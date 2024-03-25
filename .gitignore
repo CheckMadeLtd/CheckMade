@@ -1,0 +1,21 @@
+.DS_Store
+
+# .NET related
+bin/
+obj/
+/packages/
+
+# Custom
+PlantUML/
+puml-diagrams/
+LocalSecrets/
+logs/
+
+# IDE solution settings
+**.sln.DotSettings.user
+!**.sln.DotSettings
+
+# IDE / User internals
+.idea/
+riderModule.iml
+/_ReSharper.Caches/
