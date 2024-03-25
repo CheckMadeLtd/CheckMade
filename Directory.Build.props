@@ -1,6 +1,20 @@
 <Project>
   <PropertyGroup>
-    <Nullable>enable</Nullable>
     <AvaloniaVersion>11.0.10</AvaloniaVersion>
+
+    <Nullable>enable</Nullable>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- This property, when true, enforces usage of packages.lock.json files upon 'dotnet restore'
+    to enforce consistency as part of our CI/CD workflow. 
+    In that case, in GitHub Action workflow, use restore with locked-mode!
+    Using 'false' means an explicit decision not to use deterministic builds and rely on .csproj files
+    for dependency version and cache keys -->
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+
+    <!-- To protect NuGet Cache on GitHub. 
+    see: https://github.com/actions/setup-dotnet?tab=readme-ov-file#caching-nuget-packages -->
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 </Project>
