@@ -1,9 +1,5 @@
-using Foundation;
-using UIKit;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.iOS;
-using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 namespace CheckMade.iOS;
