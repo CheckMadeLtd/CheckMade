@@ -9,14 +9,20 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-        <Configurations>Debug;Release_Non_iOS;Release_iOS</Configurations>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release_iOS' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
       <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
       <EmbedAssembliesIntoApk Condition=" '$(EmbedAssembliesIntoApk)' == '' ">true</EmbedAssembliesIntoApk>
       <AndroidManagedSymbols Condition=" '$(AndroidManagedSymbols)' == '' ">true</AndroidManagedSymbols>
       <AndroidPackageFormats Condition=" '$(AndroidPackageFormats)' == '' ">aab;apk</AndroidPackageFormats>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug_iOS' ">
+      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+      <AndroidLinkMode Condition=" '$(AndroidLinkMode)' == '' ">None</AndroidLinkMode>
+      <UseInterpreter Condition=" '$(UseInterpreter)' == '' and '$(AndroidUseInterpreter)' == '' ">true</UseInterpreter>
     </PropertyGroup>
 
     <ItemGroup>

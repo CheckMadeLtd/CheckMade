@@ -5,11 +5,15 @@
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <WasmMainJSPath>wwwroot\main.js</WasmMainJSPath>
         <WasmRuntimeAssetsLocation>./_framework</WasmRuntimeAssetsLocation>
-        <Configurations>Debug;Release_Non_iOS;Release_iOS</Configurations>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_iOS' ">
       <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug_iOS' ">
+      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
