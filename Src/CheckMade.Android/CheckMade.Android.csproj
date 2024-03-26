@@ -12,18 +12,26 @@
         <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
+    
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
       <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
       <EmbedAssembliesIntoApk Condition=" '$(EmbedAssembliesIntoApk)' == '' ">true</EmbedAssembliesIntoApk>
       <AndroidManagedSymbols Condition=" '$(AndroidManagedSymbols)' == '' ">true</AndroidManagedSymbols>
       <AndroidPackageFormats Condition=" '$(AndroidPackageFormats)' == '' ">aab;apk</AndroidPackageFormats>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug_iOS' ">
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
       <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
       <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
       <AndroidLinkMode Condition=" '$(AndroidLinkMode)' == '' ">None</AndroidLinkMode>
       <UseInterpreter Condition=" '$(UseInterpreter)' == '' and '$(AndroidUseInterpreter)' == '' ">true</UseInterpreter>
     </PropertyGroup>
+
+    <!-- Helps verify via build output that the above RegEx match works as expected --> 
+    <Target Name="PrintOptimizationSettings" AfterTargets="Build">  
+        <Message Text="Optimize: $(Optimize)" Importance="high"/>  
+        <Message Text="DebugSymbols: $(DebugSymbols)" Importance="high"/>  
+    </Target>
 
     <ItemGroup>
         <AndroidResource Include="Icon.png">

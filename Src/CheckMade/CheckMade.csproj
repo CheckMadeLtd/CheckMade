@@ -8,21 +8,19 @@
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    # Match all configurations starting with 'Release_'
     <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
       <Optimize>true</Optimize>
     </PropertyGroup>
 
-    # Match all configurations starting with 'Debug_'
     <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
         <DebugSymbols>true</DebugSymbols>
         <Optimize>false</Optimize>
     </PropertyGroup>
 
-    # Helps verify via build output that the above RegEx matches work as expected
-    <Target Name="PrintOptimizationSettings" AfterTargets="Build">
-        <Message Text="Optimize: $(Optimize)" Importance="high"/>
-        <Message Text="DebugSymbols: $(DebugSymbols)" Importance="high"/>
+    <!-- Helps verify via build output that the above RegEx match works as expected -->
+    <Target Name="PrintOptimizationSettings" AfterTargets="Build">  
+        <Message Text="Optimize: $(Optimize)" Importance="high"/>  
+        <Message Text="DebugSymbols: $(DebugSymbols)" Importance="high"/>  
     </Target>
 
     <ItemGroup>
