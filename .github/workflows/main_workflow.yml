@@ -1,0 +1,79 @@
+name: .NET .Core Main Branch Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:  
+  tag_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      # By default, fetch-depth=1, which is what's needed for tagging
+      - uses: actions/checkout@v4
+
+      - name: Read Version from version.txt
+        id: read-version
+        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+
+      - name: Tag the new version
+        run: git tag ${{ env.VERSION }}
+
+      - name: Configure Git
+        run: |
+          git config user.email "our-github-action-bot@users.noreply.github.com"
+          git config user.name "GitHub Actions Bot"
+
+      # Uses '--force' to overwrite existing tag in case of repeated push of the same tag e.g. after a quick fix
+      - name: Push changes
+        run: |
+          git push --force origin ${{ env.VERSION }}
+  
+  build_and_test:
+    needs: tag_version
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # wait with Release_Android
+        build_config: [ Release_Desktop ]
+
+    env:
+      # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET Environment
+        id: setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          # cache: true
+          # cache-dependency-path: '**/packages.lock.json' # see e.g. https://github.com/actions/setup-dotnet/issues/471
+
+      - name: Install Desktop Workload
+        if: ${{ matrix.build_config }} == 'Release_Desktop' 
+        run: dotnet workload install wasi-experimental
+        
+#      - name: Install Android Workload
+#        if: ${{ matrix.build_config }} == 'Release_Android'
+#        run: dotnet workload install android
+      
+      # - name: Check cache hit
+      #   if: steps.setup-dotnet.outputs.cache-hit == 'true'
+      #   run: echo "There was a cache-hit for restoring dotnet / NuGet dependencies."
+
+      - name: Restore dependencies
+        run: dotnet restore /p:Configuration=${{ matrix.build_config }}
+
+      - name: Build
+        run: dotnet build --configuration ${{ matrix.build_config }} --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --configuration ${{ matrix.build_config }} --verbosity normal
+
+#  deploy:

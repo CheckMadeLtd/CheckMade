@@ -1,0 +1,46 @@
+name: .NET .Core Feature Branch Workflow
+
+on:
+  push:
+    branches:
+      - fb/*
+
+jobs:  
+  # No build & test run here, assumes this was run on local dev machine before 'push' to origin
+  # (by convention and via local sh script). But the full restore/build/test cycle will run on the 'main' workflow. 
+
+  create_pr_and_attempt_merge:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # built-in GitHub Token for Auth incl. sufficient rights for usual GH CLI Ops.
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for creating PR and merging (fetches entire repo history, not just latest commit)
+
+      - name: Create Pull Request
+        run: |
+          PR_TITLE="${{ github.ref_name }}"
+          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
+          PR_URL=$(gh pr create --base main --title "$PR_TITLE" --body "Merging changes from feature branch")
+          echo "Pull Request URL: $PR_URL"
+
+      - name: Merge & Delete Current Feature Branch
+        run: |
+          gh pr merge --squash --auto --delete-branch 
+
+  # This manual triggering is needed because the create_pr_and_attempt_merge job is now using the default
+  # secrets.GITHUB_TOKEN to authorize the GH CLI tool, rather than a custom PAT. Operations using this default
+  # are prevented from auto-triggering other workflows (to help prevent circular references / loops etc.).
+  trigger_main_workflow:
+    needs: create_pr_and_attempt_merge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger .NET Main Trunk Workflow
+        run: gh workflow run main_workflow.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
