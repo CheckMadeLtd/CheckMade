@@ -9,13 +9,15 @@
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <CodesignKey>Apple Development: DANIEL GORIN (929D9BD5RG)</CodesignKey>
+        <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+        <CodesignKey>Apple Development: DANIEL GORIN (929D9BD5RG)</CodesignKey>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_iOS' ">
+        <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
         <CodesignKey>Apple Distribution: DANIEL GORIN (XML55T4KXF)</CodesignKey>
-      <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
-      <MtouchUseLlvm>true</MtouchUseLlvm>
+        <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
+        <MtouchUseLlvm>true</MtouchUseLlvm>
     </PropertyGroup>
 
     <ItemGroup>
