@@ -9,6 +9,14 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+        <Configurations>Debug;Release_Non_iOS;Release_iOS</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_iOS' ">
+      <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
+      <EmbedAssembliesIntoApk Condition=" '$(EmbedAssembliesIntoApk)' == '' ">true</EmbedAssembliesIntoApk>
+      <AndroidManagedSymbols Condition=" '$(AndroidManagedSymbols)' == '' ">true</AndroidManagedSymbols>
+      <AndroidPackageFormats Condition=" '$(AndroidPackageFormats)' == '' ">aab;apk</AndroidPackageFormats>
     </PropertyGroup>
 
     <ItemGroup>

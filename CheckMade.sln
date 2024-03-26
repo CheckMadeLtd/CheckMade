@@ -21,32 +21,39 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Release_Non_iOS|Any CPU = Release_Non_iOS|Any CPU
+		Release_iOS|Any CPU = Release_iOS|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_Non_iOS|Any CPU.ActiveCfg = Release_Non_iOS|Any CPU
+		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_Non_iOS|Any CPU.Build.0 = Release_Non_iOS|Any CPU
+		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
+		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_iOS|Any CPU.Build.0 = Release_iOS|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Non_iOS|Any CPU.ActiveCfg = Release_Non_iOS|Any CPU
+		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Non_iOS|Any CPU.Build.0 = Release_Non_iOS|Any CPU
+		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Non_iOS|Any CPU.Deploy.0 = Release_Non_iOS|Any CPU
+		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release_Non_iOS|Any CPU.ActiveCfg = Release_Non_iOS|Any CPU
+		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release_Non_iOS|Any CPU.Build.0 = Release_Non_iOS|Any CPU
+		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
 		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release_Non_iOS|Any CPU.ActiveCfg = Release_Non_iOS|Any CPU
+		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
+		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release_iOS|Any CPU.Build.0 = Release_iOS|Any CPU
+		{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}.Release_iOS|Any CPU.Deploy.0 = Release_iOS|Any CPU
 		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Release_Non_iOS|Any CPU.ActiveCfg = Release_Non_iOS|Any CPU
+		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Release_Non_iOS|Any CPU.Build.0 = Release_Non_iOS|Any CPU
+		{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
 	EndGlobalSection
 EndGlobal
