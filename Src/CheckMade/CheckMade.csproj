@@ -7,13 +7,23 @@
         <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release_iOS' ">
-      <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
+
+    # Match all configurations starting with 'Release_'
+    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+      <Optimize>true</Optimize>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug_iOS' ">
-      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
-      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+
+    # Match all configurations starting with 'Debug_'
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
     </PropertyGroup>
+
+    # Helps verify via build output that the above RegEx matches work as expected
+    <Target Name="PrintOptimizationSettings" AfterTargets="Build">
+        <Message Text="Optimize: $(Optimize)" Importance="high"/>
+        <Message Text="DebugSymbols: $(DebugSymbols)" Importance="high"/>
+    </Target>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
