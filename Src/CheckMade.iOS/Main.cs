@@ -1,5 +1,3 @@
-using UIKit;
-
 namespace CheckMade.iOS;
 
 public class Application

@@ -9,6 +9,22 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+      <Optimize>true</Optimize>
+      <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+      <AndroidManagedSymbols>true</AndroidManagedSymbols>
+      <AndroidPackageFormats>aab;apk</AndroidPackageFormats>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+      <DebugSymbols>true</DebugSymbols>
+      <Optimize>false</Optimize>
+      <AndroidLinkMode>None</AndroidLinkMode>
+      <UseInterpreter>true</UseInterpreter>
     </PropertyGroup>
 
     <ItemGroup>
