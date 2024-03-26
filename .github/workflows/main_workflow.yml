@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Desktop Workload
         if: ${{ matrix.build_config }} == 'Release_Desktop' 
-        run: dotnet workload install wasi-experimental
+        run: dotnet workload install wasm-tools
         
 #      - name: Install Android Workload
 #        if: ${{ matrix.build_config }} == 'Release_Android'
