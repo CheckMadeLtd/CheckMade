@@ -37,8 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        # wait with Release_Android
-        build_config: [ Release_Desktop, Release_Android ]
+        build_config: [ ${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}, ${{ vars.RELEASE_CONFIG_NAME_ANDROID }} ]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
@@ -46,13 +45,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+# Setting up Caches ----------------------------
 
-      - name: Setup .NET Environment
-        id: setup-dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
+      # dotnet SDK & Workloads --------------
+      
       - name: Cache dotnet SDK and Workloads
         id: cache-dotnet
         uses: actions/cache@v4
@@ -66,11 +63,40 @@ jobs:
         if: steps.cache-dotnet.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
 
+      # Android SDK --------------
+      
+      - name: Cache Android SDK
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        id: cache-android-sdk
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-android-sdk
+        with:
+          path: ~/.android/sdk
+          key: ${{ runner.os }}-android-sdk-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Check cache-android-sdk hit
+        if: steps.cache-android-sdk.outputs.cache-hit == 'true'
+        run: echo "There was a cache-hit for restoring Android SDK."
+
+      # Temp
+      - name: Find android SDK dir
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        run: find ~/.android > find-android-dir.txt
+        
+      - name: Upload find results
+        uses: actions/upload-artifact@v4
+        with:
+          name: find-android-artifact
+          path: find-android-dir.txt
+      
+      # dotnet Nuget (build_config specific) --------------
+      
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
-          if [[ "${{ matrix.build_config }}" == "Release_Desktop" ]]; then
+          if [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*android*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.build_config }}" == "Release_Android" ]]; then
+          elif [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*browser*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
             HASH=$(find . -iname '*.csproj' ! -iname '*ios*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
@@ -91,10 +117,31 @@ jobs:
         if: steps.cache-nuget.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.build_config }}."
 
+# Installing SDKs and Frameworks ----------------------------
+
+      - name: Setup .NET Environment
+        id: setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Set up JDK 17
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        uses: android-actions/setup-android@v3
+      
       # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
       - name: Install Workloads
         run: dotnet workload install wasm-tools android
         
+# Build & Test ----------------------------
+
       - name: Restore dependencies
         run: dotnet restore /p:Configuration=${{ matrix.build_config }}
 
