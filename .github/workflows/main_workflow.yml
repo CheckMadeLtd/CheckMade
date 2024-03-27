@@ -70,6 +70,26 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore /p:Configuration=${{ matrix.build_config }}
 
+      - name: Check .NET SDK Path
+        run: |
+          which dotnet
+          dotnet --info
+
+      - name: List contents of .NET directories
+        run: |
+          mkdir find-results
+          find /usr/share/dotnet > find-results/usr-share-dotnet.txt
+          find ~/.dotnet > find-results/home-dotnet.txt
+          find ~/.nuget > find-results/home-nuget.txt
+          find ${{ github.workspace }}/.nuget > find-results/github-workspace-nuget.txt
+          
+      - name: Upload find results
+        uses: actions/upload-artifact@v4
+        with:
+          name: find-results-artifact
+          path: find-results/
+            
+      
       - name: Build
         run: dotnet build --configuration ${{ matrix.build_config }} --no-restore
 
