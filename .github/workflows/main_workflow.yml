@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix:
         # wait with Release_Android
-        build_config: [ Release_Desktop ]
+        build_config: [ Release_Desktop, Release_Android ]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
@@ -52,44 +52,52 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-          # cache: true
-          # cache-dependency-path: '**/packages.lock.json' # see e.g. https://github.com/actions/setup-dotnet/issues/471
 
-      - name: Install Desktop Workload
-        if: ${{ matrix.build_config }} == 'Release_Desktop' 
-        run: dotnet workload install wasm-tools
+      - name: Cache dotnet SDK and Workloads
+        id: cache-dotnet
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-dotnet
+        with:
+          path: /usr/share/dotnet
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
         
-#      - name: Install Android Workload
-#        if: ${{ matrix.build_config }} == 'Release_Android'
-#        run: dotnet workload install android
-      
-      # - name: Check cache hit
-      #   if: steps.setup-dotnet.outputs.cache-hit == 'true'
-      #   run: echo "There was a cache-hit for restoring dotnet / NuGet dependencies."
+      - name: Check cache-dotnet hit
+        if: steps.cache-dotnet.outputs.cache-hit == 'true'
+        run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
 
+      - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
+        run: |
+          if [[ "${{ matrix.build_config }}" == "Release_Desktop" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*android*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          elif [[ "${{ matrix.build_config }}" == "Release_Android" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*browser*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          else
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          fi
+          echo "CS_PROJ_HASH=$HASH" >> $GITHUB_ENV
+        shell: bash
+      
+      - name: Cache nuget dependencies
+        id: cache-nuget
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-nuget-${{ matrix.build_config }}
+        with:
+          path: ${{ github.workspace }}/.nuget
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}
+
+      - name: Check cache-nuget hit
+        if: steps.cache-nuget.outputs.cache-hit == 'true'
+        run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.build_config }}."
+
+      # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
+      - name: Install Workloads
+        run: dotnet workload install wasm-tools android
+        
       - name: Restore dependencies
         run: dotnet restore /p:Configuration=${{ matrix.build_config }}
 
-      - name: Check .NET SDK Path
-        run: |
-          which dotnet
-          dotnet --info
-
-      - name: List contents of .NET directories
-        run: |
-          mkdir find-results
-          find /usr/share/dotnet > find-results/usr-share-dotnet.txt
-          find ~/.dotnet > find-results/home-dotnet.txt
-          find ~/.nuget > find-results/home-nuget.txt
-          find ${{ github.workspace }}/.nuget > find-results/github-workspace-nuget.txt
-          
-      - name: Upload find results
-        uses: actions/upload-artifact@v4
-        with:
-          name: find-results-artifact
-          path: find-results/
-            
-      
       - name: Build
         run: dotnet build --configuration ${{ matrix.build_config }} --no-restore
 
