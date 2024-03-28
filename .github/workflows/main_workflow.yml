@@ -37,7 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        build_config: [ ${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}, ${{ vars.RELEASE_CONFIG_NAME_ANDROID }} ]
+        build_config: [ "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
