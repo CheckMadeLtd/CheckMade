@@ -1,0 +1,25 @@
+
+Not using Caching for the Android SDK:
+Installing the SDK takes less than 30sec but the compression of the 100k+ files of that SDK takes many minutes.
+=> It's not worth the overhead of caching since GitHub Runner time is the main bottleneck to watch. 
+See this discussion: https://chat.openai.com/share/4d72343c-e32c-40a4-8174-2a981ceaebe6
+
+But in case I do want to reactivate Android SDK caching in the future, this was the code. 
+The main thing that took figuring out was 'path' and 'key'.
+
+      # Android SDK --------------
+      
+      - name: Cache Android SDK
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        id: cache-android-sdk
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-android-sdk
+        with:
+          path: /usr/local/lib/android
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Check cache-android-sdk hit
+        if: steps.cache-android-sdk.outputs.cache-hit == 'true'
+        run: echo "There was a cache-hit for restoring Android SDK."
+

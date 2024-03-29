@@ -63,22 +63,6 @@ jobs:
         if: steps.cache-dotnet.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
 
-      # Android SDK --------------
-      
-      - name: Cache Android SDK
-        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
-        id: cache-android-sdk
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-android-sdk
-        with:
-          path: /usr/local/lib/android
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
-      - name: Check cache-android-sdk hit
-        if: steps.cache-android-sdk.outputs.cache-hit == 'true'
-        run: echo "There was a cache-hit for restoring Android SDK."
-
       # dotnet Nuget (build_config specific) --------------
       
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
@@ -105,6 +89,8 @@ jobs:
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.build_config }}."
+        
+      # NOT Caching Android SDK at this point, see notes in 'parked_workflows.txt'
 
 # Installing SDKs and Frameworks ----------------------------
 
