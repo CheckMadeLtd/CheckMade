@@ -101,14 +101,14 @@ jobs:
           global-json-file: global.json
 
       - name: Set up JDK 17
-        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        if: ${{ matrix.build_config }} == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        if: ${{ matrix.build_config }} == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"
         uses: android-actions/setup-android@v3
       
       # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
