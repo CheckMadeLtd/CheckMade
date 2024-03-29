@@ -72,7 +72,7 @@ jobs:
         env:
           cache-name: cache-android-sdk
         with:
-          path: ~/.android/sdk
+          path: /usr/local/lib/android
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           
       - name: Check cache-android-sdk hit
@@ -128,7 +128,7 @@ jobs:
       # Temp
       - name: Find android SDK dir
         if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
-        run: find ~/.android > find-android-dir.txt
+        run: find /usr/local/lib/android > find-android-dir.txt
 
       - name: Upload find results
         uses: actions/upload-artifact@v4
