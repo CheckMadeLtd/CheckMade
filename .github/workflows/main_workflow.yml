@@ -73,23 +73,12 @@ jobs:
           cache-name: cache-android-sdk
         with:
           path: ~/.android/sdk
-          key: ${{ runner.os }}-android-sdk-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           
       - name: Check cache-android-sdk hit
         if: steps.cache-android-sdk.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring Android SDK."
 
-      # Temp
-      - name: Find android SDK dir
-        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
-        run: find ~/.android > find-android-dir.txt
-        
-      - name: Upload find results
-        uses: actions/upload-artifact@v4
-        with:
-          name: find-android-artifact
-          path: find-android-dir.txt
-      
       # dotnet Nuget (build_config specific) --------------
       
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
@@ -135,6 +124,17 @@ jobs:
       - name: Setup Android SDK
         if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
         uses: android-actions/setup-android@v3
+      
+      # Temp
+      - name: Find android SDK dir
+        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
+        run: find ~/.android > find-android-dir.txt
+
+      - name: Upload find results
+        uses: actions/upload-artifact@v4
+        with:
+          name: find-android-artifact
+          path: find-android-dir.txt
       
       # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
       - name: Install Workloads
