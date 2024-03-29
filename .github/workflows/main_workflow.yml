@@ -54,7 +54,9 @@ jobs:
         id: cache-dotnet
         uses: actions/cache@v4
         env:
-          cache-name: cache-dotnet
+          # Using the build_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
+          # clashing while attempting to form the same cache. See: https://chat.openai.com/share/a7768546-58f8-4f4f-9de5-07a6153495c4
+          cache-name: cache-dotnet-${{ matrix.build_config }}
         with:
           path: /usr/share/dotnet
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
@@ -101,14 +103,14 @@ jobs:
           global-json-file: global.json
 
       - name: Set up JDK 17
-        if: ${{ matrix.build_config }} == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"
-        uses: actions/setup-java@v3
+        if: matrix.build_config == vars.RELEASE_CONFIG_NAME_ANDROID
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        if: ${{ matrix.build_config }} == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"
+        if: matrix.build_config == vars.RELEASE_CONFIG_NAME_ANDROID
         uses: android-actions/setup-android@v3
       
       # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
