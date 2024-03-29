@@ -125,18 +125,8 @@ jobs:
         if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
         uses: android-actions/setup-android@v3
       
-      # Temp
-      - name: Find android SDK dir
-        if: ${{ matrix.build_config }} == ${{ vars.RELEASE_CONFIG_NAME_ANDROID }}
-        run: find /usr/local/lib/android > find-android-dir.txt
-
-      - name: Upload find results
-        uses: actions/upload-artifact@v4
-        with:
-          name: find-android-artifact
-          path: find-android-dir.txt
-      
       # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
+      # A single cache is used because it seems too hard to specify sub-paths for caching which are workload-specific
       - name: Install Workloads
         run: dotnet workload install wasm-tools android
         
