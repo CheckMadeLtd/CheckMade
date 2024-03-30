@@ -27,6 +27,10 @@
       <UseInterpreter>true</UseInterpreter>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+    </PropertyGroup>
+
     <ItemGroup>
         <AndroidResource Include="Icon.png">
             <Link>Resources\drawable\Icon.png</Link>
