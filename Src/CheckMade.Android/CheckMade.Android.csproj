@@ -5,8 +5,8 @@
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
         <ApplicationId>com.CheckMadeOrga.CheckMade-Mobile</ApplicationId>
-        <ApplicationVersion>2</ApplicationVersion>
-        <ApplicationDisplayVersion>0.1.6</ApplicationDisplayVersion>
+        <ApplicationVersion>3</ApplicationVersion>
+        <ApplicationDisplayVersion>0.1.8</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
         <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
