@@ -17,7 +17,7 @@
       <Optimize>true</Optimize>
       <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
       <AndroidManagedSymbols>true</AndroidManagedSymbols>
-      <AndroidPackageFormats>aab;apk</AndroidPackageFormats>
+      <AndroidPackageFormats>aab</AndroidPackageFormats>
     </PropertyGroup>
 
     <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
