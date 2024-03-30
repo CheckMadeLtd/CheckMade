@@ -4,9 +4,9 @@
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
-        <ApplicationId>com.CompanyName.CheckMade</ApplicationId>
-        <ApplicationVersion>1</ApplicationVersion>
-        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationId>com.CheckMadeOrga.CheckMade-Mobile</ApplicationId>
+        <ApplicationVersion>3</ApplicationVersion>
+        <ApplicationDisplayVersion>0.1.8</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
         <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
@@ -17,7 +17,7 @@
       <Optimize>true</Optimize>
       <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
       <AndroidManagedSymbols>true</AndroidManagedSymbols>
-      <AndroidPackageFormats>aab;apk</AndroidPackageFormats>
+      <AndroidPackageFormats>aab</AndroidPackageFormats>
     </PropertyGroup>
 
     <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
@@ -25,6 +25,10 @@
       <Optimize>false</Optimize>
       <AndroidLinkMode>None</AndroidLinkMode>
       <UseInterpreter>true</UseInterpreter>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
