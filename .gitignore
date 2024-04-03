@@ -10,6 +10,7 @@ PlantUML/
 puml-diagrams/
 LocalSecrets/
 logs/
+AllUiTextsFromSourceCode.txt
 
 # IDE solution settings
 **.sln.DotSettings.user
