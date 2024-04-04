@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace CheckMade.Mobile.Startup;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class App : Application
 {
     public override void Initialize()
