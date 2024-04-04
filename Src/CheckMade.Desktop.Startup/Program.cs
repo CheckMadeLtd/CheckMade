@@ -2,7 +2,7 @@
 using Avalonia.ReactiveUI;
 using CheckMade.Mobile.Startup;
 
-namespace CheckMade.Desktop;
+namespace CheckMade.Desktop.Startup;
 
 sealed class Program
 {
