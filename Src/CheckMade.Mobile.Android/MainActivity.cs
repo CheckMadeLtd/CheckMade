@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
-using CheckMade.Startup;
+using CheckMade.Mobile.Startup;
 
 namespace CheckMade.Mobile.Android;
 

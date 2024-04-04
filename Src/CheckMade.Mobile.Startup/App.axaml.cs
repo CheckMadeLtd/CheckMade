@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace CheckMade.Startup;
+namespace CheckMade.Mobile.Startup;
 
 public partial class App : Application
 {

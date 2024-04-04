@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Startup", "Src\CheckMade.Startup\CheckMade.Startup.csproj", "{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Startup", "Src\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj", "{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Android", "Src\CheckMade.Mobile.Android\CheckMade.Mobile.Android.csproj", "{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}"
 EndProject
