@@ -3,10 +3,10 @@ using Avalonia;
 using Avalonia.Android;
 using Avalonia.ReactiveUI;
 
-namespace CheckMade.Android;
+namespace CheckMade.Mobile.Android;
 
 [Activity(
-    Label = "CheckMade.Android",
+    Label = "CheckMade.Mobile.Android",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
