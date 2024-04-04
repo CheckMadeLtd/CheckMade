@@ -1,4 +1,4 @@
-﻿namespace CheckMade.ViewModels;
+﻿namespace CheckMade.Mobile.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {

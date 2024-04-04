@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using CheckMade.ViewModels;
+using CheckMade.Mobile.ViewModels;
 using CheckMade.Views;
 
 namespace CheckMade;

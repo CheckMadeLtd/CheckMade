@@ -1,5 +1,5 @@
 ﻿using ReactiveUI;
 
-namespace CheckMade.ViewModels;
+namespace CheckMade.Mobile.ViewModels;
 
 public class ViewModelBase : ReactiveObject;
