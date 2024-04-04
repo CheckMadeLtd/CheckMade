@@ -34,4 +34,8 @@
       <ProjectReference Include="..\CheckMade.Mobile.ViewModels\CheckMade.Mobile.ViewModels.csproj" />
       <ProjectReference Include="..\CheckMade.Mobile.Views\CheckMade.Mobile.Views.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
+    </ItemGroup>
 </Project>

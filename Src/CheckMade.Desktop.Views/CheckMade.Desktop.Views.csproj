@@ -21,4 +21,8 @@
       <ProjectReference Include="..\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+    </ItemGroup>
+
 </Project>
