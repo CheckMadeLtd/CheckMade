@@ -31,9 +31,9 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)"/>
         <PackageReference Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) " Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+        <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
     <ItemGroup>
