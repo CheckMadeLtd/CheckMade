@@ -7,5 +7,5 @@
         x:Class="CheckMade.Desktop.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="CheckMade">
-        <views:MainView />
+        <views:MainWindow />
 </Window>

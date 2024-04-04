@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Update="MainView.axaml.cs">
-        <DependentUpon>MainView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="MainWindow.axaml.cs">
         <DependentUpon>MainWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
