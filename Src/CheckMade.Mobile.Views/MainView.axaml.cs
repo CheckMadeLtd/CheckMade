@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace CheckMade.Views;
+namespace CheckMade.Mobile.Views;
 
 public partial class MainView : UserControl
 {
