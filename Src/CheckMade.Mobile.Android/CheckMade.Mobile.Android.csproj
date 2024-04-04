@@ -43,6 +43,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CheckMade\CheckMade.csproj"/>
+        <ProjectReference Include="..\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj" />
     </ItemGroup>
 </Project>

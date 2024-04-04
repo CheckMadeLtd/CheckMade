@@ -4,7 +4,8 @@ using Avalonia.Markup.Xaml;
 using CheckMade.Mobile.ViewModels;
 using CheckMade.Mobile.Views;
 
-namespace CheckMade;
+
+namespace CheckMade.Mobile.Startup;
 
 public partial class App : Application
 {
