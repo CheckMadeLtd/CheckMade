@@ -1,8 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using CheckMade.Desktop.ViewModels;
+using CheckMade.Mobile.ViewModels;
 
-namespace CheckMade.Desktop.Startup;
+namespace CheckMade.Startup;
 
 public class ViewLocator : IDataTemplate
 {

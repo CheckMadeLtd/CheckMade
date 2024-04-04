@@ -37,10 +37,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Desktop.Startup\CheckMade.Desktop.Startup.csproj" />
+      <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
     </ItemGroup>
 
     <ItemGroup>
-      <UpToDateCheckInput Remove="Assets\avalonia-logo.ico" />
+      <ProjectReference Include="..\CheckMade.Startup\CheckMade.Startup.csproj" />
     </ItemGroup>
 </Project>

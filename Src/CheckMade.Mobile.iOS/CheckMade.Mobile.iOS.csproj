@@ -27,6 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj" />
+        <ProjectReference Include="..\CheckMade.Startup\CheckMade.Startup.csproj" />
     </ItemGroup>
 </Project>

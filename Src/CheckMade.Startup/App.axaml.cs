@@ -1,11 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using CheckMade.Mobile.ViewModels;
-using CheckMade.Mobile.Views;
 
-
-namespace CheckMade.Mobile.Startup;
+namespace CheckMade.Startup;
 
 public partial class App : Application
 {
@@ -18,16 +15,16 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
+            desktop.MainWindow = new Desktop.Views.MainWindow
             {
-                DataContext = new MainViewModel()
+                DataContext = new Desktop.ViewModels.MainViewModel()
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new MainView
+            singleViewPlatform.MainView = new Mobile.Views.MainView
             {
-                DataContext = new MainViewModel()
+                DataContext = new Mobile.ViewModels.MainViewModel()
             };
         }
 

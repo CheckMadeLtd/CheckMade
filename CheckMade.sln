@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Startup", "Src\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj", "{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Startup", "Src\CheckMade.Startup\CheckMade.Startup.csproj", "{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Android", "Src\CheckMade.Mobile.Android\CheckMade.Mobile.Android.csproj", "{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}"
 EndProject
@@ -26,8 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "Src\CheckMade.Desktop.Views\CheckMade.Desktop.Views.csproj", "{B52607A2-9E5F-436E-81A3-7999BE2DABBF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.ViewModels", "Src\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj", "{012B9519-33F7-4AE1-A604-2CA3E54423CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Startup", "Src\CheckMade.Desktop.Startup\CheckMade.Desktop.Startup.csproj", "{CF05F6D2-2FA9-48C2-BC16-5B701050D145}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,17 +124,5 @@ Global
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_iOS|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_iOS|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_Android|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_Android|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Release_Desktop|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_Non_iOS|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_iOS|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF05F6D2-2FA9-48C2-BC16-5B701050D145}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
