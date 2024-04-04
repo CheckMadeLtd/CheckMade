@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace CheckMade.Desktop.Startup;
+namespace CheckMade.Desktop.App;
 
 sealed class Program
 {

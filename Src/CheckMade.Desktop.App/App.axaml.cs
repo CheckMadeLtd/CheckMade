@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using CheckMade.Desktop.ViewModels;
 using CheckMade.Desktop.Views;
 
-namespace CheckMade.Desktop.Startup;
+namespace CheckMade.Desktop.App;
 
 public partial class App : Application
 {
