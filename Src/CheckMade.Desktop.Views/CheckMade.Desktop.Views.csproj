@@ -18,11 +18,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Mobile.ViewModels\CheckMade.Mobile.ViewModels.csproj" />
+      <ProjectReference Include="..\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj" />
     </ItemGroup>
 
 </Project>

@@ -24,11 +24,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)"/>
         <PackageReference Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) " Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\avalonia-logo.ico" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj" />
+      <Compile Update="App.axaml.cs">
+        <DependentUpon>App.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Desktop.Views\CheckMade.Desktop.Views.csproj" />
     </ItemGroup>
 </Project>

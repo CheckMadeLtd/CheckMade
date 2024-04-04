@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.ViewModels
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Views", "Src\CheckMade.Mobile.Views\CheckMade.Mobile.Views.csproj", "{6CDFC990-05B6-43A4-B5A6-15B4524BA6F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "Src\CheckMade.Desktop.Views\CheckMade.Desktop.Views.csproj", "{B52607A2-9E5F-436E-81A3-7999BE2DABBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.ViewModels", "Src\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj", "{012B9519-33F7-4AE1-A604-2CA3E54423CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release_iOS|Any CPU = Release_iOS|Any CPU
@@ -96,5 +100,29 @@ Global
 		{6CDFC990-05B6-43A4-B5A6-15B4524BA6F8}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
 		{6CDFC990-05B6-43A4-B5A6-15B4524BA6F8}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CDFC990-05B6-43A4-B5A6-15B4524BA6F8}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_Android|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_Android|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Non_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_Android|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_Android|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Non_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
