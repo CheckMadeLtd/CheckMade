@@ -1,4 +1,4 @@
-namespace CheckMade.iOS;
+namespace CheckMade.Mobile.iOS;
 
 public class Application
 {
