@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop", "Src\Ch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.iOS", "Src\CheckMade.Mobile.iOS\CheckMade.Mobile.iOS.csproj", "{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Browser", "Src\CheckMade.Browser\CheckMade.Browser.csproj", "{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Browser", "Src\CheckMade.Desktop.Browser\CheckMade.Desktop.Browser.csproj", "{A10CD7EB-567E-4B9F-8B4B-A932E23C86A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{EC4575D6-D466-4C3F-B78C-4048E0B09498}"
 	ProjectSection(SolutionItems) = preProject
