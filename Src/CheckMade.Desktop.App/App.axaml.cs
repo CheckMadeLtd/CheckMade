@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace CheckMade.Mobile.Startup;
+namespace CheckMade.Desktop.App;
 
 public partial class App : Application
 {
@@ -13,11 +13,11 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            singleViewPlatform.MainView = new Mobile.Views.MainView
+            desktop.MainWindow = new Views.MainWindow
             {
-                DataContext = new Mobile.ViewModels.MainViewModel()
+                DataContext = new ViewModels.MainViewModel()
             };
         }
 
