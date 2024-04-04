@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.iOS;
 using Avalonia.ReactiveUI;
+using CheckMade.Mobile.Startup;
 
 namespace CheckMade.Mobile.iOS;
 

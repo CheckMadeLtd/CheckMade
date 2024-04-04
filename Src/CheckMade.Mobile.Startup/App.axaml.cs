@@ -15,9 +15,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new Mobile.Views.MainView
+            singleViewPlatform.MainView = new Views.MainView
             {
-                DataContext = new Mobile.ViewModels.MainViewModel()
+                DataContext = new ViewModels.MainViewModel()
             };
         }
 
