@@ -4,7 +4,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_Desktop</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

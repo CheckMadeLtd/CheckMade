@@ -4,7 +4,7 @@
         <TargetFramework>net8.0-ios</TargetFramework>
         <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
-        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly</Configurations>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_Desktop</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
