@@ -70,11 +70,13 @@ jobs:
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
           if [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*android*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*browser*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            echo "Error: The current build_config needs explicit handling."
+            echo "CS_PROJ_HASH=error" >> $GITHUB_ENV
+            exit 1
           fi
           echo "CS_PROJ_HASH=$HASH" >> $GITHUB_ENV
         shell: bash

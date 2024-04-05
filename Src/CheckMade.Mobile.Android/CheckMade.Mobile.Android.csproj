@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0-android</TargetFramework>
+        <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+        <Nullable>enable</Nullable>
+        <ApplicationId>com.CheckMadeOrga.CheckMade-Mobile</ApplicationId>
+        <ApplicationVersion>4</ApplicationVersion>
+        <ApplicationDisplayVersion>0.2.0</ApplicationDisplayVersion>
+        <AndroidPackageFormat>apk</AndroidPackageFormat>
+        <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_Desktop;Debug_All;Release_All</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+      <Optimize>true</Optimize>
+      <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+      <AndroidManagedSymbols>true</AndroidManagedSymbols>
+      <AndroidPackageFormats>aab</AndroidPackageFormats>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+      <DebugSymbols>true</DebugSymbols>
+      <Optimize>false</Optimize>
+      <AndroidLinkMode>None</AndroidLinkMode>
+      <UseInterpreter>true</UseInterpreter>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
+      <AndroidPackageFormat>aab</AndroidPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AndroidResource Include="Icon.png">
+            <Link>Resources\drawable\Icon.png</Link>
+        </AndroidResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia.Android" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj" />
+    </ItemGroup>
+</Project>
