@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_All;Release_Android;Release_iOS;Release_All;No_Build</Configurations>
+        <Configurations>Debug_Telegram;Debug_Non_iOS;Debug_BackendOnly;Debug_All;Release_Telegram;Release_All;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -15,18 +14,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Update="MainView.axaml.cs">
-        <DependentUpon>MainView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+      <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Mobile.ViewModels\CheckMade.Mobile.ViewModels.csproj" />
-    </ItemGroup>
-
 </Project>

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CheckMade.Telegram.FunctionApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7248",
+      "launchBrowser": false
+    }
+  }
+}

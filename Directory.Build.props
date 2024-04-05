@@ -1,10 +1,10 @@
 <Project>
   <PropertyGroup>
-    <AvaloniaVersion>11.0.10</AvaloniaVersion>
-
     <Nullable>enable</Nullable>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <AvaloniaVersion>11.0.10</AvaloniaVersion>
 
     <!-- This property, when true, enforces usage of packages.lock.json files upon 'dotnet restore'
     to enforce consistency as part of our CI/CD workflow. 
