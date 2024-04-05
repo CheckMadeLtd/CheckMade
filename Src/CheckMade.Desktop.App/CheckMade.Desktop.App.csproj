@@ -3,10 +3,8 @@
         <OutputType>WinExe</OutputType>
         <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
         One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_Desktop;Debug_All;Release_All</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

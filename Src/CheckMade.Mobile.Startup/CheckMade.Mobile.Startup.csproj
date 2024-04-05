@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <Configurations>Release_iOS;Release_Android;Release_Desktop;Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_Desktop;Debug_All;Release_All</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_All;Release_iOS;Release_Android;Release_All</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
