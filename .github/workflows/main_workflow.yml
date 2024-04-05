@@ -126,7 +126,7 @@ jobs:
         run: dotnet restore /p:Configuration=${{ matrix.build_config }}
 
       - name: Build
-        run: dotnet build --configuration ${{ matrix.build_config }} --no-restore -noWarn:MSB4121
+        run: dotnet build --configuration ${{ matrix.build_config }} --no-restore
 
       - name: Test
         run: dotnet test --no-build --configuration ${{ matrix.build_config }} --verbosity normal
