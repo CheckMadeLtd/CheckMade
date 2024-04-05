@@ -8,7 +8,7 @@
         <ApplicationDisplayVersion>0.2.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-        <Configurations>Debug_Non_iOS;Debug_All;Release_Android;Release_All</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;Release_Android;Release_All;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

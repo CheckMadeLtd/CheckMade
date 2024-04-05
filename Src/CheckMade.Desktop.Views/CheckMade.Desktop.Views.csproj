@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
