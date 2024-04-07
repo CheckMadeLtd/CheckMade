@@ -1,5 +1,11 @@
-﻿namespace CheckMade.Messaging.Logic;
+﻿using CheckMade.Interfaces;
 
-public class ResponseGenerator
+namespace CheckMade.Messaging.Logic;
+
+public class ResponseGenerator : IResponseGenerator
 {
+    public string Echo(string input)
+    {
+        return $"Echo: {input}";
+    }
 }
