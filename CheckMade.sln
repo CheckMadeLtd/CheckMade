@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Tests", "Src\Chec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Messaging.Logic", "Src\CheckMade.Messaging.Logic\CheckMade.Messaging.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Interfaces", "Src\CheckMade.Interfaces\CheckMade.Interfaces.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release_iOS|Any CPU = Release_iOS|Any CPU
@@ -262,5 +264,29 @@ Global
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Release_Telegram|Any CPU.Build.0 = Debug|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.No_Build|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.No_Build|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Android|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Android|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Non_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_iOS|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_iOS|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_All|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_All|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_All|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_All|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Telegram|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Telegram|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Telegram|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_Telegram|Any CPU.Build.0 = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.No_Build|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.No_Build|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
