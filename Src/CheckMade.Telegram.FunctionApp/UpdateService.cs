@@ -4,28 +4,16 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.FunctionApp;
 
-public class UpdateService
+public class UpdateService(ITelegramBotClient botClient, ILogger<UpdateService> logger)
 {
-    private readonly ITelegramBotClient _botClient;
-    private readonly ILogger<UpdateService> _logger;
-
-    public UpdateService(ITelegramBotClient botClient, ILogger<UpdateService> logger)
+    internal async Task EchoAsync(Update update)
     {
-        _botClient = botClient;
-        _logger = logger;
-    }
-
-    public async Task EchoAsync(Update update)
-    {
-        _logger.LogInformation("Invoke telegram update function");
-
-        if (update is null)
-            return;
+        logger.LogInformation("Invoke telegram update function");
 
         if (!(update.Message is { } message)) return;
 
-        _logger.LogInformation("Received Message from {ChatId}", message.Chat.Id);
-        await _botClient.SendTextMessageAsync(
+        logger.LogInformation("Received Message from {ChatId}", message.Chat.Id);
+        await botClient.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: $"Echo : {message.Text}");
     }

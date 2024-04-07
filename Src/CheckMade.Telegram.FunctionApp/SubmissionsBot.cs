@@ -7,21 +7,13 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.FunctionApp;
 
-public class TelegramBot
+public class TelegramBot(ILogger<TelegramBot> logger, UpdateService updateService)
 {
-    private readonly ILogger<TelegramBot> _logger;
-    private readonly UpdateService _updateService;
-
-    public TelegramBot(ILogger<TelegramBot> logger, UpdateService updateService)
-    {
-        _logger = logger;
-        _updateService = updateService;
-    }
-
     [Function("SubmissionsBot")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
+    public async Task<HttpResponseData> 
+        Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
-        _logger.LogInformation("C# HTTP trigger function processed a request.");
+        logger.LogInformation("C# HTTP trigger function processed a request");
         var response = request.CreateResponse(HttpStatusCode.OK);
         try
         {
@@ -29,17 +21,17 @@ public class TelegramBot
             var update = JsonConvert.DeserializeObject<Update>(body);
             if (update is null)
             {
-                _logger.LogWarning("Unable to deserialize Update object.");
+                logger.LogWarning("Unable to deserialize Update object");
                 return response;
             }
 
-            await _updateService.EchoAsync(update);
+            await updateService.EchoAsync(update);
         }
 #pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception e)
 #pragma warning restore CA1031 // Do not catch general exception types
         {
-            _logger.LogError("Exception: {Message}", e.Message);
+            logger.LogError("Exception: {Message}", e.Message);
         }
 
         return response;
