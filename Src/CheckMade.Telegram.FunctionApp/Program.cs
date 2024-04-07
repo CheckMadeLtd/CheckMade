@@ -1,3 +1,5 @@
+using CheckMade.Interfaces;
+using CheckMade.Messaging.Logic;
 using CheckMade.Telegram.FunctionApp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +16,7 @@ var host = new HostBuilder()
             .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
 
         s.AddScoped<UpdateService>();
+        s.Add_MessagingLogic_Dependencies();
     })
     .Build();
 
