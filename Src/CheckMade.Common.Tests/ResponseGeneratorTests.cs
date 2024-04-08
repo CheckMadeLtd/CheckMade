@@ -1,8 +1,8 @@
-using CheckMade.Interfaces;
+using CheckMade.Common.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests;
+namespace CheckMade.Common.Tests;
 
 public class ResponseGeneratorTests(TestStartup setup) : IClassFixture<TestStartup>
 {

@@ -1,4 +1,4 @@
-﻿namespace CheckMade.Interfaces;
+﻿namespace CheckMade.Common.Interfaces;
 
 public interface IResponseGenerator
 {

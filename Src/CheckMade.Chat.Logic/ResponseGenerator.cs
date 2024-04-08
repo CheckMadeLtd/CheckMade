@@ -1,4 +1,4 @@
-﻿using CheckMade.Interfaces;
+﻿using CheckMade.Common.Interfaces;
 
 namespace CheckMade.Chat.Logic;
 

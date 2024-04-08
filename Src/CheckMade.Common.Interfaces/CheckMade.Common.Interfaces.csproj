@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Chat;Debug_Non_iOS;Debug_Backend_Only;Debug_All;Release_Telegram;Release_All;No_Build</Configurations>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Chat;Debug_Backend_Only;Debug_All;Release_iOS;Release_Android;Release_Desktop;Release_Telegram;Release_All;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -13,13 +13,5 @@
         <DebugSymbols>true</DebugSymbols>
         <Optimize>false</Optimize>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    </ItemGroup>
-
+    
 </Project>

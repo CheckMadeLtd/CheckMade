@@ -1,4 +1,4 @@
-using CheckMade.Interfaces;
+using CheckMade.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
