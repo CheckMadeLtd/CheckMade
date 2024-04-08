@@ -119,9 +119,11 @@ jobs:
         if: matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID
         uses: android-actions/setup-android@v3
       
-      # Installing all needed workloads irrespective of current solution_config because of a single cache for 'dotnet'
-      # A single cache is used because it seems too hard to specify sub-paths for caching which are workload-specific
+      # Installing all needed workloads irrespective of ANDROID vs. DESKTOP distinction:
+      # A single cache is used for 'dotnet' b/c it's too hard to specify workload-specific sub-paths for caching
       - name: Install Workloads
+        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID || 
+          matrix.solution_config == vars.RELEASE_CONFIG_NAME_DESKTOP }}
         run: dotnet workload install wasm-tools android
         
 # Build & Test ----------------------------
