@@ -71,17 +71,16 @@ Global
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_Non_iOS|Any CPU.Build.0 = Debug_Non_iOS|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_iOS|Any CPU.ActiveCfg = Debug_iOS|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_iOS|Any CPU.Build.0 = Debug_iOS|Any CPU
-		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_BackendOnly|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_All|Any CPU.ActiveCfg = Release_All|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_All|Any CPU.Build.0 = Release_All|Any CPU
-		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_BackendOnly|Any CPU.Build.0 = Debug_BackendOnly|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_Chat|Any CPU.ActiveCfg = No_Build|Any CPU
 		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Release_Telegram|Any CPU.ActiveCfg = No_Build|Any CPU
+		{CE7EFAF9-C868-4DAF-933D-7120BF8AA7FE}.Debug_BackendOnly|Any CPU.ActiveCfg = No_Build|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Android|Any CPU.ActiveCfg = Release_Android|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Android|Any CPU.Build.0 = Release_Android|Any CPU
 		{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}.Release_Android|Any CPU.Deploy.0 = Release_Android|Any CPU
@@ -233,8 +232,6 @@ Global
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Chat|Any CPU.Build.0 = Debug_Chat|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
-		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
-		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug_Non_iOS|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Non_iOS|Any CPU.Build.0 = Debug_Non_iOS|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
@@ -245,6 +242,7 @@ Global
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Release_Android|Any CPU.ActiveCfg = No_Build|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Release_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Release_iOS|Any CPU.ActiveCfg = No_Build|Any CPU
+		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_BackendOnly|Any CPU.ActiveCfg = No_Build|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Release_Telegram|Any CPU.ActiveCfg = Release_Telegram|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Release_Telegram|Any CPU.Build.0 = Release_Telegram|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_Chat|Any CPU.ActiveCfg = Debug_Chat|Any CPU
@@ -288,8 +286,6 @@ Global
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release_iOS|Any CPU.Build.0 = Release_iOS|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
-		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
-		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_Chat|Any CPU.ActiveCfg = No_Build|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
@@ -304,10 +300,9 @@ Global
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Release_Desktop|Any CPU.Build.0 = Release_Desktop|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Release_iOS|Any CPU.ActiveCfg = No_Build|Any CPU
 		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Release_Telegram|Any CPU.ActiveCfg = No_Build|Any CPU
+		{C2DB3D18-E5D2-4298-A50D-5FB0D7E18E13}.Debug_BackendOnly|Any CPU.ActiveCfg = No_Build|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
-		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
-		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_Chat|Any CPU.ActiveCfg = No_Build|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_iOS|Any CPU.ActiveCfg = Debug_iOS|Any CPU
@@ -323,6 +318,7 @@ Global
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Release_iOS|Any CPU.ActiveCfg = Release_iOS|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Release_iOS|Any CPU.Build.0 = Release_iOS|Any CPU
 		{D730F243-59DC-4A45-8E02-D580A041CF67}.Release_Telegram|Any CPU.ActiveCfg = No_Build|Any CPU
+		{D730F243-59DC-4A45-8E02-D580A041CF67}.Debug_BackendOnly|Any CPU.ActiveCfg = No_Build|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
