@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_Telegram;Debug_Non_iOS;Debug_All;Release_Telegram;Release_All;No_Build</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;Release_Telegram;Release_All;No_Build;Debug_Chat</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

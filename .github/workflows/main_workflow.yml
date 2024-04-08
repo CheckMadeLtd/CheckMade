@@ -37,9 +37,9 @@ jobs:
 
     strategy:
       matrix:
-        solution_config: [ "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", 
-                           "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}", 
-                           "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]
+        solution_config: [ "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]
+#                           "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", 
+#                           "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
@@ -72,9 +72,9 @@ jobs:
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
           if [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
