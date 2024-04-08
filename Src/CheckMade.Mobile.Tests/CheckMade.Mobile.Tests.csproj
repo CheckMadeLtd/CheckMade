@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;Release_Desktop;Release_All;No_Build</Configurations>        
+        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_Backend_Only;Debug_All;Release_iOS;Release_Android;Release_All;No_Build</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Desktop.App\CheckMade.Desktop.App.csproj" />
+      <ProjectReference Include="..\CheckMade.Mobile.Startup\CheckMade.Mobile.Startup.csproj" />
     </ItemGroup>
 
 </Project>
