@@ -34,6 +34,6 @@
     
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Interfaces\CheckMade.Interfaces.csproj" />
-      <ProjectReference Include="..\CheckMade.Messaging.Logic\CheckMade.Messaging.Logic.csproj" />
+      <ProjectReference Include="..\CheckMade.Chat.Logic\CheckMade.Chat.Logic.csproj" />
     </ItemGroup>
 </Project>

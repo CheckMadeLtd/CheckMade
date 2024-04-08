@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.FunctionApp;
+namespace CheckMade.Chat.Telegram;
 
 public class UpdateService(ITelegramBotClient botClient,
     IResponseGenerator responseGenerator,

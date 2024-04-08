@@ -1,6 +1,6 @@
 using CheckMade.Interfaces;
-using CheckMade.Messaging.Logic;
-using CheckMade.Telegram.FunctionApp;
+using CheckMade.Chat.Logic;
+using CheckMade.Chat.Telegram;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;

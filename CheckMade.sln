@@ -27,11 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.ViewModels", "Src\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj", "{012B9519-33F7-4AE1-A604-2CA3E54423CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.FunctionApp", "Src\CheckMade.Telegram.FunctionApp\CheckMade.Telegram.FunctionApp.csproj", "{575C0F42-CB8A-4531-9150-20B7EE460676}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Chat.Telegram", "Src\CheckMade.Chat.Telegram\CheckMade.Chat.Telegram.csproj", "{575C0F42-CB8A-4531-9150-20B7EE460676}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Tests", "Src\CheckMade.Tests\CheckMade.Tests.csproj", "{E11437BF-47AE-4FFB-9AED-1601007BC72D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Messaging.Logic", "Src\CheckMade.Messaging.Logic\CheckMade.Messaging.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Chat.Logic", "Src\CheckMade.Chat.Logic\CheckMade.Chat.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Interfaces", "Src\CheckMade.Interfaces\CheckMade.Interfaces.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
 EndProject

@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Telegram.FunctionApp\CheckMade.Telegram.FunctionApp.csproj" />
+      <ProjectReference Include="..\CheckMade.Chat.Telegram\CheckMade.Chat.Telegram.csproj" />
     </ItemGroup>
 
 </Project>

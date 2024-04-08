@@ -1,7 +1,7 @@
 using CheckMade.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Messaging.Logic;
+namespace CheckMade.Chat.Logic;
 
 public static class DependencyRegistration
 {

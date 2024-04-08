@@ -1,8 +1,8 @@
 ﻿using CheckMade.Interfaces;
 
-namespace CheckMade.Messaging.Logic;
+namespace CheckMade.Chat.Logic;
 
-public class ResponseGenerator : IResponseGenerator
+public record ResponseGenerator : IResponseGenerator
 {
     public string Echo(string input)
     {
