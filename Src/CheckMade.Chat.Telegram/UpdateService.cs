@@ -9,7 +9,7 @@ public class UpdateService(ITelegramBotClient botClient,
     IResponseGenerator responseGenerator,
     ILogger<UpdateService> logger)
 {
-    public async Task EchoAsync(Update update)
+    internal async Task EchoAsync(Update update)
     {
         logger.LogInformation("Invoke telegram update function");
 
