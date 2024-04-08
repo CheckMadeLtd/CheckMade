@@ -4,7 +4,7 @@
         <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
         One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All;No_Build</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All;No_Build;Debug_Chat;Release_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

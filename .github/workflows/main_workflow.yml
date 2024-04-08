@@ -37,7 +37,9 @@ jobs:
 
     strategy:
       matrix:
-        build_config: [ "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]
+        solution_config: [ "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]
+#                           "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", 
+#                           "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
@@ -54,9 +56,9 @@ jobs:
         id: cache-dotnet
         uses: actions/cache@v4
         env:
-          # Using the build_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
+          # Using the solution_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
           # clashing while attempting to form the same cache. See: https://chat.openai.com/share/a7768546-58f8-4f4f-9de5-07a6153495c4
-          cache-name: cache-dotnet-${{ matrix.build_config }}
+          cache-name: cache-dotnet-${{ matrix.solution_config }}
         with:
           path: /usr/share/dotnet
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
@@ -65,16 +67,18 @@ jobs:
         if: steps.cache-dotnet.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
 
-      # dotnet Nuget (build_config specific) --------------
+      # dotnet Nuget (solution_config specific) --------------
       
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
-          if [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.build_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          if [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
-            echo "Error: The current build_config needs explicit handling."
+            echo "Error: The current solution_config is not handled for hash generation."
             echo "CS_PROJ_HASH=error" >> $GITHUB_ENV
             exit 1
           fi
@@ -85,14 +89,14 @@ jobs:
         id: cache-nuget
         uses: actions/cache@v4
         env:
-          cache-name: cache-nuget-${{ matrix.build_config }}
+          cache-name: cache-nuget-${{ matrix.solution_config }}
         with:
           path: ${{ github.workspace }}/.nuget
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}
 
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'
-        run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.build_config }}."
+        run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.solution_config }}."
         
       # NOT Caching Android SDK at this point, see notes in 'parked_workflows.txt'
 
@@ -105,17 +109,17 @@ jobs:
           global-json-file: global.json
 
       - name: Set up JDK 17
-        if: matrix.build_config == vars.RELEASE_CONFIG_NAME_ANDROID
+        if: matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        if: matrix.build_config == vars.RELEASE_CONFIG_NAME_ANDROID
+        if: matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID
         uses: android-actions/setup-android@v3
       
-      # Installing all needed workloads irrespective of current build_config because of a single cache for 'dotnet'
+      # Installing all needed workloads irrespective of current solution_config because of a single cache for 'dotnet'
       # A single cache is used because it seems too hard to specify sub-paths for caching which are workload-specific
       - name: Install Workloads
         run: dotnet workload install wasm-tools android
@@ -123,12 +127,12 @@ jobs:
 # Build & Test ----------------------------
 
       - name: Restore dependencies
-        run: dotnet restore /p:Configuration=${{ matrix.build_config }}
+        run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
 
       - name: Build
-        run: dotnet build --configuration ${{ matrix.build_config }} --no-restore
+        run: dotnet build --configuration ${{ matrix.solution_config }} --no-restore
 
       - name: Test
-        run: dotnet test --no-build --configuration ${{ matrix.build_config }} --verbosity normal
+        run: dotnet test --no-build --configuration ${{ matrix.solution_config }} --verbosity normal
 
 #  deploy:

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <Configurations>Debug_Telegram;Debug_Non_iOS;Debug_BackendOnly;Debug_All;Release_Telegram;Release_All;No_Build</Configurations>
+        <Configurations>Debug_Chat;Debug_Non_iOS;Debug_Backend_Only;Debug_All;Release_Telegram;Release_All;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -14,6 +15,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>
