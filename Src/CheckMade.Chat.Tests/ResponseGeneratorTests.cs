@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Common.Tests;
+namespace CheckMade.Chat.Tests;
 
 public class ResponseGeneratorTests(TestStartup setup) : IClassFixture<TestStartup>
 {

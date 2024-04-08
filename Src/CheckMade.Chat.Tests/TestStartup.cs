@@ -2,7 +2,7 @@ using CheckMade.Chat.Logic;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Common.Tests;
+namespace CheckMade.Chat.Tests;
 
 [UsedImplicitly]
 public record TestStartup : IDisposable, IAsyncDisposable
