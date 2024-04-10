@@ -1,0 +1,25 @@
+{
+    "author": "Daniel Gorin",
+    "name": "CheckMade Class Library",
+    "description": "An empty Class Library for CheckMade with advanced settings in .csproj",
+    "identity": "CheckMade.ClassLibrary",
+    "shortName": "classlib",
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "sourceName": "MyProjectPlaceholderName",
+    "symbols": {
+        "Framework": {
+            "type": "parameter",
+            "description": "The target framework for the project.",
+            "datatype": "choice",
+            "choices": [
+                {
+                    "choice": "net8.0"
+                }
+            ],
+            "defaultValue": "net8.0"
+        }
+    }
+}
