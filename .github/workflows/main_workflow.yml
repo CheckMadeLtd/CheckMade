@@ -25,13 +25,13 @@ jobs:
         run: |
           git config user.email "our-github-action-bot@users.noreply.github.com"
           git config user.name "GitHub Actions Bot"
-
+          
       # Uses '--force' to overwrite existing tag in case of repeated push of the same tag e.g. after a quick fix
       - name: Push changes
         run: |
           git push --force origin ${{ env.VERSION }}
   
-  build_and_test:
+  build_test_and_deploy:
     needs: tag_version
     runs-on: ubuntu-latest
 
@@ -128,13 +128,40 @@ jobs:
         
 # Build & Test ----------------------------
 
+      - name: Set Output Path Parameters
+        run: |
+          SOLUTION_CONFIG=$(echo ${{ matrix.solution_config }}) >> $GITHUB_ENV
+          TARGET_FRAMEWORK=$(cat Directory.Build.props | grep '<TargetFramework>' | \
+            sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p') >> $GITHUB_ENV
+          
+      - name: Determine Build-Output-Path from Solution Configuration
+        run: |
+          SLN_FILE=$(find . -name '*.sln')
+          DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE=$(grep -P "${SOLUTION_CONFIG}.*Deploy.0" $SLN_FILE)
+          DEPLOYMENT_PROJECT_ID=$(echo "$DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE" | grep -oP "{\K[0-9A-F\-]*(?=})")
+          DEPLOYMENT_PROJECT_DEFINITION_LINE=$(grep "$DEPLOYMENT_PROJECT_ID" $SLN_FILE | grep "Project(")
+          DEPLOYMENT_PROJECT_NAME=$(echo "$DEPLOYMENT_PROJECT_DEFINITION_LINE" | grep -oP '(?<= = ")[^"]*')
+          BUILD_OUTPUT_PATH="Src/$DEPLOYMENT_PROJECT_NAME/bin/$SOLUTION_CONFIG/$TARGET_FRAMEWORK/"
+          echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
+      
       - name: Restore dependencies
         run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
 
-      - name: Build
-        run: dotnet build --configuration ${{ matrix.solution_config }} --no-restore
+      - name: Build & Test
+        run: dotnet test \
+          --configuration ${{ matrix.solution_config }} \
+          --no-restore \
+          --output $BUILD_OUTPUT_PATH \
+          --verbosity normal
 
-      - name: Test
-        run: dotnet test --no-build --configuration ${{ matrix.solution_config }} --verbosity normal
-
-#  deploy:
+#  Deploy ---------------------------------
+      
+      - name: Deploy Telegram Function to Azure
+        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_TELEGRAM }}
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'telegram-app3'
+          slot-name: 'production'
+          package: $BUILD_OUTPUT_PATH
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP3 }}
+          
