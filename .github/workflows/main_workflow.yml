@@ -128,49 +128,42 @@ jobs:
         
 # Build & Test ----------------------------
 
-      - name: Determine Build-Output-Path from Solution Configuration
+      - name: Build-Output-Path = f(Solution Configuration)
         run: |
           SLN_FILE=$(find . -name '*.sln')
           echo "SLN_FILE: $SLN_FILE"
-          
           TARGET_FRAMEWORK=$(cat Directory.Build.props | grep '<TargetFramework>' | \
             sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p')
           echo "TARGET_FRAMEWORK: $TARGET_FRAMEWORK"
-          
           DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE=$(grep -P "${{ matrix.solution_config }}.*Deploy.0" $SLN_FILE)
           echo "DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE: $DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE"
-          
           DEPLOYMENT_PROJECT_ID=$(echo "$DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE" | grep -oP "{\K[0-9A-F\-]*(?=})")
           echo "DEPLOYMENT_PROJECT_ID: $DEPLOYMENT_PROJECT_ID"
-          
           DEPLOYMENT_PROJECT_DEFINITION_LINE=$(grep "$DEPLOYMENT_PROJECT_ID" $SLN_FILE | grep "Project(")
           echo "DEPLOYMENT_PROJECT_DEFINITION_LINE: $DEPLOYMENT_PROJECT_DEFINITION_LINE"
-          
           DEPLOYMENT_PROJECT_NAME=$(echo "$DEPLOYMENT_PROJECT_DEFINITION_LINE" | grep -oP '(?<= = ")[^"]*')
           echo "DEPLOYMENT_PROJECT_NAME: $DEPLOYMENT_PROJECT_NAME"
-          
           BUILD_OUTPUT_PATH="Src/$DEPLOYMENT_PROJECT_NAME/bin/${{ matrix.solution_config }}/$TARGET_FRAMEWORK/"
           echo "BUILD_OUTPUT_PATH: $BUILD_OUTPUT_PATH"
-          
           echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
       
-#      - name: Restore dependencies
-#        run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
-#
-#      - name: Build & Test
-#        run: dotnet test --configuration ${{ matrix.solution_config }} \
-#          --no-restore \
-#          --output $BUILD_OUTPUT_PATH \
-#          --verbosity normal
-#
-##  Deploy ---------------------------------
-#      
-#      - name: Deploy Telegram Function to Azure
-#        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_TELEGRAM }}
-#        uses: Azure/functions-action@v1
-#        with:
-#          app-name: 'telegram-app3'
-#          slot-name: 'production'
-#          package: $BUILD_OUTPUT_PATH
-#          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP3 }}
+      - name: Restore dependencies
+        run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
+
+      - name: Build & Test
+        run: dotnet test --configuration ${{ matrix.solution_config }} \
+          --no-restore \
+          --output $BUILD_OUTPUT_PATH \
+          --verbosity normal
+
+#  Deploy ---------------------------------
+
+      - name: Deploy Telegram Function to Azure
+        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_TELEGRAM }}
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'telegram-app3'
+          slot-name: 'production'
+          package: $BUILD_OUTPUT_PATH
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP3 }}
           
