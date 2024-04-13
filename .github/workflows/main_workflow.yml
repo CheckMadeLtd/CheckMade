@@ -151,10 +151,8 @@ jobs:
         run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
 
       - name: Build & Test
-        run: dotnet test --configuration ${{ matrix.solution_config }} \
-          --no-restore \
-          --output $BUILD_OUTPUT_PATH \
-          --verbosity normal
+        run: |
+          dotnet test --configuration ${{ matrix.solution_config }} --no-restore --output $BUILD_OUTPUT_PATH --verbosity normal
 
 #  Deploy ---------------------------------
 
