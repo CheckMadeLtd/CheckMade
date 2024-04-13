@@ -23,3 +23,33 @@ The main thing that took figuring out was 'path' and 'key'.
         if: steps.cache-android-sdk.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring Android SDK."
 
+
+The following sequence of steps can determine the default Build-Output-Path for a specified Solution Configuration.
+Became obsolete after switching to simple 'Release' and building the top level project only.  
+
+      - name: Build-Output-Path = f(Solution Configuration)
+        run: |
+          SLN_FILE=$(find . -name '*.sln')
+          echo "SLN_FILE: $SLN_FILE"
+          TARGET_FRAMEWORK=$(cat Directory.Build.props | grep '<TargetFramework>' | \
+            sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p')
+          echo "TARGET_FRAMEWORK: $TARGET_FRAMEWORK"
+          DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE=$(grep -P "${{ matrix.toplevel_project }}.*Deploy.0" $SLN_FILE)
+          echo "DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE: $DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE"
+          DEPLOYMENT_PROJECT_ID=$(echo "$DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE" | grep -oP "{\K[0-9A-F\-]*(?=})")
+          echo "DEPLOYMENT_PROJECT_ID: $DEPLOYMENT_PROJECT_ID"
+          DEPLOYMENT_PROJECT_DEFINITION_LINE=$(grep "$DEPLOYMENT_PROJECT_ID" $SLN_FILE | grep "Project(")
+          echo "DEPLOYMENT_PROJECT_DEFINITION_LINE: $DEPLOYMENT_PROJECT_DEFINITION_LINE"
+          DEPLOYMENT_PROJECT_NAME=$(echo "$DEPLOYMENT_PROJECT_DEFINITION_LINE" | grep -oP '(?<= = ")[^"]*')
+          echo "DEPLOYMENT_PROJECT_NAME: $DEPLOYMENT_PROJECT_NAME"
+          BUILD_OUTPUT_PATH="Src/$DEPLOYMENT_PROJECT_NAME/bin/${{ matrix.toplevel_project }}/$TARGET_FRAMEWORK/"
+          echo "BUILD_OUTPUT_PATH: $BUILD_OUTPUT_PATH"
+          echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
+      
+Using MSBuild Flag, I can specify a Configuration also for dotnet restore.
+Normal --configuration flag as for dotnet build doesn't work!
+Don't need it anymore because can include restore step  
+
+      - name: Restore dependencies
+        run: dotnet restore /p:Configuration=${{ matrix.toplevel_project }}
+

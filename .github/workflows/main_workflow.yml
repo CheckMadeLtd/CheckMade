@@ -37,9 +37,9 @@ jobs:
 
     strategy:
       matrix:
-        solution_config: [ "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]
-#                           "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}", 
-#                           "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}"]
+        toplevel_project: [ "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]
+#                           "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}", 
+#                           "${{ vars.ANDROID_TOPLEVEL_PROJECT }}"]
 
     env:
       # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
@@ -58,7 +58,7 @@ jobs:
         env:
           # Using the solution_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
           # clashing while attempting to form the same cache. See: https://chat.openai.com/share/a7768546-58f8-4f4f-9de5-07a6153495c4
-          cache-name: cache-dotnet-${{ matrix.solution_config }}
+          cache-name: cache-dotnet-${{ matrix.toplevel_project }}
         with:
           path: /usr/share/dotnet
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
@@ -71,14 +71,14 @@ jobs:
       
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
-          if [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_DESKTOP }}" ]]; then
+          if [[ "${{ matrix.toplevel_project }}" == "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_ANDROID }}" ]]; then
+          elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.ANDROID_TOPLEVEL_PROJECT }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.solution_config }}" == "${{ vars.RELEASE_CONFIG_NAME_TELEGRAM }}" ]]; then
+          elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
-            echo "Error: The current solution_config is not handled for hash generation."
+            echo "Error: The current toplevel_project is not handled for hash generation."
             echo "CS_PROJ_HASH=error" >> $GITHUB_ENV
             exit 1
           fi
@@ -89,14 +89,14 @@ jobs:
         id: cache-nuget
         uses: actions/cache@v4
         env:
-          cache-name: cache-nuget-${{ matrix.solution_config }}
+          cache-name: cache-nuget-${{ matrix.toplevel_project }}
         with:
           path: ${{ github.workspace }}/.nuget
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}
 
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'
-        run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.solution_config }}."
+        run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.toplevel_project }}."
         
       # NOT Caching Android SDK at this point, see notes in 'parked_workflows.txt'
 
@@ -109,59 +109,75 @@ jobs:
           global-json-file: global.json
 
       - name: Set up JDK 17
-        if: matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID
+        if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        if: matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID
+        if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
         uses: android-actions/setup-android@v3
       
       # Installing all needed workloads irrespective of ANDROID vs. DESKTOP distinction:
       # A single cache is used for 'dotnet' b/c it's too hard to specify workload-specific sub-paths for caching
       - name: Install Workloads
-        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_ANDROID || 
-          matrix.solution_config == vars.RELEASE_CONFIG_NAME_DESKTOP }}
+        if: ${{ matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT || 
+          matrix.toplevel_project == vars.DESKTOP_TOPLEVEL_PROJECT }}
         run: dotnet workload install wasm-tools android
         
 # Build & Test ----------------------------
 
-      - name: Build-Output-Path = f(Solution Configuration)
+      - name: Set Build & Test Project Parameters
         run: |
           SLN_FILE=$(find . -name '*.sln')
           echo "SLN_FILE: $SLN_FILE"
+          
+          TOPLEVEL_PROJECT_DEFINITION_LINE=$(grep "Project(\"" $SLN_FILE | grep "${{ matrix.toplevel_project }}" | grep ".csproj")
+          echo "TOPLEVEL_PROJECT_DEFINITION_LINE: $TOPLEVEL_PROJECT_DEFINITION_LINE"
+          
+          TOPLEVEL_PROJECT_DIR=$(echo "$TOPLEVEL_PROJECT_DEFINITION_LINE" | awk -F', ' '{print $2}' | tr -d '"' | sed 's/\\/\//g' | sed 's/\/[^/]*$//')
+          echo "TOPLEVEL_PROJECT_DIR: $TOPLEVEL_PROJECT_DIR"
+          echo "TOPLEVEL_PROJECT_DIR=$TOPLEVEL_PROJECT_DIR" >> $GITHUB_ENV
+          
+          TOPLEVEL_PROJECT_FILE=$(echo "$TOPLEVEL_PROJECT_DEFINITION_LINE" | awk -F', ' '{print $2}' | tr -d '"' | sed 's/\\/\//g')
+          echo "TOPLEVEL_PROJECT_FILE: $TOPLEVEL_PROJECT_FILE"
+          echo "TOPLEVEL_PROJECT_FILE=$TOPLEVEL_PROJECT_FILE" >> $GITHUB_ENV
+          
+          TEST_PROJECT_NAME_PART=$(echo "${{ matrix.toplevel_project }}" | cut -d'.' -f2)
+          echo "TEST_PROJECT_NAME_PART: $TEST_PROJECT_NAME_PART"
+          TOPLEVEL_TEST_PROJECT_LINE=$(grep "Project(\"" $SLN_FILE | grep "$TEST_PROJECT_NAME_PART" | grep "Tests.csproj")
+          echo "TOPLEVEL_TEST_PROJECT_LINE: $TOPLEVEL_TEST_PROJECT_LINE"
+          
+          TOPLEVEL_TEST_PROJECT_FILE=$(echo "$TOPLEVEL_TEST_PROJECT_LINE" | awk -F', ' '{print $2}' | tr -d '"' | sed 's/\\/\//g')
+          echo "TOPLEVEL_TEST_PROJECT_FILE: $TOPLEVEL_TEST_PROJECT_FILE"
+          echo "TOPLEVEL_TEST_PROJECT_FILE=$TOPLEVEL_TEST_PROJECT_FILE" >> $GITHUB_ENV
+          
           TARGET_FRAMEWORK=$(cat Directory.Build.props | grep '<TargetFramework>' | \
-            sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p')
+          sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p')
           echo "TARGET_FRAMEWORK: $TARGET_FRAMEWORK"
-          DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE=$(grep -P "${{ matrix.solution_config }}.*Deploy.0" $SLN_FILE)
-          echo "DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE: $DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE"
-          DEPLOYMENT_PROJECT_ID=$(echo "$DEPLOYMENT_PROJECT_TO_SOLUTION_CONFIG_MATCH_LINE" | grep -oP "{\K[0-9A-F\-]*(?=})")
-          echo "DEPLOYMENT_PROJECT_ID: $DEPLOYMENT_PROJECT_ID"
-          DEPLOYMENT_PROJECT_DEFINITION_LINE=$(grep "$DEPLOYMENT_PROJECT_ID" $SLN_FILE | grep "Project(")
-          echo "DEPLOYMENT_PROJECT_DEFINITION_LINE: $DEPLOYMENT_PROJECT_DEFINITION_LINE"
-          DEPLOYMENT_PROJECT_NAME=$(echo "$DEPLOYMENT_PROJECT_DEFINITION_LINE" | grep -oP '(?<= = ")[^"]*')
-          echo "DEPLOYMENT_PROJECT_NAME: $DEPLOYMENT_PROJECT_NAME"
-          BUILD_OUTPUT_PATH="Src/$DEPLOYMENT_PROJECT_NAME/bin/${{ matrix.solution_config }}/$TARGET_FRAMEWORK/"
+          
+          BUILD_OUTPUT_PATH="$TOPLEVEL_PROJECT_DIR/bin/Release/$TARGET_FRAMEWORK/"
           echo "BUILD_OUTPUT_PATH: $BUILD_OUTPUT_PATH"
           echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
       
-      - name: Restore dependencies
-        run: dotnet restore /p:Configuration=${{ matrix.solution_config }}
-
-      - name: Build & Test
+      # Re OUTPUT path: even if it's the default output path, need it explicit for deployment step further down!
+      - name: Build
         run: |
-          dotnet test --configuration ${{ matrix.solution_config }} --no-restore --output $BUILD_OUTPUT_PATH --verbosity normal
+          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
+      
+      - name: Test
+        run: |
+          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity normal
 
 #  Deploy ---------------------------------
 
       - name: Deploy Telegram Function to Azure
-        if: ${{ matrix.solution_config == vars.RELEASE_CONFIG_NAME_TELEGRAM }}
+        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
           app-name: 'telegram-app3'
           slot-name: 'production'
-          package: $BUILD_OUTPUT_PATH
+          package: ${{ env.BUILD_OUTPUT_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP3 }}
           
