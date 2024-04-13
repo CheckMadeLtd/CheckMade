@@ -1,21 +1,48 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
 
-var tgToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN", EnvironmentVariableTarget.Process)
-              ?? throw new ArgumentException("Can not get token. Set token in environment setting");
+IHostEnvironment environment;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
-    .ConfigureServices(s =>
+    .ConfigureAppConfiguration((hostContext, config) =>
     {
-        s.AddHttpClient("telegram_submissions_client")
+        environment = hostContext.HostingEnvironment;
+        Console.Out.WriteLine($"Current HostingEnvironment is '{environment.EnvironmentName}'");
+
+        if (environment.IsDevelopment())
+        {
+            config.AddUserSecrets<Program>();
+        }
+        else if (environment.IsProduction())
+        {
+            var credential = new DefaultAzureCredential();
+            var secretClient = new SecretClient(new Uri("https://chat-keyvault1.vault.azure.net/"), credential);
+            config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
+        }
+
+        /* According to GPT4, the EnvironmentVariables should include the settings from 'Configuration' in the Azure App
+         and they would take precedence over any local .json setting files (which are added by default via the above */
+        config.AddEnvironmentVariables();
+    })
+    .ConfigureServices((hostContext, services) =>
+    {
+        var config = hostContext.Configuration;
+
+        var tgToken = config.GetValue<string>("TelegramBotConfiguration:SubmissionsBotToken");
+    
+        services.AddHttpClient("telegram_submissions_client")
             .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
 
-        s.AddScoped<UpdateService>();
-        s.Add_MessagingLogic_Dependencies();
+        services.AddScoped<UpdateService>();
+        services.Add_MessagingLogic_Dependencies();
     })
     .Build();
 
