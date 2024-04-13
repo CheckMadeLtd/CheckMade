@@ -6,6 +6,8 @@ using CheckMade.Chat.Telegram;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Telegram.Bot;
 
 IHostEnvironment environment;
@@ -32,7 +34,15 @@ var host = new HostBuilder()
          and they would take precedence over any local .json setting files (which are added by default via the above */
         config.AddEnvironmentVariables();
     })
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureLogging(logging =>
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            logging.AddConsole(_ => new ConsoleFormatterOptions
+            {
+                IncludeScopes = true
+            });
+        })
+        .ConfigureServices((hostContext, services) =>
     {
         var config = hostContext.Configuration;
 
