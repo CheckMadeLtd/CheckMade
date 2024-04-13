@@ -168,7 +168,7 @@ jobs:
       
       - name: Test
         run: |
-          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity normal
+          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
 
 #  Deploy ---------------------------------
 
