@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;Release_Desktop;Release_All;No_Build;Debug_Chat;Release_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_Desktop;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <Optimize>true</Optimize>
     </PropertyGroup>
 

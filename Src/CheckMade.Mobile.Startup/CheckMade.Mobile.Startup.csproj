@@ -2,11 +2,11 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_All;Release_iOS;Release_Android;Release_All;No_Build;Debug_Chat;Release_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <Optimize>true</Optimize>
     </PropertyGroup>
 

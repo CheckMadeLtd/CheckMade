@@ -2,12 +2,12 @@
     <PropertyGroup>
         <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_Non_iOS;Debug_All;Release_Telegram;Release_All;No_Build;Debug_Chat</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Debug_Chat;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <UserSecretsId>dd4f1069-ae94-4987-9751-690e8da6f3c0</UserSecretsId>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <Optimize>true</Optimize>
     </PropertyGroup>
 

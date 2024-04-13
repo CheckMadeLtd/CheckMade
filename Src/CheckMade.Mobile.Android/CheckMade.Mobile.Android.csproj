@@ -8,11 +8,11 @@
         <ApplicationDisplayVersion>0.3.3</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-        <Configurations>Debug_Non_iOS;Debug_All;Release_Android;Release_All;No_Build;Debug_Chat;Release_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <Optimize>true</Optimize>
       <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
       <AndroidManagedSymbols>true</AndroidManagedSymbols>
@@ -24,10 +24,6 @@
       <Optimize>false</Optimize>
       <AndroidLinkMode>None</AndroidLinkMode>
       <UseInterpreter>true</UseInterpreter>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release_Android' ">
-      <AndroidPackageFormat>aab</AndroidPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>

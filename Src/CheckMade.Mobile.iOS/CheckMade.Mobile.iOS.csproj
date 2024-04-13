@@ -3,11 +3,11 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0-ios</TargetFramework>
         <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
-        <Configurations>Debug_iOS;Debug_All;Release_iOS;Release_All;No_Build;Debug_Chat;Release_Telegram</Configurations>
+        <Configurations>Debug_iOS;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Release_'))">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
         <CodesignKey>Apple Distribution: DANIEL GORIN (XML55T4KXF)</CodesignKey>
         <Optimize>true</Optimize>
