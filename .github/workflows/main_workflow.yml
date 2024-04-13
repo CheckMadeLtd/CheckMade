@@ -128,6 +128,13 @@ jobs:
         
 # Build & Test ----------------------------
 
+      # Based on the TOPLEVEL_PROJECT (see matrix strategy) currently processed here, these scripts determine
+      # the paths for build output, project dir, project file, test project file etc. by extracting them from .sln file
+      # This allows us to keep the build/test commands below generic and use explicit build-output dirs for deployment. 
+      # All of this relies on implicit project naming conventions in the CheckMade solution:
+      # E.g. if toplevel project is CheckMade.Chat.Telegram then test project is assumed to start with CheckMade.Chat
+      # and to end with Test (with other possible parts in the middle).
+      
       - name: Set Build & Test Project Parameters
         run: |
           SLN_FILE=$(find . -name '*.sln')

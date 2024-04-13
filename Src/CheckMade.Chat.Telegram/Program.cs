@@ -24,7 +24,7 @@ var host = new HostBuilder()
         else if (environment.IsProduction())
         {
             var credential = new DefaultAzureCredential();
-            var secretClient = new SecretClient(new Uri("https://chat-keyvault1.vault.azure.net/"), credential);
+            var secretClient = new SecretClient(new Uri("https://chat-keyvault3.vault.azure.net/"), credential);
             config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
         }
 
