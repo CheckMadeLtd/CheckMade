@@ -30,5 +30,9 @@ public class UpdateService(ITelegramBotClient botClient,
         await botClient.SendTextMessageAsync(
             chatId: inputMessage.Chat.Id,
             text: outputMessage);
+        
+        throw new ArgumentException("A custom exception test message 12ABCD");
     }
 }
+
+

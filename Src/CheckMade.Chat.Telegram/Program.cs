@@ -40,8 +40,8 @@ var host = new HostBuilder()
     {
         var loggerConfig = new LoggerConfiguration();
 
-        var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId})" +
-                             " {Message:lj}{NewLine}{Exception}";
+        var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
+                               "{Message:lj} {Exception}{NewLine}";
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
