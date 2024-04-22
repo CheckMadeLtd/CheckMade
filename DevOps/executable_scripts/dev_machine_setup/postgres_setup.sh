@@ -9,7 +9,7 @@ source $SCRIPT_DIR/../global_utilities.sh
 
 DB_PATH="$HOME/MyPostgresDBs/CheckMade"
 DB_SUPERUSER=danielgorin
-DB_OPS_NAME=checkmadeops
+OPS_DB_SETUP_SCRIPT="sql_scripts/setup_cm_ops_db.sql"
 
 confirm_command \
 "Install Postgres with brew (y/n)? Choose 'n' if Postgres Desktop App for Mac already installed!" \
@@ -19,9 +19,13 @@ confirm_command \
 "Initialise Postgres DB Cluster for CheckMade in '${DB_PATH}' with super-user '${DB_SUPERUSER}' (y/n)?" \
 "initdb --pgdata=$DB_PATH --auth-host=md5 --username=$DB_SUPERUSER"
 
+# Create / save template in suitable location and reference it here.
+echo "In postgresql.conf go to the section '# - Where to Log -' and remove '#' from relevant log_ lines... "\
+"See example in template. "
+
 confirm_command \
 "Start the database server for '${DB_PATH}' (y/n)?" \
-"pg_ctl -D $DB_PATH -l $DB_PATH/logfile.log start"
+"pg_ctl -D $DB_PATH start"
 
 echo "-----"
 echo "Next you can confirm launching the psql prompt to administrate the db cluster. Once inside the psql interactive "\
@@ -29,12 +33,13 @@ echo "Next you can confirm launching the psql prompt to administrate the db clus
 echo "-----"
 
 confirm_command \
-"Connect to default 'postgres' db in cluster '${DB_PATH}' as super-user '${DB_SUPERUSER}' for admin purpose (y/n)?" \
-"psql -d postgres -U $DB_SUPERUSER"
+"Now execute '${OPS_DB_SETUP_SCRIPT}' with psql (y/n)?" \
+"psql -U $DB_SUPERUSER -d postgres -f $OPS_DB_SETUP_SCRIPT"
+
 
 # Check adding more details to the manual instructions below.
 echo "-----"
 echo "Next steps:"
-echo "- Go to Rider and attempt connecting to the DB via the DB Tool Window"
-echo "- Set up the application's access to the local DB via connection string."
+echo "- In case of Rider IDE, connect to the DB via the Database Tool Window"
+echo "- Set up the application's access to the local dev DB via a connection string."
 
