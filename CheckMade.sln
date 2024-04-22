@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Startup", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Android", "Src\CheckMade.Mobile.Android\CheckMade.Mobile.Android.csproj", "{A44DAC40-0F5F-45C3-8CF9-7A2287CF2EE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.App", "Src\CheckMade.Desktop.App\CheckMade.Desktop.App.csproj", "{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Startup", "Src\CheckMade.Desktop.Startup\CheckMade.Desktop.Startup.csproj", "{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.iOS", "Src\CheckMade.Mobile.iOS\CheckMade.Mobile.iOS.csproj", "{F00AFF6F-2EEE-46D4-8E94-4D58B7A3551C}"
 EndProject

@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Desktop.App\CheckMade.Desktop.App.csproj" />
+      <ProjectReference Include="..\CheckMade.Desktop.Startup\CheckMade.Desktop.Startup.csproj" />
     </ItemGroup>
 
 </Project>
