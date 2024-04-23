@@ -1,10 +1,9 @@
 #!/opt/homebrew/bin/bash
-# shellcheck disable=SC1090,SC2128
 
 set -e 
 set -o pipefail
-SCRIPT_DIR=$(dirname "$BASH_SOURCE")
-source $SCRIPT_DIR/../global_utilities.sh
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+source "$SCRIPT_DIR"/../global_utilities.sh
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -20,9 +19,9 @@ confirm_command \
 "Initialise Postgres DB Cluster for CheckMade in '${DB_PATH}' with super-user '${DB_SUPERUSER}' (y/n)?" \
 "initdb --pgdata=$DB_PATH --auth-host=md5 --username=$DB_SUPERUSER"
 
-# ToDo: Create / save template in suitable location and reference it here.
 echo "In postgresql.conf go to the section '# - Where to Log -' and remove '#' from relevant log_ lines... \
-See example in the CheckMade Repo's Templates dir."
+See example in the CheckMade Repo's Templates dir. When done, continue with 'Enter'."
+read -r
 
 confirm_command \
 "Start the database server for '${DB_PATH}' (y/n)?" \

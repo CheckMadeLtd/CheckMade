@@ -11,6 +11,7 @@ set -o pipefail
 confirm_and_select_resource() {
     local resource_type="$1" # The type of resource (e.g., "functionapp")
     local current_value="$2"
+    local confirm
 
     # Derive selection function name from resource_type
     local selection_function="select_${resource_type}"
@@ -36,11 +37,12 @@ confirm_and_select_resource() {
     fi
 
     echo "'$current_value' has been selected." >&2
-    echo $current_value # Return the selected/confirmed value
+    echo "$current_value" # Return the selected/confirmed value
 }
 
 select_functionapp() {
-    local selected_functionapp=$(select_azure_resource "functionapp" "az functionapp list") || {
+    local selected_functionapp
+    selected_functionapp=$(select_azure_resource "functionapp" "az functionapp list") || {
         echo "Selection cancelled by user." >&2
         return 1
     }
@@ -48,7 +50,8 @@ select_functionapp() {
 }
 
 select_storage_account() {
-    local selected_storage_account=$(select_azure_resource "storage account" "az storage account list") || {
+    local selected_storage_account 
+    selected_storage_account=$(select_azure_resource "storage account" "az storage account list") || {
         echo "Selection cancelled by user." >&2
         return 1
     }
@@ -56,7 +59,8 @@ select_storage_account() {
 }
 
 select_keyvault() {
-    local selected_keyvault=$(select_azure_resource "keyvault" "az keyvault list") || {
+    local selected_keyvault 
+    selected_keyvault=$(select_azure_resource "keyvault" "az keyvault list") || {
         echo "Selection cancelled by user." >&2
         return 1
     }
@@ -67,8 +71,10 @@ select_azure_resource() {
     local resource_type="$1"
     local list_command="$2"
     
-    local resources=$($list_command --query "[*].name" --output tsv)
-    local count=$(echo "$resources" | wc -l | tr -d '[:space:]')
+    local resources 
+    resources=$($list_command --query "[*].name" --output tsv)
+    local count
+    count=$(echo "$resources" | wc -l | tr -d '[:space:]')
 
     if [ "$count" -eq 1 ]; then
         resource_name=$(echo "$resources" | tr -d '[:space:]')
@@ -89,5 +95,5 @@ To quit, press 'q'." >&2
 
 get_random_id() {
     # Generates a random 5-character alphanumeric string in lower case
-    echo $(openssl rand -base64 18 | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
+    openssl rand -base64 18 | tr -dc 'a-z0-9' | fold -w 5 | head -n 1
 }

@@ -4,8 +4,8 @@
 set -e 
 set -o pipefail
 
-SCRIPT_DIR=$(dirname "$BASH_SOURCE")
-source $SCRIPT_DIR/setup_utilities.sh
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+source "$SCRIPT_DIR"/setup_utilities.sh
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -26,36 +26,36 @@ if [ -z "$bot_choice" ]; then
   echo "No bot was chosen, aborting"
   exit 0
 elif [ "$bot_choice" == "ds" ]; then
-  bot_token="$devCheckMadeSubmissionsBot"
+  bot_token="$devCheckMadeSubmissionsBotToken"
 elif [ "$bot_choice" == "dc" ]; then
-  bot_token="$devCheckMadeCommunicationsBot"
+  bot_token="$devCheckMadeCommunicationsBotToken"
 elif [ "$bot_choice" == "dn" ]; then
-  bot_token="$devCheckMadeNotificationsBot"
+  bot_token="$devCheckMadeNotificationsBotToken"
 elif [ "$bot_choice" == "ps" ]; then
-  bot_token="$CheckMadeSubmissionsBot"
+  bot_token="$CheckMadeSubmissionsBotToken"
 elif [ "$bot_choice" == "pc" ]; then
-  bot_token="$CheckMadeCommunicationsBot"
+  bot_token="$CheckMadeCommunicationsBotToken"
 elif [ "$bot_choice" == "pn" ]; then
-  bot_token="$CheckMadeNotificationsBot"
+  bot_token="$CheckMadeNotificationsBotToken"
 else
   echo "No valid bot choice, aborting"
   exit 1
 fi
 
-echo "What would you like to do? Set WebHook (default behaviour, continue with 'Enter') or "\
-"get current WebhookInfo (enter 'g')?"
+echo "What would you like to do? Set WebHook (default behaviour, continue with 'Enter') or \
+get current WebhookInfo (enter 'g')?"
 read -r bot_setup_task
 
 if [ "$bot_setup_task" == "g" ]; then
-  curl --request POST --url https://api.telegram.org/bot$bot_token/getWebhookInfo
+  curl --request POST --url https://api.telegram.org/bot"$bot_token"/getWebhookInfo
   exit 0
 fi
 
 bot_hosting_context=${bot_choice:0:1} # the first letter
 
 if [ "$bot_hosting_context" == "d" ]; then
-  echo "Please enter the https function endpoint host (use 'ngrok http 7071' in a separate CLI instance to generate "\
-"the URL that forwards to localhost)"
+  echo "Please enter the https function endpoint host (use 'ngrok http 7071' in a separate CLI instance to generate \
+the URL that forwards to localhost)"
   read -r functionapp_endpoint
 elif [ "$bot_hosting_context" == "p" ]; then 
   echo "Select functionapp to connect to Telegram..."
@@ -78,7 +78,7 @@ elif [ "$bot_type" == "n" ]; then
 fi
 
 function_code=$(az functionapp function keys list \
--n $functionapp_name --function-name $function_name \
+-n "$functionapp_name" --function-name "$function_name" \
 --query default --output tsv)
 
 if [ "$function_code" != "" ]; then
@@ -86,11 +86,11 @@ if [ "$function_code" != "" ]; then
 fi
 
 echo "FYI your function endpoint with gateway is:"
-echo $functionapp_endpoint
+echo "$functionapp_endpoint"
 echo "Now setting Webhook..."
 
 curl --request POST \
---url https://api.telegram.org/bot$bot_token/setWebhook \
+--url https://api.telegram.org/bot"$bot_token"/setWebhook \
 --header 'content-type: application/json' \
 --data '{"url": "'"$functionapp_endpoint"'"}'
 

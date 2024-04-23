@@ -3,8 +3,8 @@
 # Exit immediately if a command exits with a non-zero status (including in the middle of a pipeline).
 set -e 
 set -o pipefail
-SCRIPT_DIR=$(dirname "$BASH_SOURCE")
-source $SCRIPT_DIR/../global_utilities.sh
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+source "$SCRIPT_DIR"/../global_utilities.sh
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -17,13 +17,13 @@ source $SCRIPT_DIR/../global_utilities.sh
 # --- PREPARATION ------------------------------------------------
 
 echo "--------------------"
-echo "IMPORTANT: You must launch this script from the CheckMade repo's root directory for 'gh' to refer to the "\
-"correct repo!!!"
+echo "IMPORTANT: You must launch this script from the CheckMade repo's root directory for 'gh' to refer to the \
+correct repo!!!"
 echo "--------------------"
 echo "- Make sure Azure Portal account and 'CheckMade' subscription are set up"
 echo "- Login to Azure CLI and set default account and location with 'azure_cli_init.sh'"
-echo "- Create all (prd) bots with the Telegram BotFather and save its credentials in the ENVIRONMENT for access "\
-"by the script"
+echo "- Create all (prd) bots with the Telegram BotFather and save its credentials in the ENVIRONMENT for access \
+by the script"
 echo "- Make sure your ENVIRONMENT has a 'GITHUB_TOKEN' set to a GitHub PAT that gives gh comprehensive admin access"
 
 echo "--------------------"
@@ -42,7 +42,7 @@ az configure --list-defaults
 echo "Currently available resource groups:"
 az group list --query "[*].name"
 echo "--------------------"
-confirm_script_launch $SCRIPT_DIR/group_new_setup.sh
+confirm_script_launch "$SCRIPT_DIR"/group_new_setup.sh
 echo "--------------------"
 
 echo "Confirm if current subscriptions and defaults are correct (y/n)"
@@ -69,7 +69,7 @@ basic_resource_setup_scripts=(
     )
 
 for script in "${basic_resource_setup_scripts[@]}"; do
-    confirm_script_launch $script
+    confirm_script_launch "$script"
 done
 
 
@@ -79,25 +79,25 @@ done
 # --- DEPLOYMENT CONFIG -----------------------------------------
 
 echo "--------------------"
-echo "INSTRUCTION: In preperation for Continuous Deployment, now go to the Azure Web Portal | "\
-"Function: '${functionapp_name}' | Configuration (menu) | General Settings (tab) | Stack settings (section) | "\
-".NET Version (dropdown) and set a version and 'Save'! Continue here with 'Enter' when done."
-read
+echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
+Function: '${functionapp_name}' | Configuration (menu) | General Settings (tab) | Stack settings (section) | \
+.NET Version (dropdown) and set a version and 'Save'! Continue here with 'Enter' when done."
+read -r
 
 confirm_script_launch publishing_profile_to_github.sh
 
 echo "--------------------"
 echo "Verify deployment section of the GitHub Actions workflow. Continue with 'Enter' when done."
-read
+read -r
 
 echo "--------------------"
 echo "Verify keyvault URL in Program.cs of top-level functionapp project. Continue with 'Enter' when done."
-read
+read -r
 
 echo "--------------------"
-echo "Now publish the functions to Azure via the main GitHub Action Workflow (necessary for the next step "\
-"to retrieve the secret code of the live function). Continue with 'Enter' when done."
-read
+echo "Now publish the functions to Azure via the main GitHub Action Workflow (necessary for the next step \
+to retrieve the secret code of the live function). Continue with 'Enter' when done."
+read -r
 
 echo "--------------------"
 confirm_script_launch telegram_bot_webhooks_setup.sh

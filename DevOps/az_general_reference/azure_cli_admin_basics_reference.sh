@@ -1,7 +1,3 @@
-# !!!!!!!!!!!!!!!!
-# NOT FOR EXECUTION, just a repository of CLI commands for now!!
-# !!!!!!!!!!!!!!!!
-
 # Launch interactive CLI menu
 az interactive
 

@@ -2,8 +2,8 @@
 set -e 
 set -o pipefail
 
-SCRIPT_DIR=$(dirname "$BASH_SOURCE")
-source $SCRIPT_DIR/setup_utilities.sh
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+source "$SCRIPT_DIR"/setup_utilities.sh
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ read -r new_functionapp_name
 
 new_functionapp_name="${new_functionapp_name}-$(get_random_id)"
 
-az functionapp create --name $new_functionapp_name --storage-account $storage_name \
+az functionapp create --name "$new_functionapp_name" --storage-account "$storage_name" \
 --https-only true \
 --os-type Linux \
 --consumption-plan-location uksouth \
@@ -24,5 +24,5 @@ az functionapp create --name $new_functionapp_name --storage-account $storage_na
 
 functionapp_name=$new_functionapp_name
 
-functionapp_assigned_id=$(az functionapp identity show --name $functionapp_name --query principalId --output tsv)
+functionapp_assigned_id=$(az functionapp identity show --name "$functionapp_name" --query principalId --output tsv)
 echo "Success, function '${functionapp_name}' was created (assigned identity: ${functionapp_assigned_id})"

@@ -29,7 +29,7 @@ fi
 
 echo "Swapping slots for functionapp $functionAppName..."
 # --target-slot argument defaults to 'production'
-az functionapp deployment slot swap -n $functionAppName --slot $stagingSlotName --action $actionArgument
+az functionapp deployment slot swap -n $functionAppName --slot $stagingSlotName --action "$actionArgument"
 
 
 # Åbout swapping back (instead of using the broken 'reset'):
