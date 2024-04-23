@@ -3,6 +3,7 @@ using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram;
+using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -92,6 +93,23 @@ var host = new HostBuilder()
 
         services.AddScoped<UpdateService>();
         services.Add_MessagingLogic_Dependencies();
+
+        var dbConnectionString = hostContext.HostingEnvironment.EnvironmentName switch
+        {
+            "Development" => 
+                (config.GetConnectionString("DevDb") 
+                 ?? throw new ArgumentNullException(nameof(hostContext), "Can't find dev db connstring"))
+                .Replace("MYSECRET", 
+                    config.GetValue<string>("ConnectionStrings:DevDbPsw") 
+                                     ?? throw new ArgumentNullException(nameof(hostContext), 
+                        "Can't find dev db psw")),
+            
+            "Production" => "",
+            
+            _ => throw new ArgumentException((nameof(hostContext.HostingEnvironment.EnvironmentName)))
+        };
+        
+        services.Add_Persistence_Dependencies(dbConnectionString);
     })
     .Build();
 

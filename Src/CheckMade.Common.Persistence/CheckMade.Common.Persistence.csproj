@@ -13,5 +13,13 @@
         <DebugSymbols>true</DebugSymbols>
         <Optimize>false</Optimize>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Npgsql" Version="8.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
+    </ItemGroup>
     
 </Project>
