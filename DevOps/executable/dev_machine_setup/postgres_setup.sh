@@ -27,19 +27,20 @@ confirm_command \
 "Start the database server for '${DB_PATH}' (y/n)?" \
 "pg_ctl -D $DB_PATH start"
 
-echo "-----"
-echo "Next you can confirm launching the psql prompt to administrate the db cluster. Once inside the psql interactive \
-prompt, use the \i command to read SQL scripts saved here, e.g. to set up the $DB_OPS_NAME database with credentials."
-echo "-----"
+echo "Now exporting PGDATABASE=postgres to make that the default parameter for psql's -d argument."
+export PGDATABASE=postgres
 
 confirm_command \
 "Now execute '${OPS_DB_SETUP_SCRIPT}' with psql (y/n)?" \
-"psql -U $DB_SUPERUSER -d postgres -f $OPS_DB_SETUP_SCRIPT"
+"psql -U $DB_SUPERUSER -f $OPS_DB_SETUP_SCRIPT"
 
 
 # Check adding more details to the manual instructions below.
 echo "-----"
 echo "Next steps:"
-echo "- In case of Rider IDE, connect to the DB via the Database Tool Window"
-echo "- Set up the application's access to the local dev DB via a connection string."
+echo "- In case of Rider IDE, connect to the DB via the Database Tool Window. Do NOT use the superuser! \
+Instead, use the same user that the app will use and which was created in the setup script. This way, \
+the database explorer will replicate the privileges the app itself will have, and we can not accidentally \
+break the database outside of verified DevOps DB scripts."
+echo "- Set up the application's access to the local dev DB via a connection string, using the same app user."
 
