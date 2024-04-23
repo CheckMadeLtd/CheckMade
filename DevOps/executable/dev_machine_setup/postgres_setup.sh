@@ -8,8 +8,9 @@ source "$SCRIPT_DIR"/../global_utilities.sh
 # -------------------------------------------------------------------------------------------------------
 
 DB_PATH="$HOME/MyPostgresDBs/CheckMade"
-DB_SUPERUSER=danielgorin
-OPS_DB_SETUP_SCRIPT="sql_scripts/setup_cm_ops_db.sql"
+# The psql default user is the current system user (and thus also the superuser). 
+DB_SUPERUSER=$(whoami)
+OPS_DB_SETUP_SCRIPT="$SCRIPT_DIR/sql_scripts/setup_cm_ops_db.sql"
 
 confirm_command \
 "Install Postgres with brew (y/n)? Choose 'n' if Postgres Desktop App for Mac already installed!" \
@@ -27,17 +28,17 @@ confirm_command \
 "Start the database server for '${DB_PATH}' (y/n)?" \
 "pg_ctl -D $DB_PATH start"
 
-echo "Now exporting PGDATABASE=postgres to make that the default parameter for psql's -d argument."
+echo "Now exporting PGDATABASE=postgres to make that the default parameter for psql's -d argument, because the \
+usual default value (a database with the same name as the superuser) doesn't exist. \
+FYI: The default user already is set to be the current superuser, i.e.: $DB_SUPERUSER"
 export PGDATABASE=postgres
 
 confirm_command \
-"Now execute '${OPS_DB_SETUP_SCRIPT}' with psql (y/n)?" \
-"psql -U $DB_SUPERUSER -f $OPS_DB_SETUP_SCRIPT"
+"Now execute '${OPS_DB_SETUP_SCRIPT}' with psql with default superuser $DB_SUPERUSER (y/n)?" \
+"psql -f $OPS_DB_SETUP_SCRIPT"
 
-
-# Check adding more details to the manual instructions below.
 echo "-----"
-echo "Next steps:"
+echo "Script done. Next steps:"
 echo "- In case of Rider IDE, connect to the DB via the Database Tool Window. Do NOT use the superuser! \
 Instead, use the same user that the app will use and which was created in the setup script. This way, \
 the database explorer will replicate the privileges the app itself will have, and we can not accidentally \
