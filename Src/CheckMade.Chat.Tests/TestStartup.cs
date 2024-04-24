@@ -1,5 +1,4 @@
 using CheckMade.Chat.Logic;
-using CheckMade.Common.Persistence;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +9,7 @@ namespace CheckMade.Chat.Tests;
 [UsedImplicitly]
 public record TestStartup : IDisposable, IAsyncDisposable
 {
-    internal ServiceProvider ServiceProvider { get; private set; }
+    internal ServiceProvider ServiceProvider { get; }
 
     public TestStartup()
     {

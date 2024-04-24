@@ -1,11 +1,10 @@
 using CheckMade.Common.Interfaces;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence;
 
-public class TelegramMessageRepo(IDbConnectionProvider dbProvider, ILogger<TelegramMessageRepo> logger) 
+public class TelegramMessageRepo(IDbConnectionProvider dbProvider) 
     : ITelegramMessageRepo
 {
     public void Add(long telegramUserId, string messageText)
