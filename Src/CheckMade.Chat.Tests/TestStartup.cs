@@ -1,8 +1,11 @@
 using CheckMade.Chat.Logic;
+using CheckMade.Common.Persistence;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Chat.Tests;
+
+// ToDo: Use the existing D.I. setup from the main app for tests too, with modifications. As I did on my first attempt.
 
 [UsedImplicitly]
 public record TestStartup : IDisposable, IAsyncDisposable

@@ -20,7 +20,7 @@ public record TelegramMessageRepo : ITelegramMessageRepo
             
             var sql = new NpgsqlCommand(
                 "INSERT INTO telegram_messages (telegram_user_id, details)" +
-                " VALUES (@telegramUserId, @MessageText)");
+                " VALUES (@telegramUserId, @MessageText)", (NpgsqlConnection)db);
             
             sql.Parameters.AddWithValue("@telegramUserId", telegramUserId);
             sql.Parameters.AddWithValue("@MessageText", messageText);

@@ -12,12 +12,13 @@ public class ResponseGeneratorTests(TestStartup setup) : IClassFixture<TestStart
     [Fact]
     public void Echo_ReturnsEcho_WhenInputValid()
     {
+        const long fakeTelegramUserId = 123;
         const string fakeInputText = "Hello, world!";
         var expectedOutputText = $"Echo: {fakeInputText}";
 
         var responseGenerator = _provider.GetService<IResponseGenerator>() 
                                 ?? throw new InvalidOperationException(ProviderNotInitializedMessage);
-        var actualOutputText = responseGenerator.Echo(fakeInputText);
+        var actualOutputText = responseGenerator.Echo(fakeTelegramUserId, fakeInputText);
 
         actualOutputText.Should().Be(expectedOutputText);
     }
