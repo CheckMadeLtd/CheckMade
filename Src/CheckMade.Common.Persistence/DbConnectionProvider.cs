@@ -4,17 +4,10 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence;
 
-internal record DbConnectionProvider : IDbConnectionProvider
+internal class DbConnectionProvider(string connectionString) : IDbConnectionProvider
 {
-    private readonly string _connectionString;
-
-    public DbConnectionProvider(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
-
     public IDbConnection CreateConnection()
     {
-        return new NpgsqlConnection(_connectionString);
+        return new NpgsqlConnection(connectionString);
     }
 }
