@@ -1,16 +1,12 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram;
-using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using Telegram.Bot;
 
 IHostEnvironment environment;
 
@@ -84,32 +80,7 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        var config = hostContext.Configuration;
-
-        var tgToken = config.GetValue<string>("TelegramBotConfiguration:SubmissionsBotToken");
-    
-        services.AddHttpClient("telegram_submissions_client")
-            .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
-
-        services.AddScoped<UpdateService>();
-        services.Add_MessagingLogic_Dependencies();
-
-        var dbConnectionString = hostContext.HostingEnvironment.EnvironmentName switch
-        {
-            "Development" => 
-                (config.GetConnectionString("DevDb") 
-                 ?? throw new ArgumentNullException(nameof(hostContext), "Can't find dev db connstring"))
-                .Replace("MYSECRET", 
-                    config.GetValue<string>("ConnectionStrings:DevDbPsw") 
-                                     ?? throw new ArgumentNullException(nameof(hostContext), 
-                        "Can't find dev db psw")),
-            
-            "Production" => "",
-            
-            _ => throw new ArgumentException((nameof(hostContext.HostingEnvironment.EnvironmentName)))
-        };
-        
-        services.Add_Persistence_Dependencies(dbConnectionString);
+        services.ConfigureServices(hostContext);
     })
     .Build();
 

@@ -1,21 +1,23 @@
-using CheckMade.Chat.Logic;
+using CheckMade.Chat.Telegram;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace CheckMade.Chat.Tests;
 
-// ToDo: Use the existing D.I. setup from the main app for tests too, with modifications. As I did on my first attempt.
-
 [UsedImplicitly]
-public record TestStartup : IDisposable, IAsyncDisposable
+public class TestStartup : IDisposable, IAsyncDisposable
 {
     internal ServiceProvider ServiceProvider { get; }
 
     public TestStartup()
     {
         var services = new ServiceCollection();
-        
-        services.Add_MessagingLogic_Dependencies();
+
+        // ToDo: read environment for local test runs differently?? 
+
+        // services.ConfigureServices(hostContext);
         
         ServiceProvider = services.BuildServiceProvider();
     }
