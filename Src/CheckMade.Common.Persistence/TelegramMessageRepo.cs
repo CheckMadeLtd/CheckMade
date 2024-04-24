@@ -1,20 +1,16 @@
 using CheckMade.Common.Interfaces;
+using Microsoft.Extensions.Logging;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence;
 
-public record TelegramMessageRepo : ITelegramMessageRepo
+public class TelegramMessageRepo(IDbConnectionProvider dbProvider, ILogger<TelegramMessageRepo> logger) 
+    : ITelegramMessageRepo
 {
-    private readonly IDbConnectionProvider _dbProvider;
-
-    public TelegramMessageRepo(IDbConnectionProvider dbProvider)
-    {
-        _dbProvider = dbProvider;
-    }
-
     public void Add(long telegramUserId, string messageText)
     {
-        using (var db = _dbProvider.CreateConnection())
+        using (var db = dbProvider.CreateConnection())
         {
             db.Open();
             
@@ -23,7 +19,11 @@ public record TelegramMessageRepo : ITelegramMessageRepo
                 " VALUES (@telegramUserId, @MessageText)", (NpgsqlConnection)db);
             
             sql.Parameters.AddWithValue("@telegramUserId", telegramUserId);
-            sql.Parameters.AddWithValue("@MessageText", messageText);
+            
+            sql.Parameters.Add(new NpgsqlParameter("@MessageText", NpgsqlDbType.Jsonb)
+            {
+                Value = JsonHelper.SerializeToJson(new { text = messageText })
+            });
             
             sql.ExecuteNonQuery();
         }

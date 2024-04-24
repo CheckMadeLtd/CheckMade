@@ -46,7 +46,7 @@ var host = new HostBuilder()
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
             loggerConfig
-                .MinimumLevel.Override("CheckMade.Chat.Telegram", LogEventLevel.Debug)
+                .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
                 
                 .Enrich.WithProcessId()
                 // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
