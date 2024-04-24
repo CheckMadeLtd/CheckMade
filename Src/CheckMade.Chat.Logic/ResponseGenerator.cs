@@ -2,10 +2,11 @@
 
 namespace CheckMade.Chat.Logic;
 
-public record ResponseGenerator : IResponseGenerator
+public record ResponseGenerator(ITelegramMessageRepo Repo) : IResponseGenerator
 {
-    public string Echo(string input)
+    public string Echo(long telegramUserId, string input)
     {
+        Repo.Add(telegramUserId, input);
         return $"Echo: {input}";
     }
 }

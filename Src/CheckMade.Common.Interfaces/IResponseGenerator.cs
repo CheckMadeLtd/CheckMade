@@ -2,5 +2,5 @@
 
 public interface IResponseGenerator
 {
-    public string Echo(string input);
+    public string Echo(long telegramUserId, string input);
 }

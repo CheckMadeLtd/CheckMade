@@ -3,11 +3,11 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence;
 
-public record TelegramMessageRepository
+public record TelegramMessageRepo : ITelegramMessageRepo
 {
     private readonly IDbConnectionProvider _dbProvider;
 
-    public TelegramMessageRepository(IDbConnectionProvider dbProvider)
+    public TelegramMessageRepo(IDbConnectionProvider dbProvider)
     {
         _dbProvider = dbProvider;
     }

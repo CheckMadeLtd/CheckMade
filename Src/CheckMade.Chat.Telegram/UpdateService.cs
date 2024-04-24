@@ -11,9 +11,6 @@ public class UpdateService(ITelegramBotClient botClient,
 {
     internal async Task EchoAsync(Update update)
     {
-        logger.LogDebug("Test Trace Log 12ABCD");
-        logger.LogWarning("Test Warning Log 12ABCD");
-        
         logger.LogInformation("Invoke telegram update function");
 
         if (update.Message is not { } inputMessage) return;
@@ -24,14 +21,12 @@ public class UpdateService(ITelegramBotClient botClient,
         
         if (!string.IsNullOrWhiteSpace(inputMessage.Text))
         {
-            outputMessage = responseGenerator.Echo(inputMessage.Text);
+            outputMessage = responseGenerator.Echo(inputMessage.Chat.Id, inputMessage.Text);
         }
         
         await botClient.SendTextMessageAsync(
             chatId: inputMessage.Chat.Id,
             text: outputMessage);
-        
-        throw new ArgumentException("A custom exception test message 12ABCD");
     }
 }
 
