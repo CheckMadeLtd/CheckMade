@@ -7,9 +7,9 @@ DO $$
         EXECUTE FORMAT(
                 'CREATE TABLE IF NOT EXISTS %I (
                     id SERIAL PRIMARY KEY,
-                    timestamp timestamp NOT NULL,
-                    telegram_user_id bigint NOT NULL,
-                    details jsonb NOT NULL
+                    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    telegram_user_id BIGINT NOT NULL,
+                    details JSONB NOT NULL
                 )'
             , tableName);
         
