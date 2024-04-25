@@ -80,7 +80,9 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        services.ConfigureServices(hostContext);
+        services.ConfigureAppServices(hostContext.Configuration);
+        services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBusinessServices();
     })
     .Build();
 

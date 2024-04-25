@@ -176,8 +176,11 @@ jobs:
       - name: Test
         run: |
           dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
-
-#  Deploy ---------------------------------
+        env:
+          HOSTING_ENVIRONMENT: "CI"
+          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
+            
+      #  Deploy ---------------------------------
 
       - name: Deploy Telegram Function to Azure
         if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
