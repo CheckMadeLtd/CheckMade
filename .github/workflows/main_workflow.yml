@@ -39,6 +39,7 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: my_ci_db_psw
         options: >-
           --health-cmd pg_isready
@@ -188,11 +189,10 @@ jobs:
       
       - name: Set up PostgreSQL Db Cluster
         run: |
-          DB_CLUSTER_PATH="$HOME/MyPostgresDBs/CheckMade"
-          DB_SUPERUSER=$(whoami)
-          initdb --pgdata=$DB_CLUSTER_PATH --auth-host=md5 --username=$DB_SUPERUSER
-          pg_ctl -D $DB_CLUSTER_PATH start
-          psql -l
+          psql -h localhost -U $PGUSER -l
+        env:
+          PGUSER: postgres
+          PGPASSWORD: my_ci_db_psw
       
 #      - name: Test
 #        run: |
