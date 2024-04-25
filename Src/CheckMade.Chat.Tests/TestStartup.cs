@@ -18,9 +18,9 @@ public class TestStartup : IDisposable, IAsyncDisposable
         
         var builder = new ConfigurationBuilder()
             .SetBasePath(projectRoot)
-            // If this file can't be found: assuming test runs on GitHub Actions Runner with corresp. env. variables! 
+            // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables();
+            .AddEnvironmentVariables(); // Includes e.g. EnvVars set in GH Actions Workflow such as 'HostingEnvironment'
         var config = builder.Build();
         
         // From local.settings.json or from env variable set in GitHub Actions workflow!

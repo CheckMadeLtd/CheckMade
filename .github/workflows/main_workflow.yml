@@ -39,7 +39,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_USER: ${{ vars.POSTGRES_SUPERUSER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
         options: >-
           --health-cmd pg_isready
@@ -187,13 +187,17 @@ jobs:
         run: |
           dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
       
-      - name: Set up PostgreSQL Db Cluster
+      - name: Set up PostgreSQL
         run: |
-          psql -h localhost -U $PGSUPERUSER -f DevOps/sql_scripts/temp_ci_dbanduser_setup.sql
-          psql -h localhost -U $PGSUPERUSER -d cm_ops -f DevOps/sql_scripts/temp_ci_tables_setup.sql
-          psql -h localhost -U $PGSUPERUSER -l
+          psql -h localhost -U $PGSUPERUSER \
+          -c "CREATE DATABASE cm_ops; \
+          CREATE USER cm_app_user WITH PASSWORD '${{ secrets.POSTGRES_CM_APP_USER_PSW }}'; \
+          GRANT ALL PRIVILEGES ON DATABASE cm_ops TO cm_app_user;"
+          
+          psql -h localhost -U $PGSUPERUSER -d cm_ops \
+          -f DevOps/sql_scripts/general/migrations/001_initial_ops_tables.sql
         env:
-          PGSUPERUSER: ${{ vars.POSTGRES_USER }}
+          PGSUPERUSER: ${{ vars.POSTGRES_SUPERUSER }}
           PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
       
       - name: Test
