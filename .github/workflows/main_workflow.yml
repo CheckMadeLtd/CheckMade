@@ -208,7 +208,7 @@ jobs:
           MIGRATIONS_DIR="DevOps/sql_scripts/general/migrations"
           for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
             echo "Applying migration: $sql_file"
-            psql -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"
+            psql -h localhost -U $PG_SUPER_USER -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"
             if [ $? -ne 0 ]; then
               echo "Error applying migration: $sql_file"
               exit 1
@@ -216,7 +216,8 @@ jobs:
           done
           echo "All migrations applied successfully."
         env:
-          PGPASSWORD: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
       
       - name: Test
         run: |
