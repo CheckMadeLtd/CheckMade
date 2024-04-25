@@ -1,15 +1,12 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using Telegram.Bot;
 
 IHostEnvironment environment;
 
@@ -45,7 +42,7 @@ var host = new HostBuilder()
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
             loggerConfig
-                .MinimumLevel.Override("CheckMade.Chat.Telegram", LogEventLevel.Debug)
+                .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
                 
                 .Enrich.WithProcessId()
                 // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
@@ -83,15 +80,9 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        var config = hostContext.Configuration;
-
-        var tgToken = config.GetValue<string>("TelegramBotConfiguration:SubmissionsBotToken");
-    
-        services.AddHttpClient("telegram_submissions_client")
-            .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
-
-        services.AddScoped<UpdateService>();
-        services.Add_MessagingLogic_Dependencies();
+        services.ConfigureAppServices(hostContext.Configuration);
+        services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBusinessServices();
     })
     .Build();
 

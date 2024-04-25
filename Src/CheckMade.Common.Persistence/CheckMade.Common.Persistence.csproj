@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Chat;Debug_Backend_Only;Debug_All;No_Build;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Npgsql" Version="8.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
+    </ItemGroup>
+    
+</Project>

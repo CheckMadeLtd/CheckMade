@@ -4,8 +4,16 @@ namespace CheckMade.Chat.Logic;
 
 public record ResponseGenerator : IResponseGenerator
 {
-    public string Echo(string input)
+    private readonly ITelegramMessageRepo _repo;
+    
+    public ResponseGenerator(ITelegramMessageRepo repo)
     {
+        _repo = repo;
+    }
+    
+    public string Echo(long telegramUserId, string input)
+    {
+        _repo.Add(telegramUserId, input);
         return $"Echo: {input}";
     }
 }

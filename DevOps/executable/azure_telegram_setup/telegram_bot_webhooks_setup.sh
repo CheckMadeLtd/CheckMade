@@ -54,14 +54,23 @@ fi
 bot_hosting_context=${bot_choice:0:1} # the first letter
 
 if [ "$bot_hosting_context" == "d" ]; then
+
   echo "Please enter the https function endpoint host (use 'ngrok http 7071' in a separate CLI instance to generate \
 the URL that forwards to localhost)"
   read -r functionapp_endpoint
+
 elif [ "$bot_hosting_context" == "p" ]; then 
+
   echo "Select functionapp to connect to Telegram..."
   functionapp_name=$(confirm_and_select_resource "functionapp" "$functionapp_name")
   functionapp_endpoint="https://$functionapp_name.azurewebsites.net"
   echo "The function endpoint has been set to: $functionapp_endpoint"
+  
+  function_code=$(az functionapp function keys list \
+  -n "$functionapp_name" --function-name "$function_name" \
+  --query default --output tsv)
+  
+  functionapp_endpoint="$functionapp_endpoint?code=$function_code"
 fi
 
 bot_type=${bot_choice:1:1} # the second letter
@@ -75,14 +84,6 @@ elif [ "$bot_type" == "c" ]; then
 elif [ "$bot_type" == "n" ]; then
   function_name=NotificationsBot
   functionapp_endpoint="$functionapp_endpoint/api/${function_name,,}"
-fi
-
-function_code=$(az functionapp function keys list \
--n "$functionapp_name" --function-name "$function_name" \
---query default --output tsv)
-
-if [ "$function_code" != "" ]; then
-  functionapp_endpoint="$functionapp_endpoint?code=$function_code"
 fi
 
 echo "FYI your function endpoint with gateway is:"
