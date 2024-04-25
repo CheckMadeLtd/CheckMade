@@ -39,8 +39,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: my_ci_db_psw
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -189,10 +189,10 @@ jobs:
       
       - name: Set up PostgreSQL Db Cluster
         run: |
-          psql -h localhost -U $PGUSER -l
+          psql -h localhost -U $PGSUPERUSER -l
         env:
-          PGUSER: postgres
-          PGPASSWORD: my_ci_db_psw
+          PGSUPERUSER: ${{ vars.POSTGRES_USER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
       
 #      - name: Test
 #        run: |
