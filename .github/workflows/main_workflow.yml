@@ -35,6 +35,19 @@ jobs:
     needs: tag_version
     runs-on: ubuntu-latest
 
+    services: 
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: my_ci_db_psw
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
     strategy:
       matrix:
         toplevel_project: [ "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]
@@ -102,11 +115,11 @@ jobs:
 
 # Installing SDKs and Frameworks ----------------------------
 
-      - name: Setup .NET Environment
-        id: setup-dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
+#      - name: Setup .NET Environment
+#        id: setup-dotnet
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          global-json-file: global.json
 
       - name: Set up JDK 17
         if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
@@ -169,25 +182,33 @@ jobs:
           echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
       
       # Re OUTPUT path: even if it's the default output path, need it explicit for deployment step further down!
-      - name: Build
-        run: |
-          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
+#      - name: Build
+#        run: |
+#          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
       
-      - name: Test
+      - name: Set up PostgreSQL Db Cluster
         run: |
-          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
-        env:
-          HOSTING_ENVIRONMENT: "CI"
-          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
+          DB_CLUSTER_PATH="$HOME/MyPostgresDBs/CheckMade"
+          DB_SUPERUSER=$(whoami)
+          initdb --pgdata=$DB_CLUSTER_PATH --auth-host=md5 --username=$DB_SUPERUSER
+          pg_ctl -D $DB_CLUSTER_PATH start
+          psql -l
+      
+#      - name: Test
+#        run: |
+#          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
+#        env:
+#          HOSTING_ENVIRONMENT: "CI"
+#          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
             
       #  Deploy ---------------------------------
 
-      - name: Deploy Telegram Function to Azure
-        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
-        uses: Azure/functions-action@v1
-        with:
-          app-name: 'telegram-app-d4e8'
-          slot-name: 'production'
-          package: ${{ env.BUILD_OUTPUT_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
+#      - name: Deploy Telegram Function to Azure
+#        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
+#        uses: Azure/functions-action@v1
+#        with:
+#          app-name: 'telegram-app-d4e8'
+#          slot-name: 'production'
+#          package: ${{ env.BUILD_OUTPUT_PATH }}
+#          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
           

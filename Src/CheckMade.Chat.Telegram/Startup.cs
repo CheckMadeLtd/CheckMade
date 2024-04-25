@@ -32,21 +32,16 @@ public static class Startup
                         "Can't find ci db connstring"),
             
             "Production" => "",
-                // (config.GetConnectionString("DevDb") 
-                //     ?? throw new ArgumentNullException(nameof(config), "Can't find dev db connstring"))
+                // (config.GetConnectionString("PrdDb") 
+                //     ?? throw new ArgumentNullException(nameof(hostingEnvironment), "Can't find prd db connstring"))
                 // .Replace("MYSECRET", 
-                // config.GetValue<string>("ConnectionStrings:DevDbPsw") 
-                // ?? throw new ArgumentNullException(nameof(config), 
-                //     "Can't find dev db psw")),
+                // config.GetValue<string>("ConnectionStrings:PrdDbPsw") 
+                // ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
+                //     "Can't find prd db psw")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
 
-        if (hostingEnvironment == "CI")
-        {
-            Console.Out.Write($"The connstring is: {dbConnectionString}");
-        }
-        
         services.Add_Persistence_Dependencies(dbConnectionString);
     }
     
