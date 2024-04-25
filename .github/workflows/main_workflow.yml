@@ -116,11 +116,11 @@ jobs:
 
 # Installing SDKs and Frameworks ----------------------------
 
-#      - name: Setup .NET Environment
-#        id: setup-dotnet
-#        uses: actions/setup-dotnet@v4
-#        with:
-#          global-json-file: global.json
+      - name: Setup .NET Environment
+        id: setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
 
       - name: Set up JDK 17
         if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
@@ -183,32 +183,34 @@ jobs:
           echo "BUILD_OUTPUT_PATH=$BUILD_OUTPUT_PATH" >> $GITHUB_ENV
       
       # Re OUTPUT path: even if it's the default output path, need it explicit for deployment step further down!
-#      - name: Build
-#        run: |
-#          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
+      - name: Build
+        run: |
+          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
       
       - name: Set up PostgreSQL Db Cluster
         run: |
+          psql -h localhost -U $PGSUPERUSER -f DevOps/sql_scripts/temp_ci_dbanduser_setup.sql
+          psql -h localhost -U $PGSUPERUSER -d cm_ops -f DevOps/sql_scripts/temp_ci_tables_setup.sql
           psql -h localhost -U $PGSUPERUSER -l
         env:
           PGSUPERUSER: ${{ vars.POSTGRES_USER }}
           PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
       
-#      - name: Test
-#        run: |
-#          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
-#        env:
-#          HOSTING_ENVIRONMENT: "CI"
-#          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
+      - name: Test
+        run: |
+          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
+        env:
+          HOSTING_ENVIRONMENT: "CI"
+          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
             
       #  Deploy ---------------------------------
 
-#      - name: Deploy Telegram Function to Azure
-#        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
-#        uses: Azure/functions-action@v1
-#        with:
-#          app-name: 'telegram-app-d4e8'
-#          slot-name: 'production'
-#          package: ${{ env.BUILD_OUTPUT_PATH }}
-#          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
+      - name: Deploy Telegram Function to Azure
+        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'telegram-app-d4e8'
+          slot-name: 'production'
+          package: ${{ env.BUILD_OUTPUT_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
           
