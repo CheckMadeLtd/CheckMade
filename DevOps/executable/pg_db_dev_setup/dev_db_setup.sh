@@ -9,17 +9,27 @@ source "$SCRIPT_DIR"/../global_utilities.sh
 
 DEV_DB_NAME="cm_ops"
 DEV_DB_SETUP_SCRIPT="$SCRIPT_DIR/../../sql_scripts/dev/create_ops_db_and_user.sql"
-OPS_TABLES_SETUP_SCRIPT="$SCRIPT_DIR/../../sql_scripts/general/setup_ops_tables.sql"
 
 echo "This script assumes the DEV DB Cluster is has been started. Check with 'psql -l' if in doubt."
 
 confirm_command \
 "Create operational dev database and app user (y/n)?" \
-"psql -f $DEV_DB_SETUP_SCRIPT" # connecting with default database
+"psql -d postgres -f $DEV_DB_SETUP_SCRIPT"
 
-confirm_command \
-"Create operational tables if they don't exist (y/n)?" \
-"psql -d $DEV_DB_NAME -f $OPS_TABLES_SETUP_SCRIPT"
+echo "Apply all migrations to recreate database (y/n)?"
+read -r confirm_ops_setup
+if [ "$confirm_ops_setup" == "y" ]; then
+  MIGRATIONS_DIR="$SCRIPT_DIR/../../sql_scripts/general/migrations"
+  for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
+    echo "Applying migration: $sql_file"
+    psql -d $DEV_DB_NAME -f "$sql_file"
+    if [ $? -ne 0 ]; then
+      echo "Error applying migration: $sql_file"
+      exit 1
+    fi
+  done
+  echo "All migrations applied successfully."  
+fi
 
 echo "-----"
 echo "Script done. Next steps:"

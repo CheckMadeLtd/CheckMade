@@ -8,17 +8,12 @@ source "$SCRIPT_DIR"/../global_utilities.sh
 # -------------------------------------------------------------------------------------------------------
 
 DB_CLUSTER_PATH="$HOME/MyPostgresDBs/CheckMade"
-# The psql default user is the current system user (and thus also the superuser). 
 DB_SUPERUSER=$(whoami)
 
-echo "Now exporting PGDATABASE=postgres to make that the default parameter for psql's -d argument, because the \
-usual default value (a database with the same name as the superuser) doesn't exist. \
-FYI: The default user already is set to be the current superuser, i.e.: $DB_SUPERUSER"
-export PGDATABASE=postgres
-
-confirm_command \
-"Install Postgres with brew (y/n)? Choose 'n' if Postgres Desktop App for Mac already installed!" \
-"brew install postgresql"
+echo "Assuming, Postgres is installed (e.g. with 'brew install postgres@16')!"
+echo "----------------------"
+echo "FYI: The default psql user is set to be the current superuser, i.e.: $DB_SUPERUSER"
+echo "FYI: psql on dev won't ask for a password because it uses the 'trusted' unix 'local socket'"
 
 confirm_command \
 "Initialise Postgres DB Cluster for CheckMade in '${DB_CLUSTER_PATH}' with super-user '${DB_SUPERUSER}' (y/n)?" \

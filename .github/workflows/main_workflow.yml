@@ -187,25 +187,43 @@ jobs:
         run: |
           dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
       
-      - name: Set up PostgreSQL
+      - name: Set up PostgreSQL DB and User
         run: |
-          psql -h localhost -U $PGSUPERUSER \
-          -c "CREATE DATABASE cm_ops; \
-          CREATE USER cm_app_user WITH PASSWORD '${{ secrets.POSTGRES_CM_APP_USER_PSW }}'; \
-          GRANT ALL PRIVILEGES ON DATABASE cm_ops TO cm_app_user;"
+          psql -h localhost -U $PG_SUPER_USER -c "CREATE DATABASE $PG_DB_NAME;"
           
-          psql -h localhost -U $PGSUPERUSER -d cm_ops \
-          -f DevOps/sql_scripts/general/migrations/001_initial_ops_tables.sql
+          psql -h localhost -U $PG_SUPER_USER \
+          -c "CREATE USER $PG_APP_USER WITH PASSWORD '$PG_APP_USER_PSW'; \
+          GRANT ALL PRIVILEGES ON DATABASE $PG_DB_NAME TO $PG_APP_USER;"
+          
+          psql -h localhost -U $PG_SUPER_USER -l
         env:
-          PGSUPERUSER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
+          PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
+          PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
+          PG_APP_USER: ${{ vars.POSTGRES_APP_USER }}
+          PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
+      
+      - name: Apply Database Migrations
+        run: |
+          MIGRATIONS_DIR="DevOps/sql_scripts/general/migrations"
+          for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
+            echo "Applying migration: $sql_file"
+            psql -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"
+            if [ $? -ne 0 ]; then
+              echo "Error applying migration: $sql_file"
+              exit 1
+            fi
+          done
+          echo "All migrations applied successfully."
+        env:
+          PGPASSWORD: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
       
       - name: Test
         run: |
           dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          CI_DB_CONNSTRING: ${{ secrets.CI_DB_CONNSTRING }}
+          CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }}
             
       #  Deploy ---------------------------------
 
