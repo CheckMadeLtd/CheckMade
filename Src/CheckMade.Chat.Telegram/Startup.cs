@@ -31,7 +31,7 @@ public static class Startup
                     ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
                         "Can't find ci db connstring"),
             
-            "Production" => 
+            "Production" or "Staging" => 
                 (config.GetConnectionString("PrdDb") 
                     ?? throw new ArgumentNullException(nameof(hostingEnvironment), "Can't find prd db connstring"))
                 .Replace("MYSECRET", 
