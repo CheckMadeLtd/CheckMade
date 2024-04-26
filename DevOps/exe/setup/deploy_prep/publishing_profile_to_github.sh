@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR"/setup_utilities.sh
+source "$SCRIPT_DIR/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -30,4 +30,4 @@ else
     exit 1
 fi
 
-# After introduction of staging slot, add --slot STAGING_SLOT_NAME to az command and add _STAGING suffix to secret name
+# ToDo: After introduction of staging slot, add --slot STAGING_SLOT_NAME to az command and add _STAGING suffix to secret name

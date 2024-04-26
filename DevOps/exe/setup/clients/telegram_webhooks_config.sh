@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR"/setup_utilities.sh
+source "$SCRIPT_DIR/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

@@ -186,35 +186,22 @@ jobs:
       - name: Build
         run: |
           dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
-      
+
       - name: Set up PostgreSQL DB and User
         run: |
           psql -h localhost -U $PG_SUPER_USER -c "CREATE DATABASE $PG_DB_NAME;"
-          
-          psql -h localhost -U $PG_SUPER_USER \
-          -c "CREATE USER $PG_APP_USER WITH PASSWORD '$PG_APP_USER_PSW'; \
-          GRANT ALL PRIVILEGES ON DATABASE $PG_DB_NAME TO $PG_APP_USER;"
-          
+          ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh
           psql -h localhost -U $PG_SUPER_USER -l
         env:
           PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
           PG_APP_USER: ${{ vars.POSTGRES_APP_USER }}
           PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
       
       - name: Apply Database Migrations
         run: |
-          MIGRATIONS_DIR="DevOps/sql_scripts/general/migrations"
-          for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
-            echo "Applying migration: $sql_file"
-            psql -h localhost -U $PG_SUPER_USER -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"
-            if [ $? -ne 0 ]; then
-              echo "Error applying migration: $sql_file"
-              exit 1
-            fi
-          done
-          echo "All migrations applied successfully."
+          ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh
         env:
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
           PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql

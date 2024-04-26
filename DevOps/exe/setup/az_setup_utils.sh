@@ -36,7 +36,7 @@ confirm_and_select_resource() {
         fi
     fi
 
-    echo "'$current_value' has been selected." >&2
+    echo "'${current_value}' has been selected." >&2
     echo "$current_value" # Return the selected/confirmed value
 }
 
@@ -81,7 +81,7 @@ select_azure_resource() {
         echo "Just one $resource_type found, continuing with '${resource_name}'" >&2
     else
         echo "$resources" >&2
-        echo "See above for existing ${resource_type}s. Enter the name of the $resource_type which you want to select.
+        echo "See above for existing ${resource_type}s. Enter the name of the $resource_type which you want to select. \
 To quit, press 'q'." >&2
         read -r resource_name
         if [ "$resource_name" == "q" ]; then

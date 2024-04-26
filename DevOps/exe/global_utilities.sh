@@ -8,11 +8,16 @@ set -o pipefail
 
 confirm_script_launch() {
     local script_path="$1"
+    local first_argument="$2"
     
     echo "Launch $script_path (y/n)?"
     read -r confirm_launch
     if [ "$confirm_launch" == "y" ]; then
-        source "$script_path"
+      if [ -z "$first_argument" ]; then
+          source "$script_path"
+      else
+          source "$script_path" "$first_argument"
+      fi
     fi
 }
 
