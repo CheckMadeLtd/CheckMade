@@ -32,8 +32,8 @@ public static class Startup
                         "Can't find ci db connstring"),
             
             "Production" or "Staging" => 
-                (config.GetConnectionString("PrdDb") 
-                    ?? throw new ArgumentNullException(nameof(hostingEnvironment), "Can't find prd db connstring"))
+                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PrdDb") 
+                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), "Can't find PrdDb connstring"))
                 .Replace("MYSECRET", 
                 config.GetValue<string>("ConnectionStrings:PrdDbPsw") 
                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 

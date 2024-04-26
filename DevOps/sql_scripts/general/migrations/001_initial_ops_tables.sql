@@ -17,4 +17,3 @@ DO $$
         EXECUTE FORMAT('GRANT USAGE, SELECT, UPDATE ON SEQUENCE %I_id_seq TO %I', tableName, userName);
     END
 $$;
-

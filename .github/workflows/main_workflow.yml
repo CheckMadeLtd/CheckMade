@@ -224,7 +224,7 @@ jobs:
           dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }}
+          CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
             
       #  Deploy ---------------------------------
 
