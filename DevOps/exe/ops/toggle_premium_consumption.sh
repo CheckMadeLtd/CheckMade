@@ -19,7 +19,7 @@ echo "Would you like to upgrade to $premiumPlanName (u) , downgrade to $consumpt
 read activity
 
 if [ "$activity" == "q" ]; then
-  return 1
+  exit 0
 
 elif [ "$activity" == 'u' ]; then
   echo "Creating $premiumPlanName..."

@@ -1,16 +1,24 @@
-#- use 
+# Naming convention for variables
+# -- local vars in functions and vars only used within a single script
+lower_caps
+# -- global vars (used across scripts in the same shellenv (e.g. in sourced sub-scripts)) or ENVIRONMENT variables
+ALL_CAPS
+
+# To make a variable available in child shellenvs use 'export [var]'
+
+# To  give execution rights to the current user for this script or:
 chmod +x yourscript.sh
-#` to  give execution rights to the current user for this script (or 
+# For all scripts in a dir!! 
 chmod -R +x /path/to/directory
-# for all scripts in a dir!!
-
-#- To execute,
+# To execute in a new shellenv
 ./yourscript.sh
-# while being in the scripts dir (otherwise replace prepend the file name with `dir/dir/dir/` etc. with current dir as starting point
- 
+# To execute in the current shellenv:
+source ./yourscript.sh
+or
+. ./yourscript.sh
 
-# Example for a looping menu
 
+# Example for an interactive menu with a looping menu
 while true; do
   echo "What would you like to do? 
   'l' for list of location names;

@@ -1,16 +1,17 @@
 #!/opt/homebrew/bin/bash
 set -e 
 set -o pipefail
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../global_utils.sh"
 
-set -x # Tracing subsequent commands in the console output
+# -------------------------------------------------------------------------------------------------------
+
+working_dir_is_solution_root
+
+set -x
 
 git checkout main
 git pull
 
-set +x
-# Generate a random 6-character alphanumeric string
-random_string=$(openssl rand -base64 6 | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
-new_temp_branch="tmp/$random_string"
-
-set -x
+new_temp_branch="tmp/$(get_random_id)"
 git checkout -b "$new_temp_branch" # start work (including on unstaged changes) on a new temp branch

@@ -1,6 +1,12 @@
 #!/opt/homebrew/bin/bash
 set -e 
 set -o pipefail
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../global_utils.sh"
+
+# -------------------------------------------------------------------------------------------------------
+
+working_dir_is_solution_root
 
 echo "--------------------------------------------------------------------------"
 
@@ -63,16 +69,18 @@ done
 sln_file=$(find . -maxdepth 1 -name "*.sln" | head -n 1)
 
 if [ -z "$sln_file" ]; then
-    echo "No .sln file found in the current directory."
+    echo "Err: No .sln file found in the current directory."
     exit 1
 fi
 
 # Extract configurations starting with 'Debug_' from the .sln file
-# We are building and testing selected 'Debug' builds here on the local dev machine, as recommended, for better tracability etc. 
-# On the GitHub Action Runner / main workflow we then build and test the targeted 'Release' configuration for more realistic final tests. 
+# We are building and testing selected 'Debug' builds here on the local dev machine, as recommended, for better
+# traceability etc. 
+# On the GitHub Action Runner / main workflow we then build and test the targeted 'Release' configuration for more 
+# realistic final tests. 
 configurations=$(ggrep -P '^\s*Debug_' "$sln_file" | awk -F'|' '{print $1}' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
 
-configArray=()
+config_array=()
 
 shopt -s nocasematch  # Set shell option to ignore case in pattern matching
 
@@ -84,25 +92,25 @@ while IFS= read -r line; do
     elif [[ $line =~ _all ]]; then
         echo "Skipping build configuration: $line"
     else
-        configArray+=("$line")
+        config_array+=("$line")
     fi
 done <<< "$configurations"
 
 shopt -u nocasematch  # Unset the nocasematch option to return to default behavior
 
 echo "The following Debug configurations have been found in the local Solution:"
-for config in "${configArray[@]}"
+for config in "${config_array[@]}"
 do
     echo "$config"
 done
 
 set -x # Tracing subsequent commands in the console output
 
-for config in "${configArray[@]}"
+for config in "${config_array[@]}"
 do
-    dotnet restore /p:Configuration=$config
-    dotnet build --configuration $config --no-restore --verbosity minimal
-    dotnet test --no-build --configuration $config --verbosity minimal
+    dotnet restore /p:Configuration="$config"
+    dotnet build --configuration "$config" --no-restore --verbosity minimal
+    dotnet test --no-build --configuration "$config" --verbosity minimal
 done
 
 set +x # Stop tracing
@@ -125,10 +133,12 @@ while true; do
         
         # Find the first csproj file with "android" in its name
         csproj_file=$(find . -iname "*android*.csproj" | head -n 1)
-        if [ ! -z "$csproj_file" ]; then
+        if [ -n "$csproj_file" ]; then
             perl -i -pe 's/(<ApplicationVersion>)(\d+)(<\/ApplicationVersion>)/"$1".($2+1)."$3"/ge' "$csproj_file"
-            echo "<ApplicationVersion> in the Android .csproj file was incremented by 1. This is the 'version code' for Google Play which needs to be an integer."
-            perl -i -pe "s|<ApplicationDisplayVersion>.*</ApplicationDisplayVersion>|<ApplicationDisplayVersion>$new_version</ApplicationDisplayVersion>|g" "$csproj_file"
+            echo "<ApplicationVersion> in the Android .csproj file was incremented by 1. This is the 'version code' \
+            for Google Play which needs to be an integer."
+            perl -i -pe "s|<ApplicationDisplayVersion>.*</ApplicationDisplayVersion>|\
+            <ApplicationDisplayVersion>$new_version</ApplicationDisplayVersion>|g" "$csproj_file"
             echo "<ApplicationDisplayVersion> in the Android .csproj was updated to $new_version"
         fi
 
@@ -143,8 +153,8 @@ done
 echo "--------------------------------------------------------------------------"
 
 while true; do
-    echo "Type name (at least 2 chars) for this new feature branch (the prefix 'fb/' will be added automatically)." \
-    "To abort, enter 'q': "
+    echo "Type name (at least 2 chars) for this new feature branch (the prefix 'fb/' will be added automatically). \
+    To abort, enter 'q': "
 
     read -r branch_name
 
@@ -164,14 +174,14 @@ git checkout -b "$full_branch_name"
 echo "--------------------------------------------------------------------------"
 
 while true; do
-  echo "Checked out to new branch '$full_branch_name'. Ready to push to origin and trigger remote CI/CD workflow?" \
-  "'y' or any other input to abort."
+  echo "Checked out to new branch '$full_branch_name'. Ready to push to origin and trigger remote CI/CD workflow? \
+  'y' or any other input to abort."
   
   read -r ready_to_push
   
   if [ "$ready_to_push" = "y" ]; then
     git push origin "$full_branch_name"
-    echo "IMPORTANT: Confirm successful merger into main branch on GitHub, before continuing with the 'start_work' script!"
+    echo "IMPORTANT: Confirm successful merger into main on GitHub, before continuing with the 'start_work' script!"
     break    
   else
     echo "Not pushing at this time."

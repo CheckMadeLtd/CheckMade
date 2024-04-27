@@ -13,9 +13,13 @@ get_psql_host() {
   elif [ "$host_env" == "CI" ]; then 
     echo "localhost"
   elif [ "$host_env" == "Production" ]; then
+    if [ -z "$COSMOSDB_HOST" ]; then
+      echo "Err: COSMOSDB_HOST is empty."
+      exit 1
+    fi
     echo "$COSMOSDB_HOST"
   else
-    echo "Err: Unrecognised hosting environment:'${host_env}'"
+    echo "Err: Unrecognised hosting environment:'${host_env}'" >&2
     exit 1
   fi
 }

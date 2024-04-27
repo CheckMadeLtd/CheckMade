@@ -10,26 +10,26 @@ set -o pipefail
 # See '_azure_cli_admin_basic_commands.sh' for how to set defaults
 
 echo "Setting Variables:"
-functionAppName='eventops'; echo "resourceGroup=$functionAppName"
-stagingSlotName='staging'; echo "stagingSlotName=$stagingSlotName"
+FUNCTIONAPP_NAME='eventops'; echo "function_app_name=$FUNCTIONAPP_NAME"
+staging_slot_name='staging'; echo "staging_slot_name=$staging_slot_name"
 
-echo "Not offering 'reset swap (r)' as an option because it just didn't work. Instead, just swap again if a reset is necessary." 
-echo "Swap immediately (enter), preview-swap (p), quit (q):"
-read actionArgumentInput
+echo "Not offering 'reset swap (r)' as an option because it just didn't work. Instead, just swap again if a reset is \
+necessary.Swap immediately (enter), preview-swap (p), quit (q):"
+read -r action_argument_input
 
-if [ "$actionArgumentInput" == "" ]; then
-  actionArgument="swap"
-elif [ "$actionArgumentInput" == "p" ]; then
-  actionArgument="preview"
-#elif [ "$actionArgumentInput" == "r" ]; then
-#  actionArgument="reset"
-elif [ "$actionArgumentInput" == "q" ]; then
-  return 1
+if [ "$action_argument_input" == "" ]; then
+  action_argument="swap"
+elif [ "$action_argument_input" == "p" ]; then
+  action_argument="preview"
+#elif [ "$action_argument_input" == "r" ]; then
+#  action_argument="reset"
+elif [ "$action_argument_input" == "q" ]; then
+  exit 0
 fi
 
-echo "Swapping slots for functionapp $functionAppName..."
+echo "Swapping slots for functionapp $FUNCTIONAPP_NAME..."
 # --target-slot argument defaults to 'production'
-az functionapp deployment slot swap -n $functionAppName --slot $stagingSlotName --action "$actionArgument"
+az functionapp deployment slot swap -n $FUNCTIONAPP_NAME --slot $staging_slot_name --action "$action_argument"
 
 
 # Åbout swapping back (instead of using the broken 'reset'):

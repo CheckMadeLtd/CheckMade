@@ -1,6 +1,12 @@
 #!/opt/homebrew/bin/bash
 set -e 
 set -o pipefail
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../global_utils.sh"
+
+# -------------------------------------------------------------------------------------------------------
+
+working_dir_is_solution_root
 
 current_branch=$(git branch --show-current)
 echo "Current branch is '$current_branch'."

@@ -3,8 +3,8 @@
 set -e 
 set -o pipefail
 
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../az_setup_utils.sh"
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

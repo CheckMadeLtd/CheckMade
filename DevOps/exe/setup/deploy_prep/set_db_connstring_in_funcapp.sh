@@ -2,33 +2,35 @@
 
 set -e 
 set -o pipefail
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../az_setup_utils.sh"
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../global_utils.sh"
+source "$script_dir/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-[[ -z "$PG_DB_NAME" ]] && echo "Err: PG_DB_NAME is NOT set" && exit 1 || echo "PG_DB_NAME: $PG_DB_NAME"
-[[ -z "$PG_APP_USER" ]] && echo "Err: PG_APP_USER is NOT set" && exit 1 || echo "PG_APP_USER: $PG_APP_USER"
+env_var_is_set "PG_DB_NAME"
+env_var_is_set "PG_APP_USER"
+env_var_is_set "COSMOSDB_HOST"
 
 echo "Choose the functionapp to which the Connection String shall be added:"
-functionapp_name=$(confirm_and_select_resource "functionapp" "$functionapp_name")
+FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
 
 echo "Now constructing connection string from its components in ADO.NET format..."
-COSMOSDB_DB="$PG_DB_NAME"
-COSMOSDB_PORT="5432"
-COSMOSDB_USER="$PG_APP_USER"
-COSMOSDB_PSW="MYSECRET" # Will be replaced with value from KeyVault
-COSMOSDB_OPTIONS="Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true"
+cosmosdb_name="$PG_DB_NAME"
+cosmosdb_port="5432"
+cosmosdb_user="$PG_APP_USER"
+cosmosdb_psw="MYSECRET" # Will be replaced with value from KeyVault in Program/Startup.cs
+cosmosdb_options="Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true"
 
-COSMOSDB_CONNSTRING="Server=$COSMOSDB_HOST;Database=$COSMOSDB_DB;Port=$COSMOSDB_PORT;User Id=$COSMOSDB_USER;\
-Password=$COSMOSDB_PSW;$COSMOSDB_OPTIONS"
-echo "$COSMOSDB_CONNSTRING"
+cosmosdb_connstring="Server=$COSMOSDB_HOST;Database=$cosmosdb_name;Port=$cosmosdb_port;User Id=$cosmosdb_user;\
+Password=$cosmosdb_psw;$cosmosdb_options"
+echo "$cosmosdb_connstring"
 
 echo "Enter the key for the Connection String (e.g. PrdDb):"
-read -r CONNSTRING_KEY
-CONNSTRING_SETTINGS="$CONNSTRING_KEY='$COSMOSDB_CONNSTRING'"
+read -r connstring_key
+connstring_settings="$connstring_key='$cosmosdb_connstring'"
 
-echo "Now setting Connection String in '${functionapp_name}'"
+echo "Now setting Connection String in '${FUNCTIONAPP_NAME}'"
 set -x
-az webapp config connection-string set --name "$functionapp_name" --connection-string-type PostgreSQL \
---settings "$CONNSTRING_SETTINGS"
+az webapp config connection-string set --name "$FUNCTIONAPP_NAME" --connection-string-type PostgreSQL \
+--settings "$connstring_settings"

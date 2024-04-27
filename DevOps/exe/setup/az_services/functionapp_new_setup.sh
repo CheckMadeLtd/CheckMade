@@ -2,27 +2,28 @@
 set -e 
 set -o pipefail
 
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../az_setup_utils.sh"
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../global_utils.sh"
+source "$script_dir/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-storage_name=$(confirm_and_select_resource "storage_account" "$storage_name")
+STORAGE_NAME=$(confirm_and_select_resource "storage_account" "$STORAGE_NAME")
 
 echo "Enter the name for the new functionapp (can't contain '_').
 A new Y1 Consumption plan will automatically be created alongside it:"
-read -r new_functionapp_name
+read -r new_FUNCTIONAPP_NAME
 
-new_functionapp_name="${new_functionapp_name}-$(get_random_id)"
+new_FUNCTIONAPP_NAME="${new_FUNCTIONAPP_NAME}-$(get_random_id)"
 
-az functionapp create --name "$new_functionapp_name" --storage-account "$storage_name" \
+az functionapp create --name "$new_FUNCTIONAPP_NAME" --storage-account "$STORAGE_NAME" \
 --https-only true \
 --os-type Linux \
 --consumption-plan-location uksouth \
 --functions-version 4 --runtime dotnet-isolated \
 --assign-identity
 
-functionapp_name=$new_functionapp_name
+FUNCTIONAPP_NAME=$new_FUNCTIONAPP_NAME
 
-functionapp_assigned_id=$(az functionapp identity show --name "$functionapp_name" --query principalId --output tsv)
-echo "Success, function '${functionapp_name}' was created (assigned identity: ${functionapp_assigned_id})"
+functionapp_assigned_id=$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)
+echo "Success, function '${FUNCTIONAPP_NAME}' was created (assigned identity: ${functionapp_assigned_id})"

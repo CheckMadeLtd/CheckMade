@@ -32,7 +32,7 @@ confirm_and_select_resource() {
         current_value=$($selection_function)
         if [ -z "$current_value" ]; then
             echo "Selection is mandatory. Exiting." >&2
-            exit 1
+            exit 0
         fi
     fi
 
@@ -44,7 +44,7 @@ select_functionapp() {
     local selected_functionapp
     selected_functionapp=$(select_azure_resource "functionapp" "az functionapp list") || {
         echo "Selection cancelled by user." >&2
-        return 1
+        exit 0
     }
     echo "$selected_functionapp"
 }
@@ -53,7 +53,7 @@ select_storage_account() {
     local selected_storage_account 
     selected_storage_account=$(select_azure_resource "storage account" "az storage account list") || {
         echo "Selection cancelled by user." >&2
-        return 1
+        exit 0
     }
     echo "$selected_storage_account"
 }
@@ -62,7 +62,7 @@ select_keyvault() {
     local selected_keyvault 
     selected_keyvault=$(select_azure_resource "keyvault" "az keyvault list") || {
         echo "Selection cancelled by user." >&2
-        return 1
+        exit 0
     }
     echo "$selected_keyvault"
 }
@@ -86,14 +86,9 @@ To quit, press 'q'." >&2
         read -r resource_name
         if [ "$resource_name" == "q" ]; then
             echo "Quitting $resource_type selection." >&2
-            return 1
+            exit 0
         fi
     fi
 
     echo "$resource_name"
-}
-
-get_random_id() {
-    # Generates a random 5-character alphanumeric string in lower case
-    openssl rand -base64 18 | tr -dc 'a-z0-9' | fold -w 5 | head -n 1
 }

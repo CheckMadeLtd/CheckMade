@@ -3,8 +3,9 @@
 set -e 
 set -o pipefail
 
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../az_setup_utils.sh"
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../global_utils.sh"
+source "$script_dir/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -14,4 +15,4 @@ read -r new_storage_name
 new_storage_name="$new_storage_name$(get_random_id)"
 az storage account create --name "$new_storage_name"
 
-storage_name=$new_storage_name
+STORAGE_NAME=$new_storage_name

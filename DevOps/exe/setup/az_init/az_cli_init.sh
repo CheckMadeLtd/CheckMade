@@ -2,6 +2,7 @@
 
 set -e 
 set -o pipefail
+
 # -------------------------------------------------------------------------------------------------------
 
 # Assuming an Azure Portal account and the CheckMade Subscription are already set up (but nothing else)

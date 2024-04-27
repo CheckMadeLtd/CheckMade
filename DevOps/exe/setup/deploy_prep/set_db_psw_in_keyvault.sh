@@ -2,22 +2,23 @@
 
 set -e 
 set -o pipefail
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../az_setup_utils.sh"
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../global_utils.sh"
+source "$script_dir/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-[[ -z "$PG_APP_USER" ]] && echo "Err: PG_APP_USER is NOT set" && exit 1 || echo "PG_APP_USER: $PG_APP_USER"
-[[ -z "$PG_APP_USER_PSW" ]] && echo "Err: PG_APP_USER_PSW is NOT set" && exit 1 || echo "PG_APP_USER_PSW is set"
+env_var_is_set "PG_APP_USER"
+env_var_is_set "PG_APP_USER_PSW" "secret"
 
 echo "Choose the keyvault to which the password for DB user '$PG_APP_USER' shall be saved"
-keyvault_name=$(confirm_and_select_resource "keyvault" "$keyvault_name")
+KEYVAULT_NAME=$(confirm_and_select_resource "keyvault" "$KEYVAULT_NAME")
 
 echo "Enter the key for the new secret (e.g. 'PrdDbPsw'):"
-read -r SECRET_KEY
+read -r secret_key
 
-SECRET_KEY="ConnectionStrings--$SECRET_KEY"
+secret_key="ConnectionStrings--$secret_key"
 
 echo "Now setting a new secret in keyvault with the password for the db app user (which is stored in the environment)"
-az keyvault secret set --vault-name "$keyvault_name" --name "$SECRET_KEY" --value "$PG_APP_USER_PSW"
+az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "$secret_key" --value "$PG_APP_USER_PSW"
 
