@@ -2,9 +2,10 @@
 
 set -e 
 set -o pipefail
-script_dir=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir/../../../global_utils.sh"
-source "$script_dir/../../db_utils.sh"
+
+script_dir_db_setup=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir_db_setup/../../../global_utils.sh"
+source "$script_dir_db_setup/../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -54,8 +55,8 @@ confirm_command \
 
 psql -l
 
-confirm_script_launch "$script_dir/db_app_user_setup.sh" "Development"
-confirm_script_launch "$script_dir/apply_migrations.sh" "Development"
+confirm_script_launch "$script_dir_db_setup/db_app_user_setup.sh" "Development"
+confirm_script_launch "$script_dir_db_setup/apply_migrations.sh" "Development"
 
 echo "----------------------"
 echo "Next steps:"

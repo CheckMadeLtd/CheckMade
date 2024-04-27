@@ -3,8 +3,9 @@
 # Exit immediately if a command exits with a non-zero status (including in the middle of a pipeline).
 set -e 
 set -o pipefail
-script_dir=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir/../global_utils.sh"
+
+script_dir_orchestrator=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir_orchestrator/../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ echo "Currently available resource groups:"
 az group list --query "[*].name"
 
 echo "--------------------"
-confirm_script_launch "$script_dir/az_init/group_new_setup.sh"
+confirm_script_launch "$script_dir_orchestrator/az_init/group_new_setup.sh"
 
 echo "--------------------"
 echo "Confirm if current subscriptions and defaults are correct (y/n)"
@@ -64,10 +65,10 @@ echo "--------------------"
 echo "Consider manually running selected sub-scripts if you don't set up the resource group from scratch."
 
 az_services_setup_scripts=(
-    "$script_dir/az_services/storage_new_setup.sh" # Updates vars: $STORAGE_NAME
-    "$script_dir/az_services/functionapp_new_setup.sh" # Updates vars: FUNCTIONAPP_NAME
-    "$script_dir/az_services/keyvault_new_setup.sh" # Updates vars: KEYVAULT_NAME
-    "$script_dir/az_services/keyvault_func_map.sh" # Updates vars: KEYVAULT_NAME, FUNCTIONAPP_NAME
+    "$script_dir_orchestrator/az_services/storage_new_setup.sh" # Updates vars: $STORAGE_NAME
+    "$script_dir_orchestrator/az_services/functionapp_new_setup.sh" # Updates vars: FUNCTIONAPP_NAME
+    "$script_dir_orchestrator/az_services/keyvault_new_setup.sh" # Updates vars: KEYVAULT_NAME
+    "$script_dir_orchestrator/az_services/keyvault_func_map.sh" # Updates vars: KEYVAULT_NAME, FUNCTIONAPP_NAME
     )
 
 for script in "${az_services_setup_scripts[@]}"; do
@@ -76,7 +77,7 @@ done
 
 # --- DEPLOYMENT PREP -----------------------------------------
 
-confirm_script_launch "$script_dir/deploy_prep/telegram_tokens_to_keyvault"
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_keyvault"
 
 echo "--------------------"
 echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
@@ -84,7 +85,7 @@ Function: '${FUNCTIONAPP_NAME}' | Configuration (menu) | General Settings (tab) 
 .NET Version (dropdown) and set a version and 'Save'! Continue here with 'Enter' when done."
 read -r
 
-confirm_script_launch "$script_dir/deploy_prep/publishing_profile_to_github.sh"
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/publishing_profile_to_github.sh"
 
 echo "--------------------"
 echo "Verify deployment section of the GitHub Actions Workflow (esp. 'app-name' and 'publish_profile' properties. \
@@ -107,7 +108,7 @@ PG_APP_USER="cm_app_user"
 PG_SUPER_USER=$(whoami)
 PG_APP_USER_PSW="my_dev_db_psw" # not security critical, save also in in local.settings.json connstring
 
-confirm_script_launch "$script_dir/db/dev_only/db_setup.sh" 
+confirm_script_launch "$script_dir_orchestrator/db/dev_only/db_setup.sh" 
 
 # --- COSMOS DB - INITIAL CLUSTER SETUP -----------------------------------------
 
@@ -152,11 +153,11 @@ fi
 COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g checkmade_perm -n "$postgres_cluster_name" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
-confirm_script_launch "$script_dir/db/all_host_env/db_app_user_setup.sh" "Production"
-confirm_script_launch "$script_dir/db/all_host_env/apply_migrations.sh" "Production"
+confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
+confirm_script_launch "$script_dir_orchestrator/db/all_host_env/apply_migrations.sh" "Production"
 
-confirm_script_launch "$script_dir/deploy_prep/set_db_connstring_in_funcapp.sh" 
-confirm_script_launch "$script_dir/deploy_prep/set_db_psw_in_keyvault.sh"
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_connstring_in_funcapp.sh" 
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_psw_in_keyvault.sh"
 
 # --- PUBLISH & TELEGRAM WebHooks Setup -----------------------------------------
 
@@ -167,5 +168,5 @@ read -r
 
 echo "--------------------"
 echo "If setting up Telegram WebHooks for dev AND prd then launch a second time manually!"
-confirm_script_launch "$script_dir/clients/telegram_webhooks_config.sh"
+confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
 

@@ -1,8 +1,8 @@
 #!/opt/homebrew/bin/bash
 set -e 
 set -o pipefail
-script_dir=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir/../global_utils.sh"
+script_dir_finishwork=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir_finishwork/../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

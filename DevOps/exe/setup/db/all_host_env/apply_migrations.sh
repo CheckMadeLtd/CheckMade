@@ -2,9 +2,10 @@
 
 set -e 
 set -o pipefail
-script_dir=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir/../../../global_utils.sh"
-source "$script_dir/../../db_utils.sh"
+
+script_dir_apply_migr=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir_apply_migr/../../../global_utils.sh"
+source "$script_dir_apply_migr/../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 # Script works across all hosting environments!
@@ -32,7 +33,7 @@ fi
 
 psql_host=$(get_psql_host "$hosting_env")
 
-migrations_dir="$script_dir/../../../../sql/migrations"
+migrations_dir="$script_dir_apply_migr/../../../../sql/migrations"
 for sql_file in $(ls $migrations_dir/*.sql | sort); do
   echo "Applying migration: $sql_file"
   psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"

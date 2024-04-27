@@ -2,9 +2,9 @@
 
 set -e 
 set -o pipefail
-script_dir=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir/../../../global_utils.sh"
-source "$script_dir/../../db_utils.sh"
+
+source "$(dirname "${BASH_SOURCE[0]}")/../../../global_utils.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
