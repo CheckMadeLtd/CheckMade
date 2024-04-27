@@ -77,7 +77,7 @@ done
 
 # --- DEPLOYMENT PREP -----------------------------------------
 
-confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_keyvault"
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_keyvault.sh"
 
 echo "--------------------"
 echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \

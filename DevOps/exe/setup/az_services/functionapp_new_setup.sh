@@ -10,8 +10,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 STORAGE_NAME=$(confirm_and_select_resource "storage_account" "$STORAGE_NAME")
 
-echo "Enter the name for the new functionapp (can't contain '_').
-A new Y1 Consumption plan will automatically be created alongside it:"
+echo "Enter the name for the new functionapp (can't contain '_', and a random alphanumeric string will be appended \
+to the chosen name). Also, a new Y1 Consumption plan will automatically be created alongside it:"
 read -r new_FUNCTIONAPP_NAME
 
 new_FUNCTIONAPP_NAME="${new_FUNCTIONAPP_NAME}-$(get_random_id)"

@@ -8,7 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-echo "Enter the name for the new keyvault."
+echo "Enter the name for the new keyvault (a random alphanumeric string will be appended to the chosen name):"
 read -r new_keyvault_name
 
 new_keyvault_name="$new_keyvault_name-$(get_random_id)"

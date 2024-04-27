@@ -7,7 +7,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-echo "Enter name of new resource group (will be set as default) or leave empty to skip"
+echo "Enter name of new resource group (will be set as default) or leave empty to skip \
+(a random alphanumeric string will be appended to the chosen name):"
 read -r new_resource_group
 
 new_resource_group="$new_resource_group-$(get_random_id)"

@@ -8,7 +8,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-echo "Enter name for new storage account (lower-case letters and numbers ONLY!)"
+echo "Enter name for new storage account (lower-case letters and numbers ONLY; a random alphanumeric string will be \
+appended to the chosen name)"
 read -r new_storage_name
 
 new_storage_name="$new_storage_name$(get_random_id)"
