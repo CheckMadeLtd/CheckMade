@@ -24,6 +24,11 @@ if [ "$hosting_env" != "CI" ]; then
   fi
 fi
 
+# Only needs to be set via Environment Vars in 'CI' because lack of interactivity there (e.g. no psw prompt possible)
+if [ "$hosting_env" == "CI" ]; then
+  env_var_is_set "PGPASSWORD" "secret"
+fi
+
 psql_host=$(get_psql_host "$hosting_env")
 
 migrations_dir="$script_dir/../../../../sql/migrations"
