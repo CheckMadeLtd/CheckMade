@@ -9,9 +9,9 @@ source "$script_dir/../az_setup_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 # ToDo: Also add Staging bot tokens check
-env_var_is_set "PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
-env_var_is_set "PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
-env_var_is_set "PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+env_var_is_set "PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
+env_var_is_set "PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
+env_var_is_set "PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
 
 KEYVAULT_NAME=$(confirm_and_select_resource "keyvault" "$KEYVAULT_NAME")
 
