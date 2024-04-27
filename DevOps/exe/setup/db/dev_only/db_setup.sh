@@ -3,7 +3,7 @@
 set -e 
 set -o pipefail
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../../global_utilities.sh"
+source "$SCRIPT_DIR/../../../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ confirm_command \
 psql -l
 
 confirm_script_launch "$SCRIPT_DIR/db_app_user_setup.sh" "Development"
-confirm_script_launch "$SCRIPT_DIR/apply_migrations.sh"
+confirm_script_launch "$SCRIPT_DIR/apply_migrations.sh" "Development"
 
 echo "----------------------"
 echo "Next steps:"

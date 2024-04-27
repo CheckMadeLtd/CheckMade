@@ -2,15 +2,20 @@
 
 set -e 
 set -o pipefail
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+source "$script_dir/../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
 # Works across all hosting environments!
 
-HOSTING_ENV="$1"
+hosting_env="$1"
 
-if [ "$HOSTING_ENV" != "CI" ]; then
+[[ -z "$PG_DB_NAME" ]] && echo "Err: PG_DB_NAME is NOT set" && exit 1 || echo "PG_DB_NAME: $PG_DB_NAME"
+
+psql_host=$(get_psql_host "$hosting_env")
+
+if [ "$hosting_env" != "CI" ]; then
   echo "Apply all migrations to recreate database (y/n)?"
   read -r confirm_ops_setup
   if [ "$confirm_ops_setup" != "y" ]; then
@@ -19,10 +24,10 @@ if [ "$HOSTING_ENV" != "CI" ]; then
   fi
 fi
 
-MIGRATIONS_DIR="$SCRIPT_DIR/../../../../sql/migrations"
-for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
+migrations_dir="$script_dir/../../../../sql/migrations"
+for sql_file in $(ls $migrations_dir/*.sql | sort); do
   echo "Applying migration: $sql_file"
-  psql -d $DEV_DB_NAME -f "$sql_file"
+  psql -h "$psql_host" -U $PG_SUPER_USER -d "$PG_DB_NAME" -f "$sql_file"
   if [ $? -ne 0 ]; then
     echo "Error applying migration: $sql_file"
     exit 1
@@ -30,6 +35,3 @@ for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
 done
 echo "All migrations applied successfully."  
 
-
-# ToDo: generlaise the above psql with the following AND in beginning of script, check for presence of needed env variables.
-#psql -h localhost -U $PG_SUPER_USER -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"

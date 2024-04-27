@@ -18,6 +18,6 @@ read -r SECRET_KEY
 
 SECRET_KEY="ConnectionStrings--$SECRET_KEY"
 
-echo "Now setting a new secret in keyvault  the password for the db app user stored in the environment into"
+echo "Now setting a new secret in keyvault with the password for the db app user (which is stored in the environment)"
 az keyvault secret set --vault-name "$keyvault_name" --name "$SECRET_KEY" --value "$PG_APP_USER_PSW"
 

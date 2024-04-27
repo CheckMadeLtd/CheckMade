@@ -61,7 +61,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Make all scripts executable
+        run: chmod -R +x DevOps/exe
+
 # Setting up Caches ----------------------------
 
       # dotnet SDK & Workloads --------------
@@ -184,8 +187,7 @@ jobs:
       
       # Re OUTPUT path: even if it's the default output path, need it explicit for deployment step further down!
       - name: Build
-        run: |
-          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
+        run: dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
 
       - name: Set up PostgreSQL DB and User
         run: |
@@ -200,15 +202,13 @@ jobs:
           PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
       
       - name: Apply Database Migrations
-        run: |
-          ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh
+        run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh "CI"
         env:
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
           PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
       
       - name: Test
-        run: |
-          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
+        run: dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
           CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains ${{ secrets.POSTGRES_CM_APP_USER_PSW }}

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Chat.Tests;
 
-public class ResponseGeneratorTests(TestStartup setup) : IClassFixture<TestStartup>
+public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartup>
 {
     private const string ProviderNotInitializedMessage = "The Services Provider is null, failed to initialize";
     private readonly ServiceProvider _provider = setup.ServiceProvider;
@@ -16,9 +16,9 @@ public class ResponseGeneratorTests(TestStartup setup) : IClassFixture<TestStart
         const string fakeInputText = "Hello, world!";
         var expectedOutputText = $"Echo: {fakeInputText}";
 
-        var responseGenerator = _provider.GetService<IResponseGenerator>() 
+        var requestProcessor = _provider.GetService<IRequestProcessor>() 
                                 ?? throw new InvalidOperationException(ProviderNotInitializedMessage);
-        var actualOutputText = responseGenerator.Echo(fakeTelegramUserId, fakeInputText);
+        var actualOutputText = requestProcessor.Echo(fakeTelegramUserId, fakeInputText);
 
         actualOutputText.Should().Be(expectedOutputText);
     }

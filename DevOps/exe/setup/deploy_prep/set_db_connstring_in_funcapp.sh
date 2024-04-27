@@ -14,20 +14,19 @@ echo "Choose the functionapp to which the Connection String shall be added:"
 functionapp_name=$(confirm_and_select_resource "functionapp" "$functionapp_name")
 
 echo "Now constructing connection string from its components in ADO.NET format..."
-CST_HOST="$(az cosmosdb postgres cluster show -n "$postgres_cluster_name" \
---query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
-CST_DB="$PG_DB_NAME"
-CST_PORT="5432"
-CST_USER="$PG_APP_USER"
-CST_PSW="MYSECRET" # Will be replaced with value from KeyVault
-CST_OPTIONS="Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true"
+COSMOSDB_DB="$PG_DB_NAME"
+COSMOSDB_PORT="5432"
+COSMOSDB_USER="$PG_APP_USER"
+COSMOSDB_PSW="MYSECRET" # Will be replaced with value from KeyVault
+COSMOSDB_OPTIONS="Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true"
 
-CST_COMPLETE="Server=$CST_HOST;Database=$CST_DB;Port=$CST_PORT;User Id=$CST_USER;Password=$CST_PSW;$CST_OPTIONS"
-echo "$CST_COMPLETE"
+COSMOSDB_CONNSTRING="Server=$COSMOSDB_HOST;Database=$COSMOSDB_DB;Port=$COSMOSDB_PORT;User Id=$COSMOSDB_USER;\
+Password=$COSMOSDB_PSW;$COSMOSDB_OPTIONS"
+echo "$COSMOSDB_CONNSTRING"
 
 echo "Enter the key for the Connection String (e.g. PrdDb):"
 read -r CONNSTRING_KEY
-CONNSTRING_SETTINGS="$CONNSTRING_KEY='$CST_COMPLETE'"
+CONNSTRING_SETTINGS="$CONNSTRING_KEY='$COSMOSDB_CONNSTRING'"
 
 echo "Now setting Connection String in '${functionapp_name}'"
 set -x

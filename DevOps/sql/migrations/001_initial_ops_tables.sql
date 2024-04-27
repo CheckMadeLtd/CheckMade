@@ -2,13 +2,13 @@
 DO $$
     DECLARE
         userName CONSTANT text := 'cm_app_user';
-        tableName CONSTANT text := 'telegram_messages';
+        tableName CONSTANT text := 'tlgr_messages';
     BEGIN
         EXECUTE FORMAT(
                 'CREATE TABLE IF NOT EXISTS %I (
                     id SERIAL PRIMARY KEY,
                     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    telegram_user_id BIGINT NOT NULL,
+                    tlgr_user_id BIGINT NOT NULL,
                     details JSONB NOT NULL
                 )'
             , tableName);

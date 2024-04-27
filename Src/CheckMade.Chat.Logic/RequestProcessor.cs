@@ -2,11 +2,11 @@
 
 namespace CheckMade.Chat.Logic;
 
-public record ResponseGenerator : IResponseGenerator
+public record RequestProcessor : IRequestProcessor
 {
     private readonly ITelegramMessageRepo _repo;
     
-    public ResponseGenerator(ITelegramMessageRepo repo)
+    public RequestProcessor(ITelegramMessageRepo repo)
     {
         _repo = repo;
     }

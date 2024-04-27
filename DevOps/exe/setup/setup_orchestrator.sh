@@ -4,7 +4,7 @@
 set -e 
 set -o pipefail
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPT_DIR/../global_utilities.sh"
+source "$SCRIPT_DIR/../global_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -98,28 +98,19 @@ echo "--------------------"
 echo "Verify keyvault URL in Program.cs of top-level project(s). Continue with 'Enter' when done."
 read -r
 
-
 # --- HOSTING-ENV-AGNOSTIC DB SETUP VARS -----------------------------------------
 
 # These are consumed by subsequent db-setup-related scripts and are the same across all hosting environments
 
 PG_DB_NAME="cm_ops"
-export PG_DB_NAME
-
 PG_APP_USER="cm_app_user"
-export PG_APP_USER
-
 
 # --- POSTGRES LOCAL/DEV CLUSTER/SERVER SETUP -----------------------------------------
 
 PG_SUPER_USER=$(whoami)
-export PG_SUPER_USER
-
 PG_APP_USER_PSW="my_dev_db_psw" # exposing psw here for convenience is not critical, it's only the local dev db.
-export PG_APP_USER_PSW
 
 confirm_script_launch "$SCRIPT_DIR/db/dev_only/db_setup.sh" 
-
 
 # --- COSMOS DB - INITIAL CLUSTER SETUP -----------------------------------------
 
@@ -148,25 +139,25 @@ echo "Deployment of the new postgres cluster takes several minutes and can be fo
 of the resource group. When done, enter the name of the postgres cluster to continue:"
 read -r postgres_cluster_name
 
-
 # --- COSMOS DB SETUP -----------------------------------------
 
 PG_SUPER_USER="citus"
-export PG_SUPER_USER
 
-echo "Enter the password for '${PG_APP_USER}' (NOT 'citus'!!) for the prd (cosmos) db (already saved in 1psw?):"
+echo "Enter the password for '${PG_APP_USER}' (NOT 'citus'!!) for the prd (cosmos) db (should be in psw-manager!):"
 read -r PG_APP_USER_PSW
 if [[ -z "$PG_APP_USER_PSW" ]]; then
   echo "Err: No password set"
   exit 1
 fi
-export PG_APP_USER_PSW
+
+# Needed in multiple of the following sub scripts
+COSMOSDB_HOST="$(az cosmosdb postgres cluster show -n "$postgres_cluster_name" \
+--query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
 confirm_script_launch "$SCRIPT_DIR/db/all_host_env/db_app_user_setup.sh" "Production"
-confirm_script_launch "$SCRIPT_DIR/db/all_host_env/apply_migrations.sh"
+confirm_script_launch "$SCRIPT_DIR/db/all_host_env/apply_migrations.sh" "Production"
 confirm_script_launch "$SCRIPT_DIR/deploy_prep/set_db_connstring_in_funcapp.sh" 
 confirm_script_launch "$SCRIPT_DIR/deploy_prep/set_db_psw_in_keyvault.sh"
-
 
 # --- PUBLISH & TELEGRAM WebHooks Setup -----------------------------------------
 
