@@ -14,6 +14,7 @@ hosting_env_is_valid "$1"
 
 env_var_is_set "PG_SUPER_USER"
 env_var_is_set "PG_DB_NAME"
+env_var_is_set "COSMOSDB_HOST" # Needed in 'get_psql_host' function
 
 if [ "$hosting_env" != "CI" ]; then
   echo "Apply all migrations to recreate database (y/n)?"

@@ -18,6 +18,7 @@ env_var_is_set "PG_APP_USER"
 env_var_is_set "PG_APP_USER_PSW" "secret"
 env_var_is_set "PG_SUPER_USER"
 env_var_is_set "PG_APP_USER"
+env_var_is_set "COSMOSDB_HOST" # Needed in 'get_psql_host' function
 echo "-----------"
 
 # Only needs to be set via Environment Vars in 'CI' because lack of interactivity there (e.g. no psw prompt possible)

@@ -111,7 +111,8 @@ confirm_script_launch "$script_dir/db/dev_only/db_setup.sh"
 
 # --- COSMOS DB - INITIAL CLUSTER SETUP -----------------------------------------
 
-echo "Next, go to the Azure Portal and create a 'Cosmos DB for PostgreSQL' resource if you haven't yet."
+echo "Next, go to the Azure Portal and create a 'Cosmos DB for PostgreSQL' resource in the 'checkmade_perm' \
+resource group, if you haven't yet."
 echo "--- Setting Defaults ---"
 
 echo "BASICS: \
@@ -133,7 +134,7 @@ echo "ENCRYPTION: \
 Leave 'Service-managed key' default"
 
 echo "Deployment of the new postgres cluster takes several minutes and can be followed under 'Deployments' section \
-of the resource group. When done, enter the name of the postgres cluster to continue:"
+of the resource group. When done, or when already exists, enter the name of the postgres cluster to continue:"
 read -r postgres_cluster_name
 
 # --- COSMOS DB SETUP -----------------------------------------
@@ -148,7 +149,7 @@ if [ -z "$PG_APP_USER_PSW" ]; then
 fi
 
 # Needed in multiple of the following sub scripts
-COSMOSDB_HOST="$(az cosmosdb postgres cluster show -n "$postgres_cluster_name" \
+COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g checkmade_perm -n "$postgres_cluster_name" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
 confirm_script_launch "$script_dir/db/all_host_env/db_app_user_setup.sh" "Production"
