@@ -13,6 +13,7 @@ source "$script_dir_apply_migr/../../db_utils.sh"
 hosting_env="$1"
 hosting_env_is_valid "$1"
 
+echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_SUPER_USER"
 env_var_is_set "PG_DB_NAME"
 env_var_is_set "COSMOSDB_HOST" # Needed in 'get_psql_host' function

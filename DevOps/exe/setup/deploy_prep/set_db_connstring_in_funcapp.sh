@@ -8,6 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
+echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_DB_NAME"
 env_var_is_set "PG_APP_USER"
 env_var_is_set "COSMOSDB_HOST"

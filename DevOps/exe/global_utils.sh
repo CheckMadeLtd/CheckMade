@@ -60,8 +60,6 @@ env_var_is_set() {
   local var_value
   var_value="${!var_name}" # dereferencing from the var name into its actual value
   
-  echo "Checking necessary environment variables are set..." >&2
-  
   if [ -z "$var_value" ]; then
     echo "Err: $var_name is not set" >&2
     exit 1

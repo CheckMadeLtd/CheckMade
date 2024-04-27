@@ -9,6 +9,7 @@ source "$script_dir_db_setup/../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
+echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_SUPER_USER"
 env_var_is_set "PG_APP_USER"
 env_var_is_set "PG_DB_NAME"
