@@ -40,9 +40,11 @@ echo "Next, setting logging config for our postgres db to '${db_cluster_path}/lo
 log_settings=('#log_destination' '#logging_collector' '#log_directory' '#log_filename' '#log_file_mode' \
 '#log_rotation_age' '#log_rotation_size')
 for setting in "${log_settings[@]}"; do
-  # Uncomment the line with sed
+  # Uncomment the line with sed (using double quote for expansion of the $setting variable!)
   sed -i "" "/^$setting/s/^#//" "${db_cluster_path}/postgresql.conf"
 done
+# Turn 'logging collector' from default 'off' to 'on' (using single quotes for literal
+sed -i '' '/^logging_collector = off/s/off/on/' "${db_cluster_path}/postgresql.conf"
 
 confirm_command \
 "Start the database server for '${db_cluster_path}' (y/n)?" \
@@ -50,9 +52,12 @@ confirm_command \
 
 sql_to_create_ops_db="CREATE DATABASE $PG_DB_NAME;"
 
-confirm_command \
-"Create the '${PG_DB_NAME}' database now (y/n)?"
-"psql -d postgres -c $sql_to_create_ops_db" 
+# Can't use 'confirm_command' in this case because of problems with expansion of quotes etc.
+echo "Create the '${PG_DB_NAME}' database now (y/n)?"
+read -r create_db_confirm
+if [ "$create_db_confirm" == "y" ]; then
+  psql -d postgres -c "$sql_to_create_ops_db"
+fi
 
 psql -l
 

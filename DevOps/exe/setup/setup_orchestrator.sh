@@ -113,10 +113,11 @@ PG_APP_USER="cm_app_user"
 
 # --- POSTGRES LOCAL/DEV CLUSTER/SERVER SETUP -----------------------------------------
 
+echo "Setting vars for (dev) DB Setup..."
 PG_SUPER_USER=$(whoami)
 PG_APP_USER_PSW="my_dev_db_psw" # not security critical, save also in in local.settings.json connstring
 echo "PG_APP_USER_PSW was set to '${PG_APP_USER_PSW}'. Make sure it's the same in local.settings.json files \
-of all toplevel projects."
+of all toplevel projects (including Test projects!!)."
 
 confirm_script_launch "$script_dir_orchestrator/db/dev_only/db_setup.sh" 
 
@@ -152,7 +153,7 @@ read -r postgres_cluster_name
 
 PG_SUPER_USER="citus"
 
-echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the prd (cosmos) db (save in psw-manager!):"
+echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
 read -r PG_APP_USER_PSW
 if [ -z "$PG_APP_USER_PSW" ]; then
   echo "Err: No password set"
