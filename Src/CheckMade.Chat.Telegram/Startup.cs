@@ -26,17 +26,17 @@ public static class Startup
         var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 
-                config.GetValue<string>("PG_DB_CONNSTRING") 
+                config.GetValue<string>("PG-DB-CONNSTRING") 
                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                    "Can't find DEV_OR_CI_DB_CONNSTRING"),
+                    "Can't find PG-DB-CONNSTRING"),
             
             "Production" or "Staging" => 
-                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD_DB") 
+                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD-DB") 
                  ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                     "Can't find POSTGRESQLCONNSTR_PRD_DB"))
-                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PRD_DB_PSW") 
+                     "Can't find POSTGRESQLCONNSTR_PRD-DB"))
+                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PRD-DB-PSW") 
                                      ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                                         "Can't find ConnectionStrings:PRD_DB_PSW")),
+                                         "Can't find ConnectionStrings:PRD-DB-PSW")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
