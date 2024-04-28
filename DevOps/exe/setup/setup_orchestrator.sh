@@ -107,6 +107,8 @@ PG_APP_USER="cm_app_user"
 
 PG_SUPER_USER=$(whoami)
 PG_APP_USER_PSW="my_dev_db_psw" # not security critical, save also in in local.settings.json connstring
+echo "PG_APP_USER_PSW was set to '${PG_APP_USER_PSW}'. Make sure it's the same in local.settings.json files \
+of all toplevel projects."
 
 confirm_script_launch "$script_dir_orchestrator/db/dev_only/db_setup.sh" 
 

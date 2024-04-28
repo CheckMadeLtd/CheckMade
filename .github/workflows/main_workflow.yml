@@ -197,7 +197,7 @@ jobs:
         env:
           PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
           PG_APP_USER: ${{ vars.POSTGRES_APP_USER }}
           PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
       
@@ -205,13 +205,13 @@ jobs:
         run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh "CI"
         env:
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
       
       - name: Test
         run: dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
             
       #  Deploy ---------------------------------
 

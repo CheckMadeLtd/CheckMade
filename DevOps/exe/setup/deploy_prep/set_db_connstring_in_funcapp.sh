@@ -27,7 +27,7 @@ cosmosdb_connstring="Server=$COSMOSDB_HOST;Database=$cosmosdb_name;Port=$cosmosd
 Password=$cosmosdb_psw;$cosmosdb_options"
 echo "$cosmosdb_connstring"
 
-echo "Enter the key for the Connection String (e.g. PrdDb):"
+echo "Enter the key for the Connection String (e.g. PrdDb) and make sure it's the same used in Startup.cs:"
 read -r connstring_key
 connstring_settings="$connstring_key='$cosmosdb_connstring'"
 

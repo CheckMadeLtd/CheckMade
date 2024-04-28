@@ -10,9 +10,9 @@ public static class Startup
 {
     public static void ConfigureAppServices(this IServiceCollection services, IConfiguration config)
     {
-        var tgToken = config.GetValue<string>("TelegramBotConfiguration:SubmissionsBotToken");
+        var tgToken = config.GetValue<string>("CHECKMADE_SUBMISSIONS_BOT_TOKEN");
     
-        services.AddHttpClient("telegram_submissions_client")
+        services.AddHttpClient("CheckMadeSubmissionsBot")
             .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
 
         services.AddScoped<UpdateService>();
@@ -23,21 +23,18 @@ public static class Startup
     {
         var dbConnectionString = hostingEnvironment switch
         {
-            "Development" => config.GetConnectionString("DevDb") 
-                             ?? throw new ArgumentNullException(nameof(hostingEnvironment),
-                                 "Can't find dev db connstring"),
-        
-            "CI" => config.GetValue<string>("CI_DB_CONNSTRING") 
-                    ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                        "Can't find ci db connstring"),
+            "Development" or "CI" => 
+                config.GetValue<string>("PG_DB_CONNSTRING") 
+                ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
+                    "Can't find DEV_OR_CI_DB_CONNSTRING"),
             
             "Production" or "Staging" => 
                 (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PrdDb") 
-                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), "Can't find PrdDb connstring"))
-                .Replace("MYSECRET", 
-                config.GetValue<string>("ConnectionStrings:PrdDbPsw") 
-                ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                    "Can't find prd db psw")),
+                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
+                     "Can't find POSTGRESQLCONNSTR_PrdDb"))
+                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PrdDbPsw") 
+                                     ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
+                                         "Can't find ConnectionStrings:PrdDbPsw")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
