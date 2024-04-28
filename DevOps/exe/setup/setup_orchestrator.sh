@@ -131,14 +131,14 @@ echo "--- Setting Defaults ---"
 echo "BASICS:"
 echo "Cluster name: follow naming convention e.g. 'postgres-[randomCode]'; \
 choose smallest scale e.g. '1 node, no high availability, Burstable, 1vCore, 2 GiB RAM'; \
-generate and keep save the admin password"
+Database name '${PG_DB_NAME}'; generate and keep save the admin password"
 
 # >>>> SECURITY RELEVANT: <<<<
 # https://learn.microsoft.com/en-gb/azure/cosmos-db/postgresql/howto-manage-firewall-using-portal
 # --> Can I not limit access to my functionapp?? No!! See:
 # https://chat.openai.com/share/1a5ce5d7-0756-4695-b01d-6bf226526415  and
 # https://learn.microsoft.com/en-gb/azure/azure-functions/ip-addresses?tabs=portal#consumption-and-premium-plans
-echo "NETWORKING:" \"
+echo "NETWORKING:"
 echo "Choose 'Public access (allowed IP addresses)' and \
 under 'Firewall rules' activate 'Allow public access from Azure services...' \
 and add the current dev machine's IP address."
