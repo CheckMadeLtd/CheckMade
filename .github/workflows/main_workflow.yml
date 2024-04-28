@@ -61,7 +61,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Make all scripts executable
+        run: chmod -R +x DevOps/exe
+
 # Setting up Caches ----------------------------
 
       # dotnet SDK & Workloads --------------
@@ -75,7 +78,7 @@ jobs:
           cache-name: cache-dotnet-${{ matrix.toplevel_project }}
         with:
           path: /usr/share/dotnet
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}"
         
       - name: Check cache-dotnet hit
         if: steps.cache-dotnet.outputs.cache-hit == 'true'
@@ -106,7 +109,7 @@ jobs:
           cache-name: cache-nuget-${{ matrix.toplevel_project }}
         with:
           path: ${{ github.workspace }}/.nuget
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}"
 
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'
@@ -184,47 +187,31 @@ jobs:
       
       # Re OUTPUT path: even if it's the default output path, need it explicit for deployment step further down!
       - name: Build
-        run: |
-          dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
-      
+        run: dotnet build ${{ env.TOPLEVEL_PROJECT_FILE }} --configuration Release --output ${{ env.BUILD_OUTPUT_PATH }}
+
       - name: Set up PostgreSQL DB and User
         run: |
           psql -h localhost -U $PG_SUPER_USER -c "CREATE DATABASE $PG_DB_NAME;"
-          
-          psql -h localhost -U $PG_SUPER_USER \
-          -c "CREATE USER $PG_APP_USER WITH PASSWORD '$PG_APP_USER_PSW'; \
-          GRANT ALL PRIVILEGES ON DATABASE $PG_DB_NAME TO $PG_APP_USER;"
-          
+          ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh
           psql -h localhost -U $PG_SUPER_USER -l
         env:
           PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
           PG_APP_USER: ${{ vars.POSTGRES_APP_USER }}
           PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
       
       - name: Apply Database Migrations
-        run: |
-          MIGRATIONS_DIR="DevOps/sql_scripts/general/migrations"
-          for sql_file in $(ls $MIGRATIONS_DIR/*.sql | sort); do
-            echo "Applying migration: $sql_file"
-            psql -h localhost -U $PG_SUPER_USER -d ${{ vars.POSTGRES_OPS_DB_NAME }} -f "$sql_file"
-            if [ $? -ne 0 ]; then
-              echo "Error applying migration: $sql_file"
-              exit 1
-            fi
-          done
-          echo "All migrations applied successfully."
+        run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh "CI"
         env:
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # automatically used by psql
+          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
       
       - name: Test
-        run: |
-          dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
+        run: dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          CI_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
             
       #  Deploy ---------------------------------
 
@@ -232,8 +219,8 @@ jobs:
         if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
-          app-name: 'telegram-app-d4e8'
+          app-name: 'telegram-app-330q0'
           slot-name: 'production'
           package: ${{ env.BUILD_OUTPUT_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_330Q0 }}
           

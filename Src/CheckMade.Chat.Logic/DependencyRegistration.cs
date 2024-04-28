@@ -7,6 +7,6 @@ public static class DependencyRegistration
 {
     public static void Add_MessagingLogic_Dependencies(this IServiceCollection services)
     {
-        services.AddSingleton<IResponseGenerator, ResponseGenerator>();
+        services.AddScoped<IRequestProcessor, RequestProcessor>();
     }
 }

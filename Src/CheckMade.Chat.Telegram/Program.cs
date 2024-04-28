@@ -24,7 +24,7 @@ var host = new HostBuilder()
         else if (environment.IsProduction() || environment.IsStaging())
         {
             var credential = new DefaultAzureCredential();
-            var secretClient = new SecretClient(new Uri("https://keyvault-zv.vault.azure.net/"), credential);
+            var secretClient = new SecretClient(new Uri("https://keyvault-4txtr.vault.azure.net/"), credential);
             config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
         }
 

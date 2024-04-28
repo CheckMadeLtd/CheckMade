@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 namespace CheckMade.Chat.Telegram;
 
 public class UpdateService(ITelegramBotClient botClient,
-    IResponseGenerator responseGenerator,
+    IRequestProcessor requestProcessor,
     ILogger<UpdateService> logger)
 {
     internal async Task EchoAsync(Update update)
@@ -21,7 +21,7 @@ public class UpdateService(ITelegramBotClient botClient,
         
         if (!string.IsNullOrWhiteSpace(inputMessage.Text))
         {
-            outputMessage = responseGenerator.Echo(inputMessage.Chat.Id, inputMessage.Text);
+            outputMessage = requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
         }
         
         await botClient.SendTextMessageAsync(
