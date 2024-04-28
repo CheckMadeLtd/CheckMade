@@ -78,7 +78,7 @@ jobs:
           cache-name: cache-dotnet-${{ matrix.toplevel_project }}
         with:
           path: /usr/share/dotnet
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}"
         
       - name: Check cache-dotnet hit
         if: steps.cache-dotnet.outputs.cache-hit == 'true'
@@ -109,7 +109,7 @@ jobs:
           cache-name: cache-nuget-${{ matrix.toplevel_project }}
         with:
           path: ${{ github.workspace }}/.nuget
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ env.CS_PROJ_HASH }}"
 
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'

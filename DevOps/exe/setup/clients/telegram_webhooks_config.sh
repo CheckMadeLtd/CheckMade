@@ -10,12 +10,12 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 # ToDo: For Staging, add checks here and options below!
 echo "Checking necessary environment variables are set..."
-env_var_is_set "DEV_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
-env_var_is_set "DEV_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
-env_var_is_set "DEV_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
-env_var_is_set "PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
-env_var_is_set "PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
-env_var_is_set "PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
+env_var_is_set "DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN" "secret"
+env_var_is_set "DEV-CHECKMADE-COMMUNICATIONS-BOT-TOKEN" "secret"
+env_var_is_set "DEV-CHECKMADE-NOTIFICATIONS-BOT-TOKEN" "secret"
+env_var_is_set "PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN" "secret"
+env_var_is_set "PRD-CHECKMADE-COMMUNICATIONS-BOT-TOKEN" "secret"
+env_var_is_set "PRD-CHECKMADE-NOTIFICATIONS-BOT-TOKEN" "secret"
 
 echo "--- Welcome to the Telegram Bot Setup Tool ---"
 echo "Here you can manage the WebHook of an EXISTING Telegram Bot (created with BotFather) as found in ENVIRONMENT"
@@ -34,17 +34,17 @@ if [ -z "$bot_choice" ]; then
   echo "No bot was chosen, aborting"
   exit 0
 elif [ "$bot_choice" == "ds" ]; then
-  bot_token="$DEV_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+  bot_token="$DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN"
 elif [ "$bot_choice" == "dc" ]; then
-  bot_token="$DEV_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
+  bot_token="$DEV-CHECKMADE-COMMUNICATIONS-BOT-TOKEN"
 elif [ "$bot_choice" == "dn" ]; then
-  bot_token="$DEV_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+  bot_token="$DEV-CHECKMADE-NOTIFICATIONS-BOT-TOKEN"
 elif [ "$bot_choice" == "ps" ]; then
-  bot_token="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+  bot_token="$PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN"
 elif [ "$bot_choice" == "pc" ]; then
-  bot_token="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
+  bot_token="$PRD-CHECKMADE-COMMUNICATIONS-BOT-TOKEN"
 elif [ "$bot_choice" == "pn" ]; then
-  bot_token="$PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+  bot_token="$PRD-CHECKMADE-NOTIFICATIONS-BOT-TOKEN"
 else
   echo "Err: No valid bot choice, aborting"
   exit 1
