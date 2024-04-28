@@ -61,8 +61,8 @@ fi
 
 psql -l
 
-confirm_script_launch "$script_dir_db_setup/db_app_user_setup.sh" "Development"
-confirm_script_launch "$script_dir_db_setup/apply_migrations.sh" "Development"
+confirm_script_launch "$script_dir_db_setup/../all_host_env/db_app_user_setup.sh" "Development"
+confirm_script_launch "$script_dir_db_setup/../all_host_env/apply_migrations.sh" "Development"
 
 echo "----------------------"
 echo "Next steps:"
