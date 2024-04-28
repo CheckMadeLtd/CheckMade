@@ -12,7 +12,7 @@ get_psql_host() {
     echo "local socket"
   elif [ "$host_env" == "CI" ]; then 
     echo "localhost"
-  elif [ "$host_env" == "Production" ]; then
+  elif [ "$host_env" == "Production" ] || [ "$host_env" == "Staging" ]; then
     if [ -z "$COSMOSDB_HOST" ]; then
       echo "Err: COSMOSDB_HOST is empty."
       exit 1
