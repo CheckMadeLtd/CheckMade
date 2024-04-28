@@ -25,7 +25,8 @@ echo "Make sure these preparatory steps have been completed:"
 echo "- Azure Portal account and 'CheckMade' subscription have been set up"
 echo "- Logged in to Azure CLI and default account and location have been set (use 'az_init/az_cli_init.sh')"
 echo "- All needed bots have been created with the Telegram BotFather and their credentials/tokens saved in the \
-ENVIRONMENT for access by subsequent scripts"
+ENVIRONMENT for access by subsequent scripts; the dev-related tokens have been saved in secrets.json of the \
+Telegram StartUp project."
 echo "- 'GITHUB_TOKEN' in ENVIRONMENT has been set to a GitHub PAT that gives gh comprehensive admin access"
 
 echo "--------------------"
@@ -171,4 +172,3 @@ read -r
 echo "--------------------"
 echo "If setting up Telegram WebHooks for dev AND prd then launch a second time manually!"
 confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
-
