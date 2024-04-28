@@ -1,7 +1,7 @@
 
 DO $$
     DECLARE
-        userName CONSTANT text := 'cm_app_user';
+        userName CONSTANT text := 'citus';
         tableName CONSTANT text := 'tlgr_messages';
     BEGIN
         EXECUTE FORMAT(

@@ -109,7 +109,7 @@ read -r
 # These are consumed by subsequent db-setup-related scripts and are the same across all hosting environments
 
 PG_DB_NAME="cm_ops"
-PG_APP_USER="cm_app_user"
+PG_APP_USER="citus" # ToDo: instead of 'cm_app_user' for now
 
 # --- POSTGRES LOCAL/DEV CLUSTER/SERVER SETUP -----------------------------------------
 
@@ -166,7 +166,10 @@ fi
 COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$postgres_cluster_name" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
-confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
+# ToDo: Review! Commented out for now because of my current inability to create a new user/role with 'citus'
+# ... waiting for resolution with help of Azure Support - or will continue to use citus for ops...
+# confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
+
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/apply_migrations.sh" "Production"
 
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_connstring_in_funcapp.sh" 
