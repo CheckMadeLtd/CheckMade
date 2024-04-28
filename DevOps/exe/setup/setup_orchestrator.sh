@@ -123,12 +123,13 @@ confirm_script_launch "$script_dir_orchestrator/db/dev_only/db_setup.sh"
 
 # --- COSMOS DB - INITIAL CLUSTER SETUP -----------------------------------------
 
+echo "-------------"
 echo "Next, go to the Azure Portal and create a 'Cosmos DB for PostgreSQL' resource in the \
 '${CURRENT_COMMON_RESOURCE_GROUP}' resource group, if you haven't yet."
 echo "--- Setting Defaults ---"
 
-echo "BASICS: \
-Cluster name: follow naming convention e.g. 'postgres-[randomCode]'; \
+echo "BASICS:"
+echo "Cluster name: follow naming convention e.g. 'postgres-[randomCode]'; \
 choose smallest scale e.g. '1 node, no high availability, Burstable, 1vCore, 2 GiB RAM'; \
 generate and keep save the admin password"
 
@@ -137,14 +138,14 @@ generate and keep save the admin password"
 # --> Can I not limit access to my functionapp?? No!! See:
 # https://chat.openai.com/share/1a5ce5d7-0756-4695-b01d-6bf226526415  and
 # https://learn.microsoft.com/en-gb/azure/azure-functions/ip-addresses?tabs=portal#consumption-and-premium-plans
-echo "NETWORKING: \
-Choose 'Public access (allowed IP addresses)' and \
+echo "NETWORKING:" \"
+echo "Choose 'Public access (allowed IP addresses)' and \
 under 'Firewall rules' activate 'Allow public access from Azure services...' \
 and add the current dev machine's IP address."
 
-echo "ENCRYPTION: \
-Leave 'Service-managed key' default"
-
+echo "ENCRYPTION:"
+echo "Leave 'Service-managed key' default"
+echo "-----"
 echo "Deployment of the new postgres cluster takes several minutes and can be followed under 'Deployments' section \
 of the resource group. When done, or when already exists, enter the name of the postgres cluster to continue:"
 read -r postgres_cluster_name
@@ -153,6 +154,7 @@ read -r postgres_cluster_name
 
 PG_SUPER_USER="citus"
 
+echo "------------"
 echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
 read -r PG_APP_USER_PSW
 if [ -z "$PG_APP_USER_PSW" ]; then

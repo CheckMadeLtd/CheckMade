@@ -22,7 +22,7 @@ if [ "$hosting_env" == "Production" ] || [ "$hosting_env" == "Staging" ]; then
 fi
 
 if [ "$hosting_env" != "CI" ]; then
-  echo "Apply all migrations to recreate database (y/n)?"
+  echo "Apply all migrations to recreate database in environment '${hosting_env}' (y/n)?"
   read -r confirm_ops_setup
   if [ "$confirm_ops_setup" != "y" ]; then
     echo "Aborting"
