@@ -10,6 +10,8 @@ public static class Startup
 {
     public static void ConfigureAppServices(this IServiceCollection services, IConfiguration config)
     {
+        // In the Unix Env. the var names/keys need to use '_' but in dotnet / Azure Keyvault they need to use '-'
+        
         var tgToken = config.GetValue<string>("CHECKMADE-SUBMISSIONS-BOT-TOKEN");
     
         services.AddHttpClient("CheckMadeSubmissionsBot")
