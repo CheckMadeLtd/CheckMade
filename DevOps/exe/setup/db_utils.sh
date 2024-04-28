@@ -9,7 +9,7 @@ get_psql_host() {
   local host_env="$1"
 
   if [ "$host_env" == "Development" ]; then
-    echo "local socket"
+    echo "" # default is "local socket" but -h "local socket" wouldn't work so we leave it empty
   elif [ "$host_env" == "CI" ]; then 
     echo "localhost"
   elif [ "$host_env" == "Production" ] || [ "$host_env" == "Staging" ]; then

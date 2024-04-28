@@ -35,13 +35,23 @@ fi
 psql_host=$(get_psql_host "$hosting_env")
 
 migrations_dir="$script_dir_apply_migr/../../../../sql/migrations"
+
 for sql_file in $(ls $migrations_dir/*.sql | sort); do
+  
   echo "Applying migration: $sql_file"
-  psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
+  
+  if [ -z "$psql_host" ]; then # in case of env=Development
+    psql -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
+  else
+    psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
+  fi
+  
   if [ $? -ne 0 ]; then
     echo "Error applying migration: $sql_file"
     exit 1
   fi
+  
 done
+
 echo "All migrations applied successfully."  
 

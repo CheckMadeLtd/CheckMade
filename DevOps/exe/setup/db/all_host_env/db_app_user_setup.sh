@@ -45,4 +45,8 @@ GRANT ALL PRIVILEGES ON DATABASE $PG_DB_NAME TO $PG_APP_USER;"
 
 psql_host=$(get_psql_host "$hosting_env")
 
-psql -h "$psql_host" -U "$PG_SUPER_USER" -d postgres -c "$sql_create_user"
+if [ -z "$psql_host" ]; then # in case of env=Development
+  psql -U "$PG_SUPER_USER" -d postgres -c "$sql_create_user"
+else
+  psql -h "$psql_host" -U "$PG_SUPER_USER" -d postgres -c "$sql_create_user"
+fi
