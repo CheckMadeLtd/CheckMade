@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status (including in the middle of a pipeline).
 set -e 

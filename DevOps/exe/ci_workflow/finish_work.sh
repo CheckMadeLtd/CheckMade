@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
 set -e 
 set -o pipefail
 script_dir_finishwork=$(dirname "${BASH_SOURCE[0]}")

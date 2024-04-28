@@ -195,7 +195,7 @@ jobs:
       - name: Set up PostgreSQL DB and User
         run: |
           psql -h localhost -U $PG_SUPER_USER -c "CREATE DATABASE $PG_DB_NAME;"
-          ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh
+          ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh CI
           psql -h localhost -U $PG_SUPER_USER -l
         env:
           PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
@@ -205,7 +205,7 @@ jobs:
           PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
       
       - name: Apply Database Migrations
-        run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh "CI"
+        run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh CI
         env:
           PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
           PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
