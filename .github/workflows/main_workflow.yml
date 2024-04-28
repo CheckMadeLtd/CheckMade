@@ -64,8 +64,11 @@ jobs:
 
       - name: Make all scripts executable
         run: chmod -R +x DevOps/exe
-
-# Setting up Caches ----------------------------
+        
+      - name: Check installed Bash version
+        run: bash --version
+            
+      # Setting up Caches ----------------------------
 
       # dotnet SDK & Workloads --------------
       
