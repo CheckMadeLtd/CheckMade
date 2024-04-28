@@ -29,12 +29,12 @@ public static class Startup
                     "Can't find DEV_OR_CI_DB_CONNSTRING"),
             
             "Production" or "Staging" => 
-                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PrdDb") 
+                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD_DB") 
                  ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                     "Can't find POSTGRESQLCONNSTR_PrdDb"))
-                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PrdDbPsw") 
+                     "Can't find POSTGRESQLCONNSTR_PRD_DB"))
+                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PRD_DB_PSW") 
                                      ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                                         "Can't find ConnectionStrings:PrdDbPsw")),
+                                         "Can't find ConnectionStrings:PRD_DB_PSW")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };

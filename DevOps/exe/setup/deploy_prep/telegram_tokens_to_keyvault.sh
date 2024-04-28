@@ -23,16 +23,17 @@ as per local secrets json structure..."
 declare -A bots
 # shellcheck disable=SC2154
 # ToDo: Also add Staging bot tokens
-bots["Submissions"]="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
-bots["Communications"]="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
-bots["Notifications"]="$PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+bots["CHECKMADE_SUBMISSIONS"]="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+bots["CHECKMADE_COMMUNICATIONS"]="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
+bots["CHECKMADE_NOTIFICATIONS"]="$PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
 
 for bot_type in "${!bots[@]}"; do
     bot_token="${bots[$bot_type]}"
     if [ -n "$bot_token" ]; then
-        # Use '--' instead of the usual ':' to access nested values e.g. 'TelegramBotConfiguration--SubmissionsBotToken'
-        az keyvault secret set --vault-name "$KEYVAULT_NAME" \
-        --name "${bot_config_section}--${bot_type}BotToken" --value "$bot_token"
+          # Use '--' instead of the usual ':' to access nested values in Keyvault
+          # This leads to --name = e.g. 'TelegramBotConfiguration--CHECKMADE_SUBMISSIONS_BOT_TOKEN'
+          az keyvault secret set --vault-name "$KEYVAULT_NAME" \
+        --name "${bot_config_section}--${bot_type}_BOT_TOKEN" --value "$bot_token"
     else
         echo "The bot_token for '${bot_type}' is empty, therefore, not setting it as a secret in keyvault."
     fi
