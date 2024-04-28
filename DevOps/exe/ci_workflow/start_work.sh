@@ -15,3 +15,5 @@ git pull
 
 new_temp_branch="tmp/$(get_random_id)"
 git checkout -b "$new_temp_branch" # start work (including on unstaged changes) on a new temp branch
+
+set +x

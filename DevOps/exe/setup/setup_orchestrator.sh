@@ -155,12 +155,14 @@ read -r postgres_cluster_name
 PG_SUPER_USER="citus"
 
 echo "------------"
-echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
-read -r PG_APP_USER_PSW
-if [ -z "$PG_APP_USER_PSW" ]; then
-  echo "Err: No password set"
-  exit 1
-fi
+
+# -- ToDo: the below will only become relevant again when/if I can create a new role on the cosmosdb again
+#echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
+#read -r PG_APP_USER_PSW
+#if [ -z "$PG_APP_USER_PSW" ]; then
+#  echo "Err: No password set"
+#  exit 1
+#fi
 
 # Needed in multiple of the following sub scripts
 COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$postgres_cluster_name" \
