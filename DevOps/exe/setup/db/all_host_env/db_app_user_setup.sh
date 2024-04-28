@@ -23,7 +23,6 @@ env_var_is_set "PG_APP_USER"
 if [ "$hosting_env" == "Production" ] || [ "$hosting_env" == "Staging" ]; then
   env_var_is_set "COSMOSDB_HOST" # Needed in 'get_psql_host' function
 fi
-echo "-----------"
 
 # Only needs to be set via Environment Vars in 'CI' because lack of interactivity there (e.g. no psw prompt possible)
 if [ "$hosting_env" == "CI" ]; then
