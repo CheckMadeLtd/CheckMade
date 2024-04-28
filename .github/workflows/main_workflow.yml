@@ -219,8 +219,8 @@ jobs:
         if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
-          app-name: 'telegram-app-d4e8'
+          app-name: 'telegram-app-330q0'
           slot-name: 'production'
           package: ${{ env.BUILD_OUTPUT_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_D4E8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_330Q0 }}
           

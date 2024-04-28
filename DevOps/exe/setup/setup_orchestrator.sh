@@ -89,7 +89,7 @@ confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_k
 
 echo "--------------------"
 echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
-Function: '${FUNCTIONAPP_NAME}' | Configuration (menu) | General Settings (tab) | Stack settings (section) | \
+Choose the relevant FunctionApp | Settings | Configuration | General Settings (tab) | Stack settings (section) | \
 .NET Version (dropdown) and set a version and 'Save'! Continue here with 'Enter' when done."
 read -r
 
