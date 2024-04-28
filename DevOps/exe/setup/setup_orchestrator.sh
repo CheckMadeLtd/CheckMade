@@ -47,10 +47,17 @@ echo "Currently available resource groups:"
 az group list --query "[*].name"
 
 echo "--------------------"
+echo "Do you want to create a new resource group for az services?"
 confirm_script_launch "$script_dir_orchestrator/az_init/group_new_setup.sh"
 
 echo "--------------------"
-echo "Confirm if current subscriptions and defaults are correct (y/n)"
+CURRENT_COMMON_RESOURCE_GROUP="common-d425V"
+echo "The current 'common' resource group (e.g. used for the production DB) is saved as: \
+'${CURRENT_COMMON_RESOURCE_GROUP}'. It is 'common' in the same sense as the CheckMade.Common.XYZ code modules."
+echo ""
+
+echo "--------------------"
+echo "Confirm if current subscription, defaults and common resource group are correct (y/n)"
 read -r defaults_correct
 
 if [ "$defaults_correct" != "y" ]; then
@@ -115,8 +122,8 @@ confirm_script_launch "$script_dir_orchestrator/db/dev_only/db_setup.sh"
 
 # --- COSMOS DB - INITIAL CLUSTER SETUP -----------------------------------------
 
-echo "Next, go to the Azure Portal and create a 'Cosmos DB for PostgreSQL' resource in the 'checkmade_perm' \
-resource group, if you haven't yet."
+echo "Next, go to the Azure Portal and create a 'Cosmos DB for PostgreSQL' resource in the \
+'${CURRENT_COMMON_RESOURCE_GROUP}' resource group, if you haven't yet."
 echo "--- Setting Defaults ---"
 
 echo "BASICS: \
@@ -153,7 +160,7 @@ if [ -z "$PG_APP_USER_PSW" ]; then
 fi
 
 # Needed in multiple of the following sub scripts
-COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g checkmade_perm -n "$postgres_cluster_name" \
+COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$postgres_cluster_name" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
