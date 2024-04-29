@@ -13,7 +13,8 @@ public static class Startup
 {
     public static void ConfigureAppServices(this IServiceCollection services, IConfiguration config)
     {
-        var tgToken = config.GetValue<string>("CHECKMADE-SUBMISSIONS-BOT-TOKEN");
+        var tgToken = config.GetValue<string>("TelegramBotConfiguration:CHECKMADE-SUBMISSIONS-BOT-TOKEN")
+            ?? throw new ArgumentNullException(nameof(config), "CHECKMADE-SUBMISSIONS-BOT-TOKEN not found");
     
         services.AddHttpClient("CheckMadeSubmissionsBot")
             .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
