@@ -7,8 +7,12 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
-# ToDo: Also add Staging bot tokens check
 echo "Checking necessary environment variables are set..."
+
+env_var_is_set "STG_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
+env_var_is_set "STG_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
+env_var_is_set "STG_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
+
 env_var_is_set "PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
 env_var_is_set "PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
 env_var_is_set "PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
@@ -20,13 +24,16 @@ echo "Now setting Telegram Bot Tokens as new secrets under section '${bot_config
 as per local secrets json structure..."
 
 #  Declaring a dictionary, mapping bot_type to bot_token, based on tokens stored in the ENVIRONMENT
+#  In the Unix Env. the keys need to use '_' but in dotnet / Azure Keyvault they need to use '-'!!
 declare -A bots
-# shellcheck disable=SC2154
-# ToDo: Also add Staging bot tokens
-# In the Unix Env. the keys need to use '_' but in dotnet / Azure Keyvault they need to use '-'!!
-bots["CHECKMADE-SUBMISSIONS"]="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
-bots["CHECKMADE-COMMUNICATIONS"]="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
-bots["CHECKMADE-NOTIFICATIONS"]="$PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+
+bots["STG-CHECKMADE-SUBMISSIONS"]="$STG_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+bots["STG-CHECKMADE-COMMUNICATIONS"]="$STG_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
+bots["STG-CHECKMADE-NOTIFICATIONS"]="$STG_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
+
+bots["PRD-CHECKMADE-SUBMISSIONS"]="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+bots["PRD-CHECKMADE-COMMUNICATIONS"]="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
+bots["PRD-CHECKMADE-NOTIFICATIONS"]="$PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
 
 for bot_type in "${!bots[@]}"; do
     bot_token="${bots[$bot_type]}"

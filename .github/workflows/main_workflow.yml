@@ -209,7 +209,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'telegram-app-330q0'
-          slot-name: 'production'
+          slot-name: 'staging'
           package: ${{ env.BUILD_OUTPUT_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_330Q0 }}
           

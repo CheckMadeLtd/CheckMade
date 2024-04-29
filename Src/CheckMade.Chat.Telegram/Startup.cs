@@ -11,13 +11,31 @@ namespace CheckMade.Chat.Telegram;
 
 public static class Startup
 {
-    public static void ConfigureAppServices(this IServiceCollection services, IConfiguration config)
+    public static void ConfigureAppServices(
+        this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        var tgToken = config.GetValue<string>("TelegramBotConfiguration:CHECKMADE-SUBMISSIONS-BOT-TOKEN")
-            ?? throw new ArgumentNullException(nameof(config), "CHECKMADE-SUBMISSIONS-BOT-TOKEN not found");
+        var telegramToken = hostingEnvironment switch
+        {
+            "Development" =>
+                config.GetValue<string>("TelegramBotConfiguration:DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
+                ?? throw new ArgumentNullException(nameof(config),
+                    "DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+
+            "Staging" =>
+                config.GetValue<string>("TelegramBotConfiguration:STG-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
+                ?? throw new ArgumentNullException(nameof(config),
+                    "STG-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+
+            "Production" =>
+                config.GetValue<string>("TelegramBotConfiguration:PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
+                ?? throw new ArgumentNullException(nameof(config),
+                    "PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+
+            _ => throw new ArgumentException(nameof(hostingEnvironment))
+        };
     
         services.AddHttpClient("CheckMadeSubmissionsBot")
-            .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(tgToken, httpClient));
+            .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(telegramToken, httpClient));
 
         services.AddScoped<UpdateService>();
     }
