@@ -20,13 +20,14 @@ public class TestStartup : IDisposable, IAsyncDisposable
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables(); // Includes e.g. EnvVars set in GH Actions Workflow such as 'HostingEnvironment'
+            .AddEnvironmentVariables(); // Also includes Env Vars set in GH Actions Workflow
         var config = builder.Build();
         
         // From local.settings.json or from env variable set in GitHub Actions workflow!
-        var env = config.GetValue<string>("HOSTING_ENVIRONMENT");
+        var env = config.GetValue<string>("HOSTING_ENVIRONMENT")
+            ?? throw new ArgumentNullException(nameof(config), "Can't find HOSTING_ENVIRONMENT");
 
-        services.ConfigurePersistenceServices(config, env);        
+        services.ConfigurePersistenceServices(config, env);
         services.ConfigureBusinessServices();
         
         ServiceProvider = services.BuildServiceProvider();

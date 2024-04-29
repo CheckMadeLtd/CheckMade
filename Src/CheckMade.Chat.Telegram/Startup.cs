@@ -6,12 +6,13 @@ using Telegram.Bot;
 
 namespace CheckMade.Chat.Telegram;
 
+// In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
+// but in Azure Keyvault they need to use '-'
+
 public static class Startup
 {
     public static void ConfigureAppServices(this IServiceCollection services, IConfiguration config)
     {
-        // In the Unix Env. the var names/keys need to use '_' but in dotnet / Azure Keyvault they need to use '-'
-        
         var tgToken = config.GetValue<string>("CHECKMADE-SUBMISSIONS-BOT-TOKEN");
     
         services.AddHttpClient("CheckMadeSubmissionsBot")
@@ -26,9 +27,9 @@ public static class Startup
         var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 
-                config.GetValue<string>("PG-DB-CONNSTRING") 
+                config.GetValue<string>("PG_DB_CONNSTRING") 
                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                    "Can't find PG-DB-CONNSTRING"),
+                    "Can't find PG_DB_CONNSTRING"),
             
             "Production" or "Staging" => 
                 (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD-DB") 
