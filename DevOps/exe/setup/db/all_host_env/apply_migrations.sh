@@ -17,8 +17,8 @@ echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_SUPER_USER"
 env_var_is_set "PG_DB_NAME"
 
-if [ "$hosting_env" == "Production" ] || [ "$hosting_env" == "Staging" ]; then
-  env_var_is_set "COSMOSDB_HOST" # Needed in 'get_psql_host' function
+if [ "$hosting_env" == "Production" ]; then
+  env_var_is_set "COSMOSDB_PG_HOST" # Needed in 'get_psql_host' function
 fi
 
 if [ "$hosting_env" != "CI" ]; then
@@ -43,7 +43,7 @@ for sql_file in $(ls $migrations_dir/*.sql | sort); do
   
   echo "Applying migration: $sql_file"
   
-  if [ -z "$psql_host" ]; then # in case of env=Development
+  if [ -z "$psql_host" ]; then # usually in case of env=Development
     psql -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
   else
     psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"

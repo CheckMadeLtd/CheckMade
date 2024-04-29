@@ -107,9 +107,8 @@ read -r
 # --- HOSTING-ENV-AGNOSTIC DB SETUP VARS -----------------------------------------
 
 # These are consumed by subsequent db-setup-related scripts and are the same across all hosting environments
-
 PG_DB_NAME="cm_ops"
-PG_APP_USER="citus" # ToDo: instead of 'cm_app_user' for now
+PG_APP_USER="cmappuser"
 
 # --- POSTGRES LOCAL/DEV CLUSTER/SERVER SETUP -----------------------------------------
 
@@ -148,7 +147,7 @@ echo "Leave 'Service-managed key' default"
 echo "-----"
 echo "Deployment of the new postgres cluster takes several minutes and can be followed under 'Deployments' section \
 of the resource group. When done, or when already exists, enter the name of the postgres cluster to continue:"
-read -r postgres_cluster_name
+read -r COSMOSDB_PG_CLUSTER_NAME
 
 # --- COSMOS DB SETUP -----------------------------------------
 
@@ -156,34 +155,30 @@ PG_SUPER_USER="citus"
 
 echo "------------"
 
-# -- ToDo: the below will only become relevant again when/if I can create a new role on the cosmosdb again
-#echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
-#read -r PG_APP_USER_PSW
-#if [ -z "$PG_APP_USER_PSW" ]; then
-#  echo "Err: No password set"
-#  exit 1
-#fi
+echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
+read -r PG_APP_USER_PSW
+if [ -z "$PG_APP_USER_PSW" ]; then
+  echo "Err: No password set"
+  exit 1
+fi
 
 # Needed in multiple of the following sub scripts
-COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$postgres_cluster_name" \
+COSMOSDB_PG_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$COSMOSDB_PG_CLUSTER_NAME" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
-# ToDo: Review! Commented out for now because of my current inability to create a new user/role with 'citus'
-# ... waiting for resolution with help of Azure Support - or will continue to use citus for ops...
-# confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
-
+confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/apply_migrations.sh" "Production"
-
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_connstring_in_funcapp.sh" 
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_psw_in_keyvault.sh"
 
 # --- PUBLISH & TELEGRAM WebHooks Setup -----------------------------------------
 
 echo "--------------------"
-echo "Now publish the functions to Azure via the main GitHub Action Workflow (necessary for the next step \
-to retrieve the secret code of the live function). Continue with 'Enter' when done."
+echo "Now publish the functions to Azure (e.g. via the main GitHub Action Workflow) to allow retrieval of secret codes \
+of deployed functions - which in turn prepares us for the next step of setting Telegram Webhooks. \
+Continue with 'Enter' when done publishing."
 read -r
-
-echo "--------------------"
-echo "If setting up Telegram WebHooks for dev AND prd then launch a second time manually!"
 confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
+
+echo "---------------------"
+echo "Congratulations, you reached the end of the setup orchestration script!"
