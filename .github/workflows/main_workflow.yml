@@ -39,8 +39,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }}
+          POSTGRES_USER: ${{ vars.PG_SUPER_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PG_SUPER_USER_PSW }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -198,24 +198,24 @@ jobs:
           ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh CI
           psql -h localhost -U $PG_SUPER_USER -l
         env:
-          PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
-          PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
-          PG_APP_USER: ${{ vars.POSTGRES_APP_USER }}
-          PG_APP_USER_PSW: ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_DB_NAME: ${{ vars.PG_DB_NAME }}
+          PG_SUPER_USER: ${{ vars.PG_SUPER_USER }}
+          PGPASSWORD: ${{ secrets.PG_SUPER_USER_PSW }} # PGPASSWORD is automatically used by psql
+          PG_APP_USER: ${{ vars.PG_APP_USER }}
+          PG_APP_USER_PSW: ${{ secrets.PG_APP_USER_PSW }}
       
       - name: Apply Database Migrations
         run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh CI
         env:
-          PG_DB_NAME: ${{ vars.POSTGRES_OPS_DB_NAME }}
-          PG_SUPER_USER: ${{ vars.POSTGRES_SUPERUSER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_SUPERUSER_PSW }} # PGPASSWORD is automatically used by psql
+          PG_DB_NAME: ${{ vars.PG_DB_NAME }}
+          PG_SUPER_USER: ${{ vars.PG_SUPER_USER }}
+          PGPASSWORD: ${{ secrets.PG_SUPER_USER_PSW }} # PGPASSWORD is automatically used by psql
       
       - name: Test
         run: dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          PG_DB_CONNSTRING: ${{ secrets.POSTGRES_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_DB_CONNSTRING: ${{ secrets.PG_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
             
       #  Deploy ---------------------------------
 
