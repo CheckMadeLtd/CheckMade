@@ -11,7 +11,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_DB_NAME"
 env_var_is_set "PG_APP_USER"
-env_var_is_set "COSMOSDB_HOST"
+env_var_is_set "COSMOSDB_PG_HOST"
 
 echo "Choose the functionapp to which the Connection String shall be added:"
 FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
@@ -23,7 +23,7 @@ cosmosdb_user="$PG_APP_USER"
 cosmosdb_psw="MYSECRET" # Will be replaced with value from KeyVault in Program/Startup.cs
 cosmosdb_options="Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true"
 
-cosmosdb_connstring="Server=$COSMOSDB_HOST;Database=$cosmosdb_name;Port=$cosmosdb_port;User Id=$cosmosdb_user;\
+cosmosdb_connstring="Server=$COSMOSDB_PG_HOST;Database=$cosmosdb_name;Port=$cosmosdb_port;User Id=$cosmosdb_user;\
 Password=$cosmosdb_psw;$cosmosdb_options"
 echo "$cosmosdb_connstring"
 

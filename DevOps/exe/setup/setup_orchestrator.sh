@@ -107,7 +107,6 @@ read -r
 # --- HOSTING-ENV-AGNOSTIC DB SETUP VARS -----------------------------------------
 
 # These are consumed by subsequent db-setup-related scripts and are the same across all hosting environments
-
 PG_DB_NAME="cm_ops"
 PG_APP_USER="cmappuser"
 
@@ -148,7 +147,7 @@ echo "Leave 'Service-managed key' default"
 echo "-----"
 echo "Deployment of the new postgres cluster takes several minutes and can be followed under 'Deployments' section \
 of the resource group. When done, or when already exists, enter the name of the postgres cluster to continue:"
-read -r postgres_cluster_name
+read -r COSMOSDB_PG_CLUSTER_NAME
 
 # --- COSMOS DB SETUP -----------------------------------------
 
@@ -164,7 +163,7 @@ if [ -z "$PG_APP_USER_PSW" ]; then
 fi
 
 # Needed in multiple of the following sub scripts
-COSMOSDB_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$postgres_cluster_name" \
+COSMOSDB_PG_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$COSMOSDB_PG_CLUSTER_NAME" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
 
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
