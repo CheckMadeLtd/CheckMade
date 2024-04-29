@@ -180,10 +180,11 @@ confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_db_psw_in_keyvau
 # --- PUBLISH & TELEGRAM WebHooks Setup -----------------------------------------
 
 echo "--------------------"
-echo "Now publish the functions to Azure via the main GitHub Action Workflow (necessary for the next step \
-to retrieve the secret code of the live function). Continue with 'Enter' when done."
+echo "Now publish the functions to Azure (e.g. via the main GitHub Action Workflow) to allow retrieval of secret codes \
+of deployed functions - which in turn prepares us for the next step of setting Telegram Webhooks. \
+Continue with 'Enter' when done publishing."
 read -r
-
-echo "--------------------"
-echo "If setting up Telegram WebHooks for dev AND prd then launch a second time manually!"
 confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
+
+echo "---------------------"
+echo "Congratulations, you reached the end of the setup orchestration script!"
