@@ -153,8 +153,11 @@ read -r COSMOSDB_PG_CLUSTER_NAME
 
 PG_SUPER_USER="citus"
 
-echo "------------"
+# Forces psql, when connecting from the dev's machine into an Azure CosmosDb, to use the specified settings.
+PGSSLMODE=verify-full
+PGSSLROOTCERT=~/AzureCosmosDbForPostgreSQLDigiCert.crt.pem
 
+echo "------------"
 echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
 read -r PG_APP_USER_PSW
 if [ -z "$PG_APP_USER_PSW" ]; then
