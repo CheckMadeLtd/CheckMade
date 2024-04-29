@@ -1,3 +1,26 @@
+29/04/2024: Took out this manual setup of dotnet SDK caching because it didn't work. Lack of permissions on GH Runner for the
+/usr/share/dotnet path which is a system path. But I can also not use the 'with cache' option of the setup-dotnet 
+action, because that expects the usage of packages.lock.json for dependencies (which I don't use).  
+The .NET SDK install itself is fast enough to not having to worry about it pre mobile app dev. This might be different
+with the huge workloads (android and wasm), but I'll worry about that when it becomes relevant!
+
+      # dotnet SDK & Workloads --------------
+      
+      - name: Cache dotnet SDK and Workloads
+        id: cache-dotnet
+        uses: actions/cache@v4
+        env:
+          # Using the solution_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
+          # clashing while attempting to form the same cache. See: https://chat.openai.com/share/a7768546-58f8-4f4f-9de5-07a6153495c4
+          cache-name: cache-dotnet-${{ matrix.toplevel_project }}
+        with:
+          path: /usr/share/dotnet
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}"
+        
+      - name: Check cache-dotnet hit
+        if: steps.cache-dotnet.outputs.cache-hit == 'true'
+        run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
+
 
 Not using Caching for the Android SDK:
 Installing the SDK takes less than 30sec but the compression of the 100k+ files of that SDK takes many minutes.
