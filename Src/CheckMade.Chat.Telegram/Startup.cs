@@ -34,9 +34,6 @@ public static class Startup
             _ => throw new ArgumentException(nameof(hostingEnvironment))
         };
     
-        Console.Error.WriteLine($"Current hostingEnvironment: {hostingEnvironment}");
-        Console.Error.WriteLine($"BotToken used: {telegramToken}");
-        
         services.AddHttpClient("CheckMadeSubmissionsBot")
             .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(telegramToken, httpClient));
 

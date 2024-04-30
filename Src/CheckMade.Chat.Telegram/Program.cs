@@ -38,15 +38,21 @@ var host = new HostBuilder()
 
         var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
                                "{Message:lj} {SourceContext} {NewLine}";
+
+        loggerConfig
+            .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
+            .Enrich.WithProcessId()
+            // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
+            .Enrich.FromLogContext();
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
+            /* Not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
+            for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
+            which seem to be hard to suppress.
+            --> For seeing logs in Dev env. that follow my exact configuration, use files rather than console. */   
+            
             loggerConfig
-                .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
-                
-                .Enrich.WithProcessId()
-                // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
-                .Enrich.FromLogContext()
                 
                 .WriteTo.File(
                     new CompactJsonFormatter(),
@@ -60,23 +66,21 @@ var host = new HostBuilder()
                     rollingInterval: RollingInterval.Day,
                     outputTemplate: humanReadability);
         }
+        else
+        {
+            /* the Function writes default LogLevels to Application Insights even without specifying that sink,
+            thanks to host.json and Azure Function default settings. For logs from my own code, the min LogLevel is
+            'Information'. System components have their own default min level. 'SourceContext' is one of the useful
+            items that seems NOT to be logged by default. Hence, for more fain-grained control of what goes into
+            Application Insights, adding SeriLog's corresponding sink. */
+
+            loggerConfig
+                .WriteTo.ApplicationInsights(TelemetryConverter.Traces, LogEventLevel.Information);
+        }
 
         Log.Logger = loggerConfig.CreateLogger();
         logging.AddSerilog(Log.Logger, true);
         
-        /* Notes about the above setup
-
-        a) the Function writes default LogLevels to Application Insights even without specifying that sink,
-            thanks to host.json and Azure Function default settings. For logs from my own code, the min LogLevel is
-            'Information'. System components have their own default min level. 'SourceContext' is one of the useful 
-            items that seems NOT to be logged by default. For more fain-grained control of what goes into
-            Application Insights, use SeriLog's corresponding sink and then e.g. MinimumLevel.Override.
-        
-        b) not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
-            for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
-            which seem to be hard to suppress.  
-            --> For seeing logs in Dev env. that follow my exact configuration, use files rather than console. 
-        */   
     })
     .ConfigureServices((hostContext, services) =>
     {
