@@ -26,7 +26,11 @@ az functionapp create --name "$new_FUNCTIONAPP_NAME" --storage-account "$STORAGE
 FUNCTIONAPP_NAME=$new_FUNCTIONAPP_NAME
 
 az functionapp deployment slot create --name "$FUNCTIONAPP_NAME" --slot 'staging'
+az functionapp identity assign --name "$FUNCTIONAPP_NAME" --slot 'staging' 
 
-functionapp_assigned_id=$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)
-echo "Success, function '${FUNCTIONAPP_NAME}' was created (assigned identity: ${functionapp_assigned_id}) with \
-with 'production' and 'staging' deployment slots"
+echo "Success, function '${FUNCTIONAPP_NAME}' was created with 'production' and 'staging' deployment slots."
+echo "FYI - Assigned identity (production slot): \
+$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)"
+echo "FYI - Assigned identity (staging slot): \
+$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --slot 'staging' --query principalId --output tsv)"
+
