@@ -25,10 +25,11 @@ az functionapp create --name "$new_FUNCTIONAPP_NAME" --storage-account "$STORAGE
 
 FUNCTIONAPP_NAME=$new_FUNCTIONAPP_NAME
 
-# Wait for 10 seconds with further execution to give Azure time to fully register the new Resources, preventing a 
-# possible error message for the next step that the "The Resource 'UKSouthLinuxDynamicPlan' was not found...
-sleep 10
+# Preventing apossible error message for the next step that the "The Resource 'UKSouthLinuxDynamicPlan' was not found...
+echo "Now waiting for 30 sec with further execution to give Azure time to fully register the new Resources..."
+sleep 30
 
+echo "Wait time is over, now creating staging slot..."
 az functionapp deployment slot create --name "$FUNCTIONAPP_NAME" --slot 'staging'
 az functionapp identity assign --name "$FUNCTIONAPP_NAME" --slot 'staging' 
 
