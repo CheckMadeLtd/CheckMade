@@ -2,8 +2,10 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Chat.Telegram;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -32,6 +34,12 @@ var host = new HostBuilder()
          and they would take precedence over any local .json setting files (which are added by default via the above */
         config.AddEnvironmentVariables();
     })
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.ConfigureAppServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBusinessServices();
+    })
     .ConfigureLogging((hostContext, logging) =>
     {
         var loggerConfig = new LoggerConfiguration();
@@ -41,6 +49,12 @@ var host = new HostBuilder()
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
+            /* The Function writes default LogLevels to Application Insights even without specifying that sink,
+            thanks to host.json and Azure Function default settings. For logs from my own code, the min LogLevel is
+            'Information'. System components have their own default min level. 'SourceContext' is one of the useful 
+            items that seems NOT to be logged by default. For more fain-grained control of what goes into
+            Application Insights, use SeriLog's corresponding sink and then e.g. MinimumLevel.Override. */
+            
             loggerConfig
                 .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
                 
@@ -60,29 +74,24 @@ var host = new HostBuilder()
                     rollingInterval: RollingInterval.Day,
                     outputTemplate: humanReadability);
         }
+        else
+        {
+            /* b) not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
+            for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
+            which seem to be hard to suppress.
+            --> For seeing logs in Dev env. that follow my exact configuration, use files rather than console. */
+            
+            loggerConfig
+                .WriteTo.Console()
+                .WriteTo.ApplicationInsights(
+                    TelemetryConfiguration.Active, TelemetryConverter.Traces,
+                    restrictedToMinimumLevel: LogEventLevel.Information);
+        }
 
         Log.Logger = loggerConfig.CreateLogger();
+        logging.ClearProviders();
         logging.AddSerilog(Log.Logger, true);
         
-        /* Notes about the above setup
-
-        a) the Function writes default LogLevels to Application Insights even without specifying that sink,
-            thanks to host.json and Azure Function default settings. For logs from my own code, the min LogLevel is
-            'Information'. System components have their own default min level. 'SourceContext' is one of the useful 
-            items that seems NOT to be logged by default. For more fain-grained control of what goes into
-            Application Insights, use SeriLog's corresponding sink and then e.g. MinimumLevel.Override.
-        
-        b) not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
-            for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
-            which seem to be hard to suppress.  
-            --> For seeing logs in Dev env. that follow my exact configuration, use files rather than console. 
-        */   
-    })
-    .ConfigureServices((hostContext, services) =>
-    {
-        services.ConfigureAppServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
-        services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
-        services.ConfigureBusinessServices();
     })
     .Build();
 

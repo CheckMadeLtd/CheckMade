@@ -9,7 +9,7 @@ namespace CheckMade.Chat.Telegram;
 // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
 // but in Azure Keyvault they need to use '-'
 
-public static class Startup
+public static class ConfigureServicesExtensions
 {
     public static void ConfigureAppServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
