@@ -33,6 +33,12 @@ echo "Wait time is over, now creating staging slot..."
 az functionapp deployment slot create --name "$FUNCTIONAPP_NAME" --slot 'staging'
 az functionapp identity assign --name "$FUNCTIONAPP_NAME" --slot 'staging' 
 
+# The AzureFunctionsWebHost__hostid helps avoid collisions when accessing a shared storage account 
+# (i.e. only needed when the staging slot doesn't have its dedicated storage account)
+echo "Staging slot created and system-id assigned. Now adding staging-slot-specific appsettings..."
+az functionapp config appsettings set --name "$FUNCTIONAPP_NAME" --slot 'staging' \
+--slot-settings AZURE_FUNCTIONS_ENVIRONMENT=Staging AzureFunctionsWebHost__hostid=staging-"$(get_random_id)" 
+
 echo "Success, function '${FUNCTIONAPP_NAME}' was created with 'production' and 'staging' deployment slots."
 echo "FYI - Assigned identity (production slot): \
 $(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)"
