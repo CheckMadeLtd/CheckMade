@@ -90,7 +90,9 @@ confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_k
 echo "--------------------"
 echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
 Choose the relevant FunctionApp | Settings | Configuration | General Settings (tab) | Stack settings (section) | \
-.NET Version (dropdown) and set a version and 'Save'! Continue here with 'Enter' when done."
+.NET Version (dropdown) and set a version and 'Save'!"
+echo "Do this for both, the production AND the staging slot!"
+echo "Continue here with 'Enter' when done."
 read -r
 
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/publishing_profile_to_github.sh"
@@ -101,7 +103,11 @@ Continue with 'Enter' when done."
 read -r
 
 echo "--------------------"
-echo "Verify keyvault URL in Program.cs of top-level project(s). Continue with 'Enter' when done."
+echo "Verify keyvault URL in Program.cs of top-level project(s)."
+if [ -n "$KEYVAULT_NAME" ]; then
+  echo "Current keyvault name is: '${KEYVAULT_NAME}', usually enough to verify the alphanumeric code in the URL."
+fi
+echo "Continue with 'Enter' when done."
 read -r
 
 # --- HOSTING-ENV-AGNOSTIC DB SETUP VARS -----------------------------------------
@@ -158,11 +164,17 @@ PGSSLMODE=verify-full
 PGSSLROOTCERT=~/AzureCosmosDbForPostgreSQLDigiCert.crt.pem
 
 echo "------------"
-echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
-read -r PG_APP_USER_PSW
-if [ -z "$PG_APP_USER_PSW" ]; then
-  echo "Err: No password set"
-  exit 1
+echo "Set password for App User '${PG_APP_USER}' (y/n)? Only needed if you still want to set up 'db_app_user' or \
+set the app user's psw in keyvault."
+read -r answer_set_psw
+
+if [ "$answer_set_psw" == "y" ]; then
+  echo "Enter/set the password for '${PG_APP_USER}' (NOT 'citus'!!) for the (prd) CosmosDb (save in psw-manager!):"
+  read -r PG_APP_USER_PSW
+  if [ -z "$PG_APP_USER_PSW" ]; then
+    echo "Err: No password set"
+    exit 1
+  fi  
 fi
 
 # Needed in multiple of the following sub scripts

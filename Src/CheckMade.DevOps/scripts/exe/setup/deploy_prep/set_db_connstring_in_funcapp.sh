@@ -32,5 +32,11 @@ read -r connstring_key
 connstring_settings="$connstring_key='$cosmosdb_connstring'"
 
 echo "Now setting Connection String in '${FUNCTIONAPP_NAME}'"
-az webapp config connection-string set --name "$FUNCTIONAPP_NAME" --connection-string-type PostgreSQL \
---settings "$connstring_settings"
+
+# Using 'az webapp' instead of 'functionapp' because the latter doesn't support 'config connection-string' subcmd!
+
+az webapp config connection-string set --name "$FUNCTIONAPP_NAME" \
+--connection-string-type PostgreSQL --settings "$connstring_settings"
+
+az webapp config connection-string set --name "$FUNCTIONAPP_NAME" --slot 'staging' \
+--connection-string-type PostgreSQL --settings "$connstring_settings"
