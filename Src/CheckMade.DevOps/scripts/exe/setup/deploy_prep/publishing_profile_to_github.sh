@@ -12,7 +12,7 @@ working_dir_is_solution_root # because of usage of 'gh' below: to make sure gh o
 
 echo "Select functionapp whose publishing profile you want to save to GitHub..."
 FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
-pub_profile=$(az functionapp deployment list-publishing-profiles --name "$FUNCTIONAPP_NAME" --xml)
+pub_profile=$(az functionapp deployment list-publishing-profiles --name "$FUNCTIONAPP_NAME" --slot 'staging' --xml)
 
 if [ -n "$pub_profile" ]; then
 
@@ -33,4 +33,3 @@ else
     exit 1
 fi
 
-# ToDo: After introduction of staging slot, add --slot STAGING_SLOT_NAME to az command and add _STAGING suffix to secret name

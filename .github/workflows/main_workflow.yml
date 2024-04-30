@@ -68,25 +68,10 @@ jobs:
       - name: Check installed Bash version
         run: bash --version
             
-      # Setting up Caches ----------------------------
+# Setting up Caches ----------------------------
 
-      # dotnet SDK & Workloads --------------
+      # NOT Caching dotnet SDK & Workloads at this point, see notes in 'parked_workflows.txt'
       
-      - name: Cache dotnet SDK and Workloads
-        id: cache-dotnet
-        uses: actions/cache@v4
-        env:
-          # Using the solution_config as part of the cache-name to avoid multiple matrix jobs running in parallel 
-          # clashing while attempting to form the same cache. See: https://chat.openai.com/share/a7768546-58f8-4f4f-9de5-07a6153495c4
-          cache-name: cache-dotnet-${{ matrix.toplevel_project }}
-        with:
-          path: /usr/share/dotnet
-          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('global.json') }}"
-        
-      - name: Check cache-dotnet hit
-        if: steps.cache-dotnet.outputs.cache-hit == 'true'
-        run: echo "There was a cache-hit for restoring dotnet SDK & Workload dependencies."
-
       # dotnet Nuget (solution_config specific) --------------
       
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
@@ -224,7 +209,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'telegram-app-330q0'
-          slot-name: 'production'
+          slot-name: 'staging'
           package: ${{ env.BUILD_OUTPUT_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_330Q0 }}
           
