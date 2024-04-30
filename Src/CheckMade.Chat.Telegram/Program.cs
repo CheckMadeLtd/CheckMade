@@ -90,6 +90,7 @@ var host = new HostBuilder()
                 ConnectionString = config["APPLICATIONINSIGHTS_CONNECTION_STRING"]
             };
             
+            // ToDo: For some reason this does not yet log SourceContext to ApplicationInsights. Fix later. 
             loggerConfig
                 .WriteTo.Console()
                 .WriteTo.ApplicationInsights(

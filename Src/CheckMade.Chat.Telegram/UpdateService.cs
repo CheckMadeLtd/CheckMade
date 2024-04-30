@@ -11,6 +11,7 @@ public class UpdateService(ITelegramBotClient botClient,
 {
     internal async Task EchoAsync(Update update)
     {
+        logger.LogDebug("DebugTest Message");
         logger.LogInformation("Invoke telegram update function");
 
         if (update.Message is not { } inputMessage) return;
