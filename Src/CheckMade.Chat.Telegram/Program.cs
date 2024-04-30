@@ -18,22 +18,22 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger();
+        // Log.Logger = new LoggerConfiguration()
+        //     .WriteTo.Console()
+        //     .CreateBootstrapLogger();
 
-        try
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-        catch (Exception ex)
-        {
-            Log.Fatal(ex, "An unhandled exception occurred during bootstrapping");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
-        }
+        // try
+        // {
+        CreateHostBuilder(args).Build().Run();
+        // }
+        // catch (Exception ex)
+        // {
+        //     Log.Fatal(ex, "An unhandled exception occurred during bootstrapping");
+        // }
+        // finally
+        // {
+        //     Log.CloseAndFlush();
+        // }
     }
 
     // ReSharper disable once UnusedParameter.Local
