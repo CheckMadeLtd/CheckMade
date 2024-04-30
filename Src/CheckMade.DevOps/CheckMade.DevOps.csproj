@@ -2,8 +2,15 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Chat;Debug_Backend_Only;Debug_All;No_Build</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+    
     <ItemGroup>
       <Folder Include="scripts\" />
     </ItemGroup>
