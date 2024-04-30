@@ -42,7 +42,16 @@ var host = new HostBuilder()
     })
     .ConfigureLogging((hostContext, logging) =>
     {
+        var config = hostContext.Configuration;
+        
         var loggerConfig = new LoggerConfiguration();
+
+        loggerConfig
+            .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
+
+            .Enrich.WithProcessId()
+            // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
+            .Enrich.FromLogContext();
 
         var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
                                "{Message:lj} {SourceContext} {NewLine}";
@@ -56,12 +65,7 @@ var host = new HostBuilder()
             Application Insights, use SeriLog's corresponding sink and then e.g. MinimumLevel.Override. */
             
             loggerConfig
-                .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
-                
-                .Enrich.WithProcessId()
-                // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
-                .Enrich.FromLogContext()
-                
+                    
                 .WriteTo.File(
                     new CompactJsonFormatter(),
                     "../../../logs/machine/devlogs-.log",
@@ -81,10 +85,15 @@ var host = new HostBuilder()
             which seem to be hard to suppress.
             --> For seeing logs in Dev env. that follow my exact configuration, use files rather than console. */
             
+            var telemetryConfig = new TelemetryConfiguration
+            {
+                ConnectionString = config["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+            };
+            
             loggerConfig
                 .WriteTo.Console()
                 .WriteTo.ApplicationInsights(
-                    TelemetryConfiguration.Active, TelemetryConverter.Traces,
+                    telemetryConfig, TelemetryConverter.Traces,
                     restrictedToMinimumLevel: LogEventLevel.Information);
         }
 
