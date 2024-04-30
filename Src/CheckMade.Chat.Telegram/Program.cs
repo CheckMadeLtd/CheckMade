@@ -37,7 +37,8 @@ public class Program
     }
 
     // ReSharper disable once UnusedParameter.Local
-    private static IHostBuilder CreateHostBuilder(string[] args)
+    [UsedImplicitly]
+    public static IHostBuilder CreateHostBuilder(string[] args)
     {
         IHostEnvironment environment;
         
