@@ -97,36 +97,39 @@ while true; do
   
   bot_hosting_context=${bot_choice:0:1} # the first letter
   
-  if [ "$bot_hosting_context" == "d" ]; then
+  if [ "$bot_hosting_context" == "d" ]; then # dev
   
     echo "Please enter the https function endpoint host (use 'ngrok http 7071' in a separate CLI instance to generate \
   the URL that forwards to localhost)"
     read -r functionapp_endpoint
     functionapp_endpoint="$functionapp_endpoint/api/${function_name,,}" # ,, = to lower case
     
-  else
+  else # not dev
   
-    if [ "$bot_hosting_context" == "s" ]; then
-      
-      # ToDo: Here I need to use the functionapp and code from the function's staging slot. 
-      # Even if it's the same function, I think its URI and name have '-staging' attached to it (or similar)
-      echo "Now do stuff for staging"
-        
-    elif [ "$bot_hosting_context" == "p" ]; then 
-    
-      echo "Select functionapp to connect to Telegram..."
-      FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
-      functionapp_endpoint="https://$FUNCTIONAPP_NAME.azurewebsites.net"
-      functionapp_endpoint="$functionapp_endpoint/api/${function_name,,}" # ,, = to lower case
-      
-    fi
+    echo "Select functionapp to connect to Telegram..."
+    FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
+    echo "Now retrieving function code (wait!) and determining endpoint ..."
 
-    echo "Now retrieving function code (wait!) ..."
-    function_code=$(az functionapp function keys list \
-    -n "$FUNCTIONAPP_NAME" --function-name "$function_name" \
-    --query default --output tsv)
+    if [ "$bot_hosting_context" == "s" ]; then # staging
+      
+      functionapp_with_slot="$FUNCTIONAPP_NAME-staging"
+
+      function_code=$(az functionapp function keys list \
+      -n "$FUNCTIONAPP_NAME" --function-name "$function_name" \
+      --slot 'staging' --query default --output tsv)
+        
+    elif [ "$bot_hosting_context" == "p" ]; then # production
+      
+      functionapp_with_slot="$FUNCTIONAPP_NAME"
+
+      function_code=$(az functionapp function keys list \
+      -n "$FUNCTIONAPP_NAME" --function-name "$function_name" \
+      --query default --output tsv)
+
+    fi
     
-    functionapp_endpoint="$functionapp_endpoint?code=$function_code"
+    # ,, = to lower case
+    functionapp_endpoint="https://$functionapp_with_slot.azurewebsites.net/api/${function_name,,}?code=$function_code"
         
   fi
   
