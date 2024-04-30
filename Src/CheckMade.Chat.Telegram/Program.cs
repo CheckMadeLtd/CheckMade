@@ -1,6 +1,7 @@
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using JetBrains.Annotations;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,8 @@ using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 namespace CheckMade.Chat.Telegram;
 
-internal class Program
+[UsedImplicitly] // Azure Functions Runtime requires public entry point
+public class Program
 {
     public static void Main(string[] args)
     {
