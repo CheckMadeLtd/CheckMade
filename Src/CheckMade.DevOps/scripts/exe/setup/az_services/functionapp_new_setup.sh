@@ -25,8 +25,17 @@ az functionapp create --name "$new_FUNCTIONAPP_NAME" --storage-account "$STORAGE
 
 FUNCTIONAPP_NAME=$new_FUNCTIONAPP_NAME
 
-az functionapp deployment slot create --name "$FUNCTIONAPP_NAME" --slot 'staging'
+# Preventing apossible error message for the next step that the "The Resource 'UKSouthLinuxDynamicPlan' was not found...
+echo "Now waiting for 30 sec with further execution to give Azure time to fully register the new Resources..."
+sleep 30
 
-functionapp_assigned_id=$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)
-echo "Success, function '${FUNCTIONAPP_NAME}' was created (assigned identity: ${functionapp_assigned_id}) with \
-with 'production' and 'staging' deployment slots"
+echo "Wait time is over, now creating staging slot..."
+az functionapp deployment slot create --name "$FUNCTIONAPP_NAME" --slot 'staging'
+az functionapp identity assign --name "$FUNCTIONAPP_NAME" --slot 'staging' 
+
+echo "Success, function '${FUNCTIONAPP_NAME}' was created with 'production' and 'staging' deployment slots."
+echo "FYI - Assigned identity (production slot): \
+$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --query principalId --output tsv)"
+echo "FYI - Assigned identity (staging slot): \
+$(az functionapp identity show --name "$FUNCTIONAPP_NAME" --slot 'staging' --query principalId --output tsv)"
+

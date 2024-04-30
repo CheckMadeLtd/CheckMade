@@ -63,7 +63,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Make all scripts executable
-        run: chmod -R +x DevOps/exe
+        run: chmod -R +x ${{ vars.DEVOPS_EXE_SCRIPTS_DIR }}
         
       - name: Check installed Bash version
         run: bash --version
@@ -180,7 +180,7 @@ jobs:
       - name: Set up PostgreSQL DB and User
         run: |
           psql -h localhost -U $PG_SUPER_USER -c "CREATE DATABASE $PG_DB_NAME;"
-          ./DevOps/exe/setup/db/all_host_env/db_app_user_setup.sh CI
+          ./${{ vars.DEVOPS_EXE_SCRIPTS_DIR }}/setup/db/all_host_env/db_app_user_setup.sh CI
           psql -h localhost -U $PG_SUPER_USER -l
         env:
           PG_DB_NAME: ${{ vars.PG_DB_NAME }}
@@ -190,7 +190,7 @@ jobs:
           PG_APP_USER_PSW: ${{ secrets.PG_APP_USER_PSW }}
       
       - name: Apply Database Migrations
-        run: ./DevOps/exe/setup/db/all_host_env/apply_migrations.sh CI
+        run: ./${{ vars.DEVOPS_EXE_SCRIPTS_DIR }}/setup/db/all_host_env/apply_migrations.sh CI
         env:
           PG_DB_NAME: ${{ vars.PG_DB_NAME }}
           PG_SUPER_USER: ${{ vars.PG_SUPER_USER }}
@@ -208,8 +208,8 @@ jobs:
         if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
-          app-name: 'telegram-app-330q0'
+          app-name: 'telegram-app-i3x2o'
           slot-name: 'staging'
           package: ${{ env.BUILD_OUTPUT_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_330Q0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_APP_I3X2O }}
           
