@@ -92,7 +92,7 @@ var host = new HostBuilder()
             
             // ToDo: For some reason this does not yet log SourceContext to ApplicationInsights. Fix later. 
             loggerConfig
-                .WriteTo.Console()
+                .WriteTo.Console(outputTemplate: humanReadability)
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, TelemetryConverter.Traces,
                     restrictedToMinimumLevel: LogEventLevel.Information);
