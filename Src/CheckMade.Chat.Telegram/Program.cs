@@ -50,11 +50,11 @@ var host = new HostBuilder()
             .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
 
             .Enrich.WithProcessId()
-            // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
             .Enrich.FromLogContext();
+         // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
 
         var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
-                               "{Message:lj} || {SourceContext} {NewLine}";
+                               "{Message:lj} || SourceContext: {SourceContext} {NewLine}";
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
@@ -95,10 +95,12 @@ var host = new HostBuilder()
             loggerConfig
                 .WriteTo.Console(
                     outputTemplate: humanReadability,
-                    restrictedToMinimumLevel: LogEventLevel.Debug)
+                    restrictedToMinimumLevel: LogEventLevel.Information)
+                
+                // ToDo: The CustomTelemetryConverter for now simply doesn't do its job. Figure out post summer 2024.
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
-                    restrictedToMinimumLevel: LogEventLevel.Debug);
+                    restrictedToMinimumLevel: LogEventLevel.Information);
         }
 
         Log.Logger = loggerConfig.CreateLogger();
