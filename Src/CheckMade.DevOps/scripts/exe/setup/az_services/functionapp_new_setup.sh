@@ -16,9 +16,11 @@ read -r new_FUNCTIONAPP_NAME
 
 new_FUNCTIONAPP_NAME="${new_FUNCTIONAPP_NAME}-$(get_random_id)"
 
+# os = Windows instead of Linux b/c on Linux, toggling (migration) between consumption and premium plans not supported!
+# see/track: https://github.com/Azure/Azure-Functions/issues/2199
 az functionapp create --name "$new_FUNCTIONAPP_NAME" --storage-account "$STORAGE_NAME" \
 --https-only true \
---os-type Linux \
+--os-type Windows \
 --consumption-plan-location uksouth \
 --functions-version 4 --runtime dotnet-isolated \
 --assign-identity
