@@ -6,6 +6,7 @@ using CheckMade.Chat.Telegram.Startup;
 using CheckMade.Common.Utilities;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -32,13 +33,14 @@ var host = new HostBuilder()
             config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
         }
 
-        /* According to GPT4, the EnvironmentVariables should include the settings from 'Configuration' in the Azure App
-         and they would take precedence over any local .json setting files (which are added by default via the above */
+        /* According to GPT4, the EnvironmentVariables should include the settings from 'Configuration' in the
+         Azure App and they would take precedence over any local .json setting files (which are added by default) */
         config.AddEnvironmentVariables();
     })
     .ConfigureServices((hostContext, services) =>
     {
-        var appSettings = PopulateAppSettings(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.AddSingleton<AppSettings>(_ => 
+            PopulateAppSettings(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
         
         services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
@@ -62,10 +64,10 @@ var host = new HostBuilder()
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
-            /* Not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
-           for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
-           which seem to be hard to suppress.
-           --> That's why, for seeing logs in Dev env. following my precise config, we use files rather than console. */
+            /* Not writing to Console via SeriLog but relying on Azure Function's default logging with default
+             LogLevels for system components and 'Information' for my code. This avoids duplicates from SeriLog
+             and Azure which seem to be hard to suppress.
+           --> Hence for seeing logs in Dev env. following my precise config, we use files rather than console. */
 
             loggerConfig
                     

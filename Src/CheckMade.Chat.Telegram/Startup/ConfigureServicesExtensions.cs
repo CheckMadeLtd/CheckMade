@@ -2,7 +2,6 @@ using CheckMade.Chat.Logic;
 using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Telegram.Bot;
 
 namespace CheckMade.Chat.Telegram.Startup;
 
@@ -14,6 +13,12 @@ public static class ConfigureServicesExtensions
     public static void ConfigureBotServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        var botTypes = Enum.GetNames(typeof(BotType));
+        foreach (var botType in botTypes)
+        {
+            services.AddHttpClient($"CheckMade{botType}Bot");            
+        }    
+        
         services.AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>();
         services.AddScoped<UpdateService>();
     }
