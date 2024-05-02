@@ -11,7 +11,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../setup/az_setup_utils.sh"
 echo "FYI, Current Defaults:"
 az configure --list-defaults 
 
-FUNCTIONAPP_NAME=$(confirm_and_select_resource "functionapp" "$FUNCTIONAPP_NAME")
+functionapp_name=$(confirm_and_select_resource "functionapp")
 
 echo "Swap immediately (enter), preview-swap (p), reverse preview with reset (r) or quit (q):"
 read -r action_argument_input
@@ -26,9 +26,9 @@ elif [ "$action_argument_input" == "q" ]; then
   exit 0
 fi
 
-echo "Applying swap action '${action_argument}' for functionapp $FUNCTIONAPP_NAME..."
+echo "Applying swap action '${action_argument}' for functionapp $functionapp_name..."
 # --target-slot argument defaults to 'production' i.e. never needed since we don't have more than one non-prd slot.
-az functionapp deployment slot swap -n $FUNCTIONAPP_NAME --slot 'staging' --action "$action_argument"
+az functionapp deployment slot swap -n $functionapp_name --slot 'staging' --action "$action_argument"
 
 
 
