@@ -1,17 +1,17 @@
 using System.Net;
-using Microsoft.Azure.Functions.Worker;
+using CheckMade.Chat.Logic;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Chat.Telegram;
+namespace CheckMade.Chat.Telegram.Functions;
 
-public class TelegramBot(ILogger<TelegramBot> logger, UpdateService updateService)
+public abstract class TelegramBotFunctionBase(ILogger logger, UpdateService updateService)
 {
-    [Function("SubmissionsBot")]
-    public async Task<HttpResponseData> 
-        Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
+    protected abstract BotType BotType { get; }
+
+    protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {
         logger.LogInformation("C# HTTP trigger function processed a request");
         var response = request.CreateResponse(HttpStatusCode.OK);
@@ -25,11 +25,9 @@ public class TelegramBot(ILogger<TelegramBot> logger, UpdateService updateServic
                 return response;
             }
 
-            await updateService.EchoAsync(update);
+            await updateService.HandleUpdateAsync(update, BotType);
         }
-#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception e)
-#pragma warning restore CA1031 // Do not catch general exception types
         {
             logger.LogError("Exception: {Message}", e.Message);
         }

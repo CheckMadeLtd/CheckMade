@@ -1,3 +1,4 @@
+using CheckMade.Chat.Logic;
 using CheckMade.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -9,22 +10,22 @@ public class UpdateService(ITelegramBotClient botClient,
     IRequestProcessor requestProcessor,
     ILogger<UpdateService> logger)
 {
-    internal async Task EchoAsync(Update update)
+    internal async Task HandleUpdateAsync(Update update, BotType botType)
     {
-        logger.LogDebug("DebugTest Message");
-        logger.LogInformation("Invoke telegram update function");
+        logger.LogInformation("Invoke telegram update function for: {botType}", botType);
 
         if (update.Message is not { } inputMessage) return;
 
         logger.LogInformation("Received Message from {ChatId}", inputMessage.Chat.Id);
 
         var outputMessage = string.Empty;
+        var outputMessageStub = $"From: {botType}: ";
         
         if (!string.IsNullOrWhiteSpace(inputMessage.Text))
         {
-            outputMessage = requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
+            outputMessage = outputMessageStub + requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
         }
-        
+
         await botClient.SendTextMessageAsync(
             chatId: inputMessage.Chat.Id,
             text: outputMessage);

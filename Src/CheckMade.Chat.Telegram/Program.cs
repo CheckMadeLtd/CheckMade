@@ -2,6 +2,7 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Chat.Telegram;
+using CheckMade.Chat.Telegram.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -36,7 +37,7 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        services.ConfigureAppServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigureBusinessServices();
     })

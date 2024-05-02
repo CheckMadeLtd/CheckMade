@@ -4,39 +4,46 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 
-namespace CheckMade.Chat.Telegram;
+namespace CheckMade.Chat.Telegram.Startup;
 
 // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
 // but in Azure Keyvault they need to use '-'
 
 public static class ConfigureServicesExtensions
 {
-    public static void ConfigureAppServices(
+    public static void ConfigureBotServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        var telegramToken = hostingEnvironment switch
+        var botTypes = Enum.GetNames(typeof(BotType));
+
+        foreach (var botType in botTypes)
         {
-            "Development" =>
-                config.GetValue<string>("TelegramBotConfiguration:DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
-                ?? throw new ArgumentNullException(nameof(config),
-                    "DEV-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+            var botTypeUpper = botType.ToUpper();
+            
+            var botToken = hostingEnvironment switch
+            {
+                "Development" =>
+                    config.GetValue<string>($"TelegramBotConfiguration:DEV-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
+                    ?? throw new ArgumentNullException(nameof(config),
+                        $"DEV-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
 
-            "Staging" =>
-                config.GetValue<string>("TelegramBotConfiguration:STG-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
-                ?? throw new ArgumentNullException(nameof(config),
-                    "STG-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+                "Staging" =>
+                    config.GetValue<string>($"TelegramBotConfiguration:STG-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
+                    ?? throw new ArgumentNullException(nameof(config),
+                        $"STG-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
 
-            "Production" =>
-                config.GetValue<string>("TelegramBotConfiguration:PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN")
-                ?? throw new ArgumentNullException(nameof(config),
-                    "PRD-CHECKMADE-SUBMISSIONS-BOT-TOKEN not found"),
+                "Production" =>
+                    config.GetValue<string>($"TelegramBotConfiguration:PRD-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
+                    ?? throw new ArgumentNullException(nameof(config),
+                        $"PRD-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
 
-            _ => throw new ArgumentException(nameof(hostingEnvironment))
-        };
+                _ => throw new ArgumentException(nameof(hostingEnvironment))
+            };
     
-        services.AddHttpClient("CheckMadeSubmissionsBot")
-            .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(telegramToken, httpClient));
-
+            services.AddHttpClient($"CheckMade{botType}Bot")
+                .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(botToken, httpClient));
+        }
+        
         services.AddScoped<UpdateService>();
     }
 
