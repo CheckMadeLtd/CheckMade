@@ -196,4 +196,6 @@ read -r
 confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
 
 echo "---------------------"
+echo "In case this was a setup from scratch, don't forget to go back to the 'telegram_webhooks_config.sh' script \
+and set WebHooks for (prd) Bots after the first swap into the production slot!"
 echo "Congratulations, you reached the end of the setup orchestration script!"
