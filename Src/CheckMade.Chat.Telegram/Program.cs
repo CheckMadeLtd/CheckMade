@@ -1,10 +1,12 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Chat.Telegram;
+using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram.Startup;
+using CheckMade.Common.Utilities;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -31,12 +33,15 @@ var host = new HostBuilder()
             config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
         }
 
-        /* According to GPT4, the EnvironmentVariables should include the settings from 'Configuration' in the Azure App
-         and they would take precedence over any local .json setting files (which are added by default via the above */
+        /* According to GPT4, the EnvironmentVariables should include the settings from 'Configuration' in the
+         Azure App and they would take precedence over any local .json setting files (which are added by default) */
         config.AddEnvironmentVariables();
     })
     .ConfigureServices((hostContext, services) =>
     {
+        services.AddSingleton<AppSettings>(_ => 
+            PopulateAppSettings(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
+        
         services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigureBusinessServices();
@@ -59,10 +64,10 @@ var host = new HostBuilder()
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
-            /* Not writing to Console via SeriLog but relying on Azure Function's default logging with default LogLevels
-           for system components and 'Information' for my code. This avoids duplicates from SeriLog and Azure
-           which seem to be hard to suppress.
-           --> That's why, for seeing logs in Dev env. following my precise config, we use files rather than console. */
+            /* Not writing to Console via SeriLog but relying on Azure Function's default logging with default
+             LogLevels for system components and 'Information' for my code. This avoids duplicates from SeriLog
+             and Azure which seem to be hard to suppress.
+           --> Hence for seeing logs in Dev env. following my precise config, we use files rather than console. */
 
             loggerConfig
                     
@@ -110,4 +115,38 @@ var host = new HostBuilder()
     })
     .Build();
 
-host.Run();
+await host.StartAsync();
+
+// The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
+// after the host started, contrary to just using Run().
+
+await host.WaitForShutdownAsync();
+
+return;
+
+static AppSettings PopulateAppSettings(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
+{
+    "Development" => new AppSettings(
+        GetBotToken(config, "DEV", BotType.Submissions),
+        GetBotToken(config, "DEV", BotType.Communications),
+        GetBotToken(config, "DEV", BotType.Notifications)),
+
+    "Staging" => new AppSettings(
+        GetBotToken(config, "STG", BotType.Submissions),
+        GetBotToken(config, "STG", BotType.Communications),
+        GetBotToken(config, "STG", BotType.Notifications)),
+
+    "Production" => new AppSettings(
+        GetBotToken(config, "PRD", BotType.Submissions),
+        GetBotToken(config, "PRD", BotType.Communications),
+        GetBotToken(config, "PRD", BotType.Notifications)),
+
+    _ => throw new ArgumentException((nameof(hostingEnvironment)))
+};
+
+
+static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
+    config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
+    ?? throw new ArgumentNullException(nameof(config), 
+        $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
+    

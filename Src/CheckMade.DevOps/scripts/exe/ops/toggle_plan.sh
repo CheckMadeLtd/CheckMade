@@ -66,7 +66,7 @@ elif [ "$current_active_sku" == "$premium_plan_sku" ]; then
     az functionapp update --name "$functionapp_name" --slot 'staging' --plan "$consumption_plan_name" --force
     
     echo "Now deleting premium plan '$current_active_plan'..."
-    az functionapp plan delete --name "$current_active_plan"
+    az functionapp plan delete --ids "$current_active_plan"
     
   fi
   

@@ -90,7 +90,7 @@ confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_k
 echo "--------------------"
 echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
 Choose the relevant FunctionApp | Settings | Configuration | General Settings (tab) | Stack settings (section) | \
-.NET Version (dropdown) and set a version and 'Save'!"
+.NET Version (dropdown) and set to '.NET 8 Isolated' and click 'Save'!!!"
 echo "Do this for both, the production AND the staging slot!"
 echo "Continue here with 'Enter' when done."
 read -r
@@ -196,4 +196,6 @@ read -r
 confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
 
 echo "---------------------"
+echo "In case this was a setup from scratch, don't forget to go back to the 'telegram_webhooks_config.sh' script \
+and set WebHooks for (prd) Bots after the first swap into the production slot!"
 echo "Congratulations, you reached the end of the setup orchestration script!"
