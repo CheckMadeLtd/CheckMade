@@ -1,7 +1,9 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Chat.Logic;
 using CheckMade.Chat.Telegram.Startup;
+using CheckMade.Common.Utilities;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -36,6 +38,8 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
+        var appSettings = PopulateAppSettings(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        
         services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigureBusinessServices();
@@ -115,3 +119,32 @@ await host.StartAsync();
 // after the host started, contrary to just using Run().
 
 await host.WaitForShutdownAsync();
+
+return;
+
+static AppSettings PopulateAppSettings(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
+{
+    "Development" => new AppSettings(
+        GetBotToken(config, "DEV", BotType.Submissions),
+        GetBotToken(config, "DEV", BotType.Communications),
+        GetBotToken(config, "DEV", BotType.Notifications)),
+
+    "Staging" => new AppSettings(
+        GetBotToken(config, "STG", BotType.Submissions),
+        GetBotToken(config, "STG", BotType.Communications),
+        GetBotToken(config, "STG", BotType.Notifications)),
+
+    "Production" => new AppSettings(
+        GetBotToken(config, "PRD", BotType.Submissions),
+        GetBotToken(config, "PRD", BotType.Communications),
+        GetBotToken(config, "PRD", BotType.Notifications)),
+
+    _ => throw new ArgumentException((nameof(hostingEnvironment)))
+};
+
+
+static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
+    config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
+    ?? throw new ArgumentNullException(nameof(config), 
+        $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
+    

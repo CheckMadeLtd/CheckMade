@@ -14,36 +14,7 @@ public static class ConfigureServicesExtensions
     public static void ConfigureBotServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        var botTypes = Enum.GetNames(typeof(BotType));
-
-        foreach (var botType in botTypes)
-        {
-            var botTypeUpper = botType.ToUpper();
-            
-            var botToken = hostingEnvironment switch
-            {
-                "Development" =>
-                    config.GetValue<string>($"TelegramBotConfiguration:DEV-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
-                    ?? throw new ArgumentNullException(nameof(config),
-                        $"DEV-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
-
-                "Staging" =>
-                    config.GetValue<string>($"TelegramBotConfiguration:STG-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
-                    ?? throw new ArgumentNullException(nameof(config),
-                        $"STG-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
-
-                "Production" =>
-                    config.GetValue<string>($"TelegramBotConfiguration:PRD-CHECKMADE-{botTypeUpper}-BOT-TOKEN")
-                    ?? throw new ArgumentNullException(nameof(config),
-                        $"PRD-CHECKMADE-{botTypeUpper}-BOT-TOKEN not found"),
-
-                _ => throw new ArgumentException(nameof(hostingEnvironment))
-            };
-    
-            services.AddHttpClient($"CheckMade{botType}Bot")
-                .AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(botToken, httpClient));
-        }
-        
+        services.AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>();
         services.AddScoped<UpdateService>();
     }
 
