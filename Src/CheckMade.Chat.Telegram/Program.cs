@@ -1,7 +1,6 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Chat.Telegram;
 using CheckMade.Chat.Telegram.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
@@ -110,4 +109,9 @@ var host = new HostBuilder()
     })
     .Build();
 
-host.Run();
+await host.StartAsync();
+
+// The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
+// after the host started, contrary to just using Run().
+
+await host.WaitForShutdownAsync();
