@@ -14,6 +14,6 @@ public record RequestProcessor : IRequestProcessor
     public string Echo(long telegramUserId, string input)
     {
         _repo.Add(telegramUserId, input);
-        return $"Echo: {input}";
+        return $"Echo v0.6.1: {input}";
     }
 }

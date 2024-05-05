@@ -12,7 +12,7 @@ public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartu
     public void Echo_ReturnsEcho_WhenInputValid()
     {
         var fakeInputMessage = TestUtils.GetValidTestMessage(); 
-        var expectedOutputText = $"Echo: {fakeInputMessage.Text}";
+        var expectedOutputText = $"Echo v0.6.1: {fakeInputMessage.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         
         var actualOutputText = requestProcessor.Echo(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
