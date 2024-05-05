@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils;
+namespace CheckMade.Telegram.Utils;
 
 public record BotTokens(
     string TelegramSubmissionsBotToken,

@@ -50,6 +50,6 @@
       <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
+      <ProjectReference Include="..\CheckMade.Telegram.Utils\CheckMade.Telegram.Utils.csproj" />
     </ItemGroup>
 </Project>
