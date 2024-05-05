@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Chat;Debug_Backend_Only;Debug_All;No_Build</Configurations>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

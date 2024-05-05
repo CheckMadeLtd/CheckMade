@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Debug_Chat;Release</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
         <UserSecretsId>dd4f1069-ae94-4987-9751-690e8da6f3c0</UserSecretsId>
     </PropertyGroup>
@@ -50,6 +50,7 @@
       <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
+      <ProjectReference Include="..\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Utils\CheckMade.Telegram.Utils.csproj" />
     </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Persistence;
 using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,8 @@ public static class ConfigureServicesExtensions
     public static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        services.Add_TelegramPersistence_Dependencies();
+        
         var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 
@@ -43,8 +46,8 @@ public static class ConfigureServicesExtensions
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
-
-        services.Add_Persistence_Dependencies(dbConnectionString);
+        
+        services.Add_CommonPersistence_Dependencies(dbConnectionString);
     }
     
     public static void ConfigureBusinessServices(this IServiceCollection services)

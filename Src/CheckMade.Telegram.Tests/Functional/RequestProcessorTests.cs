@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Telegram.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 

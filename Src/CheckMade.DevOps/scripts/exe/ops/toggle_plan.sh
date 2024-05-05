@@ -34,7 +34,7 @@ if [ "$current_active_sku" == "$consumption_plan_sku" ]; then
   if [ "$confirm_toggle" == "y" ]; then
     
     if [ "$premium_plans_in_existence" == 0 ]; then
-      premium_plan_name="chat_premium_plan_$(get_random_id)"
+      premium_plan_name="premium_plan_$(get_random_id)"
       echo "Creating $premium_plan_name..."
       # You can also specify the numbers of minimum and maximum instances to have and other parameters to customize your workload needs.
       az functionapp plan create --name $premium_plan_name --sku $premium_plan_sku

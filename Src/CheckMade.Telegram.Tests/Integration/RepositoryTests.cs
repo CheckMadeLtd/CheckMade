@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Telegram.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 
@@ -21,6 +21,7 @@ public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
         var repo = _services.GetRequiredService<ITelegramMessageRepo>();
         
         repo.Add(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
+
         // var retrievedMessage = repo.Get(fakeInputMessage.From!.Id);
         //
         // Assert.Equal(expectedRetrieval.Text, retrievedMessage.Text);

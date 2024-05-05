@@ -1,6 +1,6 @@
 using CheckMade.Telegram.Logic;
-using CheckMade.Common.Interfaces;
 using CheckMade.Telegram.Function.Startup;
+using CheckMade.Telegram.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;

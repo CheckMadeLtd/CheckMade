@@ -1,8 +1,10 @@
 using CheckMade.Common.Interfaces;
+using CheckMade.Common.Persistence;
+using CheckMade.Telegram.Interfaces;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.Common.Persistence;
+namespace CheckMade.Telegram.Persistence;
 
 public class TelegramMessageRepo(IDbConnectionProvider dbProvider) 
     : ITelegramMessageRepo

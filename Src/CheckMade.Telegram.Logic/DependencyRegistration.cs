@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Telegram.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Logic;

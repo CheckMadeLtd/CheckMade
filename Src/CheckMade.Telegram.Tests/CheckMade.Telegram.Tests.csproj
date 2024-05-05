@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <Configurations>Debug_Non_iOS;Debug_Chat;Debug_All;No_Build;Release</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
