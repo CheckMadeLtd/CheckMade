@@ -1,4 +1,4 @@
-namespace CheckMade.Chat.Tests.Unit;
+namespace CheckMade.Telegram.Tests.Unit;
 
 public class UpdateServiceTests
 {

@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Chat.Tests.Functional;
+namespace CheckMade.Telegram.Tests.Functional;
 
 public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartup>
 {

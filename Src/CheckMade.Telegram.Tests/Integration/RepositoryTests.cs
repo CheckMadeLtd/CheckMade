@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Chat.Tests.Integration;
+namespace CheckMade.Telegram.Tests.Integration;
 
 public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
 {

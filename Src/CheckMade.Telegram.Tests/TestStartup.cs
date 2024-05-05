@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Chat.Tests;
+namespace CheckMade.Telegram.Tests;
 
 [UsedImplicitly]
 public class TestStartup : IDisposable, IAsyncDisposable

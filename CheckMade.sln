@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.ViewModel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Function", "Src\CheckMade.Telegram.Function\CheckMade.Telegram.Function.csproj", "{575C0F42-CB8A-4531-9150-20B7EE460676}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Chat.Tests", "Src\CheckMade.Chat.Tests\CheckMade.Chat.Tests.csproj", "{E11437BF-47AE-4FFB-9AED-1601007BC72D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Tests", "Src\CheckMade.Telegram.Tests\CheckMade.Telegram.Tests.csproj", "{E11437BF-47AE-4FFB-9AED-1601007BC72D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Logic", "Src\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject

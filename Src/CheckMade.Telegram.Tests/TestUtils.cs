@@ -1,7 +1,7 @@
 using Telegram.Bot.Types;
 using ChatAlias = Telegram.Bot.Types.Chat;
 
-namespace CheckMade.Chat.Tests;
+namespace CheckMade.Telegram.Tests;
 
 internal static class TestUtils
 {
