@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Utilities;
 
-public record AppSettings(
+public record BotTokens(
     string TelegramSubmissionsBotToken,
     string TelegramCommunicationsBotToken,
     string TelegramNotificationsBotToken);

@@ -39,8 +39,8 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddSingleton<AppSettings>(_ => 
-            PopulateAppSettings(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
+        services.AddSingleton<BotTokens>(_ => 
+            PopulateBotTokens(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
         
         services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
@@ -124,19 +124,19 @@ await host.WaitForShutdownAsync();
 
 return;
 
-static AppSettings PopulateAppSettings(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
+static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
 {
-    "Development" => new AppSettings(
+    "Development" => new BotTokens(
         GetBotToken(config, "DEV", BotType.Submissions),
         GetBotToken(config, "DEV", BotType.Communications),
         GetBotToken(config, "DEV", BotType.Notifications)),
 
-    "Staging" => new AppSettings(
+    "Staging" => new BotTokens(
         GetBotToken(config, "STG", BotType.Submissions),
         GetBotToken(config, "STG", BotType.Communications),
         GetBotToken(config, "STG", BotType.Notifications)),
 
-    "Production" => new AppSettings(
+    "Production" => new BotTokens(
         GetBotToken(config, "PRD", BotType.Submissions),
         GetBotToken(config, "PRD", BotType.Communications),
         GetBotToken(config, "PRD", BotType.Notifications)),
