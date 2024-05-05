@@ -1,11 +1,11 @@
 using CheckMade.Chat.Logic;
-using CheckMade.Chat.Telegram.Startup;
 using CheckMade.Common.Interfaces;
+using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Chat.Telegram;
+namespace CheckMade.Telegram.Function;
 
 public class UpdateService(ITelegramBotClientFactory botClientFactory,
     IRequestProcessor requestProcessor, ILogger<UpdateService> logger)

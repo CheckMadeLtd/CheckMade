@@ -3,7 +3,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Chat.Telegram.Functions;
+namespace CheckMade.Telegram.Function.Functions;
 
 public class SubmissionsBot(ILogger<SubmissionsBot> logger, UpdateService updateService)
     : TelegramBotFunctionBase(logger, updateService)

@@ -3,7 +3,7 @@ using CheckMade.Chat.Logic;
 using CheckMade.Common.Utils;
 using Telegram.Bot;
 
-namespace CheckMade.Chat.Telegram.Startup;
+namespace CheckMade.Telegram.Function.Startup;
 
 public interface ITelegramBotClientFactory
 {

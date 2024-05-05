@@ -3,14 +3,14 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Chat.Telegram.Functions;
+namespace CheckMade.Telegram.Function.Functions;
 
-public class CommunicationsBot(ILogger<CommunicationsBot> logger, UpdateService updateService)
+public class NotificationsBot(ILogger<NotificationsBot> logger, UpdateService updateService)
     : TelegramBotFunctionBase(logger, updateService)
 {
-    protected override BotType BotType => BotType.Communications;
+    protected override BotType BotType => BotType.Notifications;
 
-    [Function("CommunicationsBot")]
+    [Function("NotificationsBot")]
     public async Task<HttpResponseData> 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
