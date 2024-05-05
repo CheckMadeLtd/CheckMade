@@ -1,6 +1,6 @@
 namespace CheckMade.Telegram.Interfaces;
 
-public interface ITelegramMessageRepo
+public interface IMessageRepo
 {
     void Add(long telegramUserId, string messageText);
 }

@@ -18,7 +18,7 @@ public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
             Chat = fakeInputMessage.Chat,
             From = fakeInputMessage.From
         };
-        var repo = _services.GetRequiredService<ITelegramMessageRepo>();
+        var repo = _services.GetRequiredService<IMessageRepo>();
         
         repo.Add(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
 

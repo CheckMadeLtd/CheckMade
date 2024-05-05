@@ -7,6 +7,6 @@ public static class DependencyRegistration
 {
     public static void Add_TelegramPersistence_Dependencies(this IServiceCollection services)
     {
-        services.AddScoped<ITelegramMessageRepo, TelegramMessageRepo>();
+        services.AddScoped<IMessageRepo, MessageRepo>();
     }
 }

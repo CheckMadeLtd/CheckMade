@@ -6,8 +6,7 @@ using NpgsqlTypes;
 
 namespace CheckMade.Telegram.Persistence;
 
-public class TelegramMessageRepo(IDbConnectionProvider dbProvider) 
-    : ITelegramMessageRepo
+public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
 {
     public void Add(long telegramUserId, string telegramMessageText)
     {

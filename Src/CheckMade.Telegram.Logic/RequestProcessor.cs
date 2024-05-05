@@ -4,9 +4,9 @@ namespace CheckMade.Telegram.Logic;
 
 public record RequestProcessor : IRequestProcessor
 {
-    private readonly ITelegramMessageRepo _repo;
+    private readonly IMessageRepo _repo;
     
-    public RequestProcessor(ITelegramMessageRepo repo)
+    public RequestProcessor(IMessageRepo repo)
     {
         _repo = repo;
     }
