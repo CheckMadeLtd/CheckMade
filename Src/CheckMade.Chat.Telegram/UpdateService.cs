@@ -19,11 +19,10 @@ public class UpdateService(ITelegramBotClientFactory botClientFactory,
         logger.LogInformation("Received Message from {ChatId}", inputMessage.Chat.Id);
 
         var outputMessage = string.Empty;
-        var outputMessageStub = $"From: {botType}: ";
         
         if (!string.IsNullOrWhiteSpace(inputMessage.Text))
         {
-            outputMessage = outputMessageStub + requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
+            outputMessage = requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
         }
 
         var botClient = botClientFactory.CreateBotClient(botType);
