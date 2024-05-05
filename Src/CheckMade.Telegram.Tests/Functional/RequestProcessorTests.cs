@@ -11,7 +11,7 @@ public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartu
     [Fact]
     public void Echo_ReturnsEcho_WhenInputValid()
     {
-        var fakeInputMessage = TestUtils.GetValidTelegramTestMessage(); 
+        var fakeInputMessage = TestUtils.GetValidTestMessage(); 
         var expectedOutputText = $"Echo: {fakeInputMessage.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         

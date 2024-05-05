@@ -5,7 +5,7 @@ namespace CheckMade.Telegram.Tests;
 
 internal static class TestUtils
 {
-    internal static Message GetValidTelegramTestMessage() =>
+    internal static Message GetValidTestMessage() =>
         new Message
         {
             Text = "Hello World Test", 

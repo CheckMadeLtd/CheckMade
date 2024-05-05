@@ -4,23 +4,23 @@ using Telegram.Bot;
 
 namespace CheckMade.Telegram.Function.Startup;
 
-public interface ITelegramBotClientFactory
+public interface IBotClientFactory
 {
     ITelegramBotClient CreateBotClient(BotType botType);
 }
 
-public class TelegramBotClientFactory(IHttpClientFactory httpFactory, BotTokens botTokens) 
-    : ITelegramBotClientFactory
+public class BotClientFactory(IHttpClientFactory httpFactory, BotTokens botTokens) 
+    : IBotClientFactory
 {
     public ITelegramBotClient CreateBotClient(BotType botType) => botType switch
     {
-        BotType.Submissions => new TelegramBotClient(botTokens.TelegramSubmissionsBotToken,
+        BotType.Submissions => new TelegramBotClient(botTokens.SubmissionsBotToken,
             httpFactory.CreateClient($"CheckMade{botType}Bot")),
         
-        BotType.Communications => new TelegramBotClient(botTokens.TelegramCommunicationsBotToken,
+        BotType.Communications => new TelegramBotClient(botTokens.CommunicationsBotToken,
             httpFactory.CreateClient($"CheckMade{botType}Bot")),
         
-        BotType.Notifications => new TelegramBotClient(botTokens.TelegramNotificationsBotToken,
+        BotType.Notifications => new TelegramBotClient(botTokens.NotificationsBotToken,
             httpFactory.CreateClient($"CheckMade{botType}Bot")),
         
         _ => throw new InvalidEnumArgumentException()

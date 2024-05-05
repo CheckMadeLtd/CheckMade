@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Function.Functions;
+namespace CheckMade.Telegram.Function.Endpoints;
 
-public abstract class TelegramBotFunctionBase(ILogger logger, UpdateService updateService)
+public abstract class BotFunctionBase(ILogger logger, UpdateService updateService)
 {
     protected abstract BotType BotType { get; }
 

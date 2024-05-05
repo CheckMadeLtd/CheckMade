@@ -20,7 +20,7 @@ public static class ConfigureServicesExtensions
             services.AddHttpClient($"CheckMade{botType}Bot");            
         }    
         
-        services.AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>();
+        services.AddSingleton<IBotClientFactory, BotClientFactory>();
         services.AddScoped<UpdateService>();
     }
 

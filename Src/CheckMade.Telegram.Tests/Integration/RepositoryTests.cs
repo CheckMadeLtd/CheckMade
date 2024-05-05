@@ -11,7 +11,7 @@ public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
     [Fact]
     public void TelegramMessageRepo_SavesToAndRetrievesFromDb_WhenInputValid()
     {
-        var fakeInputMessage = TestUtils.GetValidTelegramTestMessage();
+        var fakeInputMessage = TestUtils.GetValidTestMessage();
         var expectedRetrieval = new Message
         {
             Text = fakeInputMessage.Text,
