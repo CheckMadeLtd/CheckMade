@@ -6,7 +6,7 @@ namespace CheckMade.Chat.Tests;
 
 public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartup>
 {
-    private const string ProviderNotInitializedMessage = "The Services Provider is null, failed to initialize";
+    private const string DependencyFailMessage = "The dependency of this type failed to resolve";
     private readonly ServiceProvider _provider = setup.ServiceProvider;
 
     [Fact]
@@ -17,7 +17,8 @@ public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartu
         var expectedOutputText = $"Echo: {fakeInputText}";
 
         var requestProcessor = _provider.GetService<IRequestProcessor>() 
-                                ?? throw new InvalidOperationException(ProviderNotInitializedMessage);
+                                ?? throw new ArgumentNullException(nameof(IRequestProcessor), DependencyFailMessage);
+        
         var actualOutputText = requestProcessor.Echo(fakeTelegramUserId, fakeInputText);
 
         actualOutputText.Should().Be(expectedOutputText);

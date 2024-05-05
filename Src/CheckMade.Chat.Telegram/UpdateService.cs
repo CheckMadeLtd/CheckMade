@@ -33,4 +33,3 @@ public class UpdateService(ITelegramBotClientFactory botClientFactory,
             text: outputMessage);
     }
 }
-
