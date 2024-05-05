@@ -13,9 +13,7 @@ public class UpdateService(ITelegramBotClientFactory botClientFactory,
     internal async Task HandleUpdateAsync(Update update, BotType botType)
     {
         logger.LogInformation("Invoke telegram update function for: {botType}", botType);
-
         if (update.Message is not { } inputMessage) return;
-
         logger.LogInformation("Received Message from {ChatId}", inputMessage.Chat.Id);
 
         var outputMessage = string.Empty;

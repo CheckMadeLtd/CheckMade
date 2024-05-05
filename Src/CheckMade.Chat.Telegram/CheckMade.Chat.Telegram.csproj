@@ -50,6 +50,6 @@
       <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
       <ProjectReference Include="..\CheckMade.Chat.Logic\CheckMade.Chat.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Utilities\CheckMade.Common.Utilities.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
     </ItemGroup>
 </Project>

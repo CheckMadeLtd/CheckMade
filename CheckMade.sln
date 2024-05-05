@@ -50,7 +50,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.Tests", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Persistence", "Src\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj", "{B5FF670E-F6EA-418D-A1AB-46726997181D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Utilities", "Src\CheckMade.Common.Utilities\CheckMade.Common.Utilities.csproj", "{08588F84-6A1A-4FF3-AFE4-1D1DB0DF1BE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Utils", "Src\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj", "{08588F84-6A1A-4FF3-AFE4-1D1DB0DF1BE5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.DevOps", "Src\CheckMade.DevOps\CheckMade.DevOps.csproj", "{5A64BC73-A68D-431C-8703-940F8B3A0F00}"
 EndProject
