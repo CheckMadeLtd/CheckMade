@@ -7,17 +7,15 @@ namespace CheckMade.Chat.Tests.Functional;
 public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartup>
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
-
+    
     [Fact]
     public void Echo_ReturnsEcho_WhenInputValid()
     {
-        const long fakeTelegramUserId = 123;
-        const string fakeInputText = "Hello, world!";
-        var expectedOutputText = $"Echo: {fakeInputText}";
-
+        var fakeInputMessage = TestUtils.GetValidTelegramTestMessage(); 
+        var expectedOutputText = $"Echo: {fakeInputMessage.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         
-        var actualOutputText = requestProcessor.Echo(fakeTelegramUserId, fakeInputText);
+        var actualOutputText = requestProcessor.Echo(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
 
         actualOutputText.Should().Be(expectedOutputText);
     }
