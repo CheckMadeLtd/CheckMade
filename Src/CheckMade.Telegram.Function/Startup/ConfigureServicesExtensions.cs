@@ -1,4 +1,4 @@
-using CheckMade.Chat.Logic;
+using CheckMade.Telegram.Logic;
 using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

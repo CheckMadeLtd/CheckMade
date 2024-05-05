@@ -1,4 +1,4 @@
-namespace CheckMade.Chat.Logic;
+namespace CheckMade.Telegram.Logic;
 
 public enum BotType
 {

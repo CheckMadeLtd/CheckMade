@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Function
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Chat.Tests", "Src\CheckMade.Chat.Tests\CheckMade.Chat.Tests.csproj", "{E11437BF-47AE-4FFB-9AED-1601007BC72D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Chat.Logic", "Src\CheckMade.Chat.Logic\CheckMade.Chat.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Logic", "Src\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Interfaces", "Src\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
 EndProject

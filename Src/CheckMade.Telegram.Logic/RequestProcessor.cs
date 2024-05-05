@@ -1,6 +1,6 @@
 ﻿using CheckMade.Common.Interfaces;
 
-namespace CheckMade.Chat.Logic;
+namespace CheckMade.Telegram.Logic;
 
 public record RequestProcessor : IRequestProcessor
 {

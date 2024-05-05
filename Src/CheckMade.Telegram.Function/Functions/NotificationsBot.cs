@@ -1,4 +1,4 @@
-using CheckMade.Chat.Logic;
+using CheckMade.Telegram.Logic;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

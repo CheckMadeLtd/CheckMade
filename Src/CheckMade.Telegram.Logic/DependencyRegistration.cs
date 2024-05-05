@@ -1,7 +1,7 @@
 using CheckMade.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Chat.Logic;
+namespace CheckMade.Telegram.Logic;
 
 public static class DependencyRegistration
 {

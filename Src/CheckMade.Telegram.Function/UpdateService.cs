@@ -1,4 +1,4 @@
-using CheckMade.Chat.Logic;
+using CheckMade.Telegram.Logic;
 using CheckMade.Common.Interfaces;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;

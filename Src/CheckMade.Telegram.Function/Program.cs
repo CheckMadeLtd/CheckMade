@@ -1,7 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Chat.Logic;
+using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Common.Utils;
 using Microsoft.ApplicationInsights.Extensibility;
