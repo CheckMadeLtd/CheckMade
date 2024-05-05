@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Interfaces;
+namespace CheckMade.Telegram.Interfaces;
 
 public interface ITelegramMessageRepo
 {
