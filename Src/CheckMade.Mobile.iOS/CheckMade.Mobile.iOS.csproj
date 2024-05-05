@@ -3,7 +3,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0-ios</TargetFramework>
         <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
-        <Configurations>Debug_iOS;Debug_All;No_Build;Release</Configurations>
+        <Configurations>Debug_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

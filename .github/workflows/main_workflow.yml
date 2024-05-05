@@ -77,9 +77,9 @@ jobs:
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
           if [[ "${{ matrix.toplevel_project }}" == "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.ANDROID_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chat*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
@@ -137,8 +137,8 @@ jobs:
       # the paths for build output, project dir, project file, test project file etc. by extracting them from .sln file
       # This allows us to keep the build/test commands below generic and use explicit build-output dirs for deployment. 
       # All of this relies on implicit project naming conventions in the CheckMade solution:
-      # E.g. if toplevel project is CheckMade.Chat.Telegram then test project is assumed to start with CheckMade.Chat
-      # and to end with Test (with other possible parts in the middle).
+      # E.g. if toplevel project is CheckMade.Telegram.Function then test project is assumed to start with CheckMade.Telegram
+      # and to end with 'Tests' (with other possible parts in the middle).
       
       - name: Set Build & Test Project Parameters
         run: |

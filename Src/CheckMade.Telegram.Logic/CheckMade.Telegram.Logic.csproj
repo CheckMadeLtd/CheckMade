@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_BackendOnly;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -15,7 +15,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+      <ProjectReference Include="..\CheckMade.Telegram.Interfaces\CheckMade.Telegram.Interfaces.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="Telegram.Bot" Version="$(TelegramBotVersion)" />
     </ItemGroup>
 
 </Project>
