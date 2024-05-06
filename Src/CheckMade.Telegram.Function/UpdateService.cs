@@ -18,7 +18,7 @@ public class UpdateService(IBotClientFactory botClientFactory,
         logger.LogInformation("Received Message from {ChatId}", telegramInputMessage.Chat.Id);
 
         var inputMessage = ConvertToModel(telegramInputMessage);
-        var outputMessage = requestProcessor.Echo(inputMessage);
+        var outputMessage = await requestProcessor.EchoAsync(inputMessage);
 
         var botClient = botClientFactory.CreateBotClient(botType);
 

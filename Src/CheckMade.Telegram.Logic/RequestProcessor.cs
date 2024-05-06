@@ -5,9 +5,9 @@ namespace CheckMade.Telegram.Logic;
 
 public class RequestProcessor(IMessageRepo repo) : IRequestProcessor
 {
-    public string Echo(InputTextMessage message)
+    public async Task<string> EchoAsync(InputTextMessage message)
     {
-        repo.Add(message);
+        await repo.AddAsync(message);
         return $"Echo v0.6.1: {message.Details.Text}";
     }
 }

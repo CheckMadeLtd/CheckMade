@@ -4,5 +4,5 @@ namespace CheckMade.Telegram.Interfaces;
 
 public interface IRequestProcessor
 {
-    public string Echo(InputTextMessage message);
+    public Task<string> EchoAsync(InputTextMessage message);
 }

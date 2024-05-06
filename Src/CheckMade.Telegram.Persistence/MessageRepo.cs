@@ -9,7 +9,7 @@ namespace CheckMade.Telegram.Persistence;
 
 public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
 {
-    public void Add(InputTextMessage inputMessage)
+    public async Task AddAsync(InputTextMessage inputMessage)
     {
         using (var db = dbProvider.CreateConnection())
         {
@@ -26,11 +26,11 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
                 Value = JsonHelper.SerializeToJson(inputMessage.Details)
             });
             
-            sql.ExecuteNonQuery();
+            await sql.ExecuteNonQueryAsync();
         }
     }
 
-    public IEnumerable<InputTextMessage> GetAll(long userId)
+    public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
     {
         using (var db = dbProvider.CreateConnection())
         {
@@ -41,11 +41,11 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
 
             sql.Parameters.AddWithValue("@userId", userId);
 
-            var reader = sql.ExecuteReader();
+            await using var reader = await sql.ExecuteReaderAsync();
 
             var inputMessages = new List<InputTextMessage>();
 
-            while (reader.Read())
+            while (await reader.ReadAsync())
             {
                 var telegramUserId = reader.GetInt64(reader.GetOrdinal("tlgr_user_id"));
                 var details = reader.GetString(reader.GetOrdinal("details"));

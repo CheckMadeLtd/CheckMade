@@ -6,13 +6,13 @@ namespace CheckMade.Telegram.Tests.Startup;
 
 internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRepo
 {
-    public void Add(InputTextMessage inputMessage)
+    public async Task AddAsync(InputTextMessage inputMessage)
     {
-        mockMessageRepo.Object.Add(inputMessage);
+        await mockMessageRepo.Object.AddAsync(inputMessage);
     }
 
-    public IEnumerable<InputTextMessage> GetAll(long userId)
+    public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
     {
-        return mockMessageRepo.Object.GetAll(userId);
+        return await mockMessageRepo.Object.GetAllAsync(userId);
     }
 }

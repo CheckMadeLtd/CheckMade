@@ -10,7 +10,7 @@ public class RepositoryTests(IntegrationTestStartup setup) : IClassFixture<Integ
     private readonly ServiceProvider _services = setup.GetServiceProvider();
     
     [Fact]
-    public void TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
+    public async Task TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
     {
         var fakeInputMessage = TestUtils.GetValidTestMessage();
         var expectedRetrieval = new List<InputTextMessage>
@@ -19,10 +19,10 @@ public class RepositoryTests(IntegrationTestStartup setup) : IClassFixture<Integ
         };
         var repo = _services.GetRequiredService<IMessageRepo>();
         
-        repo.Add(fakeInputMessage);
+        await repo.AddAsync(fakeInputMessage);
     
         var retrievedMessages = 
-            repo.GetAll(fakeInputMessage.UserId)
+            (await repo.GetAllAsync(fakeInputMessage.UserId))
                 .ToList().AsReadOnly();
         
         Assert.Equal(expectedRetrieval[0], retrievedMessages[0]);

@@ -10,13 +10,13 @@ public class RequestProcessorTests(FunctionalTestStartup setup) : IClassFixture<
     private readonly ServiceProvider _services = setup.GetServiceProvider();
     
     [Fact]
-    public void Echo_ReturnsEcho_WhenInputValid()
+    public async Task Echo_ReturnsEcho_WhenInputValid()
     {
         var fakeInputMessage = TestUtils.GetValidTestMessage(); 
         var expectedOutputText = $"Echo v0.6.1: {fakeInputMessage.Details.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         
-        var actualOutputText = requestProcessor.Echo(fakeInputMessage);
+        var actualOutputText = await requestProcessor.EchoAsync(fakeInputMessage);
 
         actualOutputText.Should().Be(expectedOutputText);
     }
