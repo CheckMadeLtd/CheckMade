@@ -1,5 +1,5 @@
 ﻿using CheckMade.Telegram.Interfaces;
-using Telegram.Bot.Types;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic;
 
@@ -12,9 +12,9 @@ public record RequestProcessor : IRequestProcessor
         _repo = repo;
     }
     
-    public string Echo(Message message)
+    public string Echo(InputTextMessage message)
     {
         _repo.Add(message);
-        return $"Echo v0.6.1: {message.Text}";
+        return $"Echo v0.6.1: {message.Details.Text}";
     }
 }

@@ -16,10 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Telegram.Bot" Version="$(TelegramBotVersion)" />
+      <ProjectReference Include="..\CheckMade.Telegram.Model\CheckMade.Telegram.Model.csproj" />
     </ItemGroup>
 
 </Project>

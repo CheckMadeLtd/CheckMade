@@ -1,15 +1,15 @@
 using CheckMade.Common.Interfaces;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 using Npgsql;
 using NpgsqlTypes;
-using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Persistence;
 
 public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
 {
-    public void Add(Message message)
+    public void Add(InputTextMessage inputMessage)
     {
         using (var db = dbProvider.CreateConnection())
         {
@@ -19,18 +19,18 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
                 "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
                 " VALUES (@telegramUserId, @telegramMessageText)", (NpgsqlConnection)db);
             
-            sql.Parameters.AddWithValue("@telegramUserId", message.From.Id);
+            sql.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             
             sql.Parameters.Add(new NpgsqlParameter("@telegramMessageText", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJson(new MessageDetails(message.Text))
+                Value = JsonHelper.SerializeToJson(inputMessage.Details)
             });
             
             sql.ExecuteNonQuery();
         }
     }
 
-    public IEnumerable<Message> GetAll(long userId)
+    public IEnumerable<InputTextMessage> GetAll(long userId)
     {
         using (var db = dbProvider.CreateConnection())
         {
@@ -43,25 +43,22 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
 
             var reader = sql.ExecuteReader();
 
-            var messages = new List<Message>();
+            var inputMessages = new List<InputTextMessage>();
 
             while (reader.Read())
             {
                 var telegramUserId = reader.GetInt64(reader.GetOrdinal("tlgr_user_id"));
                 var details = reader.GetString(reader.GetOrdinal("details"));
 
-                var message = new Message
-                {
-                    From = new User { Id = telegramUserId }, 
-                    Text = JsonHelper.DeserializeFromJson<MessageDetails>(details).Text
-                };
+                var message = new InputTextMessage(
+                    telegramUserId,
+                    JsonHelper.DeserializeFromJson<MessageDetails>(details)
+                        ?? throw new ArgumentNullException(nameof(details)));
 
-                messages.Add(message);
-            }
+                inputMessages.Add(message);
+            };
 
-            return messages;
+            return inputMessages;
         }
     }
-
-    private record MessageDetails(string? Text);
 }

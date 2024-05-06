@@ -1,9 +1,9 @@
-using Telegram.Bot.Types;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Interfaces;
 
 public interface IMessageRepo
 {
-    void Add(Message message);
-    IEnumerable<Message> GetAll(long userId);
+    void Add(InputTextMessage inputMessage);
+    IEnumerable<InputTextMessage> GetAll(long userId);
 }

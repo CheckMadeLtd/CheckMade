@@ -1,15 +1,12 @@
-using Telegram.Bot.Types;
-using ChatAlias = Telegram.Bot.Types.Chat;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Tests;
 
 internal static class TestUtils
 {
-    internal static Message GetValidTestMessage() =>
-        new Message
-        {
-            Text = "Hello World Test", 
-            Chat = new ChatAlias { Id = 123456789 }, 
-            From = new User { Id = 987654321 }
-        };
+    internal static InputTextMessage GetValidTestMessage() =>
+        new InputTextMessage(
+            987654321,
+            new MessageDetails(
+                "Hello World Test"));
 }
