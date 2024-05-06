@@ -1,5 +1,6 @@
-using CheckMade.Telegram.Function.Startup;
+using CheckMade.Telegram.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
@@ -15,7 +16,8 @@ public class FunctionalTestStartup : TestStartupBase
     
     private new void ConfigureServices()
     {
-        Services.ConfigurePersistenceServices(Config, Env);
+        Services.AddScoped<IMessageRepo, MockMessageRepo>(_ => 
+            new MockMessageRepo(new Mock<IMessageRepo>()));
         base.ConfigureServices();
     }
 }
