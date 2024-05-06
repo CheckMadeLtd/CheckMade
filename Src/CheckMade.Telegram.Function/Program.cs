@@ -1,7 +1,6 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Common.Model;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -124,7 +123,7 @@ await host.WaitForShutdownAsync();
 
 return;
 
-static BotTokens PopulateBotTokens(IConfiguration config, MyHostEnvWrapper hostingEnvironment) => 
+static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
     (string?)hostingEnvironment switch
 {
     "Development" => new BotTokens(

@@ -1,4 +1,3 @@
-using CheckMade.Common.Model;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
 using CheckMade.Common.Persistence;
@@ -25,7 +24,7 @@ public static class ConfigureServicesExtensions
     }
 
     public static void ConfigurePersistenceServices(
-        this IServiceCollection services, IConfiguration config, MyHostEnvWrapper hostingEnvironment)
+        this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.Add_TelegramPersistence_Dependencies();
         
