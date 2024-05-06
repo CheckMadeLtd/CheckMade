@@ -1,6 +1,8 @@
-﻿namespace CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Telegram.Model;
+
+namespace CheckMade.Telegram.Interfaces;
 
 public interface IRequestProcessor
 {
-    public string Echo(long telegramUserId, string input);
+    public string Echo(InputTextMessage message);
 }

@@ -13,5 +13,9 @@
         <DebugSymbols>true</DebugSymbols>
         <Optimize>false</Optimize>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Model\CheckMade.Common.Model.csproj" />
+    </ItemGroup>
     
 </Project>

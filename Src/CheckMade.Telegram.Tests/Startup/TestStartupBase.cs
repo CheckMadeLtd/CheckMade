@@ -1,36 +1,38 @@
 using CheckMade.Telegram.Function.Startup;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Tests;
+namespace CheckMade.Telegram.Tests.Startup;
 
-[UsedImplicitly]
-public class TestStartup : IDisposable, IAsyncDisposable
+public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 {
-    internal ServiceProvider ServiceProvider { get; }
-
-    public TestStartup()
+    protected IConfigurationRoot Config { get; private init; }
+    protected string Env { get; private init; }
+    protected ServiceCollection Services { get; } = [];
+    protected ServiceProvider ServiceProvider { get; private set; } = null!;
+    
+    protected TestStartupBase()
     {
         var projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../"));
-        
-        var services = new ServiceCollection();
         
         var builder = new ConfigurationBuilder()
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables(); // Also includes Env Vars set in GH Actions Workflow
-        var config = builder.Build();
+        Config = builder.Build();
         
         // From local.settings.json or from env variable set in GitHub Actions workflow!
-        var env = config.GetValue<string>("HOSTING_ENVIRONMENT")
-            ?? throw new ArgumentNullException(nameof(config), "Can't find HOSTING_ENVIRONMENT");
+        Env = Config.GetValue<string>("HOSTING_ENVIRONMENT")
+            ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
 
-        services.ConfigurePersistenceServices(config, env);
-        services.ConfigureBusinessServices();
-        
-        ServiceProvider = services.BuildServiceProvider();
+        ConfigureServices();
+    }
+
+    protected void ConfigureServices()
+    {
+        Services.ConfigureBusinessServices();
+        ServiceProvider = Services.BuildServiceProvider();
     }
     
     public void Dispose()

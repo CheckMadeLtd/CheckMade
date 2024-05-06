@@ -1,19 +1,13 @@
 ﻿using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic;
 
-public record RequestProcessor : IRequestProcessor
+public class RequestProcessor(IMessageRepo repo) : IRequestProcessor
 {
-    private readonly IMessageRepo _repo;
-    
-    public RequestProcessor(IMessageRepo repo)
+    public string Echo(InputTextMessage message)
     {
-        _repo = repo;
-    }
-    
-    public string Echo(long telegramUserId, string input)
-    {
-        _repo.Add(telegramUserId, input);
-        return $"Echo v0.6.1: {input}";
+        repo.Add(message);
+        return $"Echo v0.6.1: {message.Details.Text}";
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Non_iOS;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -13,14 +13,5 @@
         <DebugSymbols>true</DebugSymbols>
         <Optimize>false</Optimize>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
-      <ProjectReference Include="..\CheckMade.Telegram.Interfaces\CheckMade.Telegram.Interfaces.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Npgsql" Version="8.0.2" />
-    </ItemGroup>
 
 </Project>
