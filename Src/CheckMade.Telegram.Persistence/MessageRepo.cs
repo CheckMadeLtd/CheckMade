@@ -56,7 +56,7 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
                         ?? throw new ArgumentNullException(nameof(details)));
 
                 inputMessages.Add(message);
-            };
+            }
 
             return inputMessages;
         }
