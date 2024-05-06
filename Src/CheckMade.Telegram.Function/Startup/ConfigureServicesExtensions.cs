@@ -11,7 +11,7 @@ namespace CheckMade.Telegram.Function.Startup;
 
 public static class ConfigureServicesExtensions
 {
-    public static void ConfigureBotServices(
+    internal static void ConfigureBotServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         var botTypes = Enum.GetNames(typeof(BotType));
