@@ -1,12 +1,13 @@
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Integration;
 
-public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
+public class RepositoryTests(IntegrationTestStartup setup) : IClassFixture<IntegrationTestStartup>
 {
-    private readonly ServiceProvider _services = setup.ServiceProvider;
+    private readonly ServiceProvider _services = setup.GetServiceProvider();
     
     [Fact]
     public void TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()

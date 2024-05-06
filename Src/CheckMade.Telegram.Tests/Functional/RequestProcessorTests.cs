@@ -1,12 +1,13 @@
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Functional;
 
-public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartup>
+public class RequestProcessorTests(FunctionalTestStartup setup) : IClassFixture<FunctionalTestStartup>
 {
-    private readonly ServiceProvider _services = setup.ServiceProvider;
+    private readonly ServiceProvider _services = setup.GetServiceProvider();
     
     [Fact]
     public void Echo_ReturnsEcho_WhenInputValid()
