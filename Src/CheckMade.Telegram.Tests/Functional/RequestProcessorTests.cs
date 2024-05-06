@@ -15,7 +15,7 @@ public class RequestProcessorTests(TestStartup setup) : IClassFixture<TestStartu
         var expectedOutputText = $"Echo v0.6.1: {fakeInputMessage.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         
-        var actualOutputText = requestProcessor.Echo(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
+        var actualOutputText = requestProcessor.Echo(fakeInputMessage);
 
         actualOutputText.Should().Be(expectedOutputText);
     }

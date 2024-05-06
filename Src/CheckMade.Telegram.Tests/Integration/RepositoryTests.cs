@@ -8,24 +8,27 @@ public class RepositoryTests(TestStartup setup) : IClassFixture<TestStartup>
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
     
-    // [Fact]
-    // public void TelegramMessageRepo_SavesToAndRetrievesFromDb_WhenInputValid()
-    // {
-    //     var fakeInputMessage = TestUtils.GetValidTestMessage();
-    //     var expectedRetrieval = new Message
-    //     {
-    //         Text = fakeInputMessage.Text,
-    //         Chat = fakeInputMessage.Chat,
-    //         From = fakeInputMessage.From
-    //     };
-    //     var repo = _services.GetRequiredService<IMessageRepo>();
-    //     
-    //     repo.Add(fakeInputMessage.From!.Id, fakeInputMessage.Text!);
-    //
-    //     var retrievedMessage = repo.Get(fakeInputMessage.From!.Id);
-    //     
-    //     Assert.Equal(expectedRetrieval.Text, retrievedMessage.Text);
-    //     Assert.Equal(expectedRetrieval.Chat.Id, retrievedMessage.Chat.Id);
-    //     Assert.Equal(expectedRetrieval.From.Id, retrievedMessage.From.Id);
-    // }   
+    [Fact]
+    public void TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
+    {
+        var fakeInputMessage = TestUtils.GetValidTestMessage();
+        var expectedRetrieval = new List<Message>
+        {
+            new Message
+            {
+                Text = fakeInputMessage.Text,
+                // Chat = fakeInputMessage.Chat,
+                From = fakeInputMessage.From
+            }
+        };
+        var repo = _services.GetRequiredService<IMessageRepo>();
+        
+        repo.Add(fakeInputMessage);
+    
+        var retrievedMessages = repo.GetAll(fakeInputMessage.From!.Id).ToList().AsReadOnly();
+        
+        Assert.Equal(expectedRetrieval[0].Text, retrievedMessages[0].Text);
+        // Assert.Equal(expectedRetrieval[0].Chat.Id, retrievedMessages[0].Chat.Id);
+        Assert.Equal(expectedRetrieval[0].From!.Id, retrievedMessages[0].From!.Id);
+    }   
 }

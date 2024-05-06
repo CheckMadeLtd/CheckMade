@@ -1,6 +1,8 @@
-﻿namespace CheckMade.Telegram.Interfaces;
+﻿using Telegram.Bot.Types;
+
+namespace CheckMade.Telegram.Interfaces;
 
 public interface IRequestProcessor
 {
-    public string Echo(long telegramUserId, string input);
+    public string Echo(Message message);
 }

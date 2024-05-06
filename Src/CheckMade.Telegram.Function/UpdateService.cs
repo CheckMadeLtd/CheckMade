@@ -20,7 +20,7 @@ public class UpdateService(IBotClientFactory botClientFactory,
         
         if (!string.IsNullOrWhiteSpace(inputMessage.Text))
         {
-            outputMessage = requestProcessor.Echo(inputMessage.Chat.Id, inputMessage.Text);
+            outputMessage = requestProcessor.Echo(inputMessage);
         }
 
         var botClient = botClientFactory.CreateBotClient(botType);
