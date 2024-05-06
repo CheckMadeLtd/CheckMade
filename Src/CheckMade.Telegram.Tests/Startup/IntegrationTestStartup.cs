@@ -1,9 +1,10 @@
 using CheckMade.Telegram.Function.Startup;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+[UsedImplicitly]
 public class IntegrationTestStartup : TestStartupBase
 {
     internal ServiceProvider GetServiceProvider() => ServiceProvider;

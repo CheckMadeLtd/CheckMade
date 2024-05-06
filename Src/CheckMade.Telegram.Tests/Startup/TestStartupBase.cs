@@ -1,11 +1,9 @@
 using CheckMade.Telegram.Function.Startup;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-[UsedImplicitly]
 public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 {
     protected IConfigurationRoot Config { get; private init; }
