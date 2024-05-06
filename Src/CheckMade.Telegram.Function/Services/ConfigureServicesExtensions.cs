@@ -1,10 +1,10 @@
+using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
-using CheckMade.Common.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Function.Startup;
+namespace CheckMade.Telegram.Function.Services;
 
 // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
 // but in Azure Keyvault they need to use '-'

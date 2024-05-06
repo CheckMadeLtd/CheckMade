@@ -2,7 +2,7 @@ using System.ComponentModel;
 using CheckMade.Telegram.Logic;
 using Telegram.Bot;
 
-namespace CheckMade.Telegram.Function.Startup;
+namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotClientFactory
 {

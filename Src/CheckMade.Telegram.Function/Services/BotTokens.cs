@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Function.Startup;
+namespace CheckMade.Telegram.Function.Services;
 
 public record BotTokens(
     string SubmissionsBotToken,

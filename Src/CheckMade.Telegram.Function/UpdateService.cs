@@ -1,5 +1,5 @@
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;

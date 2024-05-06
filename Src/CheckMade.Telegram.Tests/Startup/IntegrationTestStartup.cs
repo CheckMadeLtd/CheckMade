@@ -1,4 +1,4 @@
-using CheckMade.Telegram.Function.Startup;
+using CheckMade.Telegram.Function.Services;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
