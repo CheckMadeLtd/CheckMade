@@ -1,3 +1,4 @@
+using CheckMade.Common.Model;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +8,7 @@ namespace CheckMade.Telegram.Tests.Startup;
 public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 {
     protected IConfigurationRoot Config { get; private init; }
-    protected string Env { get; private init; }
+    protected MyHostEnvWrapper HostingEnvironment { get; private init; }
     protected ServiceCollection Services { get; } = [];
     protected ServiceProvider ServiceProvider { get; private set; } = null!;
     
@@ -23,7 +24,7 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
         Config = builder.Build();
         
         // From local.settings.json or from env variable set in GitHub Actions workflow!
-        Env = Config.GetValue<string>("HOSTING_ENVIRONMENT")
+        HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
             ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
 
         ConfigureServices();

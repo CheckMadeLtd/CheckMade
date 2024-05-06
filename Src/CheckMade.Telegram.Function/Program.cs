@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Common.Model;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -41,7 +42,7 @@ var host = new HostBuilder()
         services.AddSingleton<BotTokens>(_ => 
             PopulateBotTokens(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
         
-        services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBotServices();
         services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
         services.ConfigureBusinessServices();
     })
@@ -123,7 +124,8 @@ await host.WaitForShutdownAsync();
 
 return;
 
-static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
+static BotTokens PopulateBotTokens(IConfiguration config, MyHostEnvWrapper hostingEnvironment) => 
+    (string?)hostingEnvironment switch
 {
     "Development" => new BotTokens(
         GetBotToken(config, "DEV", BotType.Submissions),

@@ -1,3 +1,4 @@
+using CheckMade.Common.Model;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
 using CheckMade.Common.Persistence;
@@ -11,8 +12,7 @@ namespace CheckMade.Telegram.Function.Startup;
 
 public static class ConfigureServicesExtensions
 {
-    internal static void ConfigureBotServices(
-        this IServiceCollection services, IConfiguration config, string hostingEnvironment)
+    internal static void ConfigureBotServices(this IServiceCollection services)
     {
         var botTypes = Enum.GetNames(typeof(BotType));
         foreach (var botType in botTypes)
@@ -25,11 +25,11 @@ public static class ConfigureServicesExtensions
     }
 
     public static void ConfigurePersistenceServices(
-        this IServiceCollection services, IConfiguration config, string hostingEnvironment)
+        this IServiceCollection services, IConfiguration config, MyHostEnvWrapper hostingEnvironment)
     {
         services.Add_TelegramPersistence_Dependencies();
         
-        var dbConnectionString = hostingEnvironment switch
+        var dbConnectionString = (string?)hostingEnvironment switch
         {
             "Development" or "CI" => 
                 config.GetValue<string>("PG_DB_CONNSTRING") 

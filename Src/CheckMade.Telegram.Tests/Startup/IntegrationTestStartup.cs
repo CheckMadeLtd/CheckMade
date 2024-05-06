@@ -16,7 +16,7 @@ public class IntegrationTestStartup : TestStartupBase
     
     private new void ConfigureServices()
     {
-        Services.ConfigurePersistenceServices(Config, Env);
+        Services.ConfigurePersistenceServices(Config, HostingEnvironment);
         base.ConfigureServices();
     }
 }
