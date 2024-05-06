@@ -56,6 +56,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Interfac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Persistence", "Src\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj", "{94CF483B-D5CB-497A-A2EE-ECB2A9CAF920}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Model", "Src\CheckMade.Telegram.Model\CheckMade.Telegram.Model.csproj", "{8237548D-C052-4C9C-9BC3-1FC27EB86A47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Model", "Src\CheckMade.Common.Model\CheckMade.Common.Model.csproj", "{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Non_iOS|Any CPU = Debug_Non_iOS|Any CPU
@@ -299,6 +303,34 @@ Global
 		{94CF483B-D5CB-497A-A2EE-ECB2A9CAF920}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{94CF483B-D5CB-497A-A2EE-ECB2A9CAF920}.Debug_Telegram|Any CPU.ActiveCfg = Debug_Telegram|Any CPU
 		{94CF483B-D5CB-497A-A2EE-ECB2A9CAF920}.Debug_Telegram|Any CPU.Build.0 = Debug_Telegram|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_iOS|Any CPU.ActiveCfg = No_Build|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug_Non_iOS|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_Non_iOS|Any CPU.Build.0 = Debug_Non_iOS|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_Telegram|Any CPU.ActiveCfg = Debug_Telegram|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.Debug_Telegram|Any CPU.Build.0 = Debug_Telegram|Any CPU
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_iOS|Any CPU.ActiveCfg = Debug_iOS|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_iOS|Any CPU.Build.0 = Debug_iOS|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug_Non_iOS|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Non_iOS|Any CPU.Build.0 = Debug_Non_iOS|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Telegram|Any CPU.ActiveCfg = Debug_Telegram|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.Debug_Telegram|Any CPU.Build.0 = Debug_Telegram|Any CPU
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
@@ -318,5 +350,7 @@ Global
 		{B5FF670E-F6EA-418D-A1AB-46726997181D} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{396D514B-CD3E-4E86-989A-F4E82E991C6B} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{94CF483B-D5CB-497A-A2EE-ECB2A9CAF920} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
+		{8237548D-C052-4C9C-9BC3-1FC27EB86A47} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
+		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F} = {E5835236-896A-4576-8A1F-EBF20213872E}
 	EndGlobalSection
 EndGlobal

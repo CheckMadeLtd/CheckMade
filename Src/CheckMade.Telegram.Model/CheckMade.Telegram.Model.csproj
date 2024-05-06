@@ -14,12 +14,4 @@
         <Optimize>false</Optimize>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Telegram.Bot" Version="$(TelegramBotVersion)" />
-    </ItemGroup>
-
 </Project>
