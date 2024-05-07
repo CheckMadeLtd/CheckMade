@@ -13,7 +13,7 @@ public class RequestProcessorTests(UnitTestStartup setup) : IClassFixture<UnitTe
     public async Task Echo_ReturnsEcho_WhenInputValid()
     {
         var fakeInputMessage = TestUtils.GetValidTestMessage(); 
-        var expectedOutputText = $"Echo v0.6.1: {fakeInputMessage.Details.Text}";
+        var expectedOutputText = $"Echo: {fakeInputMessage.Details.Text}";
         var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
         
         var actualOutputText = await requestProcessor.EchoAsync(fakeInputMessage);
