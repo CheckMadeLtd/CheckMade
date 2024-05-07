@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class UpdateServiceTests
+public class UpdateHandlerTests
 {
     [Theory]
     [InlineData(null, "Valid text")]
@@ -22,7 +22,7 @@ public class UpdateServiceTests
             Text = text
         };
 
-        Assert.Throws<ArgumentNullException>(() => UpdateService.ConvertToModel(telegramInputMessage));
+        Assert.Throws<ArgumentNullException>(() => UpdateHandler.ConvertToModel(telegramInputMessage));
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class UpdateServiceTests
         };
         var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText, now));
 
-        var actualModel = UpdateService.ConvertToModel(telegramInputMessage);
+        var actualModel = UpdateHandler.ConvertToModel(telegramInputMessage);
         Assert.Equal(expectedModel, actualModel);
     }
 
@@ -54,10 +54,10 @@ public class UpdateServiceTests
 
         var mockFactory = new Mock<IBotClientFactory>();
         var mockRequestProcessor = new Mock<IRequestProcessor>();
-        var mockLogger = new Mock<ILogger<UpdateService>>();
+        var mockLogger = new Mock<ILogger<UpdateHandler>>();
 
-        var updateService = new UpdateService(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
-        await updateService.HandleUpdateAsync(update, botType);
+        var handler = new UpdateHandler(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
+        await handler.HandleUpdateAsync(update, botType);
         
         mockFactory.VerifyNoOtherCalls();
         mockRequestProcessor.VerifyNoOtherCalls();
@@ -85,14 +85,14 @@ public class UpdateServiceTests
         var mockFactory = new Mock<IBotClientFactory>();
         var mockBotClient = new Mock<ITelegramBotClientAdapter>();
         var mockRequestProcessor = new Mock<IRequestProcessor>();
-        var mockLogger = new Mock<ILogger<UpdateService>>();
+        var mockLogger = new Mock<ILogger<UpdateHandler>>();
         
         mockFactory.Setup(factory => factory.CreateBotClient(botType)).Returns(mockBotClient.Object);
         
-        var updateService = new UpdateService(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
+        var handler = new UpdateHandler(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
         
         // Act
-        await updateService.HandleUpdateAsync(update, botType);
+        await handler.HandleUpdateAsync(update, botType);
 
         // Assert
         mockRequestProcessor.Verify(rp => 

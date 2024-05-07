@@ -9,8 +9,8 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Services;
 
-public class UpdateService(IBotClientFactory botClientFactory,
-    IRequestProcessor requestProcessor, ILogger<UpdateService> logger)
+public class UpdateHandler(IBotClientFactory botClientFactory,
+    IRequestProcessor requestProcessor, ILogger<UpdateHandler> logger)
 {
     internal async Task HandleUpdateAsync(Update update, BotType botType)
     {

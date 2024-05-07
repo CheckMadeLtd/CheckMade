@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic;
 using Telegram.Bot;
 

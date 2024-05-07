@@ -1,10 +1,11 @@
 using CheckMade.Common.Persistence;
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Startup;
 
 // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
 // but in Azure Keyvault they need to use '-'
@@ -20,7 +21,7 @@ public static class ConfigureServicesExtensions
         }    
         
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
-        services.AddScoped<UpdateService>();
+        services.AddScoped<UpdateHandler>();
     }
 
     public static void ConfigurePersistenceServices(
