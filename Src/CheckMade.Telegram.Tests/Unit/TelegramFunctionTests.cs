@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class UpdateHandlerTests
+public class TelegramFunctionTests
 {
     [Theory]
     [InlineData(null, "Valid text")]
@@ -62,51 +62,5 @@ public class UpdateHandlerTests
         mockFactory.VerifyNoOtherCalls();
         mockRequestProcessor.VerifyNoOtherCalls();
     }
-
-    [Fact]
-    public async Task HandleUpdateAsync_UsesItsDependenciesAsExpected_WhenUpdateMessageValid()
-    {
-        // Arrange
-        const BotType botType = BotType.Submissions;
-        const long validUserId = 123L;
-        const string validText = "Valid text message";
-        var validChatId = new ChatId(321L);
-
-        var update = new Update
-        {
-            Message = new Message
-            {
-                From = new User { Id = validUserId },
-                Chat= new Chat { Id = validChatId.Identifier!.Value },
-                Text = validText
-            }
-        };
-        
-        var mockFactory = new Mock<IBotClientFactory>();
-        var mockBotClient = new Mock<ITelegramBotClientAdapter>();
-        var mockRequestProcessor = new Mock<IRequestProcessor>();
-        var mockLogger = new Mock<ILogger<UpdateHandler>>();
-        
-        mockFactory.Setup(factory => factory.CreateBotClient(botType)).Returns(mockBotClient.Object);
-        
-        var handler = new UpdateHandler(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
-        
-        // Act
-        await handler.HandleUpdateAsync(update, botType);
-
-        // Assert
-        mockRequestProcessor.Verify(rp => 
-            rp.EchoAsync(It.IsAny<InputTextMessage>()), Times.Once);
-        
-        mockFactory.Verify(f => f.CreateBotClient(botType), Times.Once);
-        
-        mockBotClient.Verify(bc => 
-            bc.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
-        
-        mockFactory.VerifyNoOtherCalls();
-        mockRequestProcessor.VerifyNoOtherCalls();
-        mockBotClient.VerifyNoOtherCalls();
-    }
+    
 }

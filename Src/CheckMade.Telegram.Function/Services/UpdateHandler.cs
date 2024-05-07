@@ -3,6 +3,7 @@ using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 [assembly: InternalsVisibleTo("CheckMade.Telegram.Tests")]
