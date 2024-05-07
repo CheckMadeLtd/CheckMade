@@ -17,11 +17,11 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
             
             var sql = new NpgsqlCommand(
                 "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
-                " VALUES (@telegramUserId, @telegramMessageText)", (NpgsqlConnection)db);
+                " VALUES (@telegramUserId, @telegramMessageDetails)", (NpgsqlConnection)db);
             
             sql.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             
-            sql.Parameters.Add(new NpgsqlParameter("@telegramMessageText", NpgsqlDbType.Jsonb)
+            sql.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(inputMessage.Details)
             });
@@ -51,9 +51,9 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
                 var details = reader.GetString(reader.GetOrdinal("details"));
 
                 var message = new InputTextMessage(
-                    telegramUserId,
+                    telegramUserId, 
                     JsonHelper.DeserializeFromJson<MessageDetails>(details)
-                        ?? throw new ArgumentNullException(nameof(details)));
+                                    ?? throw new ArgumentNullException(nameof(details)));
 
                 inputMessages.Add(message);
             }

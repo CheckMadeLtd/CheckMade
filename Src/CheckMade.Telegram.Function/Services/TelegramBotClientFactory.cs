@@ -9,8 +9,7 @@ public interface IBotClientFactory
     ITelegramBotClientAdapter CreateBotClient(BotType botType);
 }
 
-public class BotClientFactory(IHttpClientFactory httpFactory, BotTokens botTokens) 
-    : IBotClientFactory
+public class BotClientFactory(IHttpClientFactory httpFactory, BotTokens botTokens) : IBotClientFactory
 {
     public ITelegramBotClientAdapter CreateBotClient(BotType botType) => botType switch
     {

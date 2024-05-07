@@ -41,6 +41,10 @@ public class UpdateService(IBotClientFactory botClientFactory,
                 "Text in the telegram input message must not be empty")
             : telegramInputMessage.Text;
         
-        return new InputTextMessage(userId, new MessageDetails(messageText));
+        return new InputTextMessage(
+            userId,
+            new MessageDetails(
+                messageText,
+                telegramInputMessage.Date));
     }
 }

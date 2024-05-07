@@ -1,12 +1,9 @@
-using CheckMade.Telegram.Function;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
@@ -33,9 +30,15 @@ public class UpdateServiceTests
     {
         const long validUserId = 123L;
         const string validText = "Valid text message";
+        var now = DateTime.Now;
         
-        var telegramInputMessage = new Message { From = new User { Id = validUserId }, Text = validText };
-        var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText));
+        var telegramInputMessage = new Message
+        {
+            From = new User { Id = validUserId },
+            Date = now,
+            Text = validText
+        };
+        var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText, now));
 
         var actualModel = UpdateService.ConvertToModel(telegramInputMessage);
         Assert.Equal(expectedModel, actualModel);
@@ -63,8 +66,8 @@ public class UpdateServiceTests
     [Fact]
     public async Task HandleUpdateAsync_UsesItsDependenciesAsExpected_WhenUpdateMessageValid()
     {
-        var botType = BotType.Submissions;
-        
+        // Arrange
+        const BotType botType = BotType.Submissions;
         const long validUserId = 123L;
         const string validText = "Valid text message";
         var validChatId = new ChatId(321L);
@@ -80,20 +83,23 @@ public class UpdateServiceTests
         };
         
         var mockFactory = new Mock<IBotClientFactory>();
+        var mockBotClient = new Mock<ITelegramBotClientAdapter>();
         var mockRequestProcessor = new Mock<IRequestProcessor>();
         var mockLogger = new Mock<ILogger<UpdateService>>();
-
-        var mockBotClient = new Mock<ITelegramBotClientAdapter>();
+        
         mockFactory.Setup(factory => factory.CreateBotClient(botType)).Returns(mockBotClient.Object);
         
         var updateService = new UpdateService(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
+        
+        // Act
         await updateService.HandleUpdateAsync(update, botType);
 
+        // Assert
         mockRequestProcessor.Verify(rp => 
             rp.EchoAsync(It.IsAny<InputTextMessage>()), Times.Once);
         
         mockFactory.Verify(f => f.CreateBotClient(botType), Times.Once);
-            
+        
         mockBotClient.Verify(bc => 
             bc.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(),
                 It.IsAny<CancellationToken>()),
@@ -103,5 +109,4 @@ public class UpdateServiceTests
         mockRequestProcessor.VerifyNoOtherCalls();
         mockBotClient.VerifyNoOtherCalls();
     }
-    
 }
