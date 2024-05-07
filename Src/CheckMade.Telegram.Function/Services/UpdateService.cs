@@ -1,12 +1,13 @@
-using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Logic;
+using System.Runtime.CompilerServices;
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Function;
+[assembly: InternalsVisibleTo("CheckMade.Telegram.Tests")]
+
+namespace CheckMade.Telegram.Function.Services;
 
 public class UpdateService(IBotClientFactory botClientFactory,
     IRequestProcessor requestProcessor, ILogger<UpdateService> logger)
@@ -14,7 +15,9 @@ public class UpdateService(IBotClientFactory botClientFactory,
     internal async Task HandleUpdateAsync(Update update, BotType botType)
     {
         logger.LogInformation("Invoke telegram update function for: {botType}", botType);
+        
         if (update.Message is not { } telegramInputMessage) return;
+
         logger.LogInformation("Received Message from {ChatId}", telegramInputMessage.Chat.Id);
 
         var inputMessage = ConvertToModel(telegramInputMessage);
@@ -27,7 +30,7 @@ public class UpdateService(IBotClientFactory botClientFactory,
             text: outputMessage);
     }
 
-    private static InputTextMessage ConvertToModel(Message telegramInputMessage)
+    internal static InputTextMessage ConvertToModel(Message telegramInputMessage)
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),

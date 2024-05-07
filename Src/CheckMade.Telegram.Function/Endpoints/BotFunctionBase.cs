@@ -1,4 +1,5 @@
 using System.Net;
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
