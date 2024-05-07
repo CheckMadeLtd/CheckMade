@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CheckMade.Telegram.Tests.Startup;
 
 [UsedImplicitly]
-public class IntegrationTestStartup : TestStartupBase
+public class IntegrationTestStartup : TestStartupBase, IDisposable, IAsyncDisposable
 {
-    internal ServiceProvider GetServiceProvider() => ServiceProvider;
+    internal ServiceProvider ServiceProvider { get; set; } = null!;
 
     public IntegrationTestStartup()
     {
@@ -16,7 +16,29 @@ public class IntegrationTestStartup : TestStartupBase
     
     private new void ConfigureServices()
     {
-        Services.ConfigurePersistenceServices(Config, HostingEnvironment);
         base.ConfigureServices();
+        
+        Services.ConfigurePersistenceServices(Config, HostingEnvironment);
+
+        ServiceProvider = Services.BuildServiceProvider();
     }
+    
+    public void Dispose()
+    {
+        if (ServiceProvider is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (ServiceProvider is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        GC.SuppressFinalize(this);
+    }
+
 }

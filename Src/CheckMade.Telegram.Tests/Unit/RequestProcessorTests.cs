@@ -7,7 +7,7 @@ namespace CheckMade.Telegram.Tests.Unit;
 
 public class RequestProcessorTests(UnitTestStartup setup) : IClassFixture<UnitTestStartup>
 {
-    private readonly ServiceProvider _services = setup.GetServiceProvider();
+    private readonly ServiceProvider _services = setup.ServiceProvider;
     
     [Fact]
     public async Task Echo_ReturnsEcho_WhenInputValid()

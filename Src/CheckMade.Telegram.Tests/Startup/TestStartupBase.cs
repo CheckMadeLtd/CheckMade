@@ -4,12 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-public abstract class TestStartupBase : IDisposable, IAsyncDisposable
+public abstract class TestStartupBase
 {
     protected IConfigurationRoot Config { get; private init; }
     protected string HostingEnvironment { get; private init; }
     protected ServiceCollection Services { get; } = [];
-    protected ServiceProvider ServiceProvider { get; private set; } = null!;
     
     protected TestStartupBase()
     {
@@ -31,25 +30,7 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 
     protected void ConfigureServices()
     {
+        Services.ConfigureBotServices();
         Services.ConfigureBusinessServices();
-        ServiceProvider = Services.BuildServiceProvider();
-    }
-    
-    public void Dispose()
-    {
-        if (ServiceProvider is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-        GC.SuppressFinalize(this);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (ServiceProvider is IAsyncDisposable asyncDisposable)
-        {
-            await asyncDisposable.DisposeAsync();
-        }
-        GC.SuppressFinalize(this);
     }
 }
