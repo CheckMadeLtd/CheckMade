@@ -10,7 +10,7 @@ namespace CheckMade.Telegram.Function.Startup;
 // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
 // but in Azure Keyvault they need to use '-'
 
-public static class ConfigureServicesExtensions
+internal static class ConfigureServicesExtensions
 {
     internal static void ConfigureBotServices(this IServiceCollection services)
     {
@@ -24,7 +24,7 @@ public static class ConfigureServicesExtensions
         services.AddScoped<UpdateHandler>();
     }
 
-    public static void ConfigurePersistenceServices(
+    internal static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.Add_TelegramPersistence_Dependencies();
@@ -49,9 +49,10 @@ public static class ConfigureServicesExtensions
         
         services.Add_CommonPersistence_Dependencies(dbConnectionString);
     }
-    
-    public static void ConfigureBusinessServices(this IServiceCollection services)
+
+    internal static void ConfigureBusinessServices(this IServiceCollection services)
     {
+        services.AddSingleton<IToModelConverter, ToModelConverter>();
         services.Add_MessagingLogic_Dependencies();
     }
 }

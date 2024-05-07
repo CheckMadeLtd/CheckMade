@@ -2,27 +2,33 @@ using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Tests.Startup;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class TelegramFunctionTests
+public class TelegramFunctionTests(UnitTestStartup setup) : IClassFixture<UnitTestStartup>
 {
+    private readonly ServiceProvider _services = setup.GetServiceProvider();
+    
     [Theory]
     [InlineData(null, "Valid text")]
     [InlineData(123L, null)]
     [InlineData(null, null)]
-    public void ConvertToModel_ThrowsArgumentNullException_ForInvalidInputs(long? userId, string text)
+    public void ConvertMessage_ThrowsArgumentNullException_ForInvalidInputs(long? userId, string text)
     {
+        var converter = _services.GetRequiredService<IToModelConverter>();
+        
         var telegramInputMessage = new Message
         {
             From = userId.HasValue ? new User { Id = userId.Value } : null,
             Text = text
         };
 
-        Assert.Throws<ArgumentNullException>(() => UpdateHandler.ConvertToModel(telegramInputMessage));
+        Assert.Throws<ArgumentNullException>(() => converter.ConvertMessage(telegramInputMessage));
     }
 
     [Fact]
@@ -38,9 +44,11 @@ public class TelegramFunctionTests
             Date = now,
             Text = validText
         };
+        
         var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText, now));
+        var converter = _services.GetRequiredService<IToModelConverter>();
 
-        var actualModel = UpdateHandler.ConvertToModel(telegramInputMessage);
+        var actualModel = converter.ConvertMessage(telegramInputMessage);
         Assert.Equal(expectedModel, actualModel);
     }
 
@@ -56,7 +64,8 @@ public class TelegramFunctionTests
         var mockRequestProcessor = new Mock<IRequestProcessor>();
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
 
-        var handler = new UpdateHandler(mockFactory.Object, mockRequestProcessor.Object, mockLogger.Object);
+        var converter = new Mock<IToModelConverter>().Object;
+        var handler = new UpdateHandler(mockFactory.Object, mockRequestProcessor.Object, converter, mockLogger.Object);
         await handler.HandleUpdateAsync(update, botType);
         
         mockFactory.VerifyNoOtherCalls();
