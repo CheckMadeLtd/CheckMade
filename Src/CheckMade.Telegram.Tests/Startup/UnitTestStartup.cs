@@ -6,11 +6,11 @@ using Moq;
 namespace CheckMade.Telegram.Tests.Startup;
 
 [UsedImplicitly]
-public class FunctionalTestStartup : TestStartupBase
+public class UnitTestStartup : TestStartupBase
 {
     internal ServiceProvider GetServiceProvider() => ServiceProvider;
 
-    public FunctionalTestStartup()
+    public UnitTestStartup()
     {
         ConfigureServices();
     }
