@@ -1,6 +1,6 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Tests.Mocks;
+using CheckMade.Telegram.Tests.DefaultMocks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -10,7 +10,7 @@ namespace CheckMade.Telegram.Tests.Startup;
 [UsedImplicitly]
 public class UnitTestStartup : TestStartupBase, IDisposable, IAsyncDisposable
 {
-    internal ServiceProvider ServiceProvider { get; set; } = null!;
+    internal ServiceProvider ServiceProvider { get; private set; } = null!;
 
     public UnitTestStartup()
     {
@@ -19,6 +19,7 @@ public class UnitTestStartup : TestStartupBase, IDisposable, IAsyncDisposable
     
     private new void ConfigureServices()
     {
+        // Needs to be called first, so that more specific configurations for dependencies can override the default ones!
         base.ConfigureServices();
         
         Services.AddScoped<IMessageRepo, MockMessageRepo>(_ => 

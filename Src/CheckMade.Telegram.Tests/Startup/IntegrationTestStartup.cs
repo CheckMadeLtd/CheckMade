@@ -7,7 +7,7 @@ namespace CheckMade.Telegram.Tests.Startup;
 [UsedImplicitly]
 public class IntegrationTestStartup : TestStartupBase, IDisposable, IAsyncDisposable
 {
-    internal ServiceProvider ServiceProvider { get; set; } = null!;
+    internal ServiceProvider ServiceProvider { get; private set; } = null!;
 
     public IntegrationTestStartup()
     {
@@ -40,5 +40,4 @@ public class IntegrationTestStartup : TestStartupBase, IDisposable, IAsyncDispos
         }
         GC.SuppressFinalize(this);
     }
-
 }

@@ -2,7 +2,7 @@ using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using Moq;
 
-namespace CheckMade.Telegram.Tests.Mocks;
+namespace CheckMade.Telegram.Tests.DefaultMocks;
 
 internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRepo
 {

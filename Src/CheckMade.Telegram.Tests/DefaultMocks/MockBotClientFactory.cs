@@ -3,9 +3,9 @@ using CheckMade.Telegram.Logic;
 using Moq;
 using Telegram.Bot;
 
-namespace CheckMade.Telegram.Tests.Mocks;
+namespace CheckMade.Telegram.Tests.DefaultMocks;
 
-public class MockBotClientFactory(IMock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
+internal class MockBotClientFactory(IMock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
 {
     public ITelegramBotClient CreateBotClient(BotType botType)
     {
