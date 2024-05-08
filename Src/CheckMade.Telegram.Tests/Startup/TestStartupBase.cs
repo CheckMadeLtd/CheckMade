@@ -22,13 +22,13 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-            // This gets ignored on the GitHub Actions Runner
+            // This config (the secrets.json of the main Telegram project) gets ignored on the GitHub Actions Runner
             .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") 
-            // Also includes Env Vars set in GH Actions Workflow
+            // This also includes Env Vars set in GitHub Actions Workflow
             .AddEnvironmentVariables();
         Config = builder.Build();
         
-        // From local.settings.json or from env variable set in GitHub Actions workflow!
+        // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
         HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
             ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
     }
