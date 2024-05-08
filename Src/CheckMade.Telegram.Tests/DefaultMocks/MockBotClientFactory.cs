@@ -4,7 +4,7 @@ using Moq;
 
 namespace CheckMade.Telegram.Tests.DefaultMocks;
 
-internal class MockBotClientFactory(Mock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
+internal class MockBotClientFactory : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClient(BotType botType)
     {

@@ -17,10 +17,7 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<IMessageRepo, MockMessageRepo>(_ => 
-            new MockMessageRepo(new Mock<IMessageRepo>()));
-        
-        Services.AddSingleton<IBotClientFactory, MockBotClientFactory>(_ =>
-            new MockBotClientFactory(new Mock<IBotClientFactory>()));
+        Services.AddScoped<IMessageRepo, MockMessageRepo>(_ => new MockMessageRepo(new Mock<IMessageRepo>()));
+        Services.AddSingleton<IBotClientFactory, MockBotClientFactory>(_ => new MockBotClientFactory());
     }
 }

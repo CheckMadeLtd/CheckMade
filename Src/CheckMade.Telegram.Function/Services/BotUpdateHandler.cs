@@ -1,10 +1,7 @@
-using System.Runtime.CompilerServices;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
-
-[assembly: InternalsVisibleTo("CheckMade.Telegram.Tests")]
 
 namespace CheckMade.Telegram.Function.Services;
 
