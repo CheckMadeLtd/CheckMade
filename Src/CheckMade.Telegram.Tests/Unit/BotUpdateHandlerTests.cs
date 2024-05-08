@@ -5,24 +5,25 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
 public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTestStartup>
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
-
-    // Test with variety of values for validText
-    [Fact]
-    public async Task HandleUpdateAsync_ReturnsCorrectOutputMessage_ForValidUpdateToSubmissionsBot()
+    
+    [Theory]
+    [InlineData("_")]
+    [InlineData("Normal valid text message")]
+    [InlineData(" valid text message \n with line break and trailing spaces ")]
+    public async Task HandleUpdateAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
     {
         // Arrange
         const BotType botType = BotType.Submissions;
         const long validUserId = 123L;
         const long validChatId = 321L;
-        const string validText = "Valid text message";
         var now = DateTime.Now;
-        const string expectedOutputMessage = $"Echo: {validText}";
 
         var update = new Update
         {
@@ -31,7 +32,7 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
                 From = new User { Id = validUserId },
                 Chat = new Chat { Id = validChatId },
                 Date = now,
-                Text = validText
+                Text = inputText
             }
         };
 
@@ -42,6 +43,8 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
         var actualOutputMessage = await handler.HandleUpdateAsync(update, botType);
         
         // Assert
+        var expectedOutputMessage = $"Echo: {inputText}";
+        
         actualOutputMessage.Should().Be(expectedOutputMessage);
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
                 validChatId,
@@ -50,21 +53,31 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
             Times.Once);
     }
     
-    [Theory]
-    [InlineData(null, "Valid text")]
-    [InlineData(123L, null)]
-    [InlineData(null, null)]
-    public void ConvertMessage_ThrowsArgumentNullException_ForInvalidInputs(long? userId, string text)
+    [Fact]
+    public async Task HandleUpdateAsync_ThrowsArgumentNullException_ForEmptyMessageToSubmissionsBot()
     {
-        var converter = _services.GetRequiredService<IToModelConverter>();
+        // Arrange
+        const BotType botType = BotType.Submissions;
+        var update = new Update { Message = null };
+        var handler = _services.GetRequiredService<IBotUpdateHandler>();
         
-        var telegramInputMessage = new Message
-        {
-            From = userId.HasValue ? new User { Id = userId.Value } : null,
-            Text = text
-        };
+        // Act
+        Func<Task> handleUpdate = () => handler.HandleUpdateAsync(update, botType);
         
-        Action convertMessage = () => converter.ConvertMessage(telegramInputMessage);
-        convertMessage.Should().Throw<ArgumentNullException>();
+        // Assert
+        await handleUpdate.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Theory]
+    [InlineData(BotType.Submissions)]
+    [InlineData(BotType.Communications)]
+    [InlineData(BotType.Notifications)]
+    public async Task HandleUpdateAsync_Fails_ForUpdateOfUnhandledType(BotType botType)
+    {
+        var update = new Update { CallbackQuery = new CallbackQuery() };
+        
+        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        Func<Task> handleUpdate = () => handler.HandleUpdateAsync(update, botType);
+        await handleUpdate.Should().ThrowAsync<Exception>();
     }
 }
