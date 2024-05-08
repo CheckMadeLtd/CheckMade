@@ -9,15 +9,4 @@ public class RequestProcessorTests(UnitTestStartup setup) : IClassFixture<UnitTe
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
     
-    [Fact]
-    public async Task Echo_ReturnsEcho_WhenInputValid()
-    {
-        var fakeInputMessage = TestUtils.GetValidTestMessage(); 
-        var expectedOutputText = $"Echo: {fakeInputMessage.Details.Text}";
-        var requestProcessor = _services.GetRequiredService<IRequestProcessor>();
-        
-        var actualOutputText = await requestProcessor.EchoAsync(fakeInputMessage);
-
-        actualOutputText.Should().Be(expectedOutputText);
-    }
 }

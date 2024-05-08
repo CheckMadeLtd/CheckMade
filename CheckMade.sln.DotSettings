@@ -11,4 +11,4 @@
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=CheckMade_002ETelegram_002EFunction_003B_002A_003BCheckMade_002ETelegram_002EFunction_002EWorkerHostBuilderFunctionMetadataProviderExtension_003B_002A/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=CheckMade_002ETelegram_002EFunction_003B_002A_003BProgram_003B_002A/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=CheckMade_002ETelegram_002ETests_003B_002A_003B_002A_003B_002A/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/Filtering/HideAutoProperties/@EntryValue">False</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/Environment/Filtering/HideAutoProperties/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

@@ -1,6 +1,6 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Tests.DefaultMocks;
+using CheckMade.Telegram.Tests.Startup.DefaultMocks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
