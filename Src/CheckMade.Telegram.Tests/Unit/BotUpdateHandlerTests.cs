@@ -3,6 +3,7 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
@@ -11,6 +12,7 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
 
+    // Test with variety of values for validText
     [Fact]
     public async Task HandleUpdateAsync_ReturnsCorrectOutputMessage_ForValidUpdateToSubmissionsBot()
     {
@@ -33,6 +35,7 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
             }
         };
 
+        var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IBotUpdateHandler>();
         
         // Act
@@ -40,6 +43,11 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
         
         // Assert
         actualOutputMessage.Should().Be(expectedOutputMessage);
+        mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
+                validChatId,
+                expectedOutputMessage,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
     
     [Theory]

@@ -18,6 +18,14 @@ public class UnitTestStartup : TestStartupBase
     protected override void RegisterTestTypeSpecificServices()
     {
         Services.AddScoped<IMessageRepo, MockMessageRepo>(_ => new MockMessageRepo(new Mock<IMessageRepo>()));
-        Services.AddSingleton<IBotClientFactory, MockBotClientFactory>(_ => new MockBotClientFactory());
+        
+        /* Adding it into the D.I. container is necessary so that I can inject the same instance in my tests that is
+         also used by the MockBotClientFactory below. This way I can verify behaviour on the mockBotClientWrapper
+         without explicitly setting up the mock in the unit test itself */ 
+        var mockBotClientWrapper = new Mock<IBotClientWrapper>();
+        Services.AddScoped(_ => mockBotClientWrapper);
+        
+        Services.AddScoped<IBotClientFactory, MockBotClientFactory>(_ => 
+            new MockBotClientFactory(mockBotClientWrapper.Object));
     }
 }
