@@ -11,6 +11,8 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
 
+    
+    
     [Theory]
     [InlineData(null, "Valid text")]
     [InlineData(123L, null)]
@@ -49,5 +51,4 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
         var actualModel = converter.ConvertMessage(telegramInputMessage);
         expectedModel.Should().Be(actualModel);
     }
-
 }

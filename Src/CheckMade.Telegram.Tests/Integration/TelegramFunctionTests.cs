@@ -1,3 +1,9 @@
+// ToDo: Implementing this test is more complicated than I thought, will leave for later. 
+// See: https://chat.openai.com/share/e9f1388e-d789-4c41-9637-2f4ffe5d4cb1
+
+
+
+
 // using System.Net;
 // using System.Text;
 // using CheckMade.Telegram.Function.Endpoints;
@@ -21,9 +27,6 @@
     // [InlineData(BotType.Submissions)]
     // [InlineData(BotType.Communications)]
     // [InlineData(BotType.Notifications)]
-    
-    // ToDo: Implementing this test is more complicated than I thought, will leave for later. 
-    // See: https://chat.openai.com/share/e9f1388e-d789-4c41-9637-2f4ffe5d4cb1
     
     // [Fact]    
     // public async Task SubmissionsBot_RespondsWithOk_ForValidUpdate()
