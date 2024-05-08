@@ -5,13 +5,12 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTestStartup>
+public class BotUpdateHandlerTests
 {
-    private readonly ServiceProvider _services = setup.ServiceProvider;
+    private ServiceProvider? _services;
     
     [Theory]
     [InlineData("_")]
@@ -19,6 +18,8 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
     [InlineData(" valid text message \n with line break and trailing spaces ")]
     public async Task HandleUpdateAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
     {
+        _services = new UnitTestStartup().ServiceProvider;
+        
         // Arrange
         const BotType botType = BotType.Submissions;
         const long validUserId = 123L;
@@ -56,6 +57,8 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
     [Fact]
     public async Task HandleUpdateAsync_ThrowsArgumentNullException_ForEmptyMessageToSubmissionsBot()
     {
+        _services = new UnitTestStartup().ServiceProvider;
+        
         // Arrange
         const BotType botType = BotType.Submissions;
         var update = new Update { Message = null };
@@ -74,6 +77,8 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
     [InlineData(BotType.Notifications)]
     public async Task HandleUpdateAsync_Fails_ForUpdateOfUnhandledType(BotType botType)
     {
+        _services = new UnitTestStartup().ServiceProvider;
+        
         var update = new Update { CallbackQuery = new CallbackQuery() };
         
         var handler = _services.GetRequiredService<IBotUpdateHandler>();

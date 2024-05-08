@@ -19,9 +19,9 @@
 //
 // namespace CheckMade.Telegram.Tests.Integration;
 //
-// public class TelegramFunctionTests(IntegrationTestStartup setup) : IClassFixture<IntegrationTestStartup>
+// public class TelegramFunctionTests
 // {
-//     private readonly ServiceProvider _services = setup.ServiceProvider;
+//     private ServiceProvider? _services;
     
     // [Theory]
     // [InlineData(BotType.Submissions)]
@@ -31,6 +31,8 @@
     // [Fact]    
     // public async Task SubmissionsBot_RespondsWithOk_ForValidUpdate()
     // {
+    //      _services = new IntegrationTestStartup().ServiceProvider;
+    
     //     var mockLoggerBot = new Mock<ILogger<SubmissionsBot>>().Object;
     //     var updateHandler = _services.GetRequiredService<IBotUpdateHandler>();
     //     var submissionsBot = new SubmissionsBot(mockLoggerBot, updateHandler);

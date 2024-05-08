@@ -6,21 +6,26 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Integration;
 
-public class RepositoryTests(IntegrationTestStartup setup) : IClassFixture<IntegrationTestStartup>
+public class RepositoryTests
 {
-    private readonly ServiceProvider _services = setup.ServiceProvider;
+    private ServiceProvider? _services;
     
     [Fact]
     public async Task TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
     {
+        _services = new IntegrationTestStartup().ServiceProvider;
+        
+        // Arrange
         var fakeInputMessage = TestUtils.GetValidTestMessage();
         
         var expectedRetrieval = new List<InputTextMessage>
         {
             new (fakeInputMessage.UserId, fakeInputMessage.Details)
         };
+        
         var repo = _services.GetRequiredService<IMessageRepo>();
         
+        // Act
         await repo.AddAsync(fakeInputMessage);
     
         var retrievedMessages = 
@@ -28,6 +33,7 @@ public class RepositoryTests(IntegrationTestStartup setup) : IClassFixture<Integ
             .OrderByDescending(x => x.Details.TelegramDate)
             .ToList().AsReadOnly();
         
+        // Assert
         expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
     }   
 }

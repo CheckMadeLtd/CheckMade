@@ -7,9 +7,7 @@ internal class MockBotClientFactory(IBotClientWrapper mockBotClientWrapper) : IB
 {
     public IBotClientWrapper CreateBotClient(BotType botType)
     {
-        /* In the future, when we need to test different behaviours of botClient for different botType, we can
-         then set up different behaviours for the mockBotClient as a function of the given botType */ 
-        
+        // since we are not using setup of any behaviour / return values, botType makes no difference at this point
         return mockBotClientWrapper;
     }
 }
