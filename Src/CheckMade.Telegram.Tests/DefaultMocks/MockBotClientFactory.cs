@@ -6,7 +6,7 @@ namespace CheckMade.Telegram.Tests.DefaultMocks;
 
 internal class MockBotClientFactory(IMock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
 {
-    public ITelegramBotClientAdapter CreateBotClient(BotType botType)
+    public IBotClientWrapper CreateBotClient(BotType botType)
     {
         return botType switch
         {

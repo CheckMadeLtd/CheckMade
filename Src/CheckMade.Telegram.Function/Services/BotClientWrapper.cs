@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Services;
 
-public interface ITelegramBotClientAdapter
+public interface IBotClientWrapper
 {
     Task<Message> SendTextMessageAsync(
         ChatId chatId,
@@ -12,7 +12,7 @@ public interface ITelegramBotClientAdapter
 
 }
 
-internal class TelegramBotClientAdapter(ITelegramBotClient botClient) : ITelegramBotClientAdapter
+internal class BotClientWrapper(ITelegramBotClient botClient) : IBotClientWrapper
 {
     public Task<Message> SendTextMessageAsync(
         ChatId chatId, 

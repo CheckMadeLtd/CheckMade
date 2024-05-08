@@ -7,22 +7,22 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotClientFactory
 {
-    ITelegramBotClientAdapter CreateBotClient(BotType botType);
+    IBotClientWrapper CreateBotClient(BotType botType);
 }
 
 public class BotClientFactory(IHttpClientFactory httpFactory, BotTokens botTokens) : IBotClientFactory
 {
-    public ITelegramBotClientAdapter CreateBotClient(BotType botType) => botType switch
+    public IBotClientWrapper CreateBotClient(BotType botType) => botType switch
     {
-        BotType.Submissions => new TelegramBotClientAdapter(
+        BotType.Submissions => new BotClientWrapper(
             new TelegramBotClient(botTokens.SubmissionsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot"))),
         
-        BotType.Communications => new TelegramBotClientAdapter(
+        BotType.Communications => new BotClientWrapper(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot"))),
         
-        BotType.Notifications => new TelegramBotClientAdapter(
+        BotType.Notifications => new BotClientWrapper(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{botType}Bot"))),
         
