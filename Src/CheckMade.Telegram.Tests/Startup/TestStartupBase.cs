@@ -7,9 +7,10 @@ namespace CheckMade.Telegram.Tests.Startup;
 public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 {
     protected IConfigurationRoot Config { get; private init; }
-    protected string Env { get; private init; }
+    protected string HostingEnvironment { get; private init; }
     protected ServiceCollection Services { get; } = [];
-    protected ServiceProvider ServiceProvider { get; private set; } = null!;
+    
+    internal ServiceProvider ServiceProvider { get; private set; } = null!;
     
     protected TestStartupBase()
     {
@@ -19,21 +20,28 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") // ToDo: check whether indeed doesn't throw exception on GH Runner 
             .AddEnvironmentVariables(); // Also includes Env Vars set in GH Actions Workflow
         Config = builder.Build();
         
         // From local.settings.json or from env variable set in GitHub Actions workflow!
-        Env = Config.GetValue<string>("HOSTING_ENVIRONMENT")
+        HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
             ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
-
-        ConfigureServices();
     }
 
     protected void ConfigureServices()
     {
-        Services.ConfigureBusinessServices();
+        RegisterBaseServices();
+        RegisterTestTypeSpecificServices();
         ServiceProvider = Services.BuildServiceProvider();
     }
+
+    private void RegisterBaseServices()
+    {
+        Services.ConfigureBusinessServices();
+    }
+
+    protected abstract void RegisterTestTypeSpecificServices();
     
     public void Dispose()
     {

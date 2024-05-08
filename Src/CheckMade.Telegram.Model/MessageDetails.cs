@@ -1,4 +1,5 @@
 namespace CheckMade.Telegram.Model;
 
 public record MessageDetails(
-    string Text);
+    string Text,
+    DateTime TelegramDate);

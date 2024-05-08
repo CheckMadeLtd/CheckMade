@@ -1,4 +1,5 @@
 using System.Net;
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Endpoints;
 
-public abstract class BotFunctionBase(ILogger logger, UpdateService updateService)
+public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdateHandler)
 {
     protected abstract BotType BotType { get; }
 
@@ -15,17 +16,21 @@ public abstract class BotFunctionBase(ILogger logger, UpdateService updateServic
     {
         logger.LogInformation("C# HTTP trigger function processed a request");
         var response = request.CreateResponse(HttpStatusCode.OK);
+        
         try
         {
-            var body = await request.ReadAsStringAsync() ?? throw new ArgumentNullException(nameof(request));
+            var body = await request.ReadAsStringAsync() 
+                       ?? throw new ArgumentNullException(nameof(request));
+            
             var update = JsonConvert.DeserializeObject<Update>(body);
+            
             if (update is null)
             {
                 logger.LogWarning("Unable to deserialize Update object");
                 return response;
             }
 
-            await updateService.HandleUpdateAsync(update, BotType);
+            await botUpdateHandler.HandleUpdateAsync(update, BotType);
         }
         catch (Exception e)
         {

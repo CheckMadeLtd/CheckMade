@@ -1,3 +1,4 @@
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -5,8 +6,8 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Telegram.Function.Endpoints;
 
-public class SubmissionsBot(ILogger<SubmissionsBot> logger, UpdateService updateService)
-    : BotFunctionBase(logger, updateService)
+public class SubmissionsBot(ILogger<SubmissionsBot> logger, IBotUpdateHandler botUpdateHandler)
+    : BotFunctionBase(logger, botUpdateHandler)
 {
     protected override BotType BotType => BotType.Submissions;
 

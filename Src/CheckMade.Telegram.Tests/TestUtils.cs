@@ -6,7 +6,8 @@ internal static class TestUtils
 {
     internal static InputTextMessage GetValidTestMessage() =>
         new InputTextMessage(
-            987654321,
+            987654321L,
             new MessageDetails(
-                "Hello World Test"));
+                $"Hello World, Valid Test: {new Random().Next(1000)}",
+                DateTime.Now));
 }

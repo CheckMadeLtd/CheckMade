@@ -1,11 +1,9 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -38,11 +36,12 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddSingleton<BotTokens>(_ => 
-            PopulateBotTokens(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName));
+        var config = hostContext.Configuration;
+        var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        services.ConfigureBotServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
-        services.ConfigurePersistenceServices(hostContext.Configuration, hostContext.HostingEnvironment.EnvironmentName);
+        services.ConfigureBotTokens(config, hostingEnvironment);
+        services.ConfigureBotServices();
+        services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureBusinessServices();
     })
     .ConfigureLogging((hostContext, logging) =>
@@ -120,32 +119,3 @@ await host.StartAsync();
 // after the host started, contrary to just using Run().
 
 await host.WaitForShutdownAsync();
-
-return;
-
-static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => hostingEnvironment switch
-{
-    "Development" => new BotTokens(
-        GetBotToken(config, "DEV", BotType.Submissions),
-        GetBotToken(config, "DEV", BotType.Communications),
-        GetBotToken(config, "DEV", BotType.Notifications)),
-
-    "Staging" => new BotTokens(
-        GetBotToken(config, "STG", BotType.Submissions),
-        GetBotToken(config, "STG", BotType.Communications),
-        GetBotToken(config, "STG", BotType.Notifications)),
-
-    "Production" => new BotTokens(
-        GetBotToken(config, "PRD", BotType.Submissions),
-        GetBotToken(config, "PRD", BotType.Communications),
-        GetBotToken(config, "PRD", BotType.Notifications)),
-
-    _ => throw new ArgumentException((nameof(hostingEnvironment)))
-};
-
-
-static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
-    config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
-    ?? throw new ArgumentNullException(nameof(config), 
-        $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
-    
