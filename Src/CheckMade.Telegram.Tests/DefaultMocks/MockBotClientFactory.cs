@@ -4,16 +4,15 @@ using Moq;
 
 namespace CheckMade.Telegram.Tests.DefaultMocks;
 
-internal class MockBotClientFactory(IMock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
+internal class MockBotClientFactory(Mock<IBotClientFactory> mockBotClientFactory) : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClient(BotType botType)
     {
-        return botType switch
-        {
-            BotType.Submissions => mockBotClientFactory.Object.CreateBotClient(BotType.Submissions),
-            BotType.Communications => mockBotClientFactory.Object.CreateBotClient(BotType.Communications),
-            BotType.Notifications => mockBotClientFactory.Object.CreateBotClient(BotType.Notifications),
-            _ => throw new ArgumentException("Invalid bot type")
-        };
+        /* In the future, when we need to test different behaviours of botClient for different botType, we can
+         then set up different behaviours for the mockBotClient as a function of the given botType */ 
+        
+        var mockBotClient = new Mock<IBotClientWrapper>();
+
+        return mockBotClient.Object;
     }
 }

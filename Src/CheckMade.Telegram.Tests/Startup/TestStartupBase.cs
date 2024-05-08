@@ -2,6 +2,7 @@ using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
@@ -41,6 +42,13 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 
     private void RegisterBaseServices()
     {
+        Services.AddLogging(config =>
+        {
+            config.ClearProviders();
+            config.AddConsole(); 
+            config.AddDebug(); 
+        });
+        
         Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
         Services.ConfigureBusinessServices();
     }

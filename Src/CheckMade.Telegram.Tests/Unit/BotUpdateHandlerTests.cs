@@ -1,4 +1,5 @@
 using CheckMade.Telegram.Function.Services;
+using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
@@ -11,7 +12,36 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
 
-    
+    [Fact]
+    public async Task HandleUpdateAsync_ReturnsCorrectOutputMessage_ForValidUpdateToSubmissionsBot()
+    {
+        // Arrange
+        const BotType botType = BotType.Submissions;
+        const long validUserId = 123L;
+        const long validChatId = 321L;
+        const string validText = "Valid text message";
+        var now = DateTime.Now;
+        const string expectedOutputMessage = $"Echo: {validText}";
+
+        var update = new Update
+        {
+            Message = new Message
+            {
+                From = new User { Id = validUserId },
+                Chat = new Chat { Id = validChatId },
+                Date = now,
+                Text = validText
+            }
+        };
+
+        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        
+        // Act
+        var actualOutputMessage = await handler.HandleUpdateAsync(update, botType);
+        
+        // Assert
+        actualOutputMessage.Should().Be(expectedOutputMessage);
+    }
     
     [Theory]
     [InlineData(null, "Valid text")]
