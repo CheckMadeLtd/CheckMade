@@ -1,6 +1,5 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,25 +59,4 @@ public class BotUpdateHandlerTests(UnitTestStartup setup) : IClassFixture<UnitTe
         Action convertMessage = () => converter.ConvertMessage(telegramInputMessage);
         convertMessage.Should().Throw<ArgumentNullException>();
     }
-
-    // [Fact]
-    // public void ConvertToModel_ReturnsCorrectModel_ForValidInput()
-    // {
-    //     const long validUserId = 123L;
-    //     const string validText = "Valid text message";
-    //     var now = DateTime.Now;
-    //     
-    //     var telegramInputMessage = new Message
-    //     {
-    //         From = new User { Id = validUserId },
-    //         Date = now,
-    //         Text = validText
-    //     };
-    //     
-    //     var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText, now));
-    //     var converter = _services.GetRequiredService<IToModelConverter>();
-    //
-    //     var actualModel = converter.ConvertMessage(telegramInputMessage);
-    //     expectedModel.Should().Be(actualModel);
-    // }
 }
