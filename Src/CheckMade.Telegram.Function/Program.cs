@@ -39,7 +39,8 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        services.ConfigureBotServices(config, hostingEnvironment);
+        services.ConfigureBotTokens(config, hostingEnvironment);
+        services.ConfigureBotServices();
         services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureBusinessServices();
     })

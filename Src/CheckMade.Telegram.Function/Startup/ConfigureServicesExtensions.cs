@@ -12,11 +12,14 @@ namespace CheckMade.Telegram.Function.Startup;
 
 internal static class ConfigureServicesExtensions
 {
-    internal static void ConfigureBotServices(
+    internal static void ConfigureBotTokens(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
-        
+    }
+    
+    internal static void ConfigureBotServices(this IServiceCollection services)
+    {
         var botTypes = Enum.GetNames(typeof(BotType));
         foreach (var botType in botTypes)
         {

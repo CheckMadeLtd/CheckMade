@@ -4,11 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-public abstract class TestStartupBase
+public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 {
     protected IConfigurationRoot Config { get; private init; }
     protected string HostingEnvironment { get; private init; }
     protected ServiceCollection Services { get; } = [];
+    
+    internal ServiceProvider ServiceProvider { get; private set; } = null!;
     
     protected TestStartupBase()
     {
@@ -25,13 +27,37 @@ public abstract class TestStartupBase
         // From local.settings.json or from env variable set in GitHub Actions workflow!
         HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
             ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
-
-        ConfigureServices();
     }
 
     protected void ConfigureServices()
     {
-        Services.ConfigureBotServices(Config, HostingEnvironment);
+        RegisterBaseServices();
+        RegisterTestTypeSpecificServices();
+        ServiceProvider = Services.BuildServiceProvider();
+    }
+
+    private void RegisterBaseServices()
+    {
         Services.ConfigureBusinessServices();
+    }
+
+    protected abstract void RegisterTestTypeSpecificServices();
+    
+    public void Dispose()
+    {
+        if (ServiceProvider is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (ServiceProvider is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        GC.SuppressFinalize(this);
     }
 }
