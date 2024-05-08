@@ -136,7 +136,7 @@ while true; do
         if [ -n "$csproj_file" ]; then
             perl -i -pe 's/(<ApplicationVersion>)(\d+)(<\/ApplicationVersion>)/"$1".($2+1)."$3"/ge' "$csproj_file"
             echo "<ApplicationVersion> in the Android .csproj file was incremented by 1. This is the 'version code' \
-            for Google Play which needs to be an integer."
+for Google Play which needs to be an integer."
             perl -i -pe "s|<ApplicationDisplayVersion>.*</ApplicationDisplayVersion>|\
             <ApplicationDisplayVersion>$new_version</ApplicationDisplayVersion>|g" "$csproj_file"
             echo "<ApplicationDisplayVersion> in the Android .csproj was updated to $new_version"
@@ -154,7 +154,7 @@ echo "--------------------------------------------------------------------------
 
 while true; do
     echo "Type name (at least 2 chars) for this new feature branch (the prefix 'fb/' will be added automatically). \
-    To abort, enter 'q': "
+To abort, enter 'q': "
 
     read -r branch_name
 
@@ -175,7 +175,7 @@ echo "--------------------------------------------------------------------------
 
 while true; do
   echo "Checked out to new branch '$full_branch_name'. Ready to push to origin and trigger remote CI/CD workflow? \
-  'y' or any other input to abort."
+'y' or any other input to abort."
   
   read -r ready_to_push
   
