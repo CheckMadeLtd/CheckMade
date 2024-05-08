@@ -18,6 +18,7 @@ public abstract class TestStartupBase
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") // ToDo: check whether indeed doesn't throw exception on GH Runner 
             .AddEnvironmentVariables(); // Also includes Env Vars set in GH Actions Workflow
         Config = builder.Build();
         
@@ -30,7 +31,7 @@ public abstract class TestStartupBase
 
     protected void ConfigureServices()
     {
-        Services.ConfigureBotServices();
+        Services.ConfigureBotServices(Config, HostingEnvironment);
         Services.ConfigureBusinessServices();
     }
 }

@@ -12,8 +12,11 @@ namespace CheckMade.Telegram.Function.Startup;
 
 internal static class ConfigureServicesExtensions
 {
-    internal static void ConfigureBotServices(this IServiceCollection services)
+    internal static void ConfigureBotServices(
+        this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
+        
         var botTypes = Enum.GetNames(typeof(BotType));
         foreach (var botType in botTypes)
         {
@@ -55,4 +58,30 @@ internal static class ConfigureServicesExtensions
         services.AddSingleton<IToModelConverter, ToModelConverter>();
         services.Add_MessagingLogic_Dependencies();
     }
+    
+    private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
+        (string?)hostingEnvironment switch
+        {
+            "Development" => new BotTokens(
+                GetBotToken(config, "DEV", BotType.Submissions),
+                GetBotToken(config, "DEV", BotType.Communications),
+                GetBotToken(config, "DEV", BotType.Notifications)),
+
+            "Staging" => new BotTokens(
+                GetBotToken(config, "STG", BotType.Submissions),
+                GetBotToken(config, "STG", BotType.Communications),
+                GetBotToken(config, "STG", BotType.Notifications)),
+
+            "Production" => new BotTokens(
+                GetBotToken(config, "PRD", BotType.Submissions),
+                GetBotToken(config, "PRD", BotType.Communications),
+                GetBotToken(config, "PRD", BotType.Notifications)),
+
+            _ => throw new ArgumentException((nameof(hostingEnvironment)))
+        };
+
+    private static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
+        config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
+        ?? throw new ArgumentNullException(nameof(config), 
+            $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
 }

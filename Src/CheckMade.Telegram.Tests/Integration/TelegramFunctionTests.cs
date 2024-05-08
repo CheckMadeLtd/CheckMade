@@ -2,7 +2,6 @@ using System.Net;
 using System.Text;
 using CheckMade.Telegram.Function.Endpoints;
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -12,58 +11,19 @@ using Moq;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Tests.Unit;
+namespace CheckMade.Telegram.Tests.Integration;
 
-public class TelegramFunctionTests(UnitTestStartup setup) : IClassFixture<UnitTestStartup>
+public class TelegramFunctionTests(IntegrationTestStartup setup) : IClassFixture<IntegrationTestStartup>
 {
     private readonly ServiceProvider _services = setup.ServiceProvider;
     
-    [Theory]
-    [InlineData(null, "Valid text")]
-    [InlineData(123L, null)]
-    [InlineData(null, null)]
-    public void ConvertMessage_ThrowsArgumentNullException_ForInvalidInputs(long? userId, string text)
-    {
-        var converter = _services.GetRequiredService<IToModelConverter>();
-        
-        var telegramInputMessage = new Message
-        {
-            From = userId.HasValue ? new User { Id = userId.Value } : null,
-            Text = text
-        };
-        
-        Action convertMessage = () => converter.ConvertMessage(telegramInputMessage);
-        convertMessage.Should().Throw<ArgumentNullException>();
-    }
-
-    [Fact]
-    public void ConvertToModel_ReturnsCorrectModel_ForValidInput()
-    {
-        const long validUserId = 123L;
-        const string validText = "Valid text message";
-        var now = DateTime.Now;
-        
-        var telegramInputMessage = new Message
-        {
-            From = new User { Id = validUserId },
-            Date = now,
-            Text = validText
-        };
-        
-        var expectedModel = new InputTextMessage(validUserId, new MessageDetails(validText, now));
-        var converter = _services.GetRequiredService<IToModelConverter>();
-
-        var actualModel = converter.ConvertMessage(telegramInputMessage);
-        expectedModel.Should().Be(actualModel);
-    }
-
     // [Theory]
     // [InlineData(BotType.Submissions)]
     // [InlineData(BotType.Communications)]
     // [InlineData(BotType.Notifications)]
     
     [Fact]    
-    public async Task SubmissionsBot_ProducesExpectedOutputMessage_ForValidMessageUpdate()
+    public async Task SubmissionsBot_RespondsWithOk_ForValidUpdate()
     {
         var mockLoggerBot = new Mock<ILogger<SubmissionsBot>>().Object;
         var updateHandler = _services.GetRequiredService<IBotUpdateHandler>();
