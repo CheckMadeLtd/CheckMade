@@ -13,8 +13,7 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.ConfigureBotTokens(Config, HostingEnvironment);
-        Services.ConfigureBotServices();
+        Services.ConfigureBotClientServices(Config, HostingEnvironment);
         Services.ConfigurePersistenceServices(Config, HostingEnvironment);
     }
 }

@@ -1,3 +1,4 @@
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,7 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
 
     private void RegisterBaseServices()
     {
+        Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
         Services.ConfigureBusinessServices();
     }
 

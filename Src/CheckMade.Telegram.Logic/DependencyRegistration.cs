@@ -5,7 +5,7 @@ namespace CheckMade.Telegram.Logic;
 
 public static class DependencyRegistration
 {
-    public static void Add_MessagingLogic_Dependencies(this IServiceCollection services)
+    public static void Add_TelegramLogic_Dependencies(this IServiceCollection services)
     {
         services.AddScoped<IRequestProcessor, RequestProcessor>();
     }
