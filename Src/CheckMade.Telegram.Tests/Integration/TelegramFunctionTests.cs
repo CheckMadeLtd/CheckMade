@@ -1,4 +1,4 @@
-// ToDo: Implementing this test is more complicated than I thought, will leave for later. 
+// Implementing this test is more complicated than I thought, will leave for later. 
 // See: https://chat.openai.com/share/e9f1388e-d789-4c41-9637-2f4ffe5d4cb1
 
 
@@ -19,9 +19,9 @@
 //
 // namespace CheckMade.Telegram.Tests.Integration;
 //
-// public class TelegramFunctionTests(IntegrationTestStartup setup) : IClassFixture<IntegrationTestStartup>
+// public class TelegramFunctionTests
 // {
-//     private readonly ServiceProvider _services = setup.ServiceProvider;
+//     private ServiceProvider? _services;
     
     // [Theory]
     // [InlineData(BotType.Submissions)]
@@ -31,6 +31,8 @@
     // [Fact]    
     // public async Task SubmissionsBot_RespondsWithOk_ForValidUpdate()
     // {
+    //      _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+    
     //     var mockLoggerBot = new Mock<ILogger<SubmissionsBot>>().Object;
     //     var updateHandler = _services.GetRequiredService<IBotUpdateHandler>();
     //     var submissionsBot = new SubmissionsBot(mockLoggerBot, updateHandler);

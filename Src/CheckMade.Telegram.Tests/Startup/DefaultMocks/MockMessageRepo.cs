@@ -2,7 +2,7 @@ using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using Moq;
 
-namespace CheckMade.Telegram.Tests.DefaultMocks;
+namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
 
 internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRepo
 {
@@ -14,5 +14,10 @@ internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRe
     public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
     {
         return await mockMessageRepo.Object.GetAllAsync(userId);
+    }
+
+    public async Task HardDeleteAsync(long userId)
+    {
+        await mockMessageRepo.Object.HardDeleteAsync(userId);
     }
 }

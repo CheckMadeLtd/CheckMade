@@ -6,4 +6,5 @@ public interface IMessageRepo
 {
     Task AddAsync(InputTextMessage inputMessage);
     Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId);
+    Task HardDeleteAsync(long userId);
 }

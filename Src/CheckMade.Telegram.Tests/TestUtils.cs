@@ -5,9 +5,9 @@ namespace CheckMade.Telegram.Tests;
 internal static class TestUtils
 {
     internal static InputTextMessage GetValidTestMessage() =>
-        new InputTextMessage(
-            987654321L,
+        new(new Random().Next(10000),
             new MessageDetails(
-                $"Hello World, Valid Test: {new Random().Next(1000)}",
+                $"Hello World, Valid Test: {new Random().Next(10000)}",
                 DateTime.Now));
+    
 }

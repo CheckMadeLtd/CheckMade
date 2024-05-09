@@ -12,14 +12,11 @@ namespace CheckMade.Telegram.Function.Startup;
 
 internal static class ConfigureServicesExtensions
 {
-    internal static void ConfigureBotTokens(
+    internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
-    }
-    
-    internal static void ConfigureBotServices(this IServiceCollection services)
-    {
+
         var botTypes = Enum.GetNames(typeof(BotType));
         foreach (var botType in botTypes)
         {
@@ -27,9 +24,8 @@ internal static class ConfigureServicesExtensions
         }    
         
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
-        services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
     }
-
+    
     internal static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
@@ -59,7 +55,7 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureBusinessServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverter, ToModelConverter>();
-        services.Add_MessagingLogic_Dependencies();
+        services.Add_TelegramLogic_Dependencies();
     }
     
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 

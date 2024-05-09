@@ -1,16 +1,16 @@
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-public abstract class TestStartupBase : IDisposable, IAsyncDisposable
+public abstract class TestStartupBase
 {
     protected IConfigurationRoot Config { get; private init; }
     protected string HostingEnvironment { get; private init; }
-    protected ServiceCollection Services { get; } = [];
-    
-    internal ServiceProvider ServiceProvider { get; private set; } = null!;
+    internal ServiceCollection Services { get; } = [];
     
     protected TestStartupBase()
     {
@@ -20,11 +20,13 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-            .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") // ToDo: check whether indeed doesn't throw exception on GH Runner 
-            .AddEnvironmentVariables(); // Also includes Env Vars set in GH Actions Workflow
+            // This config (the secrets.json of the main Telegram project) gets ignored on the GitHub Actions Runner
+            .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") 
+            // This also includes Env Vars set in GitHub Actions Workflow
+            .AddEnvironmentVariables();
         Config = builder.Build();
         
-        // From local.settings.json or from env variable set in GitHub Actions workflow!
+        // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
         HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
             ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
     }
@@ -33,31 +35,20 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
     {
         RegisterBaseServices();
         RegisterTestTypeSpecificServices();
-        ServiceProvider = Services.BuildServiceProvider();
     }
 
     private void RegisterBaseServices()
     {
+        Services.AddLogging(config =>
+        {
+            config.ClearProviders();
+            config.AddConsole(); 
+            config.AddDebug(); 
+        });
+        
+        Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
         Services.ConfigureBusinessServices();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();
-    
-    public void Dispose()
-    {
-        if (ServiceProvider is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-        GC.SuppressFinalize(this);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (ServiceProvider is IAsyncDisposable asyncDisposable)
-        {
-            await asyncDisposable.DisposeAsync();
-        }
-        GC.SuppressFinalize(this);
-    }
 }

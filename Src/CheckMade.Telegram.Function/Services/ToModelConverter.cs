@@ -15,7 +15,7 @@ internal class ToModelConverter : IToModelConverter
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
-
+        
         var messageText = string.IsNullOrWhiteSpace(telegramInputMessage.Text)
             ? throw new ArgumentNullException(nameof(telegramInputMessage),
                 "Text in the telegram input message must not be empty")
