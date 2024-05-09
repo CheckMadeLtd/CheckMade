@@ -31,10 +31,26 @@ public class RepositoryTests
             (await messageRepo.GetAllAsync(fakeInputMessage.UserId))
             .OrderByDescending(x => x.Details.TelegramDate)
             .ToList().AsReadOnly();
+
+        await messageRepo.HardDeleteAsync(fakeInputMessage.UserId);
         
         // Assert
         expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
     }
-    
-    // ToDo: GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var messageRepo = _services.GetRequiredService<IMessageRepo>();
+        long userId = new Random().Next(10000);
+
+        // Act
+        var retrievedMessages = await messageRepo.GetAllAsync(userId);
+
+        // Assert
+        retrievedMessages.Should().BeEmpty();
+    }
 }

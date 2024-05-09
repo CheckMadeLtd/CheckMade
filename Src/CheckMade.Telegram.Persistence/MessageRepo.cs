@@ -61,6 +61,20 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
             return inputMessages;
         }
     }
+
+    public async Task HardDeleteAsync(long userId)
+    {
+        using (var db = dbProvider.CreateConnection())
+        {
+            db.Open();
+            
+            var sql = new NpgsqlCommand("DELETE FROM tlgr_messages WHERE tlgr_user_id = @userId", (NpgsqlConnection)db);
+
+            sql.Parameters.AddWithValue("@userId", userId);
+
+            await sql.ExecuteNonQueryAsync();
+        }
+    }
 }
 
 // ToDo: Add try/catch / exception handling for:  db Conneciton not good; deserialisation failed; wrong columns for reader. 
