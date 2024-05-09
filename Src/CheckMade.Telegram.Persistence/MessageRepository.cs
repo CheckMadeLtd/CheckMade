@@ -1,4 +1,3 @@
-using CheckMade.Common.Interfaces;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
@@ -7,74 +6,64 @@ using NpgsqlTypes;
 
 namespace CheckMade.Telegram.Persistence;
 
-public class MessageRepository(IDbConnectionProvider dbProvider) : IMessageRepository
+// ToDo: Add try/catch / exception handling for:  db Conneciton not good; deserialisation failed; wrong columns for reader.
+
+public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
     public async Task AddAsync(InputTextMessage inputMessage)
     {
-        using (var db = dbProvider.CreateConnection())
+        await dbHelper.ExecuteAsync(async (command) =>
         {
-            db.Open();
+            command.CommandText = "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
+                                  " VALUES (@telegramUserId, @telegramMessageDetails)";
+            command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             
-            var sql = new NpgsqlCommand(
-                "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
-                " VALUES (@telegramUserId, @telegramMessageDetails)", (NpgsqlConnection)db);
-            
-            sql.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
-            
-            sql.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
+            command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(inputMessage.Details)
             });
-            
-            await sql.ExecuteNonQueryAsync();
-        }
+
+            await command.ExecuteNonQueryAsync();
+        });
     }
 
     public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
     {
-        using (var db = dbProvider.CreateConnection())
+        var inputMessages = new List<InputTextMessage>();
+    
+        await dbHelper.ExecuteAsync(async (command) =>
         {
-            db.Open();
+            command.CommandText = "SELECT * FROM tlgr_messages WHERE tlgr_user_id = @userId";
+            command.Parameters.AddWithValue("@userId", userId);
 
-            var sql = new NpgsqlCommand("SELECT * FROM tlgr_messages WHERE tlgr_user_id = @userId",
-                (NpgsqlConnection)db);
-
-            sql.Parameters.AddWithValue("@userId", userId);
-
-            await using var reader = await sql.ExecuteReaderAsync();
-
-            var inputMessages = new List<InputTextMessage>();
-
-            while (await reader.ReadAsync())
+            await using (var reader = await command.ExecuteReaderAsync())
             {
-                var telegramUserId = reader.GetInt64(reader.GetOrdinal("tlgr_user_id"));
-                var details = reader.GetString(reader.GetOrdinal("details"));
+                while (await reader.ReadAsync())
+                {
+                    var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("tlgr_user_id"));
+                    var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
-                var message = new InputTextMessage(
-                    telegramUserId, 
-                    JsonHelper.DeserializeFromJson<MessageDetails>(details)
-                                    ?? throw new ArgumentNullException(nameof(details)));
+                    var message = new InputTextMessage(
+                        telegramUserId, 
+                        JsonHelper.DeserializeFromJson<MessageDetails>(details)
+                        ?? throw new ArgumentNullException(nameof(details)));
 
-                inputMessages.Add(message);
+                    inputMessages.Add(message);
+                }
             }
+        });
 
-            return inputMessages;
-        }
+        return inputMessages;
     }
-
+    
     public async Task HardDeleteAsync(long userId)
     {
-        using (var db = dbProvider.CreateConnection())
+        await dbHelper.ExecuteAsync(async (command) =>
         {
-            db.Open();
-            
-            var sql = new NpgsqlCommand("DELETE FROM tlgr_messages WHERE tlgr_user_id = @userId", (NpgsqlConnection)db);
+            command.CommandText = "DELETE FROM tlgr_messages WHERE tlgr_user_id = @userId";
+            command.Parameters.AddWithValue("@userId", userId);
 
-            sql.Parameters.AddWithValue("@userId", userId);
-
-            await sql.ExecuteNonQueryAsync();
-        }
-    }
-}
-
-// ToDo: Add try/catch / exception handling for:  db Conneciton not good; deserialisation failed; wrong columns for reader. 
+            await command.ExecuteNonQueryAsync();
+        });
+    }}
+    
