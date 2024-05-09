@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Tests.Integration;
 
-public class RepositoryTests
+public class MessageRepoTests
 {
     private ServiceProvider? _services;
     
