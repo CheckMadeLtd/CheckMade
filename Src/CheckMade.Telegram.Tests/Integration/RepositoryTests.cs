@@ -11,25 +11,24 @@ public class RepositoryTests
     private ServiceProvider? _services;
     
     [Fact]
-    public async Task TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
+    public async Task MessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var fakeInputMessage = TestUtils.GetValidTestMessage();
+        var messageRepo = _services.GetRequiredService<IMessageRepo>();
         
         var expectedRetrieval = new List<InputTextMessage>
         {
             new (fakeInputMessage.UserId, fakeInputMessage.Details)
         };
         
-        var repo = _services.GetRequiredService<IMessageRepo>();
-        
         // Act
-        await repo.AddAsync(fakeInputMessage);
+        await messageRepo.AddAsync(fakeInputMessage);
     
         var retrievedMessages = 
-            (await repo.GetAllAsync(fakeInputMessage.UserId))
+            (await messageRepo.GetAllAsync(fakeInputMessage.UserId))
             .OrderByDescending(x => x.Details.TelegramDate)
             .ToList().AsReadOnly();
         
