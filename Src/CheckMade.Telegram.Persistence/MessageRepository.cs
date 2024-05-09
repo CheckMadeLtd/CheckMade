@@ -12,7 +12,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
     public async Task AddAsync(InputTextMessage inputMessage)
     {
-        await dbHelper.ExecuteAsync(async (command) =>
+        await dbHelper.ExecuteAsync(async command =>
         {
             command.CommandText = "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
                                   " VALUES (@telegramUserId, @telegramMessageDetails)";
@@ -31,7 +31,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         var inputMessages = new List<InputTextMessage>();
     
-        await dbHelper.ExecuteAsync(async (command) =>
+        await dbHelper.ExecuteAsync(async command =>
         {
             command.CommandText = "SELECT * FROM tlgr_messages WHERE tlgr_user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);
@@ -58,7 +58,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     
     public async Task HardDeleteAsync(long userId)
     {
-        await dbHelper.ExecuteAsync(async (command) =>
+        await dbHelper.ExecuteAsync(async command =>
         {
             command.CommandText = "DELETE FROM tlgr_messages WHERE tlgr_user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);
