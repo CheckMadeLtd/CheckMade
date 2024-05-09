@@ -6,8 +6,6 @@ using NpgsqlTypes;
 
 namespace CheckMade.Telegram.Persistence;
 
-// ToDo: Add try/catch / exception handling for:  db Conneciton not good; deserialisation failed; wrong columns for reader.
-
 public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
     public async Task AddAsync(InputTextMessage inputMessage)
