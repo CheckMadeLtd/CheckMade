@@ -1,4 +1,5 @@
 using CheckMade.Common.Persistence;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
@@ -56,6 +57,11 @@ internal static class ConfigureServicesExtensions
     {
         services.AddSingleton<IToModelConverter, ToModelConverter>();
         services.Add_TelegramLogic_Dependencies();
+    }
+
+    internal static void ConfigureUtilityServices(this IServiceCollection services)
+    {
+        services.Add_CommonUtils_Dependencies();
     }
     
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 

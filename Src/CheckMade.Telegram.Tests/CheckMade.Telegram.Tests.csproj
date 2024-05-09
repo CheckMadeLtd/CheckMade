@@ -26,7 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Function\CheckMade.Telegram.Function.csproj" />
     </ItemGroup>
 

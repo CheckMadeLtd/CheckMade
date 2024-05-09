@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.Utils;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -16,7 +17,8 @@ public class MessageRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var fakeInputMessage = TestUtils.GetValidTestMessage();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var fakeInputMessage = utils.GetValidTestMessage();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         var expectedRetrieval = new List<InputTextMessage>
@@ -44,8 +46,9 @@ public class MessageRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
+        var randomizer = _services.GetRequiredService<IRandomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
-        long userId = new Random().Next(10000);
+        long userId = randomizer.GenerateRandomLong();
     
         // Act
         var retrievedMessages = await messageRepo.GetAllAsync(userId);
