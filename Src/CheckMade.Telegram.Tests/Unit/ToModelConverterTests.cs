@@ -1,9 +1,9 @@
-using CheckMade.Telegram.Tests.Startup;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace CheckMade.Telegram.Tests.Unit;
-
-public class ToModelConverterTests
+// using CheckMade.Telegram.Tests.Startup;
+// using Microsoft.Extensions.DependencyInjection;
+//
+// namespace CheckMade.Telegram.Tests.Unit;
+//
+// public class ToModelConverterTests
 {
     // private ServiceProvider? _services;
     
@@ -13,7 +13,7 @@ public class ToModelConverterTests
     // [InlineData(null)]
     // public async Task HandleUpdateAsync_ThrowsArgumentNullException_ForEmptyMessageToSubmissionsBot(string inputText)
     // {
-    //      _services = new UnitTestStartup().ServiceProvider;
+    //      _services = new UnitTestStartup().Services.BuildServiceProvider();
     
     //     // Arrange
     //     const BotType botType = BotType.Submissions;

@@ -31,7 +31,7 @@
     // [Fact]    
     // public async Task SubmissionsBot_RespondsWithOk_ForValidUpdate()
     // {
-    //      _services = new IntegrationTestStartup().ServiceProvider;
+    //      _services = new IntegrationTestStartup().Services.BuildServiceProvider();
     
     //     var mockLoggerBot = new Mock<ILogger<SubmissionsBot>>().Object;
     //     var updateHandler = _services.GetRequiredService<IBotUpdateHandler>();

@@ -6,13 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
-public abstract class TestStartupBase : IDisposable, IAsyncDisposable
+public abstract class TestStartupBase
 {
     protected IConfigurationRoot Config { get; private init; }
     protected string HostingEnvironment { get; private init; }
-    protected ServiceCollection Services { get; } = [];
-    
-    internal ServiceProvider ServiceProvider { get; private set; } = null!;
+    internal ServiceCollection Services { get; } = [];
     
     protected TestStartupBase()
     {
@@ -37,7 +35,6 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
     {
         RegisterBaseServices();
         RegisterTestTypeSpecificServices();
-        ServiceProvider = Services.BuildServiceProvider();
     }
 
     private void RegisterBaseServices()
@@ -54,22 +51,4 @@ public abstract class TestStartupBase : IDisposable, IAsyncDisposable
     }
 
     protected abstract void RegisterTestTypeSpecificServices();
-    
-    public void Dispose()
-    {
-        if (ServiceProvider is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-        GC.SuppressFinalize(this);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (ServiceProvider is IAsyncDisposable asyncDisposable)
-        {
-            await asyncDisposable.DisposeAsync();
-        }
-        GC.SuppressFinalize(this);
-    }
 }

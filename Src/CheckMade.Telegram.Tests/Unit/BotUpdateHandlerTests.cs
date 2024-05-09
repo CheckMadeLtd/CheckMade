@@ -18,7 +18,7 @@ public class BotUpdateHandlerTests
     [InlineData(" valid text message \n with line break and trailing spaces ")]
     public async Task HandleUpdateAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
     {
-        _services = new UnitTestStartup().ServiceProvider;
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         const BotType botType = BotType.Submissions;
@@ -57,7 +57,7 @@ public class BotUpdateHandlerTests
     [Fact]
     public async Task HandleUpdateAsync_ThrowsArgumentNullException_ForEmptyMessageToSubmissionsBot()
     {
-        _services = new UnitTestStartup().ServiceProvider;
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         const BotType botType = BotType.Submissions;
@@ -77,7 +77,7 @@ public class BotUpdateHandlerTests
     [InlineData(BotType.Notifications)]
     public async Task HandleUpdateAsync_Fails_ForUpdateOfUnhandledType(BotType botType)
     {
-        _services = new UnitTestStartup().ServiceProvider;
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var update = new Update { CallbackQuery = new CallbackQuery() };
         

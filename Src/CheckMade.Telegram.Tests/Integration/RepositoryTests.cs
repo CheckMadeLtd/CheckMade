@@ -13,7 +13,7 @@ public class RepositoryTests
     [Fact]
     public async Task TelegramMessageRepo_SavesAndRetrievesOneMessage_WhenInputValid()
     {
-        _services = new IntegrationTestStartup().ServiceProvider;
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var fakeInputMessage = TestUtils.GetValidTestMessage();
