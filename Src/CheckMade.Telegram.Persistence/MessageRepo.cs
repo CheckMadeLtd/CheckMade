@@ -62,3 +62,5 @@ public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
         }
     }
 }
+
+// ToDo: Add try/catch / exception handling for:  db Conneciton not good; deserialisation failed; wrong columns for reader. 
