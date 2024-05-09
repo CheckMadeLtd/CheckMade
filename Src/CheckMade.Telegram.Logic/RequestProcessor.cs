@@ -3,7 +3,7 @@ using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic;
 
-public class RequestProcessor(IMessageRepo repo) : IRequestProcessor
+public class RequestProcessor(IMessageRepository repo) : IRequestProcessor
 {
     public async Task<string> EchoAsync(InputTextMessage message)
     {

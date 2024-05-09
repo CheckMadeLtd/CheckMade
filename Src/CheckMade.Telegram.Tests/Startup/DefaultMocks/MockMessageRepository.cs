@@ -4,7 +4,7 @@ using Moq;
 
 namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
 
-internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRepo
+internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) : IMessageRepository
 {
     public async Task AddAsync(InputTextMessage inputMessage)
     {

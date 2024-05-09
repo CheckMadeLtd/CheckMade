@@ -7,7 +7,7 @@ using NpgsqlTypes;
 
 namespace CheckMade.Telegram.Persistence;
 
-public class MessageRepo(IDbConnectionProvider dbProvider) : IMessageRepo
+public class MessageRepository(IDbConnectionProvider dbProvider) : IMessageRepository
 {
     public async Task AddAsync(InputTextMessage inputMessage)
     {
