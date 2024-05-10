@@ -51,7 +51,6 @@ public abstract class TestStartupBase
         
         Services.ConfigureUtilityServices();
         Services.ConfigureBusinessServices();
-        Services.ConfigureNetworkRetryPolicyAndServices();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();

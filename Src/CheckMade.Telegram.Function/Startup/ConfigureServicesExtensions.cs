@@ -5,7 +5,6 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
 
 namespace CheckMade.Telegram.Function.Startup;
 
@@ -65,24 +64,6 @@ internal static class ConfigureServicesExtensions
         services.Add_CommonUtils_Dependencies();
     }
 
-    internal static void ConfigureNetworkRetryPolicyAndServices(this IServiceCollection services)
-    {
-        var networkRetryPolicy = Policy
-            .Handle<Exception>()
-            .WaitAndRetryAsync(3, 
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
-                (exception, timeSpan, retryCount) =>
-                {
-                    // This will be ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
-                    Console.Error.WriteLine($"Network error occurred at attempt {retryCount} with delay of " +
-                                            $"{timeSpan.TotalMilliseconds} milliseconds! " +
-                                            $"Exception type: {exception.GetType()}. " +
-                                            $"Exception message: {exception.Message}.");
-                });
-        
-        services.AddSingleton(networkRetryPolicy);
-    }
-    
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
         (string?)hostingEnvironment switch
         {

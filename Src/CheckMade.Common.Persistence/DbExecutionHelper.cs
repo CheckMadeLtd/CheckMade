@@ -1,9 +1,9 @@
 using System.Data.Common;
 using CheckMade.Common.Interfaces;
 using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.RetryPolicies;
 using Newtonsoft.Json;
 using Npgsql;
-using Polly.Retry;
 
 namespace CheckMade.Common.Persistence;
 
@@ -14,7 +14,7 @@ public interface IDbExecutionHelper
 
 internal class DbExecutionHelper(
         IDbConnectionProvider dbProvider,
-        AsyncRetryPolicy retryPolicy) 
+        IDbRetryPolicy retryPolicy) 
     : IDbExecutionHelper
 {
     public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)

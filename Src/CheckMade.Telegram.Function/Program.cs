@@ -49,7 +49,6 @@ var host = new HostBuilder()
         services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureUtilityServices();
         services.ConfigureBusinessServices();
-        services.ConfigureNetworkRetryPolicyAndServices();
     })
     .ConfigureLogging((hostContext, logging) =>
     {
