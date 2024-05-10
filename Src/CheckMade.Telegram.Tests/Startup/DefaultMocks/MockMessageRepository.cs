@@ -4,14 +4,14 @@ using Moq;
 
 namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
 
-internal class MockMessageRepo(IMock<IMessageRepo> mockMessageRepo) : IMessageRepo
+internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) : IMessageRepository
 {
-    public async Task AddAsync(InputTextMessage inputMessage)
+    public async Task AddAsync(InputMessage inputMessage)
     {
         await mockMessageRepo.Object.AddAsync(inputMessage);
     }
 
-    public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
+    public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
     {
         return await mockMessageRepo.Object.GetAllAsync(userId);
     }

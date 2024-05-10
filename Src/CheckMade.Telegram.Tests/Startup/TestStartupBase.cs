@@ -47,6 +47,9 @@ public abstract class TestStartupBase
         });
         
         Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
+        Services.AddSingleton<ITestUtils, TestUtils>();
+        
+        Services.ConfigureUtilityServices();
         Services.ConfigureBusinessServices();
     }
 

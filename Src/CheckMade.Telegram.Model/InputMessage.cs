@@ -1,6 +1,6 @@
 ﻿namespace CheckMade.Telegram.Model;
 
-public record InputTextMessage(
+public record InputMessage(
      long UserId,
      MessageDetails Details);
      

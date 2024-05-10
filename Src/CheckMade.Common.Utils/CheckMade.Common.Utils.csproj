@@ -15,13 +15,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="Npgsql" Version="8.0.3" />
+      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="Polly" Version="8.4.0" />
     </ItemGroup>
     
 </Project>

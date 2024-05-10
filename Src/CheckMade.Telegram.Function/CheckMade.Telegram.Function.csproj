@@ -53,6 +53,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Interfaces\CheckMade.Telegram.Interfaces.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj" />
