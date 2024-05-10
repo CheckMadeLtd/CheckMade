@@ -15,15 +15,14 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {
         logger.LogInformation("C# HTTP trigger function processed a request");
-        
+
         try
         {
-            var body = await request.ReadAsStringAsync() 
-                       ?? throw new InvalidOperationException(
-                           "The incoming HttpRequestData couldn't be serialized");
-            
+            var body = await request.ReadAsStringAsync() ?? throw new InvalidOperationException(
+                "The incoming HttpRequestData couldn't be serialized");
+
             var update = JsonConvert.DeserializeObject<Update>(body);
-            
+
             if (update is null)
             {
                 logger.LogWarning("Unable to deserialize Update object");
@@ -31,6 +30,11 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
             }
 
             await botUpdateHandler.HandleUpdateAsync(update, BotType);
+        }
+        catch (JsonException jsonEx)
+        {
+            logger.LogError(jsonEx, "Failed to deserialize Update.");
+            return request.CreateResponse(HttpStatusCode.BadRequest);
         }
         catch (Exception ex)
         {
