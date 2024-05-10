@@ -53,7 +53,7 @@ public class BotUpdateHandlerTests
         var handler = _services.GetRequiredService<IBotUpdateHandler>();
         
         // Act
-        Func<Task> handleUpdate = () => handler.HandleUpdateAsync(update, botType);
+        var handleUpdate = () => handler.HandleUpdateAsync(update, botType);
         
         // Assert
         await handleUpdate.Should().ThrowAsync<Exception>();
