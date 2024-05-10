@@ -114,7 +114,7 @@ public class BotUpdateHandlerTests
     }
 
     private static Update GetValidUpdate(string inputText) => 
-        new Update
+        new()
         {
             Message = new Message
             {
