@@ -48,7 +48,7 @@ public class MessageRepositoryTests
         // Arrange
         var randomizer = _services.GetRequiredService<IRandomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
-        long userId = randomizer.GenerateRandomLong();
+        var userId = randomizer.GenerateRandomLong();
     
         // Act
         var retrievedMessages = await messageRepo.GetAllAsync(userId);

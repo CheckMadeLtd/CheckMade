@@ -8,7 +8,7 @@ namespace CheckMade.Telegram.Function.Services;
 public interface IBotUpdateHandler
 {
     // ToDo: eventually change the return type to the DTO/Model that represents Outputs with all their props.
-    Task<string> HandleUpdateAsync(Update update, BotType botType);
+    Task HandleUpdateAsync(Update update, BotType botType);
 }
 
 public class BotUpdateHandler(
@@ -18,7 +18,7 @@ public class BotUpdateHandler(
         ILogger<BotUpdateHandler> logger) 
     : IBotUpdateHandler
 {
-    public async Task<string> HandleUpdateAsync(Update update, BotType botType)
+    public async Task HandleUpdateAsync(Update update, BotType botType)
     {
         logger.LogInformation("Invoke telegram update function for: {botType}", botType);
         
@@ -35,7 +35,5 @@ public class BotUpdateHandler(
         await botClient.SendTextMessageAsync(
             chatId: telegramInputMessage.Chat.Id,
             text: outputMessage);
-        
-        return outputMessage;
     }
 }

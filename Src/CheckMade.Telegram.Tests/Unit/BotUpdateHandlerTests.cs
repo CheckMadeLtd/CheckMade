@@ -41,12 +41,11 @@ public class BotUpdateHandlerTests
         var handler = _services.GetRequiredService<IBotUpdateHandler>();
         
         // Act
-        var actualOutputMessage = await handler.HandleUpdateAsync(update, botType);
+        await handler.HandleUpdateAsync(update, botType);
         
         // Assert
         var expectedOutputMessage = $"Echo: {inputText}";
         
-        actualOutputMessage.Should().Be(expectedOutputMessage);
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
                 validChatId,
                 expectedOutputMessage,
