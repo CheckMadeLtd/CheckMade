@@ -17,7 +17,7 @@ public static class DependencyRegistration
                 (exception, timeSpan, retryCount, context) =>
                 {
                     // This will be ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
-                    Console.Error.WriteLine($"Error occurred at attempt {retryCount} with delay of " +
+                    Console.Error.WriteLine($"Database error occurred at attempt {retryCount} with delay of " +
                                             $"{timeSpan.TotalMilliseconds} milliseconds!" +
                                             $" Exception message: {exception.Message}");
                 });

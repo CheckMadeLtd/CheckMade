@@ -2,6 +2,7 @@ using CheckMade.Common.Utils;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
+using Polly.Retry;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Services;
@@ -15,6 +16,7 @@ public class BotUpdateHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessor requestProcessor,
         IToModelConverter converter,
+        AsyncRetryPolicy retryPolicy,
         ILogger<BotUpdateHandler> logger) 
     : IBotUpdateHandler
 {
@@ -57,9 +59,13 @@ public class BotUpdateHandler(
 
         var botClient = botClientFactory.CreateBotClient(botType);
 
-        // Telegram infrastructure handles retrying in case of initial failure to deliver message
-        await botClient.SendTextMessageAsync(
-            chatId: telegramInputMessage.Chat.Id,
-            text: outputMessage);
+        /* Telegram infrastructure handles retrying in case of problem e.g. with WebHook config, but this doesn't
+        catch network issues e.g. between Azure and Telegram Servers, hence still using retryPolicy here */
+        await retryPolicy.ExecuteAsync(async () =>
+        {
+            await botClient.SendTextMessageAsync(
+                chatId: telegramInputMessage.Chat.Id,
+                text: outputMessage);
+        });
     }
 }
