@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces;
 using CheckMade.Common.Utils;
 using Newtonsoft.Json;
 using Npgsql;
+using Polly.Retry;
 
 namespace CheckMade.Common.Persistence;
 
@@ -11,7 +12,10 @@ public interface IDbExecutionHelper
     Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation);
 }
 
-internal class DbExecutionHelper(IDbConnectionProvider dbProvider) : IDbExecutionHelper
+internal class DbExecutionHelper(
+        IDbConnectionProvider dbProvider,
+        AsyncRetryPolicy retryPolicy) 
+    : IDbExecutionHelper
 {
     public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)
     {
@@ -19,7 +23,11 @@ internal class DbExecutionHelper(IDbConnectionProvider dbProvider) : IDbExecutio
         {
             try
             {
-                db.Open();
+                await retryPolicy.ExecuteAsync(() =>
+                {
+                    db.Open();
+                    return Task.CompletedTask;
+                });
             }
             catch (DbException dbEx)
             {
@@ -38,17 +46,17 @@ internal class DbExecutionHelper(IDbConnectionProvider dbProvider) : IDbExecutio
 
                 try
                 {
-                    await executeDbOperation(command);
+                    await retryPolicy.ExecuteAsync(async () => await executeDbOperation(command));
                 }
                 catch (JsonSerializationException jsonEx)
                 {
                     throw new DataAccessException("JSON (de)serialization exception has occurred during " +
                                                   "db command execution", jsonEx);
                 }
-                catch (NpgsqlException npgEx)
+                catch (DbException dbEx)
                 {
                     throw new DataAccessException("A PostgreSQL-specific exception has occured during db " +
-                                                  "command execution", npgEx);
+                                                  "command execution", dbEx);
                 }
                 catch (Exception ex)
                 {

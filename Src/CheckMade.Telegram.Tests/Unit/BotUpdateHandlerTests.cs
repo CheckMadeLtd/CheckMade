@@ -14,7 +14,7 @@ namespace CheckMade.Telegram.Tests.Unit;
 public class BotUpdateHandlerTests
 {
     private ServiceProvider? _services;
-    
+
     [Theory]
     [InlineData("_")]
     [InlineData("Normal valid text message")]
