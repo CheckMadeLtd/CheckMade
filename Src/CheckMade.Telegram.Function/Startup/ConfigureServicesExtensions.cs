@@ -75,8 +75,9 @@ internal static class ConfigureServicesExtensions
                 {
                     // This will be ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
                     Console.Error.WriteLine($"Network error occurred at attempt {retryCount} with delay of " +
-                                            $"{timeSpan.TotalMilliseconds} milliseconds!" +
-                                            $" Exception message: {exception.Message}");
+                                            $"{timeSpan.TotalMilliseconds} milliseconds! " +
+                                            $"Exception type: {exception.GetType()}. " +
+                                            $"Exception message: {exception.Message}.");
                 });
         
         services.AddSingleton(networkRetryPolicy);
