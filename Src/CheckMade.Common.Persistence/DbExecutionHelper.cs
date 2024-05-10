@@ -1,6 +1,6 @@
 using System.Data.Common;
 using CheckMade.Common.Interfaces;
-using Microsoft.Extensions.Logging;
+using CheckMade.Common.Utils;
 using Newtonsoft.Json;
 using Npgsql;
 
@@ -11,10 +11,7 @@ public interface IDbExecutionHelper
     Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation);
 }
 
-internal class DbExecutionHelper(
-        IDbConnectionProvider dbProvider, 
-        ILogger<DbExecutionHelper> logger) 
-    : IDbExecutionHelper
+internal class DbExecutionHelper(IDbConnectionProvider dbProvider) : IDbExecutionHelper
 {
     public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)
     {
@@ -26,15 +23,13 @@ internal class DbExecutionHelper(
             }
             catch (DbException dbEx)
             {
-                logger.LogError("Database exception upon attempt to open connection: " +
-                                "{exMessage}", dbEx.Message);
-                throw;
+                throw new DataAccessException("Database exception has occurred during attempt to open " +
+                                              "a db connection.", dbEx);
             }
             catch (Exception ex)
             {
-                logger.LogError("An unexpected exception type has been thrown while opening a db connection:" +
-                                " {exMessage}", ex.Message);
-                throw;
+                throw new DataAccessException("An exception with unexpected type has occurred during attempt " +
+                                              "to open a db connection.", ex);
             }
             
             await using (var command = new NpgsqlCommand())
@@ -47,21 +42,17 @@ internal class DbExecutionHelper(
                 }
                 catch (JsonSerializationException jsonEx)
                 {
-                    logger.LogError("JSON (de)serialization exception has occurred during command execution: " + 
-                                    "{exMessage}", jsonEx.Message);
-                    throw;
+                    throw new DataAccessException("JSON (de)serialization exception has occurred during " +
+                                                  "db command execution", jsonEx);
                 }
                 catch (NpgsqlException npgEx)
                 {
-                    logger.LogError("A PostgreSQL-specific exception has occured during command execution: " +
-                                    "{exMessage}", npgEx.Message);
-                    throw;
+                    throw new DataAccessException("A PostgreSQL-specific exception has occured during db " +
+                                                  "command execution", npgEx);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError("An exception has occurred during command execution: " +
-                                    "{exMessage}", ex.Message);
-                    throw;
+                    throw new DataAccessException("An exception has occurred during db command execution", ex);
                 }
             }
         }

@@ -44,7 +44,8 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                     var message = new InputTextMessage(
                         telegramUserId, 
                         JsonHelper.DeserializeFromJson<MessageDetails>(details)
-                        ?? throw new ArgumentNullException(nameof(details)));
+                        ?? throw new ArgumentNullException(nameof(details), 
+                            "Failed to deserialize "));
 
                     inputMessages.Add(message);
                 }
