@@ -15,29 +15,29 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {
         logger.LogInformation("C# HTTP trigger function processed a request");
-        var response = request.CreateResponse(HttpStatusCode.OK);
         
         try
         {
             var body = await request.ReadAsStringAsync() 
-                       ?? throw new ArgumentNullException(nameof(request));
+                       ?? throw new InvalidOperationException(
+                           "The incoming HttpRequestData couldn't be serialized");
             
             var update = JsonConvert.DeserializeObject<Update>(body);
             
             if (update is null)
             {
                 logger.LogWarning("Unable to deserialize Update object");
-                return response;
+                return request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
             await botUpdateHandler.HandleUpdateAsync(update, BotType);
         }
-        // ToDo: Improve Exception handling, see convo "Strategic Placement of Try/Catch Blocks"
-        catch (Exception e)
+        catch (Exception ex)
         {
-            logger.LogError("Exception: {Message}", e.Message);
+            logger.LogError(ex, "An unhandled exception occurred while processing the request.");
+            return request.CreateResponse(HttpStatusCode.InternalServerError);
         }
 
-        return response;
+        return request.CreateResponse(HttpStatusCode.OK);
     }
 }

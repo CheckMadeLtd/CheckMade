@@ -8,7 +8,6 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotUpdateHandler
 {
-    // ToDo: eventually change the return type to the DTO/Model that represents Outputs with all their props.
     Task HandleUpdateAsync(Update update, BotType botType);
 }
 
@@ -24,12 +23,12 @@ public class BotUpdateHandler(
     
     public async Task HandleUpdateAsync(Update update, BotType botType)
     {
-        logger.LogInformation("Invoke telegram update function for: {botType}", botType);
-        
         if (update.Message is not { } telegramInputMessage) 
             throw new InvalidOperationException("Right now, only updates with a 'Message' can be handled.");
 
-        logger.LogInformation("Received Message from {ChatId}", telegramInputMessage.Chat.Id);
+        logger.LogInformation("Invoked telegram update function for: {botType} " +
+                              "with Message from ChatId: {ChatId}", 
+            botType, telegramInputMessage.Chat.Id);
 
         var inputMessage = converter.ConvertMessage(telegramInputMessage);
         string outputMessage;
@@ -58,6 +57,7 @@ public class BotUpdateHandler(
 
         var botClient = botClientFactory.CreateBotClient(botType);
 
+        // Telegram infrastructure handles retrying in case of initial failure to deliver message
         await botClient.SendTextMessageAsync(
             chatId: telegramInputMessage.Chat.Id,
             text: outputMessage);
