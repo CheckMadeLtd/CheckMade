@@ -21,7 +21,7 @@ public class MessageRepositoryTests
         var fakeInputMessage = utils.GetValidTestMessage();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
-        var expectedRetrieval = new List<InputTextMessage>
+        var expectedRetrieval = new List<InputMessage>
         {
             new (fakeInputMessage.UserId, fakeInputMessage.Details)
         };

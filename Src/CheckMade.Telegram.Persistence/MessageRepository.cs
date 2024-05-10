@@ -8,7 +8,7 @@ namespace CheckMade.Telegram.Persistence;
 
 public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
-    public async Task AddAsync(InputTextMessage inputMessage)
+    public async Task AddAsync(InputMessage inputMessage)
     {
         await dbHelper.ExecuteAsync(async command =>
         {
@@ -25,9 +25,9 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
     }
 
-    public async Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId)
+    public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
     {
-        var inputMessages = new List<InputTextMessage>();
+        var inputMessages = new List<InputMessage>();
     
         await dbHelper.ExecuteAsync(async command =>
         {
@@ -41,7 +41,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                     var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("tlgr_user_id"));
                     var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
-                    var message = new InputTextMessage(
+                    var message = new InputMessage(
                         telegramUserId, 
                         JsonHelper.DeserializeFromJson<MessageDetails>(details)
                         ?? throw new ArgumentNullException(nameof(details), 

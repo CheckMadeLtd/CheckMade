@@ -4,7 +4,7 @@ namespace CheckMade.Telegram.Interfaces;
 
 public interface IMessageRepository
 {
-    Task AddAsync(InputTextMessage inputMessage);
-    Task<IEnumerable<InputTextMessage>> GetAllAsync(long userId);
+    Task AddAsync(InputMessage inputMessage);
+    Task<IEnumerable<InputMessage>> GetAllAsync(long userId);
     Task HardDeleteAsync(long userId);
 }

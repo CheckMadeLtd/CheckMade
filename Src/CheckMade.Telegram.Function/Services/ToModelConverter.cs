@@ -5,12 +5,12 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    InputTextMessage ConvertMessage(Message telegramInputMessage);
+    InputMessage ConvertMessage(Message telegramInputMessage);
 }
 
 internal class ToModelConverter : IToModelConverter
 {
-    public InputTextMessage ConvertMessage(Message telegramInputMessage)
+    public InputMessage ConvertMessage(Message telegramInputMessage)
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
@@ -21,7 +21,7 @@ internal class ToModelConverter : IToModelConverter
                 "Text in the telegram input message must not be empty")
             : telegramInputMessage.Text;
         
-        return new InputTextMessage(
+        return new InputMessage(
             userId,
             new MessageDetails(
                 messageText,
