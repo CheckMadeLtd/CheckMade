@@ -19,7 +19,8 @@ public class BotUpdateHandler(
         ILogger<BotUpdateHandler> logger) 
     : IBotUpdateHandler
 {
-    private const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
+    internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
+    internal const string DataAccessExceptionErrorMessageStub = "An error has occured during a data access operation.";
     
     public async Task HandleUpdateAsync(Update update, BotType botType)
     {
@@ -41,7 +42,7 @@ public class BotUpdateHandler(
         {
             var errorMessage = ex switch
             { 
-                DataAccessException => "An error has occured during a data access operation.",
+                DataAccessException => DataAccessExceptionErrorMessageStub,
                 _ => $"A general error (type: {ex.GetType()}) has occured."
             };
             

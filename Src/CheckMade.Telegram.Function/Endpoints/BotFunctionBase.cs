@@ -32,6 +32,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
 
             await botUpdateHandler.HandleUpdateAsync(update, BotType);
         }
+        // ToDo: Improve Exception handling, see convo "Strategic Placement of Try/Catch Blocks"
         catch (Exception e)
         {
             logger.LogError("Exception: {Message}", e.Message);
