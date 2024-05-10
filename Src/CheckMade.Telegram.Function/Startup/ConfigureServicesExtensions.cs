@@ -1,4 +1,3 @@
-using System.Data.Common;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
@@ -72,7 +71,7 @@ internal static class ConfigureServicesExtensions
             .Handle<Exception>()
             .WaitAndRetryAsync(3, 
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
-                (exception, timeSpan, retryCount, context) =>
+                (exception, timeSpan, retryCount) =>
                 {
                     // This will be ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
                     Console.Error.WriteLine($"Network error occurred at attempt {retryCount} with delay of " +

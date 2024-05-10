@@ -14,7 +14,7 @@ public static class DependencyRegistration
             .Handle<DbException>()
             .WaitAndRetryAsync(3, 
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
-                (exception, timeSpan, retryCount, context) =>
+                (exception, timeSpan, retryCount) =>
                 {
                     // This will be ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
                     Console.Error.WriteLine($"Database error occurred at attempt {retryCount} with delay of " +
