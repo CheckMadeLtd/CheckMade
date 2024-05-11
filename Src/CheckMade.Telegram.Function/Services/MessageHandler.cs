@@ -1,6 +1,5 @@
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,7 @@ public interface IMessageHandler
 }
 
 public class MessageHandler(IBotClientFactory botClientFactory,
-        IRequestProcessor requestProcessor,
+        IRequestProcessorSelector selector,
         IToModelConverter converter,
         INetworkRetryPolicy retryPolicy,
         ILogger<MessageHandler> logger)
@@ -45,7 +44,8 @@ public class MessageHandler(IBotClientFactory botClientFactory,
         {
             throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
         }
-        
+
+        var requestProcessor = selector.GetRequestProcessor(botType);
         string outputMessage;
 
         try

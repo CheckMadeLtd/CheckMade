@@ -1,6 +1,5 @@
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -16,15 +15,17 @@ public class MessageHandlerTests
     private ServiceProvider? _services;
 
     [Theory]
-    [InlineData("_")]
-    [InlineData("Normal valid text message")]
-    [InlineData(" valid text message \n with line break and trailing spaces ")]
-    public async Task HandleMessageAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
+    [InlineData("Normal valid text message", BotType.Submissions)]
+    [InlineData("Normal valid text message", BotType.Communications)]
+    [InlineData("Normal valid text message", BotType.Notifications)]
+    [InlineData("_", BotType.Submissions)]
+    [InlineData(" valid text message \n with line break and trailing spaces ", BotType.Submissions)]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidMessageToSubmissionsBot(
+        string inputText, BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        const BotType botType = BotType.Submissions;
         var message = GetValidMessage(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
@@ -33,7 +34,7 @@ public class MessageHandlerTests
         await handler.HandleMessageAsync(message, botType);
         
         // Assert
-        var expectedOutputMessage = $"Echo: {inputText}";
+        var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
         
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
                 message.Chat.Id,
@@ -42,20 +43,18 @@ public class MessageHandlerTests
             Times.Once);
     }
     
-    [Theory]
-    [InlineData(BotType.Submissions)]
-    [InlineData(BotType.Communications)]
-    [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown(BotType botType)
+    [Fact]
+    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
-        var mockRequestProcessor = new Mock<IRequestProcessor>();
-        mockRequestProcessor
-            .Setup<Task<string>>(x => x.EchoAsync(It.IsAny<InputMessage>()))
+        var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
+        
+        mockSubmissionsRequestProcessor
+            .Setup<Task<string>>(rp => rp.EchoAsync(It.IsAny<InputMessage>()))
             .Throws(new DataAccessException("Mock DataAccess Error", new Exception()));
-        serviceCollection.AddScoped<IRequestProcessor>(_ => mockRequestProcessor.Object);
+        serviceCollection.AddScoped<IRequestProcessor>(_ => mockSubmissionsRequestProcessor.Object);
         
         _services = serviceCollection.BuildServiceProvider();
 
@@ -75,7 +74,7 @@ public class MessageHandlerTests
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(message, botType);
+        await handler.HandleMessageAsync(message, BotType.Submissions);
         
         // Assert
         outputMessageResult.Should().Be(expectedErrorMessage);
