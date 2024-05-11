@@ -61,11 +61,18 @@ public class BotUpdateHandler(
 
         /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
          catch earlier network issues like from our Azure Function to the Telegram Servers! */
-        await retryPolicy.ExecuteAsync(async () =>
+        try
         {
-            await botClient.SendTextMessageAsync(
-                chatId: telegramInputMessage.Chat.Id,
-                text: outputMessage);
-        });
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await botClient.SendTextMessageAsync(
+                    chatId: telegramInputMessage.Chat.Id,
+                    text: outputMessage);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new NetworkAccessException("Failed to reach Telegram servers.", ex);
+        }
     }
 }
