@@ -20,24 +20,24 @@ public class MessageHandlerTests
     [InlineData("Normal valid text message", BotType.Notifications)]
     [InlineData("_", BotType.Submissions)]
     [InlineData(" valid text message \n with line break and trailing spaces ", BotType.Submissions)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidMessageToSubmissionsBot(
+    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidInputMessage(
         string inputText, BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var message = GetValidMessage(inputText);
+        var telegramMessage = GetValidTelegramMessage(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act
-        await handler.HandleMessageAsync(message, botType);
+        await handler.HandleMessageAsync(telegramMessage, botType);
         
         // Assert
         var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
         
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
-                message.Chat.Id,
+                telegramMessage.Chat.Id,
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
             Times.Once);
@@ -76,17 +76,17 @@ public class MessageHandlerTests
             .Callback<ChatId, string, CancellationToken>((_, outputMessage, _) => 
                 outputMessageResult = outputMessage);
         
-        var message = GetValidMessage("some valid text");
+        var telegramMessage = GetValidTelegramMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(message, BotType.Submissions);
+        await handler.HandleMessageAsync(telegramMessage, BotType.Submissions);
         
         // Assert
         outputMessageResult.Should().Be(expectedErrorMessage);
     }
 
-    private static Message GetValidMessage(string inputText) => 
+    private static Message GetValidTelegramMessage(string inputText) => 
         new()
         {
             From = new User { Id = 1234L },
