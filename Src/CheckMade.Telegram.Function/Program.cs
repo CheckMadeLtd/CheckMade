@@ -42,8 +42,8 @@ var host = new HostBuilder()
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
         // Separate from BotClientServices because it has relevance for both, unit and integration tests
-        services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
-        // BotClient / Tokens etc. only relevant for Integration tests, hence separated out from BotUpdateHandler.
+        services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
+        // BotClient / Tokens etc. only relevant for Integration tests, hence separated out from BotUpdateSwitch.
         services.ConfigureBotClientServices(config, hostingEnvironment);
         
         services.ConfigurePersistenceServices(config, hostingEnvironment);

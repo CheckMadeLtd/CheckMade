@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Endpoints;
 
-public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdateHandler)
+public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {
     protected abstract BotType BotType { get; }
 
@@ -29,7 +29,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
                 return request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            await botUpdateHandler.HandleUpdateAsync(update, BotType);
+            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
         }
         catch (JsonException jsonEx)
         {

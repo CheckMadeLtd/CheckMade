@@ -9,18 +9,18 @@ using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services;
 
-public interface IBotUpdateHandler
+public interface IBotUpdateSwitch
 {
     Task HandleUpdateAsync(Update update, BotType botType);
 }
 
-public class BotUpdateHandler(
+public class BotUpdateSwitch(
         IBotClientFactory botClientFactory,
         IRequestProcessor requestProcessor,
         IToModelConverter converter,
         INetworkRetryPolicy retryPolicy,
-        ILogger<BotUpdateHandler> logger) 
-    : IBotUpdateHandler
+        ILogger<BotUpdateSwitch> logger) 
+    : IBotUpdateSwitch
 {
     internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
     internal const string DataAccessExceptionErrorMessageStub = "An error has occured during a data access operation.";
@@ -70,6 +70,12 @@ public class BotUpdateHandler(
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
             botType, telegramInputMessage.From?.Id ?? 0 ,telegramInputMessage.Chat.Id);
 
+        switch (telegramInputMessage.Type)
+        {
+            case MessageType.Text:
+                return;
+        }
+        
         InputMessage? inputMessage = null;
         
         try

@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class BotUpdateHandlerTests
+public class BotUpdateSwitchTests
 {
     private ServiceProvider? _services;
 
@@ -27,7 +27,7 @@ public class BotUpdateHandlerTests
         const BotType botType = BotType.Submissions;
         var update = GetValidUpdate(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
         
         // Act
         await handler.HandleUpdateAsync(update, botType);
@@ -50,7 +50,7 @@ public class BotUpdateHandlerTests
         // Arrange
         const BotType botType = BotType.Submissions;
         var update = new Update { Message = null };
-        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
         
         // Act
         var handleUpdate = () => handler.HandleUpdateAsync(update, botType);
@@ -69,7 +69,7 @@ public class BotUpdateHandlerTests
         
         var update = new Update { CallbackQuery = new CallbackQuery() };
         
-        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
         var handleUpdate = () => handler.HandleUpdateAsync(update, botType);
         await handleUpdate.Should().ThrowAsync<Exception>();
     }
@@ -91,8 +91,8 @@ public class BotUpdateHandlerTests
         
         _services = serviceCollection.BuildServiceProvider();
 
-        const string expectedErrorMessage = $"{BotUpdateHandler.DataAccessExceptionErrorMessageStub} " +
-                                            $"{BotUpdateHandler.CallToActionMessageAfterErrorReport}";
+        const string expectedErrorMessage = $"{BotUpdateSwitch.DataAccessExceptionErrorMessageStub} " +
+                                            $"{BotUpdateSwitch.CallToActionMessageAfterErrorReport}";
         
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
@@ -104,7 +104,7 @@ public class BotUpdateHandlerTests
                 outputMessageResult = outputMessage);
         
         var update = GetValidUpdate("some valid text");
-        var handler = _services.GetRequiredService<IBotUpdateHandler>();
+        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
         
         // Act 
         await handler.HandleUpdateAsync(update, botType);

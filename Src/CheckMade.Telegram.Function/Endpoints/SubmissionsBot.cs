@@ -6,8 +6,8 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Telegram.Function.Endpoints;
 
-public class SubmissionsBot(ILogger<SubmissionsBot> logger, IBotUpdateHandler botUpdateHandler)
-    : BotFunctionBase(logger, botUpdateHandler)
+public class SubmissionsBot(ILogger<SubmissionsBot> logger, IBotUpdateSwitch botUpdateSwitch)
+    : BotFunctionBase(logger, botUpdateSwitch)
 {
     protected override BotType BotType => BotType.Submissions;
 

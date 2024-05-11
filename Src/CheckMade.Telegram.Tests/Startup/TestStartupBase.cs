@@ -46,7 +46,7 @@ public abstract class TestStartupBase
             config.AddDebug(); 
         });
         
-        Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
+        Services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
         Services.AddSingleton<ITestUtils, TestUtils>();
         
         Services.ConfigureUtilityServices();
