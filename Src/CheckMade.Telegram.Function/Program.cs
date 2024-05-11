@@ -1,11 +1,9 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -41,10 +39,9 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        // Separate from BotClientServices because it has relevance for both, unit and integration tests
-        services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
-        // BotClient / Tokens etc. only relevant for Integration tests, hence separated out from BotUpdateHandler.
+        // These two are separated into two because only one of them is relevant for Integration tests
         services.ConfigureBotClientServices(config, hostingEnvironment);
+        services.ConfigureBotUpdateHandlingServices();
         
         services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureUtilityServices();

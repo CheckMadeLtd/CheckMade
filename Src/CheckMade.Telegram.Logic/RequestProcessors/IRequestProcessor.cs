@@ -1,6 +1,6 @@
 ﻿using CheckMade.Telegram.Model;
 
-namespace CheckMade.Telegram.Interfaces;
+namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface IRequestProcessor
 {

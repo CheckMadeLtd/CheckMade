@@ -5,14 +5,15 @@ namespace CheckMade.Telegram.Tests;
 
 internal interface ITestUtils
 {
-    InputMessage GetValidTestMessage();
+    InputMessage GetValidModelInputTextMessage();
 }
 
 internal class TestUtils(IRandomizer randomizer) : ITestUtils
 {
-    public InputMessage GetValidTestMessage() =>
+    public InputMessage GetValidModelInputTextMessage() =>
         new(randomizer.GenerateRandomLong(),
             new MessageDetails(
-                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}",
-                DateTime.Now));
+                DateTime.Now,
+                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}"
+                ));
 }

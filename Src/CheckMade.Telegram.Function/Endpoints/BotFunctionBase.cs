@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Endpoints;
 
-public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdateHandler)
+public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {
     protected abstract BotType BotType { get; }
 
@@ -25,11 +25,11 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
 
             if (update is null)
             {
-                logger.LogWarning("Unable to deserialize Update object");
+                logger.LogError("Unable to deserialize Update object");
                 return request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            await botUpdateHandler.HandleUpdateAsync(update, BotType);
+            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
         }
         catch (JsonException jsonEx)
         {

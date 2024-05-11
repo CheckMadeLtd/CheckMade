@@ -1,7 +1,9 @@
 using CheckMade.Telegram.Function.Services;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
@@ -17,28 +19,32 @@ public class ToModelConverterTests
     
         // Arrange
         var message = new Message { From = null, Text = "not empty" };
+        var mockBotClient = new Mock<IBotClientWrapper>();
         var converter = _services.GetRequiredService<IToModelConverter>();
         
         // Act
-        Action convertMessage = () => converter.ConvertMessage(message);
+        Func<Task<InputMessage>> convertMessage = async () => 
+            await converter.ConvertMessageAsync(message, mockBotClient.Object);
 
         // Assert
-        convertMessage.Should().Throw<ArgumentNullException>();
+        convertMessage.Should().ThrowAsync<ArgumentNullException>();
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenTextIsEmpty()
+    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndPhotoFileIdIsEmpty()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         // Arrange
-        var message = new Message { From = new User { Id = 123L }, Text = " " };
+        var message = new Message { From = new User { Id = 123L } };
+        var mockBotClient = new Mock<IBotClientWrapper>();
         var converter = _services.GetRequiredService<IToModelConverter>();
         
         // Act
-        Action convertMessage = () => converter.ConvertMessage(message);
+        Func<Task<InputMessage>> convertMessage = async () => 
+            await converter.ConvertMessageAsync(message, mockBotClient.Object);
 
         // Assert
-        convertMessage.Should().Throw<ArgumentNullException>();
+        convertMessage.Should().ThrowAsync<ArgumentNullException>();
     }
 }

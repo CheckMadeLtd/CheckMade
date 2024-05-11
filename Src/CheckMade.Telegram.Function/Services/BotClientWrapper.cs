@@ -1,5 +1,6 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -8,14 +9,20 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotClientWrapper
 {
+    string BotToken { get; }
+    
     Task<Message> SendTextMessageAsync(
         ChatId chatId,
         string text,
         CancellationToken cancellationToken = default);
+
+    Task<File> GetFileAsync(string fileId);
 }
 
-internal class BotClientWrapper(ITelegramBotClient botClient) : IBotClientWrapper
+internal class BotClientWrapper(ITelegramBotClient botClient, string botToken) : IBotClientWrapper
 {
+    public string BotToken { get; } = botToken;
+
     public Task<Message> SendTextMessageAsync(
         ChatId chatId, 
         string text,
@@ -24,4 +31,6 @@ internal class BotClientWrapper(ITelegramBotClient botClient) : IBotClientWrappe
                 chatId,
                 text,
                 cancellationToken: cancellationToken);
+
+    public Task<File> GetFileAsync(string fileId) => botClient.GetFileAsync(fileId);
 }
