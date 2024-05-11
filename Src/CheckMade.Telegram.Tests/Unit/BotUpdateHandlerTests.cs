@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
-public class BotUpdateSwitchTests
+public class MessageHandlerTests
 {
     private ServiceProvider? _services;
 
@@ -19,66 +19,34 @@ public class BotUpdateSwitchTests
     [InlineData("_")]
     [InlineData("Normal valid text message")]
     [InlineData(" valid text message \n with line break and trailing spaces ")]
-    public async Task HandleUpdateAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
+    public async Task HandleMessageAsync_SendsCorrectOutputMessage_ForValidUpdateToSubmissionsBot(string inputText)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         const BotType botType = BotType.Submissions;
-        var update = GetValidUpdate(inputText);
+        var message = GetValidMessage(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act
-        await handler.HandleUpdateAsync(update, botType);
+        await handler.HandleMessageAsync(message, botType);
         
         // Assert
         var expectedOutputMessage = $"Echo: {inputText}";
         
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
-                update.Message!.Chat.Id,
+                message.Chat.Id,
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
     
-    [Fact]
-    public async Task HandleUpdateAsync_ThrowsException_ForEmptyMessageToSubmissionsBot()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
-        const BotType botType = BotType.Submissions;
-        var update = new Update { Message = null };
-        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
-        
-        // Act
-        var handleUpdate = () => handler.HandleUpdateAsync(update, botType);
-        
-        // Assert
-        await handleUpdate.Should().ThrowAsync<Exception>();
-    }
-
     [Theory]
     [InlineData(BotType.Submissions)]
     [InlineData(BotType.Communications)]
     [InlineData(BotType.Notifications)]
-    public async Task HandleUpdateAsync_Fails_ForUpdateOfUnhandledType(BotType botType)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var update = new Update { CallbackQuery = new CallbackQuery() };
-        
-        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
-        var handleUpdate = () => handler.HandleUpdateAsync(update, botType);
-        await handleUpdate.Should().ThrowAsync<Exception>();
-    }
-
-    [Theory]
-    [InlineData(BotType.Submissions)]
-    [InlineData(BotType.Communications)]
-    [InlineData(BotType.Notifications)]
-    public async Task HandleUpdateAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown(BotType botType)
+    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown(BotType botType)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
@@ -91,8 +59,8 @@ public class BotUpdateSwitchTests
         
         _services = serviceCollection.BuildServiceProvider();
 
-        const string expectedErrorMessage = $"{BotUpdateSwitch.DataAccessExceptionErrorMessageStub} " +
-                                            $"{BotUpdateSwitch.CallToActionMessageAfterErrorReport}";
+        const string expectedErrorMessage = $"{MessageHandler.DataAccessExceptionErrorMessageStub} " +
+                                            $"{MessageHandler.CallToActionMessageAfterErrorReport}";
         
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
@@ -103,25 +71,22 @@ public class BotUpdateSwitchTests
             .Callback<ChatId, string, CancellationToken>((_, outputMessage, _) => 
                 outputMessageResult = outputMessage);
         
-        var update = GetValidUpdate("some valid text");
-        var handler = _services.GetRequiredService<IBotUpdateSwitch>();
+        var message = GetValidMessage("some valid text");
+        var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleUpdateAsync(update, botType);
+        await handler.HandleMessageAsync(message, botType);
         
         // Assert
         outputMessageResult.Should().Be(expectedErrorMessage);
     }
 
-    private static Update GetValidUpdate(string inputText) => 
+    private static Message GetValidMessage(string inputText) => 
         new()
         {
-            Message = new Message
-            {
-                From = new User { Id = 1234L },
-                Chat = new Chat { Id = 4321L },
-                Date = DateTime.Now,
-                Text = inputText
-            }
+            From = new User { Id = 1234L },
+            Chat = new Chat { Id = 4321L },
+            Date = DateTime.Now,
+            Text = inputText
         };
 }
