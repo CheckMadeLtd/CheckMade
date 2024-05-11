@@ -23,12 +23,18 @@ public class MessageHandler(IBotClientFactory botClientFactory,
 {
     internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
     internal const string DataAccessExceptionErrorMessageStub = "An error has occured during a data access operation.";
-
+    
+    private BotType _botType;
+    
     public async Task HandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
+        _botType = botType;
+        var botClient = botClientFactory.CreateBotClient(_botType);
+        ChatId chatId = telegramInputMessage.Chat.Id;
+        
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            botType, telegramInputMessage.From?.Id ?? 0 ,telegramInputMessage.Chat.Id);
+            _botType, telegramInputMessage.From?.Id ?? 0, chatId);
 
         var handledMessageTypes = new[]
         {
@@ -47,24 +53,30 @@ public class MessageHandler(IBotClientFactory botClientFactory,
             return;
         }
         
-        var botClient = botClientFactory.CreateBotClient(botType);
-        InputMessage? inputMessage;
-        
+        var inputMessage = await TryConvertToModelAsync(telegramInputMessage, botClient);
+        var outputMessage = await TryProcessInputIntoOutput(inputMessage);
+        await TrySendOutput(outputMessage, botClient, chatId);
+    }
+
+    private async Task<InputMessage> TryConvertToModelAsync(Message telegramInputMessage, IBotClientWrapper botClient)
+    {
         try
         {
-            inputMessage = await toModelConverter.ConvertMessageAsync(telegramInputMessage, botClient);
+            return await toModelConverter.ConvertMessageAsync(telegramInputMessage, botClient);
         }
         catch (Exception ex)
         {
             throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
         }
+    }
 
-        var requestProcessor = selector.GetRequestProcessor(botType);
-        string outputMessage;
-
+    private async Task<string> TryProcessInputIntoOutput(InputMessage inputMessage)
+    {
+        var requestProcessor = selector.GetRequestProcessor(_botType);
+        
         try
         {
-            outputMessage = await requestProcessor.EchoAsync(inputMessage);
+            return await requestProcessor.EchoAsync(inputMessage);
         }
         catch (Exception ex)
         {
@@ -78,20 +90,23 @@ public class MessageHandler(IBotClientFactory botClientFactory,
                                 "BotType: {botType}; UserId: {userId}; " +
                                 "DateTime of Input Message: {telegramDate}; " +
                                 "Text of InputMessage: {text}", 
-                errorMessage, botType, inputMessage.UserId, 
+                errorMessage, _botType, inputMessage.UserId, 
                 inputMessage.Details.TelegramDate, inputMessage.Details.Text);
             
-            outputMessage = $"{errorMessage} {CallToActionMessageAfterErrorReport}";
+            return $"{errorMessage} {CallToActionMessageAfterErrorReport}";
         }
+    }
 
+    private async Task TrySendOutput(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    {
         /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
-         catch earlier network issues like from our Azure Function to the Telegram Servers! */
+        catch earlier network issues like from our Azure Function to the Telegram Servers! */
         try
         {
             await retryPolicy.ExecuteAsync(async () =>
             {
                 await botClient.SendTextMessageAsync(
-                    chatId: telegramInputMessage.Chat.Id,
+                    chatId: chatId,
                     text: outputMessage);
             });
         }

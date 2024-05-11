@@ -62,7 +62,7 @@ public class MessageHandlerTests
             .Setup(x => x.BotToken).Returns("fakeToken");
 
         // Replaces the default set up in UnitTestStartup
-        serviceCollection.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
+        serviceCollection.AddScoped<IBotClientFactory, MockBotClientFactory>(_ => 
             new MockBotClientFactory(mockBotClient.Object));
         
         _services = serviceCollection.BuildServiceProvider();
