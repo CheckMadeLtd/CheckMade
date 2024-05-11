@@ -44,17 +44,23 @@ public class MessageHandlerTests
     }
     
     [Fact]
+    // Agnostic to BotType, using Submissions
     public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
-        
         mockSubmissionsRequestProcessor
             .Setup<Task<string>>(rp => rp.EchoAsync(It.IsAny<InputMessage>()))
             .Throws(new DataAccessException("Mock DataAccess Error", new Exception()));
-        serviceCollection.AddScoped<IRequestProcessor>(_ => mockSubmissionsRequestProcessor.Object);
+
+        var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
+        mockRequestProcessorSelector
+            .Setup(rps => rps.GetRequestProcessor(BotType.Submissions))
+            .Returns(mockSubmissionsRequestProcessor.Object);
+        
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockRequestProcessorSelector.Object);
         
         _services = serviceCollection.BuildServiceProvider();
 
