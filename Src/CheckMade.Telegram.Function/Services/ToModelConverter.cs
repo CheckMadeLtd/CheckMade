@@ -18,6 +18,7 @@ internal class ToModelConverter : IToModelConverter
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
 
+        // ToDo: Generalise from Photo to all sorts of Attachments
         var photoFileId = telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId;
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&

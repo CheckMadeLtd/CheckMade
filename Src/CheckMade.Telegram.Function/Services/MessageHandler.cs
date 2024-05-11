@@ -100,5 +100,4 @@ public class MessageHandler(IBotClientFactory botClientFactory,
             throw new NetworkAccessException("Failed to reach Telegram servers.", ex);
         }
     }
-
 }

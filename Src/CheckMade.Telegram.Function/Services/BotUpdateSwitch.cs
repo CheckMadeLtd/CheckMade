@@ -19,6 +19,7 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
     
     public async Task HandleUpdateAsync(Update update, BotType botType)
     {
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)
         {
             case UpdateType.Message:
@@ -29,7 +30,7 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
             case UpdateType.CallbackQuery:
                 // ToDo: Implement separate handling of InlineKeyboardResponseReceived
                 return;
-            
+
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
                                       "and new status '{NewStatus}'",
@@ -37,17 +38,6 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
                     update.MyChatMember.NewChatMember.Status);
                 return;
             
-            case UpdateType.Unknown:
-            case UpdateType.InlineQuery:
-            case UpdateType.ChosenInlineResult:
-            case UpdateType.ChannelPost:
-            case UpdateType.EditedChannelPost:
-            case UpdateType.ShippingQuery:
-            case UpdateType.PreCheckoutQuery:
-            case UpdateType.Poll:
-            case UpdateType.PollAnswer:
-            case UpdateType.ChatMember:
-            case UpdateType.ChatJoinRequest:
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
                     update.Type, NoSpecialHandlingWarningMessage);
