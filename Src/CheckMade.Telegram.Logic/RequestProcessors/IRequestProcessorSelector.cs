@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface IRequestProcessorSelector
 {

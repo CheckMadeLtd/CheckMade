@@ -1,6 +1,7 @@
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

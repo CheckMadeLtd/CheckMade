@@ -1,7 +1,7 @@
 ﻿using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface ISubmissionsRequestProcessor : IRequestProcessor;
 

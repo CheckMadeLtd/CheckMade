@@ -1,3 +1,4 @@
+using CheckMade.Telegram.Logic.RequestProcessors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Logic;
