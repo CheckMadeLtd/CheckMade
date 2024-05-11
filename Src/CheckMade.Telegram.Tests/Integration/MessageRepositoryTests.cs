@@ -18,7 +18,7 @@ public class MessageRepositoryTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var fakeInputMessage = utils.GetValidTestMessage();
+        var fakeInputMessage = utils.GetValidModelInputTextMessage();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         var expectedRetrieval = new List<InputMessage>

@@ -4,12 +4,13 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
-using FluentAssertions;
+using CheckMade.Telegram.Tests.Startup.DefaultMocks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
+using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
@@ -30,7 +31,7 @@ public class MessageHandlerTests
         
         // Arrange
         var textMessage = GetValidTextMessage(inputText);
-        var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
 
@@ -38,7 +39,7 @@ public class MessageHandlerTests
         await handler.HandleMessageAsync(textMessage, botType);
         
         // Assert
-        mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
+        mockBotClient.Verify(x => x.SendTextMessageAsync(
                 textMessage.Chat.Id,
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
@@ -48,11 +49,24 @@ public class MessageHandlerTests
     [Fact]
     public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
     {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
         var photoMessage = GetValidPhotoMessage();
-        var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+
+        var mockBotClient = new Mock<IBotClientWrapper>();
+        mockBotClient
+            .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
+            .ReturnsAsync(new File { FilePath = "fakeFilePath" });
+        mockBotClient
+            .Setup(x => x.BotToken).Returns("fakeToken");
+
+        // Replaces the default set up in UnitTestStartup
+        serviceCollection.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
+            new MockBotClientFactory(mockBotClient.Object));
+        
+        _services = serviceCollection.BuildServiceProvider();
+        
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot Submissions: photo";
         
@@ -60,7 +74,7 @@ public class MessageHandlerTests
         await handler.HandleMessageAsync(photoMessage, BotType.Submissions);
         
         // Assert
-        mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
+        mockBotClient.Verify(x => x.SendTextMessageAsync(
                 photoMessage.Chat.Id,
                 expectedOutputMessage, 
                 It.IsAny<CancellationToken>()), 
@@ -126,9 +140,9 @@ public class MessageHandlerTests
         const string expectedErrorMessage = $"{MessageHandler.DataAccessExceptionErrorMessageStub} " +
                                             $"{MessageHandler.CallToActionMessageAfterErrorReport}";
         
-        var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
-        mockBotClientWrapper
+        mockBotClient
             .Setup(x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(), 
                 expectedErrorMessage, 
@@ -142,7 +156,7 @@ public class MessageHandlerTests
         await handler.HandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
-        mockBotClientWrapper.Verify();
+        mockBotClient.Verify();
     }
 
     private static Message GetValidTextMessage(string inputText) => 
@@ -160,6 +174,6 @@ public class MessageHandlerTests
             From = new User { Id = 1234L },
             Chat = new Chat { Id = 4321L },
             Date = DateTime.Now,
-            Photo = [new PhotoSize{ Height = 1, Width = 1 }]
+            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakeFileId" }]
         };
 }

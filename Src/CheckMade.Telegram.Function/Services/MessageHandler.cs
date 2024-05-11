@@ -47,11 +47,12 @@ public class MessageHandler(IBotClientFactory botClientFactory,
             return;
         }
         
+        var botClient = botClientFactory.CreateBotClient(botType);
         InputMessage? inputMessage;
         
         try
         {
-            inputMessage = toModelConverter.ConvertMessage(telegramInputMessage);
+            inputMessage = await toModelConverter.ConvertMessageAsync(telegramInputMessage, botClient);
         }
         catch (Exception ex)
         {
@@ -82,8 +83,6 @@ public class MessageHandler(IBotClientFactory botClientFactory,
             
             outputMessage = $"{errorMessage} {CallToActionMessageAfterErrorReport}";
         }
-
-        var botClient = botClientFactory.CreateBotClient(botType);
 
         /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
          catch earlier network issues like from our Azure Function to the Telegram Servers! */
