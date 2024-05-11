@@ -1,6 +1,7 @@
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
@@ -31,13 +32,12 @@ public class MessageHandlerTests
         var textMessage = GetValidTextMessage(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        
+        var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
+
         // Act
         await handler.HandleMessageAsync(textMessage, botType);
         
         // Assert
-        var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
-        
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
                 textMessage.Chat.Id,
                 expectedOutputMessage,
@@ -45,11 +45,27 @@ public class MessageHandlerTests
             Times.Once);
     }
 
-    // [Fact]
-    // public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
-    // {
-    //     
-    // }
+    [Fact]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var photoMessage = GetValidPhotoMessage();
+        var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var expectedOutputMessage = $"Echo from bot Submissions: photo";
+        
+        // Act
+        await handler.HandleMessageAsync(photoMessage, BotType.Submissions);
+        
+        // Assert
+        mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
+                photoMessage.Chat.Id,
+                expectedOutputMessage, 
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
 
     [Fact]
     // Agnostic to BotType, using Submissions
@@ -58,7 +74,7 @@ public class MessageHandlerTests
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
-        var messageWithUnknownType = new Message // type 'Unknown' is derived by Telegram for lack of any props!
+        var unknownMessage = new Message // type 'Unknown' is derived by Telegram for lack of any props!
         {
             Chat = new Chat { Id = 123L }
         };
@@ -80,7 +96,7 @@ public class MessageHandlerTests
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(messageWithUnknownType, BotType.Submissions);
+        await handler.HandleMessageAsync(unknownMessage, BotType.Submissions);
         
         // Assert
         mockLogger.Verify();
@@ -112,13 +128,13 @@ public class MessageHandlerTests
         
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
-        var outputMessageResult = string.Empty;
         mockBotClientWrapper
             .Setup(x => x.SendTextMessageAsync(
-                It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback<ChatId, string, CancellationToken>((_, outputMessage, _) => 
-                outputMessageResult = outputMessage);
-        
+                It.IsAny<ChatId>(), 
+                expectedErrorMessage, 
+                It.IsAny<CancellationToken>()))
+            .Verifiable();
+
         var textMessage = GetValidTextMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
@@ -126,7 +142,7 @@ public class MessageHandlerTests
         await handler.HandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
-        outputMessageResult.Should().Be(expectedErrorMessage);
+        mockBotClientWrapper.Verify();
     }
 
     private static Message GetValidTextMessage(string inputText) => 
@@ -136,5 +152,14 @@ public class MessageHandlerTests
             Chat = new Chat { Id = 4321L },
             Date = DateTime.Now,
             Text = inputText
+        };
+
+    private static Message GetValidPhotoMessage() => 
+        new()
+        {
+            From = new User { Id = 1234L },
+            Chat = new Chat { Id = 4321L },
+            Date = DateTime.Now,
+            Photo = [new PhotoSize{ Height = 1, Width = 1 }]
         };
 }
