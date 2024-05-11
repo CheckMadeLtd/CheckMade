@@ -2,8 +2,10 @@ using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -25,14 +27,60 @@ public class BotUpdateHandler(
     
     public async Task HandleUpdateAsync(Update update, BotType botType)
     {
-        if (update.Message is not { } telegramInputMessage) 
-            throw new InvalidOperationException("Right now, only updates with a 'Message' can be handled.");
+        switch (update.Type)
+        {
+            case UpdateType.Message:
+            case UpdateType.EditedMessage:
+                await HandleMessageAsync(update.Message!, botType);
+                return;
 
-        logger.LogInformation("Invoked telegram update function for: {botType} " +
-                              "with Message from ChatId: {ChatId}", 
-            botType, telegramInputMessage.Chat.Id);
+            case UpdateType.CallbackQuery:
+                // ToDo: Implement separate handling of InlineKeyboardResponseReceived
+                return;
+            
+            case UpdateType.MyChatMember:
+                logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
+                                      "and new status '{NewStatus}'",
+                    update.MyChatMember!.From.Username, update.MyChatMember.OldChatMember.Status, 
+                    update.MyChatMember.NewChatMember.Status);
+                return;
+            
+            case UpdateType.Unknown:
+            case UpdateType.InlineQuery:
+            case UpdateType.ChosenInlineResult:
+            case UpdateType.ChannelPost:
+            case UpdateType.EditedChannelPost:
+            case UpdateType.ShippingQuery:
+            case UpdateType.PreCheckoutQuery:
+            case UpdateType.Poll:
+            case UpdateType.PollAnswer:
+            case UpdateType.ChatMember:
+            case UpdateType.ChatJoinRequest:
+            default:
+                logger.LogWarning("Telegram Update of type {updateType} not yet supported. No special " +
+                                  "processing is taking place for it, but that doesn't mean a Telegram-related" +
+                                  "system update didn't work. It probably did.", update.Type);
+                return;
+        }
+    }
 
-        var inputMessage = converter.ConvertMessage(telegramInputMessage);
+    private async Task HandleMessageAsync(Message telegramInputMessage, BotType botType)
+    {
+        logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
+                              "with Message from UserId/ChatId: {userId}/{chatId}", 
+            botType, telegramInputMessage.From?.Id ?? 0 ,telegramInputMessage.Chat.Id);
+
+        InputMessage? inputMessage = null;
+        
+        try
+        {
+            inputMessage = converter.ConvertMessage(telegramInputMessage);
+        }
+        catch (Exception ex)
+        {
+            throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
+        }
+        
         string outputMessage;
 
         try

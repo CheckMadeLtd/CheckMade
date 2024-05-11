@@ -25,7 +25,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateHandler botUpdat
 
             if (update is null)
             {
-                logger.LogWarning("Unable to deserialize Update object");
+                logger.LogError("Unable to deserialize Update object");
                 return request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
