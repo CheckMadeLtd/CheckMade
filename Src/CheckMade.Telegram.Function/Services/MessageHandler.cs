@@ -30,11 +30,11 @@ public class MessageHandler(IBotClientFactory botClientFactory,
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
             botType, telegramInputMessage.From?.Id ?? 0 ,telegramInputMessage.Chat.Id);
 
-        switch (telegramInputMessage.Type)
-        {
-            case MessageType.Text:
-                return;
-        }
+        // switch (telegramInputMessage.Type)
+        // {
+        //     case MessageType.Text:
+        //         return;
+        // }
         
         InputMessage? inputMessage;
         

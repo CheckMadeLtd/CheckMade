@@ -26,6 +26,12 @@ internal static class ConfigureServicesExtensions
         
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
     }
+
+    internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
+    {
+        services.AddScoped<IMessageHandler, MessageHandler>();
+        services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
+    }
     
     internal static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)

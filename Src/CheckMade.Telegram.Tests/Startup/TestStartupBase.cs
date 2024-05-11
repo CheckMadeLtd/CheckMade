@@ -1,4 +1,3 @@
-using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +45,9 @@ public abstract class TestStartupBase
             config.AddDebug(); 
         });
         
-        Services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
         Services.AddSingleton<ITestUtils, TestUtils>();
         
+        Services.ConfigureBotUpdateHandlingServices();
         Services.ConfigureUtilityServices();
         Services.ConfigureBusinessServices();
     }
