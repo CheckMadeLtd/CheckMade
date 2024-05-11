@@ -5,8 +5,10 @@ using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
+using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
@@ -20,27 +22,68 @@ public class MessageHandlerTests
     [InlineData("Normal valid text message", BotType.Notifications)]
     [InlineData("_", BotType.Submissions)]
     [InlineData(" valid text message \n with line break and trailing spaces ", BotType.Submissions)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidInputMessage(
+    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(
         string inputText, BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var telegramMessage = GetValidTelegramMessage(inputText);
+        var textMessage = GetValidTextMessage(inputText);
         var mockBotClientWrapper = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act
-        await handler.HandleMessageAsync(telegramMessage, botType);
+        await handler.HandleMessageAsync(textMessage, botType);
         
         // Assert
         var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
         
         mockBotClientWrapper.Verify(x => x.SendTextMessageAsync(
-                telegramMessage.Chat.Id,
+                textMessage.Chat.Id,
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
             Times.Once);
+    }
+
+    // [Fact]
+    // public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
+    // {
+    //     
+    // }
+
+    [Fact]
+    // Agnostic to BotType, using Submissions
+    public async Task HandleMessageAsync_LogsWarningAndReturns_ForUnhandledMessageType()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        // Arrange
+        var messageWithUnknownType = new Message // type 'Unknown' is derived by Telegram for lack of any props!
+        {
+            Chat = new Chat { Id = 123L }
+        };
+
+        var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
+                                    $"{BotUpdateSwitch.NoSpecialHandlingWarningMessage}";
+
+        var mockLogger = new Mock<ILogger<MessageHandler>>();
+        mockLogger.Setup(l => l.Log(
+                LogLevel.Warning, 
+                It.IsAny<EventId>(), 
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
+                It.IsAny<Exception>(), 
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!))
+            .Verifiable();
+        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        
+        // Act 
+        await handler.HandleMessageAsync(messageWithUnknownType, BotType.Submissions);
+        
+        // Assert
+        mockLogger.Verify();
     }
     
     [Fact]
@@ -76,17 +119,17 @@ public class MessageHandlerTests
             .Callback<ChatId, string, CancellationToken>((_, outputMessage, _) => 
                 outputMessageResult = outputMessage);
         
-        var telegramMessage = GetValidTelegramMessage("some valid text");
+        var textMessage = GetValidTextMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(telegramMessage, BotType.Submissions);
+        await handler.HandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
         outputMessageResult.Should().Be(expectedErrorMessage);
     }
 
-    private static Message GetValidTelegramMessage(string inputText) => 
+    private static Message GetValidTextMessage(string inputText) => 
         new()
         {
             From = new User { Id = 1234L },

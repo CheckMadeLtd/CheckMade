@@ -12,6 +12,11 @@ public interface IBotUpdateSwitch
 
 public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
+    internal const string
+        NoSpecialHandlingWarningMessage = "Telegram Message/Update of this type not yet supported. " +
+                                          "No special handling is taking place for it, but that doesn't mean that a " +
+                                          "Telegram-System-related update didn't work. You may assume it did.";
+    
     public async Task HandleUpdateAsync(Update update, BotType botType)
     {
         switch (update.Type)
@@ -44,9 +49,8 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
             case UpdateType.ChatMember:
             case UpdateType.ChatJoinRequest:
             default:
-                logger.LogWarning("Telegram Update of type {updateType} not yet supported. No special " +
-                                  "processing is taking place for it, but that doesn't mean a Telegram-related" +
-                                  "system update didn't work. It probably did.", update.Type);
+                logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
+                    update.Type, NoSpecialHandlingWarningMessage);
                 return;
         }
     }

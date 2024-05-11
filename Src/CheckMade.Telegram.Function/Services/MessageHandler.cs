@@ -4,6 +4,7 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -14,7 +15,7 @@ public interface IMessageHandler
 
 public class MessageHandler(IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
-        IToModelConverter converter,
+        IToModelConverter toModelConverter,
         INetworkRetryPolicy retryPolicy,
         ILogger<MessageHandler> logger)
     : IMessageHandler
@@ -28,17 +29,28 @@ public class MessageHandler(IBotClientFactory botClientFactory,
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
             botType, telegramInputMessage.From?.Id ?? 0 ,telegramInputMessage.Chat.Id);
 
-        // switch (telegramInputMessage.Type)
-        // {
-        //     case MessageType.Text:
-        //         return;
-        // }
+        var handledMessageTypes = new[]
+        {
+            MessageType.Audio,
+            MessageType.Document,
+            MessageType.Photo,
+            MessageType.Text,
+            MessageType.Video,
+            MessageType.Voice
+        };
+
+        if (!handledMessageTypes.Contains(telegramInputMessage.Type))
+        {
+            logger.LogWarning("Received message of type '{messageType}': {warningMessage}", 
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage);
+            return;
+        }
         
         InputMessage? inputMessage;
         
         try
         {
-            inputMessage = converter.ConvertMessage(telegramInputMessage);
+            inputMessage = toModelConverter.ConvertMessage(telegramInputMessage);
         }
         catch (Exception ex)
         {
