@@ -49,7 +49,8 @@ public class MessageHandlerTests
     [Theory]
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
-    [InlineData(AttachmentType.OtherDocument)]
+    [InlineData(AttachmentType.Document)]
+    [InlineData(AttachmentType.Video)]
     public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
         AttachmentType type)
     {
@@ -58,13 +59,10 @@ public class MessageHandlerTests
         // Arrange
         var attachmentMessage = type switch
         {
-            AttachmentType.Photo => GetValidPhotoMessage(),
-            // AttachmentType.NotApplicable => expr,
             AttachmentType.Audio => GetValidAudioMessage(),
-            // AttachmentType.Location => expr,
-            // AttachmentType.Video => expr,
-            // AttachmentType.Voice => expr,
-            AttachmentType.OtherDocument => GetValidOtherDocumentMessage(),
+            AttachmentType.Document => GetValidDocumentMessage(),
+            AttachmentType.Photo => GetValidPhotoMessage(),
+            AttachmentType.Video => GetValidVideoMessage(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -200,12 +198,21 @@ public class MessageHandlerTests
             Audio = new Audio { FileId = "fakeAudioFileId" }
         };
     
-    private static Message GetValidOtherDocumentMessage() => 
+    private static Message GetValidDocumentMessage() => 
         new()
         {
             From = new User { Id = 1234L },
             Chat = new Chat { Id = 4321L },
             Date = DateTime.Now,
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
+        };
+
+    private static Message GetValidVideoMessage() =>
+        new()
+        {
+            From = new User { Id = 1234L },
+            Chat = new Chat { Id = 4321L },
+            Date = DateTime.Now,
+            Video = new Video { FileId = "fakeVideoFileId" }
         };
 }

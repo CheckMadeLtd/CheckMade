@@ -31,7 +31,7 @@ public class ToModelConverterTests
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndPhotoFileIdIsEmpty()
+    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndAttachmentFileIdBothEmpty()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     

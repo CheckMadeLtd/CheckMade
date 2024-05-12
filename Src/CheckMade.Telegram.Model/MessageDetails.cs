@@ -3,5 +3,5 @@ namespace CheckMade.Telegram.Model;
 public record MessageDetails(
     DateTime TelegramDate,
     string? Text,
-    string? AttachmentUrl = null,
+    string? AttachmentSourceUrl = null,
     AttachmentType AttachmentType = AttachmentType.NotApplicable);

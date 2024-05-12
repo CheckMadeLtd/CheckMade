@@ -19,18 +19,17 @@ internal class ToModelConverter : IToModelConverter
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
 
-        var attachmentFileId = GetAttachmentFileId(telegramInputMessage);
+        var rawAttachmentDetails = GetRawAttachmentDetails(telegramInputMessage);
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&
-            string.IsNullOrWhiteSpace(attachmentFileId))
+            string.IsNullOrWhiteSpace(rawAttachmentDetails.fileId))
         {
             throw new ArgumentNullException(nameof(telegramInputMessage), "The message must either have " +
                                                                           "a text or an attachment");
         }
 
-        // ToDo: Fix, this should become the azure storage URL
-        var attachmentUrl = !string.IsNullOrWhiteSpace(attachmentFileId)
-            ? await GetTelegramFilePathAsync(attachmentFileId, botClient)
+        var attachmentUrl = rawAttachmentDetails.fileId != null 
+            ? await GetTelegramFilePathAsync(rawAttachmentDetails.fileId, botClient)
             : null;
         
         return new InputMessage(
@@ -38,14 +37,20 @@ internal class ToModelConverter : IToModelConverter
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
                 Text: telegramInputMessage.Text,
-                AttachmentUrl: attachmentUrl,
-                AttachmentType: attachmentUrl == null ? AttachmentType.NotApplicable : AttachmentType.Photo ));
+                AttachmentSourceUrl: attachmentUrl,
+                AttachmentType: rawAttachmentDetails.type ));
     }
 
-    private string? GetAttachmentFileId(Message telegramInputMessage) => telegramInputMessage.Type switch
+    // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+    private (string? fileId, AttachmentType type) GetRawAttachmentDetails(Message telegramInputMessage) => 
+        telegramInputMessage.Type switch
     {
-        MessageType.Photo => telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId,
-
+        MessageType.Text => (null, AttachmentType.NotApplicable),
+        MessageType.Audio => (telegramInputMessage.Audio?.FileId, AttachmentType.Audio),
+        MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId, 
+            AttachmentType.Photo),
+        MessageType.Document => (telegramInputMessage.Document?.FileId, AttachmentType.Document),
+        MessageType.Video => (telegramInputMessage.Video?.FileId, AttachmentType.Video),
         _ => throw new ArgumentOutOfRangeException()
     };
     
