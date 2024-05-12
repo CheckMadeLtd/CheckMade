@@ -4,7 +4,7 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence;
 
-internal class DbConnectionProvider(string connectionString) : IDbConnectionProvider
+public class DbConnectionProvider(string connectionString) : IDbConnectionProvider
 {
     public IDbConnection CreateConnection()
     {

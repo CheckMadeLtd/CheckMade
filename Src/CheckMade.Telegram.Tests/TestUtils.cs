@@ -16,6 +16,8 @@ internal interface ITestUtils
 
 internal class TestUtils(IRandomizer randomizer) : ITestUtils
 {
+    internal const long TestUserDanielGorinTelegramId = 215737196L;
+    
     public InputMessage GetValidModelInputTextMessage() =>
         new(randomizer.GenerateRandomLong(),
             new MessageDetails(

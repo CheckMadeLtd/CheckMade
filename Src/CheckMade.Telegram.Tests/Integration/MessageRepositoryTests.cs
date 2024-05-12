@@ -1,5 +1,7 @@
+using CheckMade.Common.Interfaces;
 using CheckMade.Common.Interfaces.Utils;
 using CheckMade.Common.Utils;
+using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -59,21 +61,31 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         retrievedMessages.Should().BeEmpty();
     }
 
-    // This test runs on whichever the 'current DB' is, i.e. local db when executed from dev machine.
-    // Its main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
-    // its migration has been forgotten after the details schema evolved in the model. 
-    [Fact]
-    public async Task Verifies_CurrentDb_DoesNotHaveInvalidData()
+    /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
+    its migration has been forgotten after the details schema evolved in the model/code. */ 
+    [Theory]
+    [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
+    [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
+    public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
+        long devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        const long devDbUserId = 215737196L; // Daniel's Telegram ID
+        if (overwriteDefaultDbConnProviderWithPrdDbConn)
+        {
+            var prdDbConnString = _services.GetRequiredService<PrdDbConnStringProvider>().Get;
+            testOutputHelper.WriteLine(prdDbConnString);
+            var serviceCollection = new IntegrationTestStartup().Services;
+            serviceCollection.AddScoped<IDbConnectionProvider>(_ => new DbConnectionProvider(prdDbConnString));
+            _services = serviceCollection.BuildServiceProvider();
+        }
+        
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         // Act
         Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => await messageRepo.GetAllAsync(devDbUserId);
-
+        
         // Assert 
         await getAllAction.Should().NotThrowAsync<DataAccessException>();
     }
