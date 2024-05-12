@@ -71,3 +71,20 @@ env_var_is_set() {
     fi
   fi
 }
+
+get_psql_host() {
+  local host_env="$1"
+
+  if [ "$host_env" == "Development" ]; then
+    echo "" # default is "local socket" but -h "local socket" wouldn't work so we leave it empty
+  elif [ "$host_env" == "CI" ]; then 
+    echo "localhost"
+  elif [ "$host_env" == "Production" ] || [ "$host_env" == "Staging" ]; then
+    echo "Err: For production db, this util was deprecated. Use full psql connection string. Aborting!" >&2
+    exit 1
+  else
+    echo "Err: Unrecognised hosting environment:'${host_env}'" >&2
+    exit 1
+  fi
+}
+

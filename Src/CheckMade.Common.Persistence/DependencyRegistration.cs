@@ -11,6 +11,7 @@ public static class DependencyRegistration
         services.AddScoped<IDbConnectionProvider>(_ => new DbConnectionProvider(dbConnectionString));
         services.AddScoped<IDbExecutionHelper>(sp =>
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
-                sp.GetRequiredService<IDbRetryPolicy>()));
+                sp.GetRequiredService<IDbOpenRetryPolicy>(),
+                sp.GetRequiredService<IDbCommandRetryPolicy>()));
     }
 }

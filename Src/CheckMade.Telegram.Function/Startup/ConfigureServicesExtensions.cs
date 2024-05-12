@@ -13,6 +13,8 @@ namespace CheckMade.Telegram.Function.Startup;
 
 internal static class ConfigureServicesExtensions
 {
+    internal const string PswPlaceholderString = "MYSECRET";
+    
     internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
@@ -38,20 +40,22 @@ internal static class ConfigureServicesExtensions
     {
         services.Add_TelegramPersistence_Dependencies();
         
+        const string keyToDbConnString = "PG_DB_CONNSTRING";
+        const string keyToProductionDbConnString = "POSTGRESQLCONNSTR_PRD-DB";
+        const string keyToPrdDbPsw = "ConnectionStrings:PRD-DB-PSW";
+        
         var dbConnectionString = (string?)hostingEnvironment switch
         {
             "Development" or "CI" => 
-                config.GetValue<string>("PG_DB_CONNSTRING") 
-                ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                    "Can't find PG_DB_CONNSTRING"),
+                config.GetValue<string>(keyToDbConnString) 
+                ?? throw new InvalidOperationException($"Can't find {keyToDbConnString}"),
             
             "Production" or "Staging" => 
-                (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD-DB") 
-                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                     "Can't find POSTGRESQLCONNSTR_PRD-DB"))
-                .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PRD-DB-PSW") 
-                                     ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                                         "Can't find ConnectionStrings:PRD-DB-PSW")),
+                (Environment.GetEnvironmentVariable(keyToProductionDbConnString) 
+                 ?? throw new InvalidOperationException($"Can't find {keyToProductionDbConnString}"))
+                .Replace(PswPlaceholderString, config.GetValue<string>(keyToPrdDbPsw) 
+                                               ?? throw new InvalidOperationException(
+                                                   $"Can't find {keyToPrdDbPsw}")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
@@ -61,7 +65,7 @@ internal static class ConfigureServicesExtensions
 
     internal static void ConfigureBusinessServices(this IServiceCollection services)
     {
-        services.AddSingleton<IToModelConverter, ToModelConverter>();
+        services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.Add_TelegramLogic_Dependencies();
     }
 
@@ -91,8 +95,11 @@ internal static class ConfigureServicesExtensions
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
 
-    private static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
-        config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
-        ?? throw new ArgumentNullException(nameof(config), 
-            $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
+    private static string GetBotToken(IConfiguration config, string envAcronym, BotType botType)
+    {
+        var keyToBotToken = $"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN";
+        
+        return config.GetValue<string>(keyToBotToken) 
+               ?? throw new InvalidOperationException($"Not found: {keyToBotToken}");
+    }
 }

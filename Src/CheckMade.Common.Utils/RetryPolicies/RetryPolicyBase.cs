@@ -12,11 +12,11 @@ public abstract class RetryPolicyBase
         _policy = Policy
             .Handle<Exception>()
             .WaitAndRetryAsync(retryCount,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timeSpan, retryAttempt, _) =>
                 {
                     // Console.Error ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
-                    Console.Error.WriteLine($"{errorType} error occurred at attempt no. {retryAttempt}. " +
+                    Console.Error.WriteLine($"'{errorType}' error occurred at attempt no. {retryAttempt}. " +
                                             $"Exception type: '{exception.GetType()}'. " +
                                             $"Exception message: '{exception.Message}'. " +
                                             $"Attempting next time in {timeSpan.TotalSeconds} seconds...");

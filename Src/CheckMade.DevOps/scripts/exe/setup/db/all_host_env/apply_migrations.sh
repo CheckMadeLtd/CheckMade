@@ -4,8 +4,7 @@ set -e
 set -o pipefail
 
 script_dir_apply_migr=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir_apply_migr/../../../global_utils.sh"
-source "$script_dir_apply_migr/../../db_utils.sh"
+source "$script_dir_apply_migr/../../../script_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 # Script works across all hosting environments!
@@ -15,11 +14,8 @@ hosting_env_is_valid "$1"
 
 echo "Checking necessary environment variables are set..."
 env_var_is_set "PG_SUPER_USER"
+env_var_is_set "PG_SUPER_USER_PRD_PSW" "secret"
 env_var_is_set "PG_DB_NAME"
-
-if [ "$hosting_env" == "Production" ]; then
-  env_var_is_set "COSMOSDB_PG_HOST" # Needed in 'get_psql_host' function
-fi
 
 if [ "$hosting_env" != "CI" ]; then
   echo "Apply all migrations to recreate database in environment '${hosting_env}' (y/n)?"
@@ -35,7 +31,15 @@ if [ "$hosting_env" == "CI" ]; then
   env_var_is_set "PGPASSWORD" "secret"
 fi
 
-psql_host=$(get_psql_host "$hosting_env")
+if [ "$hosting_env" == "Production" ]; then
+  env_var_is_set "COSMOSDB_PG_HOST"
+  full_cosmosdb_connection_string="sslmode=verify-full sslrootcert=system host=$COSMOSDB_PG_HOST port=5432 \
+dbname=$PG_DB_NAME user=$PG_SUPER_USER password=$PG_SUPER_USER_PRD_PSW"
+fi
+
+if [ "$hosting_env" != "Production" ] && [ "$hosting_env" != "Staging" ]; then
+  psql_host=$(get_psql_host "$hosting_env")
+fi
 
 migrations_dir="$script_dir_apply_migr/../../../../sql/migrations"
 
@@ -46,7 +50,7 @@ for sql_file in $(ls $migrations_dir/*.sql | sort); do
   if [ -z "$psql_host" ]; then # usually in case of env=Development
     psql -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
   else
-    psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
+    psql "$full_cosmosdb_connection_string" -f "$sql_file"
   fi
   
   if [ $? -ne 0 ]; then
