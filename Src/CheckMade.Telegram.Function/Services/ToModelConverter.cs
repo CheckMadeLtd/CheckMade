@@ -31,12 +31,16 @@ internal class ToModelConverter : IToModelConverter
         var attachmentUrl = rawAttachmentDetails.fileId != null 
             ? await GetTelegramFilePathAsync(rawAttachmentDetails.fileId, botClient)
             : null;
+
+        var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
+            ? telegramInputMessage.Text
+            : telegramInputMessage.Caption;
         
         return new InputMessage(
             userId,
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
-                Text: telegramInputMessage.Text,
+                Text: messageText,
                 AttachmentExternalUrl: attachmentUrl,
                 AttachmentType: rawAttachmentDetails.type ));
     }
