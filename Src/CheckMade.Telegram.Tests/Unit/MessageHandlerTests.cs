@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
@@ -46,13 +47,27 @@ public class MessageHandlerTests
             Times.Once);
     }
 
-    [Fact]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
+    [Theory]
+    [InlineData(AttachmentType.Photo)]
+    [InlineData(AttachmentType.Audio)]
+    [InlineData(AttachmentType.OtherDocument)]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
+        AttachmentType type)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
-        var photoMessage = GetValidPhotoMessage();
+        var attachmentMessage = type switch
+        {
+            AttachmentType.Photo => GetValidPhotoMessage(),
+            // AttachmentType.NotApplicable => expr,
+            AttachmentType.Audio => GetValidAudioMessage(),
+            // AttachmentType.Location => expr,
+            // AttachmentType.Video => expr,
+            // AttachmentType.Voice => expr,
+            AttachmentType.OtherDocument => GetValidOtherDocumentMessage(),
+            _ => throw new InvalidEnumArgumentException()
+        };
 
         var mockBotClient = new Mock<IBotClientWrapper>();
         mockBotClient
@@ -68,14 +83,14 @@ public class MessageHandlerTests
         _services = serviceCollection.BuildServiceProvider();
         
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo from bot Submissions: photo";
+        var expectedOutputMessage = $"Echo from bot Submissions: {type}";
         
         // Act
-        await handler.HandleMessageAsync(photoMessage, BotType.Submissions);
+        await handler.HandleMessageAsync(attachmentMessage, BotType.Submissions);
         
         // Assert
         mockBotClient.Verify(x => x.SendTextMessageAsync(
-                photoMessage.Chat.Id,
+                attachmentMessage.Chat.Id,
                 expectedOutputMessage, 
                 It.IsAny<CancellationToken>()), 
             Times.Once);
@@ -174,6 +189,24 @@ public class MessageHandlerTests
             From = new User { Id = 1234L },
             Chat = new Chat { Id = 4321L },
             Date = DateTime.Now,
-            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakeFileId" }]
+            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
+        };
+    
+    private static Message GetValidAudioMessage() => 
+        new()
+        {
+            From = new User { Id = 1234L },
+            Chat = new Chat { Id = 4321L },
+            Date = DateTime.Now,
+            Audio = new Audio { FileId = "fakeAudioFileId" }
+        };
+    
+    private static Message GetValidOtherDocumentMessage() => 
+        new()
+        {
+            From = new User { Id = 1234L },
+            Chat = new Chat { Id = 4321L },
+            Date = DateTime.Now,
+            Document = new Document { FileId = "fakeOtherDocumentFileId" }
         };
 }
