@@ -18,14 +18,13 @@ public class IntegrationTestStartup : TestStartupBase
         Services.ConfigureBotClientServices(Config, HostingEnvironment);
         Services.ConfigurePersistenceServices(Config, HostingEnvironment);
 
-        const string keyToPrdDbConnString = "PG_PRD_DB_CONNSTRING";
-        const string keyToPrdDbPsw = "ConnectionStrings:PRD-DB-PSW";
-        
-        var prdDbConnString = (Config.GetValue<string>(keyToPrdDbConnString)
-                              ?? throw new InvalidOperationException($"Can't find {keyToPrdDbConnString}"))
-            .Replace(ConfigureServicesExtensions.PswPlaceholderString, 
-                Config.GetValue<string>(keyToPrdDbPsw) 
-                ?? throw new InvalidOperationException( $"Can't find {keyToPrdDbPsw}"));
+        /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
+         also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need
+         to work there too. So to keep things simple we thus store the entire connstring incl
+         the real password in secrets.json on 'Development' and in a single GitHub Repo Password on 'CI' */
+        const string keyToPrdDbConnString = "ConnectionStrings:PG_PRD_DB_CONNSTRING";
+        var prdDbConnString = Config.GetValue<string>(keyToPrdDbConnString)
+                              ?? throw new InvalidOperationException($"Can't find {keyToPrdDbConnString}");
         
         Services.AddSingleton<PrdDbConnStringProvider>(_ => new PrdDbConnStringProvider(prdDbConnString));
     }
