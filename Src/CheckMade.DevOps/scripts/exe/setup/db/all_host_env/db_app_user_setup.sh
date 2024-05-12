@@ -47,6 +47,8 @@ if [ "$hosting_env" == "Production" ]; then
   --password "$PG_APP_USER_PSW"
   
   sql_command="$sql_grant_connect_command"
+  echo "Don't forget to update the connection string and password for the production db also in Test projects' \
+  local.settings.json files and in secrets.json files - they are used by Integration tests!"
 else
   # For every other environment, using 'psql' with a proper 'super_user' works
   sql_command="CREATE ROLE $PG_APP_USER WITH LOGIN PASSWORD '${PG_APP_USER_PSW}'; \
