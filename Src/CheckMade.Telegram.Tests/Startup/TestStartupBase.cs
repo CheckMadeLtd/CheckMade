@@ -1,3 +1,4 @@
+using System.Configuration;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ public abstract class TestStartupBase
         
         // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
         HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
-            ?? throw new ArgumentNullException(nameof(Config), "Can't find HOSTING_ENVIRONMENT");
+            ?? throw new ConfigurationErrorsException("Can't find HOSTING_ENVIRONMENT");
     }
 
     protected void ConfigureServices()

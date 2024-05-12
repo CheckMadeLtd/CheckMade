@@ -19,8 +19,10 @@ public class IntegrationTestStartup : TestStartupBase
         Services.ConfigurePersistenceServices(Config, HostingEnvironment);
 
         var prdDbConnString = (Config.GetValue<string>("PG_PRD_DB_CONNSTRING")
-                              ?? throw new ArgumentNullException())
-            .Replace("MYSECRET", Config.GetValue<string>("ConnectionStrings:PRD-DB-PSW"));
+                              ?? throw new InvalidOperationException("Can't find PG_PRD_DB_CONNSTRING"))
+            .Replace("MYSECRET", Config.GetValue<string>("ConnectionStrings:PRD-DB-PSW")
+            ?? throw new InvalidOperationException( "Can't find ConnectionStrings:PRD-DB-PSW"));
+        
         Services.AddSingleton<PrdDbConnStringProvider>(_ => new PrdDbConnStringProvider(prdDbConnString));
     }
 }

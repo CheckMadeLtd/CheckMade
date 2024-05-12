@@ -42,15 +42,13 @@ internal static class ConfigureServicesExtensions
         {
             "Development" or "CI" => 
                 config.GetValue<string>("PG_DB_CONNSTRING") 
-                ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                    "Can't find PG_DB_CONNSTRING"),
+                ?? throw new InvalidOperationException("Can't find PG_DB_CONNSTRING"),
             
             "Production" or "Staging" => 
                 (Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PRD-DB") 
-                 ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
-                     "Can't find POSTGRESQLCONNSTR_PRD-DB"))
+                 ?? throw new InvalidOperationException("Can't find POSTGRESQLCONNSTR_PRD-DB"))
                 .Replace("MYSECRET", config.GetValue<string>("ConnectionStrings:PRD-DB-PSW") 
-                                     ?? throw new ArgumentNullException(nameof(hostingEnvironment), 
+                                     ?? throw new InvalidOperationException(
                                          "Can't find ConnectionStrings:PRD-DB-PSW")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
@@ -93,6 +91,6 @@ internal static class ConfigureServicesExtensions
 
     private static string GetBotToken(IConfiguration config, string envAcronym, BotType botType) =>
         config.GetValue<string>($"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN")
-        ?? throw new ArgumentNullException(nameof(config), 
+        ?? throw new InvalidOperationException(
             $"Not found: TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN");
 }
