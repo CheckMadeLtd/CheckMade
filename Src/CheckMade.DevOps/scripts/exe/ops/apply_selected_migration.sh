@@ -30,9 +30,8 @@ for sql_file in "$migrations_dir"/*; do
   MigrationFiles[$key]=$sql_file
 done 
 
-echo "-------------"
-
 while true; do
+  echo "-------------"
   echo "Enter the first three characters of the migration file you want to apply:"
   read -r migration_id
   
