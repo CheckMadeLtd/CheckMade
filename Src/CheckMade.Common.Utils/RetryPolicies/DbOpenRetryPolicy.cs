@@ -5,4 +5,4 @@ public interface IDbOpenRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbOpenRetryPolicy() : RetryPolicyBase(3, "Open Database Connection"), IDbOpenRetryPolicy;
+public class DbOpenRetryPolicy() : RetryPolicyBase(5, "Open Database Connection"), IDbOpenRetryPolicy;
