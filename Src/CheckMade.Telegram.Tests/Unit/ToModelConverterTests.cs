@@ -13,6 +13,38 @@ public class ToModelConverterTests
     private ServiceProvider? _services;
 
     [Theory]
+    [InlineData("Normal valid text message")]
+    [InlineData("_")]
+    [InlineData(" valid text message \n with line break and trailing spaces ")]
+    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidTextMessage(string textInput)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var telegramInputMessage = utils.GetValidTextMessage(textInput);
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+
+        var expectedInputMessage = new InputMessage(
+            telegramInputMessage.From!.Id, 
+            new MessageDetails
+            (
+                TelegramDate: telegramInputMessage.Date,
+                Text: telegramInputMessage.Text,
+                AttachmentType: AttachmentType.NotApplicable,
+                AttachmentExternalUrl: null
+            ));
+
+        // Act
+        var actualInputMessage = await converter.ConvertMessageAsync(telegramInputMessage);
+
+        // Assert
+        actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
+    }
+    
+    [Theory]
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
@@ -25,7 +57,7 @@ public class ToModelConverterTests
         var utils = _services.GetRequiredService<ITestUtils>();
         
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        var attachmentMessage = type switch
+        var telegramAttachmentMessage = type switch
         {
             AttachmentType.Audio => utils.GetValidAudioMessage(),
             AttachmentType.Document => utils.GetValidDocumentMessage(),
@@ -41,16 +73,20 @@ public class ToModelConverterTests
         var expectedAttachmentExternalUrl =
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{mockBotClient.Object.BotToken}/" +
             $"{(await mockBotClient.Object.GetFileAsync("any")).FilePath}";
+
+        var expectedInputMessage = new InputMessage(
+            telegramAttachmentMessage.From!.Id,
+            new MessageDetails(
+                TelegramDate: telegramAttachmentMessage.Date,
+                Text: telegramAttachmentMessage.Caption,
+                AttachmentType: type,
+                AttachmentExternalUrl: expectedAttachmentExternalUrl));
         
         // Act
-        var inputMessageResult = await converter.ConvertMessageAsync(attachmentMessage);
+        var actualInputMessage = await converter.ConvertMessageAsync(telegramAttachmentMessage);
         
         // Assert
-        inputMessageResult.UserId.Should().Be(attachmentMessage.From!.Id);
-        inputMessageResult.Details.TelegramDate.Should().Be(attachmentMessage.Date);
-        inputMessageResult.Details.Text.Should().Be(attachmentMessage.Caption);
-        inputMessageResult.Details.AttachmentType.Should().Be(type);
-        inputMessageResult.Details.AttachmentExternalUrl.Should().Be(expectedAttachmentExternalUrl);
+        actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
     }
     
     [Fact]
@@ -59,14 +95,14 @@ public class ToModelConverterTests
          _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         // Arrange
-        var message = new Message { From = null, Text = "not empty" };
+        var telegramMessage = new Message { From = null, Text = "not empty" };
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(message);
+            await converter.ConvertMessageAsync(telegramMessage);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();
@@ -78,14 +114,14 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         // Arrange
-        var message = new Message { From = new User { Id = 123L } };
+        var telegramMessage = new Message { From = new User { Id = 123L } };
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(message);
+            await converter.ConvertMessageAsync(telegramMessage);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();
