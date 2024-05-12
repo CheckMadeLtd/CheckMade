@@ -4,13 +4,11 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
-using CheckMade.Telegram.Tests.Startup.DefaultMocks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
-using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
@@ -55,22 +53,9 @@ public class MessageHandlerTests
     public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
         AttachmentType type)
     {
-        var serviceCollection = new UnitTestStartup().Services;
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var mockBotClient = new Mock<IBotClientWrapper>();
-        mockBotClient
-            .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
-            .ReturnsAsync(new File { FilePath = "fakeFilePath" });
-        mockBotClient
-            .Setup(x => x.BotToken).Returns("fakeToken");
-
-        // Replaces the default set up in UnitTestStartup
-        serviceCollection.AddScoped<IBotClientFactory, MockBotClientFactory>(_ => 
-            new MockBotClientFactory(mockBotClient.Object));
-        
-        _services = serviceCollection.BuildServiceProvider();
-        
         var utils = _services.GetRequiredService<ITestUtils>();
         var attachmentMessage = type switch
         {
@@ -81,6 +66,7 @@ public class MessageHandlerTests
             _ => throw new ArgumentOutOfRangeException()
         };
         
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot Submissions: {type}";
         

@@ -12,6 +12,19 @@ public class ToModelConverterTests
 {
     private ServiceProvider? _services;
 
+    // [Fact]
+    // public void ConvertMessage_SavesPhotoCaptionAsText_ForValidPhotoMessageWithCaption()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     // Arrange
+    //     var utils = _services.GetRequiredService<ITestUtils>();
+    //     var photoMessage = utils.GetValidPhotoMessage();
+    //     var converter = _services.GetRequiredService<IToModelConverter>();
+    //     
+    //     // Act 
+    // }
+    
     [Fact]
     public void ConvertMessage_ThrowsArgumentNullException_WhenUserIsNull()
     {
