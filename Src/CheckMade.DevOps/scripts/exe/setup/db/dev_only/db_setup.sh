@@ -5,7 +5,6 @@ set -o pipefail
 
 script_dir_db_setup=$(dirname "${BASH_SOURCE[0]}")
 source "$script_dir_db_setup/../../../global_utils.sh"
-source "$script_dir_db_setup/../../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

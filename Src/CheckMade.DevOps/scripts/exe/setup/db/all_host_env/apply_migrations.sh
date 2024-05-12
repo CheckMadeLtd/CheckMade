@@ -5,7 +5,6 @@ set -o pipefail
 
 script_dir_apply_migr=$(dirname "${BASH_SOURCE[0]}")
 source "$script_dir_apply_migr/../../../global_utils.sh"
-source "$script_dir_apply_migr/../../../db_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 # Script works across all hosting environments!
