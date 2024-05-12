@@ -12,22 +12,45 @@ public class ToModelConverterTests
 {
     private ServiceProvider? _services;
 
-    [Fact]
-    public async Task ConvertMessage_SavesPhotoCaptionAsText_ForValidPhotoMessageWithCaption()
+    [Theory]
+    [InlineData(AttachmentType.Photo)]
+    [InlineData(AttachmentType.Audio)]
+    [InlineData(AttachmentType.Document)]
+    [InlineData(AttachmentType.Video)]
+    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage(AttachmentType type)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var photoMessage = utils.GetValidPhotoMessage();
-        var converter = _services.GetRequiredService<IToModelConverter>();
+        
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        var attachmentMessage = type switch
+        {
+            AttachmentType.Audio => utils.GetValidAudioMessage(),
+            AttachmentType.Document => utils.GetValidDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidPhotoMessage(),
+            AttachmentType.Video => utils.GetValidVideoMessage(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+
+        var expectedAttachmentExternalUrl =
+            TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{mockBotClient.Object.BotToken}/" +
+            $"{(await mockBotClient.Object.GetFileAsync("any")).FilePath}";
         
         // Act
-        var inputMessageResult = await converter.ConvertMessageAsync(photoMessage, mockBotClient.Object);
+        var inputMessageResult = await converter.ConvertMessageAsync(attachmentMessage);
         
         // Assert
-        inputMessageResult.Details.Text.Should().Be(photoMessage.Caption);
+        inputMessageResult.UserId.Should().Be(attachmentMessage.From!.Id);
+        inputMessageResult.Details.TelegramDate.Should().Be(attachmentMessage.Date);
+        inputMessageResult.Details.Text.Should().Be(attachmentMessage.Caption);
+        inputMessageResult.Details.AttachmentType.Should().Be(type);
+        inputMessageResult.Details.AttachmentExternalUrl.Should().Be(expectedAttachmentExternalUrl);
     }
     
     [Fact]
@@ -38,11 +61,12 @@ public class ToModelConverterTests
         // Arrange
         var message = new Message { From = null, Text = "not empty" };
         var mockBotClient = new Mock<IBotClientWrapper>();
-        var converter = _services.GetRequiredService<IToModelConverter>();
+        var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(message, mockBotClient.Object);
+            await converter.ConvertMessageAsync(message);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();
@@ -56,11 +80,12 @@ public class ToModelConverterTests
         // Arrange
         var message = new Message { From = new User { Id = 123L } };
         var mockBotClient = new Mock<IBotClientWrapper>();
-        var converter = _services.GetRequiredService<IToModelConverter>();
+        var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(message, mockBotClient.Object);
+            await converter.ConvertMessageAsync(message);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();

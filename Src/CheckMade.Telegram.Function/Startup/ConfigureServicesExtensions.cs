@@ -61,7 +61,7 @@ internal static class ConfigureServicesExtensions
 
     internal static void ConfigureBusinessServices(this IServiceCollection services)
     {
-        services.AddSingleton<IToModelConverter, ToModelConverter>();
+        services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.Add_TelegramLogic_Dependencies();
     }
 

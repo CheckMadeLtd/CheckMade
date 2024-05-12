@@ -6,20 +6,18 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage, IBotClientWrapper botClient);
+    Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage);
 }
 
-internal class ToModelConverter : IToModelConverter
+internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    private const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
-    
-    public async Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage, IBotClientWrapper botClient)
+    public async Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage)
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
 
-        var rawAttachmentDetails = GetRawAttachmentDetails(telegramInputMessage);
+        var rawAttachmentDetails = ConvertRawAttachmentDetails(telegramInputMessage);
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&
             string.IsNullOrWhiteSpace(rawAttachmentDetails.fileId))
@@ -28,8 +26,8 @@ internal class ToModelConverter : IToModelConverter
                                                                           "a text or an attachment");
         }
 
-        var attachmentUrl = rawAttachmentDetails.fileId != null 
-            ? await GetTelegramFilePathAsync(rawAttachmentDetails.fileId, botClient)
+        var telegramAttachmentUrl = rawAttachmentDetails.fileId != null 
+            ? await filePathResolver.GetTelegramFilePathAsync(rawAttachmentDetails.fileId)
             : null;
 
         var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
@@ -41,12 +39,12 @@ internal class ToModelConverter : IToModelConverter
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
                 Text: messageText,
-                AttachmentExternalUrl: attachmentUrl,
+                AttachmentExternalUrl: telegramAttachmentUrl,
                 AttachmentType: rawAttachmentDetails.type ));
     }
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private (string? fileId, AttachmentType type) GetRawAttachmentDetails(Message telegramInputMessage) => 
+    private (string? fileId, AttachmentType type) ConvertRawAttachmentDetails(Message telegramInputMessage) => 
         telegramInputMessage.Type switch
     {
         MessageType.Text => (null, AttachmentType.NotApplicable),
@@ -57,10 +55,4 @@ internal class ToModelConverter : IToModelConverter
         MessageType.Video => (telegramInputMessage.Video?.FileId, AttachmentType.Video),
         _ => throw new ArgumentOutOfRangeException()
     };
-    
-    private async Task<string> GetTelegramFilePathAsync(string fileId, IBotClientWrapper botClient)
-    {
-        var file = await botClient.GetFileAsync(fileId);
-        return TelegramBotDownloadFileApiUrlStub + $"bot{botClient.BotToken}/{file.FilePath}";  
-    }
 }

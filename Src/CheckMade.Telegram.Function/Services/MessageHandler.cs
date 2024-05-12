@@ -14,9 +14,10 @@ public interface IMessageHandler
     Task HandleMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
-public class MessageHandler(IBotClientFactory botClientFactory,
+public class MessageHandler(
+        IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
-        IToModelConverter toModelConverter,
+        IToModelConverterFactory toModelConverterFactory,
         INetworkRetryPolicy retryPolicy,
         ILogger<MessageHandler> logger)
     : IMessageHandler
@@ -28,9 +29,11 @@ public class MessageHandler(IBotClientFactory botClientFactory,
     
     public async Task HandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
+        ChatId chatId = telegramInputMessage.Chat.Id;
         _botType = botType;
         var botClient = botClientFactory.CreateBotClient(_botType);
-        ChatId chatId = telegramInputMessage.Chat.Id;
+        var filePathResolver = new TelegramFilePathResolver(botClient);
+        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
@@ -53,16 +56,17 @@ public class MessageHandler(IBotClientFactory botClientFactory,
             return;
         }
         
-        var inputMessage = await TryConvertToModelAsync(telegramInputMessage, botClient);
+        var inputMessage = await TryConvertToModelAsync(telegramInputMessage, toModelConverter);
         var outputMessage = await TryProcessInputIntoOutput(inputMessage);
         await TrySendOutput(outputMessage, botClient, chatId);
     }
 
-    private async Task<InputMessage> TryConvertToModelAsync(Message telegramInputMessage, IBotClientWrapper botClient)
+    private async Task<InputMessage> TryConvertToModelAsync(
+        Message telegramInputMessage, IToModelConverter toModelConverter)
     {
         try
         {
-            return await toModelConverter.ConvertMessageAsync(telegramInputMessage, botClient);
+            return await toModelConverter.ConvertMessageAsync(telegramInputMessage);
         }
         catch (Exception ex)
         {
