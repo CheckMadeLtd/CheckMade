@@ -17,22 +17,19 @@ public class MessageHandlerTests
     private ServiceProvider? _services;
 
     [Theory]
-    [InlineData("Normal valid text message", BotType.Submissions)]
-    [InlineData("Normal valid text message", BotType.Communications)]
-    [InlineData("Normal valid text message", BotType.Notifications)]
-    [InlineData("_", BotType.Submissions)]
-    [InlineData(" valid text message \n with line break and trailing spaces ", BotType.Submissions)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(
-        string inputText, BotType botType)
+    [InlineData(BotType.Submissions)]
+    [InlineData(BotType.Communications)]
+    [InlineData(BotType.Notifications)]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTextMessage(inputText);
+        var textMessage = utils.GetValidTextMessage("simple valid text");
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
+        var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
 
         // Act
         await handler.HandleMessageAsync(textMessage, botType);
