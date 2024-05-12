@@ -9,7 +9,7 @@ source "$script_dir_apply_selected_migr/../script_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 env_var_is_set "PG_SUPER_USER_PRD"
-env_var_is_set "PG_SUPER_USER_PRD_PSW"
+env_var_is_set "PG_SUPER_USER_PRD_PSW" "secret"
 env_var_is_set "PG_SUPER_USER_DEV"
 env_var_is_set "PG_DB_NAME"
 env_var_is_set "PG_APP_USER"

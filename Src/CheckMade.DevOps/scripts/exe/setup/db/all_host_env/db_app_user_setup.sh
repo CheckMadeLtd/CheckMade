@@ -17,15 +17,19 @@ env_var_is_set "PG_DB_NAME"
 env_var_is_set "PG_APP_USER"
 env_var_is_set "PG_APP_USER_PSW" "secret"
 env_var_is_set "PG_SUPER_USER"
-
-if [ "$hosting_env" == "Production" ]; then
-  env_var_is_set "COSMOSDB_PG_CLUSTER_NAME"
-  env_var_is_set "COSMOSDB_PG_HOST" # Needed in 'get_psql_host' function
-fi
+env_var_is_set "PG_SUPER_USER_PRD_PSW" "secret"
 
 # Only needs to be set via Environment Vars in 'CI' because lack of interactivity there (e.g. no psw prompt possible)
 if [ "$hosting_env" == "CI" ]; then
   env_var_is_set "PGPASSWORD" "secret"
+fi
+
+if [ "$hosting_env" == "Production" ]; then
+  env_var_is_set "COSMOSDB_PG_CLUSTER_NAME"
+  env_var_is_set "COSMOSDB_PG_HOST"
+  # Using db = postgres because creating a new user is a cluster-wide administrative task
+  full_cosmosdb_connection_string="sslmode=verify-full sslrootcert=system host=$COSMOSDB_PG_HOST port=5432 \
+dbname=postgres user=$PG_SUPER_USER password=$PG_SUPER_USER_PRD_PSW"
 fi
 
 echo "-----------"
@@ -54,11 +58,12 @@ else
   $sql_grant_connect_command"
 fi
 
-psql_host=$(get_psql_host "$hosting_env")
+if [ "$hosting_env" != "Production" ] && [ "$hosting_env" != "Staging" ]; then
+  psql_host=$(get_psql_host "$hosting_env")
+fi
 
-# Using '-d postgres' because creating a new user is a cluster-wide administrative task
 if [ -z "$psql_host" ]; then # usually in case of hosting_env=Development
   psql -U "$PG_SUPER_USER" -d postgres -c "$sql_command"
 else
-  psql -h "$psql_host" -U "$PG_SUPER_USER" -d postgres -c "$sql_command"
+  psql "$full_cosmosdb_connection_string" -c "$sql_command"
 fi

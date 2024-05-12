@@ -16,7 +16,7 @@ echo "Choose the keyvault to which the password for DB user '$PG_APP_USER' shall
 KEYVAULT_NAME=$(confirm_and_select_resource "keyvault" "$KEYVAULT_NAME")
 
 echo "Enter the key for the new secret (e.g. 'PRD-DB-PSW', no use of '_') and make sure it's the same as the one used \
-in Startup.cs:"
+in Startup.cs and any Integration-test related special configs:"
 read -r secret_key
 
 secret_key="ConnectionStrings--$secret_key"

@@ -80,11 +80,8 @@ get_psql_host() {
   elif [ "$host_env" == "CI" ]; then 
     echo "localhost"
   elif [ "$host_env" == "Production" ] || [ "$host_env" == "Staging" ]; then
-    if [ -z "$COSMOSDB_PG_HOST" ]; then
-      echo "Err: COSMOSDB_PG_HOST is empty."
-      exit 1
-    fi
-    echo "$COSMOSDB_PG_HOST"
+    echo "Err: For production db, this util was deprecated. Use full psql connection string. Aborting!" >&2
+    exit 1
   else
     echo "Err: Unrecognised hosting environment:'${host_env}'" >&2
     exit 1
