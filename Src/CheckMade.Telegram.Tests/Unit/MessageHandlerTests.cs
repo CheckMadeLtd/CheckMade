@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
@@ -66,7 +65,7 @@ public class MessageHandlerTests
             // AttachmentType.Video => expr,
             // AttachmentType.Voice => expr,
             AttachmentType.OtherDocument => GetValidOtherDocumentMessage(),
-            _ => throw new InvalidEnumArgumentException()
+            _ => throw new ArgumentOutOfRangeException()
         };
 
         var mockBotClient = new Mock<IBotClientWrapper>();

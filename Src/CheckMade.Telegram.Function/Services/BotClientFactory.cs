@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic;
 using Telegram.Bot;
@@ -29,6 +28,6 @@ public class BotClientFactory(IHttpClientFactory httpFactory, BotTokens botToken
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             botTokens.NotificationsBotToken),
         
-        _ => throw new InvalidEnumArgumentException()
+        _ => throw new ArgumentOutOfRangeException()
     };
 }

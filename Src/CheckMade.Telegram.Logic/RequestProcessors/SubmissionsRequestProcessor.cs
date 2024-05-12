@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
@@ -16,7 +15,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             AttachmentType.NotApplicable => $"Echo from bot Submissions: {message.Details.Text}",
             AttachmentType.Photo => $"Echo from bot Submissions: photo",
-            _ => throw new InvalidEnumArgumentException()
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 }
