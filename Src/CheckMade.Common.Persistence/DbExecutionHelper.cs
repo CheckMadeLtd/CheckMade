@@ -14,7 +14,8 @@ public interface IDbExecutionHelper
 
 internal class DbExecutionHelper(
         IDbConnectionProvider dbProvider,
-        IDbRetryPolicy retryPolicy) 
+        IDbOpenRetryPolicy dbOpenRetryPolicy,
+        IDbCommandRetryPolicy dbCommandRetryPolicy) 
     : IDbExecutionHelper
 {
     public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)
@@ -23,7 +24,7 @@ internal class DbExecutionHelper(
         {
             try
             {
-                await retryPolicy.ExecuteAsync(() =>
+                await dbOpenRetryPolicy.ExecuteAsync(() =>
                 {
                     db.Open();
                     return Task.CompletedTask;
@@ -46,7 +47,7 @@ internal class DbExecutionHelper(
 
                 try
                 {
-                    await retryPolicy.ExecuteAsync(async () => await executeDbOperation(command));
+                    await dbCommandRetryPolicy.ExecuteAsync(async () => await executeDbOperation(command));
                 }
                 catch (JsonSerializationException jsonEx)
                 {

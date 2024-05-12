@@ -10,7 +10,8 @@ public static class DependencyRegistration
     {
         services.AddSingleton<IRandomizer, Randomizer>();
 
-        services.AddSingleton<IDbRetryPolicy, DbRetryPolicy>();
+        services.AddSingleton<IDbOpenRetryPolicy, DbOpenRetryPolicy>();
+        services.AddSingleton<IDbCommandRetryPolicy, DbCommandRetryPolicy>();
         services.AddSingleton<INetworkRetryPolicy, NetworkRetryPolicy>();
     }
 }

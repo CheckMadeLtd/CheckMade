@@ -9,8 +9,14 @@ public static class JsonHelper
         return JsonConvert.SerializeObject(obj);
     }
 
-    public static T? DeserializeFromJson<T>(string json)
+    public static T? DeserializeFromJsonStrict<T>(string json)
     {
-        return JsonConvert.DeserializeObject<T>(json);
+        var jsonSettings = new JsonSerializerSettings
+        {
+            // Throws exception during deserialization when json data has a field that doesn't map to my model class
+            MissingMemberHandling = MissingMemberHandling.Error
+        };
+        
+        return JsonConvert.DeserializeObject<T>(json, jsonSettings);
     }
 }

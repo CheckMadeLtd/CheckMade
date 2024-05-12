@@ -28,7 +28,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
     {
         var inputMessages = new List<InputMessage>();
-    
+
         await dbHelper.ExecuteAsync(async command =>
         {
             command.CommandText = "SELECT * FROM tlgr_messages WHERE tlgr_user_id = @userId";
@@ -43,10 +43,10 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 
                     var message = new InputMessage(
                         telegramUserId, 
-                        JsonHelper.DeserializeFromJson<MessageDetails>(details)
+                        JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details)
                         ?? throw new ArgumentNullException(nameof(details), 
                             "Failed to deserialize "));
-
+                    
                     inputMessages.Add(message);
                 }
             }
