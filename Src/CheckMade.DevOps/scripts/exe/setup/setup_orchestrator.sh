@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 script_dir_orchestrator=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir_orchestrator/../global_utils.sh"
+source "$script_dir_orchestrator/../script_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

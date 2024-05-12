@@ -2,7 +2,7 @@
 set -e 
 set -o pipefail
 script_dir_finishwork=$(dirname "${BASH_SOURCE[0]}")
-source "$script_dir_finishwork/../global_utils.sh"
+source "$script_dir_finishwork/../script_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 

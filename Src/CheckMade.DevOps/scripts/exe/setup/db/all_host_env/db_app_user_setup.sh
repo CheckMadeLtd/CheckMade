@@ -3,7 +3,7 @@
 set -e 
 set -o pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/../../../global_utils.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../../../script_utils.sh"
 
 # -------------------------------------------------------------------------------------------------------
 
