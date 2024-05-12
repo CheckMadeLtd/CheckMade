@@ -1,0 +1,1 @@
+CREATE INDEX tlgr_messages_tlgr_user_id_index ON tlgr_messages (tlgr_user_id);

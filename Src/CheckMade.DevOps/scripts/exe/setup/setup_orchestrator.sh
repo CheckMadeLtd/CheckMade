@@ -113,13 +113,16 @@ read -r
 # --- HOSTING-ENV-AGNOSTIC DB SETUP VARS -----------------------------------------
 
 # These are consumed by subsequent db-setup-related scripts and are the same across all hosting environments
-PG_DB_NAME="cm_ops"
-PG_APP_USER="cmappuser"
+# They should be configured in the environment (~/.zprofile) as they are also consumed by other, non-setup scripts.
+env_var_is_set "PG_DB_NAME"
+env_var_is_set "PG_APP_USER"
+env_var_is_set "PG_SUPER_USER_DEV"
+env_var_is_set "PG_SUPER_USER_PRD"
 
 # --- POSTGRES LOCAL/DEV CLUSTER/SERVER SETUP -----------------------------------------
 
 echo "Setting vars for (dev) DB Setup..."
-PG_SUPER_USER=$(whoami)
+PG_SUPER_USER=$PG_SUPER_USER_DEV
 PG_APP_USER_PSW="my_dev_db_psw" # not security critical, save also in in local.settings.json connstring
 echo "PG_APP_USER_PSW was set to '${PG_APP_USER_PSW}'. Make sure it's the same in local.settings.json files \
 of all toplevel projects (including Test projects!!)."
@@ -157,7 +160,7 @@ read -r COSMOSDB_PG_CLUSTER_NAME
 
 # --- COSMOS DB SETUP -----------------------------------------
 
-PG_SUPER_USER="citus"
+PG_SUPER_USER=$PG_SUPER_USER_PRD
 
 # Forces psql, when connecting from the dev's machine into an Azure CosmosDb, to use the specified settings.
 PGSSLMODE=verify-full
@@ -180,6 +183,10 @@ fi
 # Needed in multiple of the following sub scripts
 COSMOSDB_PG_HOST="$(az cosmosdb postgres cluster show -g $CURRENT_COMMON_RESOURCE_GROUP -n "$COSMOSDB_PG_CLUSTER_NAME" \
 --query "serverNames[*].fullyQualifiedDomainName" --output tsv)"
+
+echo "COSMOSDB_PG_HOST was set to '${COSMOSDB_PG_HOST}'."
+echo "Make sure this current value is also saved into the global \
+environment (e.g. ~/.zprofile), as it's needed by other, non-setup scripts!"
 
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/db_app_user_setup.sh" "Production"
 confirm_script_launch "$script_dir_orchestrator/db/all_host_env/apply_migrations.sh" "Production"
