@@ -30,7 +30,8 @@ public class MessageHandlerTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var textMessage = GetValidTextMessage(inputText);
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var textMessage = utils.GetValidTextMessage(inputText);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
@@ -57,15 +58,6 @@ public class MessageHandlerTests
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
-        var attachmentMessage = type switch
-        {
-            AttachmentType.Audio => GetValidAudioMessage(),
-            AttachmentType.Document => GetValidDocumentMessage(),
-            AttachmentType.Photo => GetValidPhotoMessage(),
-            AttachmentType.Video => GetValidVideoMessage(),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
         var mockBotClient = new Mock<IBotClientWrapper>();
         mockBotClient
             .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
@@ -78,6 +70,16 @@ public class MessageHandlerTests
             new MockBotClientFactory(mockBotClient.Object));
         
         _services = serviceCollection.BuildServiceProvider();
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var attachmentMessage = type switch
+        {
+            AttachmentType.Audio => utils.GetValidAudioMessage(),
+            AttachmentType.Document => utils.GetValidDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidPhotoMessage(),
+            AttachmentType.Video => utils.GetValidVideoMessage(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
         
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot Submissions: {type}";
@@ -161,7 +163,8 @@ public class MessageHandlerTests
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
-        var textMessage = GetValidTextMessage("some valid text");
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var textMessage = utils.GetValidTextMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
@@ -170,49 +173,4 @@ public class MessageHandlerTests
         // Assert
         mockBotClient.Verify();
     }
-
-    private static Message GetValidTextMessage(string inputText) => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Text = inputText
-        };
-
-    private static Message GetValidPhotoMessage() => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
-        };
-    
-    private static Message GetValidAudioMessage() => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Audio = new Audio { FileId = "fakeAudioFileId" }
-        };
-    
-    private static Message GetValidDocumentMessage() => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Document = new Document { FileId = "fakeOtherDocumentFileId" }
-        };
-
-    private static Message GetValidVideoMessage() =>
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Video = new Video { FileId = "fakeVideoFileId" }
-        };
 }
