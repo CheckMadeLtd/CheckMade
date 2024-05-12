@@ -45,11 +45,11 @@ working_dir_is_solution_root() {
   fi
 }
 
-hosting_env_is_valid() {
-  local hosting_env="$1" 
-  if [ "$hosting_env" != "Development" ] && [ "$hosting_env" != "CI" ] && \
-  [ "$hosting_env" != "Staging" ] && [ "$hosting_env" != "Production" ]; then
-    echo "Err: Hosing Environment '${hosting_env}' is not valid." >&2
+db_hosting_env_is_valid() {
+  local db_hosting_env="$1" 
+  if [ "$db_hosting_env" != "Development" ] && [ "$db_hosting_env" != "CI" ] && \
+  [ "$db_hosting_env" != "Staging" ] && [ "$db_hosting_env" != "Production" ]; then
+    echo "Err: Hosing Environment '${db_hosting_env}' is not valid." >&2
     exit 1  
   fi
 }
@@ -71,20 +71,3 @@ env_var_is_set() {
     fi
   fi
 }
-
-get_psql_host() {
-  local host_env="$1"
-
-  if [ "$host_env" == "Development" ]; then
-    echo "" # default is "local socket" but -h "local socket" wouldn't work so we leave it empty
-  elif [ "$host_env" == "CI" ]; then 
-    echo "localhost"
-  elif [ "$host_env" == "Production" ] || [ "$host_env" == "Staging" ]; then
-    echo "Err: For production db, this util was deprecated. Use full psql connection string. Aborting!" >&2
-    exit 1
-  else
-    echo "Err: Unrecognised hosting environment:'${host_env}'" >&2
-    exit 1
-  fi
-}
-
