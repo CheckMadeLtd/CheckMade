@@ -37,7 +37,7 @@ internal class ToModelConverter : IToModelConverter
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
                 Text: telegramInputMessage.Text,
-                AttachmentSourceUrl: attachmentUrl,
+                AttachmentExternalUrl: attachmentUrl,
                 AttachmentType: rawAttachmentDetails.type ));
     }
 
