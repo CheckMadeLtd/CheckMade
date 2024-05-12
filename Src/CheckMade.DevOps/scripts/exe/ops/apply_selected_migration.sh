@@ -32,8 +32,12 @@ done
 
 while true; do
   echo "-------------"
-  echo "Enter the first three characters of the migration file you want to apply:"
+  echo "Enter the first three characters of the migration file you want to apply ('q' to quit):"
   read -r migration_id
+  
+  if [ "$migration_id" == "q" ]; then
+    exit 0
+  fi
   
   sql_file=${MigrationFiles[$migration_id]}
   
