@@ -13,6 +13,24 @@ public class ToModelConverterTests
     private ServiceProvider? _services;
 
     [Fact]
+    public async Task ConvertMessage_SavesPhotoCaptionAsText_ForValidPhotoMessageWithCaption()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var photoMessage = utils.GetValidPhotoMessage();
+        var converter = _services.GetRequiredService<IToModelConverter>();
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        
+        // Act
+        var inputMessageResult = await converter.ConvertMessageAsync(photoMessage, mockBotClient.Object);
+        
+        // Assert
+        inputMessageResult.Details.Text.Should().Be(photoMessage.Caption);
+    }
+    
+    [Fact]
     public void ConvertMessage_ThrowsArgumentNullException_WhenUserIsNull()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -31,7 +49,7 @@ public class ToModelConverterTests
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndPhotoFileIdIsEmpty()
+    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndAttachmentFileIdBothEmpty()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     

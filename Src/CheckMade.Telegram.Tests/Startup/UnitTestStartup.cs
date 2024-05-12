@@ -4,6 +4,7 @@ using CheckMade.Telegram.Tests.Startup.DefaultMocks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Tests.Startup;
 
@@ -33,7 +34,19 @@ public class UnitTestStartup : TestStartupBase
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
         
-        Services.AddScoped<Mock<IBotClientWrapper>>(_ => new Mock<IBotClientWrapper>());
+        Services.AddScoped<Mock<IBotClientWrapper>>(_ =>
+        {
+            var mockBotClient = new Mock<IBotClientWrapper>();
+            
+            mockBotClient
+                .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
+                .ReturnsAsync(new File { FilePath = "fakeFilePath" });
+            
+            mockBotClient
+                .Setup(x => x.BotToken).Returns("fakeToken");
+
+            return mockBotClient;
+        });
         
         Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
             new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>().Object));

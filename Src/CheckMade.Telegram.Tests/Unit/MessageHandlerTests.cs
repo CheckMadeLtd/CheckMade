@@ -4,13 +4,11 @@ using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
-using CheckMade.Telegram.Tests.Startup.DefaultMocks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
-using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Tests.Unit;
 
@@ -30,7 +28,8 @@ public class MessageHandlerTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var textMessage = GetValidTextMessage(inputText);
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var textMessage = utils.GetValidTextMessage(inputText);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot {botType}: {inputText}";
@@ -46,36 +45,37 @@ public class MessageHandlerTests
             Times.Once);
     }
 
-    [Fact]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoMessageToSubmissions()
+    [Theory]
+    [InlineData(AttachmentType.Photo)]
+    [InlineData(AttachmentType.Audio)]
+    [InlineData(AttachmentType.Document)]
+    [InlineData(AttachmentType.Video)]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
+        AttachmentType type)
     {
-        var serviceCollection = new UnitTestStartup().Services;
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var photoMessage = GetValidPhotoMessage();
-
-        var mockBotClient = new Mock<IBotClientWrapper>();
-        mockBotClient
-            .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
-            .ReturnsAsync(new File { FilePath = "fakeFilePath" });
-        mockBotClient
-            .Setup(x => x.BotToken).Returns("fakeToken");
-
-        // Replaces the default set up in UnitTestStartup
-        serviceCollection.AddScoped<IBotClientFactory, MockBotClientFactory>(_ => 
-            new MockBotClientFactory(mockBotClient.Object));
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var attachmentMessage = type switch
+        {
+            AttachmentType.Audio => utils.GetValidAudioMessage(),
+            AttachmentType.Document => utils.GetValidDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidPhotoMessage(),
+            AttachmentType.Video => utils.GetValidVideoMessage(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
         
-        _services = serviceCollection.BuildServiceProvider();
-        
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo from bot Submissions: photo";
+        var expectedOutputMessage = $"Echo from bot Submissions: {type}";
         
         // Act
-        await handler.HandleMessageAsync(photoMessage, BotType.Submissions);
+        await handler.HandleMessageAsync(attachmentMessage, BotType.Submissions);
         
         // Assert
         mockBotClient.Verify(x => x.SendTextMessageAsync(
-                photoMessage.Chat.Id,
+                attachmentMessage.Chat.Id,
                 expectedOutputMessage, 
                 It.IsAny<CancellationToken>()), 
             Times.Once);
@@ -149,7 +149,8 @@ public class MessageHandlerTests
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
-        var textMessage = GetValidTextMessage("some valid text");
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var textMessage = utils.GetValidTextMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
@@ -158,22 +159,4 @@ public class MessageHandlerTests
         // Assert
         mockBotClient.Verify();
     }
-
-    private static Message GetValidTextMessage(string inputText) => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Text = inputText
-        };
-
-    private static Message GetValidPhotoMessage() => 
-        new()
-        {
-            From = new User { Id = 1234L },
-            Chat = new Chat { Id = 4321L },
-            Date = DateTime.Now,
-            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakeFileId" }]
-        };
 }

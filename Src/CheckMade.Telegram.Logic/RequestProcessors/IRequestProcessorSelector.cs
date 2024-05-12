@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface IRequestProcessorSelector
@@ -20,7 +18,7 @@ public class RequestProcessorSelector(
             BotType.Submissions => submissionsProcessor,
             BotType.Communications => communicationsProcessor,
             BotType.Notifications => notificationsProcessor,
-            _ => throw new InvalidEnumArgumentException()
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 }

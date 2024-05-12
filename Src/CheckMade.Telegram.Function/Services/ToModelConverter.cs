@@ -1,5 +1,6 @@
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -18,30 +19,45 @@ internal class ToModelConverter : IToModelConverter
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
 
-        // ToDo: Generalise from Photo to all sorts of Attachments
-        var photoFileId = telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId;
+        var rawAttachmentDetails = GetRawAttachmentDetails(telegramInputMessage);
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&
-            string.IsNullOrWhiteSpace(photoFileId))
+            string.IsNullOrWhiteSpace(rawAttachmentDetails.fileId))
         {
             throw new ArgumentNullException(nameof(telegramInputMessage), "The message must either have " +
                                                                           "a text or an attachment");
         }
 
-        // ToDo: Fix, this should become the azure storage URL
-        var attachmentUrl = !string.IsNullOrWhiteSpace(photoFileId)
-            ? await GetTelegramFilePathAsync(photoFileId, botClient)
+        var attachmentUrl = rawAttachmentDetails.fileId != null 
+            ? await GetTelegramFilePathAsync(rawAttachmentDetails.fileId, botClient)
             : null;
+
+        var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
+            ? telegramInputMessage.Text
+            : telegramInputMessage.Caption;
         
         return new InputMessage(
             userId,
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
-                Text: telegramInputMessage.Text,
-                AttachmentUrl: attachmentUrl,
-                AttachmentType: attachmentUrl == null ? AttachmentType.NotApplicable : AttachmentType.Photo ));
+                Text: messageText,
+                AttachmentExternalUrl: attachmentUrl,
+                AttachmentType: rawAttachmentDetails.type ));
     }
 
+    // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+    private (string? fileId, AttachmentType type) GetRawAttachmentDetails(Message telegramInputMessage) => 
+        telegramInputMessage.Type switch
+    {
+        MessageType.Text => (null, AttachmentType.NotApplicable),
+        MessageType.Audio => (telegramInputMessage.Audio?.FileId, AttachmentType.Audio),
+        MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId, 
+            AttachmentType.Photo),
+        MessageType.Document => (telegramInputMessage.Document?.FileId, AttachmentType.Document),
+        MessageType.Video => (telegramInputMessage.Video?.FileId, AttachmentType.Video),
+        _ => throw new ArgumentOutOfRangeException()
+    };
+    
     private async Task<string> GetTelegramFilePathAsync(string fileId, IBotClientWrapper botClient)
     {
         var file = await botClient.GetFileAsync(fileId);
