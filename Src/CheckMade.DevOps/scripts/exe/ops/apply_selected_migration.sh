@@ -9,10 +9,14 @@ source "$script_dir_apply_selected_migr/../script_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 env_var_is_set "PG_SUPER_USER_PRD"
+env_var_is_set "PG_SUPER_USER_PRD_PSW"
 env_var_is_set "PG_SUPER_USER_DEV"
 env_var_is_set "PG_DB_NAME"
 env_var_is_set "PG_APP_USER"
 env_var_is_set "COSMOSDB_PG_HOST"
+
+full_cosmosdb_connection_string="sslmode=verify-full sslrootcert=system host=$COSMOSDB_PG_HOST port=5432 \
+dbname=$PG_DB_NAME user=$PG_SUPER_USER_PRD password=$PG_SUPER_USER_PRD_PSW"
 
 declare -A MigrationFiles
 
@@ -25,6 +29,8 @@ for sql_file in "$migrations_dir"/*; do
   key=$(basename "$sql_file" | cut -c 1-3) 
   MigrationFiles[$key]=$sql_file
 done 
+
+echo "-------------"
 
 while true; do
   echo "Enter the first three characters of the migration file you want to apply:"
@@ -42,21 +48,25 @@ while true; do
   
   if [ "$is_confirmed" == "y" ]; then
     
-    echo "Applying the migration to local dev db..."
-    set -x
-    psql -U "$PG_SUPER_USER_DEV" -d "$PG_DB_NAME" -f "$sql_file"
-    set +x
-    echo "Migration ${migration_id} applied to dev db."
+    echo "Do you want to apply migration '${migration_id}' to the local dev db (y/n)?"
+    read -r is_dev_confirmed
     
-    echo "Do you also want to apply the migration to the prd db? If you are absolutely sure, enter a full 'yes':"
+    if [ "$is_dev_confirmed" == "y" ]; then
+      set -x
+      psql -U "$PG_SUPER_USER_DEV" -d "$PG_DB_NAME" -f "$sql_file"
+      set +x
+      echo "Migration '${migration_id}' was applied to dev db."
+    fi
+    
+    echo "Do you want to apply the migration '${migration_id}' to the prd db?"
+    echo "If you are absolutely sure, enter a full 'yes':"
     read -r is_prd_confirmed
     
     if [ "$is_prd_confirmed" == "yes" ]; then
-      echo "Applying the migration to the prd db..."
       set -x
-      psql -h "$COSMOSDB_PG_HOST" -U "$PG_SUPER_USER_PRD" -d "$PG_DB_NAME" -f "$sql_file"
+      psql "$full_cosmosdb_connection_string" -f "$sql_file"
       set +x
-      echo "Migration ${migration_id} applied to prd db."
+      echo "Migration '${migration_id}' was applied to prd db."
     fi
   
   fi

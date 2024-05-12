@@ -45,6 +45,8 @@ for sql_file in $(ls $migrations_dir/*.sql | sort); do
   if [ -z "$psql_host" ]; then # usually in case of env=Development
     psql -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
   else
+    # ToDo: Check if this still works! Might not, then the solution is like in apply_selected_migrations.sh
+    # PG_SUPER_USER_PRD_PSW is also set on env now... 
     psql -h "$psql_host" -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$sql_file"
   fi
   
