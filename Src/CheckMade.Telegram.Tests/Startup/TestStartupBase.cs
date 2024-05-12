@@ -25,10 +25,11 @@ public abstract class TestStartupBase
             // This also includes Env Vars set in GitHub Actions Workflow
             .AddEnvironmentVariables();
         Config = builder.Build();
-        
+
         // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
-        HostingEnvironment = Config.GetValue<string>("HOSTING_ENVIRONMENT")
-            ?? throw new ConfigurationErrorsException("Can't find HOSTING_ENVIRONMENT");
+        const string keyToHostEnv = "HOSTING_ENVIRONMENT";
+        HostingEnvironment = Config.GetValue<string>(keyToHostEnv)
+            ?? throw new ConfigurationErrorsException($"Can't find {keyToHostEnv}");
     }
 
     protected void ConfigureServices()
