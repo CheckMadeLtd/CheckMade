@@ -1,36 +1,81 @@
-﻿using CheckMade.Common.Persistence;
-using CheckMade.Telegram.Persistence;
+﻿using CheckMade.DevOps.DataMigration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../"));
+string operation;
 
-var configBuilder = new ConfigurationBuilder()
-    .SetBasePath(projectRoot)
-    .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
-
-var config = configBuilder.Build();
-
-var services = new ServiceCollection();
-
-services.AddLogging(loggingConfig =>
+if (args.Length == 0)
 {
-    loggingConfig.ClearProviders();
-    loggingConfig.AddConsole(); 
-    loggingConfig.AddDebug(); 
-});
+    Console.Error.WriteLine($"Argument '{nameof(operation)}' is required to launch this app.");
+    Environment.Exit(1);
+}
 
-// var dbConnString = 
+operation = args[0];
 
-// services.Add_CommonPersistence_Dependencies();
-services.Add_TelegramPersistence_Dependencies();
+var config = BuildConfigurationRoot();
+var services = GetServiceCollectionWithBasics();
 
-
-using (var serviceProvider = services.BuildServiceProvider())
+switch (operation)
 {
-    // Here, use GetRequiredService<IMyService>()
-    // myService.DoSomething()
-    // downstream dependencies will be resolved automatically if registered above. 
+    case "mig":
+        string migDbTargetEnvironment;
+        string migIndex;
+        
+        if (args.Length != 3)
+        {
+            Console.Error.WriteLine($"2 arguments are required to launch the 'mig' operation:\n" +
+                              $"1) {nameof(migDbTargetEnvironment)} ('dev' or 'prd'),\n" +
+                              $"2) {nameof(migIndex)} (in format 'xxxx')");
+            Environment.Exit(1);
+        }
+
+        migDbTargetEnvironment = args[1];
+        
+        if (migDbTargetEnvironment is not ("dev" or "prd"))
+        {
+            Console.Error.WriteLine($"Not a valid data migration target environment: '{migDbTargetEnvironment}'. " +
+                              $"Choose 'dev' or 'prd'.");
+            Environment.Exit(1);
+        }
+
+        migIndex = args[2];
+
+        var migStarter = new DataMigrationStartup(services, config, migDbTargetEnvironment, migIndex);
+        await migStarter.StartAsync();
+        
+        break;
+    
+    default:
+        Console.Error.WriteLine($"No valid {nameof(operation)} was selected. Choose from: 'mig'.");
+        Environment.Exit(1);
+        break;
+}
+
+return;
+
+static IConfigurationRoot BuildConfigurationRoot()
+{
+    var projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../"));
+
+    var configBuilder = new ConfigurationBuilder()
+        .SetBasePath(projectRoot)
+        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables();
+
+    return configBuilder.Build();
+}
+
+static IServiceCollection GetServiceCollectionWithBasics()
+{
+    var services = new ServiceCollection();
+
+    services.AddLogging(loggingConfig =>
+    {
+        loggingConfig.ClearProviders();
+        loggingConfig.AddConsole(); 
+        loggingConfig.AddDebug(); 
+    });
+
+    return services;
 }

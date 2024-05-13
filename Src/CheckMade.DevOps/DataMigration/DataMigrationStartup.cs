@@ -1,0 +1,59 @@
+using CheckMade.Common.Persistence;
+using CheckMade.Telegram.Persistence;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CheckMade.DevOps.DataMigration;
+
+internal class DataMigrationStartup(IServiceCollection services, IConfigurationRoot config, string targetEnv, string migIndex)
+{
+    public async Task StartAsync()
+    {
+        ConfigureDataMigrationServices();
+        
+        await using (var sp = services.BuildServiceProvider())
+        {
+            var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
+            var migratorResult = migratorFactory.GetMigrator(migIndex);
+
+            if (migratorResult.Value is { } migrator)
+            {
+                var migrationResult = await migrator.MigrateAsync(targetEnv);
+
+                if (migrationResult.Value)
+                {
+                    Console.WriteLine($"Migration '{migIndex}' succeeded.");
+                }
+                else
+                {
+                    await Console.Error.WriteLineAsync(migrationResult.Error);
+                }
+            }
+            else
+            {
+                await Console.Error.WriteLineAsync(migratorResult.Error);
+            }
+        }
+    }
+
+    private void ConfigureDataMigrationServices()
+    {
+        var dbConnString = targetEnv switch
+        {
+            "dev" => config.GetValue<string>(DbConnectionProvider.KeyToLocalDbConnStringInEnv) 
+                     ?? throw new InvalidOperationException(
+                         $"Can't find {DbConnectionProvider.KeyToLocalDbConnStringInEnv}"),
+    
+            "prd" => config.GetValue<string>(DbConnectionProvider.KeyToPrdDbConnStringWithPswInEnv) 
+                     ?? throw new InvalidOperationException(
+                         $"Can't find {DbConnectionProvider.KeyToPrdDbConnStringWithPswInEnv}"),
+    
+            _ => throw new ArgumentException($"Invalid argument for {nameof(targetEnv)}.")
+        };
+
+        services.Add_CommonPersistence_Dependencies(dbConnString);
+        services.Add_TelegramPersistence_Dependencies();
+
+        services.AddScoped<MigratorByIndexFactory>();
+    }
+}
