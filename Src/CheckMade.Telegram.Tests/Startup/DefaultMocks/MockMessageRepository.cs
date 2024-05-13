@@ -11,6 +11,11 @@ internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) 
         await mockMessageRepo.Object.AddAsync(inputMessage);
     }
 
+    public async Task<IEnumerable<InputMessage>> GetAllAsync()
+    {
+        return await mockMessageRepo.Object.GetAllAsync();
+    }
+
     public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
     {
         return await mockMessageRepo.Object.GetAllAsync(userId);

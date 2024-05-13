@@ -1,3 +1,4 @@
+using System.Data.Common;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
@@ -12,7 +13,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         await dbHelper.ExecuteAsync(async command =>
         {
-            command.CommandText = "INSERT INTO tlgr_messages (tlgr_user_id, chat_id, details)" +
+            command.CommandText = "INSERT INTO tlgr_messages (user_id, chat_id, details)" +
                                   " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)";
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
@@ -26,30 +27,25 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
     }
 
+    public Task<IEnumerable<InputMessage>> GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
     {
         var inputMessages = new List<InputMessage>();
 
         await dbHelper.ExecuteAsync(async command =>
         {
-            command.CommandText = "SELECT * FROM tlgr_messages WHERE tlgr_user_id = @userId";
+            command.CommandText = "SELECT * FROM tlgr_messages WHERE user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);
 
             await using (var reader = await command.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
-                    var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("tlgr_user_id"));
-                    var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
-                    var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
-
-                    var message = new InputMessage(
-                        telegramUserId, 
-                        telegramChatId,
-                        JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details)
-                        ?? throw new ArgumentNullException(nameof(details), "Failed to deserialize "));
-                    
-                    inputMessages.Add(message);
+                    inputMessages.Add(await CreateInputMessageFromReaderAsync(reader));
                 }
             }
         });
@@ -61,10 +57,25 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         await dbHelper.ExecuteAsync(async command =>
         {
-            command.CommandText = "DELETE FROM tlgr_messages WHERE tlgr_user_id = @userId";
+            command.CommandText = "DELETE FROM tlgr_messages WHERE user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);
 
             await command.ExecuteNonQueryAsync();
         });
-    }}
-    
+    }
+
+    private static async Task<InputMessage> CreateInputMessageFromReaderAsync(DbDataReader reader)
+    {
+        var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
+        var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
+        var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
+
+        var message = new InputMessage(
+            telegramUserId,
+            telegramChatId,
+            JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details) 
+            ?? throw new InvalidOperationException("Failed to deserialize"));
+
+        return message;
+    }
+}
