@@ -26,7 +26,7 @@ var host = new HostBuilder()
         else if (environment.IsProduction() || environment.IsStaging())
         {
             var credential = new DefaultAzureCredential();
-            var secretClient = new SecretClient(new Uri("https://keyvault-uafqc.vault.azure.net/"), credential);
+            var secretClient = new SecretClient(new Uri("https://keyvault-sstw4.vault.azure.net/"), credential);
             config.AddAzureKeyVault(secretClient, new AzureKeyVaultConfigurationOptions());
         }
 
