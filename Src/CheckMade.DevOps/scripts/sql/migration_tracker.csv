@@ -1,6 +1,6 @@
-SqlMig_Index;DevDb;PrdDb;Depends_On_DataMig;Note
-001;1;1;;
-004;1;0;0001;"Only partially applied to PRD - 
+SqlMig_Index;DevDb;PrdDb;Depends_On_DataMig;Required_by_Vers;Note
+001;1;1;;;
+004;1;0;0001;0.7.7;"Only partially applied to PRD - 
 can't make chat_id NOT NULL"
-002;1;1;;
-003;1;1;;
+002;1;1;;;
+003;1;1;;;

@@ -1,2 +1,2 @@
-DataMig_Index;DevDb;PrdDb
-0001;0;0
+DataMig_Index;DevDb;PrdDb;Required_By_Vers;Notes
+0001;0;0;0.7.7;""
