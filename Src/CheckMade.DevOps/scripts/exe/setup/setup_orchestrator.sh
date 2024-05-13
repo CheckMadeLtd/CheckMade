@@ -200,9 +200,11 @@ echo "Now publish the functions to Azure (e.g. via the main GitHub Action Workfl
 of deployed functions - which in turn prepares us for the next step of setting Telegram Webhooks. \
 Continue with 'Enter' when done publishing."
 read -r
-confirm_script_launch "$script_dir_orchestrator/clients/telegram_webhooks_config.sh"
-
 echo "---------------------"
-echo "In case this was a setup from scratch, don't forget to go back to the 'telegram_webhooks_config.sh' script \
-and set WebHooks for (prd) Bots after the first swap into the production slot!"
+echo "In case this was a setup from scratch, first set the WebHooks only for the staging slot!"
+echo "Then do the first 'swap' of the production vs. staging slots, and only then set the WebHooks for production."
+echo "Continue with 'Enter'."
+read -r
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_webhooks_config.sh"
+echo "---------------------"
 echo "Congratulations, you reached the end of the setup orchestration script!"

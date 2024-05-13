@@ -82,7 +82,7 @@ while true; do
   
   if [ "$bot_setup_task" == "g" ]; then
     curl --request POST --url https://api.telegram.org/bot"$bot_token"/getWebhookInfo
-    exit 0
+    return 0
   fi
   
   bot_type=${bot_choice:1:1} # the second letter
