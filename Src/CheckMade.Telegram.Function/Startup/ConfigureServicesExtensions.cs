@@ -8,13 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Function.Startup;
 
-// In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
-// but in Azure Keyvault they need to use '-'
-
 internal static class ConfigureServicesExtensions
 {
-    internal const string PswPlaceholderString = "MYSECRET";
-    
     internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
@@ -40,22 +35,21 @@ internal static class ConfigureServicesExtensions
     {
         services.Add_TelegramPersistence_Dependencies();
         
-        const string keyToDbConnString = "PG_DB_CONNSTRING";
-        const string keyToProductionDbConnString = "POSTGRESQLCONNSTR_PRD-DB";
-        const string keyToPrdDbPsw = "ConnectionStrings:PRD-DB-PSW";
-        
         var dbConnectionString = (string?)hostingEnvironment switch
         {
             "Development" or "CI" => 
-                config.GetValue<string>(keyToDbConnString) 
-                ?? throw new InvalidOperationException($"Can't find {keyToDbConnString}"),
+                config.GetValue<string>(DbConnectionProvider.KeyToLocalDbConnStringInEnv) 
+                ?? throw new InvalidOperationException(
+                    $"Can't find {DbConnectionProvider.KeyToLocalDbConnStringInEnv}"),
             
             "Production" or "Staging" => 
-                (Environment.GetEnvironmentVariable(keyToProductionDbConnString) 
-                 ?? throw new InvalidOperationException($"Can't find {keyToProductionDbConnString}"))
-                .Replace(PswPlaceholderString, config.GetValue<string>(keyToPrdDbPsw) 
-                                               ?? throw new InvalidOperationException(
-                                                   $"Can't find {keyToPrdDbPsw}")),
+                (Environment.GetEnvironmentVariable(DbConnectionProvider.KeyToPrdDbConnStringInKeyvault) 
+                 ?? throw new InvalidOperationException(
+                     $"Can't find {DbConnectionProvider.KeyToPrdDbConnStringInKeyvault}"))
+                .Replace(DbConnectionProvider.DbPswPlaceholderString, 
+                    config.GetValue<string>(DbConnectionProvider.KeyToPrdDbPswInKeyvaultOrSecrets) 
+                    ?? throw new InvalidOperationException(
+                        $"Can't find {DbConnectionProvider.KeyToPrdDbPswInKeyvaultOrSecrets}")),
             
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
