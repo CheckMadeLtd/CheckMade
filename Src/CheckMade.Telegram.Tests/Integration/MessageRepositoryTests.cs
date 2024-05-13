@@ -27,7 +27,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var expectedRetrieval = new List<InputMessage>
         {
-            new (fakeInputMessage.UserId, fakeInputMessage.Details)
+            new (fakeInputMessage.UserId, fakeInputMessage.ChatId, fakeInputMessage.Details)
         };
         
         // Act

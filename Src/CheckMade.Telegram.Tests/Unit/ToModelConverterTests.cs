@@ -28,7 +28,8 @@ public class ToModelConverterTests
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
 
         var expectedInputMessage = new InputMessage(
-            telegramInputMessage.From!.Id, 
+            telegramInputMessage.From!.Id,
+            telegramInputMessage.Chat.Id,
             new MessageDetails
             (
                 TelegramDate: telegramInputMessage.Date,
@@ -76,6 +77,7 @@ public class ToModelConverterTests
 
         var expectedInputMessage = new InputMessage(
             telegramAttachmentMessage.From!.Id,
+            telegramAttachmentMessage.Chat.Id,
             new MessageDetails(
                 TelegramDate: telegramAttachmentMessage.Date,
                 Text: telegramAttachmentMessage.Caption,

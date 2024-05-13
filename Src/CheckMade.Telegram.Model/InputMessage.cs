@@ -2,5 +2,6 @@
 
 public record InputMessage(
      long UserId,
+     long ChatId,
      MessageDetails Details);
      

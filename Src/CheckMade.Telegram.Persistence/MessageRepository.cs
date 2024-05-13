@@ -12,9 +12,10 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         await dbHelper.ExecuteAsync(async command =>
         {
-            command.CommandText = "INSERT INTO tlgr_messages (tlgr_user_id, details)" +
-                                  " VALUES (@telegramUserId, @telegramMessageDetails)";
+            command.CommandText = "INSERT INTO tlgr_messages (tlgr_user_id, chat_id, details)" +
+                                  " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)";
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
+            command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
             
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
@@ -39,13 +40,14 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                 while (await reader.ReadAsync())
                 {
                     var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("tlgr_user_id"));
+                    var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
                     var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
                     var message = new InputMessage(
                         telegramUserId, 
+                        telegramChatId,
                         JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details)
-                        ?? throw new ArgumentNullException(nameof(details), 
-                            "Failed to deserialize "));
+                        ?? throw new ArgumentNullException(nameof(details), "Failed to deserialize "));
                     
                     inputMessages.Add(message);
                 }

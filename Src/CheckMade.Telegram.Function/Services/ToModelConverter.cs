@@ -16,7 +16,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "From.Id in the input message must not be null");
-
+        
         var rawAttachmentDetails = ConvertRawAttachmentDetails(telegramInputMessage);
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&
@@ -36,6 +36,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         
         return new InputMessage(
             userId,
+            telegramInputMessage.Chat.Id,
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
                 Text: messageText,

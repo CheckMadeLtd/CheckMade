@@ -20,6 +20,7 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
     
     public InputMessage GetValidModelInputTextMessage() =>
         new(randomizer.GenerateRandomLong(),
+            randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
                 $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}"
