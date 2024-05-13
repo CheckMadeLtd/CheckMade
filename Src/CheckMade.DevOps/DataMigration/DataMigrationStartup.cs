@@ -5,7 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.DevOps.DataMigration;
 
-internal class DataMigrationStartup(IServiceCollection services, IConfigurationRoot config, string targetEnv, string migIndex)
+internal class DataMigrationStartup(
+    IServiceCollection services, IConfigurationRoot config,
+    string targetEnv, string migIndex)
 {
     public async Task StartAsync()
     {
@@ -18,15 +20,15 @@ internal class DataMigrationStartup(IServiceCollection services, IConfigurationR
 
             if (migratorResult.Value is { } migrator)
             {
-                var migrationResult = await migrator.MigrateAsync(targetEnv);
+                var migrationOutcome = await migrator.MigrateAsync(targetEnv);
 
-                if (migrationResult.Value)
+                if (migrationOutcome.Value)
                 {
                     Console.WriteLine($"Migration '{migIndex}' succeeded.");
                 }
                 else
                 {
-                    await Console.Error.WriteLineAsync(migrationResult.Error);
+                    await Console.Error.WriteLineAsync(migrationOutcome.Error);
                 }
             }
             else
