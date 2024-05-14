@@ -1,3 +1,4 @@
+using CheckMade.Common.LanguageExtensions.MonadicWrappers;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -33,7 +34,9 @@ public class ToModelConverterTests
             new MessageDetails
             (
                 TelegramDate: telegramInputMessage.Date,
-                Text: telegramInputMessage.Text,
+                Text:  !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
+                    ? telegramInputMessage.Text 
+                    : Option<string>.None(),
                 AttachmentType: AttachmentType.NotApplicable,
                 AttachmentExternalUrl: null
             ));
@@ -80,7 +83,9 @@ public class ToModelConverterTests
             telegramAttachmentMessage.Chat.Id,
             new MessageDetails(
                 TelegramDate: telegramAttachmentMessage.Date,
-                Text: telegramAttachmentMessage.Caption,
+                Text: !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
+                    ? telegramAttachmentMessage.Caption
+                    : Option<string>.None(),
                 AttachmentType: type,
                 AttachmentExternalUrl: expectedAttachmentExternalUrl));
         

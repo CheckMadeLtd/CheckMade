@@ -1,3 +1,4 @@
+using CheckMade.Common.LanguageExtensions.MonadicWrappers;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -39,7 +40,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             telegramInputMessage.Chat.Id,
             new MessageDetails(
                 TelegramDate: telegramInputMessage.Date,
-                Text: messageText,
+                Text: !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
                 AttachmentExternalUrl: telegramAttachmentUrl,
                 AttachmentType: rawAttachmentDetails.type ));
     }
