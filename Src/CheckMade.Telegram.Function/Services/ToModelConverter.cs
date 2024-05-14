@@ -20,17 +20,16 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         
         var rawAttachmentDetails = ConvertRawAttachmentDetails(telegramInputMessage);
         
-        if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) &&
-            string.IsNullOrWhiteSpace(rawAttachmentDetails.fileId))
+        if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && rawAttachmentDetails.fileId.IsNone)
         {
-            throw new ArgumentNullException(nameof(telegramInputMessage), "The message must either have " +
-                                                                          "a text or an attachment");
+            throw new ArgumentNullException(nameof(telegramInputMessage), 
+                "The message must either have a text or an attachment");
         }
 
-        var telegramAttachmentUrl = rawAttachmentDetails.fileId != null 
-            ? await filePathResolver.GetTelegramFilePathAsync(rawAttachmentDetails.fileId)
-            : Option<string>.None();
-
+        var telegramAttachmentUrl = await rawAttachmentDetails.fileId.Match<Task<Option<string>>>(
+            async value => await filePathResolver.GetTelegramFilePathAsync(value),
+            () => Task.FromResult(Option<string>.None()));        
+        
         var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
             ? telegramInputMessage.Text
             : telegramInputMessage.Caption;
@@ -46,15 +45,35 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     }
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private (string? fileId, Option<AttachmentType> type) ConvertRawAttachmentDetails(Message telegramInputMessage) => 
-        telegramInputMessage.Type switch
+    private (Option<string> fileId, Option<AttachmentType> type) ConvertRawAttachmentDetails(Message telegramInputMessage)
     {
-        MessageType.Text => (null, Option<AttachmentType>.None()),
-        MessageType.Audio => (telegramInputMessage.Audio?.FileId, AttachmentType.Audio),
-        MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId, 
-            AttachmentType.Photo),
-        MessageType.Document => (telegramInputMessage.Document?.FileId, AttachmentType.Document),
-        MessageType.Video => (telegramInputMessage.Video?.FileId, AttachmentType.Video),
-        _ => throw new ArgumentOutOfRangeException()
-    };
+        const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
+
+        return telegramInputMessage.Type switch
+        {
+            MessageType.Text => (Option<string>.None(), Option<AttachmentType>.None()),
+            
+            MessageType.Audio => (telegramInputMessage.Audio?.FileId
+                                  ?? throw new InvalidOperationException(
+                                      string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Audio),
+            
+            MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId
+                                  ?? throw new InvalidOperationException(
+                                      string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Photo),
+            
+            MessageType.Document => (telegramInputMessage.Document?.FileId
+                                     ?? throw new InvalidOperationException(
+                                         string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Document),
+            
+            MessageType.Video => (telegramInputMessage.Video?.FileId
+                                  ?? throw new InvalidOperationException(
+                                      string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Video),
+            
+            _ => throw new ArgumentOutOfRangeException(nameof(telegramInputMessage))
+        };
+    } 
 }
