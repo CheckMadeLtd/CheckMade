@@ -45,4 +45,9 @@ public record Option<T>
         }
         throw new InvalidOperationException("No value present");
     }
+    
+    public Option<TResult> SelectMany<TResult>(Func<T, Option<TResult>> binder)
+    {
+        return _hasValue ? binder(_value!) : Option<TResult>.None();
+    }
 }

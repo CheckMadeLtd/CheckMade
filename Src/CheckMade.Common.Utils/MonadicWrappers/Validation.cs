@@ -48,4 +48,9 @@ public record Validation<T>
     {
         return IsValid ? Value! : defaultValue;
     }
+    
+    public Validation<TResult> SelectMany<TResult>(Func<T, Validation<TResult>> binder)
+    {
+        return IsValid ? binder(Value!) : Validation<TResult>.Invalid(Errors.ToList());
+    }
 }

@@ -51,4 +51,9 @@ public record Try<T>
         }
         throw _exception!;
     }
+    
+    public Try<TResult> SelectMany<TResult>(Func<T, Try<TResult>> binder)
+    {
+        return IsSuccess ? binder(_value!) : new Try<TResult>(_exception!);
+    }
 }

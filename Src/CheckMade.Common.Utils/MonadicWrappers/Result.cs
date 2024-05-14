@@ -43,4 +43,9 @@ public record Result<T>
     {
         return _success ? _value! : defaultValue;
     }
+    
+    public Result<TResult> SelectMany<TResult>(Func<T, Result<TResult>> binder)
+    {
+        return _success ? binder(_value!) : new Result<TResult>(_error!);
+    }
 }
