@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.Utils;
+using CheckMade.Common.LanguageExtensions.MonadicWrappers;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
 
@@ -23,7 +24,8 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
-                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}"
+                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}",
+                Option<string>.None()
                 ));
 
     public Message GetValidTelegramTextMessage(string inputText) => 

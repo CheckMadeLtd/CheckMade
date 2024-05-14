@@ -31,15 +31,13 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessage(
             telegramInputMessage.From!.Id,
             telegramInputMessage.Chat.Id,
-            new MessageDetails
-            (
-                TelegramDate: telegramInputMessage.Date,
-                Text:  !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
+            new MessageDetails(
+                telegramInputMessage.Date,
+                !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
                     ? telegramInputMessage.Text 
                     : Option<string>.None(),
-                AttachmentType: AttachmentType.NotApplicable,
-                AttachmentExternalUrl: null
-            ));
+                Option<string>.None(),
+                AttachmentType.NotApplicable));
 
         // Act
         var actualInputMessage = await converter.ConvertMessageAsync(telegramInputMessage);
@@ -53,7 +51,7 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
     [InlineData(AttachmentType.Video)]
-    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage(AttachmentType type)
+    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage(AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -61,7 +59,7 @@ public class ToModelConverterTests
         var utils = _services.GetRequiredService<ITestUtils>();
         
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        var telegramAttachmentMessage = type switch
+        var telegramAttachmentMessage = attachmentType switch
         {
             AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
             AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
@@ -82,12 +80,12 @@ public class ToModelConverterTests
             telegramAttachmentMessage.From!.Id,
             telegramAttachmentMessage.Chat.Id,
             new MessageDetails(
-                TelegramDate: telegramAttachmentMessage.Date,
-                Text: !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
+                telegramAttachmentMessage.Date,
+                !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
                     ? telegramAttachmentMessage.Caption
                     : Option<string>.None(),
-                AttachmentType: type,
-                AttachmentExternalUrl: expectedAttachmentExternalUrl));
+                expectedAttachmentExternalUrl,
+                attachmentType));
         
         // Act
         var actualInputMessage = await converter.ConvertMessageAsync(telegramAttachmentMessage);

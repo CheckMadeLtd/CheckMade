@@ -29,7 +29,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
         var telegramAttachmentUrl = rawAttachmentDetails.fileId != null 
             ? await filePathResolver.GetTelegramFilePathAsync(rawAttachmentDetails.fileId)
-            : null;
+            : Option<string>.None();
 
         var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
             ? telegramInputMessage.Text
@@ -39,10 +39,10 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             userId,
             telegramInputMessage.Chat.Id,
             new MessageDetails(
-                TelegramDate: telegramInputMessage.Date,
-                Text: !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
-                AttachmentExternalUrl: telegramAttachmentUrl,
-                AttachmentType: rawAttachmentDetails.type ));
+                telegramInputMessage.Date,
+                !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
+                telegramAttachmentUrl,
+                rawAttachmentDetails.type ));
     }
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
