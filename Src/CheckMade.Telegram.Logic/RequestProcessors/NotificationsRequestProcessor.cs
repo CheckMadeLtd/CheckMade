@@ -8,6 +8,6 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
 {
     public Task<string> EchoAsync(InputMessage message)
     {
-        return Task.FromResult($"Echo from bot Notifications: {message.Details.Text}");
+        return Task.FromResult($"Echo from bot Notifications: {message.Details.Text.GetValueOrDefault()}");
     }
 }

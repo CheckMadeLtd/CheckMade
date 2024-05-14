@@ -23,7 +23,7 @@ public class ToModelConverterTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var telegramInputMessage = utils.GetValidTextMessage(textInput);
+        var telegramInputMessage = utils.GetValidTelegramTextMessage(textInput);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
@@ -63,10 +63,10 @@ public class ToModelConverterTests
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         var telegramAttachmentMessage = type switch
         {
-            AttachmentType.Audio => utils.GetValidAudioMessage(),
-            AttachmentType.Document => utils.GetValidDocumentMessage(),
-            AttachmentType.Photo => utils.GetValidPhotoMessage(),
-            AttachmentType.Video => utils.GetValidVideoMessage(),
+            AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
+            AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
             _ => throw new ArgumentOutOfRangeException()
         };
         

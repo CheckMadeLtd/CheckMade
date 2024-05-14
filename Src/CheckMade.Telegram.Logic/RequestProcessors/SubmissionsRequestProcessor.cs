@@ -15,7 +15,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         
         return attachmentType switch
         {
-            AttachmentType.NotApplicable => $"Echo from bot Submissions: {message.Details.Text}",
+            AttachmentType.NotApplicable => $"Echo from bot Submissions: {message.Details.Text.GetValueOrDefault()}",
             _ => $"Echo from bot Submissions: {attachmentType}"
         };
     }

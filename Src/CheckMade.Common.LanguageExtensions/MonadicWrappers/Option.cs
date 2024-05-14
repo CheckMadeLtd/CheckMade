@@ -1,4 +1,5 @@
 // ReSharper disable MemberCanBePrivate.Global
+
 namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
 public record Option<T>

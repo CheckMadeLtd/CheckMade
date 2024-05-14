@@ -8,6 +8,6 @@ public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
 {
     public Task<string> EchoAsync(InputMessage message)
     {
-        return Task.FromResult($"Echo from bot Communications: {message.Details.Text}");
+        return Task.FromResult($"Echo from bot Communications: {message.Details.Text.GetValueOrDefault()}");
     }
 }

@@ -1,5 +1,6 @@
 using System.Data.Common;
 using CheckMade.Common.Persistence;
+using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using Npgsql;

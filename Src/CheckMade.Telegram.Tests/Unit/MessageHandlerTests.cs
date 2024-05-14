@@ -26,7 +26,7 @@ public class MessageHandlerTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTextMessage("simple valid text");
+        var textMessage = utils.GetValidTelegramTextMessage("simple valid text");
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
@@ -56,10 +56,10 @@ public class MessageHandlerTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var attachmentMessage = type switch
         {
-            AttachmentType.Audio => utils.GetValidAudioMessage(),
-            AttachmentType.Document => utils.GetValidDocumentMessage(),
-            AttachmentType.Photo => utils.GetValidPhotoMessage(),
-            AttachmentType.Video => utils.GetValidVideoMessage(),
+            AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
+            AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
             _ => throw new ArgumentOutOfRangeException()
         };
         
@@ -147,7 +147,7 @@ public class MessageHandlerTests
             .Verifiable();
 
         var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTextMessage("some valid text");
+        var textMessage = utils.GetValidTelegramTextMessage("some valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
