@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils;
+namespace CheckMade.Common.Utils.MonadicWrappers;
 
 public record Result<T>
 {
