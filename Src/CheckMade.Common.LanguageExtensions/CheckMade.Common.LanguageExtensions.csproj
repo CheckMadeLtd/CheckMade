@@ -14,8 +14,4 @@
         <Optimize>false</Optimize>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.LanguageExtensions\CheckMade.Common.LanguageExtensions.csproj" />
-    </ItemGroup>
-
 </Project>

@@ -1,5 +1,5 @@
 // ReSharper disable MemberCanBePrivate.Global
-namespace CheckMade.Common.Utils.MonadicWrappers;
+namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
 public record Try<T>
 {

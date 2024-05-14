@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.MonadicWrappers;
+using CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
 namespace CheckMade.DevOps.DataMigration;
 
