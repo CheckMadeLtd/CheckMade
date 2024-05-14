@@ -6,4 +6,4 @@ public record MessageDetails(
     DateTime TelegramDate,
     Option<string> Text,
     Option<string> AttachmentExternalUrl,
-    AttachmentType AttachmentType = AttachmentType.NotApplicable);
+    Option<AttachmentType> AttachmentType);

@@ -25,8 +25,8 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             new MessageDetails(
                 DateTime.Now,
                 $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}",
-                Option<string>.None()
-                ));
+                Option<string>.None(),
+                Option<AttachmentType>.None()));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()

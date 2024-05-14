@@ -37,7 +37,7 @@ public class ToModelConverterTests
                     ? telegramInputMessage.Text 
                     : Option<string>.None(),
                 Option<string>.None(),
-                AttachmentType.NotApplicable));
+                Option<AttachmentType>.None()));
 
         // Act
         var actualInputMessage = await converter.ConvertMessageAsync(telegramInputMessage);

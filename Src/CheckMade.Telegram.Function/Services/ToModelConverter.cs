@@ -46,10 +46,10 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     }
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private (string? fileId, AttachmentType type) ConvertRawAttachmentDetails(Message telegramInputMessage) => 
+    private (string? fileId, Option<AttachmentType> type) ConvertRawAttachmentDetails(Message telegramInputMessage) => 
         telegramInputMessage.Type switch
     {
-        MessageType.Text => (null, AttachmentType.NotApplicable),
+        MessageType.Text => (null, Option<AttachmentType>.None()),
         MessageType.Audio => (telegramInputMessage.Audio?.FileId, AttachmentType.Audio),
         MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId, 
             AttachmentType.Photo),

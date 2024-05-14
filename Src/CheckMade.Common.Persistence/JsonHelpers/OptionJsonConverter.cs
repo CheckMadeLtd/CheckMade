@@ -20,6 +20,12 @@ internal class OptionJsonConverter<T> : JsonConverter<Option<T>>
     public override Option<T> ReadJson(JsonReader reader, Type objectType, Option<T>? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
+        // Necessary to convert a null value into an Option<TEnum>
+        if (reader.TokenType == JsonToken.Null && typeof(T).IsEnum)
+        {
+            return Option<T>.None();
+        }
+    
         var value = serializer.Deserialize<T>(reader);
         return value != null ? Option<T>.Some(value) : Option<T>.None();
     }

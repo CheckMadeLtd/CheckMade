@@ -11,12 +11,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
     {
         await repo.AddAsync(message);
 
-        var attachmentType = message.Details.AttachmentType; 
-        
-        return attachmentType switch
-        {
-            AttachmentType.NotApplicable => $"Echo from bot Submissions: {message.Details.Text.GetValueOrDefault()}",
-            _ => $"Echo from bot Submissions: {attachmentType}"
-        };
+        return message.Details.AttachmentType.Match(
+            type => $"Echo from bot Submissions: {type}",
+            () => $"Echo from bot Submissions: {message.Details.Text.GetValueOrDefault()}"
+        );
     }
 }
