@@ -1,10 +1,11 @@
+// ReSharper disable MemberCanBePrivate.Global
 namespace CheckMade.Common.Utils.MonadicWrappers;
 
 public record Result<T>
 {
-    public T? Value { get; }
-    public bool Success { get; }
-    public string? Error { get; }
+    private readonly T? _value;
+    private readonly bool _success;
+    private readonly string? _error;
 
     // Implicit conversion from T to Result<T>
     public static implicit operator Result<T>(T value) => new Result<T>(value);
@@ -14,41 +15,32 @@ public record Result<T>
 
     public Result(T value)
     {
-        Value = value;
-        Success = true;
+        _value = value;
+        _success = true;
     }
 
     public Result(string error)
     {
-        Error = error;
-        Success = false;
+        _error = error;
+        _success = false;
     }
 
-    // Deconstruct method for pattern matching
-    public void Deconstruct(out bool success, out T? value, out string? error)
-    {
-        success = Success;
-        value = Value;
-        error = Error;
-    }
-
-    // Utility method to handle success and error cases
     public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<string, TResult> onError)
     {
-        return Success ? onSuccess(Value!) : onError(Error!);
+        return _success ? onSuccess(_value!) : onError(_error!);
     }
 
     public T GetValueOrThrow()
     {
-        if (Success)
+        if (_success)
         {
-            return Value!;
+            return _value!;
         }
-        throw new InvalidOperationException(Error);
+        throw new InvalidOperationException(_error);
     }
 
     public T GetValueOrDefault(T defaultValue = default!)
     {
-        return Success ? Value! : defaultValue;
+        return _success ? _value! : defaultValue;
     }
 }
