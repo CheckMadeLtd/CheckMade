@@ -52,32 +52,3 @@ public record Result<T>
         return Success ? Value! : defaultValue;
     }
 }
-
-// Example usage
-public class ResultUsageExamples
-{
-    public void Demo()
-    {
-        Result<int> successResult = 42;
-        Result<int> errorResult = "Something went wrong";
-
-        var value1 = successResult.GetValueOrDefault();
-        var value2 = errorResult.GetValueOrDefault(-1);
-
-        Console.WriteLine($"Value1: {value1}, Value2: {value2}");
-
-        // Using Match method
-        var message1 = successResult.Match(
-            value => $"Success with value: {value}",
-            error => $"Error: {error}"
-        );
-
-        var message2 = errorResult.Match(
-            value => $"Success with value: {value}",
-            error => $"Error: {error}"
-        );
-
-        Console.WriteLine(message1);
-        Console.WriteLine(message2);
-    }
-}
