@@ -16,25 +16,23 @@ internal class DataMigrationStartup(
         await using (var sp = services.BuildServiceProvider())
         {
             var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
-            var migratorResult = migratorFactory.GetMigrator(migIndex);
 
-            if (migratorResult.Value is { } migrator)
-            {
-                var migrationOutcome = await migrator.MigrateAsync(targetEnv);
-
-                if (migrationOutcome.Value)
+            await migratorFactory.GetMigrator(migIndex).Match<Task>(
+                
+                async migrator =>
                 {
-                    Console.WriteLine($"Migration '{migIndex}' succeeded.");
-                }
-                else
-                {
-                    await Console.Error.WriteLineAsync(migrationOutcome.Error);
-                }
-            }
-            else
-            {
-                await Console.Error.WriteLineAsync(migratorResult.Error);
-            }
+                    var migrationOutcome = await migrator.MigrateAsync(targetEnv);
+                    
+                    await migrationOutcome.Match<Task>(
+                        
+                        recordsUpdated => Console.Out.WriteLineAsync(
+                            $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
+                        
+                        errorMessage => Console.Error.WriteLineAsync(errorMessage)
+                    );
+                },
+                errorMessage => Console.Error.WriteLineAsync(errorMessage)
+            );
         }
     }
 

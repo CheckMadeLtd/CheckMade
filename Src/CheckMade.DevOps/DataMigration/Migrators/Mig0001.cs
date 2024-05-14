@@ -12,11 +12,14 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    public async Task<Result<bool>> MigrateAsync(string env)
+    public async Task<Result<int>> MigrateAsync(string env)
     {
         var allMessages = await messageRepo.GetAllAsync();
         
+        // Do the processing / mapping etc. and count how many records were updated.
+
+        var numberOfRecordsUpdated = 3;
         
-        return await Task.FromResult(new Result<bool>(true));
+        return numberOfRecordsUpdated;
     }
 }

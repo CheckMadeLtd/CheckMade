@@ -32,6 +32,6 @@ internal class MigratorByIndexFactory
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
             true => new Result<IDataMigrator>(migrator),
-            false => new Result<IDataMigrator>($"No migrator called 'Mig{migIndex}' was found.")
+            false => $"No migrator called 'Mig{migIndex}' was found."
         };
 }
