@@ -1,6 +1,5 @@
+using CheckMade.Common.LanguageExtensions;
 using CheckMade.Common.LanguageExtensions.MonadicWrappers;
-using CheckMade.Common.Utils;
-using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
@@ -19,7 +18,6 @@ public class MessageHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
-        INetworkRetryPolicy retryPolicy,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
@@ -83,22 +81,9 @@ public class MessageHandler(
             }); 
     }
 
-    private async Task SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
-        /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
-        catch earlier network issues like from our Azure Function to the Telegram Servers! */
-        try
-        {
-            await retryPolicy.ExecuteAsync(async () =>
-            {
-                await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: outputMessage);
-            });
-        }
-        catch (Exception ex)
-        {
-            throw new NetworkAccessException("Failed to reach Telegram servers.", ex);
-        }
+        return await Attempt<Unit>.RunAsync(async () =>
+            await botClient.SendTextMessageAsync(chatId, outputMessage));
     }
 }
