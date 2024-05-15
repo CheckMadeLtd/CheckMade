@@ -64,6 +64,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Utils", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.LanguageExtensions", "Src\CheckMade.Common.LanguageExtensions\CheckMade.Common.LanguageExtensions.csproj", "{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Tests", "Src\CheckMade.Common.Tests\CheckMade.Common.Tests.csproj", "{D5763060-5ECA-4017-BC01-76433B9F3AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Non_iOS|Any CPU = Debug_Non_iOS|Any CPU
@@ -365,6 +367,21 @@ Global
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}.Debug_Telegram|Any CPU.ActiveCfg = Debug_Telegram|Any CPU
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}.Debug_Telegram|Any CPU.Build.0 = Debug_Telegram|Any CPU
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_All|Any CPU.ActiveCfg = Debug_All|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_All|Any CPU.Build.0 = Debug_All|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug_Backend_Only|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_BackendOnly|Any CPU.Build.0 = Debug_Backend_Only|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_iOS|Any CPU.ActiveCfg = Debug_iOS|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_iOS|Any CPU.Build.0 = Debug_iOS|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Non_iOS|Any CPU.ActiveCfg = Debug_Non_iOS|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Non_iOS|Any CPU.Build.0 = Debug_Non_iOS|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Telegram|Any CPU.ActiveCfg = Debug_Telegram|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.Debug_Telegram|Any CPU.Build.0 = Debug_Telegram|Any CPU
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
@@ -388,5 +405,6 @@ Global
 		{4BD79FDC-EC3E-4ED4-905F-70D32E52619F} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630} = {E5835236-896A-4576-8A1F-EBF20213872E}
+		{D5763060-5ECA-4017-BC01-76433B9F3AF0} = {E5835236-896A-4576-8A1F-EBF20213872E}
 	EndGlobalSection
 EndGlobal
