@@ -18,4 +18,9 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.LanguageExtensions\CheckMade.Common.LanguageExtensions.csproj" />
+    </ItemGroup>
+
 </Project>
