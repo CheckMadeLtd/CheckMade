@@ -56,17 +56,17 @@ public class MessageHandler(
             return;
         }
         
-        var inputMessageAttempt = await Attempt<InputMessage>.RunAsync(() => 
+        var modelInputMessage = await Attempt<InputMessage>.RunAsync(() => 
             toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage));
         
-        var outputMessageAttempt = await inputMessageAttempt
+        var outputMessage = await modelInputMessage
             .Match(
                 async inputMessage => 
                     await selector.GetRequestProcessor(_botType).SafelyEchoAsync(inputMessage),
                 exception => throw exception
-            );        
+            );
         
-        await outputMessageAttempt.Match(
+        await outputMessage.Match(
             
             async message => await SendOutputAsync(message, botClient, chatId),
             
