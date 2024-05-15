@@ -66,35 +66,29 @@ public class MessageHandler(
             return sendWarningOutcome;
         }
         
-        var modelInputMessage = await Attempt<InputMessage>.RunAsync(() => 
-            toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage));
+        var sendOutputOutcome =
+            from modelInputMessage in Attempt<InputMessage>.RunAsync(() => 
+                toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage))
+            from outputMessage in selector.GetRequestProcessor(_botType).SafelyEchoAsync(modelInputMessage)
+            select SendOutputAsync(outputMessage, botClient, chatId);        
         
-        var outputMessage = await modelInputMessage
-            .Match(
-                async inputMessage => 
-                    await selector.GetRequestProcessor(_botType).SafelyEchoAsync(inputMessage),
-                exception => throw exception
-            );
-        
-        var sendOutputOutcome = await outputMessage.Match(
+        return (await sendOutputOutcome).Match(
             
-            async message => await SendOutputAsync(message, botClient, chatId),
-            
-            async ex =>
+            _ => Attempt<Unit>.Succeed(),
+
+            ex =>
             {
                 logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
                                     "BotType: {botType}; Telegram user Id: {userId}; " +
                                     "DateTime of received Message: {telegramDate}; " +
-                                    "with text: {text}", 
-                    ex.Message, _botType, telegramInputMessage.From!.Id, 
+                                    "with text: {text}",
+                    ex.Message, _botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                await SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
-                
+                // fire and forget
+                _ = SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
                 return Attempt<Unit>.Fail(ex);
             });
-        
-        return sendOutputOutcome;
     }
 
     private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
