@@ -1,11 +1,12 @@
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
 public record Result<T>
 {
-    private readonly T? _value;
-    private readonly bool _success;
-    private readonly string? _error;
+    internal T? Value { get; }
+    internal bool Success { get; }
+    internal string? Error { get; }
 
     // Implicit conversion from T to Result<T>
     public static implicit operator Result<T>(T value) => new(value);
@@ -15,37 +16,52 @@ public record Result<T>
 
     public Result(T value)
     {
-        _value = value;
-        _success = true;
+        Value = value;
+        Success = true;
     }
 
     public Result(string error)
     {
-        _error = error;
-        _success = false;
+        Error = error;
+        Success = false;
     }
 
     public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<string, TResult> onError)
     {
-        return _success ? onSuccess(_value!) : onError(_error!);
+        return Success ? onSuccess(Value!) : onError(Error!);
     }
 
     public T GetValueOrThrow()
     {
-        if (_success)
+        if (Success)
         {
-            return _value!;
+            return Value!;
         }
-        throw new InvalidOperationException(_error);
+        throw new InvalidOperationException(Error);
     }
 
     public T GetValueOrDefault(T defaultValue = default!)
     {
-        return _success ? _value! : defaultValue;
+        return Success ? Value! : defaultValue;
     }
     
     public Result<TResult> SelectMany<TResult>(Func<T, Result<TResult>> binder)
     {
-        return _success ? binder(_value!) : new Result<TResult>(_error!);
+        return Success ? binder(Value!) : new Result<TResult>(Error!);
     }
+    
+    public Result<TResult> SelectMany<TCollection, TResult>(
+        Func<T, Result<TCollection>> collectionSelector,
+        Func<T, TCollection, TResult> resultSelector)
+    {
+        if (!Success)
+            return new Result<TResult>(Error!);
+
+        var collectionResult = collectionSelector(Value!);
+
+        return collectionResult.Success
+            ? new Result<TResult>(resultSelector(Value!, collectionResult.Value!))
+            : new Result<TResult>(collectionResult.Error!);
+    }
+
 }

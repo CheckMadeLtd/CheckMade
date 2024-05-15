@@ -1,4 +1,5 @@
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
 public record Attempt<T>
@@ -21,8 +22,8 @@ public record Attempt<T>
         Value = default;
     }
 
-    internal static Attempt<T> FromValue(T value) => new (value);
-    internal static Attempt<T> FromException(Exception exception) => new (exception);
+    public static Attempt<T> FromValue(T value) => new (value);
+    public static Attempt<T> FromException(Exception exception) => new (exception);
     
     public static Attempt<T> Run(Func<T> func)
     {
