@@ -29,7 +29,16 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            var updateHandlingOutcome = await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            
+            return updateHandlingOutcome.Match(
+            _ => request.CreateResponse(HttpStatusCode.OK),
+            error =>
+            {
+                logger.LogError(error, $"Error for processing this update. Message: {error.Message}");
+                return request.CreateResponse(HttpStatusCode.InternalServerError);
+            });
+
         }
         catch (JsonException jsonEx)
         {
@@ -41,7 +50,5 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             logger.LogError(ex, "An unhandled exception occurred while processing the request.");
             return request.CreateResponse(HttpStatusCode.InternalServerError);
         }
-
-        return request.CreateResponse(HttpStatusCode.OK);
     }
 }

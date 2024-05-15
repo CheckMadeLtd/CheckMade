@@ -50,6 +50,11 @@ public record Attempt<T>
         return IsSuccess ? onSuccess(_value!) : onFailure(_exception!);
     }
 
+    public static Attempt<Unit> Succeed()
+    {
+        return new Attempt<Unit>(Unit.Value);
+    }
+    
     public static Attempt<T> Fail(Exception exception)
     {
         return new Attempt<T>(exception);

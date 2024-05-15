@@ -49,7 +49,7 @@ internal class BotClientWrapper(
         }
         catch (Exception ex)
         {
-            throw new NetworkAccessException("Failed to reach Telegram servers.", ex);
+            throw new NetworkAccessException("Failed to reach Telegram servers after several attempts.", ex);
         }
         
         return Unit.Value;

@@ -11,7 +11,7 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IMessageHandler
 {
-    Task HandleMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 public class MessageHandler(
@@ -25,7 +25,7 @@ public class MessageHandler(
     
     private BotType _botType;
     
-    public async Task HandleMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         ChatId chatId = telegramInputMessage.Chat.Id;
         _botType = botType;
@@ -49,9 +49,21 @@ public class MessageHandler(
 
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
-            logger.LogWarning("Received message of type '{messageType}': {warningMessage}", 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage);
-            return;
+            const string warningMessage = "Received message of type '{0}': {1}";
+            
+            logger.LogWarning(string.Format(warningMessage, 
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage));
+
+            var sendWarningOutcome = (await SendOutputAsync(
+                    string.Format(warningMessage,
+                        telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage), 
+                    botClient,
+                    chatId))
+                .Match(
+                    _ => Attempt<Unit>.Succeed(),
+                    Attempt<Unit>.Fail);
+
+            return sendWarningOutcome;
         }
         
         var modelInputMessage = await Attempt<InputMessage>.RunAsync(() => 
@@ -64,7 +76,7 @@ public class MessageHandler(
                 exception => throw exception
             );
         
-        await outputMessage.Match(
+        var sendOutputOutcome = await outputMessage.Match(
             
             async message => await SendOutputAsync(message, botClient, chatId),
             
@@ -78,7 +90,11 @@ public class MessageHandler(
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 await SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
-            }); 
+                
+                return Attempt<Unit>.Fail(ex);
+            });
+        
+        return sendOutputOutcome;
     }
 
     private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
