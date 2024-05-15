@@ -9,7 +9,7 @@ namespace CheckMade.Common.Persistence;
 
 public interface IDbExecutionHelper
 {
-    Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation);
+    Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation);
 }
 
 internal class DbExecutionHelper(
@@ -18,7 +18,7 @@ internal class DbExecutionHelper(
         IDbCommandRetryPolicy dbCommandRetryPolicy) 
     : IDbExecutionHelper
 {
-    public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)
+    public async Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation)
     {
         using (var db = dbProvider.CreateConnection())
         {

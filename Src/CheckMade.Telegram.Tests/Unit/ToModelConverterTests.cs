@@ -40,7 +40,7 @@ public class ToModelConverterTests
                 Option<AttachmentType>.None()));
 
         // Act
-        var actualInputMessage = await converter.ConvertMessageAsync(telegramInputMessage);
+        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramInputMessage);
 
         // Assert
         actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
@@ -88,7 +88,7 @@ public class ToModelConverterTests
                 attachmentType));
         
         // Act
-        var actualInputMessage = await converter.ConvertMessageAsync(telegramAttachmentMessage);
+        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramAttachmentMessage);
         
         // Assert
         actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
@@ -107,7 +107,7 @@ public class ToModelConverterTests
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(telegramMessage);
+            await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();
@@ -126,7 +126,7 @@ public class ToModelConverterTests
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(telegramMessage);
+            await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
         convertMessage.Should().ThrowAsync<ArgumentNullException>();

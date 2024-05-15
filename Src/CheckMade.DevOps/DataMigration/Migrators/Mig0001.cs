@@ -14,7 +14,7 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
     
     public async Task<Result<int>> MigrateAsync(string env)
     {
-        var allMessages = await messageRepo.GetAllAsync();
+        var allMessages = await messageRepo.GetAllOrThrowAsync();
         
         // Do the processing / mapping etc. and count how many records were updated.
 

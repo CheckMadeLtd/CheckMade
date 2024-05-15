@@ -1,7 +1,5 @@
-using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -111,49 +109,5 @@ public class MessageHandlerTests
         
         // Assert
         mockLogger.Verify();
-    }
-    
-    [Fact]
-    // Agnostic to BotType, using Submissions
-    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
-    {
-        var serviceCollection = new UnitTestStartup().Services;
-        
-        // Arrange
-        var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
-        mockSubmissionsRequestProcessor
-            .Setup<Task<string>>(rp => rp.EchoAsync(It.IsAny<InputMessage>()))
-            .Throws(new DataAccessException("Mock DataAccess Error", new Exception()));
-
-        var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
-        mockRequestProcessorSelector
-            .Setup(rps => rps.GetRequestProcessor(BotType.Submissions))
-            .Returns(mockSubmissionsRequestProcessor.Object);
-        
-        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockRequestProcessorSelector.Object);
-        
-        _services = serviceCollection.BuildServiceProvider();
-
-        const string expectedErrorMessage = $"{MessageHandler.DataAccessExceptionErrorMessageStub} " +
-                                            $"{MessageHandler.CallToActionMessageAfterErrorReport}";
-        
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        
-        mockBotClient
-            .Setup(x => x.SendTextMessageAsync(
-                It.IsAny<ChatId>(), 
-                expectedErrorMessage, 
-                It.IsAny<CancellationToken>()))
-            .Verifiable();
-
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTelegramTextMessage("some valid text");
-        var handler = _services.GetRequiredService<IMessageHandler>();
-        
-        // Act 
-        await handler.HandleMessageAsync(textMessage, BotType.Submissions);
-        
-        // Assert
-        mockBotClient.Verify();
     }
 }

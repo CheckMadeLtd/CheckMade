@@ -10,9 +10,9 @@ namespace CheckMade.Telegram.Persistence;
 
 public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
-    public async Task AddAsync(InputMessage inputMessage)
+    public async Task AddOrThrowAsync(InputMessage inputMessage)
     {
-        await dbHelper.ExecuteAsync(async command =>
+        await dbHelper.ExecuteOrThrowAsync(async command =>
         {
             command.CommandText = "INSERT INTO tlgr_messages (user_id, chat_id, details)" +
                                   " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)";
@@ -28,16 +28,16 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
     }
 
-    public Task<IEnumerable<InputMessage>> GetAllAsync()
+    public Task<IEnumerable<InputMessage>> GetAllOrThrowAsync()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
+    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync(long userId)
     {
         var inputMessages = new List<InputMessage>();
 
-        await dbHelper.ExecuteAsync(async command =>
+        await dbHelper.ExecuteOrThrowAsync(async command =>
         {
             command.CommandText = "SELECT * FROM tlgr_messages WHERE user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);
@@ -54,9 +54,9 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return inputMessages;
     }
     
-    public async Task HardDeleteAsync(long userId)
+    public async Task HardDeleteOrThrowAsync(long userId)
     {
-        await dbHelper.ExecuteAsync(async command =>
+        await dbHelper.ExecuteOrThrowAsync(async command =>
         {
             command.CommandText = "DELETE FROM tlgr_messages WHERE user_id = @userId";
             command.Parameters.AddWithValue("@userId", userId);

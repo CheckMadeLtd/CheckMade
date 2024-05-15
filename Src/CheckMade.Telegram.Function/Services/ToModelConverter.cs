@@ -1,4 +1,5 @@
 using CheckMade.Common.LanguageExtensions.MonadicWrappers;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -7,12 +8,24 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage);
+    Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage)
+    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage)
+    {
+        try
+        {
+            return await ConvertMessageAsync(telegramInputMessage);
+        }
+        catch (Exception ex)
+        {
+            throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
+        }
+    }
+
+    private async Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage)
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
@@ -43,7 +56,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 telegramAttachmentUrl,
                 rawAttachmentDetails.type ));
     }
-
+    
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
     private (Option<string> fileId, Option<AttachmentType> type) ConvertRawAttachmentDetails(Message telegramInputMessage)
     {

@@ -1,7 +1,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
 
-public record Try<T>
+public record Attempt<T>
 {
     private readonly T? _value;
     private readonly Exception? _exception;
@@ -9,27 +9,39 @@ public record Try<T>
     public bool IsSuccess => _exception == null;
     public bool IsFailure => !IsSuccess;
 
-    private Try(T value)
+    private Attempt(T value)
     {
         _value = value;
         _exception = null;
     }
 
-    private Try(Exception exception)
+    private Attempt(Exception exception)
     {
         _exception = exception;
         _value = default;
     }
 
-    public static Try<T> Run(Func<T> func)
+    public static Attempt<T> Run(Func<T> func)
     {
         try
         {
-            return new Try<T>(func());
+            return new Attempt<T>(func());
         }
         catch (Exception ex)
         {
-            return new Try<T>(ex);
+            return new Attempt<T>(ex);
+        }
+    }
+    
+    public static async Task<Attempt<T>> RunAsync(Func<Task<T>> func)
+    {
+        try
+        {
+            return new Attempt<T>(await func());
+        }
+        catch (Exception ex)
+        {
+            return new Attempt<T>(ex);
         }
     }
 
@@ -52,8 +64,8 @@ public record Try<T>
         throw _exception!;
     }
     
-    public Try<TResult> SelectMany<TResult>(Func<T, Try<TResult>> binder)
+    public Attempt<TResult> SelectMany<TResult>(Func<T, Attempt<TResult>> binder)
     {
-        return IsSuccess ? binder(_value!) : new Try<TResult>(_exception!);
+        return IsSuccess ? binder(_value!) : new Attempt<TResult>(_exception!);
     }
 }

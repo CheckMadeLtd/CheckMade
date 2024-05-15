@@ -6,23 +6,23 @@ namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
 
 internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) : IMessageRepository
 {
-    public async Task AddAsync(InputMessage inputMessage)
+    public async Task AddOrThrowAsync(InputMessage inputMessage)
     {
-        await mockMessageRepo.Object.AddAsync(inputMessage);
+        await mockMessageRepo.Object.AddOrThrowAsync(inputMessage);
     }
 
-    public async Task<IEnumerable<InputMessage>> GetAllAsync()
+    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync()
     {
-        return await mockMessageRepo.Object.GetAllAsync();
+        return await mockMessageRepo.Object.GetAllOrThrowAsync();
     }
 
-    public async Task<IEnumerable<InputMessage>> GetAllAsync(long userId)
+    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync(long userId)
     {
-        return await mockMessageRepo.Object.GetAllAsync(userId);
+        return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }
 
-    public async Task HardDeleteAsync(long userId)
+    public async Task HardDeleteOrThrowAsync(long userId)
     {
-        await mockMessageRepo.Object.HardDeleteAsync(userId);
+        await mockMessageRepo.Object.HardDeleteOrThrowAsync(userId);
     }
 }

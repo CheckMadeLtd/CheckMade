@@ -1,3 +1,4 @@
+using CheckMade.Common.LanguageExtensions.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Logic;
@@ -23,7 +24,6 @@ public class MessageHandler(
     : IMessageHandler
 {
     internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
-    internal const string DataAccessExceptionErrorMessageStub = "An error has occured during a data access operation.";
     
     private BotType _botType;
     
@@ -56,52 +56,34 @@ public class MessageHandler(
             return;
         }
         
-        var inputMessage = await TryConvertToModelAsync(telegramInputMessage, toModelConverter);
-        var outputMessage = await TryProcessInputIntoOutput(inputMessage);
-        await TrySendOutput(outputMessage, botClient, chatId);
-    }
-
-    private async Task<InputMessage> TryConvertToModelAsync(
-        Message telegramInputMessage, IToModelConverter toModelConverter)
-    {
-        try
-        {
-            return await toModelConverter.ConvertMessageAsync(telegramInputMessage);
-        }
-        catch (Exception ex)
-        {
-            throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
-        }
-    }
-
-    private async Task<string> TryProcessInputIntoOutput(InputMessage inputMessage)
-    {
-        var requestProcessor = selector.GetRequestProcessor(_botType);
+        var inputMessageAttempt = await Attempt<InputMessage>.RunAsync(() => 
+            toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage));
         
-        try
-        {
-            return await requestProcessor.EchoAsync(inputMessage);
-        }
-        catch (Exception ex)
-        {
-            var errorMessage = ex switch
-            { 
-                DataAccessException => DataAccessExceptionErrorMessageStub,
-                _ => $"A general error (type: {ex.GetType()}) has occured."
-            };
+        var outputMessageAttempt = await inputMessageAttempt
+            .Match(
+                async inputMessage => 
+                    await selector.GetRequestProcessor(_botType).SafelyEchoAsync(inputMessage),
+                exception => throw exception
+            );        
+        
+        await outputMessageAttempt.Match(
             
-            logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
-                                "BotType: {botType}; UserId: {userId}; " +
-                                "DateTime of Input Message: {telegramDate}; " +
-                                "Text of InputMessage: {text}", 
-                errorMessage, _botType, inputMessage.UserId, 
-                inputMessage.Details.TelegramDate, inputMessage.Details.Text);
+            async message => await SendOutputAsync(message, botClient, chatId),
             
-            return $"{errorMessage} {CallToActionMessageAfterErrorReport}";
-        }
+            async ex =>
+            {
+                logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
+                                    "BotType: {botType}; Telegram user Id: {userId}; " +
+                                    "DateTime of received Message: {telegramDate}; " +
+                                    "with text: {text}", 
+                    ex.Message, _botType, telegramInputMessage.From!.Id, 
+                    telegramInputMessage.Date, telegramInputMessage.Text);
+
+                await SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
+            }); 
     }
 
-    private async Task TrySendOutput(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
         /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
         catch earlier network issues like from our Azure Function to the Telegram Servers! */
