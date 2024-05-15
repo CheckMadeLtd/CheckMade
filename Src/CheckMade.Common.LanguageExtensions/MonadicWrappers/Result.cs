@@ -8,10 +8,10 @@ public record Result<T>
     private readonly string? _error;
 
     // Implicit conversion from T to Result<T>
-    public static implicit operator Result<T>(T value) => new Result<T>(value);
+    public static implicit operator Result<T>(T value) => new(value);
 
     // Implicit conversion from string to Result<T> (for errors)
-    public static implicit operator Result<T>(string error) => new Result<T>(error);
+    public static implicit operator Result<T>(string error) => new(error);
 
     public Result(T value)
     {

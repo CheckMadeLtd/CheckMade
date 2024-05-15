@@ -35,7 +35,7 @@ internal static class ConfigureServicesExtensions
     {
         services.Add_TelegramPersistence_Dependencies();
         
-        var dbConnectionString = (string?)hostingEnvironment switch
+        var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 
                 config.GetValue<string>(DbConnectionProvider.KeyToLocalDbConnStringInEnv) 
@@ -69,7 +69,7 @@ internal static class ConfigureServicesExtensions
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
-        (string?)hostingEnvironment switch
+        hostingEnvironment switch
         {
             "Development" => new BotTokens(
                 GetBotToken(config, "DEV", BotType.Submissions),
