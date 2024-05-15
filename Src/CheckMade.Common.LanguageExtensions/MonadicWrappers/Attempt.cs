@@ -50,6 +50,11 @@ public record Attempt<T>
         return IsSuccess ? onSuccess(_value!) : onFailure(_exception!);
     }
 
+    public static Attempt<T> Fail(Exception exception)
+    {
+        return new Attempt<T>(exception);
+    }
+    
     public T GetValueOrDefault(T defaultValue = default!)
     {
         return IsSuccess ? _value! : defaultValue;
