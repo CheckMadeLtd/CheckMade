@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace CheckMade.Common.Tests.MonadicWrappers;
 
-public class OptionExtensionsTests
+public class OptionTests
 {
     [Fact]
     public void TestSelectMany_SyncBindingSyncOps()
@@ -118,10 +118,7 @@ public class OptionExtensionsTests
 
         Task<Option<int>> faultedTask = Task.FromException<Option<int>>(new Exception("Simulated exception"));
 
-        var action = async () =>
-        {
-            var source = await faultedTask;
-        };
+        var action = async () => { await faultedTask; };
 
         await action.Should().ThrowAsync<Exception>().WithMessage("Simulated exception");
     }
@@ -135,12 +132,12 @@ public class OptionExtensionsTests
         var sourceTask = Task.FromResult(Option<int>.Some(5));
 
         Func<Task> action = async () =>
-            await (from s in await sourceTask from c in FaultedSelector(s) select c + s);
+            await (from s in await sourceTask from c in FaultedSelector() select c + s);
 
         await action.Should().ThrowAsync<Exception>().WithMessage("Simulated exception");
         return;
 
-        static async Task<Option<int>> FaultedSelector(int _) => 
+        static async Task<Option<int>> FaultedSelector() => 
             await Task.FromException<Option<int>>(new Exception("Simulated exception"));
     }
     
