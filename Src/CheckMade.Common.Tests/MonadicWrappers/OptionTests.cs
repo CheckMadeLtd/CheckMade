@@ -6,6 +6,64 @@ namespace CheckMade.Common.Tests.MonadicWrappers;
 public class OptionTests
 {
     [Fact]
+    public void TestOption_Match_Some()
+    {
+        var option = Option<int>.Some(5);
+        var result = option.Match(
+            onSome: value => value * 2,
+            onNone: () => 0);
+
+        result.Should().Be(10);
+    }
+
+    [Fact]
+    public void TestOption_Match_None()
+    {
+        var option = Option<int>.None();
+        var result = option.Match(
+            onSome: value => value * 2,
+            onNone: () => 0);
+
+        result.Should().Be(0);
+    }
+
+    [Fact]
+    public void TestOption_GetValueOrThrow_Some()
+    {
+        var option = Option<int>.Some(5);
+        var value = option.GetValueOrThrow();
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestOption_GetValueOrThrow_None()
+    {
+        var option = Option<int>.None();
+
+        Action action = () => option.GetValueOrThrow();
+        action.Should().Throw<InvalidOperationException>().WithMessage("No value present");
+    }
+
+    [Fact]
+    public void TestOption_GetValueOrDefault_Some()
+    {
+        var option = Option<int>.Some(5);
+        var value = option.GetValueOrDefault(10);
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestOption_GetValueOrDefault_None()
+    {
+        var option = Option<int>.None();
+        var value = option.GetValueOrDefault(10);
+
+        value.Should().Be(10);
+    }
+
+    [Fact]
     public void TestSelectMany_SomeToSome()
     {
         /* This test demonstrates binding a Some Option<T> to another Some Option<TResult>.

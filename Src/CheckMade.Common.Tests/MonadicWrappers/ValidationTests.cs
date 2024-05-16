@@ -5,7 +5,63 @@ namespace CheckMade.Common.Tests.MonadicWrappers;
 
 public class ValidationTests
 {
-    
+    [Fact]
+    public void TestValidation_Match_Valid()
+    {
+        var validation = Validation<int>.Valid(5);
+        var result = validation.Match(
+            onValid: value => value * 2,
+            onInvalid: _ => 0);
+
+        result.Should().Be(10);
+    }
+
+    [Fact]
+    public void TestValidation_Match_Invalid()
+    {
+        var validation = Validation<int>.Invalid("Error");
+        var result = validation.Match(
+            onValid: value => value * 2,
+            onInvalid: errors => errors.Count);
+
+        result.Should().Be(1);
+    }
+
+    [Fact]
+    public void TestValidation_GetValueOrThrow_Valid()
+    {
+        var validation = Validation<int>.Valid(5);
+        var value = validation.GetValueOrThrow();
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestValidation_GetValueOrThrow_Invalid()
+    {
+        var validation = Validation<int>.Invalid("Error");
+
+        Action action = () => validation.GetValueOrThrow();
+        action.Should().Throw<InvalidOperationException>().WithMessage("Error");
+    }
+
+    [Fact]
+    public void TestValidation_GetValueOrDefault_Valid()
+    {
+        var validation = Validation<int>.Valid(5);
+        var value = validation.GetValueOrDefault(10);
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestValidation_GetValueOrDefault_Invalid()
+    {
+        var validation = Validation<int>.Invalid("Error");
+        var value = validation.GetValueOrDefault(10);
+
+        value.Should().Be(10);
+    }
     
     [Fact]
     public void TestSelectMany_SuccessToSuccess()

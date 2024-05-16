@@ -7,6 +7,64 @@ namespace CheckMade.Common.Tests.MonadicWrappers;
 public class AttemptTests
 {
     [Fact]
+    public void TestAttempt_Match_Success()
+    {
+        var attempt = Attempt<int>.Succeed(5);
+        var result = attempt.Match(
+            onSuccess: value => value * 2,
+            onFailure: _ => 0);
+
+        result.Should().Be(10);
+    }
+
+    [Fact]
+    public void TestAttempt_Match_Failure()
+    {
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
+        var result = attempt.Match(
+            onSuccess: value => value * 2,
+            onFailure: ex => ex.Message.Length);
+
+        result.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestAttempt_GetValueOrThrow_Success()
+    {
+        var attempt = Attempt<int>.Succeed(5);
+        var value = attempt.GetValueOrThrow();
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestAttempt_GetValueOrThrow_Failure()
+    {
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
+
+        Action action = () => attempt.GetValueOrThrow();
+        action.Should().Throw<Exception>().WithMessage("Error");
+    }
+
+    [Fact]
+    public void TestAttempt_GetValueOrDefault_Success()
+    {
+        var attempt = Attempt<int>.Succeed(5);
+        var value = attempt.GetValueOrDefault(10);
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestAttempt_GetValueOrDefault_Failure()
+    {
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
+        var value = attempt.GetValueOrDefault(10);
+
+        value.Should().Be(10);
+    }
+    
+    [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
         /* This test demonstrates binding a successful Attempt<T> to another successful Attempt<TResult>.

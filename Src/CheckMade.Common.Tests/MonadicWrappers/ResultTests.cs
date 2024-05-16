@@ -6,6 +6,64 @@ namespace CheckMade.Common.Tests.MonadicWrappers;
 public class ResultTests
 {
     [Fact]
+    public void TestResult_Match_Success()
+    {
+        var result = Result<int>.FromSuccess(5);
+        var output = result.Match(
+            onSuccess: value => value * 2,
+            onError: _ => 0);
+
+        output.Should().Be(10);
+    }
+
+    [Fact]
+    public void TestResult_Match_Error()
+    {
+        var result = Result<int>.FromError("Error");
+        var output = result.Match(
+            onSuccess: value => value * 2,
+            onError: error => error.Length);
+
+        output.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestResult_GetValueOrThrow_Success()
+    {
+        var result = Result<int>.FromSuccess(5);
+        var value = result.GetValueOrThrow();
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestResult_GetValueOrThrow_Error()
+    {
+        var result = Result<int>.FromError("Error");
+
+        Action action = () => result.GetValueOrThrow();
+        action.Should().Throw<InvalidOperationException>().WithMessage("Error");
+    }
+
+    [Fact]
+    public void TestResult_GetValueOrDefault_Success()
+    {
+        var result = Result<int>.FromSuccess(5);
+        var value = result.GetValueOrDefault(10);
+
+        value.Should().Be(5);
+    }
+
+    [Fact]
+    public void TestResult_GetValueOrDefault_Error()
+    {
+        var result = Result<int>.FromError("Error");
+        var value = result.GetValueOrDefault(10);
+
+        value.Should().Be(10);
+    }
+    
+    [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
         /* This test demonstrates binding a successful Result<T> to another successful Result<TResult>.
