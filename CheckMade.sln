@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Model", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Utils", "Src\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj", "{8FABE16E-9692-46A8-9254-B414F6EA34AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.LanguageExtensions", "Src\CheckMade.Common.LanguageExtensions\CheckMade.Common.LanguageExtensions.csproj", "{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.FpExt", "Src\CheckMade.Common.FpExt\CheckMade.Common.FpExt.csproj", "{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Tests", "Src\CheckMade.Common.Tests\CheckMade.Common.Tests.csproj", "{D5763060-5ECA-4017-BC01-76433B9F3AF0}"
 EndProject

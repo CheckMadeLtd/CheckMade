@@ -1,6 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
-namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
+namespace CheckMade.Common.FpExt.MonadicWrappers;
 
 // Use to encapsulate (and then potentially process with Match()) the outcome of a separate validation method! 
 public record Validation<T>

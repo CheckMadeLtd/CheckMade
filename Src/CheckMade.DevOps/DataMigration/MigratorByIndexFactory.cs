@@ -1,5 +1,5 @@
 using System.Reflection;
-using CheckMade.Common.LanguageExtensions.MonadicWrappers;
+using CheckMade.Common.FpExt.MonadicWrappers;
 
 namespace CheckMade.DevOps.DataMigration;
 

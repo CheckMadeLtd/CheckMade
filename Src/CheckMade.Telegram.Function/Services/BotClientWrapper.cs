@@ -1,4 +1,4 @@
-using CheckMade.Common.LanguageExtensions;
+using CheckMade.Common.FpExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
 using Telegram.Bot;

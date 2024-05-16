@@ -1,4 +1,4 @@
-using CheckMade.Common.LanguageExtensions.MonadicWrappers;
+using CheckMade.Common.FpExt.MonadicWrappers;
 using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;

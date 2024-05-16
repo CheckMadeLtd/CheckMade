@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.LanguageExtensions.MonadicWrappers;
+﻿using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 

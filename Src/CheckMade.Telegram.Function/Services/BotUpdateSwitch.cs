@@ -1,5 +1,5 @@
-using CheckMade.Common.LanguageExtensions;
-using CheckMade.Common.LanguageExtensions.MonadicWrappers;
+using CheckMade.Common.FpExt;
+using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

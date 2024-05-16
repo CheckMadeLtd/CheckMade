@@ -1,6 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
-namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
+namespace CheckMade.Common.FpExt.MonadicWrappers;
 
 public record Option<T>
 {
@@ -46,31 +46,32 @@ public record Option<T>
         }
         throw new InvalidOperationException("No value present");
     }
-    
-    // Synchronous binding of synchronous operations
-    public Option<TResult> SelectMany<TResult>(Func<T, Option<TResult>> binder)
-    {
-        return HasValue ? binder(Value!) : Option<TResult>.None();
-    }
-    
-    // Combining two synchronous operations to produce a final result
-    public Option<TResult> SelectMany<TCollection, TResult>(
-        Func<T, Option<TCollection>> collectionSelector,
-        Func<T, TCollection, TResult> resultSelector)
-    {
-        if (!IsSome)
-            return Option<TResult>.None();
-
-        var collectionOption = collectionSelector(Value!);
-
-        return collectionOption.IsSome
-            ? Option<TResult>.Some(resultSelector(Value!, collectionOption.Value!))
-            : Option<TResult>.None();
-    }
 }
 
 public static class OptionExtensions
 {
+    // Synchronous binding of synchronous operations
+    public static Option<TResult> SelectMany<T, TResult>(this Option<T> source, Func<T, Option<TResult>> binder)
+    {
+        return source.HasValue ? binder(source.Value!) : Option<TResult>.None();
+    }
+    
+    // Combining two synchronous operations to produce a final result
+    public static Option<TResult> SelectMany<T, TCollection, TResult>(
+        this Option<T> source,
+        Func<T, Option<TCollection>> collectionSelector,
+        Func<T, TCollection, TResult> resultSelector)
+    {
+        if (!source.IsSome)
+            return Option<TResult>.None();
+
+        var collectionOption = collectionSelector(source.Value!);
+
+        return collectionOption.IsSome
+            ? Option<TResult>.Some(resultSelector(source.Value!, collectionOption.Value!))
+            : Option<TResult>.None();
+    }
+    
     // Asynchronous binding of asynchronous operations
     public static async Task<Option<TResult>> SelectMany<TSource, TCollection, TResult>(
         this Task<Option<TSource>> sourceTask,

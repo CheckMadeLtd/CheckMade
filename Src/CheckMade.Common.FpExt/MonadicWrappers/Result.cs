@@ -1,6 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
-namespace CheckMade.Common.LanguageExtensions.MonadicWrappers;
+namespace CheckMade.Common.FpExt.MonadicWrappers;
 
 public record Result<T>
 {
