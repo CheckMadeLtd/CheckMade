@@ -44,6 +44,22 @@ public record Result<T>
 
 public static class ResultExtensions
 {
+    public static Result<TResult> Select<T, TResult>(this Result<T> source, Func<T, TResult> selector)
+    {
+        return source.Success 
+            ? Result<TResult>.FromSuccess(selector(source.Value!)) 
+            : Result<TResult>.FromError(source.Error!);
+    }
+
+    public static Result<T> Where<T>(this Result<T> source, Func<T, bool> predicate)
+    {
+        if (!source.Success) return source;
+
+        return predicate(source.Value!) 
+            ? source 
+            : Result<T>.FromError("Predicate not satisfied");
+    }
+    
     // Covers scenarios where you have a successful Result and want to bind it to another Result,
     // with both operations being synchronous.
     public static Result<TResult> SelectMany<T, TResult>(

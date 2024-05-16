@@ -50,6 +50,22 @@ public record Option<T>
 
 public static class OptionExtensions
 {
+    public static Option<TResult> Select<T, TResult>(this Option<T> source, Func<T, TResult> selector)
+    {
+        return source.IsSome 
+            ? Option<TResult>.Some(selector(source.Value!)) 
+            : Option<TResult>.None();
+    }
+
+    public static Option<T> Where<T>(this Option<T> source, Func<T, bool> predicate)
+    {
+        if (!source.IsSome) return Option<T>.None();
+
+        return predicate(source.Value!) 
+            ? source 
+            : Option<T>.None();
+    }
+    
     // Synchronous binding of synchronous operations
     public static Option<TResult> SelectMany<T, TResult>(this Option<T> source, Func<T, Option<TResult>> binder)
     {

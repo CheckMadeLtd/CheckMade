@@ -49,6 +49,22 @@ public record Validation<T>
 
 public static class ValidationExtensions
 {
+    public static Validation<TResult> Select<T, TResult>(this Validation<T> source, Func<T, TResult> selector)
+    {
+        return source.IsValid 
+            ? Validation<TResult>.Valid(selector(source.Value!)) 
+            : Validation<TResult>.Invalid(source.Errors.ToList());
+    }
+
+    public static Validation<T> Where<T>(this Validation<T> source, Func<T, bool> predicate)
+    {
+        if (!source.IsValid) return source;
+
+        return predicate(source.Value!) 
+            ? source 
+            : Validation<T>.Invalid("Predicate not satisfied");
+    }
+
     // Synchronous binding of synchronous operations
     public static Validation<TResult> SelectMany<T, TResult>(
         this Validation<T> source,
