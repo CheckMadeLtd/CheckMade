@@ -7,7 +7,7 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotClientFactory
 {
-    IBotClientWrapper CreateBotClient(BotType botType);
+    IBotClientWrapper CreateBotClientOrThrow(BotType botType);
 }
 
 public class BotClientFactory(
@@ -16,7 +16,7 @@ public class BotClientFactory(
         BotTokens botTokens) 
     : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClient(BotType botType) => botType switch
+    public IBotClientWrapper CreateBotClientOrThrow(BotType botType) => botType switch
     {
         BotType.Submissions => new BotClientWrapper(
             new TelegramBotClient(botTokens.SubmissionsBotToken, 

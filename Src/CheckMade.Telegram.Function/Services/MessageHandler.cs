@@ -29,9 +29,6 @@ public class MessageHandler(
     {
         ChatId chatId = telegramInputMessage.Chat.Id;
         _botType = botType;
-        var botClient = botClientFactory.CreateBotClient(_botType);
-        var filePathResolver = new TelegramFilePathResolver(botClient);
-        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
@@ -49,34 +46,33 @@ public class MessageHandler(
 
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
-            const string warningMessage = "Received message of type '{0}': {1}";
-            
-            logger.LogWarning(string.Format(warningMessage, 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage));
+            logger.LogWarning("Received message of type '{0}': {1}", 
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage);
 
-            var sendWarningOutcome = (await SendOutputAsync(
-                    string.Format(warningMessage,
-                        telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage), 
-                    botClient,
-                    chatId))
-                .Match(
-                    _ => Attempt<Unit>.Succeed(Unit.Value),
-                    Attempt<Unit>.Fail);
-
-            return sendWarningOutcome;
+            return Attempt<Unit>.Succeed(Unit.Value);
         }
         
         var sendOutputOutcome =
+            from botClient in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(_botType))
+            let filePathResolver = new TelegramFilePathResolver(botClient)
+            let toModelConverter = toModelConverterFactory.Create(filePathResolver)
             from modelInputMessage in Attempt<InputMessage>.RunAsync(() => 
                 toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage))
             from outputMessage in selector.GetRequestProcessor(_botType).SafelyEchoAsync(modelInputMessage)
-            select SendOutputAsync(outputMessage, botClient, chatId);        
+            select (outputMessage, botClient);        
         
-        return (await sendOutputOutcome).Match(
-            
-            _ => Attempt<Unit>.Succeed(Unit.Value),
+        var outcome = await sendOutputOutcome;
 
-            ex =>
+        return await outcome.Match(
+            
+            async result =>
+            {
+                var (outputMessage, botClient) = result;
+                await SendOutputAsync(outputMessage, botClient, chatId);
+                return Attempt<Unit>.Succeed(Unit.Value);
+            },
+
+            async ex =>
             {
                 logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
                                     "BotType: {botType}; Telegram user Id: {userId}; " +
@@ -85,15 +81,21 @@ public class MessageHandler(
                     ex.Message, _botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                // fire and forget
-                _ = SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
+                var botClientResult = outcome.Match(
+                    result => result.botClient,
+                    innerException => throw new Exception("No botClient!", innerException));
+                
+                if (botClientResult != null)
+                {
+                    await SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClientResult, chatId);
+                }
+                
                 return Attempt<Unit>.Fail(ex);
-            });
+            });    
     }
 
-    private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
-        return await Attempt<Unit>.RunAsync(async () =>
-            await botClient.SendTextMessageAsync(chatId, outputMessage));
+        await botClient.SendTextMessageAsync(chatId, outputMessage);
     }
 }
