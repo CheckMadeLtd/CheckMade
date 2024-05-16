@@ -53,18 +53,12 @@ public class MessageHandler(
         }
         
         var sendOutputOutcome =
-            
             from botClient in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(_botType))
-            
             let filePathResolver = new TelegramFilePathResolver(botClient)
-            
             let toModelConverter = toModelConverterFactory.Create(filePathResolver)
-            
             from modelInputMessage in Attempt<InputMessage>.RunAsync(() => 
                 toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage))
-            
             from outputMessage in selector.GetRequestProcessor(_botType).SafelyEchoAsync(modelInputMessage)
-            
             select (outputMessage, botClient);        
         
         var outcome = await sendOutputOutcome;
