@@ -288,7 +288,7 @@ public class OptionTests
 
         Func<Task> action = async () =>
             await sourceTask.SelectMany(
-                async s => await FaultedSelector(),
+                async _ => await FaultedSelector(),
                 (s, c) => s + c
             );
 
@@ -309,7 +309,7 @@ public class OptionTests
 
         Func<Task> action = async () =>
             await sourceTask.SelectMany(
-                s => FaultedSelector(),
+                _ => FaultedSelector(),
                 (s, c) => s + c
             );
 
@@ -329,11 +329,11 @@ public class OptionTests
         var source = Option<int>.Some(5);
 
         var intermediateResult = await source
-            .SelectMany(s => Task.FromResult(SyncOperation1(s)), (s, a) => a)
-            .SelectMany(a => AsyncOperation2(a), (a, b) => b);
+            .SelectMany(s => Task.FromResult(SyncOperation1(s)), (_, a) => a)
+            .SelectMany(a => AsyncOperation2(a), (_, b) => b);
 
         var result = await intermediateResult
-            .SelectMany(b => Task.FromResult(SyncOperation3(b)), (b, c) => Task.FromResult(c));
+            .SelectMany(b => Task.FromResult(SyncOperation3(b)), (_, c) => Task.FromResult(c));
 
         result.Should().BeEquivalentTo(Option<int>.Some(20));
         return;
@@ -353,7 +353,7 @@ public class OptionTests
 
         var result = await source.SelectMany(
             outer => Task.FromResult(outer),
-            (outer, inner) => inner + 5
+            (_, inner) => inner + 5
         );
 
         result.Should().BeEquivalentTo(Option<int>.Some(10));
@@ -383,7 +383,7 @@ public class OptionTests
 
     private record Person
     {
-        public string Name { get; init; }
+        public string? Name { get; init; }
         public int Age { get; init; }
     }
 }
