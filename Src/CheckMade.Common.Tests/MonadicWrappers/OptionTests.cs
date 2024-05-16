@@ -6,6 +6,46 @@ namespace CheckMade.Common.Tests.MonadicWrappers;
 public class OptionTests
 {
     [Fact]
+    public void TestSelectMany_SomeToSome()
+    {
+        /* This test demonstrates binding a Some Option<T> to another Some Option<TResult>.
+         The initial value is Some, and the binder function also returns a Some Option<TResult>. */
+
+        var source = Option<int>.Some(5);
+        var result = source.SelectMany(Binder);
+
+        result.IsSome.Should().BeTrue();
+        result.Value.Should().Be(10);
+    }
+
+    [Fact]
+    public void TestSelectMany_SomeToNone()
+    {
+        /* This test demonstrates binding a Some Option<T> to a None Option<TResult>.
+         The initial value is Some, but the binder function returns a None Option<TResult>. */
+
+        var source = Option<int>.Some(5);
+        var result = source.SelectMany(BinderNone);
+
+        result.IsNone.Should().BeTrue();
+    }
+
+    [Fact]
+    public void TestSelectMany_NoneToBinding()
+    {
+        /* This test demonstrates binding a None Option<T> to any Option<TResult>.
+         The initial value is None, and we expect the None to propagate without calling the binder function. */
+
+        var source = Option<int>.None();
+        var result = source.SelectMany(Binder);
+
+        result.IsNone.Should().BeTrue();
+    }
+
+    private static Option<int> Binder(int i) => Option<int>.Some(i + 5);
+    private static Option<int> BinderNone(int i) => Option<int>.None();
+    
+    [Fact]
     public void TestSelectMany_SyncBindingSyncOps()
     {
         /* This test demonstrates synchronous binding of synchronous operations. It starts from an initial synchronous
