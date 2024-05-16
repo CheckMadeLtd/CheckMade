@@ -199,4 +199,191 @@ public class OptionTests
             return await Task.FromResult(Option<int>.Some(i + 5));
         }
     }
+    
+    [Fact]
+    public async Task TestSelectMany_AsyncBindingAsyncOps2()
+    {
+        /* This test demonstrates the binding of asynchronous operations in sequence.
+         It starts with an asynchronous operation (sourceTask) and binds it to another asynchronous operation
+         (collectionTaskSelector), resulting in a final transformation using the resultSelector function. */
+
+        var sourceTask = Task.FromResult(Option<int>.Some(5));
+
+        var result = await sourceTask.SelectMany(
+            async s => await CollectionTaskSelector(s),
+            (s, c) => s + c
+        );
+
+        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        return;
+
+        static async Task<Option<int>> CollectionTaskSelector(int i) => await Task.FromResult(Option<int>.Some(i + 5));
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp2()
+    {
+        /* This test illustrates the binding of an asynchronous initial operation to a synchronous subsequent operation.
+         It begins with an asynchronous operation (sourceTask) and binds it to a synchronous operation 
+         (collectionSelector), resulting in a final transformation using the resultSelector function. */
+
+        var sourceTask = Task.FromResult(Option<int>.Some(5));
+
+        var result = await sourceTask.SelectMany(
+            s => CollectionSelector(s),
+            (s, c) => s + c
+        );
+
+        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        return;
+
+        static Option<int> CollectionSelector(int i) => Option<int>.Some(i + 5);
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_AsyncBindingAsyncOps_SourceNone()
+    {
+        /* This test covers the scenario where the initial asynchronous operation returns None.
+        Even though the operations are asynchronous, the final result should also be None. */
+
+        var sourceTask = Task.FromResult(Option<int>.None());
+
+        var result = await sourceTask.SelectMany(
+            async s => await CollectionTaskSelector(s),
+            (s, c) => s + c
+        );
+
+        result.Should().Be(Option<int>.None());
+        return;
+
+        static async Task<Option<int>> CollectionTaskSelector(int i) => await Task.FromResult(Option<int>.Some(i + 5));
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp_SourceNone()
+    {
+        /* This test examines the behavior when the initial asynchronous operation returns None.
+        The subsequent synchronous operation should not be called, and the final result should be None. */
+
+        var sourceTask = Task.FromResult(Option<int>.None());
+
+        var result = await sourceTask.SelectMany(
+            s => CollectionSelector(s),
+            (s, c) => s + c
+        );
+
+        result.Should().Be(Option<int>.None());
+        return;
+
+        static Option<int> CollectionSelector(int i) => Option<int>.Some(i + 5);
+    }
+
+    [Fact]
+    public async Task TestSelectMany_AsyncBindingAsyncOps_Exception()
+    {
+        /* This test checks the behavior when the subsequent asynchronous operation throws an exception.
+        The test ensures that the exception is correctly propagated. */
+
+        var sourceTask = Task.FromResult(Option<int>.Some(5));
+
+        Func<Task> action = async () =>
+            await sourceTask.SelectMany(
+                async s => await FaultedSelector(),
+                (s, c) => s + c
+            );
+
+        await action.Should().ThrowAsync<Exception>().WithMessage("Simulated exception");
+        return;
+
+        static async Task<Option<int>> FaultedSelector() => 
+            await Task.FromException<Option<int>>(new Exception("Simulated exception"));
+    }
+
+    [Fact]
+    public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp_Exception()
+    {
+        /* This test ensures that when the synchronous subsequent operation throws an exception,
+        it is correctly propagated, even if the initial operation was asynchronous. */
+
+        var sourceTask = Task.FromResult(Option<int>.Some(5));
+
+        Func<Task> action = async () =>
+            await sourceTask.SelectMany(
+                s => FaultedSelector(),
+                (s, c) => s + c
+            );
+
+        await action.Should().ThrowAsync<Exception>().WithMessage("Simulated exception");
+        return;
+
+        static Option<int> FaultedSelector() => 
+            throw new Exception("Simulated exception");
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_ChainingMultipleOperations()
+    {
+        /* This test demonstrates chaining multiple operations together.
+         It starts with an initial value and performs a series of synchronous and asynchronous operations. */
+
+        var source = Option<int>.Some(5);
+
+        var intermediateResult = await source
+            .SelectMany(s => Task.FromResult(SyncOperation1(s)), (s, a) => a)
+            .SelectMany(a => AsyncOperation2(a), (a, b) => b);
+
+        var result = await intermediateResult
+            .SelectMany(b => Task.FromResult(SyncOperation3(b)), (b, c) => Task.FromResult(c));
+
+        result.Should().BeEquivalentTo(Option<int>.Some(20));
+        return;
+
+        static Option<int> SyncOperation1(int i) => Option<int>.Some(i + 5);
+        static async Task<Option<int>> AsyncOperation2(int i) => await Task.FromResult(Option<int>.Some(i * 2));
+        static Option<int> SyncOperation3(int i) => Option<int>.Some(i - 5);
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_NestedOptionTypes()
+    {
+        /* This test ensures that nested Option types are handled correctly.
+         The source is an Option<Option<int>>, and the operations are performed on the inner value. */
+
+        var source = Option<Option<int>>.Some(Option<int>.Some(5));
+
+        var result = await source.SelectMany(
+            outer => Task.FromResult(outer),
+            (outer, inner) => inner + 5
+        );
+
+        result.Should().BeEquivalentTo(Option<int>.Some(10));
+    }
+    
+    [Fact]
+    public async Task TestSelectMany_ComplexTypes()
+    {
+        /* This test demonstrates using more complex types instead of simple int values.
+         It ensures that the Option class works correctly with complex data types. */
+
+        var source = Option<Person>.Some(new Person { Name = "Alice", Age = 30 });
+
+        var result = await source.SelectMany(
+            async p => await UpdateAgeAsync(p),
+            (p, updatedAge) => new Person { Name = p.Name, Age = updatedAge }
+        );
+
+        result.Should().BeEquivalentTo(Option<Person>.Some(new Person { Name = "Alice", Age = 35 }));
+        return;
+
+        static async Task<Option<int>> UpdateAgeAsync(Person person)
+        {
+            return await Task.FromResult(Option<int>.Some(person.Age + 5));
+        }
+    }
+
+    private record Person
+    {
+        public string Name { get; init; }
+        public int Age { get; init; }
+    }
 }
