@@ -64,6 +64,84 @@ public class ValidationTests
     }
     
     [Fact]
+    public void Select_ShouldReturnSuccessfulResult_WhenSourceIsValid()
+    {
+        // Arrange
+        var source = Validation<int>.Valid(2);
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsValid.Should().BeTrue();
+        result.Value.Should().Be(4);
+    }
+    
+    [Fact]
+    public void Select_ShouldReturnFailureResult_WhenSourceIsInvalid()
+    {
+        // Arrange
+        var source = Validation<int>.Invalid("Error message");
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain("Error message");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnSuccessfulResult_WhenSourceIsValidAndPredicateIsSatisfied()
+    {
+        // Arrange
+        var source = Validation<int>.Valid(2);
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsValid.Should().BeTrue();
+        result.Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsValidAndPredicateIsNotSatisfied()
+    {
+        // Arrange
+        var source = Validation<int>.Valid(2);
+        
+        // Act
+        var result = from s in source
+            where s < 1
+            select s;
+        
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain("Predicate not satisfied");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsInvalid()
+    {
+        // Arrange
+        var source = Validation<int>.Invalid("Error message");
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain("Error message");
+    }
+    
+    [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
         /* This test demonstrates binding a valid Validation<T> to another valid Validation<TResult>.

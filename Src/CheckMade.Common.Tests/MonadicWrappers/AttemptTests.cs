@@ -65,6 +65,84 @@ public class AttemptTests
     }
     
     [Fact]
+    public void Select_ShouldReturnSuccessfulResult_WhenSourceIsSuccessful()
+    {
+        // Arrange
+        var source = Attempt<int>.Succeed(2);
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(4);
+    }
+    
+    [Fact]
+    public void Select_ShouldReturnFailureResult_WhenSourceIsFailure()
+    {
+        // Arrange
+        var source = Attempt<int>.Fail(new Exception("Test exception"));
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Exception!.Message.Should().Be("Test exception");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnSuccessfulResult_WhenSourceIsSuccessfulAndPredicateIsSatisfied()
+    {
+        // Arrange
+        var source = Attempt<int>.Succeed(2);
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsSuccessfulAndPredicateIsNotSatisfied()
+    {
+        // Arrange
+        var source = Attempt<int>.Succeed(2);
+        
+        // Act
+        var result = from s in source
+            where s < 1
+            select s;
+        
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Exception!.Message.Should().Be("Predicate not satisfied");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsFailure()
+    {
+        // Arrange
+        var source = Attempt<int>.Fail(new Exception("Test exception"));
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Exception!.Message.Should().Be("Test exception");
+    }
+    
+    [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
         /* This test demonstrates binding a successful Attempt<T> to another successful Attempt<TResult>.

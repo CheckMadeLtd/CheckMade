@@ -64,6 +64,81 @@ public class OptionTests
     }
 
     [Fact]
+    public void Select_ShouldReturnResult_WhenSourceIsSome()
+    {
+        // Arrange
+        var source = Option<int>.Some(2);
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsSome.Should().BeTrue();
+        result.Value.Should().Be(4);
+    }
+    
+    [Fact]
+    public void Select_ShouldReturnNone_WhenSourceIsNone()
+    {
+        // Arrange
+        var source = Option<int>.None();
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.IsNone.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnSource_WhenSourceIsSomeAndPredicateIsSatisfied()
+    {
+        // Arrange
+        var source = Option<int>.Some(2);
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsSome.Should().BeTrue();
+        result.Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnNone_WhenSourceIsSomeAndPredicateIsNotSatisfied()
+    {
+        // Arrange
+        var source = Option<int>.Some(2);
+        
+        // Act
+        var result = from s in source
+            where s < 1
+            select s;
+        
+        // Assert
+        result.IsNone.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnNone_WhenSourceIsNone()
+    {
+        // Arrange
+        var source = Option<int>.None();
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.IsNone.Should().BeTrue();
+    } 
+    
+    [Fact]
     public void TestSelectMany_SomeToSome()
     {
         /* This test demonstrates binding a Some Option<T> to another Some Option<TResult>.

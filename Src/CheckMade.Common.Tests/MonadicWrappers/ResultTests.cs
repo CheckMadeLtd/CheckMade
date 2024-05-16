@@ -64,6 +64,84 @@ public class ResultTests
     }
     
     [Fact]
+    public void Select_ShouldReturnSuccessfulResult_WhenSourceIsSuccessful()
+    {
+        // Arrange
+        var source = Result<int>.FromSuccess(2);
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.Success.Should().BeTrue();
+        result.Value.Should().Be(4);
+    }
+    
+    [Fact]
+    public void Select_ShouldReturnFailureResult_WhenSourceIsError()
+    {
+        // Arrange
+        var source = Result<int>.FromError("Error message");
+        
+        // Act
+        var result = from s in source
+            select s * 2;
+        
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Error.Should().Be("Error message");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnSuccessfulResult_WhenSourceIsSuccessfulAndPredicateIsSatisfied()
+    {
+        // Arrange
+        var source = Result<int>.FromSuccess(2);
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.Success.Should().BeTrue();
+        result.Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsSuccessfulAndPredicateIsNotSatisfied()
+    {
+        // Arrange
+        var source = Result<int>.FromSuccess(2);
+        
+        // Act
+        var result = from s in source
+            where s < 1
+            select s;
+        
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Error.Should().Be("Predicate not satisfied");
+    }
+    
+    [Fact]
+    public void Where_ShouldReturnFailureResult_WhenSourceIsError()
+    {
+        // Arrange
+        var source = Result<int>.FromError("Error message");
+        
+        // Act
+        var result = from s in source
+            where s > 1
+            select s;
+        
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Error.Should().Be("Error message");
+    }
+    
+    [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
         /* This test demonstrates binding a successful Result<T> to another successful Result<TResult>.
