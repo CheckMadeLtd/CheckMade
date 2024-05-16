@@ -7,6 +7,9 @@ public record Option<T>
     internal T? Value { get; }
     internal bool HasValue { get; }
 
+    public bool IsSome => HasValue;
+    public bool IsNone => !HasValue;
+    
     private Option(T value)
     {
         Value = value;
@@ -25,22 +28,19 @@ public record Option<T>
     public static Option<T> Some(T value) => new Option<T>(value);
     public static Option<T> None() => new Option<T>();
 
-    public bool IsSome => HasValue;
-    public bool IsNone => !HasValue;
-
     public TResult Match<TResult>(Func<T, TResult> onSome, Func<TResult> onNone)
     {
-        return HasValue ? onSome(Value!) : onNone();
+        return IsSome ? onSome(Value!) : onNone();
     }
 
     public T GetValueOrDefault(T defaultValue = default!)
     {
-        return HasValue ? Value! : defaultValue;
+        return IsSome ? Value! : defaultValue;
     }
 
     public T GetValueOrThrow()
     {
-        if (HasValue)
+        if (IsSome)
         {
             return Value!;
         }
@@ -53,7 +53,7 @@ public static class OptionExtensions
     // Synchronous binding of synchronous operations
     public static Option<TResult> SelectMany<T, TResult>(this Option<T> source, Func<T, Option<TResult>> binder)
     {
-        return source.HasValue ? binder(source.Value!) : Option<TResult>.None();
+        return source.IsSome ? binder(source.Value!) : Option<TResult>.None();
     }
     
     // Combining two synchronous operations to produce a final result

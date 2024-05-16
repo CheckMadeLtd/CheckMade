@@ -7,27 +7,25 @@ public record Validation<T>
 {
     internal T? Value { get; }
     internal IReadOnlyList<string> Errors { get; }
-    
-    public bool IsValid { get; }
+
+    public bool IsValid => Errors.Count == 0;
     public bool IsInvalid => !IsValid;
 
     private Validation(T value)
     {
         Value = value;
         Errors = new List<string>();
-        IsValid = true;
     }
 
     private Validation(List<string> errors)
     {
         Value = default;
         Errors = errors;
-        IsValid = false;
     }
 
-    public static Validation<T> Valid(T value) => new Validation<T>(value);
-    public static Validation<T> Invalid(List<string> errors) => new Validation<T>(errors);
-    public static Validation<T> Invalid(params string[] errors) => new Validation<T>(errors.ToList());
+    public static Validation<T> Valid(T value) => new(value);
+    public static Validation<T> Invalid(List<string> errors) => new(errors);
+    public static Validation<T> Invalid(params string[] errors) => new(errors.ToList());
 
     public TResult Match<TResult>(Func<T, TResult> onValid, Func<IReadOnlyList<string>, TResult> onInvalid)
     {
@@ -47,31 +45,34 @@ public record Validation<T>
     {
         return IsValid ? Value! : defaultValue;
     }
-    
-    // Synchronous binding of synchronous operations
-    public Validation<TResult> SelectMany<TResult>(Func<T, Validation<TResult>> binder)
-    {
-        return IsValid ? binder(Value!) : Validation<TResult>.Invalid(Errors.ToList());
-    }
-    
-    // Combining two synchronous operations to produce a final result
-    public Validation<TResult> SelectMany<TCollection, TResult>(
-        Func<T, Validation<TCollection>> collectionSelector,
-        Func<T, TCollection, TResult> resultSelector)
-    {
-        if (!IsValid)
-            return Validation<TResult>.Invalid(Errors.ToList());
-
-        var collectionValidation = collectionSelector(Value!);
-
-        return collectionValidation.IsValid
-            ? Validation<TResult>.Valid(resultSelector(Value!, collectionValidation.Value!))
-            : Validation<TResult>.Invalid(collectionValidation.Errors.ToList());
-    }
 }
 
 public static class ValidationExtensions
 {
+    // Synchronous binding of synchronous operations
+    public static Validation<TResult> SelectMany<T, TResult>(
+        this Validation<T> source,
+        Func<T, Validation<TResult>> binder)
+    {
+        return source.IsValid ? binder(source.Value!) : Validation<TResult>.Invalid(source.Errors.ToList());
+    }
+    
+    // Combining two synchronous operations to produce a final result
+    public static Validation<TResult> SelectMany<T, TCollection, TResult>(
+        this Validation<T> source,
+        Func<T, Validation<TCollection>> collectionSelector,
+        Func<T, TCollection, TResult> resultSelector)
+    {
+        if (!source.IsValid)
+            return Validation<TResult>.Invalid(source.Errors.ToList());
+
+        var collectionValidation = collectionSelector(source.Value!);
+
+        return collectionValidation.IsValid
+            ? Validation<TResult>.Valid(resultSelector(source.Value!, collectionValidation.Value!))
+            : Validation<TResult>.Invalid(collectionValidation.Errors.ToList());
+    }
+    
     // Asynchronous binding of asynchronous operations:
     public static async Task<Validation<TResult>> SelectMany<TSource, TCollection, TResult>(
         this Task<Validation<TSource>> sourceTask,

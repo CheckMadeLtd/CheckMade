@@ -72,7 +72,7 @@ public record Attempt<T>
 public static class AttemptExtensions 
 {
     /* Covers scenarios where you have a successful attempt and want to bind it to another
- attempt, with both operations being synchronous.*/
+    attempt, with both operations being synchronous.*/
     public static Attempt<TResult> SelectMany<T, TResult>(this Attempt<T> source, Func<T, Attempt<TResult>> binder)
     {
         return source.IsSuccess ? binder(source.Value!) : Attempt<TResult>.Fail(source.Exception!);

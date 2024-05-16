@@ -5,25 +5,18 @@ namespace CheckMade.Common.FpExt.MonadicWrappers;
 public record Result<T>
 {
     internal T? Value { get; }
-    internal bool Success { get; }
     internal string? Error { get; }
 
-    // Implicit conversion from T to Result<T>
-    public static implicit operator Result<T>(T value) => new(value);
-
-    // Implicit conversion from string to Result<T> (for errors)
-    public static implicit operator Result<T>(string error) => new(error);
+    internal bool Success => Error == null;
 
     private Result(T value)
     {
         Value = value;
-        Success = true;
     }
 
     private Result(string error)
     {
         Error = error;
-        Success = false;
     }
 
     public static Result<T> FromSuccess(T value) => new Result<T>(value);
@@ -47,33 +40,36 @@ public record Result<T>
     {
         return Success ? Value! : defaultValue;
     }
-    
-    // Covers scenarios where you have a successful Result and want to bind it to another Result,
-    // with both operations being synchronous.
-    public Result<TResult> SelectMany<TResult>(Func<T, Result<TResult>> binder)
-    {
-        return Success ? binder(Value!) : Result<TResult>.FromError(Error!);
-    }
-    
-    // Covers scenarios where you need to combine a successful Result with another Result to produce a final result,
-    // all within synchronous operations.
-    public Result<TResult> SelectMany<TCollection, TResult>(
-        Func<T, Result<TCollection>> collectionSelector,
-        Func<T, TCollection, TResult> resultSelector)
-    {
-        if (!Success)
-            return Result<TResult>.FromError(Error!);
-
-        var collectionResult = collectionSelector(Value!);
-
-        return collectionResult.Success
-            ? Result<TResult>.FromSuccess(resultSelector(Value!, collectionResult.Value!))
-            : Result<TResult>.FromError(collectionResult.Error!);
-    }
 }
 
 public static class ResultExtensions
 {
+    // Covers scenarios where you have a successful Result and want to bind it to another Result,
+    // with both operations being synchronous.
+    public static Result<TResult> SelectMany<T, TResult>(
+        this Result<T> source,
+        Func<T, Result<TResult>> binder)
+    {
+        return source.Success ? binder(source.Value!) : Result<TResult>.FromError(source.Error!);
+    }
+    
+    // Covers scenarios where you need to combine a successful Result with another Result to produce a final result,
+    // all within synchronous operations.
+    public static Result<TResult> SelectMany<T, TCollection, TResult>(
+        this Result<T> source,
+        Func<T, Result<TCollection>> collectionSelector,
+        Func<T, TCollection, TResult> resultSelector)
+    {
+        if (!source.Success)
+            return Result<TResult>.FromError(source.Error!);
+
+        var collectionResult = collectionSelector(source.Value!);
+
+        return collectionResult.Success
+            ? Result<TResult>.FromSuccess(resultSelector(source.Value!, collectionResult.Value!))
+            : Result<TResult>.FromError(collectionResult.Error!);
+    }
+    
     // Covers scenarios where both the initial Result and the function it binds to are asynchronous operations,
     // allowing for the combination of their results asynchronously.
     public static async Task<Result<TResult>> SelectMany<TSource, TCollection, TResult>(

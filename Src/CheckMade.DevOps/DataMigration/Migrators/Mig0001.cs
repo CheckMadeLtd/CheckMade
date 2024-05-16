@@ -20,6 +20,6 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
 
         var numberOfRecordsUpdated = 3;
         
-        return numberOfRecordsUpdated;
+        return Result<int>.FromSuccess(numberOfRecordsUpdated);
     }
 }
