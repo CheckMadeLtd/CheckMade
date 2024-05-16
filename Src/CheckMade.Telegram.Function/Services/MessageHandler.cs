@@ -60,7 +60,7 @@ public class MessageHandler(
                     botClient,
                     chatId))
                 .Match(
-                    _ => Attempt<Unit>.Succeed(),
+                    _ => Attempt<Unit>.Succeed(Unit.Value),
                     Attempt<Unit>.Fail);
 
             return sendWarningOutcome;
@@ -74,7 +74,7 @@ public class MessageHandler(
         
         return (await sendOutputOutcome).Match(
             
-            _ => Attempt<Unit>.Succeed(),
+            _ => Attempt<Unit>.Succeed(Unit.Value),
 
             ex =>
             {

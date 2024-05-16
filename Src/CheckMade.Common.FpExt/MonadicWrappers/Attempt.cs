@@ -21,9 +21,9 @@ public record Attempt<T>
         Exception = exception;
         Value = default;
     }
-
-    public static Attempt<T> FromValue(T value) => new (value);
-    public static Attempt<T> FromException(Exception exception) => new (exception);
+    
+    public static Attempt<T> Succeed(T value) => new(value);
+    public static Attempt<T> Fail(Exception exception) => new(exception);
     
     public static Attempt<T> Run(Func<T> func)
     {
@@ -53,16 +53,6 @@ public record Attempt<T>
     {
         return IsSuccess ? onSuccess(Value!) : onFailure(Exception!);
     }
-
-    public static Attempt<Unit> Succeed()
-    {
-        return new Attempt<Unit>(Unit.Value);
-    }
-    
-    public static Attempt<T> Fail(Exception exception)
-    {
-        return new Attempt<T>(exception);
-    }
     
     public T GetValueOrDefault(T defaultValue = default!)
     {
@@ -77,33 +67,34 @@ public record Attempt<T>
         }
         throw Exception!;
     }
-    
-    /* Covers scenarios where you have a successful attempt and want to bind it to another
-     attempt, with both operations being synchronous.*/
-    public Attempt<TResult> SelectMany<TResult>(Func<T, Attempt<TResult>> binder)
-    {
-        return IsSuccess ? binder(Value!) : new Attempt<TResult>(Exception!);
-    }
-    
-    /* Covers scenarios where you need to combine a successful attempt with another attempt to
-     produce a final result, all within synchronous operations. */
-    public Attempt<TResult> SelectMany<TCollection, TResult>(
-        Func<T, Attempt<TCollection>> collectionSelector,
-        Func<T, TCollection, TResult> resultSelector)
-    {
-        if (!IsSuccess)
-            return new Attempt<TResult>(Exception!);
-    
-        var collectionAttempt = collectionSelector(Value!);
-
-        return collectionAttempt.IsSuccess
-            ? new Attempt<TResult>(resultSelector(Value!, collectionAttempt.Value!))
-            : new Attempt<TResult>(collectionAttempt.Exception!);
-    }
 }
 
 public static class AttemptExtensions 
 {
+    /* Covers scenarios where you have a successful attempt and want to bind it to another
+ attempt, with both operations being synchronous.*/
+    public static Attempt<TResult> SelectMany<T, TResult>(this Attempt<T> source, Func<T, Attempt<TResult>> binder)
+    {
+        return source.IsSuccess ? binder(source.Value!) : Attempt<TResult>.Fail(source.Exception!);
+    }
+    
+    /* Covers scenarios where you need to combine a successful attempt with another attempt to
+     produce a final result, all within synchronous operations. */
+    public static Attempt<TResult> SelectMany<T, TCollection, TResult>(
+        this Attempt<T> source,
+        Func<T, Attempt<TCollection>> collectionSelector,
+        Func<T, TCollection, TResult> resultSelector)
+    {
+        if (!source.IsSuccess)
+            return Attempt<TResult>.Fail(source.Exception!);
+    
+        var collectionAttempt = collectionSelector(source.Value!);
+
+        return collectionAttempt.IsSuccess
+            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collectionAttempt.Value!))
+            : Attempt<TResult>.Fail(collectionAttempt.Exception!);
+    }
+    
     /* Covers scenarios where both the initial attempt and the function it binds to are
      asynchronous operations, allowing for the combination of their results asynchronously */
     public static async Task<Attempt<TResult>> SelectMany<TSource, TCollection, TResult>(
@@ -114,13 +105,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return Attempt<TResult>.FromException(source.Exception!);
+            return Attempt<TResult>.Fail(source.Exception!);
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess 
-            ? Attempt<TResult>.FromValue(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.FromException(collection.Exception!);
+            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
+            : Attempt<TResult>.Fail(collection.Exception!);
     }
     
     /* Covers scenarios where the initial attempt is an asynchronous operation, but the function
@@ -133,13 +124,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return Attempt<TResult>.FromException(source.Exception!);
+            return Attempt<TResult>.Fail(source.Exception!);
 
         var collection = collectionSelector(source.Value!);
 
         return collection.IsSuccess 
-            ? Attempt<TResult>.FromValue(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.FromException(collection.Exception!);
+            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
+            : Attempt<TResult>.Fail(collection.Exception!);
     }
     
     /* Handles cases where you start with a synchronous Attempt<T>, but need to perform an asynchronous operation based
@@ -150,12 +141,12 @@ public static class AttemptExtensions
         Func<TSource, TCollection, TResult> resultSelector)
     {
         if (!source.IsSuccess)
-            return Attempt<TResult>.FromException(source.Exception!);
+            return Attempt<TResult>.Fail(source.Exception!);
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess
-            ? Attempt<TResult>.FromValue(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.FromException(collection.Exception!);
+            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
+            : Attempt<TResult>.Fail(collection.Exception!);
     }
 }
