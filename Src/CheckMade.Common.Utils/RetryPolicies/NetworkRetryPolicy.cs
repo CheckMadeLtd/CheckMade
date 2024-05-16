@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace CheckMade.Common.Utils.RetryPolicies;
 
 public interface INetworkRetryPolicy
@@ -5,4 +7,5 @@ public interface INetworkRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class NetworkRetryPolicy() : RetryPolicyBase(5, "Network"), INetworkRetryPolicy;
+public class NetworkRetryPolicy(ILogger<RetryPolicyBase> logger) 
+    : RetryPolicyBase(5, "Network", logger), INetworkRetryPolicy;

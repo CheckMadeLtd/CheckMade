@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace CheckMade.Common.Utils.RetryPolicies;
 
 public interface IDbCommandRetryPolicy
@@ -5,4 +7,5 @@ public interface IDbCommandRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbCommandRetryPolicy() : RetryPolicyBase(1, "Execute Database Command"), IDbCommandRetryPolicy;
+public class DbCommandRetryPolicy(ILogger<RetryPolicyBase> logger) 
+    : RetryPolicyBase(1, "Execute Database Command", logger), IDbCommandRetryPolicy;

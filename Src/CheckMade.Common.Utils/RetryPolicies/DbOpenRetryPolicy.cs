@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace CheckMade.Common.Utils.RetryPolicies;
 
 public interface IDbOpenRetryPolicy
@@ -5,4 +7,5 @@ public interface IDbOpenRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbOpenRetryPolicy() : RetryPolicyBase(5, "Open Database Connection"), IDbOpenRetryPolicy;
+public class DbOpenRetryPolicy(ILogger<RetryPolicyBase> logger) 
+    : RetryPolicyBase(5, "Open Database Connection", logger), IDbOpenRetryPolicy;

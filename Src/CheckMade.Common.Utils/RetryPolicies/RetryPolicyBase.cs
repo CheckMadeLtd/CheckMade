@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Retry;
 
@@ -7,7 +8,7 @@ public abstract class RetryPolicyBase
 {
     private readonly AsyncRetryPolicy _policy;
 
-    protected RetryPolicyBase(int retryCount, string errorType)
+    protected RetryPolicyBase(int retryCount, string errorType, ILogger<RetryPolicyBase> logger)
     {
         _policy = Policy
             .Handle<Exception>()
@@ -15,11 +16,10 @@ public abstract class RetryPolicyBase
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timeSpan, retryAttempt, _) =>
                 {
-                    // Console.Error ignored by xUnit (who only works with ITestOutputHelper) but should work for prd.
-                    Console.Error.WriteLine($"'{errorType}' error occurred at attempt no. {retryAttempt}. " +
-                                            $"Exception type: '{exception.GetType()}'. " +
-                                            $"Exception message: '{exception.Message}'. " +
-                                            $"Attempting next time in {timeSpan.TotalSeconds} seconds...");
+                    logger.LogError($"'{errorType}' error occurred at attempt no. {retryAttempt}. " +
+                                    $"Exception type: '{exception.GetType()}'. " +
+                                    $"Exception message: '{exception.Message}'. " +
+                                    $"Attempting next time in {timeSpan.TotalSeconds} seconds...");
                 });
     }
 
