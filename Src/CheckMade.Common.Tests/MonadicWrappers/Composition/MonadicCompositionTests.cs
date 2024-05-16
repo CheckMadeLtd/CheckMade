@@ -2,7 +2,7 @@ using FluentAssertions;
 
 namespace CheckMade.Common.Tests.MonadicWrappers.Composition;
 
-public class MonadicWrappersTest
+public class MonadicCompositionTests
 {
     [Fact]
     public async Task NestedMatch_CanComposeVariousMonads_ToGenerateWelcomeEmail_ForValidUserData()
