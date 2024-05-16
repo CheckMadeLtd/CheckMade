@@ -194,9 +194,6 @@ public class OptionTests
             select res;
 
         result.Should().BeEquivalentTo(Option<int>.Some(10));
-        return;
-
-        static Option<int> Binder(int i) => Option<int>.Some(i + 5);
     }
     
     [Fact]
@@ -328,9 +325,6 @@ public class OptionTests
             select res;
 
         result.Should().Be(Option<int>.None());
-        return;
-
-        static Option<int> Binder(int i) => Option<int>.Some(i + 5);
     }
 
     [Fact]
