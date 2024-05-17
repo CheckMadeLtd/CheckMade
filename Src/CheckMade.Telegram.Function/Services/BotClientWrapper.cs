@@ -14,7 +14,7 @@ public interface IBotClientWrapper
 {
     string BotToken { get; }
     
-    Task<Unit> SendTextMessageAsync(
+    Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
         string text,
         CancellationToken cancellationToken = default);
@@ -30,7 +30,7 @@ internal class BotClientWrapper(
 {
     public string BotToken { get; } = botToken;
     
-    public async Task<Unit> SendTextMessageAsync(
+    public async Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
         string text,
         CancellationToken cancellationToken = default)

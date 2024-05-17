@@ -13,6 +13,8 @@ internal class DataMigrationStartup(
     {
         ConfigureDataMigrationServices();
         
+        
+        // ToDo: This contains a nested call to two subsequent Result<T> operations ==> make more concise with LINQ!
         await using (var sp = services.BuildServiceProvider())
         {
             var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();

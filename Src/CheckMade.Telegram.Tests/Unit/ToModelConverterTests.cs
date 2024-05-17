@@ -65,7 +65,7 @@ public class ToModelConverterTests
             AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
             AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
             AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();

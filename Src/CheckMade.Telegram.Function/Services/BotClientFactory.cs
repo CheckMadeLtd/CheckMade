@@ -36,6 +36,6 @@ public class BotClientFactory(
             retryPolicy,
             botTokens.NotificationsBotToken),
         
-        _ => throw new ArgumentOutOfRangeException()
+        _ => throw new ArgumentOutOfRangeException(nameof(botType))
     };
 }

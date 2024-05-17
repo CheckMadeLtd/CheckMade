@@ -9,7 +9,7 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IBotUpdateSwitch
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(Update update, BotType botType);
+    Task<Attempt<Unit>> SafelyHandleUpdateAsync(Update update, BotType botType);
 }
 
 public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
@@ -19,14 +19,14 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
                                           "No special handling is taking place for it, but that doesn't mean that a " +
                                           "Telegram-System-related update didn't work. You may assume it did.";
     
-    public async Task<Attempt<Unit>> HandleUpdateAsync(Update update, BotType botType)
+    public async Task<Attempt<Unit>> SafelyHandleUpdateAsync(Update update, BotType botType)
     {
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)
         {
             case UpdateType.Message:
             case UpdateType.EditedMessage:
-                return await messageHandler.HandleMessageAsync(update.Message!, botType);
+                return await messageHandler.SafelyHandleMessageAsync(update.Message!, botType);
 
             case UpdateType.CallbackQuery:
                 // ToDo: Implement separate handling of InlineKeyboardResponseReceived

@@ -36,7 +36,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            var updateHandlingOutcome = await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            var updateHandlingOutcome = await botUpdateSwitch.SafelyHandleUpdateAsync(update, BotType);
             
             return updateHandlingOutcome.Match(
             _ => defaultOkResponse,

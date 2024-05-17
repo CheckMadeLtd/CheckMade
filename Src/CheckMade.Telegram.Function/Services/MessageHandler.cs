@@ -11,7 +11,7 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IMessageHandler
 {
-    Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 public class MessageHandler(
@@ -25,7 +25,7 @@ public class MessageHandler(
     
     private BotType _botType;
     
-    public async Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         ChatId chatId = telegramInputMessage.Chat.Id;
         _botType = botType;
@@ -57,7 +57,8 @@ public class MessageHandler(
                 botClientFactory.CreateBotClientOrThrow(_botType))
                 .Match(
                     botClient => botClient,
-                    ex => throw new Exception("Failed to create BotClient", ex));
+                    ex => throw new InvalidOperationException(
+                        "Failed to create BotClient", ex));
 
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
@@ -90,6 +91,6 @@ public class MessageHandler(
     private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
         return await Attempt<Unit>.RunAsync(async () =>
-            await botClient.SendTextMessageAsync(chatId, outputMessage));
+            await botClient.SendTextMessageOrThrowAsync(chatId, outputMessage));
     }
 }
