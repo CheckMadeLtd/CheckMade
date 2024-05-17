@@ -51,28 +51,28 @@ public class MessageHandler(
 
             return Attempt<Unit>.Succeed(Unit.Value);
         }
+
+        var botClient = 
+            Attempt<IBotClientWrapper>.Run(() => 
+                botClientFactory.CreateBotClientOrThrow(_botType))
+                .Match(
+                    botClient => botClient,
+                    ex => throw new Exception("Failed to create BotClient", ex));
+
+        var filePathResolver = new TelegramFilePathResolver(botClient);
+        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
-            from botClient in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(_botType))
-            let filePathResolver = new TelegramFilePathResolver(botClient)
-            let toModelConverter = toModelConverterFactory.Create(filePathResolver)
             from modelInputMessage in Attempt<InputMessage>.RunAsync(() => 
                 toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage))
             from outputMessage in selector.GetRequestProcessor(_botType).SafelyEchoAsync(modelInputMessage)
-            select (outputMessage, botClient);        
+            select SendOutputAsync(outputMessage, botClient, chatId);        
         
-        var outcome = await sendOutputOutcome;
-
-        return await outcome.Match(
+        return (await sendOutputOutcome).Match(
             
-            async result =>
-            {
-                var (outputMessage, botClient) = result;
-                await SendOutputAsync(outputMessage, botClient, chatId);
-                return Attempt<Unit>.Succeed(Unit.Value);
-            },
+            _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            async ex =>
+            ex =>
             {
                 logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
                                     "BotType: {botType}; Telegram user Id: {userId}; " +
@@ -81,19 +81,15 @@ public class MessageHandler(
                     ex.Message, _botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                var botClient = outcome.GetValueOrDefault().botClient;
-                
-                if (botClient != null)
-                    await SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
-                else
-                    throw new Exception("No botClient!");
-                
+                // fire and forget
+                _ = SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
                 return Attempt<Unit>.Fail(ex);
-            });    
+            });
     }
 
-    private static async Task SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
-        await botClient.SendTextMessageAsync(chatId, outputMessage);
+        return await Attempt<Unit>.RunAsync(async () =>
+            await botClient.SendTextMessageAsync(chatId, outputMessage));
     }
 }

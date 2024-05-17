@@ -21,7 +21,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         }
         catch (Exception ex)
         {
-            throw new ToModelConversionException("Failed to convert Telegram Message to Model", ex);
+            throw new ToModelConversionException("Failed to convert Telegram Message to Model.", ex);
         }
     }
 
@@ -29,14 +29,14 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
-                         "From.Id in the input message must not be null");
+                         "User Id (From.Id in the input message) must not be null");
         
-        var rawAttachmentDetails = ConvertRawAttachmentDetails(telegramInputMessage);
+        var rawAttachmentDetails = GetAttachmentDetails(telegramInputMessage);
         
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && rawAttachmentDetails.fileId.IsNone)
         {
             throw new ArgumentNullException(nameof(telegramInputMessage), 
-                "The message must either have a text or an attachment");
+                "A valid message must either have a text or an attachment - both must not be null/empty");
         }
 
         var telegramAttachmentUrl = await rawAttachmentDetails.fileId.Match<Task<Option<string>>>(
@@ -58,7 +58,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     }
     
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private (Option<string> fileId, Option<AttachmentType> type) ConvertRawAttachmentDetails(Message telegramInputMessage)
+    private static (Option<string> fileId, Option<AttachmentType> type) GetAttachmentDetails(Message telegramInputMessage)
     {
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
@@ -86,7 +86,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                                       string.Format(errorMessage, telegramInputMessage.Type)),
                 AttachmentType.Video),
             
-            _ => throw new ArgumentOutOfRangeException(nameof(telegramInputMessage))
+            _ => throw new ArgumentOutOfRangeException(nameof(telegramInputMessage), 
+                $"Attachment type {telegramInputMessage.Type} is not yet supported!")
         };
     } 
 }
