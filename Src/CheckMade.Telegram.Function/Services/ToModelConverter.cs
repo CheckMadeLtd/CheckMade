@@ -13,81 +13,86 @@ public interface IToModelConverter
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage)
-    {
-        try
-        {
-            return await ConvertMessageAsync(telegramInputMessage);
-        }
-        catch (Exception ex)
-        {
-            throw new ToModelConversionException("Failed to convert Telegram Message to Model.", ex);
-        }
-    }
+    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage) => 
+        (await ConvertMessageAsync(telegramInputMessage)).Match(
+            modelInputMessage => modelInputMessage, 
+            error => throw new ToModelConversionException(
+                $"Failed to convert Telegram Message to Model: {error}"));
 
-    private async Task<InputMessage> ConvertMessageAsync(Message telegramInputMessage)
+    private async Task<Result<InputMessage>> ConvertMessageAsync(Message telegramInputMessage)
     {
         var userId = telegramInputMessage.From?.Id 
                      ?? throw new ArgumentNullException(nameof(telegramInputMessage),
                          "User Id (From.Id in the input message) must not be null");
-        
-        var rawAttachmentDetails = GetAttachmentDetails(telegramInputMessage);
-        
-        if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && rawAttachmentDetails.fileId.IsNone)
-        {
-            throw new ArgumentNullException(nameof(telegramInputMessage), 
-                "A valid message must either have a text or an attachment - both must not be null/empty");
-        }
 
-        var telegramAttachmentUrl = await rawAttachmentDetails.fileId.Match<Task<Option<string>>>(
-            async value => await filePathResolver.GetTelegramFilePathAsync(value),
-            () => Task.FromResult(Option<string>.None()));        
-        
-        var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
-            ? telegramInputMessage.Text
-            : telegramInputMessage.Caption;
-        
-        return new InputMessage(
-            userId,
-            telegramInputMessage.Chat.Id,
-            new MessageDetails(
-                telegramInputMessage.Date,
-                !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
-                telegramAttachmentUrl,
-                rawAttachmentDetails.type ));
+        return await GetAttachmentDetails(telegramInputMessage).Match<Task<Result<InputMessage>>>(
+            async attachmentDetails =>
+            {
+                if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
+                {
+                    throw new ArgumentNullException(nameof(telegramInputMessage),
+                        "A valid message must either have a text or an attachment - both must not be null/empty");
+                }
+
+                var telegramAttachmentUrl = await attachmentDetails.FileId.Match<Task<Option<string>>>(
+                    async value => await filePathResolver.GetTelegramFilePathAsync(value),
+                    () => Task.FromResult(Option<string>.None()));
+
+                var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
+                    ? telegramInputMessage.Text
+                    : telegramInputMessage.Caption;
+
+                return Result<InputMessage>.FromSuccess(
+                    new InputMessage(userId,
+                        telegramInputMessage.Chat.Id,
+                        new MessageDetails(
+                            telegramInputMessage.Date,
+                            !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
+                            telegramAttachmentUrl,
+                            attachmentDetails.Type)));
+            },
+            error => Task.FromResult(Result<InputMessage>.FromError(error))
+        );
     }
     
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private static (Option<string> fileId, Option<AttachmentType> type) GetAttachmentDetails(Message telegramInputMessage)
+    private static Result<AttachmentDetails> GetAttachmentDetails(Message telegramInputMessage)
     {
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
         return telegramInputMessage.Type switch
         {
-            MessageType.Text => (Option<string>.None(), Option<AttachmentType>.None()),
+            MessageType.Text => Result<AttachmentDetails>.FromSuccess(
+                new AttachmentDetails(Option<string>.None(), Option<AttachmentType>.None())),
             
-            MessageType.Audio => (telegramInputMessage.Audio?.FileId
-                                  ?? throw new InvalidOperationException(
-                                      string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Audio),
+            MessageType.Audio => Result<AttachmentDetails>.FromSuccess(
+                new AttachmentDetails(telegramInputMessage.Audio?.FileId 
+                                      ?? throw new InvalidOperationException(
+                                          string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Audio)),
             
-            MessageType.Photo => (telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId
-                                  ?? throw new InvalidOperationException(
-                                      string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Photo),
+            MessageType.Photo => Result<AttachmentDetails>.FromSuccess(
+                new AttachmentDetails(telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId
+                                       ?? throw new InvalidOperationException(
+                                           string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Photo)),
             
-            MessageType.Document => (telegramInputMessage.Document?.FileId
-                                     ?? throw new InvalidOperationException(
-                                         string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Document),
+            MessageType.Document => Result<AttachmentDetails>.FromSuccess(
+                new AttachmentDetails(telegramInputMessage.Document?.FileId
+                                       ?? throw new InvalidOperationException(
+                                           string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Document)),
             
-            MessageType.Video => (telegramInputMessage.Video?.FileId
-                                  ?? throw new InvalidOperationException(
-                                      string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Video),
+            MessageType.Video => Result<AttachmentDetails>.FromSuccess(
+                new AttachmentDetails(telegramInputMessage.Video?.FileId
+                                       ?? throw new InvalidOperationException(
+                                           string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Video)),
             
-            _ => throw new ArgumentOutOfRangeException(nameof(telegramInputMessage), 
-                $"Attachment type {telegramInputMessage.Type} is not yet supported!")
+            _ => Result<AttachmentDetails>.FromError(
+                $"Attachment type {telegramInputMessage.Type} is not yet supported!") 
         };
-    } 
+    }
+
+    private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 }

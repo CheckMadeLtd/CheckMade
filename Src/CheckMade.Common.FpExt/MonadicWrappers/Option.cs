@@ -25,8 +25,8 @@ public record Option<T>
     // Implicit conversion from T to Option<T>
     public static implicit operator Option<T>(T value) => Some(value);
     
-    public static Option<T> Some(T value) => new Option<T>(value);
-    public static Option<T> None() => new Option<T>();
+    public static Option<T> Some(T value) => new(value);
+    public static Option<T> None() => new();
 
     public TResult Match<TResult>(Func<T, TResult> onSome, Func<TResult> onNone)
     {

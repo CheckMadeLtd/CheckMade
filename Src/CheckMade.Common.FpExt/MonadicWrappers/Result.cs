@@ -7,7 +7,7 @@ public record Result<T>
     internal T? Value { get; }
     internal string? Error { get; }
 
-    internal bool Success => Error == null;
+    public bool Success => Error == null;
 
     private Result(T value)
     {

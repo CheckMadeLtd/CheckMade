@@ -75,11 +75,11 @@ public class MessageHandler(
 
             ex =>
             {
-                logger.LogError(ex, "{errMsg} Next, some details for debugging. " +
+                logger.LogError(ex, "Next, some details for debugging the upcoming error log entry. " +
                                     "BotType: {botType}; Telegram user Id: {userId}; " +
                                     "DateTime of received Message: {telegramDate}; " +
                                     "with text: {text}",
-                    ex.Message, _botType, telegramInputMessage.From!.Id,
+                    _botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget
