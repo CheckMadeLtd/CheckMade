@@ -20,6 +20,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
         /* Any other response sends the Telegram Server into an endless loop reattempting the failed Update and
          paralysing the Bot! This also makes sense: just because my code can't process a certain type of update
          doesn't mean that there is something wrong with the way Telegram Server send me the request. */
+        var defaultOkResponse = request.CreateResponse(HttpStatusCode.OK);
         
         try
         {
@@ -32,24 +33,24 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             if (update is null)
             {
                 logger.LogError("Unable to deserialize Update object");
-                return request.CreateResponse(HttpStatusCode.OK);
+                return defaultOkResponse;
             }
 
             var updateHandlingOutcome = await botUpdateSwitch.HandleUpdateAsync(update, BotType);
             
             return updateHandlingOutcome.Match(
-            _ => request.CreateResponse(HttpStatusCode.OK),
+            _ => defaultOkResponse,
             ex =>
             {
                 logger.LogWarning(ex, $"Can't process this kind of update. Message: {ex.Message}");
-                return request.CreateResponse(HttpStatusCode.OK);
+                return defaultOkResponse;
             });
 
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An unhandled exception occurred while processing the request.");
-            return request.CreateResponse(HttpStatusCode.OK);
+            return defaultOkResponse;
         }
     }
 }
