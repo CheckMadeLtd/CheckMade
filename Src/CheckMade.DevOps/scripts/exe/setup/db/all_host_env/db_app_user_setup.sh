@@ -51,7 +51,7 @@ if [ "$db_hosting_env" == "Production" ]; then
   
   sql_command="$sql_grant_connect_command"
   echo "Don't forget to update the connection string (including password) for the production db also in the global \
-  environment (~/.zprofile) - they are used by Integration tests and DevOps!"
+environment (~/.zprofile) and in GitHub Actions Repo Secrets - they are used by Integration tests and DevOps!"
 else
   # For every other environment, using 'psql' with a proper 'super_user' works
   sql_command="CREATE ROLE $PG_APP_USER WITH LOGIN PASSWORD '${PG_APP_USER_PSW}'; \

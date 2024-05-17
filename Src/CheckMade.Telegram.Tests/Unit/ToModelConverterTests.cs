@@ -1,3 +1,5 @@
+using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -22,23 +24,24 @@ public class ToModelConverterTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var telegramInputMessage = utils.GetValidTextMessage(textInput);
+        var telegramInputMessage = utils.GetValidTelegramTextMessage(textInput);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
 
         var expectedInputMessage = new InputMessage(
-            telegramInputMessage.From!.Id, 
-            new MessageDetails
-            (
-                TelegramDate: telegramInputMessage.Date,
-                Text: telegramInputMessage.Text,
-                AttachmentType: AttachmentType.NotApplicable,
-                AttachmentExternalUrl: null
-            ));
+            telegramInputMessage.From!.Id,
+            telegramInputMessage.Chat.Id,
+            new MessageDetails(
+                telegramInputMessage.Date,
+                !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
+                    ? telegramInputMessage.Text 
+                    : Option<string>.None(),
+                Option<string>.None(),
+                Option<AttachmentType>.None()));
 
         // Act
-        var actualInputMessage = await converter.ConvertMessageAsync(telegramInputMessage);
+        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramInputMessage);
 
         // Assert
         actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
@@ -49,7 +52,7 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
     [InlineData(AttachmentType.Video)]
-    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage(AttachmentType type)
+    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage(AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -57,13 +60,13 @@ public class ToModelConverterTests
         var utils = _services.GetRequiredService<ITestUtils>();
         
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        var telegramAttachmentMessage = type switch
+        var telegramAttachmentMessage = attachmentType switch
         {
-            AttachmentType.Audio => utils.GetValidAudioMessage(),
-            AttachmentType.Document => utils.GetValidDocumentMessage(),
-            AttachmentType.Photo => utils.GetValidPhotoMessage(),
-            AttachmentType.Video => utils.GetValidVideoMessage(),
-            _ => throw new ArgumentOutOfRangeException()
+            AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
+            AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
+            _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -76,54 +79,80 @@ public class ToModelConverterTests
 
         var expectedInputMessage = new InputMessage(
             telegramAttachmentMessage.From!.Id,
+            telegramAttachmentMessage.Chat.Id,
             new MessageDetails(
-                TelegramDate: telegramAttachmentMessage.Date,
-                Text: telegramAttachmentMessage.Caption,
-                AttachmentType: type,
-                AttachmentExternalUrl: expectedAttachmentExternalUrl));
+                telegramAttachmentMessage.Date,
+                !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
+                    ? telegramAttachmentMessage.Caption
+                    : Option<string>.None(),
+                expectedAttachmentExternalUrl,
+                attachmentType));
         
         // Act
-        var actualInputMessage = await converter.ConvertMessageAsync(telegramAttachmentMessage);
+        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramAttachmentMessage);
         
         // Assert
         actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenUserIsNull()
+    public async Task ConvertMessage_ThrowsException_WhenUserIsNull()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         // Arrange
         var telegramMessage = new Message { From = null, Text = "not empty" };
+        
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(telegramMessage);
+            await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
-        convertMessage.Should().ThrowAsync<ArgumentNullException>();
+        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndAttachmentFileIdBothEmpty()
+    public async Task ConvertMessage_ThrowsException_WhenTextAndAttachmentFileIdBothEmpty()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         // Arrange
         var telegramMessage = new Message { From = new User { Id = 123L } };
+        
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageAsync(telegramMessage);
+            await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
-        convertMessage.Should().ThrowAsync<ArgumentNullException>();
+        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
+    }
+
+    [Fact]
+    public async Task ConvertMessage_ThrowsException_WhenUnsupportedAttachmentTypeLikeVoiceIsSent()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var voiceMessage = utils.GetValidTelegramVoiceMessage();
+
+        var mockBotClient = new Mock<IBotClientWrapper>();
+        var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+
+        // Act
+        Func<Task<InputMessage>> convertMessage = async () =>
+            await converter.ConvertMessageOrThrowAsync(voiceMessage);
+        
+        // Assert
+        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
     }
 }

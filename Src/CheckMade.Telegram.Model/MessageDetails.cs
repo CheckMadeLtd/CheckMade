@@ -1,7 +1,10 @@
+
+using CheckMade.Common.FpExt.MonadicWrappers;
+
 namespace CheckMade.Telegram.Model;
 
 public record MessageDetails(
     DateTime TelegramDate,
-    string? Text,
-    AttachmentType AttachmentType = AttachmentType.NotApplicable,
-    string? AttachmentExternalUrl = null);
+    Option<string> Text,
+    Option<string> AttachmentExternalUrl,
+    Option<AttachmentType> AttachmentType);

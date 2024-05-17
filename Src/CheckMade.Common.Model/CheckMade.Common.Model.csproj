@@ -14,4 +14,8 @@
         <Optimize>false</Optimize>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.FpExt\CheckMade.Common.FpExt.csproj" />
+    </ItemGroup>
+
 </Project>

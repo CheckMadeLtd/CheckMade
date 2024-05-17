@@ -1,4 +1,5 @@
-﻿using CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
@@ -7,16 +8,15 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<string> EchoAsync(InputMessage message)
+    public async Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage)
     {
-        await repo.AddAsync(message);
-
-        var attachmentType = message.Details.AttachmentType; 
-        
-        return attachmentType switch
+        return await Attempt<string>.RunAsync(async () => 
         {
-            AttachmentType.NotApplicable => $"Echo from bot Submissions: {message.Details.Text}",
-            _ => $"Echo from bot Submissions: {attachmentType}"
-        };
+            await repo.AddOrThrowAsync(inputMessage);
+
+            return inputMessage.Details.AttachmentType.Match(
+                type => $"Echo from bot Submissions: {type}",
+                () => $"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}");
+        });
     }
 }

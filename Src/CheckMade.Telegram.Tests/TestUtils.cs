@@ -1,3 +1,4 @@
+using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Interfaces.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
@@ -7,11 +8,12 @@ namespace CheckMade.Telegram.Tests;
 internal interface ITestUtils
 {
     InputMessage GetValidModelInputTextMessage();
-    Message GetValidTextMessage(string inputText);
-    Message GetValidAudioMessage();
-    Message GetValidDocumentMessage();
-    Message GetValidPhotoMessage();
-    Message GetValidVideoMessage();
+    Message GetValidTelegramTextMessage(string inputText);
+    Message GetValidTelegramAudioMessage();
+    Message GetValidTelegramDocumentMessage();
+    Message GetValidTelegramPhotoMessage();
+    Message GetValidTelegramVideoMessage();
+    Message GetValidTelegramVoiceMessage();
 }
 
 internal class TestUtils(IRandomizer randomizer) : ITestUtils
@@ -20,12 +22,14 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
     
     public InputMessage GetValidModelInputTextMessage() =>
         new(randomizer.GenerateRandomLong(),
+            randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
-                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}"
-                ));
+                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}",
+                Option<string>.None(),
+                Option<AttachmentType>.None()));
 
-    public Message GetValidTextMessage(string inputText) => 
+    public Message GetValidTelegramTextMessage(string inputText) => 
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
@@ -34,7 +38,7 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Text = inputText
         };
 
-    public Message GetValidAudioMessage() => 
+    public Message GetValidTelegramAudioMessage() => 
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
@@ -44,7 +48,7 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Audio = new Audio { FileId = "fakeAudioFileId" }
         };
     
-    public Message GetValidDocumentMessage() => 
+    public Message GetValidTelegramDocumentMessage() => 
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
@@ -54,7 +58,7 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
         };
 
-    public Message GetValidPhotoMessage() => 
+    public Message GetValidTelegramPhotoMessage() => 
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
@@ -64,7 +68,7 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
         };
     
-    public Message GetValidVideoMessage() =>
+    public Message GetValidTelegramVideoMessage() =>
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
@@ -73,4 +77,15 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Caption = "fakeVideoCaption",
             Video = new Video { FileId = "fakeVideoFileId" }
         };
+
+    public Message GetValidTelegramVoiceMessage() =>
+        new()
+        {
+            From = new User { Id = randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            Caption = "fakeVoiceCaption",
+            Voice = new Voice { FileId = "fakeVoiceFileId" }
+        };
+
 }

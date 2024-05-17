@@ -15,6 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Interfaces\CheckMade.Telegram.Interfaces.csproj" />
     </ItemGroup>
 

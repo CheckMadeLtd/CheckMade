@@ -16,32 +16,41 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
     {
         logger.LogInformation("C# HTTP trigger function processed a request");
 
+        // IMPORTANT: Do NOT Use anything but HttpStatusCode.Ok (200) !!
+        /* Any other response sends the Telegram Server into an endless loop reattempting the failed Update and
+         paralysing the Bot! This also makes sense: just because my code can't process a certain type of update
+         doesn't mean that there is something wrong with the way Telegram Server send me the request. */
+        var defaultOkResponse = request.CreateResponse(HttpStatusCode.OK);
+        
         try
         {
-            var body = await request.ReadAsStringAsync() ?? throw new InvalidOperationException(
-                "The incoming HttpRequestData couldn't be serialized");
+            var body = await request.ReadAsStringAsync() 
+                       ?? throw new InvalidOperationException(
+                           "The incoming HttpRequestData couldn't be serialized");
 
             var update = JsonConvert.DeserializeObject<Update>(body);
 
             if (update is null)
             {
                 logger.LogError("Unable to deserialize Update object");
-                return request.CreateResponse(HttpStatusCode.BadRequest);
+                return defaultOkResponse;
             }
 
-            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
-        }
-        catch (JsonException jsonEx)
-        {
-            logger.LogError(jsonEx, "Failed to deserialize Update.");
-            return request.CreateResponse(HttpStatusCode.BadRequest);
+            var updateHandlingOutcome = await botUpdateSwitch.SafelyHandleUpdateAsync(update, BotType);
+            
+            return updateHandlingOutcome.Match(
+            _ => defaultOkResponse,
+            ex =>
+            {
+                logger.LogError(ex, $"Can't process this kind of update. Message: {ex.Message}");
+                return defaultOkResponse;
+            });
+
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An unhandled exception occurred while processing the request.");
-            return request.CreateResponse(HttpStatusCode.InternalServerError);
+            return defaultOkResponse;
         }
-
-        return request.CreateResponse(HttpStatusCode.OK);
     }
 }

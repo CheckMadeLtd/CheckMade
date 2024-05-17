@@ -9,7 +9,7 @@ namespace CheckMade.Common.Persistence;
 
 public interface IDbExecutionHelper
 {
-    Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation);
+    Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation);
 }
 
 internal class DbExecutionHelper(
@@ -18,7 +18,7 @@ internal class DbExecutionHelper(
         IDbCommandRetryPolicy dbCommandRetryPolicy) 
     : IDbExecutionHelper
 {
-    public async Task ExecuteAsync(Func<NpgsqlCommand, Task> executeDbOperation)
+    public async Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation)
     {
         using (var db = dbProvider.CreateConnection())
         {
@@ -52,16 +52,16 @@ internal class DbExecutionHelper(
                 catch (JsonSerializationException jsonEx)
                 {
                     throw new DataAccessException("JSON (de)serialization exception has occurred during " +
-                                                  "db command execution", jsonEx);
+                                                  "db command execution.", jsonEx);
                 }
                 catch (DbException dbEx)
                 {
                     throw new DataAccessException("A PostgreSQL-specific exception has occured during db " +
-                                                  "command execution", dbEx);
+                                                  "command execution.", dbEx);
                 }
                 catch (Exception ex)
                 {
-                    throw new DataAccessException("An exception has occurred during db command execution", ex);
+                    throw new DataAccessException("An exception has occurred during db command execution.", ex);
                 }
             }
         }

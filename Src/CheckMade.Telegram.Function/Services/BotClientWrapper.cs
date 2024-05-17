@@ -1,3 +1,6 @@
+using CheckMade.Common.FpExt;
+using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.RetryPolicies;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using File = Telegram.Bot.Types.File;
@@ -11,7 +14,7 @@ public interface IBotClientWrapper
 {
     string BotToken { get; }
     
-    Task<Message> SendTextMessageAsync(
+    Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
         string text,
         CancellationToken cancellationToken = default);
@@ -19,18 +22,38 @@ public interface IBotClientWrapper
     Task<File> GetFileAsync(string fileId);
 }
 
-internal class BotClientWrapper(ITelegramBotClient botClient, string botToken) : IBotClientWrapper
+internal class BotClientWrapper(
+        ITelegramBotClient botClient,
+        INetworkRetryPolicy retryPolicy,
+        string botToken) 
+    : IBotClientWrapper
 {
     public string BotToken { get; } = botToken;
-
-    public Task<Message> SendTextMessageAsync(
-        ChatId chatId, 
+    
+    public async Task<Unit> SendTextMessageOrThrowAsync(
+        ChatId chatId,
         string text,
-        CancellationToken cancellationToken = default) => 
-            botClient.SendTextMessageAsync(
-                chatId,
-                text,
-                cancellationToken: cancellationToken);
-
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
+            catch earlier network issues like from our Azure Function to the Telegram Servers! */
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: text,
+                    cancellationToken: cancellationToken);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new NetworkAccessException("Failed to reach Telegram servers after several attempts.", ex);
+        }
+        
+        return Unit.Value;
+    } 
+    
     public Task<File> GetFileAsync(string fileId) => botClient.GetFileAsync(fileId);
 }

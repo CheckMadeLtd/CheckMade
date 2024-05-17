@@ -1,3 +1,4 @@
+using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
@@ -26,16 +27,16 @@ public class MessageHandlerTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTextMessage("simple valid text");
+        var textMessage = utils.GetValidTelegramTextMessage("simple valid text");
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
 
         // Act
-        await handler.HandleMessageAsync(textMessage, botType);
+        await handler.SafelyHandleMessageAsync(textMessage, botType);
         
         // Assert
-        mockBotClient.Verify(x => x.SendTextMessageAsync(
+        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 textMessage.Chat.Id,
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
@@ -48,30 +49,30 @@ public class MessageHandlerTests
     [InlineData(AttachmentType.Document)]
     [InlineData(AttachmentType.Video)]
     public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
-        AttachmentType type)
+        AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var attachmentMessage = type switch
+        var attachmentMessage = attachmentType switch
         {
-            AttachmentType.Audio => utils.GetValidAudioMessage(),
-            AttachmentType.Document => utils.GetValidDocumentMessage(),
-            AttachmentType.Photo => utils.GetValidPhotoMessage(),
-            AttachmentType.Video => utils.GetValidVideoMessage(),
-            _ => throw new ArgumentOutOfRangeException()
+            AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
+            AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
+            AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
+            _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo from bot Submissions: {type}";
+        var expectedOutputMessage = $"Echo from bot Submissions: {attachmentType}";
         
         // Act
-        await handler.HandleMessageAsync(attachmentMessage, BotType.Submissions);
+        await handler.SafelyHandleMessageAsync(attachmentMessage, BotType.Submissions);
         
         // Assert
-        mockBotClient.Verify(x => x.SendTextMessageAsync(
+        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 attachmentMessage.Chat.Id,
                 expectedOutputMessage, 
                 It.IsAny<CancellationToken>()), 
@@ -107,7 +108,7 @@ public class MessageHandlerTests
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(unknownMessage, BotType.Submissions);
+        await handler.SafelyHandleMessageAsync(unknownMessage, BotType.Submissions);
         
         // Assert
         mockLogger.Verify();
@@ -121,9 +122,12 @@ public class MessageHandlerTests
         
         // Arrange
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
+        const string mockErrorMessage = "Mock DataAccess Error";
+        
         mockSubmissionsRequestProcessor
-            .Setup<Task<string>>(rp => rp.EchoAsync(It.IsAny<InputMessage>()))
-            .Throws(new DataAccessException("Mock DataAccess Error", new Exception()));
+            .Setup<Task<Attempt<string>>>(rp => 
+                rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
+            .Returns(Task.FromResult(Attempt<string>.Fail(new DataAccessException(mockErrorMessage, new Exception()))));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
         mockRequestProcessorSelector
@@ -134,24 +138,24 @@ public class MessageHandlerTests
         
         _services = serviceCollection.BuildServiceProvider();
 
-        const string expectedErrorMessage = $"{MessageHandler.DataAccessExceptionErrorMessageStub} " +
+        const string expectedErrorMessage = $"{mockErrorMessage} " +
                                             $"{MessageHandler.CallToActionMessageAfterErrorReport}";
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
         mockBotClient
-            .Setup(x => x.SendTextMessageAsync(
+            .Setup(x => x.SendTextMessageOrThrowAsync(
                 It.IsAny<ChatId>(), 
                 expectedErrorMessage, 
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
         var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTextMessage("some valid text");
+        var textMessage = utils.GetValidTelegramTextMessage("random valid text");
         var handler = _services.GetRequiredService<IMessageHandler>();
         
         // Act 
-        await handler.HandleMessageAsync(textMessage, BotType.Submissions);
+        await handler.SafelyHandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
         mockBotClient.Verify();

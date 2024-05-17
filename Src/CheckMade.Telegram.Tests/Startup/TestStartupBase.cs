@@ -16,7 +16,7 @@ public abstract class TestStartupBase
     {
         var projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../"));
         
-        var builder = new ConfigurationBuilder()
+        var configBuilder = new ConfigurationBuilder()
             .SetBasePath(projectRoot)
             // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
@@ -24,7 +24,7 @@ public abstract class TestStartupBase
             .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") 
             // This also includes Env Vars set in GitHub Actions Workflow
             .AddEnvironmentVariables();
-        Config = builder.Build();
+        Config = configBuilder.Build();
 
         // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
         const string keyToHostEnv = "HOSTING_ENVIRONMENT";
@@ -40,11 +40,11 @@ public abstract class TestStartupBase
 
     private void RegisterBaseServices()
     {
-        Services.AddLogging(config =>
+        Services.AddLogging(loggingConfig =>
         {
-            config.ClearProviders();
-            config.AddConsole(); 
-            config.AddDebug(); 
+            loggingConfig.ClearProviders();
+            loggingConfig.AddConsole(); 
+            loggingConfig.AddDebug(); 
         });
         
         Services.AddSingleton<ITestUtils, TestUtils>();

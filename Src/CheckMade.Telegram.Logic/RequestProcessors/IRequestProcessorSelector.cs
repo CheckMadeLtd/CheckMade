@@ -18,7 +18,7 @@ public class RequestProcessorSelector(
             BotType.Submissions => submissionsProcessor,
             BotType.Communications => communicationsProcessor,
             BotType.Notifications => notificationsProcessor,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
     }
 }

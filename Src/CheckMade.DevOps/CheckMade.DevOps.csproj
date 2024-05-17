@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Debug_Telegram</Configurations>
+        <Configurations>No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -13,6 +13,21 @@
     
     <ItemGroup>
       <Folder Include="scripts\" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

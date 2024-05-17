@@ -27,18 +27,18 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var expectedRetrieval = new List<InputMessage>
         {
-            new (fakeInputMessage.UserId, fakeInputMessage.Details)
+            new (fakeInputMessage.UserId, fakeInputMessage.ChatId, fakeInputMessage.Details)
         };
         
         // Act
-        await messageRepo.AddAsync(fakeInputMessage);
+        await messageRepo.AddOrThrowAsync(fakeInputMessage);
     
         var retrievedMessages = 
-            (await messageRepo.GetAllAsync(fakeInputMessage.UserId))
+            (await messageRepo.GetAllOrThrowAsync(fakeInputMessage.UserId))
             .OrderByDescending(x => x.Details.TelegramDate)
             .ToList().AsReadOnly();
 
-        await messageRepo.HardDeleteAsync(fakeInputMessage.UserId);
+        await messageRepo.HardDeleteOrThrowAsync(fakeInputMessage.UserId);
         
         // Assert
         expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
@@ -55,7 +55,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var userId = randomizer.GenerateRandomLong();
     
         // Act
-        var retrievedMessages = await messageRepo.GetAllAsync(userId);
+        var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
     
         // Assert
         retrievedMessages.Should().BeEmpty();
@@ -64,6 +64,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     [Theory(Skip = "Waiting to migrate the old DB data")]
+    // [Theory]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
@@ -84,7 +85,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         // Act
-        Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => await messageRepo.GetAllAsync(devDbUserId);
+        Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => await messageRepo.GetAllOrThrowAsync(devDbUserId);
         
         // Assert 
         await getAllAction.Should().NotThrowAsync<DataAccessException>();
