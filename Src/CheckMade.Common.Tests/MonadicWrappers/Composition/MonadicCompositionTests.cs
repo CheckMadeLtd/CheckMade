@@ -107,28 +107,27 @@ public class MonadicCompositionTests
 
         var userAttempt = UserService.CreateUser(username, email, password);
 
-        var act = async () =>
+        var errorMessage = string.Empty;
+        
+        if (userAttempt.IsSuccess)
         {
-            if (userAttempt.IsSuccess)
+            var userValidation = UserService.ValidateUser(userAttempt.Value!);
+            if (userValidation.IsValid)
             {
-                var userValidation = UserService.ValidateUser(userAttempt.Value!);
-                if (userValidation.IsValid)
-                {
-                    var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
-                    registerUserResult.Success.Should().BeFalse();
-                }
-                else
-                {
-                    throw new Exception(userValidation.Errors[0]);
-                }
+                var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
+                registerUserResult.Success.Should().BeFalse();
             }
             else
             {
-                throw new Exception("User creation failed");
+                errorMessage = userValidation.Errors[0];
             }
-        };
+        }
+        else
+        {
+            errorMessage = "User creation failed";
+        }
 
-        await act.Should().ThrowAsync<Exception>().WithMessage("User creation failed");
+        errorMessage.Should().Be("User creation failed");
     }
     
     [Fact]
@@ -155,7 +154,7 @@ public class MonadicCompositionTests
         }
         else
         {
-            throw new Exception("User creation failed");
+            throw new Exception("User creation failed - but this test shouldn't visit this line ever");
         }
     }
     
@@ -184,7 +183,7 @@ public class MonadicCompositionTests
         }
         else
         {
-            throw new Exception("User creation failed");
+            throw new Exception("User creation failed - but this test shouldn't visit this line ever");
         }
     }
 }
