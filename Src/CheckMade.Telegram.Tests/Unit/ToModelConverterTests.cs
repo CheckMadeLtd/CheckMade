@@ -1,4 +1,5 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -95,7 +96,7 @@ public class ToModelConverterTests
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenUserIsNull()
+    public async Task ConvertMessage_ThrowsArgumentNullException_WhenUserIsNull()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
     
@@ -110,11 +111,11 @@ public class ToModelConverterTests
             await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
-        convertMessage.Should().ThrowAsync<ArgumentNullException>();
+        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
     }
     
     [Fact]
-    public void ConvertMessage_ThrowsArgumentNullException_WhenTextAndAttachmentFileIdBothEmpty()
+    public async Task ConvertMessage_ThrowsArgumentNullException_WhenTextAndAttachmentFileIdBothEmpty()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
@@ -129,6 +130,6 @@ public class ToModelConverterTests
             await converter.ConvertMessageOrThrowAsync(telegramMessage);
 
         // Assert
-        convertMessage.Should().ThrowAsync<ArgumentNullException>();
+        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
     }
 }

@@ -21,16 +21,17 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private async Task<Result<InputMessage>> ConvertMessageAsync(Message telegramInputMessage)
     {
-        var userId = telegramInputMessage.From?.Id 
-                     ?? throw new ArgumentNullException(nameof(telegramInputMessage),
-                         "User Id (From.Id in the input message) must not be null");
+        var userId = telegramInputMessage.From?.Id; 
+                     
+        if (userId == null)
+            return Result<InputMessage>.FromError("User Id (From.Id in the input message) must not be null");
 
         return await GetAttachmentDetails(telegramInputMessage).Match<Task<Result<InputMessage>>>(
             async attachmentDetails =>
             {
                 if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
                 {
-                    throw new ArgumentNullException(nameof(telegramInputMessage),
+                    return Result<InputMessage>.FromError(
                         "A valid message must either have a text or an attachment - both must not be null/empty");
                 }
 
@@ -43,7 +44,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     : telegramInputMessage.Caption;
 
                 return Result<InputMessage>.FromSuccess(
-                    new InputMessage(userId,
+                    new InputMessage(userId.Value,
                         telegramInputMessage.Chat.Id,
                         new MessageDetails(
                             telegramInputMessage.Date,
@@ -58,6 +59,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
     private static Result<AttachmentDetails> GetAttachmentDetails(Message telegramInputMessage)
     {
+        // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
         return telegramInputMessage.Type switch
