@@ -13,6 +13,7 @@ internal interface ITestUtils
     Message GetValidTelegramDocumentMessage();
     Message GetValidTelegramPhotoMessage();
     Message GetValidTelegramVideoMessage();
+    Message GetValidTelegramVoiceMessage();
 }
 
 internal class TestUtils(IRandomizer randomizer) : ITestUtils
@@ -76,4 +77,15 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
             Caption = "fakeVideoCaption",
             Video = new Video { FileId = "fakeVideoFileId" }
         };
+
+    public Message GetValidTelegramVoiceMessage() =>
+        new()
+        {
+            From = new User { Id = randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            Caption = "fakeVoiceCaption",
+            Voice = new Voice { FileId = "fakeVoiceFileId" }
+        };
+
 }
