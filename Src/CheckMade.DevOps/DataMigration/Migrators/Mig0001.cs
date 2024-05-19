@@ -1,5 +1,7 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.DevOps.DataMigration.Migrators;
 
@@ -12,14 +14,26 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    public async Task<Result<int>> MigrateAsync(string env)
+    public async Task<Attempt<int>> MigrateAsync(string env)
     {
-        var allMessages = await messageRepo.GetAllOrThrowAsync();
-        
-        // Do the processing / mapping etc. and count how many records were updated.
+        return ((Attempt<int>) await 
+            from allMessages in Attempt<IEnumerable<InputMessage>>
+                .RunAsync(messageRepo.GetAllOrThrowAsync)
+            from migratedMessages in SafelyMigrateMessagesAsync(allMessages)
+            select SafelyCountUpdatedRecordsAsync(migratedMessages))
+            .Match(
+                Attempt<int>.Succeed, 
+                ex => Attempt<int>.Fail(new DataAccessException(
+                    $"Data migration failed with: {ex.Message}.", ex)));
+    }
 
-        var numberOfRecordsUpdated = 3;
-        
-        return Result<int>.FromSuccess(numberOfRecordsUpdated);
+    private Attempt<IEnumerable<InputMessage>> SafelyMigrateMessagesAsync(IEnumerable<InputMessage> allMessages)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Attempt<int> SafelyCountUpdatedRecordsAsync(IEnumerable<InputMessage> migratedMessages)
+    {
+        return Attempt<int>.Succeed(1); // fake return because as of SqlMig004 there is no last_migration field yet
     }
 }

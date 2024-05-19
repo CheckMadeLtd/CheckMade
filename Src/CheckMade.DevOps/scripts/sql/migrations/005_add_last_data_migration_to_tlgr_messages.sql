@@ -1,0 +1,1 @@
+ALTER TABLE tlgr_messages ADD COLUMN last_data_migration INT;

@@ -4,3 +4,4 @@ SqlMig_Index;DevDb;PrdDb;Depends_On_DataMig;Required_by_Vers;Note
 can't make chat_id NOT NULL"
 002;1;1;;;
 003;1;1;;;
+005;0;0;;0.8.1;

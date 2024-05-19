@@ -4,5 +4,5 @@ namespace CheckMade.DevOps.DataMigration;
 
 internal interface IDataMigrator
 {
-    Task<Result<int>> MigrateAsync(string env);
+    Task<Attempt<int>> MigrateAsync(string env);
 }

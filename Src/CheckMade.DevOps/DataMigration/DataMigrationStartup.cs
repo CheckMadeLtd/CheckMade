@@ -13,24 +13,17 @@ internal class DataMigrationStartup(
     {
         ConfigureDataMigrationServices();
         
-        
-        // ToDo: This contains a nested call to two subsequent Result<T> operations ==> make more concise with LINQ!
         await using (var sp = services.BuildServiceProvider())
         {
             var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
 
             await migratorFactory.GetMigrator(migIndex).Match<Task>(
-                
                 async migrator =>
                 {
-                    var migrationOutcome = await migrator.MigrateAsync(targetEnv);
-                    
-                    await migrationOutcome.Match<Task>(
-                        
+                    await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                         recordsUpdated => Console.Out.WriteLineAsync(
                             $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                        
-                        errorMessage => Console.Error.WriteLineAsync(errorMessage)
+                        ex => Console.Error.WriteLineAsync(ex.Message)
                     );
                 },
                 errorMessage => Console.Error.WriteLineAsync(errorMessage)
