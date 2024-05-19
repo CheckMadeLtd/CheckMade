@@ -22,26 +22,33 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var fakeInputMessage = utils.GetValidModelInputTextMessage();
-        var messageRepo = _services.GetRequiredService<IMessageRepository>();
-        
-        var expectedRetrieval = new List<InputMessage>
+        var modelInputMessages = new[]
         {
-            new (fakeInputMessage.UserId, fakeInputMessage.ChatId, fakeInputMessage.Details)
+            utils.GetValidModelInputTextMessageNoAttachment(),
+            utils.GetValidModelInputTextMessageWithAttachment()
         };
-        
-        // Act
-        await messageRepo.AddOrThrowAsync(fakeInputMessage);
-    
-        var retrievedMessages = 
-            (await messageRepo.GetAllOrThrowAsync(fakeInputMessage.UserId))
-            .OrderByDescending(x => x.Details.TelegramDate)
-            .ToList().AsReadOnly();
+        var messageRepo = _services.GetRequiredService<IMessageRepository>();
 
-        await messageRepo.HardDeleteOrThrowAsync(fakeInputMessage.UserId);
+        foreach (var message in modelInputMessages)
+        {
+            var expectedRetrieval = new List<InputMessage>
+            {
+                new (message.UserId, message.ChatId, message.Details)
+            };
         
-        // Assert
-        expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
+            // Act
+            await messageRepo.AddOrThrowAsync(message);
+    
+            var retrievedMessages = 
+                (await messageRepo.GetAllOrThrowAsync(message.UserId))
+                .OrderByDescending(x => x.Details.TelegramDate)
+                .ToList().AsReadOnly();
+
+            await messageRepo.HardDeleteOrThrowAsync(message.UserId);
+        
+            // Assert
+            expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
+        }
     }
 
     [Fact]
@@ -85,7 +92,8 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         // Act
-        Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => await messageRepo.GetAllOrThrowAsync(devDbUserId);
+        Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => 
+            await messageRepo.GetAllOrThrowAsync(devDbUserId);
         
         // Assert 
         await getAllAction.Should().NotThrowAsync<DataAccessException>();
