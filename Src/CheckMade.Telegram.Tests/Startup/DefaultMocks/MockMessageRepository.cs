@@ -21,8 +21,8 @@ internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) 
         return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }
 
-    public async Task HardDeleteOrThrowAsync(long userId)
+    public async Task HardDeleteAllOrThrowAsync(long userId)
     {
-        await mockMessageRepo.Object.HardDeleteOrThrowAsync(userId);
+        await mockMessageRepo.Object.HardDeleteAllOrThrowAsync(userId);
     }
 }

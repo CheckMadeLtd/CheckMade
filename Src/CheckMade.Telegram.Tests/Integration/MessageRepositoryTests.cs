@@ -44,7 +44,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
                 .OrderByDescending(x => x.Details.TelegramDate)
                 .ToList().AsReadOnly();
 
-            await messageRepo.HardDeleteOrThrowAsync(message.UserId);
+            await messageRepo.HardDeleteAllOrThrowAsync(message.UserId);
         
             // Assert
             expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);

@@ -78,7 +78,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return message;
     }
 
-    public async Task HardDeleteOrThrowAsync(long userId)
+    public async Task HardDeleteAllOrThrowAsync(long userId)
     {
         await dbHelper.ExecuteOrThrowAsync(async command =>
         {
