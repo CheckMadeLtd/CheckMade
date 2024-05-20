@@ -14,7 +14,7 @@ internal abstract class DataMigratorBase(MessagesMigrationRepository migRepo)
                 from historicPairs in Attempt<IEnumerable<MessageOldFormatDetailsPair>>
                     .RunAsync(migRepo.GetMessageOldFormatDetailsPairsOrThrowAsync)
                 from updateDetails in SafelyGenerateMigrationUpdatesAsync(historicPairs)
-                from migratedMessages in SafelyMigrateHistoricMessages(updateDetails)
+                from unit in SafelyMigrateHistoricMessages(updateDetails)
                 select updateDetails.Count())
             ).Match(
                 Attempt<int>.Succeed, 

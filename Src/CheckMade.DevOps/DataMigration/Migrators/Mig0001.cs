@@ -41,8 +41,7 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                     updateDetailsForCurrentPair.NewValueByColumn.Add("chat_id", 1);
                 }
 
-                // Interpret / convert the details in the old format...
-                
+                // Interpret the details from the old format JObject so they can be used for the new format...
 
                 var attachmentUrlRaw = pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
                                        ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl");
@@ -56,6 +55,7 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                     : Option<AttachmentType>.None();
                 
                 // Now use the interpreted values to create a new, current-format MessageDetails
+                
                 updateDetailsForCurrentPair.NewValueByColumn.Add(
                     "details",
                     JsonHelper.SerializeToJson(new MessageDetails(
