@@ -7,7 +7,9 @@ namespace CheckMade.Telegram.Tests;
 
 internal interface ITestUtils
 {
-    InputMessage GetValidModelInputTextMessage();
+    InputMessage GetValidModelInputTextMessageNoAttachment();
+    InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
+    InputMessage GetValidModelInputTextMessageWithAttachment();
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramAudioMessage();
     Message GetValidTelegramDocumentMessage();
@@ -20,14 +22,26 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
 {
     internal const long TestUserDanielGorinTelegramId = 215737196L;
     
-    public InputMessage GetValidModelInputTextMessage() =>
+    public InputMessage GetValidModelInputTextMessageNoAttachment() =>
+        GetValidModelInputTextMessageNoAttachment(randomizer.GenerateRandomLong());
+
+    public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
+        new(userId,
+            randomizer.GenerateRandomLong(),
+            new MessageDetails(
+                DateTime.Now,
+                $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
+                Option<string>.None(),
+                Option<AttachmentType>.None()));
+    
+    public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(randomizer.GenerateRandomLong(),
             randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
-                $"Hello World, Valid Test: {randomizer.GenerateRandomLong()}",
-                Option<string>.None(),
-                Option<AttachmentType>.None()));
+                $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
+                "fakeAttachmentUrl",
+                AttachmentType.Photo));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()

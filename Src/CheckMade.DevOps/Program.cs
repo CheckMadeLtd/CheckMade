@@ -1,4 +1,5 @@
-﻿using CheckMade.DevOps.DataMigration;
+﻿using CheckMade.Common.Utils;
+using CheckMade.DevOps.DataMigration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -60,7 +61,7 @@ static IConfigurationRoot BuildConfigurationRoot()
 
     var configBuilder = new ConfigurationBuilder()
         .SetBasePath(projectRoot)
-        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile("settings.json", optional: false, reloadOnChange: true)
         .AddEnvironmentVariables();
 
     return configBuilder.Build();
@@ -76,6 +77,8 @@ static IServiceCollection GetServiceCollectionWithBasics()
         loggingConfig.AddConsole(); 
         loggingConfig.AddDebug(); 
     });
+    
+    services.Add_CommonUtils_Dependencies();
 
     return services;
 }

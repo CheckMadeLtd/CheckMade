@@ -2,7 +2,7 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_iOS;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

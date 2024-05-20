@@ -1,22 +1,23 @@
 using System.Reflection;
 using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.DevOps.DataMigration.Repositories;
 
 namespace CheckMade.DevOps.DataMigration;
 
 internal class MigratorByIndexFactory
 {
-    private readonly Dictionary<string, IDataMigrator> _migratorByIndex;
+    private readonly Dictionary<string, DataMigratorBase> _migratorByIndex;
     
-    public MigratorByIndexFactory()
+    public MigratorByIndexFactory(MessagesMigrationRepository migRepo)
     {
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
                            type.Namespace.StartsWith("CheckMade.DevOps.DataMigration.Migrators") &&
-                           typeof(IDataMigrator).IsAssignableFrom(type))
+                           typeof(DataMigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),
-                type => (IDataMigrator)(Activator.CreateInstance(type) 
+                type => (DataMigratorBase)(Activator.CreateInstance(type, migRepo) 
                                         ?? throw new InvalidOperationException(
                                             $"Could not create instance for {type.FullName}"))
             );
@@ -28,10 +29,10 @@ internal class MigratorByIndexFactory
         return typeName.Substring(3, 4);
     }
 
-    public Result<IDataMigrator> GetMigrator(string migIndex) => 
+    public Result<DataMigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
-            true => Result<IDataMigrator>.FromSuccess(migrator),
-            false => Result<IDataMigrator>.FromError($"No migrator called 'Mig{migIndex}' was found.")
+            true => Result<DataMigratorBase>.FromSuccess(migrator),
+            false => Result<DataMigratorBase>.FromError($"No migrator called 'Mig{migIndex}' was found.")
         };
 }

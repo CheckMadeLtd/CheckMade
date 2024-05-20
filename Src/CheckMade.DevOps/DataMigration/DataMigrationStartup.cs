@@ -1,7 +1,8 @@
 using CheckMade.Common.Persistence;
-using CheckMade.Telegram.Persistence;
+using CheckMade.DevOps.DataMigration.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.DevOps.DataMigration;
 
@@ -12,30 +13,26 @@ internal class DataMigrationStartup(
     public async Task StartAsync()
     {
         ConfigureDataMigrationServices();
-        
-        
-        // ToDo: This contains a nested call to two subsequent Result<T> operations ==> make more concise with LINQ!
-        await using (var sp = services.BuildServiceProvider())
-        {
-            var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
+        await using var sp = services.BuildServiceProvider();
 
-            await migratorFactory.GetMigrator(migIndex).Match<Task>(
-                
-                async migrator =>
-                {
-                    var migrationOutcome = await migrator.MigrateAsync(targetEnv);
-                    
-                    await migrationOutcome.Match<Task>(
-                        
-                        recordsUpdated => Console.Out.WriteLineAsync(
-                            $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                        
-                        errorMessage => Console.Error.WriteLineAsync(errorMessage)
-                    );
-                },
-                errorMessage => Console.Error.WriteLineAsync(errorMessage)
-            );
-        }
+        var logger = sp.GetRequiredService<ILogger<DataMigrationStartup>>();
+        var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
+
+        await migratorFactory.GetMigrator(migIndex).Match<Task>(
+            async migrator =>
+            {
+                await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
+                    recordsUpdated => Console.Out.WriteLineAsync(
+                        $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
+                    ex =>
+                    {
+                        throw ex;
+                        // logger.LogError(ex.Message, ex.StackTrace);
+                        // return Console.Error.WriteLineAsync(ex.Message);
+                    });
+            },
+            errorMessage => Console.Error.WriteLineAsync(errorMessage)
+        );
     }
 
     private void ConfigureDataMigrationServices()
@@ -54,8 +51,7 @@ internal class DataMigrationStartup(
         };
 
         services.Add_CommonPersistence_Dependencies(dbConnString);
-        services.Add_TelegramPersistence_Dependencies();
-
         services.AddScoped<MigratorByIndexFactory>();
+        services.AddScoped<MessagesMigrationRepository>();
     }
 }

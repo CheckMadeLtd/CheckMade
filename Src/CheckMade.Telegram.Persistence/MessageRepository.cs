@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Telegram.Interfaces;
@@ -12,60 +14,74 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
     public async Task AddOrThrowAsync(InputMessage inputMessage)
     {
-        await dbHelper.ExecuteOrThrowAsync(async command =>
+        await AddOrThrowAsync(new List<InputMessage> { inputMessage }.ToImmutableArray());
+    }
+
+    public async Task AddOrThrowAsync(IEnumerable<InputMessage> inputMessages)
+    {
+        var commands = inputMessages.Select(inputMessage =>
         {
-            command.CommandText = "INSERT INTO tlgr_messages (user_id, chat_id, details)" +
-                                  " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)";
+            var command = new NpgsqlCommand("INSERT INTO tlgr_messages (user_id, chat_id, details)" +
+                                            " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)");
+
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
-            
+
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(inputMessage.Details)
             });
 
-            await command.ExecuteNonQueryAsync();
+            return command;
+        }).ToImmutableArray();
+
+        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        {
+            foreach (var command in commands)
+            {
+                command.Connection = db;
+                command.Transaction = transaction;        
+                await command.ExecuteNonQueryAsync();
+            }
         });
     }
 
-    public Task<IEnumerable<InputMessage>> GetAllOrThrowAsync()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync() =>
+        await GetAllOrThrowExecuteAsync(
+            "SELECT * FROM tlgr_messages",
+            Option<long>.None());
 
-    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync(long userId)
-    {
-        var inputMessages = new List<InputMessage>();
+    public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync(long userId) =>
+        await GetAllOrThrowExecuteAsync(
+            "SELECT * FROM tlgr_messages WHERE user_id = @userId",
+            userId);
 
-        await dbHelper.ExecuteOrThrowAsync(async command =>
+    private async Task<IEnumerable<InputMessage>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
+    {
+        var builder = ImmutableArray.CreateBuilder<InputMessage>();
+        var command = new NpgsqlCommand(commandText);
+            
+        if (userId.IsSome)
+            command.Parameters.AddWithValue("@userId", userId.GetValueOrDefault());
+
+        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
-            command.CommandText = "SELECT * FROM tlgr_messages WHERE user_id = @userId";
-            command.Parameters.AddWithValue("@userId", userId);
-
+            command.Connection = db;
+            command.Transaction = transaction;
+            
             await using (var reader = await command.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
-                    inputMessages.Add(await CreateInputMessageFromReaderAsync(reader));
+                    builder.Add(await CreateInputMessageFromReaderStrictAsync(reader));
                 }
             }
         });
 
-        return inputMessages;
-    }
+        return builder.ToImmutable();
+    } 
     
-    public async Task HardDeleteOrThrowAsync(long userId)
-    {
-        await dbHelper.ExecuteOrThrowAsync(async command =>
-        {
-            command.CommandText = "DELETE FROM tlgr_messages WHERE user_id = @userId";
-            command.Parameters.AddWithValue("@userId", userId);
-
-            await command.ExecuteNonQueryAsync();
-        });
-    }
-
-    private static async Task<InputMessage> CreateInputMessageFromReaderAsync(DbDataReader reader)
+    private static async Task<InputMessage> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
@@ -78,5 +94,18 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
         return message;
+    }
+
+    public async Task HardDeleteAllOrThrowAsync(long userId)
+    {
+        var command = new NpgsqlCommand("DELETE FROM tlgr_messages WHERE user_id = @userId");
+        command.Parameters.AddWithValue("@userId", userId);
+
+        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        {
+            command.Connection = db;
+            command.Transaction = transaction;
+            await command.ExecuteNonQueryAsync();
+        });
     }
 }
