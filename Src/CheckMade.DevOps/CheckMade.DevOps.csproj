@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <Configurations>No_Build</Configurations>
+        <Configurations>Debug_DevOps;No_Build</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
