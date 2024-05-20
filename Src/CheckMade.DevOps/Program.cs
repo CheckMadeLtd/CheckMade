@@ -61,7 +61,7 @@ static IConfigurationRoot BuildConfigurationRoot()
 
     var configBuilder = new ConfigurationBuilder()
         .SetBasePath(projectRoot)
-        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile("settings.json", optional: false, reloadOnChange: true)
         .AddEnvironmentVariables();
 
     return configBuilder.Build();
