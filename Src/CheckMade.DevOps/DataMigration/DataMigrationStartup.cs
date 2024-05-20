@@ -1,5 +1,5 @@
 using CheckMade.Common.Persistence;
-using CheckMade.Telegram.Persistence;
+using CheckMade.DevOps.DataMigration.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,8 +47,7 @@ internal class DataMigrationStartup(
         };
 
         services.Add_CommonPersistence_Dependencies(dbConnString);
-        services.Add_TelegramPersistence_Dependencies();
-
         services.AddScoped<MigratorByIndexFactory>();
+        services.AddScoped<MessagesMigrationRepository>();
     }
 }

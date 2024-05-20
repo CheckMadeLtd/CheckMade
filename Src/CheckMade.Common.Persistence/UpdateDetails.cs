@@ -1,3 +1,6 @@
 namespace CheckMade.Common.Persistence;
 
-public record UpdateDetails(int Id, IDictionary<string, string> NewValueByColumn);
+public record UpdateDetails(
+    long UserId, 
+    string TelegramDateString, 
+    IDictionary<string, string> NewValueByColumn);

@@ -1,11 +1,14 @@
+using System.Collections.Immutable;
 using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.Persistence;
+using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils;
-using CheckMade.Telegram.Interfaces;
+using CheckMade.DevOps.DataMigration.Repositories;
 using CheckMade.Telegram.Model;
 
 namespace CheckMade.DevOps.DataMigration.Migrators;
 
-internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
+internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(migRepo)
 {
     /* Overview
      * - Only table at this point: tlgr_messages
@@ -14,32 +17,51 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    public async Task<Attempt<int>> MigrateAsync(string env)
+    protected override Attempt<IEnumerable<UpdateDetails>> SafelyGenerateMigrationUpdatesAsync(
+        IEnumerable<MessageOldFormatDetailsPair> allHistoricMessageDetailPairs)
     {
-        return ((Attempt<int>) await 
-            from allMessages in Attempt<IEnumerable<InputMessage>>
-                .RunAsync(messageRepo.GetAllOrThrowAsync)
-            from migratedMessages in SafelyMigrateMessagesAsync(allMessages)
-            select SafelyCountUpdatedRecordsAsync(migratedMessages))
-            .Match(
-                Attempt<int>.Succeed, 
-                ex => Attempt<int>.Fail(new DataAccessException(
-                    $"Data migration failed with: {ex.Message}.", ex)));
-    }
+        var updateDetailsBuilder = ImmutableArray.CreateBuilder<UpdateDetails>();
 
-    private Attempt<IEnumerable<InputMessage>> SafelyMigrateMessagesAsync(IEnumerable<InputMessage> allMessages)
-    {
-        foreach (var message in allMessages)
+        try
         {
-            if (message.ChatId == 0)
+            foreach (var pair in allHistoricMessageDetailPairs)
             {
-                
+                var telegramDate = pair.OldFormatDetailsJson.Value<string>("TelegramDate");
+
+                if (pair.ModelMessage.ChatId == 0)
+                {
+                    updateDetailsBuilder.Add(new UpdateDetails(
+                        pair.ModelMessage.UserId, telegramDate!,
+                        new Dictionary<string, string> { { "chat_id", "1" } }));
+                }
+
+                updateDetailsBuilder.Add(new UpdateDetails(
+                    pair.ModelMessage.UserId, telegramDate!,
+                    new Dictionary<string, string>
+                    {
+                        {
+                            "details",
+                            JsonHelper.SerializeToJson(new MessageDetails(
+                                DateTime.Parse(telegramDate!),
+                                pair.OldFormatDetailsJson.Value<string>("Text")!,
+                                pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
+                                ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl")!,
+                                Enum.Parse<AttachmentType>(
+                                    pair.OldFormatDetailsJson.Value<string>("AttachmentType")!)
+                            ))
+                        }
+                    })
+                );
             }
         }
-    }
+        catch (Exception ex)
+        {
+            return Attempt<IEnumerable<UpdateDetails>>
+                .Fail(new DataMigrationException(
+                    $"Exception while generating updates for data migration: {ex.Message}", ex));
+        }
 
-    private Attempt<int> SafelyCountUpdatedRecordsAsync(IEnumerable<InputMessage> migratedMessages)
-    {
-        return Attempt<int>.Succeed(1); // fake return because as of SqlMig004 there is no last_migration field yet
+        return Attempt<IEnumerable<UpdateDetails>>
+            .Succeed(updateDetailsBuilder.ToImmutable());
     }
 }

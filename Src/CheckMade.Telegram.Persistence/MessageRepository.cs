@@ -56,33 +56,6 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             "SELECT * FROM tlgr_messages WHERE user_id = @userId",
             userId);
 
-    public async Task MigrateOrThrowAsync(IEnumerable<UpdateDetails> updateDetails)
-    {
-        var commands = updateDetails.Select(update =>
-        {
-            var commandTextPrefix = "UPDATE tlgr_messages SET ";
-
-            commandTextPrefix += string.Join(", ", update.NewValueByColumn
-                .Select(d => $"{d.Key} = {d.Value}"));
-            commandTextPrefix = $"{commandTextPrefix} WHERE id = @id";
-
-            var command = new NpgsqlCommand(commandTextPrefix);
-            command.Parameters.AddWithValue("@id", update.Id);
-
-            return command;
-        }).ToImmutableArray();
-
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
-        {
-            foreach (var command in commands)
-            {
-                command.Connection = db;
-                command.Transaction = transaction;
-                await command.ExecuteNonQueryAsync();
-            }
-        });
-    }
-
     private async Task<IEnumerable<InputMessage>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
     {
         var builder = ImmutableArray.CreateBuilder<InputMessage>();
@@ -100,7 +73,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             {
                 while (await reader.ReadAsync())
                 {
-                    builder.Add(await CreateInputMessageFromReaderAsync(reader));
+                    builder.Add(await CreateInputMessageFromReaderStrictAsync(reader));
                 }
             }
         });
@@ -108,7 +81,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return builder.ToImmutable();
     } 
     
-    private static async Task<InputMessage> CreateInputMessageFromReaderAsync(DbDataReader reader)
+    private static async Task<InputMessage> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
