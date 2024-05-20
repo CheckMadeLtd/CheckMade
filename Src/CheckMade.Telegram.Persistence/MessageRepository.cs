@@ -33,7 +33,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             });
 
             return command;
-        }).ToList();
+        }).ToImmutableArray();
 
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
@@ -55,6 +55,33 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_messages WHERE user_id = @userId",
             userId);
+
+    public async Task MigrateOrThrowAsync(IEnumerable<UpdateDetails> updateDetails)
+    {
+        var commands = updateDetails.Select(update =>
+        {
+            var commandTextPrefix = "UPDATE tlgr_messages SET ";
+
+            commandTextPrefix += string.Join(", ", update.NewValueByColumn
+                .Select(d => $"{d.Key} = {d.Value}"));
+            commandTextPrefix = $"{commandTextPrefix} WHERE id = @id";
+
+            var command = new NpgsqlCommand(commandTextPrefix);
+            command.Parameters.AddWithValue("@id", update.Id);
+
+            return command;
+        }).ToImmutableArray();
+
+        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        {
+            foreach (var command in commands)
+            {
+                command.Connection = db;
+                command.Transaction = transaction;
+                await command.ExecuteNonQueryAsync();
+            }
+        });
+    }
 
     private async Task<IEnumerable<InputMessage>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
     {

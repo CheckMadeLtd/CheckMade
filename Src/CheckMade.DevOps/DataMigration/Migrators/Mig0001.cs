@@ -29,7 +29,13 @@ internal class Mig0001(IMessageRepository messageRepo) : IDataMigrator
 
     private Attempt<IEnumerable<InputMessage>> SafelyMigrateMessagesAsync(IEnumerable<InputMessage> allMessages)
     {
-        throw new NotImplementedException();
+        foreach (var message in allMessages)
+        {
+            if (message.ChatId == 0)
+            {
+                
+            }
+        }
     }
 
     private Attempt<int> SafelyCountUpdatedRecordsAsync(IEnumerable<InputMessage> migratedMessages)
