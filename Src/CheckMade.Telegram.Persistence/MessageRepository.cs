@@ -14,23 +14,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
     public async Task AddOrThrowAsync(InputMessage inputMessage)
     {
-        var command = new NpgsqlCommand("INSERT INTO tlgr_messages (user_id, chat_id, details)" +
-                                        " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)");
-
-        command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
-        command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
-
-        command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
-        {
-            Value = JsonHelper.SerializeToJson(inputMessage.Details)
-        });
-        
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
-        {
-            command.Connection = db;
-            command.Transaction = transaction;
-            await command.ExecuteNonQueryAsync();
-        });
+        await AddOrThrowAsync(new List<InputMessage> { inputMessage }.ToImmutableArray());
     }
 
     public async Task AddOrThrowAsync(IEnumerable<InputMessage> inputMessages)
@@ -75,7 +59,6 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     private async Task<IEnumerable<InputMessage>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
     {
         var builder = ImmutableArray.CreateBuilder<InputMessage>();
-
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
@@ -93,7 +76,6 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                     builder.Add(await CreateInputMessageFromReaderAsync(reader));
                 }
             }
-            
         });
 
         return builder.ToImmutable();
