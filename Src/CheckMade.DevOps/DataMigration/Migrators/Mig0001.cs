@@ -41,31 +41,38 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                     updateDetailsForCurrentPair.NewValueByColumn.Add("chat_id", 1);
                 }
 
-                // Interpret the details from the old format JObject so they can be used for the new format...
+                var deserializationOfDetailsAttempt = Attempt<MessageDetails?>.Run(() => 
+                    JsonHelper.DeserializeFromJsonStrict<MessageDetails>(pair.OldFormatDetailsJson.ToString()));
 
-                var attachmentUrlRaw = pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
-                                       ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl");
-                var attachmentUrl = !string.IsNullOrWhiteSpace(attachmentUrlRaw)
-                    ? Option<string>.Some(attachmentUrlRaw)
-                    : Option<string>.None();
+                if (deserializationOfDetailsAttempt.IsFailure)
+                {
+                    // Interpret the details from the old format JObject, so they can be used for the new format...
+
+                    var attachmentUrlRaw = pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
+                                           ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl");
+                    var attachmentUrl = !string.IsNullOrWhiteSpace(attachmentUrlRaw)
+                        ? Option<string>.Some(attachmentUrlRaw)
+                        : Option<string>.None();
                 
-                var attachmentTypeString = pair.OldFormatDetailsJson.Value<string>("AttachmentType");
-                var attachmentType = !string.IsNullOrWhiteSpace(attachmentTypeString) 
-                    ? Enum.Parse<AttachmentType>(attachmentTypeString) 
-                    : Option<AttachmentType>.None();
+                    var attachmentTypeString = pair.OldFormatDetailsJson.Value<string>("AttachmentType");
+                    var attachmentType = !string.IsNullOrWhiteSpace(attachmentTypeString) 
+                        ? Enum.Parse<AttachmentType>(attachmentTypeString) 
+                        : Option<AttachmentType>.None();
                 
-                // Now use the interpreted values to create a new, current-format MessageDetails
+                    // Now use the interpreted values to create a new, current-format MessageDetails
                 
-                updateDetailsForCurrentPair.NewValueByColumn.Add(
-                    "details",
-                    JsonHelper.SerializeToJson(new MessageDetails(
-                        telegramDate,
-                        pair.OldFormatDetailsJson.Value<string>("Text")!,
-                        attachmentUrl,
-                        attachmentType))
+                    updateDetailsForCurrentPair.NewValueByColumn.Add(
+                        "details",
+                        JsonHelper.SerializeToJson(new MessageDetails(
+                            telegramDate,
+                            pair.OldFormatDetailsJson.Value<string>("Text")!,
+                            attachmentUrl,
+                            attachmentType))
                     );
+                }
                 
-                updateDetailsBuilder.Add(updateDetailsForCurrentPair);
+                if (updateDetailsForCurrentPair.NewValueByColumn.Count > 0)
+                    updateDetailsBuilder.Add(updateDetailsForCurrentPair);
             }
         }
         catch (Exception ex)
