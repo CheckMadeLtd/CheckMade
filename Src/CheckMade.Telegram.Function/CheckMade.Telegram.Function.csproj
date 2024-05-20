@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AzureFunctionsVersion>v4</AzureFunctionsVersion>
         <OutputType>Exe</OutputType>
-        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release;Debug_Telegram;Debug_DevOps</Configurations>
         <Platforms>AnyCPU</Platforms>
         <UserSecretsId>dd4f1069-ae94-4987-9751-690e8da6f3c0</UserSecretsId>
     </PropertyGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_iOS;Debug_Non_iOS;Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram;Debug_DevOps</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
