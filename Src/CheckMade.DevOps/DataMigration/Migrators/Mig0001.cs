@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Persistence.JsonHelpers;
@@ -26,23 +27,27 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
         {
             foreach (var pair in allHistoricMessageDetailPairs)
             {
-                var telegramDate = pair.OldFormatDetailsJson.Value<string>("TelegramDate");
-
+                var telegramDateString = pair.OldFormatDetailsJson.Value<string>("TelegramDate");
+                const string format = "MM/dd/yyyy HH:mm:ss";
+                DateTime.TryParseExact(
+                    telegramDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                    out var telegramDate);
+                
                 if (pair.ModelMessage.ChatId == 0)
                 {
                     updateDetailsBuilder.Add(new UpdateDetails(
-                        pair.ModelMessage.UserId, telegramDate!,
+                        pair.ModelMessage.UserId, telegramDateString!,
                         new Dictionary<string, string> { { "chat_id", "1" } }));
                 }
 
                 updateDetailsBuilder.Add(new UpdateDetails(
-                    pair.ModelMessage.UserId, telegramDate!,
+                    pair.ModelMessage.UserId, telegramDateString!,
                     new Dictionary<string, string>
                     {
                         {
                             "details",
                             JsonHelper.SerializeToJson(new MessageDetails(
-                                DateTime.Parse(telegramDate!),
+                                telegramDate,
                                 pair.OldFormatDetailsJson.Value<string>("Text")!,
                                 pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
                                 ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl")!,

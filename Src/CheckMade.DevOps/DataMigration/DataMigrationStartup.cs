@@ -2,6 +2,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.DevOps.DataMigration.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.DevOps.DataMigration;
 
@@ -13,7 +14,8 @@ internal class DataMigrationStartup(
     {
         ConfigureDataMigrationServices();
         await using var sp = services.BuildServiceProvider();
-        
+
+        var logger = sp.GetRequiredService<ILogger<DataMigrationStartup>>();
         var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
 
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
@@ -22,8 +24,11 @@ internal class DataMigrationStartup(
                 await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    ex => Console.Error.WriteLineAsync(ex.Message)
-                );
+                    ex =>
+                    {
+                        logger.LogError(ex.Message, ex.StackTrace);
+                        return Console.Error.WriteLineAsync(ex.Message);
+                    });
             },
             errorMessage => Console.Error.WriteLineAsync(errorMessage)
         );
