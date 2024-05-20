@@ -8,7 +8,7 @@
                                                                                                                                                                                                                                             <ApplicationDisplayVersion>0.8.0</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release;Debug_Telegram</Configurations>
+        <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
