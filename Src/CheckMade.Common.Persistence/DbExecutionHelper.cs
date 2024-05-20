@@ -1,4 +1,3 @@
-using System.Data.Common;
 using CheckMade.Common.Interfaces;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
@@ -9,7 +8,7 @@ namespace CheckMade.Common.Persistence;
 
 public interface IDbExecutionHelper
 {
-    Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation);
+    Task ExecuteOrThrowAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation);
 }
 
 internal class DbExecutionHelper(
@@ -18,52 +17,37 @@ internal class DbExecutionHelper(
         IDbCommandRetryPolicy dbCommandRetryPolicy) 
     : IDbExecutionHelper
 {
-    public async Task ExecuteOrThrowAsync(Func<NpgsqlCommand, Task> executeDbOperation)
+    public async Task ExecuteOrThrowAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations)
     {
-        using (var db = dbProvider.CreateConnection())
+        await using var db = dbProvider.CreateConnection() as NpgsqlConnection;
+
+        if (db == null)
+            throw new DataAccessException("Failed to assign IDbConnection");
+        
+        await dbOpenRetryPolicy.ExecuteAsync(async () => await db.OpenAsync());
+
+        try
         {
+            await using var transaction = await db.BeginTransactionAsync();
+            
             try
             {
-                await dbOpenRetryPolicy.ExecuteAsync(() =>
-                {
-                    db.Open();
-                    return Task.CompletedTask;
-                });
-            }
-            catch (DbException dbEx)
+                await dbCommandRetryPolicy.ExecuteAsync(async () => await executeDbOperations(db, transaction));
+                await transaction.CommitAsync();            }
+            catch
             {
-                throw new DataAccessException("Database exception has occurred during attempt to open " +
-                                              "a db connection.", dbEx);
+                await transaction.RollbackAsync();
+                throw;
             }
-            catch (Exception ex)
-            {
-                throw new DataAccessException("An exception with unexpected type has occurred during attempt " +
-                                              "to open a db connection.", ex);
-            }
-            
-            await using (var command = new NpgsqlCommand())
-            {
-                command.Connection = db as NpgsqlConnection;
-
-                try
-                {
-                    await dbCommandRetryPolicy.ExecuteAsync(async () => await executeDbOperation(command));
-                }
-                catch (JsonSerializationException jsonEx)
-                {
-                    throw new DataAccessException("JSON (de)serialization exception has occurred during " +
-                                                  "db command execution.", jsonEx);
-                }
-                catch (DbException dbEx)
-                {
-                    throw new DataAccessException("A PostgreSQL-specific exception has occured during db " +
-                                                  "command execution.", dbEx);
-                }
-                catch (Exception ex)
-                {
-                    throw new DataAccessException("An exception has occurred during db command execution.", ex);
-                }
-            }
+        }
+        catch (JsonSerializationException jsonEx)
+        {
+            throw new DataAccessException("JSON (de)serialization exception has occurred during " +
+                                          "db command execution.", jsonEx);
+        }
+        catch (Exception ex)
+        {
+            throw new DataAccessException("A database exception has occurred.", ex);
         }
     }
 }

@@ -51,6 +51,23 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         }
     }
 
+    // [Fact]
+    // public async Task GetAllAsync_ReturnsAllMessages_WithMultipleValidMessagesSaved()
+    // {
+    //     _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+    //     
+    //     // Arrange
+    //     var utils = _services.GetRequiredService<ITestUtils>();
+    //     var modelInputMessages = new[]
+    //     {
+    //         utils.GetValidModelInputTextMessageNoAttachment(), utils.GetValidModelInputTextMessageWithAttachment()
+    //     };
+    //     var messageRepo = _services.GetRequiredService<IMessageRepository>();
+    //     
+    //     // Act
+    //     
+    // }
+    
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
