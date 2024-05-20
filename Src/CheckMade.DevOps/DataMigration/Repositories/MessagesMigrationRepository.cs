@@ -5,6 +5,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Model;
 using Newtonsoft.Json.Linq;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace CheckMade.DevOps.DataMigration.Repositories;
 
@@ -58,11 +59,24 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
             var commandTextPrefix = "UPDATE tlgr_messages SET ";
 
             commandTextPrefix += string.Join(", ", update.NewValueByColumn
-                .Select(d => $"{d.Key} = {d.Value}"));
+                .Select(d => $"{d.Key} = @{d.Key}"));
+            
             commandTextPrefix = $"{commandTextPrefix} " +
                                 $"WHERE user_id = @userId AND (details ->> 'TelegramDate')::timestamp = @dateTime";
 
             var command = new NpgsqlCommand(commandTextPrefix);
+            
+            foreach(var kv in update.NewValueByColumn)
+            {
+                if(kv.Key == "details")
+                    command.Parameters.Add(new NpgsqlParameter($"@{kv.Key}", NpgsqlDbType.Jsonb)
+                    {
+                        Value = kv.Value
+                    });
+                else
+                    command.Parameters.AddWithValue($"@{kv.Key}", kv.Value);
+            }
+            
             command.Parameters.AddWithValue("@userId", update.UserId);
             command.Parameters.AddWithValue("@dateTime", update.TelegramDateString);
 

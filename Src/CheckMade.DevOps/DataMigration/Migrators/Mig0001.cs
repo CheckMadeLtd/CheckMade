@@ -41,8 +41,13 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                     telegramDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
                     out var telegramDate);
 
-                var attachmentTypeString = pair.OldFormatDetailsJson.Value<string>("AttachmentType");
+                var attachmentUrlRaw = pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
+                                       ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl");
+                var attachmentUrl = !string.IsNullOrWhiteSpace(attachmentUrlRaw)
+                    ? Option<string>.Some(attachmentUrlRaw)
+                    : Option<string>.None();
                 
+                var attachmentTypeString = pair.OldFormatDetailsJson.Value<string>("AttachmentType");
                 var attachmentType = !string.IsNullOrWhiteSpace(attachmentTypeString) 
                     ? Enum.Parse<AttachmentType>(attachmentTypeString) 
                     : Option<AttachmentType>.None();
@@ -56,8 +61,7 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                             JsonHelper.SerializeToJson(new MessageDetails(
                                 telegramDate,
                                 pair.OldFormatDetailsJson.Value<string>("Text")!,
-                                pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
-                                ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl")!,
+                                attachmentUrl,
                                 attachmentType
                             ))
                         }
