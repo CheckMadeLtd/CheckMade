@@ -51,22 +51,30 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         }
     }
 
-    // [Fact]
-    // public async Task GetAllAsync_ReturnsAllMessages_WithMultipleValidMessagesSaved()
-    // {
-    //     _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-    //     
-    //     // Arrange
-    //     var utils = _services.GetRequiredService<ITestUtils>();
-    //     var modelInputMessages = new[]
-    //     {
-    //         utils.GetValidModelInputTextMessageNoAttachment(), utils.GetValidModelInputTextMessageWithAttachment()
-    //     };
-    //     var messageRepo = _services.GetRequiredService<IMessageRepository>();
-    //     
-    //     // Act
-    //     
-    // }
+    [Fact]
+    public async Task GetAllAsync_And_AddOrThrowAsync_CorrectlyAddAndReturn_MultipleValidMessages()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        const long userId = 1234L;
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var modelInputMessages = new[]
+        {
+            utils.GetValidModelInputTextMessageNoAttachment(userId),
+            utils.GetValidModelInputTextMessageNoAttachment(userId),
+            utils.GetValidModelInputTextMessageNoAttachment(userId)
+        };
+        var messageRepo = _services.GetRequiredService<IMessageRepository>();
+        
+        // Act
+        await messageRepo.AddOrThrowAsync(modelInputMessages);
+        var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
+        await messageRepo.HardDeleteAllOrThrowAsync(userId);
+
+        // Assert
+        retrievedMessages.Should().BeEquivalentTo(modelInputMessages);
+    }
     
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()

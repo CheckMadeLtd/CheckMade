@@ -33,9 +33,33 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
     }
 
-    public Task AddOrThrowAsync(IEnumerable<InputMessage> inputMessage)
+    public async Task AddOrThrowAsync(IEnumerable<InputMessage> inputMessages)
     {
-        throw new NotImplementedException();
+        var commands = inputMessages.Select(inputMessage =>
+        {
+            var command = new NpgsqlCommand("INSERT INTO tlgr_messages (user_id, chat_id, details)" +
+                                            " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)");
+
+            command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
+            command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
+
+            command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
+            {
+                Value = JsonHelper.SerializeToJson(inputMessage.Details)
+            });
+
+            return command;
+        }).ToList();
+
+        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        {
+            foreach (var command in commands)
+            {
+                command.Connection = db;
+                command.Transaction = transaction;        
+                await command.ExecuteNonQueryAsync();
+            }
+        });
     }
 
     public async Task<IEnumerable<InputMessage>> GetAllOrThrowAsync() =>
@@ -99,7 +123,6 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         {
             command.Connection = db;
             command.Transaction = transaction;
-            
             await command.ExecuteNonQueryAsync();
         });
     }

@@ -8,6 +8,7 @@ namespace CheckMade.Telegram.Tests;
 internal interface ITestUtils
 {
     InputMessage GetValidModelInputTextMessageNoAttachment();
+    InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
     InputMessage GetValidModelInputTextMessageWithAttachment();
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramAudioMessage();
@@ -22,14 +23,17 @@ internal class TestUtils(IRandomizer randomizer) : ITestUtils
     internal const long TestUserDanielGorinTelegramId = 215737196L;
     
     public InputMessage GetValidModelInputTextMessageNoAttachment() =>
-        new(randomizer.GenerateRandomLong(),
+        GetValidModelInputTextMessageNoAttachment(randomizer.GenerateRandomLong());
+
+    public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
+        new(userId,
             randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
                 $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None()));
-
+    
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(randomizer.GenerateRandomLong(),
             randomizer.GenerateRandomLong(),

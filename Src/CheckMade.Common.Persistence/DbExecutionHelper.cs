@@ -33,7 +33,8 @@ internal class DbExecutionHelper(
             try
             {
                 await dbCommandRetryPolicy.ExecuteAsync(async () => await executeDbOperations(db, transaction));
-                await transaction.CommitAsync();            }
+                await transaction.CommitAsync();
+            }
             catch
             {
                 await transaction.RollbackAsync();
