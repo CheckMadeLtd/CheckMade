@@ -27,19 +27,22 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
         {
             foreach (var pair in allHistoricMessageDetailPairs)
             {
-                var telegramDateString = pair.OldFormatDetailsJson.Value<string>("TelegramDate");
+                DateTime.TryParseExact(
+                    pair.OldFormatDetailsJson.Value<string>("TelegramDate"), 
+                    "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, 
+                    out var telegramDate);
+                
+                var updateDetailsForCurrentPair = new UpdateDetails(
+                    pair.ModelMessage.UserId, telegramDate,
+                    new Dictionary<string, object>());
                 
                 if (pair.ModelMessage.ChatId == 0)
                 {
-                    updateDetailsBuilder.Add(new UpdateDetails(
-                        pair.ModelMessage.UserId, telegramDateString!,
-                        new Dictionary<string, string> { { "chat_id", "1" } }));
+                    updateDetailsForCurrentPair.NewValueByColumn.Add("chat_id", 1);
                 }
 
-                const string format = "MM/dd/yyyy HH:mm:ss";
-                DateTime.TryParseExact(
-                    telegramDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
-                    out var telegramDate);
+                // Interpret / convert the details in the old format...
+                
 
                 var attachmentUrlRaw = pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
                                        ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl");
@@ -52,21 +55,17 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                     ? Enum.Parse<AttachmentType>(attachmentTypeString) 
                     : Option<AttachmentType>.None();
                 
-                updateDetailsBuilder.Add(new UpdateDetails(
-                    pair.ModelMessage.UserId, telegramDateString!,
-                    new Dictionary<string, string>
-                    {
-                        {
-                            "details",
-                            JsonHelper.SerializeToJson(new MessageDetails(
-                                telegramDate,
-                                pair.OldFormatDetailsJson.Value<string>("Text")!,
-                                attachmentUrl,
-                                attachmentType
-                            ))
-                        }
-                    })
-                );
+                // Now use the interpreted values to create a new, current-format MessageDetails
+                updateDetailsForCurrentPair.NewValueByColumn.Add(
+                    "details",
+                    JsonHelper.SerializeToJson(new MessageDetails(
+                        telegramDate,
+                        pair.OldFormatDetailsJson.Value<string>("Text")!,
+                        attachmentUrl,
+                        attachmentType))
+                    );
+                
+                updateDetailsBuilder.Add(updateDetailsForCurrentPair);
             }
         }
         catch (Exception ex)

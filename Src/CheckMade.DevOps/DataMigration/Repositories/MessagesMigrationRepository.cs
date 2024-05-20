@@ -37,7 +37,8 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
         DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
-        var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
+        var telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
+            ?? 0;
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
@@ -78,7 +79,7 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
             }
             
             command.Parameters.AddWithValue("@userId", update.UserId);
-            command.Parameters.AddWithValue("@dateTime", update.TelegramDateString);
+            command.Parameters.AddWithValue("@dateTime", update.TelegramDate);
 
             return command;
         }).ToImmutableArray();
