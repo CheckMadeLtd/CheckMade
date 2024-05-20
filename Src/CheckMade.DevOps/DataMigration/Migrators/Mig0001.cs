@@ -28,10 +28,6 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
             foreach (var pair in allHistoricMessageDetailPairs)
             {
                 var telegramDateString = pair.OldFormatDetailsJson.Value<string>("TelegramDate");
-                const string format = "MM/dd/yyyy HH:mm:ss";
-                DateTime.TryParseExact(
-                    telegramDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
-                    out var telegramDate);
                 
                 if (pair.ModelMessage.ChatId == 0)
                 {
@@ -40,6 +36,17 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                         new Dictionary<string, string> { { "chat_id", "1" } }));
                 }
 
+                const string format = "MM/dd/yyyy HH:mm:ss";
+                DateTime.TryParseExact(
+                    telegramDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                    out var telegramDate);
+
+                var attachmentTypeString = pair.OldFormatDetailsJson.Value<string>("AttachmentType");
+                
+                var attachmentType = !string.IsNullOrWhiteSpace(attachmentTypeString) 
+                    ? Enum.Parse<AttachmentType>(attachmentTypeString) 
+                    : Option<AttachmentType>.None();
+                
                 updateDetailsBuilder.Add(new UpdateDetails(
                     pair.ModelMessage.UserId, telegramDateString!,
                     new Dictionary<string, string>
@@ -51,8 +58,7 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                                 pair.OldFormatDetailsJson.Value<string>("Text")!,
                                 pair.OldFormatDetailsJson.Value<string>("AttachmentUrl")
                                 ?? pair.OldFormatDetailsJson.Value<string>("AttachmentExternalUrl")!,
-                                Enum.Parse<AttachmentType>(
-                                    pair.OldFormatDetailsJson.Value<string>("AttachmentType")!)
+                                attachmentType
                             ))
                         }
                     })

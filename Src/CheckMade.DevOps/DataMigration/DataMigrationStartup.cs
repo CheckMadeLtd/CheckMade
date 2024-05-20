@@ -26,8 +26,9 @@ internal class DataMigrationStartup(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
                     ex =>
                     {
-                        logger.LogError(ex.Message, ex.StackTrace);
-                        return Console.Error.WriteLineAsync(ex.Message);
+                        throw ex;
+                        // logger.LogError(ex.Message, ex.StackTrace);
+                        // return Console.Error.WriteLineAsync(ex.Message);
                     });
             },
             errorMessage => Console.Error.WriteLineAsync(errorMessage)
