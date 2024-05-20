@@ -1,5 +1,6 @@
 using System.Reflection;
 using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.DevOps.DataMigration.Repositories;
 
 namespace CheckMade.DevOps.DataMigration;
 
@@ -7,7 +8,7 @@ internal class MigratorByIndexFactory
 {
     private readonly Dictionary<string, DataMigratorBase> _migratorByIndex;
     
-    public MigratorByIndexFactory()
+    public MigratorByIndexFactory(MessagesMigrationRepository migRepo)
     {
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
@@ -16,7 +17,7 @@ internal class MigratorByIndexFactory
                            typeof(DataMigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),
-                type => (DataMigratorBase)(Activator.CreateInstance(type) 
+                type => (DataMigratorBase)(Activator.CreateInstance(type, migRepo) 
                                         ?? throw new InvalidOperationException(
                                             $"Could not create instance for {type.FullName}"))
             );

@@ -10,13 +10,13 @@ internal abstract class DataMigratorBase(MessagesMigrationRepository migRepo)
 {
     internal async Task<Attempt<int>> MigrateAsync(string env)
     {
-        return ((Attempt<int>) await 
+        return ((Attempt<int>) await (
                 from historicPairs in Attempt<IEnumerable<MessageOldFormatDetailsPair>>
                     .RunAsync(migRepo.GetMessageOldFormatDetailsPairsOrThrowAsync)
                 from updateDetails in SafelyGenerateMigrationUpdatesAsync(historicPairs)
                 from migratedMessages in SafelyMigrateHistoricMessages(updateDetails)
-                select Attempt<int>.Run(updateDetails.Count))
-            .Match(
+                select updateDetails.Count())
+            ).Match(
                 Attempt<int>.Succeed, 
                 ex => Attempt<int>.Fail(new DataAccessException(
                     $"Data migration failed with: {ex.Message}.", ex)));
