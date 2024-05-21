@@ -1,5 +1,5 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Common.Interfaces.Utils;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
 
@@ -18,7 +18,7 @@ internal interface ITestUtils
     Message GetValidTelegramVoiceMessage();
 }
 
-internal class TestUtils(IRandomizer randomizer) : ITestUtils
+internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     internal const long TestUserDanielGorinTelegramId = 215737196L;
     

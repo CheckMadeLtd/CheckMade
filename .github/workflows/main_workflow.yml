@@ -67,6 +67,9 @@ jobs:
         
       - name: Check installed Bash version
         run: bash --version
+        
+      - name: Create Google API credentials file
+        run: echo ${{ secrets.GOOGLE_API_CREDENTIAL_FILE_CONTENT }} > ~/${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
             
 # Setting up Caches ----------------------------
 

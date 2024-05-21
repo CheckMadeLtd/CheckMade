@@ -1,8 +1,6 @@
-﻿using CheckMade.Common.Interfaces.Utils;
+﻿namespace CheckMade.Common.Utils;
 
-namespace CheckMade.Common.Utils;
-
-public class Randomizer : IRandomizer
+public class Randomizer
 {
     public long GenerateRandomLong()
     {

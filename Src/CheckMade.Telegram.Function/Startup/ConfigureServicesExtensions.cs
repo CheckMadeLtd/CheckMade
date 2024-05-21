@@ -57,7 +57,7 @@ internal static class ConfigureServicesExtensions
         services.Add_CommonPersistence_Dependencies(dbConnectionString);
     }
 
-    internal static void ConfigureBusinessServices(this IServiceCollection services)
+    internal static void ConfigureBotBusinessServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.Add_TelegramLogic_Dependencies();

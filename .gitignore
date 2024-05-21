@@ -4,6 +4,7 @@
 bin/
 obj/
 /packages/
+local.settings.json
 
 # Custom
 PlantUML/

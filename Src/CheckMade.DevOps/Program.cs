@@ -1,5 +1,5 @@
 ﻿using CheckMade.Common.Utils;
-using CheckMade.DevOps.DataMigration;
+using CheckMade.DevOps.DetailsMigration.InputMessages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -42,7 +42,7 @@ switch (operation)
 
         migIndex = args[2];
 
-        var migStarter = new DataMigrationStartup(services, config, migDbTargetEnvironment, migIndex);
+        var migStarter = new MigrationStartup(services, config, migDbTargetEnvironment, migIndex);
         await migStarter.StartAsync();
         
         break;
@@ -61,7 +61,7 @@ static IConfigurationRoot BuildConfigurationRoot()
 
     var configBuilder = new ConfigurationBuilder()
         .SetBasePath(projectRoot)
-        .AddJsonFile("settings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
         .AddEnvironmentVariables();
 
     return configBuilder.Build();
