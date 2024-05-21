@@ -209,6 +209,8 @@ jobs:
           HOSTING_ENVIRONMENT: "CI"
           PG_DB_CONNSTRING: ${{ secrets.PG_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
           FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING: ${{ secrets.FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING }}
+          GOOGLE_SHEET_ID_TEST_DATA: ${{ vars.GOOGLE_SHEET_ID_TEST_DATA }}
+          GOOGLE_API_CREDENTIAL_FILE: ${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
             
       #  Deploy ---------------------------------
 
