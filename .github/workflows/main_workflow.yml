@@ -69,7 +69,11 @@ jobs:
         run: bash --version
         
       - name: Create Google API credentials file
-        run: echo ${{ secrets.GOOGLE_API_CREDENTIAL_FILE_CONTENT }} > ~/${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
+        env:
+          GOOGLE_API_CREDENTIAL_FILE_CONTENT: ${{ secrets.GOOGLE_API_CREDENTIAL_FILE_CONTENT }}
+          GOOGLE_API_CREDENTIAL_FILE: ${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
+        run: |
+            echo "$GOOGLE_API_CREDENTIAL_FILE_CONTENT" > ~/$GOOGLE_API_CREDENTIAL_FILE
             
 # Setting up Caches ----------------------------
 
