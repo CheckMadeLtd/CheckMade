@@ -1,12 +1,12 @@
 using CheckMade.Common.Persistence;
-using CheckMade.DevOps.DetailsMigration.Repositories.Messages;
+using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.DevOps.DetailsMigration;
+namespace CheckMade.DevOps.DetailsMigration.InputMessages;
 
-internal class DetailsMigrationStartup(
+internal class MigrationStartup(
     IServiceCollection services, IConfigurationRoot config,
     string targetEnv, string migIndex)
 {
@@ -15,7 +15,7 @@ internal class DetailsMigrationStartup(
         ConfigureDataMigrationServices();
         await using var sp = services.BuildServiceProvider();
 
-        var logger = sp.GetRequiredService<ILogger<DetailsMigrationStartup>>();
+        var logger = sp.GetRequiredService<ILogger<MigrationStartup>>();
         var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
 
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
@@ -52,6 +52,6 @@ internal class DetailsMigrationStartup(
 
         services.Add_CommonPersistence_Dependencies(dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
-        services.AddScoped<MessagesMigrationRepository>();
+        services.AddScoped<MigrationRepository>();
     }
 }

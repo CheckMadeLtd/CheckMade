@@ -7,13 +7,13 @@ using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.DevOps.DetailsMigration.Repositories.Messages;
+namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
-public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
+public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
-    internal async Task<IEnumerable<MessageOldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
+    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
     {
-        var pairBuilder = ImmutableArray.CreateBuilder<MessageOldFormatDetailsPair>();
+        var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
         var command = new NpgsqlCommand("SELECT * FROM tlgr_messages");
         
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
@@ -33,7 +33,7 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
         return pairBuilder.ToImmutable();
     }
 
-    private static async Task<MessageOldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
+    private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
@@ -50,10 +50,10 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<AttachmentType>.None()));
 
-        return new MessageOldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
+        return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateOrThrowAsync(IEnumerable<MessageDetailsUpdate> updates)
+    internal async Task UpdateOrThrowAsync(IEnumerable<DetailsUpdate> updates)
     {
         var commands = updates.Select(update =>
         {

@@ -12,6 +12,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+      <Folder Include="DetailsMigration\" />
       <Folder Include="scripts\" />
     </ItemGroup>
     

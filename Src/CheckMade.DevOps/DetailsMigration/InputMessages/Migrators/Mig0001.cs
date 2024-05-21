@@ -3,12 +3,12 @@ using System.Globalization;
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils;
-using CheckMade.DevOps.DetailsMigration.Repositories.Messages;
+using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 using CheckMade.Telegram.Model;
 
-namespace CheckMade.DevOps.DetailsMigration.Migrators;
+namespace CheckMade.DevOps.DetailsMigration.InputMessages.Migrators;
 
-internal class Mig0001(MessagesMigrationRepository migRepo) : DetailsMigratorBase(migRepo)
+internal class Mig0001(MigrationRepository migRepo) : MigratorBase(migRepo)
 {
     /* Overview
      * - Only table at this point: tlgr_messages
@@ -17,16 +17,16 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DetailsMigratorBas
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    protected override Attempt<IEnumerable<MessageDetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
-        IEnumerable<MessageOldFormatDetailsPair> allHistoricMessageDetailPairs)
+    protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
     {
-        var updatesBuilder = ImmutableArray.CreateBuilder<MessageDetailsUpdate>();
+        var updatesBuilder = ImmutableArray.CreateBuilder<DetailsUpdate>();
 
         try
         {
             foreach (var pair in allHistoricMessageDetailPairs)
             {
-                var update = Option<MessageDetailsUpdate>.None();
+                var update = Option<DetailsUpdate>.None();
                 
                 DateTime.TryParseExact(
                     pair.OldFormatDetailsJson.Value<string>("TelegramDate"), 
@@ -53,7 +53,7 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DetailsMigratorBas
                 
                     // Now use the interpreted values to create a new, current-format MessageDetails
                 
-                    update = new MessageDetailsUpdate(
+                    update = new DetailsUpdate(
                         pair.ModelMessage.UserId, telegramDate, 
                         JsonHelper.SerializeToJson(new MessageDetails(
                             telegramDate,
@@ -69,12 +69,12 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DetailsMigratorBas
         }
         catch (Exception ex)
         {
-            return Attempt<IEnumerable<MessageDetailsUpdate>>
+            return Attempt<IEnumerable<DetailsUpdate>>
                 .Fail(new DataMigrationException(
                     $"Exception while generating updates for data migration: {ex.Message}", ex));
         }
 
-        return Attempt<IEnumerable<MessageDetailsUpdate>>
+        return Attempt<IEnumerable<DetailsUpdate>>
             .Succeed(updatesBuilder.ToImmutable());
     }
 }

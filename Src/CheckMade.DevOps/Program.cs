@@ -1,5 +1,6 @@
 ﻿using CheckMade.Common.Utils;
 using CheckMade.DevOps.DetailsMigration;
+using CheckMade.DevOps.DetailsMigration.InputMessages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -42,7 +43,7 @@ switch (operation)
 
         migIndex = args[2];
 
-        var migStarter = new DetailsMigrationStartup(services, config, migDbTargetEnvironment, migIndex);
+        var migStarter = new MigrationStartup(services, config, migDbTargetEnvironment, migIndex);
         await migStarter.StartAsync();
         
         break;

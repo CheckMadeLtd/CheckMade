@@ -1,23 +1,23 @@
 using System.Reflection;
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.DevOps.DetailsMigration.Repositories.Messages;
+using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
-namespace CheckMade.DevOps.DetailsMigration;
+namespace CheckMade.DevOps.DetailsMigration.InputMessages;
 
 internal class MigratorByIndexFactory
 {
-    private readonly Dictionary<string, DetailsMigratorBase> _migratorByIndex;
+    private readonly Dictionary<string, MigratorBase> _migratorByIndex;
     
-    public MigratorByIndexFactory(MessagesMigrationRepository migRepo)
+    public MigratorByIndexFactory(MigrationRepository migRepo)
     {
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
-                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.Migrators") &&
-                           typeof(DetailsMigratorBase).IsAssignableFrom(type))
+                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.InputMessages.Migrators") &&
+                           typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),
-                type => (DetailsMigratorBase)(Activator.CreateInstance(type, migRepo) 
+                type => (MigratorBase)(Activator.CreateInstance(type, migRepo) 
                                         ?? throw new InvalidOperationException(
                                             $"Could not create instance for {type.FullName}"))
             );
@@ -29,10 +29,10 @@ internal class MigratorByIndexFactory
         return typeName.Substring(3, 4);
     }
 
-    public Result<DetailsMigratorBase> GetMigrator(string migIndex) => 
+    public Result<MigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
-            true => Result<DetailsMigratorBase>.FromSuccess(migrator),
-            false => Result<DetailsMigratorBase>.FromError($"No migrator called 'Mig{migIndex}' was found.")
+            true => Result<MigratorBase>.FromSuccess(migrator),
+            false => Result<MigratorBase>.FromError($"No migrator called 'Mig{migIndex}' was found.")
         };
 }
