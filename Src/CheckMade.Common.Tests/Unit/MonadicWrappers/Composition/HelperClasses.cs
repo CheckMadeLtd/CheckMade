@@ -1,6 +1,6 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 
-namespace CheckMade.Common.Tests.MonadicWrappers.Composition;
+namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
 
 internal class User
 {

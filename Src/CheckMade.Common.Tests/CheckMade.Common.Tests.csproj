@@ -24,4 +24,10 @@
       <ProjectReference Include="..\CheckMade.Common.FpExt\CheckMade.Common.FpExt.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Integration\" />
+      <Folder Include="Startup\" />
+      <Folder Include="Unit\" />
+    </ItemGroup>
+
 </Project>

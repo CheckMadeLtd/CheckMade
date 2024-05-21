@@ -1,7 +1,7 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using FluentAssertions;
 
-namespace CheckMade.Common.Tests.MonadicWrappers;
+namespace CheckMade.Common.Tests.Unit.MonadicWrappers;
 
 public class OptionTests
 {
