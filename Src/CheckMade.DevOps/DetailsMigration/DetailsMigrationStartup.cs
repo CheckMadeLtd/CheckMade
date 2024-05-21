@@ -52,6 +52,6 @@ internal class DetailsMigrationStartup(
 
         services.Add_CommonPersistence_Dependencies(dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
-        services.AddScoped<MigrationRepository>();
+        services.AddScoped<MessagesMigrationRepository>();
     }
 }

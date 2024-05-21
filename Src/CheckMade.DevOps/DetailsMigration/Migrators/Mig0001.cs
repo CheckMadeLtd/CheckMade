@@ -8,7 +8,7 @@ using CheckMade.Telegram.Model;
 
 namespace CheckMade.DevOps.DetailsMigration.Migrators;
 
-internal class Mig0001(MigrationRepository migRepo) : DetailsMigratorBase(migRepo)
+internal class Mig0001(MessagesMigrationRepository migRepo) : DetailsMigratorBase(migRepo)
 {
     /* Overview
      * - Only table at this point: tlgr_messages
@@ -17,16 +17,16 @@ internal class Mig0001(MigrationRepository migRepo) : DetailsMigratorBase(migRep
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
-        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
+    protected override Attempt<IEnumerable<MessageDetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+        IEnumerable<MessageOldFormatDetailsPair> allHistoricMessageDetailPairs)
     {
-        var updatesBuilder = ImmutableArray.CreateBuilder<DetailsUpdate>();
+        var updatesBuilder = ImmutableArray.CreateBuilder<MessageDetailsUpdate>();
 
         try
         {
             foreach (var pair in allHistoricMessageDetailPairs)
             {
-                var update = Option<DetailsUpdate>.None();
+                var update = Option<MessageDetailsUpdate>.None();
                 
                 DateTime.TryParseExact(
                     pair.OldFormatDetailsJson.Value<string>("TelegramDate"), 
@@ -53,7 +53,7 @@ internal class Mig0001(MigrationRepository migRepo) : DetailsMigratorBase(migRep
                 
                     // Now use the interpreted values to create a new, current-format MessageDetails
                 
-                    update = new DetailsUpdate(
+                    update = new MessageDetailsUpdate(
                         pair.ModelMessage.UserId, telegramDate, 
                         JsonHelper.SerializeToJson(new MessageDetails(
                             telegramDate,
@@ -69,12 +69,12 @@ internal class Mig0001(MigrationRepository migRepo) : DetailsMigratorBase(migRep
         }
         catch (Exception ex)
         {
-            return Attempt<IEnumerable<DetailsUpdate>>
+            return Attempt<IEnumerable<MessageDetailsUpdate>>
                 .Fail(new DataMigrationException(
                     $"Exception while generating updates for data migration: {ex.Message}", ex));
         }
 
-        return Attempt<IEnumerable<DetailsUpdate>>
+        return Attempt<IEnumerable<MessageDetailsUpdate>>
             .Succeed(updatesBuilder.ToImmutable());
     }
 }

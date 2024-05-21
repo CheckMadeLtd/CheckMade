@@ -9,11 +9,11 @@ using NpgsqlTypes;
 
 namespace CheckMade.DevOps.DetailsMigration.Repositories.Messages;
 
-public class MigrationRepository(IDbExecutionHelper dbHelper)
+public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
 {
-    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
+    internal async Task<IEnumerable<MessageOldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
     {
-        var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
+        var pairBuilder = ImmutableArray.CreateBuilder<MessageOldFormatDetailsPair>();
         var command = new NpgsqlCommand("SELECT * FROM tlgr_messages");
         
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
@@ -33,7 +33,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return pairBuilder.ToImmutable();
     }
 
-    private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
+    private static async Task<MessageOldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
@@ -50,10 +50,10 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<AttachmentType>.None()));
 
-        return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
+        return new MessageOldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateOrThrowAsync(IEnumerable<DetailsUpdate> updates)
+    internal async Task UpdateOrThrowAsync(IEnumerable<MessageDetailsUpdate> updates)
     {
         var commands = updates.Select(update =>
         {

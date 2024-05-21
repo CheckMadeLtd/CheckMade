@@ -1,6 +1,6 @@
 namespace CheckMade.DevOps.DetailsMigration.Repositories.Messages;
 
-internal record DetailsUpdate(
+internal record MessageDetailsUpdate(
     long UserId, 
     DateTime TelegramDate, 
     string NewDetails);

@@ -8,7 +8,7 @@ internal class MigratorByIndexFactory
 {
     private readonly Dictionary<string, DetailsMigratorBase> _migratorByIndex;
     
-    public MigratorByIndexFactory(MigrationRepository migRepo)
+    public MigratorByIndexFactory(MessagesMigrationRepository migRepo)
     {
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
