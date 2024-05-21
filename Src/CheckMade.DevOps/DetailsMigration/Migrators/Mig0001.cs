@@ -1,15 +1,14 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Common.Persistence;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils;
-using CheckMade.DevOps.DataMigration.Repositories;
+using CheckMade.DevOps.DetailsMigration.Repositories.Messages;
 using CheckMade.Telegram.Model;
 
-namespace CheckMade.DevOps.DataMigration.Migrators;
+namespace CheckMade.DevOps.DetailsMigration.Migrators;
 
-internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(migRepo)
+internal class Mig0001(MigrationRepository migRepo) : DetailsMigratorBase(migRepo)
 {
     /* Overview
      * - Only table at this point: tlgr_messages
@@ -18,29 +17,22 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
      * - update old 'details' to be compatible with current MessageDetails schema
      */
     
-    protected override Attempt<IEnumerable<UpdateDetails>> SafelyGenerateMigrationUpdatesAsync(
-        IEnumerable<MessageOldFormatDetailsPair> allHistoricMessageDetailPairs)
+    protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
     {
-        var updateDetailsBuilder = ImmutableArray.CreateBuilder<UpdateDetails>();
+        var updatesBuilder = ImmutableArray.CreateBuilder<DetailsUpdate>();
 
         try
         {
             foreach (var pair in allHistoricMessageDetailPairs)
             {
+                var update = Option<DetailsUpdate>.None();
+                
                 DateTime.TryParseExact(
                     pair.OldFormatDetailsJson.Value<string>("TelegramDate"), 
                     "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, 
                     out var telegramDate);
                 
-                var updateDetailsForCurrentPair = new UpdateDetails(
-                    pair.ModelMessage.UserId, telegramDate,
-                    new Dictionary<string, object>());
-                
-                if (pair.ModelMessage.ChatId == 0)
-                {
-                    updateDetailsForCurrentPair.NewValueByColumn.Add("chat_id", 1);
-                }
-
                 var deserializationOfDetailsAttempt = Attempt<MessageDetails?>.Run(() => 
                     JsonHelper.DeserializeFromJsonStrict<MessageDetails>(pair.OldFormatDetailsJson.ToString()));
 
@@ -61,28 +53,28 @@ internal class Mig0001(MessagesMigrationRepository migRepo) : DataMigratorBase(m
                 
                     // Now use the interpreted values to create a new, current-format MessageDetails
                 
-                    updateDetailsForCurrentPair.NewValueByColumn.Add(
-                        "details",
+                    update = new DetailsUpdate(
+                        pair.ModelMessage.UserId, telegramDate, 
                         JsonHelper.SerializeToJson(new MessageDetails(
                             telegramDate,
                             pair.OldFormatDetailsJson.Value<string>("Text")!,
                             attachmentUrl,
-                            attachmentType))
-                    );
+                            attachmentType)
+                        ));
                 }
                 
-                if (updateDetailsForCurrentPair.NewValueByColumn.Count > 0)
-                    updateDetailsBuilder.Add(updateDetailsForCurrentPair);
+                if (update.IsSome)
+                    updatesBuilder.Add(update.GetValueOrDefault());
             }
         }
         catch (Exception ex)
         {
-            return Attempt<IEnumerable<UpdateDetails>>
+            return Attempt<IEnumerable<DetailsUpdate>>
                 .Fail(new DataMigrationException(
                     $"Exception while generating updates for data migration: {ex.Message}", ex));
         }
 
-        return Attempt<IEnumerable<UpdateDetails>>
-            .Succeed(updateDetailsBuilder.ToImmutable());
+        return Attempt<IEnumerable<DetailsUpdate>>
+            .Succeed(updatesBuilder.ToImmutable());
     }
 }

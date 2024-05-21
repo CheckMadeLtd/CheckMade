@@ -1,17 +1,16 @@
 using CheckMade.Common.FpExt;
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
-using CheckMade.DevOps.DataMigration.Repositories;
+using CheckMade.DevOps.DetailsMigration.Repositories.Messages;
 
-namespace CheckMade.DevOps.DataMigration;
+namespace CheckMade.DevOps.DetailsMigration;
 
-internal abstract class DataMigratorBase(MessagesMigrationRepository migRepo)
+internal abstract class DetailsMigratorBase(MigrationRepository migRepo)
 {
     internal async Task<Attempt<int>> MigrateAsync(string env)
     {
         return ((Attempt<int>) await (
-                from historicPairs in Attempt<IEnumerable<MessageOldFormatDetailsPair>>
+                from historicPairs in Attempt<IEnumerable<OldFormatDetailsPair>>
                     .RunAsync(migRepo.GetMessageOldFormatDetailsPairsOrThrowAsync)
                 from updateDetails in SafelyGenerateMigrationUpdatesAsync(historicPairs)
                 from unit in SafelyMigrateHistoricMessages(updateDetails)
@@ -22,10 +21,10 @@ internal abstract class DataMigratorBase(MessagesMigrationRepository migRepo)
                     $"Data migration failed with: {ex.Message}.", ex)));
     }
 
-    protected abstract Attempt<IEnumerable<UpdateDetails>> SafelyGenerateMigrationUpdatesAsync(
-        IEnumerable<MessageOldFormatDetailsPair> allHistoricMessageDetailPairs);
+    protected abstract Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs);
     
-    private async Task<Attempt<Unit>> SafelyMigrateHistoricMessages(IEnumerable<UpdateDetails> updates)
+    private async Task<Attempt<Unit>> SafelyMigrateHistoricMessages(IEnumerable<DetailsUpdate> updates)
     {
         try
         {

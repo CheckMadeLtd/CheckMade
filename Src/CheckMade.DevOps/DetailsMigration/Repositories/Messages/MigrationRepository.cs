@@ -7,13 +7,13 @@ using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.DevOps.DataMigration.Repositories;
+namespace CheckMade.DevOps.DetailsMigration.Repositories.Messages;
 
-public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
+public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
-    internal async Task<IEnumerable<MessageOldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
+    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
     {
-        var pairBuilder = ImmutableArray.CreateBuilder<MessageOldFormatDetailsPair>();
+        var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
         var command = new NpgsqlCommand("SELECT * FROM tlgr_messages");
         
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
@@ -33,7 +33,7 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
         return pairBuilder.ToImmutable();
     }
 
-    private static async Task<MessageOldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
+    private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
@@ -50,37 +50,27 @@ public class MessagesMigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<AttachmentType>.None()));
 
-        return new MessageOldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
+        return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateOrThrowAsync(IEnumerable<UpdateDetails> updateDetails)
+    internal async Task UpdateOrThrowAsync(IEnumerable<DetailsUpdate> updates)
     {
-        var commands = updateDetails.Select(update =>
+        var commands = updates.Select(update =>
         {
-            var commandTextPrefix = "UPDATE tlgr_messages SET ";
-
-            commandTextPrefix += string.Join(", ", update.NewValueByColumn
-                .Select(d => $"{d.Key} = @{d.Key}"));
-            
-            commandTextPrefix = $"{commandTextPrefix} " +
-                                $"WHERE user_id = @userId AND (details ->> 'TelegramDate')::timestamp = @dateTime";
+            const string commandTextPrefix = "UPDATE tlgr_messages SET details = @details " +
+                                             "WHERE user_id = @userId " +
+                                             "AND (details ->> 'TelegramDate')::timestamp = @dateTime";
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            foreach(var kv in update.NewValueByColumn)
-            {
-                if(kv.Key == "details")
-                    command.Parameters.Add(new NpgsqlParameter($"@{kv.Key}", NpgsqlDbType.Jsonb)
-                    {
-                        Value = kv.Value
-                    });
-                else
-                    command.Parameters.AddWithValue($"@{kv.Key}", kv.Value);
-            }
-            
             command.Parameters.AddWithValue("@userId", update.UserId);
             command.Parameters.AddWithValue("@dateTime", update.TelegramDate);
-
+            
+            command.Parameters.Add(new NpgsqlParameter($"@details", NpgsqlDbType.Jsonb)
+            {
+                Value = update.NewDetails
+            });
+            
             return command;
         }).ToImmutableArray();
 
