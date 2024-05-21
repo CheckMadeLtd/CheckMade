@@ -105,4 +105,27 @@ public class GoogleApiTests
         // Assert
         actualCells.Should().BeEquivalentTo(expectedCells);
     }
+    
+    [Fact]
+    public async Task GetSpreadsheetDataAsync_ReturnsStringThatCanBeParameterized()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        const string testSheetName = "tests_special_char";
+        var sheetService = _services.GetRequiredService<ISheetsService>();
+        
+        const string param1 = "param1";
+        const string param2 = "param2";
+        const string expected = $"With first value {param1} and second value {param2} inserted with string formatting.";
+        
+        // Act
+        var cell = await sheetService.GetSpreadsheetDataAsync(
+            TestSheetId, "B2:B2", testSheetName);
+
+        var actual = string.Format(cell.Cells[0][0], param1, param2);
+        
+        // Assert
+        actual.Should().BeEquivalentTo(expected);
+    }
 }
