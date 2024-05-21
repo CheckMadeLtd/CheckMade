@@ -82,11 +82,13 @@ static IServiceCollection GetServiceCollectionWithBasics(IConfigurationRoot conf
     
     services.Add_CommonUtils_Dependencies();
 
-    var gglApiCredential = config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey) 
-                           ?? throw new InvalidOperationException(
-                               $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
-    
-    services.Add_GoogleApi_Dependencies(gglApiCredential);
+    var gglApiCredentialFileName = config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
+                                   ?? throw new InvalidOperationException(
+                                       $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
 
+    var gglApiCredentialFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        gglApiCredentialFileName);
+    
     return services;
 }

@@ -15,10 +15,14 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        var gglApiCredential = Config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
+        var gglApiCredentialFileName = Config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
                                ?? throw new InvalidOperationException(
                                    $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
-    
-        Services.Add_GoogleApi_Dependencies(gglApiCredential);
+
+        var gglApiCredentialFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            gglApiCredentialFileName);
+        
+        Services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
     }
 }
