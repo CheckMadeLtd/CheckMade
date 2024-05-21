@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.ExternalServices;
+using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Utils;
 using CheckMade.DevOps.DetailsMigration.InputMessages;
 using Microsoft.Extensions.Configuration;
@@ -81,11 +82,11 @@ static IServiceCollection GetServiceCollectionWithBasics(IConfigurationRoot conf
     
     services.Add_CommonUtils_Dependencies();
 
-    const string gglApiCredentialFileKey = "GOOGLE_API_CREDENTIAL_FILE";
-    var googleApiCredential = config.GetValue<string>(gglApiCredentialFileKey)
-        ?? throw new InvalidOperationException($"Can't find: {gglApiCredentialFileKey}");
+    var gglApiCredential = config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey) 
+                           ?? throw new InvalidOperationException(
+                               $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
     
-    services.Add_GoogleApi_Dependencies(googleApiCredential);
+    services.Add_GoogleApi_Dependencies(gglApiCredential);
 
     return services;
 }
