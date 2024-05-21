@@ -51,7 +51,7 @@ public abstract class TestStartupBase
         
         Services.ConfigureBotUpdateHandlingServices();
         Services.ConfigureUtilityServices();
-        Services.ConfigureBusinessServices();
+        Services.ConfigureBotBusinessServices();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();
