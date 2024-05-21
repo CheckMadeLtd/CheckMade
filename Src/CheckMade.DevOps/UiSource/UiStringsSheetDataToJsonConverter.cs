@@ -7,12 +7,12 @@ public class UiStringsSheetDataToJsonConverter(ISheetsService sheetsService, UiS
 {
     public JObject Convert(SheetData uiStrings)
     {
-        // var headers = uiSource.Headers;
-        
-        var appScope = new JObject();
-        var telegramScope = new JObject();
-        appScope["telegram"] = telegramScope;
+        throw new NotImplementedException();
 
-        return appScope;
+        // var appScope = new JObject();
+        // var telegramScope = new JObject();
+        // appScope["telegram"] = telegramScope;
+        //
+        // return appScope;
     }
 }

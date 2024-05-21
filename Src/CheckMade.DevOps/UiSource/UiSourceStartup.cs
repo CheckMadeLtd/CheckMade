@@ -10,8 +10,6 @@ public class UiSourceStartup(IServiceCollection services, IConfigurationRoot con
     public async Task StartAsync()
     {
         ConfigureUiSourceServices();
-        
-        
     }
 
     private void ConfigureUiSourceServices()

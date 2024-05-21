@@ -8,8 +8,9 @@ namespace CheckMade.Common.Tests.Integration;
 public class GoogleApiTests
 {
     private ServiceProvider? _services;
+    private const string SkipReason = "Google Sheets not in use"; 
     
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetAllSpreadsheetDataAsync_GetsAllData()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
@@ -34,7 +35,7 @@ public class GoogleApiTests
         actualCells.Should().BeEquivalentTo(expectedCells);
     }
 
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetSpreadsheetDataAsync_HandlesEscapedCharactersCorrectly()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
@@ -63,7 +64,7 @@ public class GoogleApiTests
         actualCells.Should().BeEquivalentTo(expectedCells);
     }
 
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetSpreadsheetDataAsync_DoesNotTrimTrailingWhitespace()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
@@ -86,7 +87,7 @@ public class GoogleApiTests
         actualCells.Should().BeEquivalentTo(expectedCells);
     }
     
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetSpreadsheetDataAsync_CorrectlyReturnsUnicodeCharacter()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
@@ -109,7 +110,7 @@ public class GoogleApiTests
         actualCells.Should().BeEquivalentTo(expectedCells);
     }
     
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetSpreadsheetDataAsync_ReturnsStringThatCanBeParameterized()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
