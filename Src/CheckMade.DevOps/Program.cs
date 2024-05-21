@@ -90,5 +90,7 @@ static IServiceCollection GetServiceCollectionWithBasics(IConfigurationRoot conf
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
         gglApiCredentialFileName);
     
+    services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
+    
     return services;
 }
