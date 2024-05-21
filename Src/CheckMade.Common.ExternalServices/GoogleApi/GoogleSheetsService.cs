@@ -20,7 +20,9 @@ public class GoogleSheetsService(GoogleAuth googleAuth) : ISheetsService
 
     public async Task<SheetData> GetSpreadsheetDataAsync(string sheetId, string sheetRange, string? sheetName = null)
     {
-        var fullSheetRange = sheetName != null ? string.Concat(sheetName, "!", sheetRange) : sheetRange;
+        var fullSheetRange = sheetName != null 
+            ? string.Concat(sheetName, "!", sheetRange) 
+            : sheetRange;
         
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, fullSheetRange);
         var response = (await request.ExecuteAsync()).Values;
