@@ -1,5 +1,3 @@
-using CheckMade.Common.ExternalServices;
-using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,12 +40,6 @@ public abstract class TestStartupBase
         
         Services.AddSingleton<ITestUtils, TestUtils>();
         Services.Add_CommonUtils_Dependencies();
-        
-        var gglApiCredential = Config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
-                                  ?? throw new InvalidOperationException(
-                                      $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
-    
-        Services.Add_GoogleApi_Dependencies(gglApiCredential);
     }
 
     protected abstract void RegisterTestTypeSpecificServices();
