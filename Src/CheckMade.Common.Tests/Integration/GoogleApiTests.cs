@@ -8,7 +8,6 @@ namespace CheckMade.Common.Tests.Integration;
 public class GoogleApiTests
 {
     private ServiceProvider? _services;
-    private const string TestSheetId = "1b6AHy35omBwmUsMNIfRjRIEJ__4YxLnNwviz8h8287I";
     
     [Fact]
     public async Task GetAllSpreadsheetDataAsync_GetsAllData()
@@ -17,6 +16,7 @@ public class GoogleApiTests
         
         // Arrange
         const string testSheetName = "tests_retrieve_all";
+        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
         var sheetsService = _services.GetRequiredService<ISheetsService>();
         
         var expectedCells = new SheetData(new string[][]
@@ -28,7 +28,7 @@ public class GoogleApiTests
         });
         
         // Act
-        var actualCells = await sheetsService.GetAllSpreadsheetDataAsync(TestSheetId, testSheetName);
+        var actualCells = await sheetsService.GetAllSpreadsheetDataAsync(testSheetId, testSheetName);
         
         // Assert
         actualCells.Should().BeEquivalentTo(expectedCells);
@@ -41,6 +41,7 @@ public class GoogleApiTests
         
         // Arrange
         const string testSheetName = "tests_special_char";
+        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
         var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
@@ -56,7 +57,7 @@ public class GoogleApiTests
         
         // Act
         var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            TestSheetId, "A1:B1", testSheetName);
+            testSheetId, "A1:B1", testSheetName);
         
         // Assert
         actualCells.Should().BeEquivalentTo(expectedCells);
@@ -69,6 +70,7 @@ public class GoogleApiTests
         
         // Arrange
         const string testSheetName = "tests_special_char";
+        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
         var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
@@ -78,7 +80,7 @@ public class GoogleApiTests
         
         // Act
         var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            TestSheetId, "A2:A2", testSheetName);
+            testSheetId, "A2:A2", testSheetName);
         
         // Assert
         actualCells.Should().BeEquivalentTo(expectedCells);
@@ -91,6 +93,7 @@ public class GoogleApiTests
         
         // Arrange
         const string testSheetName = "tests_special_char";
+        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
         var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
@@ -100,7 +103,7 @@ public class GoogleApiTests
         
         // Act
         var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            TestSheetId, "C3:C3", testSheetName);
+            testSheetId, "C3:C3", testSheetName);
         
         // Assert
         actualCells.Should().BeEquivalentTo(expectedCells);
@@ -113,6 +116,7 @@ public class GoogleApiTests
         
         // Arrange
         const string testSheetName = "tests_special_char";
+        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
         var sheetService = _services.GetRequiredService<ISheetsService>();
         
         const string param1 = "param1";
@@ -121,7 +125,7 @@ public class GoogleApiTests
         
         // Act
         var cell = await sheetService.GetSpreadsheetDataAsync(
-            TestSheetId, "B2:B2", testSheetName);
+            testSheetId, "B2:B2", testSheetName);
 
         var actual = string.Format(cell.Cells[0][0], param1, param2);
         

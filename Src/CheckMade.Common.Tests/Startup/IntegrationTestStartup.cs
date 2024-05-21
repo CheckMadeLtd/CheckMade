@@ -2,6 +2,7 @@ using CheckMade.Common.ExternalServices;
 using CheckMade.Common.ExternalServices.GoogleApi;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.Tests.Startup;
 
@@ -24,5 +25,12 @@ public class IntegrationTestStartup : TestStartupBase
             gglApiCredentialFileName);
         
         Services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
+
+        const string uiSourceGglSheetKeyInEnv = "GOOGLE_SHEET_ID_UI_SOURCE";
+        
+        Services.AddScoped<UiSourceSheetIdProvider>(_ => new UiSourceSheetIdProvider(
+            Config.GetValue<string>(uiSourceGglSheetKeyInEnv)
+            ?? throw new InvalidOperationException(
+                $"Can't find: {uiSourceGglSheetKeyInEnv}")));
     }
 }

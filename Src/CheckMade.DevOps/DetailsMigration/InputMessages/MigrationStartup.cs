@@ -12,7 +12,7 @@ internal class MigrationStartup(
 {
     public async Task StartAsync()
     {
-        ConfigureDataMigrationServices();
+        ConfigureDetailsMigrationServices();
         await using var sp = services.BuildServiceProvider();
 
         // var logger = sp.GetRequiredService<ILogger<MigrationStartup>>();
@@ -35,7 +35,7 @@ internal class MigrationStartup(
         );
     }
 
-    private void ConfigureDataMigrationServices()
+    private void ConfigureDetailsMigrationServices()
     {
         var dbConnString = targetEnv switch
         {

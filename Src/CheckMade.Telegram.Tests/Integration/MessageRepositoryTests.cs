@@ -1,5 +1,4 @@
 using CheckMade.Common.Interfaces;
-using CheckMade.Common.Interfaces.Utils;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
@@ -82,7 +81,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var randomizer = _services.GetRequiredService<IRandomizer>();
+        var randomizer = _services.GetRequiredService<Randomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         var userId = randomizer.GenerateRandomLong();
     
