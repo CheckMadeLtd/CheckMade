@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Utils;
+﻿using CheckMade.Common.ExternalServices;
+using CheckMade.Common.Utils;
 using CheckMade.DevOps.DetailsMigration.InputMessages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ if (args.Length == 0)
 operation = args[0];
 
 var config = BuildConfigurationRoot();
-var services = GetServiceCollectionWithBasics();
+var services = GetServiceCollectionWithBasics(config);
 
 switch (operation)
 {
@@ -67,7 +68,7 @@ static IConfigurationRoot BuildConfigurationRoot()
     return configBuilder.Build();
 }
 
-static IServiceCollection GetServiceCollectionWithBasics()
+static IServiceCollection GetServiceCollectionWithBasics(IConfigurationRoot config)
 {
     var services = new ServiceCollection();
 
@@ -79,6 +80,12 @@ static IServiceCollection GetServiceCollectionWithBasics()
     });
     
     services.Add_CommonUtils_Dependencies();
+
+    const string gglApiCredentialFileKey = "GOOGLE_API_CREDENTIAL_FILE";
+    var googleApiCredential = config.GetValue<string>(gglApiCredentialFileKey)
+        ?? throw new InvalidOperationException($"Can't find: {gglApiCredentialFileKey}");
+    
+    services.Add_GoogleApi_Dependencies(googleApiCredential);
 
     return services;
 }
