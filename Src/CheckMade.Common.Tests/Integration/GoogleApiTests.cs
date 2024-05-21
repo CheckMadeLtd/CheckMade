@@ -10,7 +10,7 @@ public class GoogleApiTests
     private ServiceProvider? _services;
     private const string SkipReason = "Google Sheets currently not in use -> reducing test execution time"; 
     
-    [Fact]
+    [Fact(Skip = SkipReason)]
     public async Task GetAllSpreadsheetDataAsync_GetsAllData()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
