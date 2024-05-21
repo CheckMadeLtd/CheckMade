@@ -8,9 +8,9 @@ namespace CheckMade.Common.Tests.Integration;
 public class GoogleApiTests
 {
     private ServiceProvider? _services;
-    private const string SkipReason = "Google Sheets not in use"; 
+    private const string SkipReason = "Google Sheets currently not in use -> reducing test execution time"; 
     
-    [Fact(Skip = SkipReason)]
+    [Fact]
     public async Task GetAllSpreadsheetDataAsync_GetsAllData()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();

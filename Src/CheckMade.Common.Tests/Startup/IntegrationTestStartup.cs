@@ -26,11 +26,11 @@ public class IntegrationTestStartup : TestStartupBase
         
         Services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
 
-        const string uiSourceGglSheetKeyInEnv = "GOOGLE_SHEET_ID_UI_SOURCE";
+        const string testDataGglSheetKeyInEnv = "GOOGLE_SHEET_ID_TEST_DATA";
         
         Services.AddScoped<UiSourceSheetIdProvider>(_ => new UiSourceSheetIdProvider(
-            Config.GetValue<string>(uiSourceGglSheetKeyInEnv)
+            Config.GetValue<string>(testDataGglSheetKeyInEnv)
             ?? throw new InvalidOperationException(
-                $"Can't find: {uiSourceGglSheetKeyInEnv}")));
+                $"Can't find: {testDataGglSheetKeyInEnv}")));
     }
 }

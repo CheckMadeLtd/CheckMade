@@ -1,3 +1,3 @@
 namespace CheckMade.Common.Tests.Startup;
 
-public record UiSourceSheetIdProvider(string UiSourceSheetId);
+internal record UiSourceSheetIdProvider(string UiSourceSheetId);
