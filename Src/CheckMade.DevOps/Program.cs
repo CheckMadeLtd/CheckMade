@@ -1,5 +1,4 @@
 ﻿using CheckMade.Common.Utils;
-using CheckMade.DevOps.DetailsMigration;
 using CheckMade.DevOps.DetailsMigration.InputMessages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

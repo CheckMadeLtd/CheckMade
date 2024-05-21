@@ -2,7 +2,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages;
 
@@ -15,7 +15,7 @@ internal class MigrationStartup(
         ConfigureDataMigrationServices();
         await using var sp = services.BuildServiceProvider();
 
-        var logger = sp.GetRequiredService<ILogger<MigrationStartup>>();
+        // var logger = sp.GetRequiredService<ILogger<MigrationStartup>>();
         var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
 
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
