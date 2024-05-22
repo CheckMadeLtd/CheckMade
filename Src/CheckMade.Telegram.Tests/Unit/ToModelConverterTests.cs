@@ -1,7 +1,6 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Tests.Startup;

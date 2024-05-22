@@ -1,7 +1,7 @@
 using CheckMade.Common.FpExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot;
 using Telegram.Bot.Types;

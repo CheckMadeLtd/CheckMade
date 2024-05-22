@@ -1,6 +1,5 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
-using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot.Types;
@@ -21,13 +20,13 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
     {
         return ((Result<InputMessage>) await
-            from attachmentDetails 
+            (from attachmentDetails 
                 in GetAttachmentDetails(telegramInputMessage)
             from submissionBotCommand 
                 in GetSubmissionsBotCommand(telegramInputMessage, botType)
             from modelInputMessage 
                 in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, submissionBotCommand)
-            select modelInputMessage)
+            select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
                 error => throw new ToModelConversionException(
@@ -79,6 +78,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     internal const string FailToParseBotCommandError =
         "Failed to parse out a {0} BotCommand even though an entity of that type was detected.";
     
+    // ToDo: Implement for other botTypes / try to generalise
     private static Result<Option<SubmissionsBotCommands>> GetSubmissionsBotCommand(
         Message telegramInputMessage,
         BotType botType)
@@ -130,7 +130,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 attachmentDetails.FileId.GetValueOrDefault());
             
             if (pathAttempt.IsFailure)
-                return Result<InputMessage>.FromError("Error while trying to retrieve full path to attachment file.");
+                return Result<InputMessage>.FromError(
+                    "Error while trying to retrieve full Telegram server path to attachment file.");
 
             telegramAttachmentUrl = pathAttempt.GetValueOrDefault();
         }

@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.Telegram.Model;
 
 public enum BotType
 {

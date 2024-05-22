@@ -1,6 +1,6 @@
 using System.Net;
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

@@ -1,5 +1,5 @@
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
 

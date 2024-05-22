@@ -1,6 +1,6 @@
 using CheckMade.Common.FpExt;
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
