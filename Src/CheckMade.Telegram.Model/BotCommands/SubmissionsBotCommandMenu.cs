@@ -8,11 +8,11 @@ public record SubmissionsBotCommandMenu
         {
             { SubmissionsBotCommands.Problem, 
                 new BotCommand("/problem", "Ein Problem melden ❗") },
-            { SubmissionsBotCommands.Bewertung, 
+            { SubmissionsBotCommands.Assessment, 
                 new BotCommand("/bewertung", "Eine Bewertung vornehmen ⭐") },
-            { SubmissionsBotCommands.Einstellungen, 
+            { SubmissionsBotCommands.Settings, 
                 new BotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
-            { SubmissionsBotCommands.Ausloggen, 
+            { SubmissionsBotCommands.Logout, 
                 new BotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
         };
 }

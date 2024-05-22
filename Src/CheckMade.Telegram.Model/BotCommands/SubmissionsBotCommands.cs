@@ -5,7 +5,7 @@ namespace CheckMade.Telegram.Model.BotCommands;
 public enum SubmissionsBotCommands
 {
     Problem = 10,
-    Bewertung = 20,
-    Einstellungen = 90,
-    Ausloggen = 99
+    Assessment = 20,
+    Settings = 90,
+    Logout = 99
 }

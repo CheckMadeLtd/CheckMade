@@ -1,9 +1,14 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
+using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model.BotCommands;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -117,7 +122,31 @@ var host = new HostBuilder()
 
 await host.StartAsync();
 
-// The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
-// after the host started, contrary to just using Run().
+/* The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
+after the host started (contrary to just using Run()).
+I.e. this would be the place to run code independent of an update trigger into one of the bot's functions.
+However, this is outside of the typical scope of http triggers, so I need to create my own scope if I want to use 
+any of the scoped services registered in the D.I. container */
+// WARNING-1: Careful about concurrency issues between code executed here and via function invocations!
+// WARNING-2: Any unhandled exception here will crash the entire host, making the Functions unresponsive until restart! 
+
+using var startUpScope = host.Services.CreateScope();
+var sp = startUpScope.ServiceProvider;
+
+var botClientFactory = sp.GetRequiredService<IBotClientFactory>();
+
+foreach (var botType in Enum.GetValues<BotType>())
+{
+    var botClientAttempt = Attempt<IBotClientWrapper>.Run(() => 
+        botClientFactory.CreateBotClientOrThrow(botType));
+
+    await botClientAttempt.Match(
+        async botClient =>
+        {
+            await botClient.SetBotCommandMenuOrThrow(new SubmissionsBotCommandMenu());
+        },
+        ex => Console.Error.WriteLineAsync(ex.Message)
+    );
+}
 
 await host.WaitForShutdownAsync();

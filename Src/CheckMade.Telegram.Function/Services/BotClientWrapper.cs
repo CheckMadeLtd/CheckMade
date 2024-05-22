@@ -1,8 +1,10 @@
 using CheckMade.Common.FpExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
+using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Function.Services;
@@ -20,6 +22,8 @@ public interface IBotClientWrapper
         CancellationToken cancellationToken = default);
 
     Task<File> GetFileAsync(string fileId);
+
+    Task SetBotCommandMenuOrThrow(SubmissionsBotCommandMenu modelBotCommandMenu);
 }
 
 internal class BotClientWrapper(
@@ -55,5 +59,27 @@ internal class BotClientWrapper(
         return Unit.Value;
     } 
     
-    public Task<File> GetFileAsync(string fileId) => botClient.GetFileAsync(fileId);
+    // ToDo: turn this into GetFileAsyncOrThrow for consistency and see where this is used and whether it needs
+    // wrapping in Attempt<> too
+    public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
+
+    // ToDo: Change argument to IBotCommandMenu after introducing it, so that it works for all botTypes
+    public async Task SetBotCommandMenuOrThrow(SubmissionsBotCommandMenu modelBotCommandMenu)
+    {
+        await botClient.DeleteMyCommandsAsync();
+        
+        await botClient.SetMyCommandsAsync(modelBotCommandMenu.Menu
+            .Select(kvp => new
+            {
+                ModelCommand = kvp.Value.Command,
+                ModelDescription = kvp.Value.Description
+            })
+            .Select(pair => new BotCommand
+            {
+                Command = pair.ModelCommand,
+                Description = pair.ModelDescription
+            })
+            .ToArray());
+    }
 }
+
