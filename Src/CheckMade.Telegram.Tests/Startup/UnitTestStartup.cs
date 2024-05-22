@@ -39,7 +39,7 @@ public class UnitTestStartup : TestStartupBase
             var mockBotClient = new Mock<IBotClientWrapper>();
             
             mockBotClient
-                .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
+                .Setup(x => x.GetFileOrThrowAsync(It.IsNotNull<string>()))
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
             
             mockBotClient

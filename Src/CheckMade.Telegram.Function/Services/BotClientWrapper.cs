@@ -22,9 +22,9 @@ public interface IBotClientWrapper
         string text,
         CancellationToken cancellationToken = default);
 
-    Task<File> GetFileAsync(string fileId);
+    Task<File> GetFileOrThrowAsync(string fileId);
 
-    Task<Unit> SetBotCommandMenuOrThrow(BotCommandMenus menu, BotType botType);
+    Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType);
 }
 
 internal class BotClientWrapper(
@@ -60,11 +60,9 @@ internal class BotClientWrapper(
         return Unit.Value;
     } 
     
-    // ToDo: turn this into GetFileAsyncOrThrow for consistency and see where this is used and whether it needs
-    // wrapping in Attempt<> too
-    public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
-    public async Task<Unit> SetBotCommandMenuOrThrow(BotCommandMenus menu, BotType botType)
+    public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType)
     {
         await botClient.DeleteMyCommandsAsync();
 

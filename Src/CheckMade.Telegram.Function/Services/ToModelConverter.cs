@@ -122,10 +122,19 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 "A valid message must either have a text or an attachment - both must not be null/empty");
         }
 
-        var telegramAttachmentUrl = await attachmentDetails.FileId.Match<Task<Option<string>>>(
-            async value => await filePathResolver.GetTelegramFilePathAsync(value),
-            () => Task.FromResult(Option<string>.None()));
+        var telegramAttachmentUrl = Option<string>.None();
+        
+        if (attachmentDetails.FileId.IsSome)
+        {
+            var pathAttempt = await filePathResolver.SafelyGetTelegramFilePathAsync(
+                attachmentDetails.FileId.GetValueOrDefault());
+            
+            if (pathAttempt.IsFailure)
+                return Result<InputMessage>.FromError("Error while trying to retrieve full path to attachment file.");
 
+            telegramAttachmentUrl = pathAttempt.GetValueOrDefault();
+        }
+        
         var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
             ? telegramInputMessage.Text
             : telegramInputMessage.Caption;

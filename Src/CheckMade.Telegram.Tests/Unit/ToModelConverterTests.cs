@@ -80,7 +80,7 @@ public class ToModelConverterTests
 
         var expectedAttachmentExternalUrl =
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{mockBotClient.Object.BotToken}/" +
-            $"{(await mockBotClient.Object.GetFileAsync("any")).FilePath}";
+            $"{(await mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}";
 
         var expectedInputMessage = new InputMessage(
             telegramAttachmentMessage.From!.Id,
