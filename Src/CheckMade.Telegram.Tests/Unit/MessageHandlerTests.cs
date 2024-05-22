@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace CheckMade.Telegram.Tests.Unit;

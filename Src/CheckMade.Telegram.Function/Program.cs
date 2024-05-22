@@ -104,7 +104,6 @@ var host = new HostBuilder()
                     outputTemplate: humanReadability,
                     restrictedToMinimumLevel: LogEventLevel.Information)
                 
-                // ToDo: The CustomTelemetryConverter for now simply doesn't do its job. Figure out post summer 2024.
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
                     restrictedToMinimumLevel: LogEventLevel.Information);
