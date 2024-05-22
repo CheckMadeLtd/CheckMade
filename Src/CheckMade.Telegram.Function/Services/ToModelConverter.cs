@@ -95,16 +95,16 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         {
             botCommandEnumType = botType switch
             {
-                BotType.Submissions => (int) botCommandMenus.SubmissionsBotCommandMenu
-                    .FirstOrDefault(kvp => 
-                        kvp.Value.Command == telegramInputMessage.Text)
+                BotType.Submissions => (int)botCommandMenus.SubmissionsBotCommandMenu
+                    .First(kvp => 
+                        kvp.Value.Command == telegramInputMessage.Text) 
                     .Key,
                 BotType.Communications => (int) botCommandMenus.CommunicationsBotCommandMenu
-                    .FirstOrDefault(kvp => 
+                    .First(kvp => 
                         kvp.Value.Command == telegramInputMessage.Text)
                     .Key,
                 BotType.Notifications => (int) botCommandMenus.NotificationsBotCommandMenu
-                    .FirstOrDefault(kvp => 
+                    .First(kvp => 
                         kvp.Value.Command == telegramInputMessage.Text)
                     .Key,
                 _ => throw new ArgumentOutOfRangeException(nameof(botType))
@@ -112,8 +112,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         }
         catch (Exception ex)
         {
-            // ToDo: Confirm that this new message now makes the unit test fail
-            return Result<Option<int>>.FromError($"{ex.Message} {string.Format(FailToParseBotCommandError, botType)}");
+            return Result<Option<int>>.FromError($"{ex.Message}. {string.Format(FailToParseBotCommandError, botType)}");
         }
         
         return Result<Option<int>>.FromSuccess(botCommandEnumType);

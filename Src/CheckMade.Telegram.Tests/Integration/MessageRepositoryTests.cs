@@ -51,7 +51,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
-    public async Task GetAllAsync_And_AddAsync_CorrectlyAddAndReturn_MultipleValidMessages()
+    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidMessages()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         

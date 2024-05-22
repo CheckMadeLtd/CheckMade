@@ -196,10 +196,7 @@ public class MessageHandlerTests
         var invalidBotCommandMessage = utils.GetSubmissionsBotCommandMessage(invalidBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedErrorMessage = 
-            $"{ToModelConverter.FailedToConvertMessageToModel} " +
-            $"{string.Format(ToModelConverter.FailToParseBotCommandError, BotType.Submissions)} " +
-            $"{MessageHandler.CallToActionAfterErrorReport}";
+        var expectedErrorMessageSegment = $"{string.Format(ToModelConverter.FailToParseBotCommandError, BotType.Submissions)}";
     
         // Act
         await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
@@ -208,7 +205,7 @@ public class MessageHandlerTests
         mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 invalidBotCommandMessage.Chat.Id,
-                expectedErrorMessage,
+                It.Is<string>(msg => msg.Contains(expectedErrorMessageSegment)),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
