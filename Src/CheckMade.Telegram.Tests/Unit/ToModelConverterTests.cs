@@ -3,7 +3,7 @@ using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommandEnums;
+using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;

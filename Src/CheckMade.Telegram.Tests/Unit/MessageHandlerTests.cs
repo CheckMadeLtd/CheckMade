@@ -4,7 +4,7 @@ using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommandEnums;
+using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

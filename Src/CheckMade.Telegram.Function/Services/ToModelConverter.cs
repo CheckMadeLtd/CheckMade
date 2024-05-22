@@ -2,7 +2,7 @@ using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommandEnums;
+using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 

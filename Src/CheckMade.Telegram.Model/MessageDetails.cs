@@ -1,6 +1,6 @@
 
 using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Telegram.Model.BotCommandEnums;
+using CheckMade.Telegram.Model.BotCommands;
 
 namespace CheckMade.Telegram.Model;
 
