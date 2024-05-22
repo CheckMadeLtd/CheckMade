@@ -1,7 +1,9 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
+using CheckMade.Telegram.Logic.BotCommandEnums;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Tests;
 
@@ -10,12 +12,15 @@ internal interface ITestUtils
     InputMessage GetValidModelInputTextMessageNoAttachment();
     InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
     InputMessage GetValidModelInputTextMessageWithAttachment();
+    
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramAudioMessage();
     Message GetValidTelegramDocumentMessage();
     Message GetValidTelegramPhotoMessage();
     Message GetValidTelegramVideoMessage();
     Message GetValidTelegramVoiceMessage();
+
+    Message GetValidSubmissionsBotCommandMessage(SubmissionsBotCommands botCommand);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
@@ -102,4 +107,20 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Voice = new Voice { FileId = "fakeVoiceFileId" }
         };
 
+    public Message GetValidSubmissionsBotCommandMessage(SubmissionsBotCommands botCommand) =>
+        new()
+        {
+            From = new User { Id = randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            Text = botCommand.ToString(),
+            Entities = [
+                new MessageEntity
+                {
+                    Length = botCommand.ToString().Length,
+                    Offset = 0,
+                    Type = MessageEntityType.BotCommand
+                }
+            ]
+        };
 }

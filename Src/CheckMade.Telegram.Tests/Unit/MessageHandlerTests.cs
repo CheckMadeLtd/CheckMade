@@ -2,6 +2,7 @@ using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Logic.BotCommandEnums;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Tests.Startup;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace CheckMade.Telegram.Tests.Unit;
@@ -159,5 +161,33 @@ public class MessageHandlerTests
         
         // Assert
         mockBotClient.Verify();
+    }
+
+    [Theory]
+    [InlineData(SubmissionsBotCommands.Problem)]
+    [InlineData(SubmissionsBotCommands.Bewertung)]
+    [InlineData(SubmissionsBotCommands.Einstellungen)]
+    [InlineData(SubmissionsBotCommands.Ausloggen)]
+    public async Task HandleMessageAsync_EchosCorrectBotCommand_ForValidBotCommandInputToSubmissions(
+        SubmissionsBotCommands botCommand)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var botCommandMessage = utils.GetValidSubmissionsBotCommandMessage(botCommand);
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {botCommand}";
+
+        // Act
+        await handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);
+
+        // Assert
+        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+                botCommandMessage.Chat.Id,
+                expectedOutputMessage,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
 }
