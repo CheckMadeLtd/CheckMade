@@ -145,6 +145,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 telegramInputMessage.Chat.Id,
                 new MessageDetails(
                     telegramInputMessage.Date,
+                    botType,
                     !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
                     telegramAttachmentUrl,
                     attachmentDetails.Type,

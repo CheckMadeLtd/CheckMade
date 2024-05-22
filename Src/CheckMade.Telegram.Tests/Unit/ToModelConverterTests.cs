@@ -36,6 +36,7 @@ public class ToModelConverterTests
             telegramInputMessage.Chat.Id,
             new MessageDetails(
                 telegramInputMessage.Date,
+                BotType.Submissions,
                 !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
                     ? telegramInputMessage.Text 
                     : Option<string>.None(),
@@ -86,6 +87,7 @@ public class ToModelConverterTests
             telegramAttachmentMessage.Chat.Id,
             new MessageDetails(
                 telegramAttachmentMessage.Date,
+                BotType.Submissions,
                 !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
                     ? telegramAttachmentMessage.Caption
                     : Option<string>.None(),

@@ -35,6 +35,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
+                BotType.Submissions,
                 $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
@@ -45,6 +46,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
+                BotType.Submissions,
                 $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 AttachmentType.Photo,
