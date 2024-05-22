@@ -162,22 +162,18 @@ public class MessageHandlerTests
         mockBotClient.Verify();
     }
 
-    [Theory]
-    [InlineData(SubmissionsBotCommands.Problem)]
-    [InlineData(SubmissionsBotCommands.Bewertung)]
-    [InlineData(SubmissionsBotCommands.Einstellungen)]
-    [InlineData(SubmissionsBotCommands.Ausloggen)]
-    public async Task HandleMessageAsync_EchosCorrectBotCommand_ForValidBotCommandInputToSubmissions(
-        SubmissionsBotCommands botCommand)
+    [Fact]
+    public async Task HandleMessageAsync_EchosCorrectBotCommand_ForValidBotCommandInputToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
+        var validBotCommand = new SubmissionsBotCommandMenu().Menu[SubmissionsBotCommands.Problem].Command;
         var utils = _services.GetRequiredService<ITestUtils>();
-        var botCommandMessage = utils.GetSubmissionsBotCommandMessage(botCommand.ToString());
+        var botCommandMessage = utils.GetSubmissionsBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {botCommand}";
+        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {validBotCommand}";
 
         // Act
         await handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);

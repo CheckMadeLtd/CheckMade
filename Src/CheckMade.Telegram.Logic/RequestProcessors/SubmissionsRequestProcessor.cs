@@ -1,6 +1,7 @@
 ﻿using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommands;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 
@@ -14,8 +15,13 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             await repo.AddOrThrowAsync(inputMessage);
 
+            var submissionsBotCommandMenu = new SubmissionsBotCommandMenu();
+            
             return inputMessage.Details.SubmissionsBotCommand.Match(
-                botCommand => $"Echo of a Submissions BotCommand: {botCommand}",
+                botCommand => $"Echo of a Submissions BotCommand: " +
+                              $"{submissionsBotCommandMenu.Menu
+                                  .First(kvp => kvp.Key == botCommand)
+                                  .Value.Command}",
                 () => inputMessage.Details.AttachmentType.Match(
                     type => $"Echo from bot Submissions: {type}",
                     () => $"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));

@@ -77,7 +77,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
     internal const string FailToParseBotCommandError =
-        "Failed to parse a {0} BotCommand even though an entity of that type was detected.";
+        "Failed to parse out a {0} BotCommand even though an entity of that type was detected.";
     
     private static Result<Option<SubmissionsBotCommands>> GetSubmissionsBotCommand(
         Message telegramInputMessage,
@@ -86,16 +86,23 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         if (botType is not BotType.Submissions)
             return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
         
-        var botCommand = telegramInputMessage.Entities?
+        var botCommandEntity = telegramInputMessage.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
 
-        if (botCommand == null)
+        if (botCommandEntity == null)
             return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
 
-        return Enum.TryParse<SubmissionsBotCommands>(telegramInputMessage.Text, out var command) 
-                ? Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.Some(command)) 
-                : Result<Option<SubmissionsBotCommands>>.FromError(
-                    string.Format(FailToParseBotCommandError, botType));
+        var submissionsBotCommandMenu = new SubmissionsBotCommandMenu(); 
+        
+        var botCommand = submissionsBotCommandMenu.Menu.Values
+            .FirstOrDefault(bc => bc.Command == telegramInputMessage.Text);
+
+        if (botCommand == null)
+            return Result<Option<SubmissionsBotCommands>>.FromError(string.Format(FailToParseBotCommandError, botType));
+
+        return Result<Option<SubmissionsBotCommands>>.FromSuccess(submissionsBotCommandMenu.Menu
+            .FirstOrDefault(kvp => kvp.Value.Command == botCommand.Command)
+            .Key);
     }
     
     private async Task<Result<InputMessage>> GetInputMessageAsync(
