@@ -23,16 +23,13 @@ public class MessageHandler(
 {
     internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
     
-    private BotType _botType;
-    
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         ChatId chatId = telegramInputMessage.Chat.Id;
-        _botType = botType;
         
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            _botType, telegramInputMessage.From?.Id ?? 0, chatId);
+            botType, telegramInputMessage.From?.Id ?? 0, chatId);
 
         var handledMessageTypes = new[]
         {
@@ -54,7 +51,7 @@ public class MessageHandler(
 
         var botClient = 
             Attempt<IBotClientWrapper>.Run(() => 
-                botClientFactory.CreateBotClientOrThrow(_botType))
+                botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
                     botClient => botClient,
                     ex => throw new InvalidOperationException(
@@ -65,8 +62,8 @@ public class MessageHandler(
         
         var sendOutputOutcome =
             from modelInputMessage in Attempt<InputMessage>.RunAsync(() => 
-                toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage))
-            from outputMessage in selector.GetRequestProcessor(_botType).SafelyEchoAsync(modelInputMessage)
+                toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage, botType))
+            from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
             select SendOutputAsync(outputMessage, botClient, chatId);        
         
         return (await sendOutputOutcome).Match(
@@ -79,7 +76,7 @@ public class MessageHandler(
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Message: '{telegramDate}'; " +
                                     "with text: '{text}'",
-                    _botType, telegramInputMessage.From!.Id,
+                    botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget

@@ -1,6 +1,8 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
+using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommandEnums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -8,16 +10,20 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage);
+    Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage)
+    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
     {
         return ((Result<InputMessage>) await
-            from attachmentDetails in GetAttachmentDetails(telegramInputMessage)
-            from modelInputMessage in GetInputMessageAsync(telegramInputMessage, attachmentDetails)
+            from attachmentDetails 
+                in GetAttachmentDetails(telegramInputMessage)
+            from submissionBotCommand 
+                in GetSubmissionsBotCommand(telegramInputMessage, botType)
+            from modelInputMessage 
+                in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, submissionBotCommand)
             select modelInputMessage)
             .Match(
                 modelInputMessage => modelInputMessage,
@@ -67,8 +73,30 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
+    private static Result<Option<SubmissionsBotCommands>> GetSubmissionsBotCommand(
+        Message telegramInputMessage,
+        BotType botType)
+    {
+        if (botType is not BotType.Submissions)
+            return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
+        
+        var botCommand = telegramInputMessage.Entities?
+            .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
+
+        if (botCommand == null)
+            return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
+
+        return Enum.TryParse<SubmissionsBotCommands>(telegramInputMessage.Text, out var command) 
+                ? Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.Some(command)) 
+                : Result<Option<SubmissionsBotCommands>>.FromError(
+                    $"Failed to parse a {botType} BotCommand even though an entity of that type was detected.");
+    }
+    
     private async Task<Result<InputMessage>> GetInputMessageAsync(
-        Message telegramInputMessage, AttachmentDetails attachmentDetails)
+        Message telegramInputMessage,
+        BotType botType,
+        AttachmentDetails attachmentDetails,
+        Option<SubmissionsBotCommands> submissionsBotCommand)
     {
         var userId = telegramInputMessage.From?.Id; 
                      
@@ -88,7 +116,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         var messageText = !string.IsNullOrWhiteSpace(telegramInputMessage.Text)
             ? telegramInputMessage.Text
             : telegramInputMessage.Caption;
-
+        
         return Result<InputMessage>.FromSuccess(
             new InputMessage(userId.Value,
                 telegramInputMessage.Chat.Id,
@@ -96,6 +124,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     telegramInputMessage.Date,
                     !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
                     telegramAttachmentUrl,
-                    attachmentDetails.Type)));
+                    attachmentDetails.Type,
+                    submissionsBotCommand)));
     }
 }

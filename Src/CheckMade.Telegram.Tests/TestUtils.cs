@@ -1,7 +1,7 @@
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
-using CheckMade.Telegram.Logic.BotCommandEnums;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommandEnums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -37,7 +37,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 DateTime.Now,
                 $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
-                Option<AttachmentType>.None()));
+                Option<AttachmentType>.None(),
+                Option<SubmissionsBotCommands>.None()));
     
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(randomizer.GenerateRandomLong(),
@@ -46,7 +47,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 DateTime.Now,
                 $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
-                AttachmentType.Photo));
+                AttachmentType.Photo,
+                Option<SubmissionsBotCommands>.None()));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()

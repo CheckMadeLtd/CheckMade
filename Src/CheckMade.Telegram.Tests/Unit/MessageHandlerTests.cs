@@ -2,9 +2,9 @@ using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Logic.BotCommandEnums;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommandEnums;
 using CheckMade.Telegram.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -188,5 +188,12 @@ public class MessageHandlerTests
                 expectedOutputMessage,
                 It.IsAny<CancellationToken>()), 
             Times.Once);
+    }
+
+    [Fact(Skip = "Not implemented")]
+    public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
+    {
+        // $"Failed to parse a {botType} BotCommand even though an entity of that type was detected.");
+        // or at least ToModelConversionException
     }
 }
