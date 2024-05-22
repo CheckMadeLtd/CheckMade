@@ -15,16 +15,22 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             await repo.AddOrThrowAsync(inputMessage);
 
-            var submissionsBotCommandMenu = new BotCommandMenus();
-            
-            return inputMessage.Details.SubmissionsBotCommand.Match(
-                botCommand => $"Echo of a Submissions BotCommand: " +
-                              $"{submissionsBotCommandMenu.SubmissionsBotCommandMenu
-                                  .First(kvp => kvp.Key == botCommand)
-                                  .Value.Command}",
-                () => inputMessage.Details.AttachmentType.Match(
-                    type => $"Echo from bot Submissions: {type}",
-                    () => $"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
+            var botCommandMenus = new BotCommandMenus();
+
+            if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
+                inputMessage.Details.BotCommandEnumCode.IsSome)
+            {
+                var botCommand = botCommandMenus.SubmissionsBotCommandMenu
+                    .FirstOrDefault(kvp => 
+                        (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
+                    .Value.Command;
+
+                return $"Echo of a Submissions BotCommand: {botCommand}";
+            }
+
+            return inputMessage.Details.AttachmentType.Match(
+                type => $"Echo from bot Submissions: {type}",
+                () => $"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}");
         });
     }
 }

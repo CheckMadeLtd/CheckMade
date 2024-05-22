@@ -2,7 +2,6 @@ using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +41,7 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
-                Option<SubmissionsBotCommands>.None()));
+                Option<int>.None()));
 
         // Act
         var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramInputMessage, BotType.Submissions);
@@ -93,7 +92,7 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 expectedAttachmentExternalUrl,
                 attachmentType,
-                Option<SubmissionsBotCommands>.None()));
+                Option<int>.None()));
         
         // Act
         var actualInputMessage = await converter.ConvertMessageOrThrowAsync(

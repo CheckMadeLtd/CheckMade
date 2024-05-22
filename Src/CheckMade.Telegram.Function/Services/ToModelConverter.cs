@@ -22,10 +22,10 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         return ((Result<InputMessage>) await
             (from attachmentDetails 
                 in GetAttachmentDetails(telegramInputMessage)
-            from submissionBotCommand 
-                in GetSubmissionsBotCommand(telegramInputMessage, botType)
+            from botCommandEnumCode 
+                in GetBotCommandEnumCode(telegramInputMessage, botType)
             from modelInputMessage 
-                in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, submissionBotCommand)
+                in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, botCommandEnumCode)
             select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
@@ -78,38 +78,52 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     internal const string FailToParseBotCommandError =
         "Failed to parse out a {0} BotCommand even though an entity of that type was detected.";
     
-    // ToDo: Implement for other botTypes / try to generalise
-    private static Result<Option<SubmissionsBotCommands>> GetSubmissionsBotCommand(
+    private static Result<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,
         BotType botType)
     {
-        if (botType is not BotType.Submissions)
-            return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
-        
         var botCommandEntity = telegramInputMessage.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
 
         if (botCommandEntity == null)
-            return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
+            return Result<Option<int>>.FromSuccess(Option<int>.None());
 
-        var submissionsBotCommandMenu = new BotCommandMenus(); 
+        var botCommandMenus = new BotCommandMenus();
+        int botCommandEnumType;
         
-        var botCommand = submissionsBotCommandMenu.SubmissionsBotCommandMenu.Values
-            .FirstOrDefault(bc => bc.Command == telegramInputMessage.Text);
-
-        if (botCommand == null)
-            return Result<Option<SubmissionsBotCommands>>.FromError(string.Format(FailToParseBotCommandError, botType));
-
-        return Result<Option<SubmissionsBotCommands>>.FromSuccess(submissionsBotCommandMenu.SubmissionsBotCommandMenu
-            .FirstOrDefault(kvp => kvp.Value.Command == botCommand.Command)
-            .Key);
+        try
+        {
+            botCommandEnumType = botType switch
+            {
+                BotType.Submissions => (int) botCommandMenus.SubmissionsBotCommandMenu
+                    .FirstOrDefault(kvp => 
+                        kvp.Value.Command == telegramInputMessage.Text)
+                    .Key,
+                BotType.Communications => (int) botCommandMenus.CommunicationsBotCommandMenu
+                    .FirstOrDefault(kvp => 
+                        kvp.Value.Command == telegramInputMessage.Text)
+                    .Key,
+                BotType.Notifications => (int) botCommandMenus.NotificationsBotCommandMenu
+                    .FirstOrDefault(kvp => 
+                        kvp.Value.Command == telegramInputMessage.Text)
+                    .Key,
+                _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            };
+        }
+        catch (Exception ex)
+        {
+            // ToDo: Confirm that this new message now makes the unit test fail
+            return Result<Option<int>>.FromError($"{ex.Message} {string.Format(FailToParseBotCommandError, botType)}");
+        }
+        
+        return Result<Option<int>>.FromSuccess(botCommandEnumType);
     }
     
     private async Task<Result<InputMessage>> GetInputMessageAsync(
         Message telegramInputMessage,
         BotType botType,
         AttachmentDetails attachmentDetails,
-        Option<SubmissionsBotCommands> submissionsBotCommand)
+        Option<int> botCommandEnumCode)
     {
         var userId = telegramInputMessage.From?.Id; 
                      
@@ -149,6 +163,6 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
                     telegramAttachmentUrl,
                     attachmentDetails.Type,
-                    submissionsBotCommand)));
+                    botCommandEnumCode)));
     }
 }
