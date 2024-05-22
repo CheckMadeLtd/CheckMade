@@ -93,7 +93,7 @@ public class MessageHandlerTests
         };
 
         var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
-                                    $"{BotUpdateSwitch.NoSpecialHandlingWarningMessage}";
+                                    $"{BotUpdateSwitch.NoSpecialHandlingWarning}";
 
         var mockLogger = new Mock<ILogger<MessageHandler>>();
         mockLogger.Setup(l => l.Log(
@@ -140,7 +140,7 @@ public class MessageHandlerTests
         _services = serviceCollection.BuildServiceProvider();
 
         const string expectedErrorMessage = $"{mockErrorMessage} " +
-                                            $"{MessageHandler.CallToActionMessageAfterErrorReport}";
+                                            $"{MessageHandler.CallToActionAfterErrorReport}";
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
@@ -174,7 +174,7 @@ public class MessageHandlerTests
         
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
-        var botCommandMessage = utils.GetValidSubmissionsBotCommandMessage(botCommand);
+        var botCommandMessage = utils.GetSubmissionsBotCommandMessage(botCommand.ToString());
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo of a Submissions BotCommand: {botCommand}";
@@ -190,10 +190,31 @@ public class MessageHandlerTests
             Times.Once);
     }
 
-    [Fact(Skip = "Not implemented")]
+    [Fact]
     public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
     {
-        // $"Failed to parse a {botType} BotCommand even though an entity of that type was detected.");
-        // or at least ToModelConversionException
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        const string invalidBotCommand = "/invalid";
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var invalidBotCommandMessage = utils.GetSubmissionsBotCommandMessage(invalidBotCommand);
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var expectedErrorMessage = 
+            $"{ToModelConverter.FailedToConvertMessageToModel} " +
+            $"{string.Format(ToModelConverter.FailToParseBotCommandError, BotType.Submissions)} " +
+            $"{MessageHandler.CallToActionAfterErrorReport}";
+    
+        // Act
+        await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
+    
+        // Assert
+        mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                invalidBotCommandMessage.Chat.Id,
+                expectedErrorMessage,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
 }

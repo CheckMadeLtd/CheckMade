@@ -15,6 +15,9 @@ public interface IToModelConverter
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
+    internal const string FailedToConvertMessageToModel =
+        "Failed to convert Telegram Message to Model:";
+    
     public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
     {
         return ((Result<InputMessage>) await
@@ -28,7 +31,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             .Match(
                 modelInputMessage => modelInputMessage,
                 error => throw new ToModelConversionException(
-                    $"Failed to convert Telegram Message to Model: {error}"));
+                    $"{FailedToConvertMessageToModel} {error}"));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -73,6 +76,9 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
+    internal const string FailToParseBotCommandError =
+        "Failed to parse a {0} BotCommand even though an entity of that type was detected.";
+    
     private static Result<Option<SubmissionsBotCommands>> GetSubmissionsBotCommand(
         Message telegramInputMessage,
         BotType botType)
@@ -89,7 +95,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         return Enum.TryParse<SubmissionsBotCommands>(telegramInputMessage.Text, out var command) 
                 ? Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.Some(command)) 
                 : Result<Option<SubmissionsBotCommands>>.FromError(
-                    $"Failed to parse a {botType} BotCommand even though an entity of that type was detected.");
+                    string.Format(FailToParseBotCommandError, botType));
     }
     
     private async Task<Result<InputMessage>> GetInputMessageAsync(

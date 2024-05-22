@@ -21,7 +21,7 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    internal const string CallToActionMessageAfterErrorReport = "Please report to your supervisor or contact support.";
+    internal const string CallToActionAfterErrorReport = "Please report to your supervisor or contact support.";
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
@@ -44,7 +44,7 @@ public class MessageHandler(
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
             logger.LogWarning("Received message of type '{0}': {1}", 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarningMessage);
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning);
 
             return Attempt<Unit>.Succeed(Unit.Value);
         }
@@ -80,7 +80,7 @@ public class MessageHandler(
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget
-                _ = SendOutputAsync($"{ex.Message} {CallToActionMessageAfterErrorReport}", botClient, chatId);
+                _ = SendOutputAsync($"{ex.Message} {CallToActionAfterErrorReport}", botClient, chatId);
                 return Attempt<Unit>.Fail(ex);
             });
     }

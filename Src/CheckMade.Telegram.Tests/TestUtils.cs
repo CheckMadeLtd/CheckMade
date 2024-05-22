@@ -20,7 +20,7 @@ internal interface ITestUtils
     Message GetValidTelegramVideoMessage();
     Message GetValidTelegramVoiceMessage();
 
-    Message GetValidSubmissionsBotCommandMessage(SubmissionsBotCommands botCommand);
+    Message GetSubmissionsBotCommandMessage(string botCommand);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
@@ -109,17 +109,17 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Voice = new Voice { FileId = "fakeVoiceFileId" }
         };
 
-    public Message GetValidSubmissionsBotCommandMessage(SubmissionsBotCommands botCommand) =>
+    public Message GetSubmissionsBotCommandMessage(string botCommand) =>
         new()
         {
             From = new User { Id = randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
-            Text = botCommand.ToString(),
+            Text = botCommand,
             Entities = [
                 new MessageEntity
                 {
-                    Length = botCommand.ToString().Length,
+                    Length = botCommand.Length,
                     Offset = 0,
                     Type = MessageEntityType.BotCommand
                 }
