@@ -23,7 +23,7 @@ public interface IBotClientWrapper
 
     Task<File> GetFileAsync(string fileId);
 
-    Task SetBotCommandMenuOrThrow(SubmissionsBotCommandMenu modelBotCommandMenu);
+    Task SetBotCommandMenuOrThrow(BotCommandMenus modelBotCommandMenu);
 }
 
 internal class BotClientWrapper(
@@ -64,11 +64,11 @@ internal class BotClientWrapper(
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
     // ToDo: Change argument to IBotCommandMenu after introducing it, so that it works for all botTypes
-    public async Task SetBotCommandMenuOrThrow(SubmissionsBotCommandMenu modelBotCommandMenu)
+    public async Task SetBotCommandMenuOrThrow(BotCommandMenus modelBotCommandMenu)
     {
         await botClient.DeleteMyCommandsAsync();
         
-        await botClient.SetMyCommandsAsync(modelBotCommandMenu.Menu
+        await botClient.SetMyCommandsAsync(modelBotCommandMenu.SubmissionsBotCommandMenu
             .Select(kvp => new
             {
                 ModelCommand = kvp.Value.Command,

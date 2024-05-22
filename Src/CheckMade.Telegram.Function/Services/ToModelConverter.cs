@@ -92,15 +92,15 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         if (botCommandEntity == null)
             return Result<Option<SubmissionsBotCommands>>.FromSuccess(Option<SubmissionsBotCommands>.None());
 
-        var submissionsBotCommandMenu = new SubmissionsBotCommandMenu(); 
+        var submissionsBotCommandMenu = new BotCommandMenus(); 
         
-        var botCommand = submissionsBotCommandMenu.Menu.Values
+        var botCommand = submissionsBotCommandMenu.SubmissionsBotCommandMenu.Values
             .FirstOrDefault(bc => bc.Command == telegramInputMessage.Text);
 
         if (botCommand == null)
             return Result<Option<SubmissionsBotCommands>>.FromError(string.Format(FailToParseBotCommandError, botType));
 
-        return Result<Option<SubmissionsBotCommands>>.FromSuccess(submissionsBotCommandMenu.Menu
+        return Result<Option<SubmissionsBotCommands>>.FromSuccess(submissionsBotCommandMenu.SubmissionsBotCommandMenu
             .FirstOrDefault(kvp => kvp.Value.Command == botCommand.Command)
             .Key);
     }

@@ -15,11 +15,11 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             await repo.AddOrThrowAsync(inputMessage);
 
-            var submissionsBotCommandMenu = new SubmissionsBotCommandMenu();
+            var submissionsBotCommandMenu = new BotCommandMenus();
             
             return inputMessage.Details.SubmissionsBotCommand.Match(
                 botCommand => $"Echo of a Submissions BotCommand: " +
-                              $"{submissionsBotCommandMenu.Menu
+                              $"{submissionsBotCommandMenu.SubmissionsBotCommandMenu
                                   .First(kvp => kvp.Key == botCommand)
                                   .Value.Command}",
                 () => inputMessage.Details.AttachmentType.Match(

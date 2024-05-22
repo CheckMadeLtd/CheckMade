@@ -18,7 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 		.github\workflows\main_workflow.yml = .github\workflows\main_workflow.yml
 		.github\workflows\parked_workflows.txt = .github\workflows\parked_workflows.txt
 		.idea\.idea.CheckMade\.idea\bashsupport-pro.xml = .idea\.idea.CheckMade\.idea\bashsupport-pro.xml
-		bot_commands_master.md = bot_commands_master.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.ViewModels", "Src\CheckMade.Mobile.ViewModels\CheckMade.Mobile.ViewModels.csproj", "{F8592897-CF33-4614-97B2-C0E16D406D3A}"

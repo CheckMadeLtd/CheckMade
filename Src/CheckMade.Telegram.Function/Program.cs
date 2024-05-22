@@ -143,7 +143,7 @@ foreach (var botType in Enum.GetValues<BotType>())
     await botClientAttempt.Match(
         async botClient =>
         {
-            await botClient.SetBotCommandMenuOrThrow(new SubmissionsBotCommandMenu());
+            await botClient.SetBotCommandMenuOrThrow(new BotCommandMenus());
         },
         ex => Console.Error.WriteLineAsync(ex.Message)
     );

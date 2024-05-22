@@ -168,7 +168,7 @@ public class MessageHandlerTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var validBotCommand = new SubmissionsBotCommandMenu().Menu[SubmissionsBotCommands.Problem].Command;
+        var validBotCommand = new BotCommandMenus().SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command;
         var utils = _services.GetRequiredService<ITestUtils>();
         var botCommandMessage = utils.GetSubmissionsBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
