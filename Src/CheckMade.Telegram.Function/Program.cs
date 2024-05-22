@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Common.FpExt;
 using CheckMade.Common.FpExt.MonadicWrappers;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
@@ -127,26 +128,40 @@ after the host started (contrary to just using Run()).
 I.e. this would be the place to run code independent of an update trigger into one of the bot's functions.
 However, this is outside of the typical scope of http triggers, so I need to create my own scope if I want to use 
 any of the scoped services registered in the D.I. container */
-// WARNING-1: Careful about concurrency issues between code executed here and via function invocations!
-// WARNING-2: Any unhandled exception here will crash the entire host, making the Functions unresponsive until restart! 
+// WARNING-1: Careful about potential concurrency issues between code executed below and through function invocations!
+// WARNING-2: Any unhandled exception below will crash the entire host, making the Functions unresponsive until restart! 
 
-using var startUpScope = host.Services.CreateScope();
-var sp = startUpScope.ServiceProvider;
-
-var botClientFactory = sp.GetRequiredService<IBotClientFactory>();
-
-foreach (var botType in Enum.GetValues<BotType>())
+using (var startUpScope = host.Services.CreateScope())
 {
-    var botClientAttempt = Attempt<IBotClientWrapper>.Run(() => 
-        botClientFactory.CreateBotClientOrThrow(botType));
+    var sp = startUpScope.ServiceProvider;
+    var logger = sp.GetRequiredService<ILogger<Program>>();
 
-    await botClientAttempt.Match(
-        async botClient =>
-        {
-            await botClient.SetBotCommandMenuOrThrow(new BotCommandMenus());
-        },
-        ex => Console.Error.WriteLineAsync(ex.Message)
-    );
+    await InitBotCommandsAsync(sp, logger);
 }
 
 await host.WaitForShutdownAsync();
+
+return;
+
+static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> logger)
+{
+    var botClientFactory = sp.GetRequiredService<IBotClientFactory>();
+
+    foreach (var botType in Enum.GetValues<BotType>())
+    {
+        var botCommandSettingAttempt = 
+            from botClient
+                in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
+            from unit in Attempt<Unit>.RunAsync(async () =>
+                await botClient.SetBotCommandMenuOrThrow(new BotCommandMenus(), botType))
+            select unit;
+
+        (await botCommandSettingAttempt).Match(
+            unit => unit,
+            ex =>
+            {
+                logger.LogError(ex, ex.Message);
+                return Unit.Value;
+            });
+    }
+}

@@ -1,6 +1,7 @@
 using CheckMade.Common.FpExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
+using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -23,7 +24,7 @@ public interface IBotClientWrapper
 
     Task<File> GetFileAsync(string fileId);
 
-    Task SetBotCommandMenuOrThrow(BotCommandMenus modelBotCommandMenu);
+    Task<Unit> SetBotCommandMenuOrThrow(BotCommandMenus menu, BotType botType);
 }
 
 internal class BotClientWrapper(
@@ -63,23 +64,30 @@ internal class BotClientWrapper(
     // wrapping in Attempt<> too
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
-    // ToDo: Change argument to IBotCommandMenu after introducing it, so that it works for all botTypes
-    public async Task SetBotCommandMenuOrThrow(BotCommandMenus modelBotCommandMenu)
+    public async Task<Unit> SetBotCommandMenuOrThrow(BotCommandMenus menu, BotType botType)
     {
         await botClient.DeleteMyCommandsAsync();
+
+        var telegramBotCommands = botType switch
+        {
+            BotType.Submissions => GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu),
+            BotType.Communications => GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu),
+            BotType.Notifications => GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu),
+            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+        };
         
-        await botClient.SetMyCommandsAsync(modelBotCommandMenu.SubmissionsBotCommandMenu
-            .Select(kvp => new
-            {
-                ModelCommand = kvp.Value.Command,
-                ModelDescription = kvp.Value.Description
-            })
-            .Select(pair => new BotCommand
-            {
-                Command = pair.ModelCommand,
-                Description = pair.ModelDescription
-            })
-            .ToArray());
+        await botClient.SetMyCommandsAsync(telegramBotCommands);
+        
+        return Unit.Value;
     }
+
+    private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
+        IDictionary<TEnum, ModelBotCommand> menu) where TEnum : Enum =>
+        menu
+            .Select(kvp => new BotCommand
+            {
+                Command = kvp.Value.Command, 
+                Description = kvp.Value.Description
+            }).ToArray();
 }
 

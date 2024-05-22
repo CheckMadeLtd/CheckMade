@@ -3,38 +3,38 @@ namespace CheckMade.Telegram.Model.BotCommands;
 
 public record BotCommandMenus
 {
-    public IDictionary<SubmissionsBotCommands, BotCommand> SubmissionsBotCommandMenu { get; } = 
-        new Dictionary<SubmissionsBotCommands, BotCommand>
+    public IDictionary<SubmissionsBotCommands, ModelBotCommand> SubmissionsBotCommandMenu { get; } = 
+        new Dictionary<SubmissionsBotCommands, ModelBotCommand>
         {
             { SubmissionsBotCommands.Problem, 
-                new BotCommand("/problem", "Ein Problem melden ❗") },
+                new ModelBotCommand("/problem", "Ein Problem melden ❗") },
             { SubmissionsBotCommands.Assessment, 
-                new BotCommand("/bewertung", "Eine Bewertung vornehmen ⭐") },
+                new ModelBotCommand("/bewertung", "Eine Bewertung vornehmen ⭐") },
             { SubmissionsBotCommands.Settings, 
-                new BotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
+                new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
             { SubmissionsBotCommands.Logout, 
-                new BotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
+                new ModelBotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
         };
     
-    public IDictionary<CommunicationsBotCommands, BotCommand> CommunicationsBotCommandMenu { get; } = 
-        new Dictionary<CommunicationsBotCommands, BotCommand>
+    public IDictionary<CommunicationsBotCommands, ModelBotCommand> CommunicationsBotCommandMenu { get; } = 
+        new Dictionary<CommunicationsBotCommands, ModelBotCommand>
         {
             { CommunicationsBotCommands.Contact, 
-                new BotCommand("/kontakt", "Kontakt aufnehmen 💬") },
+                new ModelBotCommand("/kontakt", "Kontakt aufnehmen 💬") },
             { CommunicationsBotCommands.Settings, 
-                new BotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
+                new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
             { CommunicationsBotCommands.Logout, 
-                new BotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
+                new ModelBotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
         };
 
-    public IDictionary<NotificationsBotCommands, BotCommand> NotificationsBotCommandMenu { get; } = 
-        new Dictionary<NotificationsBotCommands, BotCommand>
+    public IDictionary<NotificationsBotCommands, ModelBotCommand> NotificationsBotCommandMenu { get; } = 
+        new Dictionary<NotificationsBotCommands, ModelBotCommand>
         {
             { NotificationsBotCommands.Status, 
-                new BotCommand("/status", "Aktueller Statusreport 📋") },
+                new ModelBotCommand("/status", "Aktueller Statusreport 📋") },
             { NotificationsBotCommands.Settings, 
-                new BotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
+                new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️") },
             { NotificationsBotCommands.Logout, 
-                new BotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
+                new ModelBotCommand("/ausloggen", "Aktuelle Rolle von diesem Chat trennen 💨") }
         };
 }
