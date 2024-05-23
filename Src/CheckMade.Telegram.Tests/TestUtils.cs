@@ -38,7 +38,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
-                Option<int>.Some(10)));
+                Option<int>.None()));
     
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(randomizer.GenerateRandomLong(),
@@ -49,7 +49,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 AttachmentType.Photo,
-                Option<int>.Some(10)));
+                Option<int>.None()));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()
