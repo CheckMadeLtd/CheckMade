@@ -17,10 +17,8 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
 
             var botCommandMenus = new BotCommandMenus();
 
-            if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == 1)
-                return Ui(
-                    "Willkommen zum SubmissionsBot! Klick auf den Menüknopf oder tippe '/' " +
-                    "um verfügbare Befehle zu sehen.");
+            if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+                return string.Format(IRequestProcessor.WelcomeToBot, BotType.Submissions);
             
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
