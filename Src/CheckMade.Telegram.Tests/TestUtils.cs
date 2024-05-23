@@ -8,6 +8,8 @@ namespace CheckMade.Telegram.Tests;
 
 internal interface ITestUtils
 {
+    Randomizer Randomizer { get; }
+    
     InputMessage GetValidModelInputTextMessageNoAttachment();
     InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
     InputMessage GetValidModelInputTextMessageWithAttachment();
@@ -25,28 +27,30 @@ internal interface ITestUtils
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     internal const long TestUserDanielGorinTelegramId = 215737196L;
+
+    public Randomizer Randomizer { get; } = randomizer;
     
     public InputMessage GetValidModelInputTextMessageNoAttachment() =>
-        GetValidModelInputTextMessageNoAttachment(randomizer.GenerateRandomLong());
+        GetValidModelInputTextMessageNoAttachment(Randomizer.GenerateRandomLong());
 
     public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
         new(userId,
-            randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
                 BotType.Submissions,
-                $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
+                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 Option<int>.None()));
     
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
-        new(randomizer.GenerateRandomLong(),
-            randomizer.GenerateRandomLong(),
+        new(Randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
                 BotType.Submissions,
-                $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
+                $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 AttachmentType.Photo,
                 Option<int>.None()));
@@ -54,8 +58,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Text = inputText
         };
@@ -63,8 +67,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramAudioMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
@@ -73,8 +77,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramDocumentMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
@@ -83,8 +87,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramPhotoMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
@@ -93,8 +97,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramVideoMessage() =>
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeVideoCaption",
             Video = new Video { FileId = "fakeVideoFileId" }
@@ -103,8 +107,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramVoiceMessage() =>
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }
@@ -113,8 +117,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetSubmissionsBotCommandMessage(string botCommand) =>
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Text = botCommand,
             Entities = [

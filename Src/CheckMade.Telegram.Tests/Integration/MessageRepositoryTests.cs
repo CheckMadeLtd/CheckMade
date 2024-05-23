@@ -56,8 +56,8 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        const long userId = 1234L;
         var utils = _services.GetRequiredService<ITestUtils>();
+        var userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessageNoAttachment(userId),
