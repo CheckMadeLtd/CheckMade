@@ -87,6 +87,11 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         if (botCommandEntity == null)
             return Result<Option<int>>.FromSuccess(Option<int>.None());
 
+        if (telegramInputMessage.Text == "/start")
+        {
+            return Result<Option<int>>.FromSuccess(Option<int>.Some(1));
+        }
+        
         var allBotCommandMenus = new BotCommandMenus();
 
         var botCommandMenuForCurrentBotType = botType switch

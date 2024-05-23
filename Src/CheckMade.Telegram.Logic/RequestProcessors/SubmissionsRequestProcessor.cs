@@ -17,6 +17,10 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
 
             var botCommandMenus = new BotCommandMenus();
 
+            // ToDo: here, check if user is logged in, if not, prompt that directly! 
+            if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == 1)
+                return "Welcome to the SubmissionsBot! Pick an action either by clicking the menu button or typing '/'.";
+            
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
             {
