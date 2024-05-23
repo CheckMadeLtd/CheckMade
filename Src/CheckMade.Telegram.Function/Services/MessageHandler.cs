@@ -1,5 +1,5 @@
-using CheckMade.Common.FpExt;
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
@@ -20,7 +20,8 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    internal const string CallToActionAfterErrorReport = "Please report to your supervisor or contact support.";
+    internal static readonly string CallToActionAfterErrorReport = 
+        Ui("Bitte kontaktiere den Support oder deinen Supervisor.");
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
@@ -42,7 +43,7 @@ public class MessageHandler(
 
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
-            logger.LogWarning("Received message of type '{0}': {1}", 
+            logger.LogWarning("Received message of type '{messageType}': {warning}", 
                 telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning);
 
             return Attempt<Unit>.Succeed(Unit.Value);

@@ -1,8 +1,8 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Common.FpExt;
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model;

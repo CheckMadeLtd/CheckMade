@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.FpExt.MonadicWrappers;
+﻿using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
@@ -19,7 +19,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
 
             // ToDo: here, check if user is logged in, if not, prompt that directly! 
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == 1)
-                return "Welcome to the SubmissionsBot! Pick an action either by clicking the menu button or typing '/'.";
+                return Ui(
+                    "Willkommen zum SubmissionsBot! Klick auf den Menüknopf oder tippe '/' " +
+                    "um verfügbare Befehle zu sehen.");
             
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
@@ -29,12 +31,12 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                         (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
                     .Value.Command;
 
-                return $"Echo of a Submissions BotCommand: {botCommand}";
+                return Ui($"Echo of a Submissions BotCommand: {botCommand}");
             }
 
             return inputMessage.Details.AttachmentType.Match(
-                type => $"Echo from bot Submissions: {type}",
-                () => $"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}");
+                type => Ui($"Echo from bot Submissions: {type}"),
+                () => Ui($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
         });
     }
 }

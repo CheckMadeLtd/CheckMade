@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic.RequestProcessors;
@@ -138,7 +138,7 @@ public class MessageHandlerTests
         
         _services = serviceCollection.BuildServiceProvider();
 
-        const string expectedErrorMessage = $"{mockErrorMessage} " +
+        string expectedErrorMessage = $"{mockErrorMessage} " +
                                             $"{MessageHandler.CallToActionAfterErrorReport}";
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();

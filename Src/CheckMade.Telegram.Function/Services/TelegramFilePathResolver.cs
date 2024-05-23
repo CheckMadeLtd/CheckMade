@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Function.Services;

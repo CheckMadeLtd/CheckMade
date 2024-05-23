@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
@@ -14,9 +14,6 @@ public interface IToModelConverter
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    internal const string FailedToConvertMessageToModel =
-        "Failed to convert Telegram Message to Model:";
-    
     public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
     {
         return ((Result<InputMessage>) await
@@ -30,7 +27,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             .Match(
                 modelInputMessage => modelInputMessage,
                 error => throw new ToModelConversionException(
-                    $"{FailedToConvertMessageToModel} {error}"));
+                    $"Failed to convert Telegram Message to Model: {error}"));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -75,7 +72,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    internal const string BotCommandDoesNotExistError = "The BotCommand {0} does not exist for BotType {1}.";
+    internal static readonly string BotCommandDoesNotExistError = 
+        Ui("Der BotCommand {0} existiert nicht für den {1} bot.");
     
     private static Result<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,

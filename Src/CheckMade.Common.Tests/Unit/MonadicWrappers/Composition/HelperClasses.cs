@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 
 namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
 

@@ -1,5 +1,5 @@
 using System.Reflection;
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages;

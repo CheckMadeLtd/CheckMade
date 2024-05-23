@@ -29,7 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.FpExt\CheckMade.Common.FpExt.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.LangExt\CheckMade.Common.LangExt.csproj" />
       <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
     </ItemGroup>
 

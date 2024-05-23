@@ -1,6 +1,6 @@
 // using System.Collections.Immutable;
 // using System.Globalization;
-// using CheckMade.Common.FpExt.MonadicWrappers;
+// using CheckMade.Common.LangExt.MonadicWrappers;
 // using CheckMade.Common.Persistence.JsonHelpers;
 // using CheckMade.Common.Utils;
 // using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;

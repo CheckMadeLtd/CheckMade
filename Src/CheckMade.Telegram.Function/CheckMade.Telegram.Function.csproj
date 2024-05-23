@@ -58,4 +58,10 @@
       <ProjectReference Include="..\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
 </Project>
