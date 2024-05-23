@@ -73,7 +73,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
     internal static readonly string BotCommandDoesNotExistError = 
-        Ui("Der BotCommand {0} existiert nicht für den {1} bot.");
+        UiSm("Der BotCommand {0} existiert nicht für den {1} bot.");
     
     private static Result<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,

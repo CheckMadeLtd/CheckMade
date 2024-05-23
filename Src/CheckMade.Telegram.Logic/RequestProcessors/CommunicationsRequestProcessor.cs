@@ -13,6 +13,6 @@ public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
         return Attempt<string>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 
                 ? string.Format(IRequestProcessor.WelcomeToBot, BotType.Communications) 
-                : Ui($"Echo from bot Communications: {inputMessage.Details.Text.GetValueOrDefault()}")));
+                : UiSm($"Echo from bot Communications: {inputMessage.Details.Text.GetValueOrDefault()}")));
     }
 }

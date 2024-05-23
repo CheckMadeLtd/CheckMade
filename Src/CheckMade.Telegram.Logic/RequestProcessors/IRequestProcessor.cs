@@ -6,7 +6,7 @@ namespace CheckMade.Telegram.Logic.RequestProcessors;
 public interface IRequestProcessor
 {
     public static readonly string WelcomeToBot = 
-        Ui("Willkommen zum {0}Bot! Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.");
+        UiSm("Willkommen zum {0}Bot! Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.");
 
     public Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage);
 }

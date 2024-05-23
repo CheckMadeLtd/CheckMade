@@ -1,1 +1,1 @@
-global using static CheckMade.Common.LangExt.UiString;
+global using static CheckMade.Common.LangExt.UiStringSimple;

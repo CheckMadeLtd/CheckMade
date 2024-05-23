@@ -28,12 +28,12 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                         (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
                     .Value.Command;
 
-                return Ui($"Echo of a Submissions BotCommand: {botCommand}");
+                return UiSm($"Echo of a Submissions BotCommand: {botCommand}");
             }
 
             return inputMessage.Details.AttachmentType.Match(
-                type => Ui($"Echo from bot Submissions: {type}"),
-                () => Ui($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
+                type => UiSm($"Echo from bot Submissions: {type}"),
+                () => UiSm($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
         });
     }
 }

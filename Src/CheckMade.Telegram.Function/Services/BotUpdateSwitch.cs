@@ -15,7 +15,7 @@ public interface IBotUpdateSwitch
 public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
     internal static readonly string
-        NoSpecialHandlingWarning = Ui("Telegram Message/Update of this type not yet supported. " +
+        NoSpecialHandlingWarning = UiSm("Telegram Message/Update of this type not yet supported. " +
                                           "No special handling is taking place for it, but that doesn't mean that a " +
                                           "Telegram-System-related update didn't work. You may assume it did.");
     

@@ -7,34 +7,34 @@ public record BotCommandMenus
         new Dictionary<SubmissionsBotCommands, ModelBotCommand>
         {
             { SubmissionsBotCommands.Problem, 
-                new ModelBotCommand(Ui("/problem"), Ui("Ein Problem melden ❗")) },
+                new ModelBotCommand(UiSm("/problem"), UiSm("Ein Problem melden ❗")) },
             { SubmissionsBotCommands.Assessment, 
-                new ModelBotCommand(Ui("/bewertung"), Ui("Eine Bewertung vornehmen ⭐")) },
+                new ModelBotCommand(UiSm("/bewertung"), UiSm("Eine Bewertung vornehmen ⭐")) },
             { SubmissionsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(UiSm("/einstellungen"), UiSm("Einstellungen ändern ⚙️")) },
             { SubmissionsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(UiSm("/ausloggen"), UiSm("Aktuelle Rolle von diesem Chat trennen 💨")) }
         };
     
     public IDictionary<CommunicationsBotCommands, ModelBotCommand> CommunicationsBotCommandMenu { get; } = 
         new Dictionary<CommunicationsBotCommands, ModelBotCommand>
         {
             { CommunicationsBotCommands.Contact, 
-                new ModelBotCommand(Ui("/kontakt"), Ui("Kontakt aufnehmen 💬")) },
+                new ModelBotCommand(UiSm("/kontakt"), UiSm("Kontakt aufnehmen 💬")) },
             { CommunicationsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(UiSm("/einstellungen"), UiSm("Einstellungen ändern ⚙️")) },
             { CommunicationsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(UiSm("/ausloggen"), UiSm("Aktuelle Rolle von diesem Chat trennen 💨")) }
         };
 
     public IDictionary<NotificationsBotCommands, ModelBotCommand> NotificationsBotCommandMenu { get; } = 
         new Dictionary<NotificationsBotCommands, ModelBotCommand>
         {
             { NotificationsBotCommands.Status, 
-                new ModelBotCommand(Ui("/status"), Ui("Aktueller Statusreport 📋")) },
+                new ModelBotCommand(UiSm("/status"), UiSm("Aktueller Statusreport 📋")) },
             { NotificationsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(UiSm("/einstellungen"), UiSm("Einstellungen ändern ⚙️")) },
             { NotificationsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(UiSm("/ausloggen"), UiSm("Aktuelle Rolle von diesem Chat trennen 💨")) }
         };
 }

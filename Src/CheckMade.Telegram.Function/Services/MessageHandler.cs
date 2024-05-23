@@ -21,7 +21,7 @@ public class MessageHandler(
     : IMessageHandler
 {
     internal static readonly string CallToActionAfterErrorReport = 
-        Ui("Bitte kontaktiere den Support oder deinen Supervisor.");
+        UiSm("Bitte kontaktiere den Support oder deinen Supervisor.");
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
