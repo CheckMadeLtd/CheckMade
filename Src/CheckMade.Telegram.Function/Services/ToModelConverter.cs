@@ -104,6 +104,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             return Result<Option<int>>.FromError(
                 string.Format(BotCommandDoesNotExistError, telegramInputMessage.Text, botType));
 
+        // Casting 'Key' (= Enum) to its underlying 'int' code so that the botCommand can be represented in a single
+        // property (db field) regardless of botType.
         return botType switch
         {
             BotType.Submissions => Result<Option<int>>.FromSuccess(
