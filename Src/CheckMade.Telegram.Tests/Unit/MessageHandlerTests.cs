@@ -167,7 +167,8 @@ public class MessageHandlerTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var validBotCommand = new BotCommandMenus().SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command;
+        var validBotCommand = new BotCommandMenus()
+            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command;
         var utils = _services.GetRequiredService<ITestUtils>();
         var botCommandMessage = utils.GetSubmissionsBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -196,7 +197,8 @@ public class MessageHandlerTests
         var invalidBotCommandMessage = utils.GetSubmissionsBotCommandMessage(invalidBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedErrorMessageSegment = $"{string.Format(ToModelConverter.FailToParseBotCommandError, BotType.Submissions)}";
+        var expectedErrorMessageSegment = $"{string.Format(ToModelConverter.BotCommandDoesNotExistError, 
+            invalidBotCommandMessage.Text, BotType.Submissions)}";
     
         // Act
         await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);

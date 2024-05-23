@@ -75,8 +75,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    internal const string FailToParseBotCommandError =
-        "Failed to parse out a {0} BotCommand even though an entity of that type was detected.";
+    internal const string BotCommandDoesNotExistError = "The BotCommand {0} does not exist for BotType {1}.";
     
     private static Result<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,
@@ -88,34 +87,42 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         if (botCommandEntity == null)
             return Result<Option<int>>.FromSuccess(Option<int>.None());
 
-        var botCommandMenus = new BotCommandMenus();
-        int botCommandEnumType;
-        
-        try
+        var allBotCommandMenus = new BotCommandMenus();
+
+        var botCommandMenuForCurrentBotType = botType switch
         {
-            botCommandEnumType = botType switch
-            {
-                BotType.Submissions => (int)botCommandMenus.SubmissionsBotCommandMenu
-                    .First(kvp => 
-                        kvp.Value.Command == telegramInputMessage.Text) 
-                    .Key,
-                BotType.Communications => (int) botCommandMenus.CommunicationsBotCommandMenu
-                    .First(kvp => 
-                        kvp.Value.Command == telegramInputMessage.Text)
-                    .Key,
-                BotType.Notifications => (int) botCommandMenus.NotificationsBotCommandMenu
-                    .First(kvp => 
-                        kvp.Value.Command == telegramInputMessage.Text)
-                    .Key,
-                _ => throw new ArgumentOutOfRangeException(nameof(botType))
-            };
-        }
-        catch (Exception ex)
-        {
-            return Result<Option<int>>.FromError($"{ex.Message}. {string.Format(FailToParseBotCommandError, botType)}");
-        }
+            BotType.Submissions => allBotCommandMenus.SubmissionsBotCommandMenu.Values,
+            BotType.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
+            BotType.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
+            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+        };
+
+        var botCommandFromInputMessage = botCommandMenuForCurrentBotType
+            .FirstOrDefault(mbc => mbc.Command == telegramInputMessage.Text)?.Command;
         
-        return Result<Option<int>>.FromSuccess(botCommandEnumType);
+        if (botCommandFromInputMessage == null)
+            return Result<Option<int>>.FromError(
+                string.Format(BotCommandDoesNotExistError, telegramInputMessage.Text, botType));
+
+        return botType switch
+        {
+            BotType.Submissions => Result<Option<int>>.FromSuccess(
+                (int) allBotCommandMenus.SubmissionsBotCommandMenu
+                .First(kvp => 
+                    kvp.Value.Command == botCommandFromInputMessage)
+                .Key),
+            BotType.Communications => Result<Option<int>>.FromSuccess(
+                (int) allBotCommandMenus.CommunicationsBotCommandMenu
+                .First(kvp => 
+                    kvp.Value.Command == botCommandFromInputMessage)
+                .Key),
+            BotType.Notifications => Result<Option<int>>.FromSuccess(
+                (int) allBotCommandMenus.NotificationsBotCommandMenu
+                .First(kvp => 
+                    kvp.Value.Command == botCommandFromInputMessage)
+                .Key),
+            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+        };
     }
     
     private async Task<Result<InputMessage>> GetInputMessageAsync(
