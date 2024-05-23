@@ -1,12 +1,12 @@
-using CheckMade.Common.FpExt;
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {
-    internal async Task<Attempt<int>> MigrateAsync(string env)
+    internal async Task<Attempt<int>> SafelyMigrateAsync(string env)
     {
         return ((Attempt<int>) await (
                 from historicPairs in Attempt<IEnumerable<OldFormatDetailsPair>>

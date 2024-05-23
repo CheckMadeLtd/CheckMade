@@ -1,9 +1,15 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Common.LangExt;
+using CheckMade.Common.LangExt.MonadicWrappers;
+using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
+using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommands;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -104,7 +110,6 @@ var host = new HostBuilder()
                     outputTemplate: humanReadability,
                     restrictedToMinimumLevel: LogEventLevel.Information)
                 
-                // ToDo: The CustomTelemetryConverter for now simply doesn't do its job. Figure out post summer 2024.
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
                     restrictedToMinimumLevel: LogEventLevel.Information);
@@ -118,7 +123,45 @@ var host = new HostBuilder()
 
 await host.StartAsync();
 
-// The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
-// after the host started, contrary to just using Run().
+/* The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
+after the host started (contrary to just using Run()).
+I.e. this would be the place to run code independent of an update trigger into one of the bot's functions.
+However, this is outside of the typical scope of http triggers, so I need to create my own scope if I want to use 
+any of the scoped services registered in the D.I. container */
+// WARNING-1: Careful about potential concurrency issues between code executed below and through function invocations!
+// WARNING-2: Any unhandled exception below will crash the entire host, making the Functions unresponsive until restart! 
+
+using (var startUpScope = host.Services.CreateScope())
+{
+    var sp = startUpScope.ServiceProvider;
+    var logger = sp.GetRequiredService<ILogger<Program>>();
+
+    await InitBotCommandsAsync(sp, logger);
+}
 
 await host.WaitForShutdownAsync();
+
+return;
+
+static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> logger)
+{
+    var botClientFactory = sp.GetRequiredService<IBotClientFactory>();
+
+    foreach (var botType in Enum.GetValues<BotType>())
+    {
+        var botCommandSettingAttempt = 
+            from botClient
+                in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
+            from unit in Attempt<Unit>.RunAsync(async () =>
+                await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus(), botType))
+            select unit;
+
+        (await botCommandSettingAttempt).Match(
+            unit => unit,
+            ex =>
+            {
+                logger.LogError(ex, ex.Message);
+                return Unit.Value;
+            });
+    }
+}

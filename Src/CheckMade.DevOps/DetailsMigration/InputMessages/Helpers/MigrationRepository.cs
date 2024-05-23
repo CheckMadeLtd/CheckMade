@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Model;
 using Newtonsoft.Json.Linq;
@@ -45,10 +45,12 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new InputMessage(
             telegramUserId,
             telegramChatId,
-            new MessageDetails(DateTime.MinValue, 
+            new MessageDetails(DateTime.MinValue,
+                BotType.Submissions,
                 Option<string>.None(),
                 Option<string>.None(),
-                Option<AttachmentType>.None()));
+                Option<AttachmentType>.None(),
+                Option<int>.None()));
 
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }

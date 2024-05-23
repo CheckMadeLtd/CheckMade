@@ -1,6 +1,6 @@
-using CheckMade.Common.FpExt;
-using CheckMade.Common.FpExt.MonadicWrappers;
-using CheckMade.Telegram.Logic;
+using CheckMade.Common.LangExt;
+using CheckMade.Common.LangExt.MonadicWrappers;
+using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,10 +14,10 @@ public interface IBotUpdateSwitch
 
 public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
-    internal const string
-        NoSpecialHandlingWarningMessage = "Telegram Message/Update of this type not yet supported. " +
+    internal static readonly string
+        NoSpecialHandlingWarning = Ui("Telegram Message/Update of this type not yet supported. " +
                                           "No special handling is taking place for it, but that doesn't mean that a " +
-                                          "Telegram-System-related update didn't work. You may assume it did.";
+                                          "Telegram-System-related update didn't work. You may assume it did.");
     
     public async Task<Attempt<Unit>> SafelyHandleUpdateAsync(Update update, BotType botType)
     {
@@ -41,7 +41,7 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
             
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
-                    update.Type, NoSpecialHandlingWarningMessage);
+                    update.Type, NoSpecialHandlingWarning);
                 return Attempt<Unit>.Succeed(Unit.Value);
         }
     }

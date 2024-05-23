@@ -1,53 +1,65 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Tests;
 
 internal interface ITestUtils
 {
+    Randomizer Randomizer { get; }
+    
     InputMessage GetValidModelInputTextMessageNoAttachment();
     InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
     InputMessage GetValidModelInputTextMessageWithAttachment();
+    
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramAudioMessage();
     Message GetValidTelegramDocumentMessage();
     Message GetValidTelegramPhotoMessage();
     Message GetValidTelegramVideoMessage();
     Message GetValidTelegramVoiceMessage();
+
+    Message GetBotCommandMessage(string botCommand);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     internal const long TestUserDanielGorinTelegramId = 215737196L;
+
+    public Randomizer Randomizer { get; } = randomizer;
     
     public InputMessage GetValidModelInputTextMessageNoAttachment() =>
-        GetValidModelInputTextMessageNoAttachment(randomizer.GenerateRandomLong());
+        GetValidModelInputTextMessageNoAttachment(Randomizer.GenerateRandomLong());
 
     public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
         new(userId,
-            randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
-                $"Hello World, without attachment: {randomizer.GenerateRandomLong()}",
+                BotType.Submissions,
+                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
-                Option<AttachmentType>.None()));
+                Option<AttachmentType>.None(),
+                Option<int>.None()));
     
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
-        new(randomizer.GenerateRandomLong(),
-            randomizer.GenerateRandomLong(),
+        new(Randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             new MessageDetails(
                 DateTime.Now,
-                $"Hello World, with attachment: {randomizer.GenerateRandomLong()}",
+                BotType.Submissions,
+                $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
-                AttachmentType.Photo));
+                AttachmentType.Photo,
+                Option<int>.None()));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Text = inputText
         };
@@ -55,8 +67,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramAudioMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
@@ -65,8 +77,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramDocumentMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
@@ -75,8 +87,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramPhotoMessage() => 
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
@@ -85,8 +97,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramVideoMessage() =>
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeVideoCaption",
             Video = new Video { FileId = "fakeVideoFileId" }
@@ -95,11 +107,27 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Message GetValidTelegramVoiceMessage() =>
         new()
         {
-            From = new User { Id = randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = randomizer.GenerateRandomLong() },
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
             Date = DateTime.Now,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }
         };
 
+    public Message GetBotCommandMessage(string botCommand) =>
+        new()
+        {
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            Text = botCommand,
+            Entities = [
+                new MessageEntity
+                {
+                    Length = botCommand.Length,
+                    Offset = 0,
+                    Type = MessageEntityType.BotCommand
+                }
+            ]
+        };
 }

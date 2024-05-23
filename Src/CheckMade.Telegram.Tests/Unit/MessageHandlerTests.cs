@@ -1,9 +1,9 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
-using CheckMade.Telegram.Logic;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -92,7 +92,7 @@ public class MessageHandlerTests
         };
 
         var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
-                                    $"{BotUpdateSwitch.NoSpecialHandlingWarningMessage}";
+                                    $"{BotUpdateSwitch.NoSpecialHandlingWarning}";
 
         var mockLogger = new Mock<ILogger<MessageHandler>>();
         mockLogger.Setup(l => l.Log(
@@ -138,8 +138,8 @@ public class MessageHandlerTests
         
         _services = serviceCollection.BuildServiceProvider();
 
-        const string expectedErrorMessage = $"{mockErrorMessage} " +
-                                            $"{MessageHandler.CallToActionMessageAfterErrorReport}";
+        string expectedErrorMessage = $"{mockErrorMessage} " +
+                                            $"{MessageHandler.CallToActionAfterErrorReport}";
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
@@ -159,5 +159,83 @@ public class MessageHandlerTests
         
         // Assert
         mockBotClient.Verify();
+    }
+
+    [Fact]
+    public async Task HandleMessageAsync_EchosCorrectBotCommand_ForValidBotCommandInputToSubmissions()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var validBotCommand = new BotCommandMenus()
+            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command;
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {validBotCommand}";
+
+        // Act
+        await handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);
+
+        // Assert
+        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+                botCommandMessage.Chat.Id,
+                expectedOutputMessage,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        const string invalidBotCommand = "/invalid";
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var invalidBotCommandMessage = utils.GetBotCommandMessage(invalidBotCommand);
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var expectedErrorMessageSegment = $"{string.Format(ToModelConverter.BotCommandDoesNotExistError, 
+            invalidBotCommandMessage.Text, BotType.Submissions)}";
+    
+        // Act
+        await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
+    
+        // Assert
+        mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                invalidBotCommandMessage.Chat.Id,
+                It.Is<string>(msg => msg.Contains(expectedErrorMessageSegment)),
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+    }
+
+    [Theory]
+    [InlineData(BotType.Submissions)]
+    [InlineData(BotType.Communications)]
+    [InlineData(BotType.Notifications)]
+    public async Task HandleMessageAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        // Arrange
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
+        var handler = _services.GetRequiredService<IMessageHandler>();
+        var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
+        var expectedWelcomeMessage = string.Format(IRequestProcessor.WelcomeToBot, botType);
+        
+        // Act
+        await handler.SafelyHandleMessageAsync(startCommandMessage, botType);
+        
+        // Assert
+        mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                startCommandMessage.Chat.Id,
+                expectedWelcomeMessage,
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
 }

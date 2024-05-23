@@ -51,13 +51,13 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
-    public async Task GetAllAsync_And_AddOrThrowAsync_CorrectlyAddAndReturn_MultipleValidMessages()
+    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidMessages()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        const long userId = 1234L;
         var utils = _services.GetRequiredService<ITestUtils>();
+        var userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessageNoAttachment(userId),
@@ -95,7 +95,8 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     // [Theory(Skip = "Waiting to migrate the old DB data")]
-    [Theory]
+    [Theory(Skip = "Running tests from unknown IP / internet")]
+    // [Theory]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(

@@ -1,8 +1,11 @@
-using CheckMade.Common.FpExt;
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
+using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Function.Services;
@@ -19,7 +22,9 @@ public interface IBotClientWrapper
         string text,
         CancellationToken cancellationToken = default);
 
-    Task<File> GetFileAsync(string fileId);
+    Task<File> GetFileOrThrowAsync(string fileId);
+
+    Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType);
 }
 
 internal class BotClientWrapper(
@@ -55,5 +60,32 @@ internal class BotClientWrapper(
         return Unit.Value;
     } 
     
-    public Task<File> GetFileAsync(string fileId) => botClient.GetFileAsync(fileId);
+    public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
+
+    public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType)
+    {
+        await botClient.DeleteMyCommandsAsync();
+
+        var telegramBotCommands = botType switch
+        {
+            BotType.Submissions => GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu),
+            BotType.Communications => GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu),
+            BotType.Notifications => GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu),
+            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+        };
+        
+        await botClient.SetMyCommandsAsync(telegramBotCommands);
+        
+        return Unit.Value;
+    }
+
+    private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
+        IDictionary<TEnum, ModelBotCommand> menu) where TEnum : Enum =>
+        menu
+            .Select(kvp => new BotCommand
+            {
+                Command = kvp.Value.Command, 
+                Description = kvp.Value.Description
+            }).ToArray();
 }
+

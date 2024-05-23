@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

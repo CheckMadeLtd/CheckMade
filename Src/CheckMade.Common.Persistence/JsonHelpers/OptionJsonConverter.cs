@@ -1,4 +1,4 @@
-using CheckMade.Common.FpExt.MonadicWrappers;
+using CheckMade.Common.LangExt.MonadicWrappers;
 using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
@@ -20,8 +20,8 @@ internal class OptionJsonConverter<T> : JsonConverter<Option<T>>
     public override Option<T> ReadJson(JsonReader reader, Type objectType, Option<T>? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
-        // Necessary to convert a null value into an Option<TEnum>
-        if (reader.TokenType == JsonToken.Null && typeof(T).IsEnum)
+        // This makes sure that a 'null' value in the database gets converted to Option<T>.None() for any T
+        if (reader.TokenType == JsonToken.Null)
         {
             return Option<T>.None();
         }

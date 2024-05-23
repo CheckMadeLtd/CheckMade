@@ -1,6 +1,6 @@
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Model;
 using Telegram.Bot;
 
 namespace CheckMade.Telegram.Function.Services;

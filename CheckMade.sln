@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 		.github\workflows\main_workflow.yml = .github\workflows\main_workflow.yml
 		.github\workflows\parked_workflows.txt = .github\workflows\parked_workflows.txt
 		.idea\.idea.CheckMade\.idea\bashsupport-pro.xml = .idea\.idea.CheckMade\.idea\bashsupport-pro.xml
+		Src\SharedGlobalUsings.cs = Src\SharedGlobalUsings.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Mobile.ViewModels", "Src\CheckMade.Mobile.ViewModels\CheckMade.Mobile.ViewModels.csproj", "{F8592897-CF33-4614-97B2-C0E16D406D3A}"
@@ -62,7 +63,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Model", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Utils", "Src\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj", "{8FABE16E-9692-46A8-9254-B414F6EA34AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.FpExt", "Src\CheckMade.Common.FpExt\CheckMade.Common.FpExt.csproj", "{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.LangExt", "Src\CheckMade.Common.LangExt\CheckMade.Common.LangExt.csproj", "{77CE18B0-ACE6-44BE-BB4D-2A2F73706630}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Tests", "Src\CheckMade.Common.Tests\CheckMade.Common.Tests.csproj", "{D5763060-5ECA-4017-BC01-76433B9F3AF0}"
 EndProject
