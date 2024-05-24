@@ -1,5 +1,3 @@
-using CheckMade.Common.LangExt.MonadicWrappers;
-
 namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
 
 internal class User
@@ -50,7 +48,7 @@ internal static class UserService
         await Task.Delay(50); // Simulate async work
         
         return user.Username == "existingUser" 
-            ? Result<RegisteredUser>.FromError("Username already exists") 
+            ? Result<RegisteredUser>.FromError(Ui("Username already exists")) 
             : Result<RegisteredUser>.FromSuccess(new RegisteredUser { Id = new Random().Next(1, 1000), Username = user.Username });
     }
 

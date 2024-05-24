@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces;
-using CheckMade.Common.Utils;
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.RetryPolicies;
 using Newtonsoft.Json;
 using Npgsql;
@@ -22,7 +22,7 @@ internal class DbExecutionHelper(
         await using var db = dbProvider.CreateConnection() as NpgsqlConnection;
 
         if (db == null)
-            throw new DataAccessException("Failed to assign IDbConnection");
+            throw new DataAccessException(Ui("Failed to assign IDbConnection"));
         
         await dbOpenRetryPolicy.ExecuteAsync(async () => await db.OpenAsync());
 
@@ -43,12 +43,12 @@ internal class DbExecutionHelper(
         }
         catch (JsonSerializationException jsonEx)
         {
-            throw new DataAccessException("JSON (de)serialization exception has occurred during " +
-                                          "db command execution.", jsonEx);
+            throw new DataAccessException(Ui("JSON (de)serialization exception has occurred during " +
+                                          "db command execution."), jsonEx);
         }
         catch (Exception ex)
         {
-            throw new DataAccessException("A database exception has occurred.", ex);
+            throw new DataAccessException(Ui("A database exception has occurred."), ex);
         }
     }
 }

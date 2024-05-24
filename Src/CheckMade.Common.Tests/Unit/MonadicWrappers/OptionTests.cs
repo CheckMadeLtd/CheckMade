@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt.MonadicWrappers;
 using FluentAssertions;
 
 namespace CheckMade.Common.Tests.Unit.MonadicWrappers;

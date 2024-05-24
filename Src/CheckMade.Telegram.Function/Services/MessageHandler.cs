@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Utils;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
@@ -16,11 +17,12 @@ public class MessageHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
+        IUiTranslator translator,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    internal static readonly string CallToActionAfterErrorReport = 
-        UiSm("Bitte kontaktiere den Support oder deinen Supervisor.");
+    internal static readonly UiString CallToActionAfterErrorReport = 
+        Ui("Bitte kontaktiere den Support oder deinen Supervisor.");
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
@@ -57,7 +59,7 @@ public class MessageHandler(
                         "Failed to create BotClient", ex));
 
         var filePathResolver = new TelegramFilePathResolver(botClient);
-        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
+        var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);
         
         var sendOutputOutcome =
             from modelInputMessage in Attempt<InputMessage>.RunAsync(async () => 
@@ -79,14 +81,16 @@ public class MessageHandler(
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget
-                _ = SendOutputAsync($"{ex.Message} {CallToActionAfterErrorReport}", botClient, chatId);
+                _ = SendOutputAsync(UiConcatenate(UiIndirect(ex.Message), CallToActionAfterErrorReport),
+                    botClient, chatId);
                 return Attempt<Unit>.Fail(ex);
             });
     }
 
-    private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task<Attempt<Unit>> SendOutputAsync(
+        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
         return await Attempt<Unit>.RunAsync(async () =>
-            await botClient.SendTextMessageOrThrowAsync(chatId, outputMessage));
+            await botClient.SendTextMessageOrThrowAsync(chatId, translator.Translate(outputMessage)));
     }
 }

@@ -1,3 +1,5 @@
+using CheckMade.Common.LangExt;
+
 namespace CheckMade.Telegram.Model.BotCommands;
 
-public record ModelBotCommand(string Command, string Description);
+public record ModelBotCommand(UiString Command, UiString Description);

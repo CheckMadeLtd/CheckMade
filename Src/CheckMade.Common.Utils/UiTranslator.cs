@@ -1,8 +1,12 @@
 using System.Text;
-using CheckMade.Common.Interfaces;
 using CheckMade.Common.LangExt;
 
 namespace CheckMade.Common.Utils;
+
+public interface IUiTranslator
+{
+    string Translate(UiString uiString);
+}
 
 public class UiTranslator : IUiTranslator
 {
@@ -13,6 +17,8 @@ public class UiTranslator : IUiTranslator
         foreach (var part in uiString.Concatenations)
             translatedAll.Append(Translate(part));
 
+        // Will be replaced with a method of actually looking up translations in a resource file, using 
+        // RawOriginalText as the look-up key
         var translated = uiString.RawOriginalText;
 
         return translatedAll + string.Format(translated, uiString.MessageParams);

@@ -31,7 +31,7 @@ internal class MigrationStartup(
                         // return Console.Error.WriteLineAsync(ex.Message);
                     });
             },
-            errorMessage => Console.Error.WriteLineAsync(errorMessage)
+            errorMessage => Console.Error.WriteLineAsync(errorMessage.RawOriginalText)
         );
     }
 

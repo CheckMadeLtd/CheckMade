@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.Interfaces;
+﻿using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 
@@ -6,16 +6,15 @@ namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class CommunicationsRequestProcessor(IUiTranslator translator) : ICommunicationsRequestProcessor
+public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
 {
-    public Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage)
+    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
     {
-        return Attempt<string>.RunAsync(() => 
+        return Attempt<UiString>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 
-                ? translator.Translate(UiConcatenate(
+                ? UiConcatenate(
                     Ui("Willkommen zum {0} Bot! ", BotType.Communications), 
-                    IRequestProcessor.WelcomeToBotMenuInstruction)) 
-                : translator.Translate(
-                    Ui($"Echo from bot Communications: {inputMessage.Details.Text.GetValueOrDefault()}"))));
+                    IRequestProcessor.WelcomeToBotMenuInstruction)
+                : Ui($"Echo from bot Communications: {inputMessage.Details.Text.GetValueOrDefault()}")));
     }
 }

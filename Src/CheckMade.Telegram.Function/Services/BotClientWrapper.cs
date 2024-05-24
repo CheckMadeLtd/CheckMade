@@ -30,6 +30,7 @@ public interface IBotClientWrapper
 internal class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
+        IUiTranslator translator,
         string botToken) 
     : IBotClientWrapper
 {
@@ -54,7 +55,7 @@ internal class BotClientWrapper(
         }
         catch (Exception ex)
         {
-            throw new NetworkAccessException("Failed to reach Telegram servers after several attempts.", ex);
+            throw new NetworkAccessException(Ui("Failed to reach Telegram servers after several attempts."), ex);
         }
         
         return Unit.Value;
@@ -79,13 +80,13 @@ internal class BotClientWrapper(
         return Unit.Value;
     }
 
-    private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
+    private BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
         IDictionary<TEnum, ModelBotCommand> menu) where TEnum : Enum =>
         menu
             .Select(kvp => new BotCommand
             {
-                Command = kvp.Value.Command, 
-                Description = kvp.Value.Description
+                Command = translator.Translate(kvp.Value.Command), 
+                Description = translator.Translate(kvp.Value.Description)
             }).ToArray();
 }
 

@@ -1,5 +1,4 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Utils;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
@@ -16,7 +15,7 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
             ).Match(
                 Attempt<int>.Succeed, 
                 ex => Attempt<int>.Fail(new DataAccessException(
-                    $"Data migration failed with: {ex.Message}.", ex)));
+                    Ui("Data migration failed with: {0}.", ex.Message), ex)));
     }
 
     protected abstract Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
@@ -31,7 +30,7 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
         catch (Exception ex)
         {
             return Attempt<Unit>.Fail(new DataMigrationException(
-                $"Exception while performing data migration updates: {ex.Message}", ex));
+                Ui("Exception while performing data migration updates: {0}", ex.Message), ex));
         }
 
         return Attempt<Unit>.Succeed(Unit.Value);

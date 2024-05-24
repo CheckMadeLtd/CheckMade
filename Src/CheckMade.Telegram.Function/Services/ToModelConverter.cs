@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
@@ -11,7 +12,10 @@ public interface IToModelConverter
     Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType);
 }
 
-internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
+internal class ToModelConverter(
+        ITelegramFilePathResolver filePathResolver,
+        IUiTranslator translator) 
+    : IToModelConverter
 {
     public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
     {
@@ -26,7 +30,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             .Match(
                 modelInputMessage => modelInputMessage,
                 error => throw new ToModelConversionException(
-                    $"Failed to convert Telegram Message to Model: {error}"));
+                    Ui("Failed to convert Telegram Message to Model: {0}", error)));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -65,16 +69,13 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 AttachmentType.Video)),
             
             _ => Result<AttachmentDetails>.FromError(
-                $"Attachment type {telegramInputMessage.Type} is not yet supported!") 
+                Ui("Attachment type {0} is not yet supported!", telegramInputMessage.Type)) 
         };
     }
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    internal static readonly string BotCommandDoesNotExistError = 
-        UiSm("Der BotCommand {0} existiert nicht für den {1} bot.");
-    
-    private static Result<Option<int>> GetBotCommandEnumCode(
+    private Result<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,
         BotType botType)
     {
@@ -100,11 +101,14 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         };
 
         var botCommandFromInputMessage = botCommandMenuForCurrentBotType
-            .FirstOrDefault(mbc => mbc.Command == telegramInputMessage.Text)?.Command;
+            .FirstOrDefault(mbc => 
+                translator.Translate(mbc.Command) == telegramInputMessage.Text)?
+            .Command;
         
         if (botCommandFromInputMessage == null)
             return Result<Option<int>>.FromError(
-                string.Format(BotCommandDoesNotExistError, telegramInputMessage.Text, botType));
+                Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}].", 
+                    telegramInputMessage.Text ?? "[empty text!]", botType, "W3DL9"));
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
@@ -138,12 +142,12 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         var userId = telegramInputMessage.From?.Id; 
                      
         if (userId == null)
-            return Result<InputMessage>.FromError("User Id (From.Id in the input message) must not be null");
+            return Result<InputMessage>.FromError(Ui("User Id (i.e. 'From.Id' in the input message) must not be null"));
 
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
         {
             return Result<InputMessage>.FromError(
-                "A valid message must either have a text or an attachment - both must not be null/empty");
+                Ui("A valid message must either have a text or an attachment - both must not be null/empty"));
         }
 
         var telegramAttachmentUrl = Option<string>.None();
@@ -155,7 +159,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             
             if (pathAttempt.IsFailure)
                 return Result<InputMessage>.FromError(
-                    "Error while trying to retrieve full Telegram server path to attachment file.");
+                    Ui("Error while trying to retrieve full Telegram server path to attachment file."));
 
             telegramAttachmentUrl = pathAttempt.GetValueOrDefault();
         }

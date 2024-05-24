@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
@@ -27,7 +28,9 @@ public class ToModelConverterTests
         var telegramInputMessage = utils.GetValidTelegramTextMessage(textInput);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var converter = converterFactory.Create(
+            new TelegramFilePathResolver(mockBotClient.Object),
+            _services.GetRequiredService<IUiTranslator>());
 
         var expectedInputMessage = new InputMessage(
             telegramInputMessage.From!.Id,
@@ -74,7 +77,9 @@ public class ToModelConverterTests
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var converter = converterFactory.Create(
+            new TelegramFilePathResolver(mockBotClient.Object),
+            _services.GetRequiredService<IUiTranslator>());
 
         var expectedAttachmentExternalUrl =
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{mockBotClient.Object.BotToken}/" +
@@ -111,7 +116,9 @@ public class ToModelConverterTests
         
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var converter = converterFactory.Create(
+            new TelegramFilePathResolver(mockBotClient.Object),
+            _services.GetRequiredService<IUiTranslator>());
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
@@ -131,7 +138,9 @@ public class ToModelConverterTests
         
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var converter = converterFactory.Create(
+            new TelegramFilePathResolver(mockBotClient.Object),
+            _services.GetRequiredService<IUiTranslator>());
         
         // Act
         Func<Task<InputMessage>> convertMessage = async () => 
@@ -152,7 +161,9 @@ public class ToModelConverterTests
 
         var mockBotClient = new Mock<IBotClientWrapper>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var converter = converterFactory.Create(
+            new TelegramFilePathResolver(mockBotClient.Object),
+            _services.GetRequiredService<IUiTranslator>());
 
         // Act
         Func<Task<InputMessage>> convertMessage = async () =>

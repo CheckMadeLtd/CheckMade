@@ -37,4 +37,10 @@
       <Folder Include="Unit\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
+
 </Project>

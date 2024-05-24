@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces;
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;

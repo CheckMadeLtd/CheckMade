@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils;
+using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
@@ -121,12 +121,13 @@ public class MessageHandlerTests
         
         // Arrange
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
-        const string mockErrorMessage = "Mock DataAccess Error";
+        var mockErrorMessage = "Mock DataAccess Error";
         
         mockSubmissionsRequestProcessor
-            .Setup<Task<Attempt<string>>>(rp => 
+            .Setup<Task<Attempt<UiString>>>(rp => 
                 rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
-            .Returns(Task.FromResult(Attempt<string>.Fail(new DataAccessException(mockErrorMessage, new Exception()))));
+            .Returns(Task.FromResult(Attempt<UiString>
+                .Fail(new DataAccessException(UiNoTranslate(mockErrorMessage), new Exception()))));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
         mockRequestProcessorSelector
@@ -136,16 +137,13 @@ public class MessageHandlerTests
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockRequestProcessorSelector.Object);
         
         _services = serviceCollection.BuildServiceProvider();
-
-        string expectedErrorMessage = $"{mockErrorMessage} " +
-                                            $"{MessageHandler.CallToActionAfterErrorReport}";
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         
         mockBotClient
             .Setup(x => x.SendTextMessageOrThrowAsync(
                 It.IsAny<ChatId>(), 
-                expectedErrorMessage, 
+                It.Is<string>(output => output.Contains(mockErrorMessage)), 
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
@@ -167,7 +165,7 @@ public class MessageHandlerTests
         
         // Arrange
         var validBotCommand = new BotCommandMenus()
-            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command;
+            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command.RawOriginalText;
         var utils = _services.GetRequiredService<ITestUtils>();
         var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -196,8 +194,7 @@ public class MessageHandlerTests
         var invalidBotCommandMessage = utils.GetBotCommandMessage(invalidBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedErrorMessageSegment = $"{string.Format(ToModelConverter.BotCommandDoesNotExistError, 
-            invalidBotCommandMessage.Text, BotType.Submissions)}";
+        const string expectedErrorCode = "W3DL9";
     
         // Act
         await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
@@ -206,7 +203,7 @@ public class MessageHandlerTests
         mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 invalidBotCommandMessage.Chat.Id,
-                It.Is<string>(msg => msg.Contains(expectedErrorMessageSegment)),
+                It.Is<string>(msg => msg.Contains(expectedErrorCode)),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -224,7 +221,7 @@ public class MessageHandlerTests
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
-        var expectedWelcomeMessage = string.Format(IRequestProcessor.WelcomeToBotMenuInstruction, botType);
+        var expectedWelcomeMessageSegment = IRequestProcessor.WelcomeToBotMenuInstruction.RawOriginalText;
         
         // Act
         await handler.SafelyHandleMessageAsync(startCommandMessage, botType);
@@ -233,7 +230,8 @@ public class MessageHandlerTests
         mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 startCommandMessage.Chat.Id,
-                expectedWelcomeMessage,
+                It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
+                                        output.Contains(botType.ToString())),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }

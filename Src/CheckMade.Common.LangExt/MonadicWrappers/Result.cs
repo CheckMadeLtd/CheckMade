@@ -5,7 +5,7 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 public record Result<T>
 {
     internal T? Value { get; }
-    internal string? Error { get; }
+    internal UiString? Error { get; }
 
     public bool Success => Error == null;
 
@@ -14,15 +14,17 @@ public record Result<T>
         Value = value;
     }
 
-    private Result(string error)
+    private Result(UiString error)
     {
         Error = error;
     }
 
-    public static Result<T> FromSuccess(T value) => new Result<T>(value);
-    public static Result<T> FromError(string error) => new Result<T>(error);
+    public static implicit operator Result<T>(T value) => FromSuccess(value);
     
-    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<string, TResult> onError)
+    public static Result<T> FromSuccess(T value) => new Result<T>(value);
+    public static Result<T> FromError(UiString error) => new Result<T>(error);
+    
+    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<UiString, TResult> onError)
     {
         return Success ? onSuccess(Value!) : onError(Error!);
     }
@@ -33,7 +35,7 @@ public record Result<T>
         {
             return Value!;
         }
-        throw new InvalidOperationException(Error);
+        throw new MonadicWrapperGetValueOrThrowException(Error);
     }
 
     public T GetValueOrDefault(T defaultValue = default!)
@@ -57,7 +59,7 @@ public static class ResultExtensions
 
         return predicate(source.Value!) 
             ? source 
-            : Result<T>.FromError("Predicate not satisfied");
+            : Result<T>.FromError(Ui("Predicate not satisfied"));
     }
     
     // Covers scenarios where you have a successful Result and want to bind it to another Result,
