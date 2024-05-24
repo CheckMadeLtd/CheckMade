@@ -59,7 +59,7 @@ public static class ResultExtensions
 
         return predicate(source.Value!) 
             ? source 
-            : Result<T>.FromError(Ui("Predicate not satisfied"));
+            : Result<T>.FromError(UiNoTranslate("Predicate not satisfied"));
     }
     
     // Covers scenarios where you have a successful Result and want to bind it to another Result,

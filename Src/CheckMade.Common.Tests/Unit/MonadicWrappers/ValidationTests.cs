@@ -18,7 +18,7 @@ public class ValidationTests
     [Fact]
     public void TestValidation_Match_Invalid()
     {
-        var validation = Validation<int>.Invalid("Error");
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
         var result = validation.Match(
             onValid: value => value * 2,
             onInvalid: errors => errors.Count);
@@ -38,7 +38,7 @@ public class ValidationTests
     [Fact]
     public void TestValidation_GetValueOrThrow_Invalid()
     {
-        var validation = Validation<int>.Invalid("Error");
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
 
         Action action = () => validation.GetValueOrThrow();
         action.Should().Throw<InvalidOperationException>().WithMessage("Error");
@@ -56,7 +56,7 @@ public class ValidationTests
     [Fact]
     public void TestValidation_GetValueOrDefault_Invalid()
     {
-        var validation = Validation<int>.Invalid("Error");
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
         var value = validation.GetValueOrDefault(10);
 
         value.Should().Be(10);
@@ -81,7 +81,7 @@ public class ValidationTests
     public void Select_ShouldReturnFailureResult_WhenSourceIsInvalid()
     {
         // Arrange
-        var source = Validation<int>.Invalid("Error message");
+        var source = Validation<int>.Invalid(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
@@ -89,7 +89,7 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain("Error message");
+        result.Errors.Should().Contain(UiNoTranslate("Error message"));
     }
     
     [Fact]
@@ -121,14 +121,14 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain("Predicate not satisfied");
+        result.Errors.Should().Contain(UiNoTranslate("Predicate not satisfied"));
     }
     
     [Fact]
     public void Where_ShouldReturnFailureResult_WhenSourceIsInvalid()
     {
         // Arrange
-        var source = Validation<int>.Invalid("Error message");
+        var source = Validation<int>.Invalid(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
@@ -137,7 +137,7 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain("Error message");
+        result.Errors.Should().Contain(UiNoTranslate("Error message"));
     }
     
     [Fact]
@@ -163,10 +163,10 @@ public class ValidationTests
         var result = source.SelectMany(BinderInvalid);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
     }
 
-    private static Validation<int> BinderInvalid(int i) => Validation<int>.Invalid("Simulated error");
+    private static Validation<int> BinderInvalid(int i) => Validation<int>.Invalid(UiNoTranslate("Simulated error"));
     
     [Fact]
     public void TestSelectMany_InvalidToBinding()
@@ -174,11 +174,11 @@ public class ValidationTests
         /* This test demonstrates binding an invalid Validation<T> to any Validation<TResult>.
          The initial value is invalid, and we expect the errors to propagate without calling the binder function. */
 
-        var source = Validation<int>.Invalid("Initial error");
+        var source = Validation<int>.Invalid(UiNoTranslate("Initial error"));
         var result = source.SelectMany(Binder);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Initial error");
+        result.Errors.Should().Contain(UiNoTranslate("Initial error"));
     }
     
     [Fact]
@@ -265,7 +265,7 @@ public class ValidationTests
         /* This test shows what happens when the initial operation—the source Task—throws an exception.
         You can expect this to propagate up to the calling code, which the test verifies. */
 
-        Task<Validation<int>> faultedTask = Task.FromException<Validation<int>>(new Exception("Simulated exception"));
+        var faultedTask = Task.FromException<Validation<int>>(new Exception("Simulated exception"));
 
         Func<Task> action = async () => { await faultedTask; };
 
@@ -291,12 +291,12 @@ public class ValidationTests
         /* This test simulates a situation where the source value is invalid. We can expect that no matter 
         what operation we try to apply, the result should also be invalid. */
         
-        var source = Validation<int>.Invalid("Simulated error");
+        var source = Validation<int>.Invalid(UiNoTranslate("Simulated error"));
 
         var result = from s in source from res in Binder(s) select res;
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
     }
     
     [Fact]
@@ -305,12 +305,12 @@ public class ValidationTests
         /* The same scenario as the previous test, but with the source value provided by a Task. Again, 
         when the source is invalid, the result is expected to be invalid. */
         
-        var sourceTask = Task.FromResult(Validation<int>.Invalid("Simulated error"));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
     }
 
     [Fact]
@@ -318,13 +318,13 @@ public class ValidationTests
     {
         /* This test ensures that the selector is not called when the source value is invalid. */
         
-        var sourceTask = Task.FromResult(Validation<int>.Invalid("Simulated error"));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
         var selectorWasCalled = false;
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -378,7 +378,7 @@ public class ValidationTests
         /* This test covers the scenario where the initial asynchronous operation returns an invalid result.
         Even though the operations are asynchronous, the final result should also be invalid. */
         
-        var sourceTask = Task.FromResult(Validation<int>.Invalid("Simulated error"));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             async s => await CollectionTaskSelector(s),
@@ -386,7 +386,7 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
     }
     
     [Fact]
@@ -395,7 +395,7 @@ public class ValidationTests
         /* This test examines the behavior when the initial asynchronous operation returns an invalid result.
         The subsequent synchronous operation should not be called, and the final result should be invalid. */
         
-        var sourceTask = Task.FromResult(Validation<int>.Invalid("Simulated error"));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             s => CollectionSelector(s),
@@ -403,7 +403,7 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain("Simulated error");
+        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
     }
 
     [Fact]
@@ -497,8 +497,10 @@ public class ValidationTests
 
     static Validation<int> Binder(int i) => Validation<int>.Valid(i + 5);
     static Validation<int> CollectionSelector(int i) => Validation<int>.Valid(i + 1);
-    static async Task<Validation<int>> CollectionTaskSelector(int i) => await Task.FromResult(Validation<int>.Valid(i + 5));
-    static async Task<Validation<int>> FaultedSelector() => await Task.FromException<Validation<int>>(new Exception("Simulated exception"));
+    static async Task<Validation<int>> CollectionTaskSelector(int i) => 
+        await Task.FromResult(Validation<int>.Valid(i + 5));
+    static async Task<Validation<int>> FaultedSelector() => 
+        await Task.FromException<Validation<int>>(new Exception("Simulated exception"));
 
     static async Task<Validation<int>> UpdateAgeAsync(Person person)
     {

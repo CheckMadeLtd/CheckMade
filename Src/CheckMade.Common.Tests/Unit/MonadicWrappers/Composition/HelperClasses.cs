@@ -1,3 +1,5 @@
+using CheckMade.Common.LangExt;
+
 namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
 
 internal class User
@@ -26,18 +28,18 @@ internal static class UserService
 
     public static Validation<User> ValidateUser(User user)
     {
-        var errors = new List<string>();
+        var errors = new List<UiString>();
         if (string.IsNullOrWhiteSpace(user.Username))
         {
-            errors.Add("Username is required");
+            errors.Add(UiNoTranslate("Username is required"));
         }
         if (string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains("@"))
         {
-            errors.Add("Valid email is required");
+            errors.Add(UiNoTranslate("Valid email is required"));
         }
         if (user.Password?.Length < 6)
         {
-            errors.Add("Password must be at least 6 characters long");
+            errors.Add(UiNoTranslate("Password must be at least 6 characters long"));
         }
 
         return errors.Count == 0 ? Validation<User>.Valid(user) : Validation<User>.Invalid(errors);

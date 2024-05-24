@@ -24,10 +24,11 @@ public class MonadicCompositionTests
                         var registerUserResult = await UserService.RegisterUserAsync(validUser);
                         registerUserResult.Success.Should().BeTrue();
 
-                        var welcomeEmail = UserService.GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
+                        var welcomeEmail = UserService
+                            .GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
                         welcomeEmail.IsSome.Should().BeTrue();
                     },
-                    errors => Task.FromException(new Exception(errors[0]))
+                    errors => Task.FromException(new Exception(errors[0].RawOriginalText))
                     );
             },
             exception => Task.FromException(new Exception("User creation failed", exception)));
@@ -55,10 +56,12 @@ public class MonadicCompositionTests
                             var registerUserResult = await UserService.RegisterUserAsync(validUser);
                             registerUserResult.Success.Should().BeTrue();
 
-                            var welcomeEmail = UserService.GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
+                            var welcomeEmail = UserService
+                                .GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
                             welcomeEmail.IsSome.Should().BeTrue();
                         },
-                        errors => Task.FromException(new Exception(errors[0]))
+                        errors => Task
+                            .FromException(new Exception(errors[0].RawOriginalText))
                     );
                 },
                 exception => Task.FromException(new Exception("User creation failed", exception)));
@@ -119,7 +122,7 @@ public class MonadicCompositionTests
             }
             else
             {
-                errorMessage = userValidation.Errors[0];
+                errorMessage = userValidation.Errors[0].RawOriginalText;
             }
         }
         else

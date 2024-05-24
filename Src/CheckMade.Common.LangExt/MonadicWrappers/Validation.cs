@@ -6,7 +6,7 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 public record Validation<T>
 {
     internal T? Value { get; }
-    internal IReadOnlyList<string> Errors { get; }
+    internal IReadOnlyList<UiString> Errors { get; }
 
     public bool IsValid => Errors.Count == 0;
     public bool IsInvalid => !IsValid;
@@ -14,20 +14,20 @@ public record Validation<T>
     private Validation(T value)
     {
         Value = value;
-        Errors = new List<string>();
+        Errors = new List<UiString>();
     }
 
-    private Validation(List<string> errors)
+    private Validation(List<UiString> errors)
     {
         Value = default;
         Errors = errors;
     }
 
     public static Validation<T> Valid(T value) => new(value);
-    public static Validation<T> Invalid(List<string> errors) => new(errors);
-    public static Validation<T> Invalid(params string[] errors) => new(errors.ToList());
+    public static Validation<T> Invalid(List<UiString> errors) => new(errors);
+    public static Validation<T> Invalid(params UiString[] errors) => new(errors.ToList());
 
-    public TResult Match<TResult>(Func<T, TResult> onValid, Func<IReadOnlyList<string>, TResult> onInvalid)
+    public TResult Match<TResult>(Func<T, TResult> onValid, Func<IReadOnlyList<UiString>, TResult> onInvalid)
     {
         return IsValid ? onValid(Value!) : onInvalid(Errors);
     }
@@ -62,7 +62,7 @@ public static class ValidationExtensions
 
         return predicate(source.Value!) 
             ? source 
-            : Validation<T>.Invalid("Predicate not satisfied");
+            : Validation<T>.Invalid(UiNoTranslate("Predicate not satisfied"));
     }
 
     // Synchronous binding of synchronous operations
