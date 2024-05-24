@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace CheckMade.Common.LangExt;
 
-public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawOriginalText, object[] MessageParams)
+public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawEnglishText, object[] MessageParams)
 {
     [StringFormatMethod("uiString")]
     public static UiString Ui(string uiString, params object[] messageParams) 

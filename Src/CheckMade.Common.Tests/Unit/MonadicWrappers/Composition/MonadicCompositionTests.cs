@@ -28,7 +28,7 @@ public class MonadicCompositionTests
                             .GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
                         welcomeEmail.IsSome.Should().BeTrue();
                     },
-                    errors => Task.FromException(new Exception(errors[0].RawOriginalText))
+                    errors => Task.FromException(new Exception(errors[0].RawEnglishText))
                     );
             },
             exception => Task.FromException(new Exception("User creation failed", exception)));
@@ -61,7 +61,7 @@ public class MonadicCompositionTests
                             welcomeEmail.IsSome.Should().BeTrue();
                         },
                         errors => Task
-                            .FromException(new Exception(errors[0].RawOriginalText))
+                            .FromException(new Exception(errors[0].RawEnglishText))
                     );
                 },
                 exception => Task.FromException(new Exception("User creation failed", exception)));
@@ -122,7 +122,7 @@ public class MonadicCompositionTests
             }
             else
             {
-                errorMessage = userValidation.Errors[0].RawOriginalText;
+                errorMessage = userValidation.Errors[0].RawEnglishText;
             }
         }
         else

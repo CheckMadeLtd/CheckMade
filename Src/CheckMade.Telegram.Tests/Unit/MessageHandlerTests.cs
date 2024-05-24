@@ -165,7 +165,7 @@ public class MessageHandlerTests
         
         // Arrange
         var validBotCommand = new BotCommandMenus()
-            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command.RawOriginalText;
+            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command.RawEnglishText;
         var utils = _services.GetRequiredService<ITestUtils>();
         var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -221,7 +221,7 @@ public class MessageHandlerTests
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
-        var expectedWelcomeMessageSegment = IRequestProcessor.WelcomeToBotMenuInstruction.RawOriginalText;
+        var expectedWelcomeMessageSegment = IRequestProcessor.WelcomeToBotMenuInstruction.RawEnglishText;
         
         // Act
         await handler.SafelyHandleMessageAsync(startCommandMessage, botType);

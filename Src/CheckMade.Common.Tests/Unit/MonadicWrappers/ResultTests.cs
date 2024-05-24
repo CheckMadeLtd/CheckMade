@@ -21,7 +21,7 @@ public class ResultTests
         var result = Result<int>.FromError(UiNoTranslate("Error"));
         var output = result.Match(
             onSuccess: value => value * 2,
-            onError: error => error.RawOriginalText.Length);
+            onError: error => error.RawEnglishText.Length);
 
         output.Should().Be(5);
     }
