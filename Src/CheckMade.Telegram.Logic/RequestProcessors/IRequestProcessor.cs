@@ -8,5 +8,5 @@ public interface IRequestProcessor
     public static readonly UiString WelcomeToBotMenuInstruction = 
         Ui("Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.");
 
-    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage);
+    public Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage);
 }
