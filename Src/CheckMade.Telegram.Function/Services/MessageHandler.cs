@@ -58,7 +58,7 @@ public class MessageHandler(
                     ex => throw new InvalidOperationException(
                         "Failed to create BotClient", ex));
 
-        var translator = translatorFactory.Create(LanguageCode.En); // will be based on actual user targetLanguage
+        var translator = translatorFactory.Create(LanguageCode.De); // will be based on actual user targetLanguage
         
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);

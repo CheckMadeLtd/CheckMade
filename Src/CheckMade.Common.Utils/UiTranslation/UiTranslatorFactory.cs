@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 
@@ -10,47 +11,50 @@ public interface IUiTranslatorFactory
 }
 
 public class UiTranslatorFactory(
-        string targetLanguagesDir,
         ILogger<UiTranslatorFactory> logger,
         ILogger<UiTranslator> loggerForUiTranslator) 
     : IUiTranslatorFactory
 {
+    private LanguageCode _targetLanguage;
+    
     public IUiTranslator Create(LanguageCode targetLanguage)
     {
-        var translationByKey = targetLanguage switch
+        _targetLanguage = targetLanguage;
+        
+        var translationByKey = _targetLanguage switch
         {
 
             LanguageCode.En => Option<IDictionary<string, string>>.None(),
             
-            LanguageCode.De => SafelyCreateTranslationDictionary(targetLanguage).Match(
+            LanguageCode.De => SafelyCreateTranslationDictionary().Match(
                 Option<IDictionary<string, string>>.Some,
                 ex =>
                 {
-                    logger.LogWarning(ex, $"Failed to create translation dictionary for '{targetLanguage}'," +
+                    logger.LogWarning(ex, $"Failed to create translation dictionary for '{_targetLanguage}'," +
                                           $"and so U.I. will be English. Exception message: '{ex.Message}'");
                     
                     return Option<IDictionary<string, string>>.None();
                 }),
             
-            _ => throw new ArgumentOutOfRangeException(nameof(targetLanguage))
+            _ => throw new ArgumentOutOfRangeException(nameof(_targetLanguage))
         };
         
         return new UiTranslator(translationByKey, loggerForUiTranslator);
     }
 
-    private Attempt<IDictionary<string, string>> SafelyCreateTranslationDictionary(LanguageCode targetLanguage)
+    private Attempt<IDictionary<string, string>> SafelyCreateTranslationDictionary()
     {
         return Attempt<IDictionary<string, string>>.Run(() =>
         {
             var translationByKey = new Dictionary<string, string>();
-
+            
             var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord = true,
                 Delimiter = "\t"
             }; 
         
-            using (var reader = new StreamReader(Path.Combine(targetLanguagesDir, $"{targetLanguage}.tsv")))
+            using (var reader = new StreamReader(GetTranslationResourceStreamOrThrow()))
             using (var csv = new CsvReader(reader, config))
             {
                 while(csv.Read())
@@ -63,5 +67,15 @@ public class UiTranslatorFactory(
 
             return translationByKey;
         });
+    }
+
+    private Stream GetTranslationResourceStreamOrThrow()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        
+        var targetLanguagesResourceName =
+            $"{typeof(UiTranslatorFactory).Namespace}.TargetLanguages.{_targetLanguage.ToString().ToLower()}.tsv";
+
+        return assembly.GetManifestResourceStream(targetLanguagesResourceName)!;
     }
 }
