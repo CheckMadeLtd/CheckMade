@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;

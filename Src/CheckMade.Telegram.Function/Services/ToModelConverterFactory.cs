@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Telegram.Function.Services;
 

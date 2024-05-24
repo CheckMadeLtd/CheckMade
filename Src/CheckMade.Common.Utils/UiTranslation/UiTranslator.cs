@@ -1,14 +1,14 @@
 using System.Text;
 using CheckMade.Common.LangExt;
 
-namespace CheckMade.Common.Utils;
+namespace CheckMade.Common.Utils.UiTranslation;
 
 public interface IUiTranslator
 {
     string Translate(UiString uiString);
 }
 
-public class UiTranslator : IUiTranslator
+public class UiTranslator(LanguageCode targetLanguage) : IUiTranslator
 {
     public string Translate(UiString uiString)
     {
