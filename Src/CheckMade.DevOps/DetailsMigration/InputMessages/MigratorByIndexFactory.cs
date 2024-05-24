@@ -31,7 +31,7 @@ internal class MigratorByIndexFactory
     public Result<MigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
-            true => Result<MigratorBase>.FromSuccess(migrator),
+            true => migrator,
             false => Result<MigratorBase>.FromError(Ui("No migrator called 'Mig{0}' was found.", migIndex))
         };
 }

@@ -41,32 +41,29 @@ internal class ToModelConverter(
 
         return telegramInputMessage.Type switch
         {
-            MessageType.Text => Result<AttachmentDetails>.FromSuccess(
-                new AttachmentDetails(Option<string>.None(), Option<AttachmentType>.None())),
+            MessageType.Text => new AttachmentDetails(
+                Option<string>.None(), Option<AttachmentType>.None()),
             
-            MessageType.Audio => Result<AttachmentDetails>.FromSuccess(
-                new AttachmentDetails(telegramInputMessage.Audio?.FileId 
-                                      ?? throw new InvalidOperationException(
-                                          string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Audio)),
+            MessageType.Audio => new AttachmentDetails(
+                telegramInputMessage.Audio?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Audio),
             
-            MessageType.Photo => Result<AttachmentDetails>.FromSuccess(
-                new AttachmentDetails(telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId
-                                       ?? throw new InvalidOperationException(
-                                           string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Photo)),
+            MessageType.Photo => new AttachmentDetails(
+                telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId 
+                ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Photo),
             
-            MessageType.Document => Result<AttachmentDetails>.FromSuccess(
-                new AttachmentDetails(telegramInputMessage.Document?.FileId
-                                       ?? throw new InvalidOperationException(
-                                           string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Document)),
+            MessageType.Document => new AttachmentDetails(
+                telegramInputMessage.Document?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, telegramInputMessage.Type)), 
+                    AttachmentType.Document),
             
-            MessageType.Video => Result<AttachmentDetails>.FromSuccess(
-                new AttachmentDetails(telegramInputMessage.Video?.FileId
-                                       ?? throw new InvalidOperationException(
-                                           string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Video)),
+            MessageType.Video => new AttachmentDetails(
+                telegramInputMessage.Video?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, telegramInputMessage.Type)),
+                AttachmentType.Video),
             
             _ => Result<AttachmentDetails>.FromError(
                 Ui("Attachment type {0} is not yet supported!", telegramInputMessage.Type)) 
@@ -83,12 +80,10 @@ internal class ToModelConverter(
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
 
         if (botCommandEntity == null)
-            return Result<Option<int>>.FromSuccess(Option<int>.None());
+            return Option<int>.None();
 
         if (telegramInputMessage.Text == Start.Command)
-        {
-            return Result<Option<int>>.FromSuccess(Option<int>.Some(1));
-        }
+            return Option<int>.Some(1);
         
         var allBotCommandMenus = new BotCommandMenus();
 
@@ -112,17 +107,17 @@ internal class ToModelConverter(
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
-            BotType.Submissions => Result<Option<int>>.FromSuccess(
+            BotType.Submissions => Option<int>.Some(
                 (int) allBotCommandMenus.SubmissionsBotCommandMenu
                 .First(kvp => 
                     kvp.Value.Command == botCommandFromInputMessage)
                 .Key),
-            BotType.Communications => Result<Option<int>>.FromSuccess(
+            BotType.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
                 .First(kvp => 
                     kvp.Value.Command == botCommandFromInputMessage)
                 .Key),
-            BotType.Notifications => Result<Option<int>>.FromSuccess(
+            BotType.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
                 .First(kvp => 
                     kvp.Value.Command == botCommandFromInputMessage)
@@ -168,15 +163,13 @@ internal class ToModelConverter(
             ? telegramInputMessage.Text
             : telegramInputMessage.Caption;
         
-        return Result<InputMessage>.FromSuccess(
-            new InputMessage(userId.Value,
-                telegramInputMessage.Chat.Id,
-                new MessageDetails(
-                    telegramInputMessage.Date,
-                    botType,
-                    !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(),
-                    telegramAttachmentUrl,
-                    attachmentDetails.Type,
-                    botCommandEnumCode)));
+        return new InputMessage(userId.Value, telegramInputMessage.Chat.Id, 
+            new MessageDetails(
+                telegramInputMessage.Date, 
+                botType, 
+                !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
+                telegramAttachmentUrl,
+                attachmentDetails.Type,
+                botCommandEnumCode));
     }
 }

@@ -49,7 +49,7 @@ internal static class UserService
         
         return user.Username == "existingUser" 
             ? Result<RegisteredUser>.FromError(Ui("Username already exists")) 
-            : Result<RegisteredUser>.FromSuccess(new RegisteredUser { Id = new Random().Next(1, 1000), Username = user.Username });
+            : new RegisteredUser { Id = new Random().Next(1, 1000), Username = user.Username };
     }
 
     public static Option<int> GenerateWelcomeEmail(RegisteredUser? user)

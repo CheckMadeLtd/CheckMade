@@ -21,8 +21,8 @@ public record Result<T>
 
     public static implicit operator Result<T>(T value) => FromSuccess(value);
     
-    public static Result<T> FromSuccess(T value) => new Result<T>(value);
-    public static Result<T> FromError(UiString error) => new Result<T>(error);
+    public static Result<T> FromSuccess(T value) => new(value);
+    public static Result<T> FromError(UiString error) => new(error);
     
     public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<UiString, TResult> onError)
     {
