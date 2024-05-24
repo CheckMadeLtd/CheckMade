@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using FluentAssertions;
 
 namespace CheckMade.Common.Tests.Unit.MonadicWrappers;
@@ -41,7 +42,7 @@ public class ValidationTests
         var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
 
         Action action = () => validation.GetValueOrThrow();
-        action.Should().Throw<InvalidOperationException>().WithMessage("Error");
+        action.Should().Throw<MonadicWrapperGetValueOrThrowException>().WithMessage("Error");
     }
 
     [Fact]
@@ -89,7 +90,7 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(UiNoTranslate("Error message"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
     }
     
     [Fact]
@@ -121,7 +122,7 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(UiNoTranslate("Predicate not satisfied"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Predicate not satisfied");
     }
     
     [Fact]
@@ -137,7 +138,7 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(UiNoTranslate("Error message"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
     }
     
     [Fact]
@@ -163,7 +164,7 @@ public class ValidationTests
         var result = source.SelectMany(BinderInvalid);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
     private static Validation<int> BinderInvalid(int i) => Validation<int>.Invalid(UiNoTranslate("Simulated error"));
@@ -178,7 +179,7 @@ public class ValidationTests
         var result = source.SelectMany(Binder);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Initial error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Initial error");
     }
     
     [Fact]
@@ -296,7 +297,7 @@ public class ValidationTests
         var result = from s in source from res in Binder(s) select res;
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
     
     [Fact]
@@ -310,7 +311,7 @@ public class ValidationTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
     [Fact]
@@ -324,7 +325,7 @@ public class ValidationTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -386,7 +387,7 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
     
     [Fact]
@@ -403,7 +404,7 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Should().Contain(UiNoTranslate("Simulated error"));
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
     [Fact]

@@ -180,8 +180,9 @@ public class MonadicCompositionTests
             }
             else
             {
-                userValidation.Errors[0].Should().Be("Valid email is required");
-                userValidation.Errors[1].Should().Be("Password must be at least 6 characters long");
+                userValidation.Errors[0].GetFormattedEnglish().Should().Be("Valid email is required");
+                userValidation.Errors[1].GetFormattedEnglish().Should().Be(
+                    "Password must be at least 6 characters long");
             }
         }
         else

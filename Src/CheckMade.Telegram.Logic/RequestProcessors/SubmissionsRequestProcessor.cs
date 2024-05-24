@@ -30,7 +30,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                         (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
                     .Value.Command;
 
-                return Ui($"Echo of a Submissions BotCommand: {botCommand}");
+                return UiConcatenate(Ui("Echo of a Submissions BotCommand: "), botCommand);
             }
 
             return inputMessage.Details.AttachmentType.Match(

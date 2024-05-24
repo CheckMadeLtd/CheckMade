@@ -96,8 +96,8 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     // [Theory(Skip = "Waiting to migrate the old DB data")]
-    [Theory(Skip = "Running tests from unknown IP / internet")]
-    // [Theory]
+    // [Theory(Skip = "Running tests from unknown IP / internet")]
+    [Theory]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(

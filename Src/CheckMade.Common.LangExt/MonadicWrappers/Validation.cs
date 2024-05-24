@@ -38,7 +38,8 @@ public record Validation<T>
         {
             return Value!;
         }
-        throw new InvalidOperationException(string.Join(", ", Errors));
+        throw new MonadicWrapperGetValueOrThrowException(string.Join(", ", 
+            Errors.Select(e => e.GetFormattedEnglish())));
     }
 
     public T GetValueOrDefault(T defaultValue = default!)
