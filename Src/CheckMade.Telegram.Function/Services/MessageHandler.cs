@@ -17,7 +17,7 @@ public class MessageHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
-        IUiTranslator translator,
+        IUiTranslatorFactory translatorFactory,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
@@ -58,6 +58,8 @@ public class MessageHandler(
                     ex => throw new InvalidOperationException(
                         "Failed to create BotClient", ex));
 
+        var translator = translatorFactory.Create(LanguageCode.En); // will be based on actual user targetLanguage
+        
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);
         
@@ -65,7 +67,7 @@ public class MessageHandler(
             from modelInputMessage in Attempt<InputMessage>.RunAsync(async () => 
                 await toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage, botType))
             from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
-            select SendOutputAsync(outputMessage, botClient, chatId);        
+            select SendOutputAsync(outputMessage, botClient, chatId, translator);
         
         return (await sendOutputOutcome).Match(
             
@@ -82,13 +84,13 @@ public class MessageHandler(
 
                 // fire and forget
                 _ = SendOutputAsync(UiConcatenate(UiIndirect(ex.Message), CallToActionAfterErrorReport),
-                    botClient, chatId);
+                    botClient, chatId, translator);
                 return Attempt<Unit>.Fail(ex);
             });
     }
 
     private async Task<Attempt<Unit>> SendOutputAsync(
-        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId)
+        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId, IUiTranslator translator)
     {
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(chatId, translator.Translate(outputMessage)));
