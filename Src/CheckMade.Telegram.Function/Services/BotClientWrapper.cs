@@ -1,6 +1,5 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot;
@@ -30,7 +29,6 @@ public interface IBotClientWrapper
 internal class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        IUiTranslator translator,
         string botToken) 
     : IBotClientWrapper
 {
@@ -85,8 +83,8 @@ internal class BotClientWrapper(
         menu
             .Select(kvp => new BotCommand
             {
-                Command = translator.Translate(kvp.Value.Command), 
-                Description = translator.Translate(kvp.Value.Description)
+                Command = kvp.Value.Command.RawEnglishText, 
+                Description = kvp.Value.Description.RawEnglishText
             }).ToArray();
 }
 

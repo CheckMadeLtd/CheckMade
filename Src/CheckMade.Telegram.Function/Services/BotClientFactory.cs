@@ -1,5 +1,4 @@
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model;
 using Telegram.Bot;
@@ -14,7 +13,6 @@ public interface IBotClientFactory
 public class BotClientFactory(
         IHttpClientFactory httpFactory,
         INetworkRetryPolicy retryPolicy,
-        IUiTranslator translator,
         BotTokens botTokens) 
     : IBotClientFactory
 {
@@ -24,21 +22,18 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.SubmissionsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy, 
-            translator,
             botTokens.SubmissionsBotToken),
         
         BotType.Communications => new BotClientWrapper(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
-            translator,
             botTokens.CommunicationsBotToken),
         
         BotType.Notifications => new BotClientWrapper(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
-            translator,
             botTokens.NotificationsBotToken),
         
         _ => throw new ArgumentOutOfRangeException(nameof(botType))
