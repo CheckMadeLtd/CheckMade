@@ -1,4 +1,5 @@
-﻿using CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Common.LangExt;
+using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 
@@ -8,16 +9,18 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage)
+    public async Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
     {
-        return await Attempt<string>.RunAsync(async () =>
+        return await Attempt<UiString>.RunAsync(async () =>
         {
             await repo.AddOrThrowAsync(inputMessage);
 
             var botCommandMenus = new BotCommandMenus();
 
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
-                return string.Format(IRequestProcessor.WelcomeToBot, BotType.Submissions);
+                return UiConcatenate(
+                    Ui("Willkommen zum {0} Bot! ", BotType.Submissions), 
+                    IRequestProcessor.WelcomeToBotMenuInstruction);
             
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
@@ -27,12 +30,12 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                         (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
                     .Value.Command;
 
-                return UiSm($"Echo of a Submissions BotCommand: {botCommand}");
+                return Ui($"Echo of a Submissions BotCommand: {botCommand}");
             }
 
             return inputMessage.Details.AttachmentType.Match(
-                type => UiSm($"Echo from bot Submissions: {type}"),
-                () => UiSm($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
+                type => Ui($"Echo from bot Submissions: {type}"),
+                () => Ui($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
         });
     }
 }

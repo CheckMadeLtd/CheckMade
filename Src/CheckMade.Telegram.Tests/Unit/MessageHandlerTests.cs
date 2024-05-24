@@ -224,7 +224,7 @@ public class MessageHandlerTests
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
-        var expectedWelcomeMessage = string.Format(IRequestProcessor.WelcomeToBot, botType);
+        var expectedWelcomeMessage = string.Format(IRequestProcessor.WelcomeToBotMenuInstruction, botType);
         
         // Act
         await handler.SafelyHandleMessageAsync(startCommandMessage, botType);
