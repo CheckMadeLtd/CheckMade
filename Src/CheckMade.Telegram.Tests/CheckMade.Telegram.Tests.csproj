@@ -29,4 +29,10 @@
       <ProjectReference Include="..\CheckMade.Telegram.Function\CheckMade.Telegram.Function.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
+
 </Project>

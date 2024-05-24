@@ -1,6 +1,4 @@
 
-using CheckMade.Common.LangExt.MonadicWrappers;
-
 namespace CheckMade.Telegram.Model;
 
 public record MessageDetails(

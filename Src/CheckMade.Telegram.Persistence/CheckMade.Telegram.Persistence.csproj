@@ -23,4 +23,10 @@
       <PackageReference Include="Npgsql" Version="8.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
+
 </Project>
