@@ -53,11 +53,11 @@ internal class BotClientWrapper(
         }
         catch (Exception ex)
         {
-            throw new NetworkAccessException(Ui("Failed to reach Telegram servers after several attempts."), ex);
+            throw new NetworkAccessException("Failed to reach Telegram servers after several attempts.", ex);
         }
         
         return Unit.Value;
-    } 
+    }
     
     public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 

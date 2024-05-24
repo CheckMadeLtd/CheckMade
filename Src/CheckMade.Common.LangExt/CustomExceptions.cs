@@ -1,12 +1,12 @@
 namespace CheckMade.Common.LangExt;
 
-public class DataAccessException(UiString message, Exception? innerException = null) 
-    : Exception(message.RawEnglishText, innerException);
-public class NetworkAccessException(UiString message, Exception? innerException = null) 
-    : Exception(message.RawEnglishText, innerException);
-public class ToModelConversionException(UiString message, Exception? innerException = null) 
-    : Exception(message.RawEnglishText, innerException);
-public class DataMigrationException(UiString message, Exception? innerException = null) 
-    : Exception(message.RawEnglishText, innerException);
-public class MonadicWrapperGetValueOrThrowException(UiString? message, Exception? innerException = null) 
-    : Exception(message?.RawEnglishText, innerException);
+public class DataAccessException(string message, Exception? innerException = null) 
+    : Exception(message, innerException);
+public class NetworkAccessException(string message, Exception? innerException = null) 
+    : Exception(message, innerException);
+public class ToModelConversionException(string message, Exception? innerException = null) 
+    : Exception(message, innerException);
+public class DataMigrationException(string message, Exception? innerException = null) 
+    : Exception(message, innerException);
+public class MonadicWrapperGetValueOrThrowException(string? message, Exception? innerException = null) 
+    : Exception(message, innerException);

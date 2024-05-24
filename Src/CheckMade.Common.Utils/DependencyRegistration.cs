@@ -1,4 +1,5 @@
 using CheckMade.Common.Utils.RetryPolicies;
+using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.Utils;
@@ -12,5 +13,7 @@ public static class DependencyRegistration
         services.AddSingleton<IDbOpenRetryPolicy, DbOpenRetryPolicy>();
         services.AddSingleton<IDbCommandRetryPolicy, DbCommandRetryPolicy>();
         services.AddSingleton<INetworkRetryPolicy, NetworkRetryPolicy>();
+
+        services.AddSingleton<IUiTranslatorFactory, UiTranslatorFactory>();
     }
 }

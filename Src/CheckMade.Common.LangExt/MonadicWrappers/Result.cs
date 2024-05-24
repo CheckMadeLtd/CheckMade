@@ -35,7 +35,7 @@ public record Result<T>
         {
             return Value!;
         }
-        throw new MonadicWrapperGetValueOrThrowException(Error);
+        throw new MonadicWrapperGetValueOrThrowException(Error?.GetFormattedEnglish());
     }
 
     public T GetValueOrDefault(T defaultValue = default!)

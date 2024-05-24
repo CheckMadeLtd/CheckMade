@@ -30,7 +30,7 @@ internal class ToModelConverter(
             .Match(
                 modelInputMessage => modelInputMessage,
                 error => throw new ToModelConversionException(
-                    Ui("Failed to convert Telegram Message to Model: {0}", error)));
+                    $"Failed to convert Telegram Message to Model: {error.GetFormattedEnglish()}"));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
