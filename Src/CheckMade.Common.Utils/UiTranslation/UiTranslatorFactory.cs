@@ -36,7 +36,7 @@ public class UiTranslatorFactory(
                     return Option<IDictionary<string, string>>.None();
                 }),
             
-            _ => throw new ArgumentOutOfRangeException(nameof(_targetLanguage))
+            _ => throw new ArgumentOutOfRangeException(nameof(targetLanguage))
         };
         
         return new UiTranslator(translationByKey, loggerForUiTranslator);
@@ -59,8 +59,12 @@ public class UiTranslatorFactory(
             {
                 while(csv.Read())
                 {
-                    var enKey = csv.GetField(1);
-                    var translation = csv.GetField(2);
+                    /* Why Replace()?
+                     In the .tsv file any '\n' is a string literal, while in the resulting translation dictionary
+                     we need them to become actual line-breaking control characters to ensure a match against any
+                     UiString.RawEnglishText in the Translate() method. */ 
+                    var enKey = csv.GetField(1).Replace("\\n", "\n");
+                    var translation = csv.GetField(2).Replace("\\n", "\n");
                     translationByKey[enKey] = translation;
                 }
             }

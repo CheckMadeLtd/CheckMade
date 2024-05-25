@@ -15,6 +15,6 @@ public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
                 ? UiConcatenate(
                     Ui("Willkommen zum {0} Bot! ", BotType.Communications), 
                     IRequestProcessor.WelcomeToBotMenuInstruction)
-                : Ui("Echo from bot Communications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
+                : Ui("Echo from bot \nCommunications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
     }
 }

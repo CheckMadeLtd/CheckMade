@@ -35,7 +35,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
 
             return inputMessage.Details.AttachmentType.Match(
                 type => Ui("Echo from bot Submissions: {0}", type),
-                () => Ui("Echo from bot Submissions: {0}", inputMessage.Details.Text.GetValueOrDefault()));
+                () => Ui("Echo from bot \nSubmissions: {0}", inputMessage.Details.Text.GetValueOrDefault()));
         });
     }
 }

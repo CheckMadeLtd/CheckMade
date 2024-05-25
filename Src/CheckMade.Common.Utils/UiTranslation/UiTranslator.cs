@@ -20,18 +20,16 @@ public class UiTranslator(
         
         foreach (var part in uiString.Concatenations)
             translatedAll.Append(Translate(part));
-        
-        var keyWithLinebreakLiterals = uiString.RawEnglishText.Replace("\n", "\\n");
-        
+
         var translationUnformatted = translationByKey.IsSome 
-            ? translationByKey.GetValueOrDefault().TryGetValue(keyWithLinebreakLiterals, out var translation)
+            ? translationByKey.GetValueOrDefault().TryGetValue(uiString.RawEnglishText, out var translation)
                 ? translation
                 : uiString.RawEnglishText // e.g. because a new U.I. text hasn't been translated yet
             : uiString.RawEnglishText; // because targetLanguage is 'en'
         
         var translationFormatted = Attempt<string>.Run(() =>
             translatedAll + 
-            string.Format(translationUnformatted, uiString.MessageParams).Replace("\\n", "\n"));
+            string.Format(translationUnformatted, uiString.MessageParams));
         
         return translationFormatted.Match(
             formatted => formatted,

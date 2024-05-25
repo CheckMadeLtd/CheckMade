@@ -15,6 +15,6 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
             ? UiConcatenate(
                 Ui("Willkommen zum {0} Bot! ", BotType.Notifications), 
                 IRequestProcessor.WelcomeToBotMenuInstruction) 
-            : Ui("Echo from bot Notifications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
+            : Ui("Echo from bot \nNotifications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
     }
 }
