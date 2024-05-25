@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+// ReSharper disable FormatStringProblem
 
 namespace CheckMade.Tests.Unit.Common;
 
@@ -144,7 +145,6 @@ public class UiStringAndTranslationTests
             .Returns(new UiTranslator(fakeTranslationByKey, factory.logger));
         
         var uiTranslator = factory.mockFactory.Object.Create(factory.deLangCode);
-        // ReSharper disable once FormatStringProblem
         var uiString = Ui(enKey);
 
         // Act
@@ -177,7 +177,6 @@ public class UiStringAndTranslationTests
             .Returns(new UiTranslator(fakeTranslationByKey, factory.logger));
         
         var uiTranslator = factory.mockFactory.Object.Create(factory.deLangCode);
-        // ReSharper disable once FormatStringProblem
         var uiString = Ui(enKey, param1);
 
         // Act
@@ -212,7 +211,6 @@ public class UiStringAndTranslationTests
             .Returns(new UiTranslator(fakeTranslationByKey, factory.logger));
         
         var uiTranslator = factory.mockFactory.Object.Create(factory.deLangCode);
-        // ReSharper disable once FormatStringProblem
         var uiString = Ui(enKey, param1, param2, param3);
 
         // Act

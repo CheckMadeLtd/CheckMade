@@ -52,8 +52,7 @@ public partial class UiTranslator(
             var paramSurplus = actualNumberOfParams - numberOfParamPlaceholders;
 
             return paramSurplus > 0
-                ? formatted = $"{formatted}" +
-                              $"[{string.Join("; ", uiString.MessageParams.TakeLast(paramSurplus))}]"
+                ? $"{formatted}[{string.Join("; ", uiString.MessageParams.TakeLast(paramSurplus))}]"
                 : formatted;
         }
 
