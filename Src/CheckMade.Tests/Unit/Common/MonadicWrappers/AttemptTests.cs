@@ -90,7 +90,7 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Exception!.Message.Should().Be("Test exception");
+        result.Failure!.Message.Should().Be("Test exception");
     }
     
     [Fact]
@@ -122,7 +122,7 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Exception!.Message.Should().Be("Predicate not satisfied");
+        result.Failure!.Message.Should().Be("Predicate not satisfied");
     }
     
     [Fact]
@@ -138,7 +138,7 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Exception!.Message.Should().Be("Test exception");
+        result.Failure!.Message.Should().Be("Test exception");
     }
     
     [Fact]
@@ -164,8 +164,8 @@ public class AttemptTests
         var result = source.SelectMany(BinderFail);
 
         result.IsFailure.Should().BeTrue();
-        Trace.Assert(result.Exception != null, "result.Exception != null");
-        result.Exception.Message.Should().Be("Simulated error");
+        Trace.Assert(result.Failure != null, "result.Failure != null");
+        result.Failure.Message.Should().Be("Simulated error");
     }
 
     [Fact]
@@ -178,8 +178,8 @@ public class AttemptTests
         var result = source.SelectMany(Binder);
 
         result.IsFailure.Should().BeTrue();
-        Trace.Assert(result.Exception != null, "result.Exception != null");
-        result.Exception.Message.Should().Be("Initial error");
+        Trace.Assert(result.Failure != null, "result.Failure != null");
+        result.Failure.Message.Should().Be("Initial error");
     }
 
     static Attempt<int> BinderFail(int i) => Attempt<int>.Fail(new Exception("Simulated error"));
@@ -288,7 +288,7 @@ public class AttemptTests
         var source = Attempt<int>.Fail(new Exception("Simulated exception"));
         var result = from s in source from res in Binder(s) select res;
         result.IsFailure.Should().BeTrue();
-        result.Exception.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Exception>();
     }
     
     [Fact]
@@ -300,7 +300,7 @@ public class AttemptTests
         var sourceTask = Task.FromResult(Attempt<int>.Fail(new Exception("Simulated exception")));
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
         result.IsFailure.Should().BeTrue();
-        result.Exception.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Exception>();
     }
 
     [Fact]
@@ -314,7 +314,7 @@ public class AttemptTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsFailure.Should().BeTrue();
-        result.Exception.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Exception>();
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -370,7 +370,7 @@ public class AttemptTests
             (s, c) => s + c
         );
         result.IsFailure.Should().BeTrue();
-        result.Exception.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Exception>();
     }
     
     [Fact]
@@ -385,7 +385,7 @@ public class AttemptTests
             (s, c) => s + c
         );
         result.IsFailure.Should().BeTrue();
-        result.Exception.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Exception>();
     }
 
     [Fact]
