@@ -1,4 +1,5 @@
 using System.Configuration;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,8 @@ public abstract class TestStartupBase
         });
         
         Services.AddSingleton<ITestUtils, TestUtils>();
+
+        Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.En));
         
         Services.ConfigureBotUpdateHandlingServices();
         Services.ConfigureUtilityServices();

@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ public class MessageHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
+        DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
         ILogger<MessageHandler> logger)
     : IMessageHandler
@@ -58,7 +60,14 @@ public class MessageHandler(
                     ex => throw new InvalidOperationException(
                         "Failed to create BotClient", ex));
 
-        var translator = translatorFactory.Create(LanguageCode.De); // will be based on actual user targetLanguage
+        // Will retrieve actual user language preference
+        var userLanguagePreference = Option<LanguageCode>.None();
+
+        var currentUiLanguage = userLanguagePreference.Match(
+            code => code,
+            () => defaultUiLanguage.Code);
+        
+        var translator = translatorFactory.Create(currentUiLanguage);
         
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);
