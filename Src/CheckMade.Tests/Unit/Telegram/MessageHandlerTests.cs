@@ -29,7 +29,7 @@ public class MessageHandlerTests
         var textMessage = utils.GetValidTelegramTextMessage("simple valid text");
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo from bot \n{botType}: {textMessage.Text}";
+        var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
 
         // Act
         await handler.SafelyHandleMessageAsync(textMessage, botType);

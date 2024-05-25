@@ -23,8 +23,10 @@ public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawE
     public static UiString UiConcatenate(IEnumerable<UiString> uiStrings) => 
         new UiString(uiStrings.ToList(), string.Empty, []);
 
+    // ToDo: Review this comment after fixing the custom exception issue
     /* Useful when I need to convert a UiString with Message Params back to a fully formatted string,
      e.g. when converting the error in a Result<T> to a message for a custom Exception (which, as of 05/2024,
      doesn't accept UiString for its message */
+    // This doesn't work for UiStrings that contain Concatenations
     public string GetFormattedEnglish() => string.Format(RawEnglishText, MessageParams);
 }
