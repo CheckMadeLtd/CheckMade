@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using CheckMade.Common.LangExt;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ public interface IUiTranslator
     string Translate(UiString uiString);
 }
 
-public class UiTranslator(
+public partial class UiTranslator(
         Option<IDictionary<string, string>> translationByKey,
         ILogger<UiTranslator> logger) 
     : IUiTranslator
@@ -21,25 +22,45 @@ public class UiTranslator(
         foreach (var part in uiString.Concatenations)
             translatedAll.Append(Translate(part));
 
-        var translationUnformatted = translationByKey.IsSome 
+        var unformattedTranslation = translationByKey.IsSome 
             ? translationByKey.GetValueOrDefault().TryGetValue(uiString.RawEnglishText, out var translation)
                 ? translation
-                : uiString.RawEnglishText // e.g. because a new U.I. text hasn't been translated yet
-            : uiString.RawEnglishText; // because targetLanguage is 'en'
+                // e.g. new U.I. text hasn't been translated; a resource file w. outdated key; use of UiNoTranslate();
+                : uiString.RawEnglishText
+            // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
+            : uiString.RawEnglishText;
         
-        var translationFormatted = Attempt<string>.Run(() =>
+        var formattedTranslation = Attempt<string>.Run(() =>
             translatedAll + 
-            string.Format(translationUnformatted, uiString.MessageParams));
+            string.Format(unformattedTranslation, uiString.MessageParams));
         
-        return translationFormatted.Match(
-            formatted => formatted,
+        return formattedTranslation.Match(
+            GetFormattedTranslationWithAnySurplusParamsAppended,
             ex =>
             {
                 logger.LogWarning(ex, "Failed to format translated UiString for: '{unformatted}' " +
                                       "with {paramsCount} provided string formatting parameters.", 
-                    translationUnformatted, uiString.MessageParams.Length);
+                    unformattedTranslation, uiString.MessageParams.Length);
                 
-                return translationUnformatted;
+                return GetUnformattedTranslationWithInsufficientParamsAppended(unformattedTranslation);
             });
+
+        string GetFormattedTranslationWithAnySurplusParamsAppended(string formatted)
+        {
+            var numberOfParamPlaceholders = MyParamPlaceholderMatcher().Matches(unformattedTranslation).Count;
+            var actualNumberOfParams = uiString.MessageParams.Length; 
+            var paramSurplus = actualNumberOfParams - numberOfParamPlaceholders;
+
+            return paramSurplus > 0
+                ? formatted = $"{formatted}" +
+                              $"[{string.Join("; ", uiString.MessageParams.TakeLast(paramSurplus))}]"
+                : formatted;
+        }
+
+        string GetUnformattedTranslationWithInsufficientParamsAppended(string unformatted) =>
+            $"{unformatted}[{string.Join("; ", uiString.MessageParams)}]";
     }
+
+    [GeneratedRegex(@"\{\d+\}")]
+    private static partial Regex MyParamPlaceholderMatcher();
 }
