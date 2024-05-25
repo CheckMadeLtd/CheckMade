@@ -5,6 +5,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Tests.Startup;
+using CheckMade.Tests.Startup.ConfigProviders;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;

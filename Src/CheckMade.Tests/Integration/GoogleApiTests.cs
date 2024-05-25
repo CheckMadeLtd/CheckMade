@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup;
+using CheckMade.Tests.Startup.ConfigProviders;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,4 +1,4 @@
-namespace CheckMade.Tests.Startup;
+namespace CheckMade.Tests.Startup.ConfigProviders;
 
 internal class PrdDbConnStringProvider(string connString)
 {
