@@ -23,8 +23,8 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    internal static readonly UiString CallToActionAfterErrorReport = 
-        Ui("Bitte kontaktiere den Support oder deinen Supervisor.");
+    private static readonly UiString CallToActionAfterErrorReport = 
+        Ui("Please contact technical support or your supervisor.");
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
@@ -47,7 +47,7 @@ public class MessageHandler(
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
             logger.LogWarning("Received message of type '{messageType}': {warning}", 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning);
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish());
 
             return Attempt<Unit>.Succeed(Unit.Value);
         }
@@ -92,7 +92,7 @@ public class MessageHandler(
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget
-                _ = SendOutputAsync(UiConcatenate(UiNoTranslate(ex.Message), CallToActionAfterErrorReport),
+                _ = SendOutputAsync(UiConcatenate(UiNoTranslate($"{ex.Message} "), CallToActionAfterErrorReport),
                     botClient, chatId, translator);
                 return Attempt<Unit>.Fail(ex);
             });

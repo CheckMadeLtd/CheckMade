@@ -13,8 +13,8 @@ public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
         return Attempt<UiString>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 
                 ? UiConcatenate(
-                    Ui("Willkommen zum {0} Bot! ", BotType.Communications), 
-                    IRequestProcessor.WelcomeToBotMenuInstruction)
-                : Ui("Echo from bot \nCommunications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
+                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Communications), 
+                    IRequestProcessor.SeeValidBotCommandsInstruction)
+                : Ui("Echo from bot {0}: {1}", BotType.Communications, inputMessage.Details.Text.GetValueOrDefault())));
     }
 }

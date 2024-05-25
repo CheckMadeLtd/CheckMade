@@ -91,7 +91,7 @@ public class MessageHandlerTests
         };
 
         var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
-                                    $"{BotUpdateSwitch.NoSpecialHandlingWarning}";
+                                    $"{BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish()}";
 
         var mockLogger = new Mock<ILogger<MessageHandler>>();
         mockLogger.Setup(l => l.Log(
@@ -221,7 +221,7 @@ public class MessageHandlerTests
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
-        var expectedWelcomeMessageSegment = IRequestProcessor.WelcomeToBotMenuInstruction.RawEnglishText;
+        var expectedWelcomeMessageSegment = IRequestProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
         // Act
         await handler.SafelyHandleMessageAsync(startCommandMessage, botType);

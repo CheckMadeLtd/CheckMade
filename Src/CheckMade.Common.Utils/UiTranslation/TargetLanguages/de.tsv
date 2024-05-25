@@ -1,2 +1,24 @@
 assembly	en	de
-CheckMade.Telegram.Logic	Echo from bot \nSubmissions: {0}	Doofes Echo vom Bot \nSubmissions: {0}
+CheckMade.Telegram.Function	Telegram Message/Update of this type not yet supported. No special handling is taking place for it, but that doesn't mean that a Telegram-System-related update didn't work. You may assume it did.	Telegram-Nachricht/Update dieses Typs wird noch nicht unterstützt. Es findet keine spezielle Verarbeitung statt, aber das bedeutet nicht, dass ein Telegram-System-bezogenes Update nicht funktioniert hat. Sie können davon ausgehen, dass es funktioniert hat.
+CheckMade.Telegram.Function	Please contact technical support or your supervisor.	Bitte kontaktiere den technischen Support oder deinen Supervisor.
+CheckMade.Telegram.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
+CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
+CheckMade.Telegram.Function	User Id (i.e. 'From.Id' in the input message) must not be null.	User Id (i.e. 'From.Id' in der Inputnachricht) darf nicht null sein.
+CheckMade.Telegram.Function	A valid message must either have a text or an attachment - both must not be null/empty.	Eine gültige Nachricht muss entweder einen Text oder einen Anhang enthalten - beide dürfen nicht null oder leer sein.
+CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
+CheckMade.Telegram.Logic	Welcome to the CheckMade {0}Bot! 	Willkommen zum CheckMade {0}Bot! 
+CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}
+CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
+CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
+CheckMade.Telegram.Model	/problem	/problem
+CheckMade.Telegram.Model	Report a problem ❗	Ein Problem melden ❗
+CheckMade.Telegram.Model	/assessment	/bewertung
+CheckMade.Telegram.Model	Submit an assessment ⭐	Eine Bewertung vornehmen ⭐
+CheckMade.Telegram.Model	/settings	/einstellungen
+CheckMade.Telegram.Model	Change settings ⚙️	Einstellungen ändern ⚙️
+CheckMade.Telegram.Model	/logout	/ausloggen
+CheckMade.Telegram.Model	Exit this chat in your current role 💨	In Ihrer aktuellen Rolle diesen Chat verlassen 💨
+CheckMade.Telegram.Model	/contact	/kontakt
+CheckMade.Telegram.Model	Contact a colleague 💬	Mit einem Kollegen Kontakt aufnehmen 💬
+CheckMade.Telegram.Model	/status	/status
+CheckMade.Telegram.Model	Current status report 📋	Aktueller Statusreport 📋

@@ -40,7 +40,7 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
             
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
-                    update.Type, NoSpecialHandlingWarning);
+                    update.Type, NoSpecialHandlingWarning.GetFormattedEnglish());
                 return Attempt<Unit>.Succeed(Unit.Value);
         }
     }

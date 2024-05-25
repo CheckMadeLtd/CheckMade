@@ -7,24 +7,24 @@ public record BotCommandMenus
         new Dictionary<SubmissionsBotCommands, ModelBotCommand>
         {
             { SubmissionsBotCommands.Problem, 
-                new ModelBotCommand(Ui("/problem"), Ui("Ein Problem melden ❗")) },
+                new ModelBotCommand(Ui("/problem"), Ui("Report a problem ❗")) },
             { SubmissionsBotCommands.Assessment, 
-                new ModelBotCommand(Ui("/bewertung"), Ui("Eine Bewertung vornehmen ⭐")) },
+                new ModelBotCommand(Ui("/assessment"), Ui("Submit an assessment ⭐")) },
             { SubmissionsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️")) },
             { SubmissionsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨")) }
         };
     
     public IDictionary<CommunicationsBotCommands, ModelBotCommand> CommunicationsBotCommandMenu { get; } = 
         new Dictionary<CommunicationsBotCommands, ModelBotCommand>
         {
             { CommunicationsBotCommands.Contact, 
-                new ModelBotCommand(Ui("/kontakt"), Ui("Kontakt aufnehmen 💬")) },
+                new ModelBotCommand(Ui("/contact"), Ui("Contact a colleague 💬")) },
             { CommunicationsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️")) },
             { CommunicationsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨")) }
         };
 
     public IDictionary<NotificationsBotCommands, ModelBotCommand> NotificationsBotCommandMenu { get; } = 
@@ -33,8 +33,8 @@ public record BotCommandMenus
             { NotificationsBotCommands.Status, 
                 new ModelBotCommand(Ui("/status"), Ui("Aktueller Statusreport 📋")) },
             { NotificationsBotCommands.Settings, 
-                new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️")) },
+                new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️")) },
             { NotificationsBotCommands.Logout, 
-                new ModelBotCommand(Ui("/ausloggen"), Ui("Aktuelle Rolle von diesem Chat trennen 💨")) }
+                new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨")) }
         };
 }

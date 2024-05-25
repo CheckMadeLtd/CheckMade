@@ -13,8 +13,8 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
         return Attempt<UiString>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 
             ? UiConcatenate(
-                Ui("Willkommen zum {0} Bot! ", BotType.Notifications), 
-                IRequestProcessor.WelcomeToBotMenuInstruction) 
-            : Ui("Echo from bot \nNotifications: {0}", inputMessage.Details.Text.GetValueOrDefault())));
+                Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications), 
+                IRequestProcessor.SeeValidBotCommandsInstruction) 
+            : Ui("Echo from bot {0}: {1}", BotType.Notifications, inputMessage.Details.Text.GetValueOrDefault())));
     }
 }

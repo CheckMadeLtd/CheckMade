@@ -19,8 +19,8 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
 
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
                 return UiConcatenate(
-                    Ui("Willkommen zum {0} Bot! ", BotType.Submissions), 
-                    IRequestProcessor.WelcomeToBotMenuInstruction);
+                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions), 
+                    IRequestProcessor.SeeValidBotCommandsInstruction);
             
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
@@ -30,12 +30,14 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                         (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
                     .Value.Command;
 
-                return UiConcatenate(Ui("Echo of a Submissions BotCommand: "), botCommand);
+                return UiConcatenate(Ui("Echo of a {0} BotCommand: ", BotType.Submissions), botCommand);
             }
 
             return inputMessage.Details.AttachmentType.Match(
-                type => Ui("Echo from bot Submissions: {0}", type),
-                () => Ui("Echo from bot \nSubmissions: {0}", inputMessage.Details.Text.GetValueOrDefault()));
+                type => Ui("Echo from bot {0}: {1}", 
+                    BotType.Submissions, type),
+                () => Ui("Echo from bot {0}: {1}", 
+                    BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()));
         });
     }
 }

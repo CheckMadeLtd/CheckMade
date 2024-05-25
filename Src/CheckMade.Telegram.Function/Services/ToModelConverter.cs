@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using Telegram.Bot.Types;
@@ -101,9 +102,10 @@ internal class ToModelConverter(
             .Command;
         
         if (botCommandFromInputMessage == null)
-            return Result<Option<int>>.FromError(
-                Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}].", 
-                    telegramInputMessage.Text ?? "[empty text!]", botType, "W3DL9"));
+            return Result<Option<int>>.FromError(UiConcatenate(
+                Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
+                    telegramInputMessage.Text ?? "[empty text!]", botType, "W3DL9"),
+                IRequestProcessor.SeeValidBotCommandsInstruction));
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
@@ -137,12 +139,12 @@ internal class ToModelConverter(
         var userId = telegramInputMessage.From?.Id; 
                      
         if (userId == null)
-            return Result<InputMessage>.FromError(Ui("User Id (i.e. 'From.Id' in the input message) must not be null"));
+            return Result<InputMessage>.FromError(Ui("User Id (i.e. 'From.Id' in the input message) must not be null."));
 
         if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
         {
             return Result<InputMessage>.FromError(
-                Ui("A valid message must either have a text or an attachment - both must not be null/empty"));
+                Ui("A valid message must either have a text or an attachment - both must not be null/empty."));
         }
 
         var telegramAttachmentUrl = Option<string>.None();
