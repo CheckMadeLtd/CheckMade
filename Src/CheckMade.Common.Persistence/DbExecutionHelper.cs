@@ -24,10 +24,9 @@ internal class DbExecutionHelper(
         if (db == null)
             throw new DataAccessException("Failed to assign IDbConnection");
         
-        await dbOpenRetryPolicy.ExecuteAsync(async () => await db.OpenAsync());
-
         try
         {
+            await dbOpenRetryPolicy.ExecuteAsync(async () => await db.OpenAsync());
             await using var transaction = await db.BeginTransactionAsync();
             
             try
