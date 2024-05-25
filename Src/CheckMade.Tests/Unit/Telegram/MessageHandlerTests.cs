@@ -10,7 +10,7 @@ using Moq;
 using Telegram.Bot.Types;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
-namespace CheckMade.Tests.Unit;
+namespace CheckMade.Tests.Unit.Telegram;
 
 public class MessageHandlerTests
 {

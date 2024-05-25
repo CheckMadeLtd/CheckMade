@@ -1,4 +1,4 @@
-namespace CheckMade.Tests.Unit;
+namespace CheckMade.Tests.Unit.Common;
 
 public class UiStringAndTranslationTests
 {
