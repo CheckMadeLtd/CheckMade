@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Telegram.Tests.Startup;
+namespace CheckMade.Tests.Startup;
 
 public abstract class TestStartupBase
 {

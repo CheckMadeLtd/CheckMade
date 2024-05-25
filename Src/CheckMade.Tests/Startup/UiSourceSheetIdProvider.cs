@@ -1,3 +1,3 @@
-namespace CheckMade.Telegram.Tests.Startup;
+namespace CheckMade.Tests.Startup;
 
 internal record UiSourceSheetIdProvider(string UiSourceSheetId);

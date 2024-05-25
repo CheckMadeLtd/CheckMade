@@ -4,12 +4,12 @@ using CheckMade.Common.Utils;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Tests.Startup;
+using CheckMade.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
-namespace CheckMade.Telegram.Tests.Integration;
+namespace CheckMade.Tests.Integration;
 
 public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
 {

@@ -3,7 +3,7 @@ using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.Telegram.Tests;
+namespace CheckMade.Tests;
 
 internal interface ITestUtils
 {

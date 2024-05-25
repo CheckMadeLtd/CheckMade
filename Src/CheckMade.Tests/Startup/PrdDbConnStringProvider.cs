@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Tests.Startup;
+namespace CheckMade.Tests.Startup;
 
 internal class PrdDbConnStringProvider(string connString)
 {

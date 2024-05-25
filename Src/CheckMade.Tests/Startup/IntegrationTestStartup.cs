@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Tests.Startup;
+namespace CheckMade.Tests.Startup;
 
 [UsedImplicitly]
 public class IntegrationTestStartup : TestStartupBase

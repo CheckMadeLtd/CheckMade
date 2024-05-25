@@ -1,6 +1,6 @@
 using FluentAssertions;
 
-namespace CheckMade.Telegram.Tests.Unit.MonadicWrappers;
+namespace CheckMade.Tests.Unit.MonadicWrappers;
 
 public class OptionTests
 {

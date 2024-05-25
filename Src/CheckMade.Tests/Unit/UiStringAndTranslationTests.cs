@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Tests.Unit;
+namespace CheckMade.Tests.Unit;
 
 public class UiStringAndTranslationTests
 {

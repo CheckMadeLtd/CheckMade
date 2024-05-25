@@ -2,13 +2,13 @@ using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Tests.Startup;
+using CheckMade.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Tests.Unit;
+namespace CheckMade.Tests.Unit;
 
 public class ToModelConverterTests
 {

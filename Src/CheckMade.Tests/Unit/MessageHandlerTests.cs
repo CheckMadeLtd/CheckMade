@@ -3,14 +3,14 @@ using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
-using CheckMade.Telegram.Tests.Startup;
+using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
-namespace CheckMade.Telegram.Tests.Unit;
+namespace CheckMade.Tests.Unit;
 
 public class MessageHandlerTests
 {

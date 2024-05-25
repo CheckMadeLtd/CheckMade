@@ -1,12 +1,12 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Tests.Startup.DefaultMocks;
+using CheckMade.Tests.Startup.DefaultMocks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using File = Telegram.Bot.Types.File;
 
-namespace CheckMade.Telegram.Tests.Startup;
+namespace CheckMade.Tests.Startup;
 
 [UsedImplicitly]
 public class UnitTestStartup : TestStartupBase

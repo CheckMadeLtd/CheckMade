@@ -1,7 +1,7 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
 
-namespace CheckMade.Telegram.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockBotClientFactory(IBotClientWrapper mockBotClientWrapper) : IBotClientFactory
 {

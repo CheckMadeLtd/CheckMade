@@ -1,103 +1,103 @@
 using CheckMade.Common.LangExt;
 using FluentAssertions;
 
-namespace CheckMade.Telegram.Tests.Unit.MonadicWrappers;
+namespace CheckMade.Tests.Unit.MonadicWrappers;
 
-public class ResultTests
+public class ValidationTests
 {
     [Fact]
-    public void TestResult_Match_Success()
+    public void TestValidation_Match_Valid()
     {
-        var result = Result<int>.FromSuccess(5);
-        var output = result.Match(
-            onSuccess: value => value * 2,
-            onError: _ => 0);
+        var validation = Validation<int>.Valid(5);
+        var result = validation.Match(
+            onValid: value => value * 2,
+            onInvalid: _ => 0);
 
-        output.Should().Be(10);
+        result.Should().Be(10);
     }
 
     [Fact]
-    public void TestResult_Match_Error()
+    public void TestValidation_Match_Invalid()
     {
-        var result = Result<int>.FromError(UiNoTranslate("Error"));
-        var output = result.Match(
-            onSuccess: value => value * 2,
-            onError: error => error.GetFormattedEnglish().Length);
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
+        var result = validation.Match(
+            onValid: value => value * 2,
+            onInvalid: errors => errors.Count);
 
-        output.Should().Be(5);
+        result.Should().Be(1);
     }
 
     [Fact]
-    public void TestResult_GetValueOrThrow_Success()
+    public void TestValidation_GetValueOrThrow_Valid()
     {
-        var result = Result<int>.FromSuccess(5);
-        var value = result.GetValueOrThrow();
+        var validation = Validation<int>.Valid(5);
+        var value = validation.GetValueOrThrow();
 
         value.Should().Be(5);
     }
 
     [Fact]
-    public void TestResult_GetValueOrThrow_Error()
+    public void TestValidation_GetValueOrThrow_Invalid()
     {
-        var result = Result<int>.FromError(UiNoTranslate("Error"));
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
 
-        Action action = () => result.GetValueOrThrow();
+        Action action = () => validation.GetValueOrThrow();
         action.Should().Throw<MonadicWrapperGetValueOrThrowException>().WithMessage("Error");
     }
 
     [Fact]
-    public void TestResult_GetValueOrDefault_Success()
+    public void TestValidation_GetValueOrDefault_Valid()
     {
-        var result = Result<int>.FromSuccess(5);
-        var value = result.GetValueOrDefault(10);
+        var validation = Validation<int>.Valid(5);
+        var value = validation.GetValueOrDefault(10);
 
         value.Should().Be(5);
     }
 
     [Fact]
-    public void TestResult_GetValueOrDefault_Error()
+    public void TestValidation_GetValueOrDefault_Invalid()
     {
-        var result = Result<int>.FromError(UiNoTranslate("Error"));
-        var value = result.GetValueOrDefault(10);
+        var validation = Validation<int>.Invalid(UiNoTranslate("Error"));
+        var value = validation.GetValueOrDefault(10);
 
         value.Should().Be(10);
     }
     
     [Fact]
-    public void Select_ShouldReturnSuccessfulResult_WhenSourceIsSuccessful()
+    public void Select_ShouldReturnSuccessfulResult_WhenSourceIsValid()
     {
         // Arrange
-        var source = Result<int>.FromSuccess(2);
+        var source = Validation<int>.Valid(2);
         
         // Act
         var result = from s in source
             select s * 2;
         
         // Assert
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(4);
     }
     
     [Fact]
-    public void Select_ShouldReturnFailureResult_WhenSourceIsError()
+    public void Select_ShouldReturnFailureResult_WhenSourceIsInvalid()
     {
         // Arrange
-        var source = Result<int>.FromError(UiNoTranslate("Error message"));
+        var source = Validation<int>.Invalid(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
             select s * 2;
         
         // Assert
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Error message");
+        result.IsValid.Should().BeFalse();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
     }
     
     [Fact]
-    public void Where_ShouldReturnSuccessfulResult_WhenSourceIsSuccessfulAndPredicateIsSatisfied()
+    public void Where_ShouldReturnSuccessfulResult_WhenSourceIsValidAndPredicateIsSatisfied()
     {
         // Arrange
-        var source = Result<int>.FromSuccess(2);
+        var source = Validation<int>.Valid(2);
         
         // Act
         var result = from s in source
@@ -105,15 +105,15 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(2);
     }
     
     [Fact]
-    public void Where_ShouldReturnFailureResult_WhenSourceIsSuccessfulAndPredicateIsNotSatisfied()
+    public void Where_ShouldReturnFailureResult_WhenSourceIsValidAndPredicateIsNotSatisfied()
     {
         // Arrange
-        var source = Result<int>.FromSuccess(2);
+        var source = Validation<int>.Valid(2);
         
         // Act
         var result = from s in source
@@ -121,15 +121,15 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Predicate not satisfied");
+        result.IsValid.Should().BeFalse();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Predicate not satisfied");
     }
     
     [Fact]
-    public void Where_ShouldReturnFailureResult_WhenSourceIsError()
+    public void Where_ShouldReturnFailureResult_WhenSourceIsInvalid()
     {
         // Arrange
-        var source = Result<int>.FromError(UiNoTranslate("Error message"));
+        var source = Validation<int>.Invalid(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
@@ -137,51 +137,49 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Error message");
+        result.IsValid.Should().BeFalse();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
     }
     
     [Fact]
     public void TestSelectMany_SuccessToSuccess()
     {
-        /* This test demonstrates binding a successful Result<T> to another successful Result<TResult>.
-         The initial value is successful, and the binder function also returns a successful Result<TResult>. */
+        /* This test demonstrates binding a valid Validation<T> to another valid Validation<TResult>.
+         The initial value is valid, and the binder function also returns a valid Validation<TResult>. */
 
-        var source = Result<int>.FromSuccess(5);
+        var source = Validation<int>.Valid(5);
         var result = source.SelectMany(Binder);
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(10);
     }
 
     [Fact]
-    public void TestSelectMany_SuccessToError()
+    public void TestSelectMany_SuccessToInvalid()
     {
-        /* This test demonstrates binding a successful Result<T> to an erroneous Result<TResult>.
-         The initial value is successful, but the binder function returns an erroneous Result<TResult>. */
+        /* This test demonstrates binding a valid Validation<T> to an invalid Validation<TResult>.
+         The initial value is valid, but the binder function returns an invalid Validation<TResult>. */
 
-        var source = Result<int>.FromSuccess(5);
-        var result = source.SelectMany(BinderError);
+        var source = Validation<int>.Valid(5);
+        var result = source.SelectMany(BinderInvalid);
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
-        
-        return;
-
-        static Result<int> BinderError(int i) => Result<int>.FromError(UiNoTranslate("Simulated error"));
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
+    private static Validation<int> BinderInvalid(int i) => Validation<int>.Invalid(UiNoTranslate("Simulated error"));
+    
     [Fact]
-    public void TestSelectMany_ErrorToBinding()
+    public void TestSelectMany_InvalidToBinding()
     {
-        /* This test demonstrates binding an erroneous Result<T> to any Result<TResult>.
-         The initial value is an error, and we expect the error to propagate without calling the binder function. */
+        /* This test demonstrates binding an invalid Validation<T> to any Validation<TResult>.
+         The initial value is invalid, and we expect the errors to propagate without calling the binder function. */
 
-        var source = Result<int>.FromError(UiNoTranslate("Initial error"));
+        var source = Validation<int>.Invalid(UiNoTranslate("Initial error"));
         var result = source.SelectMany(Binder);
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Initial error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Initial error");
     }
     
     [Fact]
@@ -192,11 +190,11 @@ public class ResultTests
          mapping, filtering, or flatmapping. 
          The key feature here is that all operations are done in a synchronous manner. */
         
-        var source = Result<int>.FromSuccess(5);
+        var source = Validation<int>.Valid(5);
 
         var result = from s in source from res in Binder(s) select res;
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(10);
     }
     
@@ -205,13 +203,13 @@ public class ResultTests
     {
         /* This test shows how to combine two synchronous operations to produce a final result.
          Here we have an additional function (collectionSelector) which operates on the source value and produces
-         another Result<T>. The final result is obtained by combining the source and selected values. */
+         another Validation<T>. The final result is obtained by combining the source and selected values. */
         
-        var source = Result<int>.FromSuccess(5);
+        var source = Validation<int>.Valid(5);
 
         var result = from s in source from c in CollectionSelector(s) select s + c;
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
@@ -223,11 +221,11 @@ public class ResultTests
          another asynchronous operation (collectionTaskSelector). 
          The await keyword is used to allow asynchronous execution of tasks. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -239,11 +237,11 @@ public class ResultTests
          is passed to a synchronous operation (collectionSelector). 
          This example shows how to efficiently chain asynchronous and synchronous operations. */ 
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         var result = from s in await sourceTask from c in CollectionSelector(s) select c + s;
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
@@ -254,11 +252,11 @@ public class ResultTests
          A synchronous operation (source) is executed first, and its result is used in an asynchronous function 
          (collectionTaskSelector) to yield the final result. */
         
-        var source = Result<int>.FromSuccess(5);
+        var source = Validation<int>.Valid(5);
 
         var result = await (from s in source from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -268,7 +266,7 @@ public class ResultTests
         /* This test shows what happens when the initial operation—the source Task—throws an exception.
         You can expect this to propagate up to the calling code, which the test verifies. */
 
-        Task<Result<int>> faultedTask = Task.FromException<Result<int>>(new Exception("Simulated exception"));
+        var faultedTask = Task.FromException<Validation<int>>(new Exception("Simulated exception"));
 
         Func<Task> action = async () => { await faultedTask; };
 
@@ -281,7 +279,7 @@ public class ResultTests
         /* Similar to the previous test, except this time the exception originates from the subsequent operation.
         This test checks whether exceptions inside async operations are correctly propagated. */
 
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         Func<Task> action = async () => await (from s in await sourceTask from c in FaultedSelector() select c + s);
 
@@ -289,53 +287,53 @@ public class ResultTests
     }
     
     [Fact]
-    public void TestSelectMany_SyncBindingToError()
+    public void TestSelectMany_SyncBindingToInvalid()
     {
-        /* This test simulates a situation where the source value is an error. We can expect that no matter 
-        what operation we try to apply, the result should also be an error. */
+        /* This test simulates a situation where the source value is invalid. We can expect that no matter 
+        what operation we try to apply, the result should also be invalid. */
         
-        var source = Result<int>.FromError(UiNoTranslate("Simulated error"));
+        var source = Validation<int>.Invalid(UiNoTranslate("Simulated error"));
 
         var result = from s in source from res in Binder(s) select res;
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
     
     [Fact]
-    public async Task TestSelectMany_AsyncBindingToError()
+    public async Task TestSelectMany_AsyncBindingToInvalid()
     {
         /* The same scenario as the previous test, but with the source value provided by a Task. Again, 
-        when the source is an error, the result is expected to be an error. */
+        when the source is invalid, the result is expected to be invalid. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
     [Fact]
-    public async Task TestSelectMany_AsyncSourceErrorDoesNotCallSelector()
+    public async Task TestSelectMany_AsyncSourceInvalidDoesNotCallSelector()
     {
-        /* This test ensures that the selector is not called when the source value is an error. */
+        /* This test ensures that the selector is not called when the source value is invalid. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
         var selectorWasCalled = false;
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
         selectorWasCalled.Should().BeFalse();
         
         return;
 
-        async Task<Result<int>> CollectionTaskSelectorLocal(int i)
+        async Task<Validation<int>> CollectionTaskSelectorLocal(int i)
         {
             selectorWasCalled = true;
-            return await Task.FromResult(Result<int>.FromSuccess(i + 5));
+            return await Task.FromResult(Validation<int>.Valid(i + 5));
         }
     }
     
@@ -346,14 +344,14 @@ public class ResultTests
          It starts with an asynchronous operation (sourceTask) and binds it to another asynchronous operation
          (collectionTaskSelector), resulting in a final transformation using the resultSelector function. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         var result = await sourceTask.SelectMany(
             async s => await CollectionTaskSelector(s),
             (s, c) => s + c
         );
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -364,49 +362,49 @@ public class ResultTests
          It begins with an asynchronous operation (sourceTask) and binds it to a synchronous operation 
          (collectionSelector), resulting in a final transformation using the resultSelector function. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         var result = await sourceTask.SelectMany(
             s => CollectionSelector(s),
             (s, c) => s + c
         );
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
     [Fact]
-    public async Task TestSelectMany_AsyncBindingAsyncOps_SourceError()
+    public async Task TestSelectMany_AsyncBindingAsyncOps_SourceInvalid()
     {
-        /* This test covers the scenario where the initial asynchronous operation returns an error.
-        Even though the operations are asynchronous, the final result should also be an error. */
+        /* This test covers the scenario where the initial asynchronous operation returns an invalid result.
+        Even though the operations are asynchronous, the final result should also be invalid. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             async s => await CollectionTaskSelector(s),
             (s, c) => s + c
         );
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
     
     [Fact]
-    public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp_SourceError()
+    public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp_SourceInvalid()
     {
-        /* This test examines the behavior when the initial asynchronous operation returns an error.
-        The subsequent synchronous operation should not be called, and the final result should be an error. */
+        /* This test examines the behavior when the initial asynchronous operation returns an invalid result.
+        The subsequent synchronous operation should not be called, and the final result should be invalid. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
+        var sourceTask = Task.FromResult(Validation<int>.Invalid(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             s => CollectionSelector(s),
             (s, c) => s + c
         );
 
-        result.Success.Should().BeFalse();
-        result.Error?.GetFormattedEnglish().Should().Be("Simulated error");
+        result.IsInvalid.Should().BeTrue();
+        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
     }
 
     [Fact]
@@ -415,7 +413,7 @@ public class ResultTests
         /* This test checks the behavior when the subsequent asynchronous operation throws an exception.
         The test ensures that the exception is correctly propagated. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         Func<Task> action = async () => await sourceTask.SelectMany(
             async _ => await FaultedSelector(),
@@ -431,7 +429,7 @@ public class ResultTests
         /* This test ensures that when the synchronous subsequent operation throws an exception,
         it is correctly propagated, even if the initial operation was asynchronous. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromSuccess(5));
+        var sourceTask = Task.FromResult(Validation<int>.Valid(5));
 
         Func<Task> action = async () => await sourceTask.SelectMany(
             _ => FaultedSelector(),
@@ -447,7 +445,7 @@ public class ResultTests
         /* This test demonstrates chaining multiple operations together.
          It starts with an initial value and performs a series of synchronous and asynchronous operations. */
     
-        var source = Result<int>.FromSuccess(5);
+        var source = Validation<int>.Valid(5);
 
         var intermediateResult = await source
             .SelectMany(s => Task.FromResult(SyncOperation1(s)), (_, a) => a)
@@ -456,28 +454,28 @@ public class ResultTests
         var result = await intermediateResult
             .SelectMany(b => Task.FromResult(SyncOperation3(b)), (_, c) => c);
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(15);
     }
 
-    static Result<int> SyncOperation1(int i) => Result<int>.FromSuccess(i + 5);
-    static async Task<Result<int>> AsyncOperation2(int i) => await Task.FromResult(Result<int>.FromSuccess(i * 2));
-    static Result<int> SyncOperation3(int i) => Result<int>.FromSuccess(i - 5);
+    static Validation<int> SyncOperation1(int i) => Validation<int>.Valid(i + 5);
+    static async Task<Validation<int>> AsyncOperation2(int i) => await Task.FromResult(Validation<int>.Valid(i * 2));
+    static Validation<int> SyncOperation3(int i) => Validation<int>.Valid(i - 5);
     
     [Fact]
-    public async Task TestSelectMany_NestedResultTypes()
+    public async Task TestSelectMany_NestedValidationTypes()
     {
-        /* This test ensures that nested Result types are handled correctly.
-         The source is a Result<Result<int>>, and the operations are performed on the inner value. */
+        /* This test ensures that nested Validation types are handled correctly.
+         The source is a Validation<Validation<int>>, and the operations are performed on the inner value. */
         
-        var source = Result<Result<int>>.FromSuccess(Result<int>.FromSuccess(5));
+        var source = Validation<Validation<int>>.Valid(Validation<int>.Valid(5));
 
         var result = await source.SelectMany(
             outer => Task.FromResult(outer),
             (_, inner) => inner + 5
         );
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().Be(10);
     }
     
@@ -485,29 +483,29 @@ public class ResultTests
     public async Task TestSelectMany_ComplexTypes()
     {
         /* This test demonstrates using more complex types instead of simple int values.
-         It ensures that the Result class works correctly with complex data types. */
+         It ensures that the Validation class works correctly with complex data types. */
         
-        var source = Result<Person>.FromSuccess(new Person { Name = "Alice", Age = 30 });
+        var source = Validation<Person>.Valid(new Person { Name = "Alice", Age = 30 });
 
         var result = await source.SelectMany(
             async p => await UpdateAgeAsync(p),
             (p, updatedAge) => new Person { Name = p.Name, Age = updatedAge }
         );
 
-        result.Success.Should().BeTrue();
+        result.IsValid.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(new Person { Name = "Alice", Age = 35 });
     }
 
-    static Result<int> Binder(int i) => Result<int>.FromSuccess(i + 5);
-    static Result<int> CollectionSelector(int i) => Result<int>.FromSuccess(i + 1);
-    static async Task<Result<int>> CollectionTaskSelector(int i) => 
-        await Task.FromResult(Result<int>.FromSuccess(i + 5));
-    static async Task<Result<int>> FaultedSelector() => 
-        await Task.FromException<Result<int>>(new Exception("Simulated exception"));
+    static Validation<int> Binder(int i) => Validation<int>.Valid(i + 5);
+    static Validation<int> CollectionSelector(int i) => Validation<int>.Valid(i + 1);
+    static async Task<Validation<int>> CollectionTaskSelector(int i) => 
+        await Task.FromResult(Validation<int>.Valid(i + 5));
+    static async Task<Validation<int>> FaultedSelector() => 
+        await Task.FromException<Validation<int>>(new Exception("Simulated exception"));
 
-    static async Task<Result<int>> UpdateAgeAsync(Person person)
+    static async Task<Validation<int>> UpdateAgeAsync(Person person)
     {
-        return await Task.FromResult(Result<int>.FromSuccess(person.Age + 5));
+        return await Task.FromResult(Validation<int>.Valid(person.Age + 5));
     }
     private record Person
     {
