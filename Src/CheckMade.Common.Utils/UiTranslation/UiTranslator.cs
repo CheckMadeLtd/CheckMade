@@ -42,7 +42,7 @@ public partial class UiTranslator(
                                       "with {paramsCount} provided string formatting parameters.", 
                     unformattedTranslation, uiString.MessageParams.Length);
                 
-                return GetUnformattedTranslationWithInsufficientParamsAppended(unformattedTranslation);
+                return GetUnformattedTranslationWithInsufficientParamsAppended();
             });
 
         string GetFormattedTranslationWithAnySurplusParamsAppended(string formatted)
@@ -56,8 +56,8 @@ public partial class UiTranslator(
                 : formatted;
         }
 
-        string GetUnformattedTranslationWithInsufficientParamsAppended(string unformatted) =>
-            $"{unformatted}[{string.Join("; ", uiString.MessageParams)}]";
+        string GetUnformattedTranslationWithInsufficientParamsAppended() =>
+            $"{unformattedTranslation}[{string.Join("; ", uiString.MessageParams)}]";
     }
 
     [GeneratedRegex(@"\{\d+\}")]
