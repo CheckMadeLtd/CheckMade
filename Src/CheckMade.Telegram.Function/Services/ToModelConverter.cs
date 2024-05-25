@@ -30,9 +30,9 @@ internal class ToModelConverter(
             select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
+                // ToDo: Once I augmented Attempt<T> for additional error information in UiString form, update this
                 error => throw new ToModelConversionException(
-                    // ToDo: Once my custom exceptions can accept a UiString, add error back in here! 
-                    $"Failed to convert Telegram Message to Model."));
+                    "Failed to convert Telegram Message to Model."));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
