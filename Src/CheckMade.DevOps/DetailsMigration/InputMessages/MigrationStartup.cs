@@ -24,10 +24,10 @@ internal class MigrationStartup(
                 await (await migrator.SafelyMigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    ex =>
+                    failure =>
                     {
                         // ReSharper disable once ConvertToLambdaExpression
-                        throw ex.Exception ?? new Exception(ex.Error!.GetFormattedEnglish());
+                        throw failure.Exception ?? new Exception(failure.Error!.GetFormattedEnglish());
                         // logger.LogError(ex.Message, ex.StackTrace);
                         // return Console.Error.WriteLineAsync(ex.Message);
                     });

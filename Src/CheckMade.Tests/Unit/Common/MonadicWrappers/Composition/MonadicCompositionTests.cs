@@ -31,7 +31,7 @@ public class MonadicCompositionTests
                     errors => Task.FromException(new Exception(errors[0].RawEnglishText))
                     );
             },
-            exception => Task.FromException(new Exception("User creation failed", exception)));
+            failure => Task.FromException(new Exception("User creation failed", failure.Exception)));
     }
     
     [Fact]
@@ -64,7 +64,7 @@ public class MonadicCompositionTests
                             .FromException(new Exception(errors[0].RawEnglishText))
                     );
                 },
-                exception => Task.FromException(new Exception("User creation failed", exception)));
+                failure => Task.FromException(new Exception("User creation failed", failure.Exception)));
         };
 
         await act.Should().ThrowAsync<Exception>().WithMessage("User creation failed");

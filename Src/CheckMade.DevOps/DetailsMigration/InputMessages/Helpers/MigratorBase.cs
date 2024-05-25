@@ -14,9 +14,10 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 select updateDetails.Count())
             ).Match(
                 Attempt<int>.Succeed, 
-                ex => Attempt<int>.Fail(new Failure(new DataAccessException(
-                    $"Data migration failed with: {ex.Exception?.Message ?? ex.Error?.GetFormattedEnglish()}.", 
-                    ex.Exception))));
+                failure => Attempt<int>.Fail(new Failure(new DataAccessException(
+                    $"Data migration failed with: {failure.Exception?.Message 
+                                                   ?? failure.Error?.GetFormattedEnglish()}.", 
+                    failure.Exception))));
     }
 
     protected abstract Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(

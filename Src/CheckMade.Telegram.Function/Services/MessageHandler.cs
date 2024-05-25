@@ -57,8 +57,8 @@ public class MessageHandler(
                 botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
                     botClient => botClient,
-                    ex => throw new InvalidOperationException(
-                        "Failed to create BotClient", ex.Exception));
+                    failure => throw new InvalidOperationException(
+                        "Failed to create BotClient", failure.Exception));
 
         // Will retrieve actual user language preference
         var userLanguagePreference = Option<LanguageCode>.None();
@@ -82,23 +82,24 @@ public class MessageHandler(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            ex =>
+            failure =>
             {
-                if (ex.Error != null)
+                if (failure.Error != null)
                 {
-                    logger.LogError($"Message from Attempt<T>.Failure.Error: {ex.Error.GetFormattedEnglish()}");
+                    logger.LogError($"Message from Attempt<T>.Failure.Error: " +
+                                    $"{failure.Error.GetFormattedEnglish()}");
                 }
                 
-                logger.LogError(ex.Exception, "Next, some details for debugging the upcoming error log entry. " +
+                logger.LogError(failure.Exception, 
+                    "Next, some details for debugging the upcoming error log entry. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                                    "DateTime of received Message: '{telegramDate}'; " +
-                                    "with text: '{text}'",
+                                    "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                var errorMessageForSendOut = ex.Exception != null 
-                    ? UiNoTranslate(ex.Exception.Message) 
-                    : ex.Error;
+                var errorMessageForSendOut = failure.Exception != null 
+                    ? UiNoTranslate(failure.Exception.Message) 
+                    : failure.Error;
                 
                 // fire and forget
                 _ = SendOutputAsync(UiConcatenate(
@@ -107,7 +108,7 @@ public class MessageHandler(
                         CallToActionAfterErrorReport),
                     botClient, chatId, translator);
                 
-                return Attempt<Unit>.Fail(ex);
+                return Attempt<Unit>.Fail(failure);
             });
     }
 

@@ -21,7 +21,7 @@ internal static class UserService
     {
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
-            return Attempt<User>.Fail(new ArgumentException("Invalid user details"));
+            return Attempt<User>.Fail(new Failure(new ArgumentException("Invalid user details")));
         }
         return Attempt<User>.Succeed(new User { Username = username, Email = email, Password = password });
     }

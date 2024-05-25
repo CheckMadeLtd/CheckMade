@@ -160,9 +160,10 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
 
         (await botCommandSettingAttempt).Match(
             unit => unit,
-            ex =>
+            failure =>
             {
-                logger.LogError(ex.Exception, ex.Exception?.Message ?? ex.Error?.GetFormattedEnglish());
+                logger.LogError(failure.Exception, failure.Exception?.Message 
+                                                   ?? failure.Error?.GetFormattedEnglish());
                 return Unit.Value;
             });
     }

@@ -28,12 +28,12 @@ public class UiTranslatorFactory(
             
             LanguageCode.De => SafelyCreateTranslationDictionary().Match(
                 Option<IDictionary<string, string>>.Some,
-                ex =>
+                failure =>
                 {
-                    logger.LogWarning(ex.Exception, 
+                    logger.LogWarning(failure.Exception, 
                         $"Failed to create translation dictionary for '{_targetLanguage}'," +
                                           $"and so U.I. will be English. Exception message: " +
-                                          $"'{ex.Exception?.Message ?? ex.Error?.GetFormattedEnglish()}'");
+                                          $"'{failure.Exception?.Message ?? failure.Error?.GetFormattedEnglish()}'");
                     
                     return Option<IDictionary<string, string>>.None();
                 }),
