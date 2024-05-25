@@ -162,7 +162,7 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             unit => unit,
             ex =>
             {
-                logger.LogError(ex, ex.Message);
+                logger.LogError(ex.Exception, ex.Exception?.Message ?? ex.Error?.GetFormattedEnglish());
                 return Unit.Value;
             });
     }

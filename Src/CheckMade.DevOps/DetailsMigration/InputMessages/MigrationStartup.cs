@@ -26,7 +26,8 @@ internal class MigrationStartup(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
                     ex =>
                     {
-                        throw ex;
+                        // ReSharper disable once ConvertToLambdaExpression
+                        throw ex.Exception ?? new Exception(ex.Error!.GetFormattedEnglish());
                         // logger.LogError(ex.Message, ex.StackTrace);
                         // return Console.Error.WriteLineAsync(ex.Message);
                     });

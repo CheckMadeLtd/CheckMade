@@ -38,7 +38,7 @@ public partial class UiTranslator(
             GetFormattedTranslationWithAnySurplusParamsAppended,
             ex =>
             {
-                logger.LogWarning(ex, "Failed to format translated UiString for: '{unformatted}' " +
+                logger.LogWarning(ex.Exception, "Failed to format translated UiString for: '{unformatted}' " +
                                       "with {paramsCount} provided string formatting parameters.", 
                     unformattedTranslation, uiString.MessageParams.Length);
                 

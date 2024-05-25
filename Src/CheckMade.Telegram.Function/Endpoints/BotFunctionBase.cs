@@ -42,7 +42,9 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             _ => defaultOkResponse,
             ex =>
             {
-                logger.LogError(ex, $"Can't process this kind of update. Message: {ex.Message}");
+                logger.LogError(ex.Exception, 
+                    $"Can't process this kind of update. Message: {ex.Exception?.Message ?? 
+                                                                   ex.Error?.GetFormattedEnglish()}");
                 return defaultOkResponse;
             });
 

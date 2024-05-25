@@ -58,7 +58,7 @@ public class MessageHandler(
                 .Match(
                     botClient => botClient,
                     ex => throw new InvalidOperationException(
-                        "Failed to create BotClient", ex));
+                        "Failed to create BotClient", ex.Exception));
 
         // Will retrieve actual user language preference
         var userLanguagePreference = Option<LanguageCode>.None();
@@ -84,16 +84,29 @@ public class MessageHandler(
 
             ex =>
             {
-                logger.LogError(ex, "Next, some details for debugging the upcoming error log entry. " +
+                if (ex.Error != null)
+                {
+                    logger.LogError($"Message from Attempt<T>.Failure.Error: {ex.Error.GetFormattedEnglish()}");
+                }
+                
+                logger.LogError(ex.Exception, "Next, some details for debugging the upcoming error log entry. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Message: '{telegramDate}'; " +
                                     "with text: '{text}'",
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
+                var errorMessageForSendOut = ex.Exception != null 
+                    ? UiNoTranslate(ex.Exception.Message) 
+                    : ex.Error;
+                
                 // fire and forget
-                _ = SendOutputAsync(UiConcatenate(UiNoTranslate($"{ex.Message} "), CallToActionAfterErrorReport),
+                _ = SendOutputAsync(UiConcatenate(
+                        errorMessageForSendOut ?? UiNoTranslate("No error message"),
+                        UiNoTranslate(" "),
+                        CallToActionAfterErrorReport),
                     botClient, chatId, translator);
+                
                 return Attempt<Unit>.Fail(ex);
             });
     }

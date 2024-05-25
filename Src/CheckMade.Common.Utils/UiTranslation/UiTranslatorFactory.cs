@@ -30,8 +30,10 @@ public class UiTranslatorFactory(
                 Option<IDictionary<string, string>>.Some,
                 ex =>
                 {
-                    logger.LogWarning(ex, $"Failed to create translation dictionary for '{_targetLanguage}'," +
-                                          $"and so U.I. will be English. Exception message: '{ex.Message}'");
+                    logger.LogWarning(ex.Exception, 
+                        $"Failed to create translation dictionary for '{_targetLanguage}'," +
+                                          $"and so U.I. will be English. Exception message: " +
+                                          $"'{ex.Exception?.Message ?? ex.Error?.GetFormattedEnglish()}'");
                     
                     return Option<IDictionary<string, string>>.None();
                 }),

@@ -127,7 +127,7 @@ public class MessageHandlerTests
             .Setup<Task<Attempt<UiString>>>(rp => 
                 rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
             .Returns(Task.FromResult(Attempt<UiString>
-                .Fail(new DataAccessException(mockErrorMessage, new Exception()))));
+                .Fail(new Failure(new DataAccessException(mockErrorMessage, new Exception())))));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
         mockRequestProcessorSelector
