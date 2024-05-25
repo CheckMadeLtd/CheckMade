@@ -1,7 +1,7 @@
 using CheckMade.Common.LangExt;
 using FluentAssertions;
 
-namespace CheckMade.Common.Tests.Unit.MonadicWrappers;
+namespace CheckMade.Telegram.Tests.Unit.MonadicWrappers;
 
 public class ValidationTests
 {

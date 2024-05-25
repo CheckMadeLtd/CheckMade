@@ -1,6 +1,6 @@
 using CheckMade.Common.LangExt;
 
-namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
+namespace CheckMade.Telegram.Tests.Unit.MonadicWrappers.Composition;
 
 internal class User
 {

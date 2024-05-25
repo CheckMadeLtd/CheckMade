@@ -1,6 +1,6 @@
 using FluentAssertions;
 
-namespace CheckMade.Common.Tests.Unit.MonadicWrappers.Composition;
+namespace CheckMade.Telegram.Tests.Unit.MonadicWrappers.Composition;
 
 public class MonadicCompositionTests
 {

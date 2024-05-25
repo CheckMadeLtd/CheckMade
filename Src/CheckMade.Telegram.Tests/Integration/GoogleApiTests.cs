@@ -1,9 +1,9 @@
 using CheckMade.Common.Interfaces.ExternalServices.GoogleApi;
-using CheckMade.Common.Tests.Startup;
+using CheckMade.Telegram.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Common.Tests.Integration;
+namespace CheckMade.Telegram.Tests.Integration;
 
 public class GoogleApiTests
 {

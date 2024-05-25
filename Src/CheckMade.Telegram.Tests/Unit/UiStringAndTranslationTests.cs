@@ -1,6 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
-
-namespace CheckMade.Common.Tests.Unit;
+namespace CheckMade.Telegram.Tests.Unit;
 
 public class UiStringAndTranslationTests
 {

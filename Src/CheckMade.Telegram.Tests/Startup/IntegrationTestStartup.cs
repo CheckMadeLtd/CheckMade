@@ -1,3 +1,5 @@
+using CheckMade.Common.ExternalServices;
+using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Function.Startup;
 using JetBrains.Annotations;
@@ -28,5 +30,23 @@ public class IntegrationTestStartup : TestStartupBase
                                   $"Can't find {DbConnectionProvider.KeyToPrdDbConnStringWithPswInEnv}");
         
         Services.AddSingleton<PrdDbConnStringProvider>(_ => new PrdDbConnStringProvider(prdDbConnString));
+        
+        
+        var gglApiCredentialFileName = Config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
+                                       ?? throw new InvalidOperationException(
+                                           $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
+
+        var gglApiCredentialFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            gglApiCredentialFileName);
+        
+        Services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
+
+        const string testDataGglSheetKeyInEnv = "GOOGLE_SHEET_ID_TEST_DATA";
+        
+        Services.AddScoped<UiSourceSheetIdProvider>(_ => new UiSourceSheetIdProvider(
+            Config.GetValue<string>(testDataGglSheetKeyInEnv)
+            ?? throw new InvalidOperationException(
+                $"Can't find: {testDataGglSheetKeyInEnv}")));
     }
 }
