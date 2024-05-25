@@ -92,7 +92,7 @@ public class MessageHandler(
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
                 // fire and forget
-                _ = SendOutputAsync(UiConcatenate(UiIndirect(ex.Message), CallToActionAfterErrorReport),
+                _ = SendOutputAsync(UiConcatenate(UiNoTranslate(ex.Message), CallToActionAfterErrorReport),
                     botClient, chatId, translator);
                 return Attempt<Unit>.Fail(ex);
             });
