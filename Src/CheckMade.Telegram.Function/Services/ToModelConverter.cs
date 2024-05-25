@@ -31,7 +31,7 @@ internal class ToModelConverter(
             .Match(
                 modelInputMessage => modelInputMessage,
                 // ToDo: Once I augmented Attempt<T> for additional error information in UiString form, update this
-                error => throw new ToModelConversionException(
+                _ => throw new ToModelConversionException(
                     "Failed to convert Telegram Message to Model."));
     } 
 
