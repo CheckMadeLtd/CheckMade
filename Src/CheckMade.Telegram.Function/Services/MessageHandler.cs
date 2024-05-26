@@ -104,8 +104,15 @@ public class MessageHandler(
                 _ = SendOutputAsync(UiConcatenate(
                         errorMessageForSendOut ?? UiNoTranslate("No error message"),
                         UiNoTranslate(" "),
-                        CallToActionAfterErrorReport),
-                    botClient, chatId, translator);
+                        CallToActionAfterErrorReport), botClient, chatId, translator)
+                    // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
+                    .ContinueWith(task => 
+                    { 
+                        if (task.Result.IsFailure) 
+                        { 
+                            logger.LogError(
+                                "An error occurred while trying to send a message to report another error."); 
+                        }});
                 
                 return Attempt<Unit>.Fail(failure);
             });
