@@ -2,6 +2,7 @@ using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using BotCommand = Telegram.Bot.Types.BotCommand;
@@ -26,10 +27,11 @@ public interface IBotClientWrapper
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType);
 }
 
-internal class BotClientWrapper(
+public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        string botToken) 
+        string botToken,
+        ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
     public string BotToken { get; } = botToken;
@@ -82,17 +84,21 @@ internal class BotClientWrapper(
                 telegramBotCommands, 
                 scope: null,
                 languageCode: language.ToString().ToLower());
+            
+            logger.LogDebug($"Added to bot {botType} for language {language.ToString().ToLower()} " +
+                            $"the following BotCommands: " +
+                            $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
         }
         
         return Unit.Value;
     }
 
-    private BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
+    private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
         IDictionary<TEnum, IDictionary<LanguageCode, ModelBotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
-            .Select(kvp => kvp.Value)
-            .First(kvp => kvp.ContainsKey(language))
+            .SelectMany(kvp => kvp.Value)
+            .Where(kvp => kvp.Key == language)
             .Select(kvp => new BotCommand
             {
                 Command = kvp.Value.Command, 
