@@ -168,10 +168,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var validBotCommand = new BotCommandMenus()
             .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem][0].Command;
         var utils = _services.GetRequiredService<ITestUtils>();
-        var botCommandMessage = utils.GetBotCommandMessage(((int)SubmissionsBotCommands.Problem).ToString());
+        var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
-        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {validBotCommand}";
+        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {(int)SubmissionsBotCommands.Problem}";
 
         // Act
         await handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);
