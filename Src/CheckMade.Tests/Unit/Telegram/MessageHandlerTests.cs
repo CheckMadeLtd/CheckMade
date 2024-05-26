@@ -122,7 +122,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         // Arrange
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
-        var mockErrorMessage = "Mock DataAccess Error";
+        const string mockErrorMessage = "Mock DataAccess Error";
         
         mockSubmissionsRequestProcessor
             .Setup<Task<Attempt<UiString>>>(rp => 
