@@ -18,9 +18,12 @@ public partial class UiTranslator(
     public string Translate(UiString uiString)
     {
         var translatedAll = new StringBuilder();
-        
+
         foreach (var part in uiString.Concatenations)
-            translatedAll.Append(Translate(part));
+        {
+            if (part != null)
+                translatedAll.Append(Translate(part));            
+        }
 
         var unformattedTranslation = translationByKey.IsSome 
             ? translationByKey.GetValueOrDefault().TryGetValue(uiString.RawEnglishText, out var translation)
