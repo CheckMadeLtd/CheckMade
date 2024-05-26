@@ -21,11 +21,11 @@ public class MonadicCompositionTests
                 await userValidation.Match(
                     async validUser =>
                     {
-                        var registerUserResult = await UserService.RegisterUserAsync(validUser);
-                        registerUserResult.Success.Should().BeTrue();
+                        var registerUserAttempt = await UserService.RegisterUserAsync(validUser);
+                        registerUserAttempt.IsSuccess.Should().BeTrue();
 
                         var welcomeEmail = UserService
-                            .GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
+                            .GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
                         welcomeEmail.IsSome.Should().BeTrue();
                     },
                     errors => Task.FromException(new Exception(errors[0].RawEnglishText))
@@ -53,11 +53,11 @@ public class MonadicCompositionTests
                     await userValidation.Match(
                         async validUser =>
                         {
-                            var registerUserResult = await UserService.RegisterUserAsync(validUser);
-                            registerUserResult.Success.Should().BeTrue();
+                            var registerUserAttempt = await UserService.RegisterUserAsync(validUser);
+                            registerUserAttempt.IsSuccess.Should().BeTrue();
 
                             var welcomeEmail = UserService
-                                .GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
+                                .GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
                             welcomeEmail.IsSome.Should().BeTrue();
                         },
                         errors => Task
@@ -84,10 +84,10 @@ public class MonadicCompositionTests
             var userValidation = UserService.ValidateUser(userAttempt.Value!);
             if (userValidation.IsValid)
             {
-                var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserResult.Success.Should().BeTrue();
+                var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
+                registerUserAttempt.IsSuccess.Should().BeTrue();
 
-                var welcomeEmail = UserService.GenerateWelcomeEmail(registerUserResult.GetValueOrDefault());
+                var welcomeEmail = UserService.GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
                 welcomeEmail.IsSome.Should().BeTrue();
             }
             else
@@ -117,8 +117,8 @@ public class MonadicCompositionTests
             var userValidation = UserService.ValidateUser(userAttempt.Value!);
             if (userValidation.IsValid)
             {
-                var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserResult.Success.Should().BeFalse();
+                var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
+                registerUserAttempt.IsSuccess.Should().BeFalse();
             }
             else
             {
@@ -147,8 +147,8 @@ public class MonadicCompositionTests
             var userValidation = UserService.ValidateUser(userAttempt.Value!);
             if (userValidation.IsValid)
             {
-                var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserResult.Success.Should().BeFalse();
+                var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
+                registerUserAttempt.IsSuccess.Should().BeFalse();
             }
             else
             {
@@ -175,8 +175,8 @@ public class MonadicCompositionTests
             var userValidation = UserService.ValidateUser(userAttempt.Value!);
             if (userValidation.IsValid)
             {
-                var registerUserResult = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserResult.Success.Should().BeFalse();
+                var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
+                registerUserAttempt.IsSuccess.Should().BeFalse();
             }
             else
             {

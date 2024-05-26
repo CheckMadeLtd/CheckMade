@@ -24,6 +24,9 @@ public record Attempt<T>
         Value = default;
     }
     
+    public static implicit operator Attempt<T>(T value) => Succeed(value);
+    public static implicit operator Attempt<T>(Failure failure) => Fail(failure);
+    
     public static Attempt<T> Succeed(T value) => new(value);
     public static Attempt<T> Fail(Failure failure) => new(failure);
     

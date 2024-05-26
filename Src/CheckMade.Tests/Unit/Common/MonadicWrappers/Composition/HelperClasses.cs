@@ -45,13 +45,17 @@ internal static class UserService
         return errors.Count == 0 ? Validation<User>.Valid(user) : Validation<User>.Invalid(errors);
     }
 
-    public static async Task<Result<RegisteredUser>> RegisterUserAsync(User user)
+    public static async Task<Attempt<RegisteredUser>> RegisterUserAsync(User user)
     {
         await Task.Delay(50); // Simulate async work
         
         return user.Username == "existingUser" 
-            ? Result<RegisteredUser>.FromError(Ui("Username already exists")) 
-            : new RegisteredUser { Id = new Random().Next(1, 1000), Username = user.Username };
+            ? new Failure(Error: Ui("Username already exists")) 
+            : new RegisteredUser
+            {
+                Id = new Random().Next(1, 1000), 
+                Username = user.Username
+            };
     }
 
     public static Option<int> GenerateWelcomeEmail(RegisteredUser? user)
