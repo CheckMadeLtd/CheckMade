@@ -1,5 +1,4 @@
 using System.Reflection;
-using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages;
@@ -29,10 +28,10 @@ internal class MigratorByIndexFactory
         return typeName.Substring(3, 4);
     }
 
-    public Result<MigratorBase> GetMigrator(string migIndex) => 
+    public Attempt<MigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
-            true => Result<MigratorBase>.FromSuccess(migrator),
-            false => Result<MigratorBase>.FromError($"No migrator called 'Mig{migIndex}' was found.")
+            true => migrator,
+            false => new Failure(Error: Ui("No migrator called 'Mig{0}' was found.", migIndex))
         };
 }

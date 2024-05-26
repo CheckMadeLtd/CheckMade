@@ -1,12 +1,12 @@
-﻿using CheckMade.Common.LangExt.MonadicWrappers;
+﻿using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 
 public interface IRequestProcessor
 {
-    public static readonly string WelcomeToBot = 
-        Ui("Willkommen zum {0}Bot! Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.");
+    public static readonly UiString SeeValidBotCommandsInstruction = 
+        Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage);
+    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage);
 }

@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.LangExt.MonadicWrappers;
+using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
@@ -17,11 +18,13 @@ public class MessageHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
+        DefaultUiLanguageCodeProvider defaultUiLanguage,
+        IUiTranslatorFactory translatorFactory,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    internal static readonly string CallToActionAfterErrorReport = 
-        Ui("Bitte kontaktiere den Support oder deinen Supervisor.");
+    private static readonly UiString CallToActionAfterErrorReport = 
+        Ui("Please contact technical support or your supervisor.");
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
@@ -44,9 +47,9 @@ public class MessageHandler(
         if (!handledMessageTypes.Contains(telegramInputMessage.Type))
         {
             logger.LogWarning("Received message of type '{messageType}': {warning}", 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning);
+                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish());
 
-            return Attempt<Unit>.Succeed(Unit.Value);
+            return Unit.Value;
         }
 
         var botClient = 
@@ -54,40 +57,68 @@ public class MessageHandler(
                 botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
                     botClient => botClient,
-                    ex => throw new InvalidOperationException(
-                        "Failed to create BotClient", ex));
+                    failure => throw new InvalidOperationException(
+                        "Failed to create BotClient", failure.Exception));
 
+        // Will retrieve actual user language preference
+        var userLanguagePreference = Option<LanguageCode>.None();
+        var currentUiLanguage = userLanguagePreference.Match(
+            code => code,
+            () => defaultUiLanguage.Code);
+        var translator = translatorFactory.Create(currentUiLanguage);
+        
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
-            from modelInputMessage in Attempt<InputMessage>.RunAsync(async () => 
-                await toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage, botType))
+            from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
             from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
-            select SendOutputAsync(outputMessage, botClient, chatId);        
+            select SendOutputAsync(outputMessage, botClient, chatId, translator);
         
         return (await sendOutputOutcome).Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            ex =>
+            failure =>
             {
-                logger.LogError(ex, "Next, some details for debugging the upcoming error log entry. " +
+                if (failure.Error != null)
+                {
+                    logger.LogError($"Message from Attempt<T>.Failure.Error: " +
+                                    $"{failure.Error.GetFormattedEnglish()}");
+                }
+                
+                logger.LogError(failure.Exception, 
+                    "Next, some details to help debug the current error. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                                    "DateTime of received Message: '{telegramDate}'; " +
-                                    "with text: '{text}'",
+                                    "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
+                var errorMessageToUser = failure.Exception != null 
+                    ? UiNoTranslate(failure.Exception.Message) 
+                    : failure.Error;
+                
                 // fire and forget
-                _ = SendOutputAsync($"{ex.Message} {CallToActionAfterErrorReport}", botClient, chatId);
-                return Attempt<Unit>.Fail(ex);
+                _ = SendOutputAsync(UiConcatenate(
+                        errorMessageToUser ?? UiNoTranslate("No error message"),
+                        UiNoTranslate(" "),
+                        CallToActionAfterErrorReport), botClient, chatId, translator)
+                    // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
+                    .ContinueWith(task => 
+                    { 
+                        if (task.Result.IsFailure) 
+                            logger.LogError(
+                                "An error occurred while trying to send a message to report another error."); 
+                    });
+                
+                return failure;
             });
     }
 
-    private async Task<Attempt<Unit>> SendOutputAsync(string outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private static async Task<Attempt<Unit>> SendOutputAsync(
+        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId, IUiTranslator translator)
     {
         return await Attempt<Unit>.RunAsync(async () =>
-            await botClient.SendTextMessageOrThrowAsync(chatId, outputMessage));
+            await botClient.SendTextMessageOrThrowAsync(chatId, translator.Translate(outputMessage)));
     }
 }

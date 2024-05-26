@@ -2,7 +2,6 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Common.LangExt;
-using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model;
@@ -44,6 +43,8 @@ var host = new HostBuilder()
     {
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
+        
+        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.De));
         
         // These two are separated into two because only one of them is relevant for Integration tests
         services.ConfigureBotClientServices(config, hostingEnvironment);
@@ -149,19 +150,19 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
 
     foreach (var botType in Enum.GetValues<BotType>())
     {
-        var botCommandSettingAttempt = 
-            from botClient
+        (await  
+            (from botClient
                 in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
             from unit in Attempt<Unit>.RunAsync(async () =>
                 await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus(), botType))
-            select unit;
-
-        (await botCommandSettingAttempt).Match(
-            unit => unit,
-            ex =>
-            {
-                logger.LogError(ex, ex.Message);
-                return Unit.Value;
-            });
+            select unit))
+            .Match(
+                unit => unit, 
+                failure => 
+                { 
+                    logger.LogError(failure.Exception, failure.Exception?.Message 
+                                                     ?? failure.Error?.GetFormattedEnglish()); 
+                    return Unit.Value; 
+                });
     }
 }

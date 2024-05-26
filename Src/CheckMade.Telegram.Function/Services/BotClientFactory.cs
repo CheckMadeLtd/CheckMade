@@ -1,6 +1,7 @@
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
 namespace CheckMade.Telegram.Function.Services;
@@ -13,7 +14,8 @@ public interface IBotClientFactory
 public class BotClientFactory(
         IHttpClientFactory httpFactory,
         INetworkRetryPolicy retryPolicy,
-        BotTokens botTokens) 
+        BotTokens botTokens,
+        ILogger<BotClientWrapper> loggerForClient) 
     : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClientOrThrow(BotType botType) => botType switch
@@ -21,20 +23,23 @@ public class BotClientFactory(
         BotType.Submissions => new BotClientWrapper(
             new TelegramBotClient(botTokens.SubmissionsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
-            retryPolicy,
-            botTokens.SubmissionsBotToken),
+            retryPolicy, 
+            botTokens.SubmissionsBotToken,
+            loggerForClient),
         
         BotType.Communications => new BotClientWrapper(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
-            botTokens.CommunicationsBotToken),
+            botTokens.CommunicationsBotToken,
+            loggerForClient),
         
         BotType.Notifications => new BotClientWrapper(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
-            botTokens.NotificationsBotToken),
+            botTokens.NotificationsBotToken,
+            loggerForClient),
         
         _ => throw new ArgumentOutOfRangeException(nameof(botType))
     };

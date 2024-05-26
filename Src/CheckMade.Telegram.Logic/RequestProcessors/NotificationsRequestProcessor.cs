@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.LangExt.MonadicWrappers;
+﻿using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 
@@ -8,11 +8,13 @@ public interface INotificationsRequestProcessor : IRequestProcessor;
 
 public class NotificationsRequestProcessor : INotificationsRequestProcessor
 {
-    public Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage)
+    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
     {
-        return Attempt<string>.RunAsync(() => 
+        return Attempt<UiString>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 
-            ? string.Format(IRequestProcessor.WelcomeToBot, BotType.Notifications) 
-            : Ui($"Echo from bot Notifications: {inputMessage.Details.Text.GetValueOrDefault()}")));
+            ? UiConcatenate(
+                Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications), 
+                IRequestProcessor.SeeValidBotCommandsInstruction) 
+            : Ui("Echo from bot {0}: {1}", BotType.Notifications, inputMessage.Details.Text.GetValueOrDefault())));
     }
 }

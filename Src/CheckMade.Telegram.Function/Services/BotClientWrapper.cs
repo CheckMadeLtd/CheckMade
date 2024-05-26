@@ -1,8 +1,8 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using BotCommand = Telegram.Bot.Types.BotCommand;
@@ -27,10 +27,11 @@ public interface IBotClientWrapper
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType);
 }
 
-internal class BotClientWrapper(
+public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        string botToken) 
+        string botToken,
+        ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
     public string BotToken { get; } = botToken;
@@ -58,7 +59,7 @@ internal class BotClientWrapper(
         }
         
         return Unit.Value;
-    } 
+    }
     
     public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
@@ -66,22 +67,38 @@ internal class BotClientWrapper(
     {
         await botClient.DeleteMyCommandsAsync();
 
-        var telegramBotCommands = botType switch
+        foreach (LanguageCode language in Enum.GetValues(typeof(LanguageCode)))
         {
-            BotType.Submissions => GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu),
-            BotType.Communications => GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu),
-            BotType.Notifications => GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu),
-            _ => throw new ArgumentOutOfRangeException(nameof(botType))
-        };
+            var telegramBotCommands = botType switch
+            {
+                BotType.Submissions => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu, language),
+                BotType.Communications => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
+                BotType.Notifications => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
+                _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            };
         
-        await botClient.SetMyCommandsAsync(telegramBotCommands);
+            await botClient.SetMyCommandsAsync(
+                telegramBotCommands, 
+                scope: null,
+                languageCode: language.ToString().ToLower());
+            
+            logger.LogDebug($"Added to bot {botType} for language {language.ToString().ToLower()} " +
+                            $"the following BotCommands: " +
+                            $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
+        }
         
         return Unit.Value;
     }
 
     private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IDictionary<TEnum, ModelBotCommand> menu) where TEnum : Enum =>
+        IDictionary<TEnum, IDictionary<LanguageCode, ModelBotCommand>> menu, LanguageCode language) 
+        where TEnum : Enum =>
         menu
+            .SelectMany(kvp => kvp.Value)
+            .Where(kvp => kvp.Key == language)
             .Select(kvp => new BotCommand
             {
                 Command = kvp.Value.Command, 

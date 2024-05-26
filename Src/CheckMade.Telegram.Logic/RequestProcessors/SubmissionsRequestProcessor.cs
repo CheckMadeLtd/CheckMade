@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.LangExt.MonadicWrappers;
+﻿using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
@@ -9,31 +9,30 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<Attempt<string>> SafelyEchoAsync(InputMessage inputMessage)
+    public async Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
     {
-        return await Attempt<string>.RunAsync(async () =>
+        return await Attempt<UiString>.RunAsync(async () =>
         {
             await repo.AddOrThrowAsync(inputMessage);
 
-            var botCommandMenus = new BotCommandMenus();
-
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
-                return string.Format(IRequestProcessor.WelcomeToBot, BotType.Submissions);
+                return UiConcatenate(
+                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions), 
+                    IRequestProcessor.SeeValidBotCommandsInstruction);
             
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
             {
-                var botCommand = botCommandMenus.SubmissionsBotCommandMenu
-                    .FirstOrDefault(kvp => 
-                        (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
-                    .Value.Command;
-
-                return Ui($"Echo of a Submissions BotCommand: {botCommand}");
+                return UiConcatenate(
+                    Ui("Echo of a {0} BotCommand: ", BotType.Submissions),
+                    UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString()));
             }
 
             return inputMessage.Details.AttachmentType.Match(
-                type => Ui($"Echo from bot Submissions: {type}"),
-                () => Ui($"Echo from bot Submissions: {inputMessage.Details.Text.GetValueOrDefault()}"));
+                type => Ui("Echo from bot {0}: {1}", 
+                    BotType.Submissions, type),
+                () => Ui("Echo from bot {0}: {1}", 
+                    BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()));
         });
     }
 }

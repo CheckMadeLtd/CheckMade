@@ -1,5 +1,4 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.LangExt.MonadicWrappers;
 using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -14,7 +13,7 @@ public interface IBotUpdateSwitch
 
 public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
-    internal static readonly string
+    internal static readonly UiString
         NoSpecialHandlingWarning = Ui("Telegram Message/Update of this type not yet supported. " +
                                           "No special handling is taking place for it, but that doesn't mean that a " +
                                           "Telegram-System-related update didn't work. You may assume it did.");
@@ -30,19 +29,19 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
 
             case UpdateType.CallbackQuery:
                 // ToDo: Implement separate handling of InlineKeyboardResponseReceived
-                return Attempt<Unit>.Succeed(Unit.Value);
+                return Unit.Value;
 
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
                                       "and new status '{NewStatus}'",
                     update.MyChatMember!.From.Username, update.MyChatMember.OldChatMember.Status, 
                     update.MyChatMember.NewChatMember.Status);
-                return Attempt<Unit>.Succeed(Unit.Value);
+                return Unit.Value;
             
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
-                    update.Type, NoSpecialHandlingWarning);
-                return Attempt<Unit>.Succeed(Unit.Value);
+                    update.Type, NoSpecialHandlingWarning.GetFormattedEnglish());
+                return Unit.Value;
         }
     }
 }

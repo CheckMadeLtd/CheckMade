@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt.MonadicWrappers;
 using File = Telegram.Bot.Types.File;
 
 namespace CheckMade.Telegram.Function.Services;
@@ -17,8 +16,7 @@ internal class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegram
         var fileAttempt = await Attempt<File>.RunAsync(async () => await botClient.GetFileOrThrowAsync(fileId));
         
         return fileAttempt.Match(
-            file => Attempt<string>.Succeed(
-                TelegramBotDownloadFileApiUrlStub + $"bot{botClient.BotToken}/{file.FilePath}"),
+            file => TelegramBotDownloadFileApiUrlStub + $"bot{botClient.BotToken}/{file.FilePath}",
             Attempt<string>.Fail);  
     }
 }
