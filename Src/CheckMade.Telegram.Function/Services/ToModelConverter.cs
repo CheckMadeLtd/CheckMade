@@ -35,7 +35,7 @@ internal class ToModelConverter(
                 {
                     Error = UiConcatenate(
                         Ui("Failed to convert Telegram Message to Model. "),
-                        failure.Error ?? UiNoTranslate(string.Empty))
+                        failure.Error)
                 }
             ));
     } 

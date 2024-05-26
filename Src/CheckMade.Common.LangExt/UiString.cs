@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace CheckMade.Common.LangExt;
 
-public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawEnglishText, object[] MessageParams)
+public record UiString(IReadOnlyCollection<UiString?> Concatenations, string RawEnglishText, object[] MessageParams)
 {
     [StringFormatMethod("uiString")]
     public static UiString Ui(string uiString, params object[] messageParams) 
@@ -19,9 +19,9 @@ public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawE
     // Only use this for names/labels etc. but not for strings (like "n/a") which are similar between languages. 
     public static UiString UiNoTranslate(string uiString) => Ui("{0}", uiString);
     
-    public static UiString UiConcatenate(params UiString[] uiStrings) => UiConcatenate(uiStrings.ToList());
+    public static UiString UiConcatenate(params UiString?[] uiStrings) => UiConcatenate(uiStrings.ToList());
     
-    public static UiString UiConcatenate(IEnumerable<UiString> uiStrings) => 
+    public static UiString UiConcatenate(IEnumerable<UiString?> uiStrings) => 
         new UiString(uiStrings.ToList(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)
@@ -33,7 +33,7 @@ public record UiString(IReadOnlyCollection<UiString> Concatenations, string RawE
 
         foreach (var uiString in Concatenations)
         {
-            allFormatted.Append(uiString.GetFormattedEnglish());
+            allFormatted.Append(uiString?.GetFormattedEnglish());
         }
 
         return allFormatted.ToString();

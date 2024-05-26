@@ -19,7 +19,7 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 {
                     Error = UiConcatenate(
                         Ui("Data migration failed."),
-                        failure.Error ?? UiNoTranslate(string.Empty))
+                        failure.Error)
                 }));
     }
 
