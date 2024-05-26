@@ -27,10 +27,8 @@ public class ToModelConverterTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var telegramInputMessage = utils.GetValidTelegramTextMessage(textInput);
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var uiTranslatorFactory = _services.GetRequiredService<IUiTranslatorFactory>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(
-            new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
 
         var expectedInputMessage = new InputMessage(
             telegramInputMessage.From!.Id,
@@ -75,10 +73,8 @@ public class ToModelConverterTests
         };
         
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var uiTranslatorFactory = _services.GetRequiredService<IUiTranslatorFactory>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(
-            new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
 
         var expectedAttachmentExternalUrl =
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{mockBotClient.Object.BotToken}/" +
@@ -114,10 +110,8 @@ public class ToModelConverterTests
         var telegramMessage = new Message { From = null, Text = "not empty" };
         
         var mockBotClient = new Mock<IBotClientWrapper>();
-        var uiTranslatorFactory = _services.GetRequiredService<IUiTranslatorFactory>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(
-            new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         var conversionAttempt = await converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
@@ -135,10 +129,8 @@ public class ToModelConverterTests
         var telegramMessage = new Message { From = new User { Id = 123L } };
         
         var mockBotClient = new Mock<IBotClientWrapper>();
-        var uiTranslatorFactory = _services.GetRequiredService<IUiTranslatorFactory>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(
-            new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         
         // Act
         var conversionAttempt = await converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
@@ -157,10 +149,8 @@ public class ToModelConverterTests
         var voiceMessage = utils.GetValidTelegramVoiceMessage();
 
         var mockBotClient = new Mock<IBotClientWrapper>();
-        var uiTranslatorFactory = _services.GetRequiredService<IUiTranslatorFactory>();
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
-        var converter = converterFactory.Create(
-            new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
+        var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
 
         // Act
         var conversionAttempt = await converter.SafelyConvertMessageAsync(voiceMessage, BotType.Submissions);

@@ -1,4 +1,3 @@
-using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
@@ -12,10 +11,7 @@ public interface IToModelConverter
     Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
-internal class ToModelConverter(
-        ITelegramFilePathResolver filePathResolver,
-        IUiTranslator translator) 
-    : IToModelConverter
+internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
     public async Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType)
     {

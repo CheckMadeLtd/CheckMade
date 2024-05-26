@@ -1,14 +1,12 @@
-using CheckMade.Common.Utils.UiTranslation;
-
 namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverterFactory
 {
-    IToModelConverter Create(ITelegramFilePathResolver filePathResolver, IUiTranslator translator);
+    IToModelConverter Create(ITelegramFilePathResolver filePathResolver);
 }
 
 public class ToModelConverterFactory : IToModelConverterFactory
 {
-    public IToModelConverter Create(ITelegramFilePathResolver filePathResolver, IUiTranslator translator) =>
-        new ToModelConverter(filePathResolver, translator);
+    public IToModelConverter Create(ITelegramFilePathResolver filePathResolver) =>
+        new ToModelConverter(filePathResolver);
 }
