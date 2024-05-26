@@ -90,35 +90,34 @@ public class MessageHandler(
                 }
                 
                 logger.LogError(failure.Exception, 
-                    "Next, some details for debugging the upcoming error log entry. " +
+                    "Next, some details to help debug the current error. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                var errorMessageForSendOut = failure.Exception != null 
+                var errorMessageToUser = failure.Exception != null 
                     ? UiNoTranslate(failure.Exception.Message) 
                     : failure.Error;
                 
                 // fire and forget
                 _ = SendOutputAsync(UiConcatenate(
-                        errorMessageForSendOut ?? UiNoTranslate("No error message"),
+                        errorMessageToUser ?? UiNoTranslate("No error message"),
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport), botClient, chatId, translator)
                     // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
                     .ContinueWith(task => 
                     { 
                         if (task.Result.IsFailure) 
-                        { 
                             logger.LogError(
                                 "An error occurred while trying to send a message to report another error."); 
-                        }});
+                    });
                 
-                return Attempt<Unit>.Fail(failure);
+                return failure;
             });
     }
 
-    private async Task<Attempt<Unit>> SendOutputAsync(
+    private static async Task<Attempt<Unit>> SendOutputAsync(
         UiString outputMessage, IBotClientWrapper botClient, ChatId chatId, IUiTranslator translator)
     {
         return await Attempt<Unit>.RunAsync(async () =>
