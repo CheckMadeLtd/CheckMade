@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Telegram.Function.Startup;

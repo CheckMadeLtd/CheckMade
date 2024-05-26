@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils.UiTranslation;
+namespace CheckMade.Common.LangExt;
 
 public enum LanguageCode
 {
