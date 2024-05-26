@@ -151,20 +151,19 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
 
     foreach (var botType in Enum.GetValues<BotType>())
     {
-        var botCommandSettingAttempt = 
-            from botClient
+        (await  
+            (from botClient
                 in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
             from unit in Attempt<Unit>.RunAsync(async () =>
                 await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus(), botType))
-            select unit;
-
-        (await botCommandSettingAttempt).Match(
-            unit => unit,
-            failure =>
-            {
-                logger.LogError(failure.Exception, failure.Exception?.Message 
-                                                   ?? failure.Error?.GetFormattedEnglish());
-                return Unit.Value;
-            });
+            select unit))
+            .Match(
+                unit => unit, 
+                failure => 
+                { 
+                    logger.LogError(failure.Exception, failure.Exception?.Message 
+                                                     ?? failure.Error?.GetFormattedEnglish()); 
+                    return Unit.Value; 
+                });
     }
 }
