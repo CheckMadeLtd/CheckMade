@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
@@ -46,7 +45,7 @@ public class ToModelConverterTests
                 Option<int>.None()));
 
         // Act
-        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(telegramInputMessage, BotType.Submissions);
+        var actualInputMessage = await converter.SafelyConvertMessageAsync(telegramInputMessage, BotType.Submissions);
 
         // Assert
         actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
@@ -99,7 +98,7 @@ public class ToModelConverterTests
                 Option<int>.None()));
         
         // Act
-        var actualInputMessage = await converter.ConvertMessageOrThrowAsync(
+        var actualInputMessage = await converter.SafelyConvertMessageAsync(
             telegramAttachmentMessage, BotType.Submissions);
         
         // Assert
@@ -121,11 +120,10 @@ public class ToModelConverterTests
             new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
         
         // Act
-        Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageOrThrowAsync(telegramMessage, BotType.Submissions);
+        var conversionAttempt = await converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
 
         // Assert
-        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
+        conversionAttempt.IsFailure.Should().BeTrue();
     }
     
     [Fact]
@@ -143,11 +141,10 @@ public class ToModelConverterTests
             new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
         
         // Act
-        Func<Task<InputMessage>> convertMessage = async () => 
-            await converter.ConvertMessageOrThrowAsync(telegramMessage, BotType.Submissions);
+        var conversionAttempt = await converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
 
         // Assert
-        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
+        conversionAttempt.IsFailure.Should().BeTrue();
     }
 
     [Fact]
@@ -166,10 +163,9 @@ public class ToModelConverterTests
             new TelegramFilePathResolver(mockBotClient.Object), uiTranslatorFactory.Create(LanguageCode.En));
 
         // Act
-        Func<Task<InputMessage>> convertMessage = async () =>
-            await converter.ConvertMessageOrThrowAsync(voiceMessage, BotType.Submissions);
-        
+        var conversionAttempt = await converter.SafelyConvertMessageAsync(voiceMessage, BotType.Submissions);
+
         // Assert
-        await convertMessage.Should().ThrowAsync<ToModelConversionException>();
+        conversionAttempt.Failure!.Exception.Should().BeAssignableTo<InvalidOperationException>();
     }
 }

@@ -3,8 +3,7 @@ CheckMade.Telegram.Function	Telegram Message/Update of this type not yet support
 CheckMade.Telegram.Function	Please contact technical support or your supervisor.	Bitte kontaktiere den technischen Support oder deinen Supervisor.
 CheckMade.Telegram.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
 CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
-CheckMade.Telegram.Function	User Id (i.e. 'From.Id' in the input message) must not be null.	User Id (i.e. 'From.Id' in der Inputnachricht) darf nicht null sein.
-CheckMade.Telegram.Function	A valid message must either have a text or an attachment - both must not be null/empty.	Eine gültige Nachricht muss entweder einen Text oder einen Anhang enthalten - beide dürfen nicht null oder leer sein.
+CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment.	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten.
 CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
 CheckMade.Telegram.Logic	Welcome to the CheckMade {0}Bot! 	Willkommen zum CheckMade {0}Bot! 
 CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}
@@ -22,3 +21,4 @@ CheckMade.Telegram.Model	/contact	/kontakt
 CheckMade.Telegram.Model	Contact a colleague 💬	Mit einem Kollegen Kontakt aufnehmen 💬
 CheckMade.Telegram.Model	/status	/status
 CheckMade.Telegram.Model	Current status report 📋	Aktueller Statusreport 📋
+CheckMade.Telegram.Function	Failed to convert Telegram Message to Model. 	Fehler beim Konvertieren der Telegram-Nachricht in das Modell. 

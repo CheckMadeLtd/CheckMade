@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
@@ -10,7 +9,7 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 internal class ToModelConverter(
@@ -18,25 +17,31 @@ internal class ToModelConverter(
         IUiTranslator translator) 
     : IToModelConverter
 {
-    public async Task<InputMessage> ConvertMessageOrThrowAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType)
     {
-        return ((Result<InputMessage>) await
-            (from attachmentDetails 
-                in GetAttachmentDetails(telegramInputMessage)
-            from botCommandEnumCode 
-                in GetBotCommandEnumCode(telegramInputMessage, botType)
-            from modelInputMessage 
-                in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, botCommandEnumCode)
-            select modelInputMessage))
+        return (await
+                    (from attachmentDetails
+                            in SafelyGetAttachmentDetails(telegramInputMessage)
+                        from botCommandEnumCode
+                            in GetBotCommandEnumCode(telegramInputMessage, botType)
+                        from modelInputMessage
+                            in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails,
+                                botCommandEnumCode)
+                        select modelInputMessage))
             .Match(
-                modelInputMessage => modelInputMessage,
-                // ToDo: Once I augmented Attempt<T> for additional error information in UiString form, update this
-                _ => throw new ToModelConversionException(
-                    "Failed to convert Telegram Message to Model."));
+            modelInputMessage => modelInputMessage,
+            failure => Attempt<InputMessage>.Fail(
+                failure with // preserves any contained Exception and prefixes any contained Error UiString
+                {
+                    Error = UiConcatenate(
+                        Ui("Failed to convert Telegram Message to Model. "),
+                        failure.Error ?? UiNoTranslate(string.Empty))
+                }
+            ));
     } 
 
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private static Result<AttachmentDetails> GetAttachmentDetails(Message telegramInputMessage)
+    private static Attempt<AttachmentDetails> SafelyGetAttachmentDetails(Message telegramInputMessage)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
@@ -46,35 +51,35 @@ internal class ToModelConverter(
             MessageType.Text => new AttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
             
-            MessageType.Audio => new AttachmentDetails(
+            MessageType.Audio => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 telegramInputMessage.Audio?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Audio),
+                AttachmentType.Audio)),
             
-            MessageType.Photo => new AttachmentDetails(
+            MessageType.Photo => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 telegramInputMessage.Photo?.OrderBy(p => p.FileSize).Last().FileId 
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Photo),
+                    AttachmentType.Photo)),
             
-            MessageType.Document => new AttachmentDetails(
+            MessageType.Document => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 telegramInputMessage.Document?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramInputMessage.Type)), 
-                    AttachmentType.Document),
+                    AttachmentType.Document)),
             
-            MessageType.Video => new AttachmentDetails(
+            MessageType.Video => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 telegramInputMessage.Video?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramInputMessage.Type)),
-                AttachmentType.Video),
+                AttachmentType.Video)),
             
-            _ => Result<AttachmentDetails>.FromError(
+            _ => new Failure(Error:
                 Ui("Attachment type {0} is not yet supported!", telegramInputMessage.Type)) 
         };
     }
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    private Result<Option<int>> GetBotCommandEnumCode(
+    private Attempt<Option<int>> GetBotCommandEnumCode(
         Message telegramInputMessage,
         BotType botType)
     {
@@ -85,7 +90,7 @@ internal class ToModelConverter(
             return Option<int>.None();
 
         if (telegramInputMessage.Text == Start.Command)
-            return Option<int>.Some(1);
+            return Option<int>.Some(Start.CommandCode);
         
         var allBotCommandMenus = new BotCommandMenus();
 
@@ -96,14 +101,14 @@ internal class ToModelConverter(
             BotType.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
-
+        
         var botCommandFromInputMessage = botCommandMenuForCurrentBotType
             .FirstOrDefault(mbc => 
                 translator.Translate(mbc.Command) == telegramInputMessage.Text)?
             .Command;
         
         if (botCommandFromInputMessage == null)
-            return Result<Option<int>>.FromError(UiConcatenate(
+            return new Failure (Error: UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
                     telegramInputMessage.Text ?? "[empty text!]", botType, "W3DL9"),
                 IRequestProcessor.SeeValidBotCommandsInstruction));
@@ -131,21 +136,18 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
     
-    private async Task<Result<InputMessage>> GetInputMessageAsync(
+    private async Task<Attempt<InputMessage>> GetInputMessageAsync(
         Message telegramInputMessage,
         BotType botType,
         AttachmentDetails attachmentDetails,
         Option<int> botCommandEnumCode)
     {
-        var userId = telegramInputMessage.From?.Id; 
-                     
-        if (userId == null)
-            return Result<InputMessage>.FromError(Ui("User Id (i.e. 'From.Id' in the input message) must not be null."));
+        var userId = telegramInputMessage.From?.Id;
 
-        if (string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
+        if (userId == null || string.IsNullOrWhiteSpace(telegramInputMessage.Text) && attachmentDetails.FileId.IsNone)
         {
-            return Result<InputMessage>.FromError(
-                Ui("A valid message must either have a text or an attachment - both must not be null/empty."));
+            return new Failure(Error: Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
+                                         "b) either have a text or an attachment."));   
         }
 
         var telegramAttachmentUrl = Option<string>.None();
@@ -156,7 +158,7 @@ internal class ToModelConverter(
                 attachmentDetails.FileId.GetValueOrDefault());
             
             if (pathAttempt.IsFailure)
-                return Result<InputMessage>.FromError(
+                return new Failure(Error:
                     Ui("Error while trying to retrieve full Telegram server path to attachment file."));
 
             telegramAttachmentUrl = pathAttempt.GetValueOrDefault();

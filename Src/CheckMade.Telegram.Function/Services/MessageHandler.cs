@@ -73,8 +73,7 @@ public class MessageHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);
         
         var sendOutputOutcome =
-            from modelInputMessage in Attempt<InputMessage>.RunAsync(async () => 
-                await toModelConverter.ConvertMessageOrThrowAsync(telegramInputMessage, botType))
+            from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
             from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
             select SendOutputAsync(outputMessage, botClient, chatId, translator);
         
