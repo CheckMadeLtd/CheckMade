@@ -166,6 +166,8 @@ public class ToModelConverterTests
         var conversionAttempt = await converter.SafelyConvertMessageAsync(voiceMessage, BotType.Submissions);
 
         // Assert
-        conversionAttempt.Failure!.Exception.Should().BeAssignableTo<InvalidOperationException>();
+        conversionAttempt.IsFailure.Should().BeTrue();
+        conversionAttempt.Failure!.Error!.GetFormattedEnglish().Should().Be(
+            "Attachment type Voice is not yet supported!");
     }
 }
