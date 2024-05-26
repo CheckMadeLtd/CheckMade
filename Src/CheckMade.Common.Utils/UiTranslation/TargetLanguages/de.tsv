@@ -9,16 +9,4 @@ CheckMade.Telegram.Logic	Welcome to the CheckMade {0}Bot! 	Willkommen zum CheckM
 CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
-CheckMade.Telegram.Model	/problem	/problem
-CheckMade.Telegram.Model	Report a problem ❗	Ein Problem melden ❗
-CheckMade.Telegram.Model	/assessment	/bewertung
-CheckMade.Telegram.Model	Submit an assessment ⭐	Eine Bewertung vornehmen ⭐
-CheckMade.Telegram.Model	/settings	/einstellungen
-CheckMade.Telegram.Model	Change settings ⚙️	Einstellungen ändern ⚙️
-CheckMade.Telegram.Model	/logout	/ausloggen
-CheckMade.Telegram.Model	Exit this chat in your current role 💨	In Ihrer aktuellen Rolle diesen Chat verlassen 💨
-CheckMade.Telegram.Model	/contact	/kontakt
-CheckMade.Telegram.Model	Contact a colleague 💬	Mit einem Kollegen Kontakt aufnehmen 💬
-CheckMade.Telegram.Model	/status	/status
-CheckMade.Telegram.Model	Current status report 📋	Aktueller Statusreport 📋
 CheckMade.Telegram.Function	Failed to convert Telegram Message to Model. 	Fehler beim Konvertieren der Telegram-Nachricht in das Modell. 
