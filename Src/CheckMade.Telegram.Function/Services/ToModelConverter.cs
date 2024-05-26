@@ -40,7 +40,6 @@ internal class ToModelConverter(
             ));
     } 
 
-    // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
     private static Attempt<AttachmentDetails> SafelyGetAttachmentDetails(Message telegramInputMessage)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!

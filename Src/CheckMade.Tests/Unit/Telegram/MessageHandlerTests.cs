@@ -8,11 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
+using Xunit.Abstractions;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace CheckMade.Tests.Unit.Telegram;
 
-public class MessageHandlerTests
+public class MessageHandlerTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
@@ -196,6 +197,15 @@ public class MessageHandlerTests
         var handler = _services.GetRequiredService<IMessageHandler>();
         const string expectedErrorCode = "W3DL9";
     
+        mockBotClient
+            .Setup(
+                x => x.SendTextMessageOrThrowAsync(
+                    invalidBotCommandMessage.Chat.Id,
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+            .Callback<ChatId, string, CancellationToken>((_, msg, _) => 
+                outputHelper.WriteLine(msg));
+        
         // Act
         await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
     

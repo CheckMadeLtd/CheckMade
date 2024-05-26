@@ -48,7 +48,7 @@ public class ToModelConverterTests
         var actualInputMessage = await converter.SafelyConvertMessageAsync(telegramInputMessage, BotType.Submissions);
 
         // Assert
-        actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
+        actualInputMessage.GetValueOrDefault().Should().BeEquivalentTo(expectedInputMessage);
     }
     
     [Theory]
@@ -64,7 +64,6 @@ public class ToModelConverterTests
         // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
         
-        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         var telegramAttachmentMessage = attachmentType switch
         {
             AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
@@ -102,7 +101,7 @@ public class ToModelConverterTests
             telegramAttachmentMessage, BotType.Submissions);
         
         // Assert
-        actualInputMessage.Should().BeEquivalentTo(expectedInputMessage);
+        actualInputMessage.GetValueOrDefault().Should().BeEquivalentTo(expectedInputMessage);
     }
     
     [Fact]
