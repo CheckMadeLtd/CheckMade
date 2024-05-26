@@ -147,7 +147,7 @@ jobs:
       # E.g. if toplevel project is CheckMade.Telegram.Function then test project is assumed to start with CheckMade.Telegram
       # and to end with 'Tests' (with other possible parts in the middle).
       
-      - name: Set Build & Test Project Parameters
+      - name: Set Build & Output Parameters
         run: |
           SLN_FILE=$(find . -name '*.sln')
           echo "SLN_FILE: $SLN_FILE"
@@ -162,15 +162,6 @@ jobs:
           TOPLEVEL_PROJECT_FILE=$(echo "$TOPLEVEL_PROJECT_DEFINITION_LINE" | awk -F', ' '{print $2}' | tr -d '"' | sed 's/\\/\//g')
           echo "TOPLEVEL_PROJECT_FILE: $TOPLEVEL_PROJECT_FILE"
           echo "TOPLEVEL_PROJECT_FILE=$TOPLEVEL_PROJECT_FILE" >> $GITHUB_ENV
-          
-          TEST_PROJECT_NAME_PART=$(echo "${{ matrix.toplevel_project }}" | cut -d'.' -f2)
-          echo "TEST_PROJECT_NAME_PART: $TEST_PROJECT_NAME_PART"
-          TOPLEVEL_TEST_PROJECT_LINE=$(grep "Project(\"" $SLN_FILE | grep "$TEST_PROJECT_NAME_PART" | grep "Tests.csproj")
-          echo "TOPLEVEL_TEST_PROJECT_LINE: $TOPLEVEL_TEST_PROJECT_LINE"
-          
-          TOPLEVEL_TEST_PROJECT_FILE=$(echo "$TOPLEVEL_TEST_PROJECT_LINE" | awk -F', ' '{print $2}' | tr -d '"' | sed 's/\\/\//g')
-          echo "TOPLEVEL_TEST_PROJECT_FILE: $TOPLEVEL_TEST_PROJECT_FILE"
-          echo "TOPLEVEL_TEST_PROJECT_FILE=$TOPLEVEL_TEST_PROJECT_FILE" >> $GITHUB_ENV
           
           TARGET_FRAMEWORK=$(cat Directory.Build.props | grep '<TargetFramework>' | \
           sed -n 's/.*<TargetFramework>\(.*\)<\/TargetFramework>.*/\1/p')
@@ -204,10 +195,10 @@ jobs:
           PGPASSWORD: ${{ secrets.PG_SUPER_USER_PSW }} # PGPASSWORD is automatically used by psql
       
       - name: Test
-        run: dotnet test ${{ env.TOPLEVEL_TEST_PROJECT_FILE }} --configuration Release --verbosity minimal
+        run: dotnet test Src/CheckMade.Tests/CheckMade.Tests.csproj --configuration Release --verbosity minimal
         env:
           HOSTING_ENVIRONMENT: "CI"
-          PG_DB_CONNSTRING: ${{ secrets.PG_DB_CONNSTRING }} # contains the ${{ secrets.POSTGRES_CM_APP_USER_PSW }}
+          PG_DB_CONNSTRING: ${{ secrets.PG_DB_CONNSTRING }}
           FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING: ${{ secrets.FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING }}
           GOOGLE_SHEET_ID_TEST_DATA: ${{ vars.GOOGLE_SHEET_ID_TEST_DATA }}
           GOOGLE_API_CREDENTIAL_FILE: ${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
