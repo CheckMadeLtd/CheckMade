@@ -15,11 +15,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En, 
-                        new ModelBotCommand(Ui("/problem"), Ui("Report a problem ❗"))
+                        new ModelBotCommand("/problem", "Report a problem ❗")
                     },
                     {
                         LanguageCode.De, 
-                        new ModelBotCommand(Ui("/problem"), Ui("Ein Problem melden ❗"))
+                        new ModelBotCommand("/problem", "Ein Problem melden ❗")
                     }
                 }
             },
@@ -28,11 +28,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En, 
-                        new ModelBotCommand(Ui("/assessment"), Ui("Submit an assessment ⭐"))
+                        new ModelBotCommand("/assessment", "Submit an assessment ⭐")
                     },
                     {
                         LanguageCode.De, 
-                        new ModelBotCommand(Ui("/bewertung"), Ui("Eine Bewertung vornehmen ⭐"))
+                        new ModelBotCommand("/bewertung", "Eine Bewertung vornehmen ⭐")
                     }
                 }
             },
@@ -41,11 +41,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️"))
+                        new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️"))
+                        new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 } 
             },
@@ -54,12 +54,12 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En, 
-                        new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨"))
+                        new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/ausloggen"), 
-                            Ui("In Ihrer aktuellen Rolle diesen Chat verlassen 💨"))
+                        new ModelBotCommand("/ausloggen", 
+                            "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }
                 } 
             }
@@ -74,11 +74,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/contact"), Ui("Contact a colleague 💬"))
+                        new ModelBotCommand("/contact", "Contact a colleague 💬")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/kontakt"), Ui("Mit einem Kollegen Kontakt aufnehmen 💬"))
+                        new ModelBotCommand("/kontakt", "Mit einem Kollegen Kontakt aufnehmen 💬")
                     }
                 }},
             { CommunicationsBotCommands.Settings,
@@ -86,11 +86,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️"))
+                        new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️"))
+                        new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 }},
             { CommunicationsBotCommands.Logout, 
@@ -98,12 +98,12 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨"))
+                        new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/ausloggen"), 
-                            Ui("In Ihrer aktuellen Rolle diesen Chat verlassen 💨"))
+                        new ModelBotCommand("/ausloggen", 
+                            "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }
                 }}
         };
@@ -117,11 +117,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/status"), Ui("Current status report 📋"))
+                        new ModelBotCommand("/status", "Current status report 📋")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/status"), Ui("Aktueller Statusreport 📋"))
+                        new ModelBotCommand("/status", "Aktueller Statusreport 📋")
                     }
                 }},
             { NotificationsBotCommands.Settings, 
@@ -129,11 +129,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/settings"), Ui("Change settings ⚙️"))
+                        new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/einstellungen"), Ui("Einstellungen ändern ⚙️"))
+                        new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 }},
             { NotificationsBotCommands.Logout, 
@@ -141,12 +141,12 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.En,
-                        new ModelBotCommand(Ui("/logout"), Ui("Exit this chat in your current role 💨"))
+                        new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
                         LanguageCode.De,
-                        new ModelBotCommand(Ui("/ausloggen"), 
-                            Ui("In Ihrer aktuellen Rolle diesen Chat verlassen 💨"))
+                        new ModelBotCommand("/ausloggen", 
+                            "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }
                 }}
         };

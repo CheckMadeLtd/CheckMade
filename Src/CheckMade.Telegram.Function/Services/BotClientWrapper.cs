@@ -65,26 +65,38 @@ internal class BotClientWrapper(
     {
         await botClient.DeleteMyCommandsAsync();
 
-        var telegramBotCommands = botType switch
+        foreach (LanguageCode language in Enum.GetValues(typeof(LanguageCode)))
         {
-            BotType.Submissions => GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu),
-            BotType.Communications => GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu),
-            BotType.Notifications => GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu),
-            _ => throw new ArgumentOutOfRangeException(nameof(botType))
-        };
+            var telegramBotCommands = botType switch
+            {
+                BotType.Submissions => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu, language),
+                BotType.Communications => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
+                BotType.Notifications => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
+                _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            };
         
-        await botClient.SetMyCommandsAsync(telegramBotCommands);
+            await botClient.SetMyCommandsAsync(
+                telegramBotCommands, 
+                scope: null,
+                languageCode: language.ToString().ToLower());
+        }
         
         return Unit.Value;
     }
 
     private BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IDictionary<TEnum, ModelBotCommand> menu) where TEnum : Enum =>
+        IDictionary<TEnum, IDictionary<LanguageCode, ModelBotCommand>> menu, LanguageCode language) 
+        where TEnum : Enum =>
         menu
+            .Select(kvp => kvp.Value)
+            .First(kvp => kvp.ContainsKey(language))
             .Select(kvp => new BotCommand
             {
-                Command = kvp.Value.Command.RawEnglishText, 
-                Description = kvp.Value.Description.RawEnglishText
+                Command = kvp.Value.Command, 
+                Description = kvp.Value.Description
             }).ToArray();
 }
 
