@@ -100,11 +100,10 @@ internal class ToModelConverter(
             BotType.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
-        
+
         var botCommandFromInputMessage = botCommandMenuForCurrentBotType
-            .FirstOrDefault(mbc => 
-                translator.Translate(mbc.Command) == telegramInputMessage.Text)?
-            .Command;
+            .SelectMany(kvp => kvp.Values)
+            .FirstOrDefault(mbc => mbc.Command == telegramInputMessage.Text);
         
         if (botCommandFromInputMessage == null)
             return new Failure (Error: UiConcatenate(
@@ -116,19 +115,19 @@ internal class ToModelConverter(
         {
             BotType.Submissions => Option<int>.Some(
                 (int) allBotCommandMenus.SubmissionsBotCommandMenu
-                .First(kvp => 
-                    kvp.Value.Command == botCommandFromInputMessage)
-                .Key),
+                    .First(kvp => 
+                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                    .Key),
             BotType.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
-                .First(kvp => 
-                    kvp.Value.Command == botCommandFromInputMessage)
-                .Key),
+                    .First(kvp => 
+                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                    .Key),
             BotType.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
-                .First(kvp => 
-                    kvp.Value.Command == botCommandFromInputMessage)
-                .Key),
+                    .First(kvp => 
+                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                    .Key),
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
 
