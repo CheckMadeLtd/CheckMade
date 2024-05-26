@@ -29,19 +29,19 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
 
             case UpdateType.CallbackQuery:
                 // ToDo: Implement separate handling of InlineKeyboardResponseReceived
-                return Attempt<Unit>.Succeed(Unit.Value);
+                return Unit.Value;
 
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
                                       "and new status '{NewStatus}'",
                     update.MyChatMember!.From.Username, update.MyChatMember.OldChatMember.Status, 
                     update.MyChatMember.NewChatMember.Status);
-                return Attempt<Unit>.Succeed(Unit.Value);
+                return Unit.Value;
             
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
                     update.Type, NoSpecialHandlingWarning.GetFormattedEnglish());
-                return Attempt<Unit>.Succeed(Unit.Value);
+                return Unit.Value;
         }
     }
 }

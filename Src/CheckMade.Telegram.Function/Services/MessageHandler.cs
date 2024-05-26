@@ -49,7 +49,7 @@ public class MessageHandler(
             logger.LogWarning("Received message of type '{messageType}': {warning}", 
                 telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish());
 
-            return Attempt<Unit>.Succeed(Unit.Value);
+            return Unit.Value;
         }
 
         var botClient = 
