@@ -62,15 +62,13 @@ public class MessageHandler(
 
         // Will retrieve actual user language preference
         var userLanguagePreference = Option<LanguageCode>.None();
-
         var currentUiLanguage = userLanguagePreference.Match(
             code => code,
             () => defaultUiLanguage.Code);
-        
         var translator = translatorFactory.Create(currentUiLanguage);
         
         var filePathResolver = new TelegramFilePathResolver(botClient);
-        var toModelConverter = toModelConverterFactory.Create(filePathResolver, translator);
+        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
             from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
