@@ -32,7 +32,7 @@ internal class MigrationStartup(
                         // return Console.Error.WriteLineAsync(ex.Message);
                     });
             },
-            errorMessage => Console.Error.WriteLineAsync(errorMessage.RawEnglishText)
+            errorMessage => Console.Error.WriteLineAsync(errorMessage.Error!.GetFormattedEnglish())
         );
     }
 

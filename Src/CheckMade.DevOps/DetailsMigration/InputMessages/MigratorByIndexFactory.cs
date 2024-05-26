@@ -28,10 +28,10 @@ internal class MigratorByIndexFactory
         return typeName.Substring(3, 4);
     }
 
-    public Result<MigratorBase> GetMigrator(string migIndex) => 
+    public Attempt<MigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
             true => migrator,
-            false => Result<MigratorBase>.FromError(Ui("No migrator called 'Mig{0}' was found.", migIndex))
+            false => new Failure(Error: Ui("No migrator called 'Mig{0}' was found.", migIndex))
         };
 }
