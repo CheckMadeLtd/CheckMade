@@ -160,15 +160,15 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleMessageAsync_EchosCorrectBotCommand_ForValidBotCommandInputToSubmissions()
+    public async Task HandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
         var validBotCommand = new BotCommandMenus()
-            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem].Command.RawEnglishText;
+            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem][0].Command;
         var utils = _services.GetRequiredService<ITestUtils>();
-        var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
+        var botCommandMessage = utils.GetBotCommandMessage(((int)SubmissionsBotCommands.Problem).ToString());
         var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
         var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo of a Submissions BotCommand: {validBotCommand}";

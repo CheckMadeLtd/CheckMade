@@ -15,8 +15,6 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             await repo.AddOrThrowAsync(inputMessage);
 
-            var botCommandMenus = new BotCommandMenus();
-
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
                 return UiConcatenate(
                     Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions), 
@@ -25,12 +23,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
             if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
             {
-                var botCommand = botCommandMenus.SubmissionsBotCommandMenu
-                    .FirstOrDefault(kvp => 
-                        (int)kvp.Key == inputMessage.Details.BotCommandEnumCode.GetValueOrDefault())
-                    .Value.Command;
-
-                return UiConcatenate(Ui("Echo of a {0} BotCommand: ", BotType.Submissions), botCommand);
+                return UiConcatenate(
+                    Ui("Echo of a {0} BotCommand: ", BotType.Submissions),
+                    UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString()));
             }
 
             return inputMessage.Details.AttachmentType.Match(
