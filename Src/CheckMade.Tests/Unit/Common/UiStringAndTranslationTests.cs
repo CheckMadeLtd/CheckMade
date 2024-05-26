@@ -301,12 +301,24 @@ public class UiStringAndTranslationTests
     }
     
     [Fact]
-    public void GetFormattedEnglish_ReturnsCorrectResult()
+    public void GetFormattedEnglish_ReturnsCorrectResult_ForSingleRawMessage()
     {
         const string param1 = "param1", param2 = "param2";
         var uiString = Ui("This is a test message with {0} and {1}.", param1, param2);
         const string expected = $"This is a test message with {param1} and {param2}.";
 
+        uiString.GetFormattedEnglish().Should().Be(expected);
+    }
+
+    [Fact]
+    public void GetFormattedEnglish_ReturnsCorrectResult_ForConcatenatedMessage()
+    {
+        const string param1 = "param1", param2 = "param2";
+        var uiString = UiConcatenate(
+            Ui("Test 1 with {0} ", param1),
+            Ui("Test 2 with {0}", param2));
+        const string expected = $"Test 1 with {param1} Test 2 with {param2}";
+        
         uiString.GetFormattedEnglish().Should().Be(expected);
     }
 

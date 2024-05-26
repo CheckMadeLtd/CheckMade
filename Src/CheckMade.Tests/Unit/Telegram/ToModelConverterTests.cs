@@ -168,6 +168,6 @@ public class ToModelConverterTests
         // Assert
         conversionAttempt.IsFailure.Should().BeTrue();
         conversionAttempt.Failure!.Error!.GetFormattedEnglish().Should().Be(
-            "Attachment type Voice is not yet supported!");
+            "Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!");
     }
 }
