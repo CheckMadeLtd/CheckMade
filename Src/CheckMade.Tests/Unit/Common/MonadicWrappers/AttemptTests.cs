@@ -288,7 +288,7 @@ public class AttemptTests
         var source = Attempt<int>.Fail(new Failure(new Exception("Simulated exception")));
         var result = from s in source from res in Binder(s) select res;
         result.IsFailure.Should().BeTrue();
-        result.Failure.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Failure>();
     }
     
     [Fact]
@@ -300,7 +300,7 @@ public class AttemptTests
         var sourceTask = Task.FromResult(Attempt<int>.Fail(new Failure(new Exception("Simulated exception"))));
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
         result.IsFailure.Should().BeTrue();
-        result.Failure.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Failure>();
     }
 
     [Fact]
@@ -314,7 +314,7 @@ public class AttemptTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsFailure.Should().BeTrue();
-        result.Failure.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Failure>();
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -370,7 +370,7 @@ public class AttemptTests
             (s, c) => s + c
         );
         result.IsFailure.Should().BeTrue();
-        result.Failure.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Failure>();
     }
     
     [Fact]
@@ -385,7 +385,7 @@ public class AttemptTests
             (s, c) => s + c
         );
         result.IsFailure.Should().BeTrue();
-        result.Failure.Should().BeOfType<Exception>();
+        result.Failure.Should().BeOfType<Failure>();
     }
 
     [Fact]
