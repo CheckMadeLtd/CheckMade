@@ -25,10 +25,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var basics = GetBasicTestingServices(_services);
         
+        // Arrange
         var textMessage = basics.utils.GetValidTelegramTextMessage("simple valid text");
         var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
 
@@ -53,10 +52,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var basics = GetBasicTestingServices(_services);
         
+        // Arrange
         var attachmentMessage = attachmentType switch
         {
             AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
@@ -163,10 +161,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var basics = GetBasicTestingServices(_services);
         
+        // Arrange
         var validBotCommand = new BotCommandMenus()
             .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem][0].Command;
         var botCommandMessage = basics.utils.GetBotCommandMessage(validBotCommand);
@@ -188,10 +185,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var basics = GetBasicTestingServices(_services);
         
+        // Arrange
         const string invalidBotCommand = "/invalid";
         var invalidBotCommandMessage = basics.utils.GetBotCommandMessage(invalidBotCommand);
         const string expectedErrorCode = "W3DL9";
@@ -226,10 +222,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var basics = GetBasicTestingServices(_services);
         
+        // Arrange
         var startCommandMessage = basics.utils.GetBotCommandMessage(Start.Command);
         var expectedWelcomeMessageSegment = IRequestProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
@@ -260,9 +255,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     //     
     // }
 
-    private (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler)
-        GetBasicTestingServices(IServiceProvider services) => 
-        (services.GetRequiredService<ITestUtils>(), 
-            services.GetRequiredService<Mock<IBotClientWrapper>>(),
-            services.GetRequiredService<IMessageHandler>());
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler)
+        GetBasicTestingServices(IServiceProvider sp) => 
+        (sp.GetRequiredService<ITestUtils>(), 
+            sp.GetRequiredService<Mock<IBotClientWrapper>>(),
+            sp.GetRequiredService<IMessageHandler>());
 }
