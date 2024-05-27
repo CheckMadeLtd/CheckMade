@@ -11,7 +11,7 @@ public interface IUiTranslator
 }
 
 public partial class UiTranslator(
-        Option<IDictionary<string, string>> translationByKey,
+        Option<IReadOnlyDictionary<string, string>> translationByKey,
         ILogger<UiTranslator> logger) 
     : IUiTranslator
 {

@@ -25,7 +25,7 @@ public class UiStringAndTranslationTests
         const string trans = " Deutscher Schlüssel mit Parameter {0} und \n Zeilenumbruch und Leerzeichen am Anfang."; 
         const string param1 = "param1";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { "key1", "translation1" },
@@ -64,7 +64,7 @@ public class UiStringAndTranslationTests
         const string param1 = "param1";
         const string param2 = "param2";
 
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { enKey1, trans1 },
@@ -104,7 +104,7 @@ public class UiStringAndTranslationTests
         const string enKey = "Key is present";
         const string trans = "Der Schlüssel ist present";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { enKey, trans },
@@ -135,7 +135,7 @@ public class UiStringAndTranslationTests
         const string enKey = "Key with {0} and {1} as two params.";
         const string trans = "Schlüssel mit {0} und {1} als zwei Parameter.";
 
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { enKey, trans }
@@ -167,7 +167,7 @@ public class UiStringAndTranslationTests
         const string trans = "Schlüssel mit {0} und {1} als zwei Parameter.";
         const string param1 = "param1";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { enKey, trans }
@@ -201,7 +201,7 @@ public class UiStringAndTranslationTests
         const string param2 = "param2";
         const string param3 = "param3";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { enKey, trans }
@@ -233,7 +233,7 @@ public class UiStringAndTranslationTests
         const string enKey = "My English {0} key with param.";
         const string param1 = "param1";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.None();
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.None();
         
         factory.mockFactory
             .Setup(f => f.Create(factory.deLangCode))
@@ -260,7 +260,7 @@ public class UiStringAndTranslationTests
         const string enString = "My English {0} string with one param.";
         const string param1 = "param1";
         
-        var fakeTranslationByKey = Option<IDictionary<string, string>>.Some(
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
             new Dictionary<string, string>
             {
                 { "some value but not our string", "some irrelevant translation" }
