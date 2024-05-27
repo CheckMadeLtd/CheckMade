@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
@@ -7,6 +8,8 @@ namespace CheckMade.Tests;
 
 internal interface ITestUtils
 {
+    internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
+    
     Randomizer Randomizer { get; }
     
     InputMessage GetValidModelInputTextMessageNoAttachment();
