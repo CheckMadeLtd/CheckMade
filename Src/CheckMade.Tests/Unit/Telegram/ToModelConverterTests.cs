@@ -16,7 +16,7 @@ public class ToModelConverterTests
     [InlineData("Normal valid text message")]
     [InlineData("_")]
     [InlineData(" valid text message \n with line break and trailing spaces ")]
-    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidTextMessage_ToAnyBotType(
+    public async Task SafelyConvertMessageAsync_ConvertsWithCorrectDetails_ForValidTextMessage_ToAnyBotType(
         string textInput)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -51,7 +51,7 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
     [InlineData(AttachmentType.Video)]
-    public async Task ConvertMessage_ConvertsWithCorrectDetails_ForValidAttachmentMessage_ToAnyBotType(
+    public async Task SafelyConvertMessageAsync_ConvertsWithCorrectDetails_ForValidAttachmentMessage_ToAnyBotType(
         AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -93,7 +93,7 @@ public class ToModelConverterTests
     }
     
     [Fact]
-    public async Task ConvertMessage_ReturnsFailure_WhenUserIsNull_ForAnyBotType()
+    public async Task SafelyConvertMessageAsync_ReturnsFailure_WhenUserIsNull_ForAnyBotType()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
          var basics = GetBasicTestingServices(_services);
@@ -104,7 +104,7 @@ public class ToModelConverterTests
     }
     
     [Fact]
-    public async Task ConvertMessage_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
+    public async Task SafelyConvertMessageAsync_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -115,7 +115,7 @@ public class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertMessage_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeVoiceIsSent_ToAnyBotType()
+    public async Task SafelyConvertMessageAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
