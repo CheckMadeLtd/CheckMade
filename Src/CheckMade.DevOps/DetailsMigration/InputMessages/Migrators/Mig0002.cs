@@ -1,12 +1,10 @@
-using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+// namespace CheckMade.DevOps.DetailsMigration.InputMessages.Migrators;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages.Migrators;
-
-internal class Mig0002(MigrationRepository migRepo) : MigratorBase(migRepo)
-{
-    protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
-        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
-    {
+// internal class Mig0002(MigrationRepository migRepo) : MigratorBase(migRepo)
+// {
+//     protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+//         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
+    // {
         /*
          * Postprocessing after SQL Mig 006
          * - Moving RecipientBotType out of Details, into the new dedicated field in tlgr_messages
@@ -17,6 +15,6 @@ internal class Mig0002(MigrationRepository migRepo) : MigratorBase(migRepo)
          * Maybe I need to bring back the ability to also update non-Details fields? Apparently! 
          */
         
-        throw new NotImplementedException();
-    }
-}
+//         throw new NotImplementedException();
+//     }
+// }
