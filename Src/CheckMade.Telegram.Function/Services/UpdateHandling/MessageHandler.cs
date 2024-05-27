@@ -1,5 +1,7 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Telegram.Function.Services.BotClient;
+using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
@@ -9,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IMessageHandler
 {

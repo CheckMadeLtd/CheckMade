@@ -1,4 +1,5 @@
-using CheckMade.Telegram.Function.Services;
+using CheckMade.Telegram.Function.Services.BotClient;
+using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;

@@ -1,4 +1,4 @@
-using CheckMade.Telegram.Function.Services;
+using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Model;
 
 namespace CheckMade.Tests.Startup.DefaultMocks;

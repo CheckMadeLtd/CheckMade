@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Telegram.Function.Services;
+using CheckMade.Telegram.Function.Services.BotClient;
+using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;

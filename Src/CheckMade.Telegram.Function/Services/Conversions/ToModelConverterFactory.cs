@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverterFactory
 {

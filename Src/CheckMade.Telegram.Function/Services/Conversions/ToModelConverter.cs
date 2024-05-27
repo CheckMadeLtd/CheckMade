@@ -5,7 +5,7 @@ using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {

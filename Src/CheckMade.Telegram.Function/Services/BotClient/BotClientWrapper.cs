@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.BotClient;
 
 /* The need for a Wrapper around ITelegramBotClient arises from the need to be able to mock it in unit tests
  and thereby allow verifications, to check that my code 'uses' this important external dependency correctly */

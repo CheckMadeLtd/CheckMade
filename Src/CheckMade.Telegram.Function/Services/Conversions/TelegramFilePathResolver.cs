@@ -1,6 +1,7 @@
+using CheckMade.Telegram.Function.Services.BotClient;
 using File = Telegram.Bot.Types.File;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface ITelegramFilePathResolver
 {

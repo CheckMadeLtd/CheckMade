@@ -4,7 +4,7 @@ using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace CheckMade.Telegram.Function.Services;
+namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientFactory
 {
