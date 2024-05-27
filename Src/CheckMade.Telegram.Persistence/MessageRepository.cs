@@ -20,11 +20,15 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         var commands = inputMessages.Select(inputMessage =>
         {
-            var command = new NpgsqlCommand("INSERT INTO tlgr_messages (user_id, chat_id, details)" +
-                                            " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails)");
+            var command = new NpgsqlCommand("INSERT INTO tlgr_messages " +
+                                            "(user_id, chat_id, details, last_data_migration, bot_type)" +
+                                            " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails," +
+                                            "@lastDataMig, @botType)");
 
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
+            command.Parameters.AddWithValue("@lastDataMig", 0);
+            command.Parameters.AddWithValue("@botType", (int) inputMessage.BotType);
 
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
@@ -84,13 +88,13 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
-        var telegramBotType = await reader.GetFieldValueAsync<BotType>(reader.GetOrdinal("bot_type"));
+        var telegramBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
         var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
         var message = new InputMessage(
             telegramUserId,
             telegramChatId,
-            telegramBotType,
+            (BotType) Enum.ToObject(typeof(BotType), telegramBotType),
             JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
