@@ -27,17 +27,16 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTelegramTextMessage("simple valid text");
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IMessageHandler>();
+        var basics = GetBasicTestingServices(_services);
+        
+        var textMessage = basics.utils.GetValidTelegramTextMessage("simple valid text");
         var expectedOutputMessage = $"Echo from bot {botType}: {textMessage.Text}";
 
         // Act
-        await handler.SafelyHandleMessageAsync(textMessage, botType);
+        await basics.handler.SafelyHandleMessageAsync(textMessage, botType);
         
         // Assert
-        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 textMessage.Chat.Id,
                 expectedOutputMessage,
                 Option<IReplyMarkup>.None(),
@@ -56,25 +55,24 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var basics = GetBasicTestingServices(_services);
+        
         var attachmentMessage = attachmentType switch
         {
-            AttachmentType.Audio => utils.GetValidTelegramAudioMessage(),
-            AttachmentType.Document => utils.GetValidTelegramDocumentMessage(),
-            AttachmentType.Photo => utils.GetValidTelegramPhotoMessage(),
-            AttachmentType.Video => utils.GetValidTelegramVideoMessage(),
+            AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
+            AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
+            AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Video => basics.utils.GetValidTelegramVideoMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IMessageHandler>();
         var expectedOutputMessage = $"Echo from bot Submissions: {attachmentType}";
         
         // Act
-        await handler.SafelyHandleMessageAsync(attachmentMessage, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(attachmentMessage, BotType.Submissions);
         
         // Assert
-        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 attachmentMessage.Chat.Id,
                 expectedOutputMessage, 
                 Option<IReplyMarkup>.None(),
@@ -105,13 +103,14 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<Exception>(), 
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!))
             .Verifiable();
-        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
         
+        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var handler = _services.GetRequiredService<IMessageHandler>();
+        
+        var basics = GetBasicTestingServices(_services);
         
         // Act 
-        await handler.SafelyHandleMessageAsync(unknownMessage, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(unknownMessage, BotType.Submissions);
         
         // Assert
         mockLogger.Verify();
@@ -139,12 +138,11 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             .Returns(mockSubmissionsRequestProcessor.Object);
         
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockRequestProcessorSelector.Object);
-        
         _services = serviceCollection.BuildServiceProvider();
+
+        var basics = GetBasicTestingServices(_services);
         
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        
-        mockBotClient
+        basics.mockBotClient
             .Setup(x => x.SendTextMessageOrThrowAsync(
                 It.IsAny<ChatId>(), 
                 It.Is<string>(output => output.Contains(mockErrorMessage)),
@@ -152,15 +150,13 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var textMessage = utils.GetValidTelegramTextMessage("random valid text");
-        var handler = _services.GetRequiredService<IMessageHandler>();
+        var textMessage = basics.utils.GetValidTelegramTextMessage("random valid text");
         
         // Act 
-        await handler.SafelyHandleMessageAsync(textMessage, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
-        mockBotClient.Verify();
+        basics.mockBotClient.Verify();
     }
 
     [Fact]
@@ -169,19 +165,18 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
+        var basics = GetBasicTestingServices(_services);
+        
         var validBotCommand = new BotCommandMenus()
             .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem][0].Command;
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var botCommandMessage = utils.GetBotCommandMessage(validBotCommand);
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IMessageHandler>();
+        var botCommandMessage = basics.utils.GetBotCommandMessage(validBotCommand);
         var expectedOutputMessage = $"Echo of a Submissions BotCommand: {(int)SubmissionsBotCommands.Problem}";
 
         // Act
-        await handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(botCommandMessage, BotType.Submissions);
 
         // Assert
-        mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 botCommandMessage.Chat.Id,
                 expectedOutputMessage,
                 Option<IReplyMarkup>.None(),
@@ -195,14 +190,13 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
+        var basics = GetBasicTestingServices(_services);
+        
         const string invalidBotCommand = "/invalid";
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var invalidBotCommandMessage = utils.GetBotCommandMessage(invalidBotCommand);
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IMessageHandler>();
+        var invalidBotCommandMessage = basics.utils.GetBotCommandMessage(invalidBotCommand);
         const string expectedErrorCode = "W3DL9";
     
-        mockBotClient
+        basics.mockBotClient
             .Setup(
                 x => x.SendTextMessageOrThrowAsync(
                     invalidBotCommandMessage.Chat.Id,
@@ -213,10 +207,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 outputHelper.WriteLine(msg));
         
         // Act
-        await handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(invalidBotCommandMessage, BotType.Submissions);
     
         // Assert
-        mockBotClient.Verify(
+        basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 invalidBotCommandMessage.Chat.Id,
                 It.Is<string>(msg => msg.Contains(expectedErrorCode)),
@@ -234,17 +228,16 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         // Arrange
-        var utils = _services.GetRequiredService<ITestUtils>();
-        var mockBotClient = _services.GetRequiredService<Mock<IBotClientWrapper>>();
-        var handler = _services.GetRequiredService<IMessageHandler>();
-        var startCommandMessage = utils.GetBotCommandMessage(Start.Command);
+        var basics = GetBasicTestingServices(_services);
+        
+        var startCommandMessage = basics.utils.GetBotCommandMessage(Start.Command);
         var expectedWelcomeMessageSegment = IRequestProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
         // Act
-        await handler.SafelyHandleMessageAsync(startCommandMessage, botType);
+        await basics.handler.SafelyHandleMessageAsync(startCommandMessage, botType);
         
         // Assert
-        mockBotClient.Verify(
+        basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 startCommandMessage.Chat.Id,
                 It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
@@ -253,4 +246,23 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
+
+    // [Fact]
+    // public void SafelyHandleMessageAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     // Arrange
+    //     var fakeInvalidLanguageCodeInTelegramMessage = "xyz";
+    //     var basics = GetBasicTestingServices(_services);
+    //     
+    //     // Act
+    //     
+    // }
+
+    private (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler)
+        GetBasicTestingServices(IServiceProvider services) => 
+        (services.GetRequiredService<ITestUtils>(), 
+            services.GetRequiredService<Mock<IBotClientWrapper>>(),
+            services.GetRequiredService<IMessageHandler>());
 }
