@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;

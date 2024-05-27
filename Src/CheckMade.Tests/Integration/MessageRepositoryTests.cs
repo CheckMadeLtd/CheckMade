@@ -1,7 +1,7 @@
 using CheckMade.Common.Interfaces;
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Utils;
 using CheckMade.Common.Persistence;
+using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
