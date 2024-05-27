@@ -20,7 +20,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions), 
                     IRequestProcessor.SeeValidBotCommandsInstruction);
             
-            if (inputMessage.Details.RecipientBotType is BotType.Submissions &&
+            if (inputMessage.BotType is BotType.Submissions &&
                 inputMessage.Details.BotCommandEnumCode.IsSome)
             {
                 return UiConcatenate(

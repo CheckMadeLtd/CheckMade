@@ -34,7 +34,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<InputMessage>
             {
-                new (message.UserId, message.ChatId, message.Details)
+                new (message.UserId, message.ChatId, message.BotType, message.Details)
             };
         
             // Act

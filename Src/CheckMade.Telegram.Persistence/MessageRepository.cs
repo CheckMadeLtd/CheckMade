@@ -84,11 +84,13 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
+        var telegramBotType = await reader.GetFieldValueAsync<BotType>(reader.GetOrdinal("bot_type"));
         var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
         var message = new InputMessage(
             telegramUserId,
             telegramChatId,
+            telegramBotType,
             JsonHelper.DeserializeFromJsonStrict<MessageDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 

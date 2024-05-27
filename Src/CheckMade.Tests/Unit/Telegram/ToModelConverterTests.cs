@@ -31,9 +31,9 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessage(
             telegramInputMessage.From!.Id,
             telegramInputMessage.Chat.Id,
+            BotType.Submissions,
             new MessageDetails(
                 telegramInputMessage.Date,
-                BotType.Submissions,
                 !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
                     ? telegramInputMessage.Text 
                     : Option<string>.None(),
@@ -81,9 +81,9 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessage(
             telegramAttachmentMessage.From!.Id,
             telegramAttachmentMessage.Chat.Id,
+            BotType.Submissions,
             new MessageDetails(
                 telegramAttachmentMessage.Date,
-                BotType.Submissions,
                 !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
                     ? telegramAttachmentMessage.Caption
                     : Option<string>.None(),

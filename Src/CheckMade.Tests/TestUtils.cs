@@ -35,9 +35,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
+            BotType.Submissions,
             new MessageDetails(
                 DateTime.Now,
-                BotType.Submissions,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
@@ -46,9 +46,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
+            BotType.Submissions,
             new MessageDetails(
                 DateTime.Now,
-                BotType.Submissions,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 AttachmentType.Photo,
