@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.LangExt;
 
-namespace CheckMade.Telegram.Model.BotOperations;
+namespace CheckMade.Telegram.Model.BotResponsePrompts;
 
 public record BotResponsePromptsDefinition
 {

@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Telegram.Model.BotOperations;
+using CheckMade.Telegram.Model.BotResponsePrompts;
 
 namespace CheckMade.Telegram.Model.DTOs;
 

@@ -5,7 +5,7 @@ using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotOperations;
+using CheckMade.Telegram.Model.BotResponsePrompts;
 using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

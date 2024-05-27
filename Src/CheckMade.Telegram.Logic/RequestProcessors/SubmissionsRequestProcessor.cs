@@ -1,7 +1,7 @@
 ﻿using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
-using CheckMade.Telegram.Model.BotOperations;
+using CheckMade.Telegram.Model.BotResponsePrompts;
 using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
