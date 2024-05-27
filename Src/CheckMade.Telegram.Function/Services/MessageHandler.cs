@@ -71,6 +71,7 @@ public class MessageHandler(
             ? (LanguageCode) userLanguagePreference!
             : defaultUiLanguage.Code;
         
+        // FYI: There is a time delay of a couple of minutes on Telegram side when user switches language in Tlgr client
         var translator = translatorFactory.Create(uiLanguage);
         
         var filePathResolver = new TelegramFilePathResolver(botClient);
