@@ -8,7 +8,9 @@ namespace CheckMade.Tests;
 
 internal interface ITestUtils
 {
+    // These string values to be exactly the same as in the corresponding .tsv translation files! 
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
+    internal const string GermanStringForTests = "Deutscher Text für Tests";
     
     Randomizer Randomizer { get; }
     

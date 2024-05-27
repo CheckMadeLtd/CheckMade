@@ -228,6 +228,64 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     [Fact]
     // Agnostic to BotType, using Submissions
+    public async Task SafelyHandleMessageAsync_ReturnsEnglishTestString_ForEnglishLanguageCode()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        // Arrange
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
+            GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
+                ITestUtils.EnglishUiStringForTests));
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        
+        var messageWithEnglishInTlgrUserLangSetting = basics.utils.GetValidTelegramTextMessage("random valid text");
+        messageWithEnglishInTlgrUserLangSetting.From!.LanguageCode = LanguageCode.en.ToString();
+        
+        // Act
+        await basics.handler.SafelyHandleMessageAsync(messageWithEnglishInTlgrUserLangSetting, BotType.Submissions);
+        
+        // Assert
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                messageWithEnglishInTlgrUserLangSetting.Chat.Id,
+                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    // Agnostic to BotType, using Submissions
+    public async Task SafelyHandleMessageAsync_ReturnsGermanTestString_ForGermanLanguageCode()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        // Arrange
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
+            GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
+                ITestUtils.EnglishUiStringForTests));
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        
+        var messageWithGermanInTlgrUserLangSetting = basics.utils.GetValidTelegramTextMessage("random valid text");
+        messageWithGermanInTlgrUserLangSetting.From!.LanguageCode = LanguageCode.de.ToString();
+        
+        // Act
+        await basics.handler.SafelyHandleMessageAsync(messageWithGermanInTlgrUserLangSetting, BotType.Submissions);
+        
+        // Assert
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                messageWithGermanInTlgrUserLangSetting.Chat.Id,
+                ITestUtils.GermanStringForTests,
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    // Agnostic to BotType, using Submissions
     public async Task SafelyHandleMessageAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -240,18 +298,18 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var messageWithUnsupportedLangCode = basics.utils.GetValidTelegramTextMessage("random valid text");
-        messageWithUnsupportedLangCode.From!.LanguageCode = "xyz";
-        var expectedEnglishOutput = ITestUtils.EnglishUiStringForTests.GetFormattedEnglish();
+        var msgWithUnsupportedLangInTlgrUserSetting = 
+            basics.utils.GetValidTelegramTextMessage("random valid text");
+        msgWithUnsupportedLangInTlgrUserSetting.From!.LanguageCode = "xyz";
         
         // Act
-        await basics.handler.SafelyHandleMessageAsync(messageWithUnsupportedLangCode, BotType.Submissions);
+        await basics.handler.SafelyHandleMessageAsync(msgWithUnsupportedLangInTlgrUserSetting, BotType.Submissions);
         
         // Assert
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
-                messageWithUnsupportedLangCode.Chat.Id,
-                expectedEnglishOutput,
+                msgWithUnsupportedLangInTlgrUserSetting.Chat.Id,
+                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
     }
