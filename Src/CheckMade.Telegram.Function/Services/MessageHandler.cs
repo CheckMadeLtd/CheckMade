@@ -24,11 +24,15 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    private static readonly UiString CallToActionAfterErrorReport = 
+    private static readonly UiString CallToActionAfterErrorReport =
         Ui("Please contact technical support or your supervisor.");
+
+    private static IUiTranslator? _uiTranslator;
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
+        _uiTranslator = GetTranslator(telegramInputMessage);
+        
         ChatId chatId = telegramInputMessage.Chat.Id;
         
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
@@ -61,26 +65,13 @@ public class MessageHandler(
                     failure => throw new InvalidOperationException(
                         "Failed to create BotClient", failure.Exception));
 
-        var userLanguagePreferenceIsRecognized = Enum.TryParse(
-            typeof(LanguageCode),
-            telegramInputMessage.From?.LanguageCode,
-            true,
-            out var userLanguagePreference);
-        
-        var uiLanguage = userLanguagePreferenceIsRecognized
-            ? (LanguageCode) userLanguagePreference!
-            : defaultUiLanguage.Code;
-        
-        // FYI: There is a time delay of a couple of minutes on Telegram side when user switches language in Tlgr client
-        var translator = translatorFactory.Create(uiLanguage);
-        
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
             from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
             from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
-            select SendOutputAsync(outputMessage, botClient, chatId, translator);
+            select SendOutputAsync(outputMessage, botClient, chatId);
         
         return (await sendOutputOutcome).Match(
             
@@ -109,7 +100,7 @@ public class MessageHandler(
                 _ = SendOutputAsync(UiConcatenate(
                         errorMessageToUser ?? UiNoTranslate("No error message"),
                         UiNoTranslate(" "),
-                        CallToActionAfterErrorReport), botClient, chatId, translator)
+                        CallToActionAfterErrorReport), botClient, chatId)
                     // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
                     .ContinueWith(task => 
                     { 
@@ -122,13 +113,31 @@ public class MessageHandler(
             });
     }
 
+    // FYI: There is a time delay of a couple of minutes on Telegram side when user switches lang. setting in Tlgr client
+    private IUiTranslator GetTranslator(Message telegramInputMessage)
+    {
+        var userLanguagePreferenceIsRecognized = Enum.TryParse(
+            typeof(LanguageCode),
+            telegramInputMessage.From?.LanguageCode,
+            true,
+            out var userLanguagePreference);
+        
+        var uiLanguage = userLanguagePreferenceIsRecognized
+            ? (LanguageCode) userLanguagePreference!
+            : defaultUiLanguage.Code;
+        
+        return translatorFactory.Create(uiLanguage);
+    }
+    
     private static async Task<Attempt<Unit>> SendOutputAsync(
-        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId, IUiTranslator translator)
+        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId)
     {
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                translator.Translate(outputMessage), 
+                _uiTranslator?.Translate(outputMessage) 
+                ?? throw new ArgumentNullException(nameof(outputMessage), 
+                    "UiTranslator or translated OutputMessage must not be NULL."), 
                 Option<IReplyMarkup>.None())); // ToDo: replace with ReplyMarkup to be contained in outputMessageDto
     }
 }
