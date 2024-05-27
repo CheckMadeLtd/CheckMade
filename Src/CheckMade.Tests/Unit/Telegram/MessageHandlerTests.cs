@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
@@ -39,6 +40,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 textMessage.Chat.Id,
                 expectedOutputMessage,
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -75,6 +77,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 attachmentMessage.Chat.Id,
                 expectedOutputMessage, 
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -144,7 +147,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         mockBotClient
             .Setup(x => x.SendTextMessageOrThrowAsync(
                 It.IsAny<ChatId>(), 
-                It.Is<string>(output => output.Contains(mockErrorMessage)), 
+                It.Is<string>(output => output.Contains(mockErrorMessage)),
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()))
             .Verifiable();
 
@@ -180,6 +184,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 botCommandMessage.Chat.Id,
                 expectedOutputMessage,
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -202,8 +207,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 x => x.SendTextMessageOrThrowAsync(
                     invalidBotCommandMessage.Chat.Id,
                     It.IsAny<string>(),
+                    Option<IReplyMarkup>.None(),
                     It.IsAny<CancellationToken>()))
-            .Callback<ChatId, string, CancellationToken>((_, msg, _) => 
+            .Callback<ChatId, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _) => 
                 outputHelper.WriteLine(msg));
         
         // Act
@@ -214,6 +220,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageOrThrowAsync(
                 invalidBotCommandMessage.Chat.Id,
                 It.Is<string>(msg => msg.Contains(expectedErrorCode)),
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -242,6 +249,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 startCommandMessage.Chat.Id,
                 It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
                                         output.Contains(botType.ToString())),
+                Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }

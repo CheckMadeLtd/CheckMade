@@ -6,6 +6,7 @@ using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -119,6 +120,9 @@ public class MessageHandler(
         UiString outputMessage, IBotClientWrapper botClient, ChatId chatId, IUiTranslator translator)
     {
         return await Attempt<Unit>.RunAsync(async () =>
-            await botClient.SendTextMessageOrThrowAsync(chatId, translator.Translate(outputMessage)));
+            await botClient.SendTextMessageOrThrowAsync(
+                chatId, 
+                translator.Translate(outputMessage), 
+                Option<IReplyMarkup>.None())); // ToDo: replace with ReplyMarkup to be contained in outputMessageDto
     }
 }

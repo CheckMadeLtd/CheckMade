@@ -5,6 +5,7 @@ using CheckMade.Telegram.Model.BotCommands;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
 
@@ -20,6 +21,7 @@ public interface IBotClientWrapper
     Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
         string text,
+        Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
     Task<File> GetFileOrThrowAsync(string fileId);
@@ -39,6 +41,7 @@ public class BotClientWrapper(
     public async Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
         string text,
+        Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
         try
@@ -50,6 +53,7 @@ public class BotClientWrapper(
                 await botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: text,
+                    replyMarkup: replyMarkup.GetValueOrDefault(),
                     cancellationToken: cancellationToken);
             });
         }
