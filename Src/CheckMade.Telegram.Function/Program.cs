@@ -44,7 +44,7 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.De));
+        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.de));
         
         // These two are separated into two because only one of them is relevant for Integration tests
         services.ConfigureBotClientServices(config, hostingEnvironment);

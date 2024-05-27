@@ -1,7 +1,8 @@
+// ReSharper disable InconsistentNaming
 namespace CheckMade.Common.LangExt;
 
 public enum LanguageCode
 {
-    En = 0, // Default
-    De = 1
+    en = 0, // Default
+    de = 1
 }

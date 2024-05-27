@@ -61,11 +61,11 @@ public class MessageHandler(
                     failure => throw new InvalidOperationException(
                         "Failed to create BotClient", failure.Exception));
 
-        // Will retrieve actual user language preference
-        var userLanguagePreference = Option<LanguageCode>.None();
-        var currentUiLanguage = userLanguagePreference.Match(
-            code => code,
-            () => defaultUiLanguage.Code);
+        // ToDo: Also handle failure to parse, then also default
+        var currentUiLanguage = telegramInputMessage.From?.LanguageCode != null 
+            ? telegramInputMessage.From?.LanguageCode
+            : defaultUiLanguage.Code;
+        
         var translator = translatorFactory.Create(currentUiLanguage);
         
         var filePathResolver = new TelegramFilePathResolver(botClient);

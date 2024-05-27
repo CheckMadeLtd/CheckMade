@@ -50,7 +50,7 @@ public abstract class TestStartupBase
         
         Services.AddSingleton<ITestUtils, TestUtils>();
 
-        Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.En));
+        Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         Services.ConfigureBotUpdateHandlingServices();
         Services.ConfigureUtilityServices();

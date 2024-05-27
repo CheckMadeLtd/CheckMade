@@ -87,11 +87,11 @@ public class BotClientWrapper(
             await botClient.SetMyCommandsAsync(
                 telegramBotCommands, 
                 scope: null,
-                languageCode: language != LanguageCode.En 
-                    ? language.ToString().ToLower() 
+                languageCode: language != LanguageCode.en 
+                    ? language.ToString() 
                     : null); // The English BotCommands are the global default
             
-            logger.LogDebug($"Added to bot {botType} for language {language.ToString().ToLower()} " +
+            logger.LogDebug($"Added to bot {botType} for language {language} " +
                             $"the following BotCommands: " +
                             $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
         }
