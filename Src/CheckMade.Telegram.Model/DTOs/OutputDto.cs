@@ -3,7 +3,7 @@ using CheckMade.Telegram.Model.BotOperations;
 
 namespace CheckMade.Telegram.Model.DTOs;
 
-public record OutputMessageDto(
+public record OutputDto(
     UiString Text,
     Option<IEnumerable<BotOperation>> BotOperations,
     Option<IEnumerable<string>> PredefinedChoices);

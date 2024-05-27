@@ -4,6 +4,7 @@ using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Model.BotCommands.DefinitionEnumsByBotType;
+using CheckMade.Telegram.Model.BotOperations;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -237,7 +238,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         // Arrange
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                ITestUtils.EnglishUiStringForTests));
+                new OutputDto(
+                    ITestUtils.EnglishUiStringForTests,
+                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -266,7 +270,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         // Arrange
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                ITestUtils.EnglishUiStringForTests));
+                new OutputDto(
+                    ITestUtils.EnglishUiStringForTests,
+                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -295,7 +302,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         // Arrange
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                ITestUtils.EnglishUiStringForTests));
+                new OutputDto(
+                    ITestUtils.EnglishUiStringForTests,
+                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -324,12 +334,12 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
-        GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(Attempt<UiString> returnValue)
+        GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(Attempt<OutputDto> returnValue)
     {
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
         
         mockSubmissionsRequestProcessor
-            .Setup<Task<Attempt<UiString>>>(rp => 
+            .Setup<Task<Attempt<OutputDto>>>(rp => 
                 rp.SafelyEchoAsync(It.IsAny<InputMessageDto>()))
             .Returns(Task.FromResult(returnValue));
 

@@ -3,10 +3,11 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.BotOperations;
+using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Telegram.Function.Services;
 
@@ -21,14 +22,15 @@ public class MessageHandler(
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
+        IOutputDtoToReplyMarkupConverter replyMarkupConverter,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
     private static readonly UiString CallToActionAfterErrorReport =
         Ui("Please contact technical support or your supervisor.");
 
-    private static IUiTranslator? _uiTranslator;
-    
+    private IUiTranslator? _uiTranslator;
+
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         _uiTranslator = translatorFactory.Create(GetUiLanguage(telegramInputMessage));
@@ -70,8 +72,8 @@ public class MessageHandler(
         
         var sendOutputOutcome =
             from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
-            from outputMessage in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
-            select SendOutputAsync(outputMessage, botClient, chatId);
+            from output in selector.GetRequestProcessor(botType).SafelyEchoAsync(modelInputMessage)
+            select SendOutputAsync(output, botClient, chatId);
         
         return (await sendOutputOutcome).Match(
             
@@ -92,15 +94,15 @@ public class MessageHandler(
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                var errorMessageToUser = failure.Exception != null 
-                    ? UiNoTranslate(failure.Exception.Message) 
-                    : failure.Error;
-                
-                // fire and forget
-                _ = SendOutputAsync(UiConcatenate(
-                        errorMessageToUser ?? UiNoTranslate("No error message"),
+                var errorOutput = new OutputDto(UiConcatenate(
+                        UiNoTranslate(failure.Exception?.Message ?? string.Empty), 
+                        failure.Error,
                         UiNoTranslate(" "),
-                        CallToActionAfterErrorReport), botClient, chatId)
+                        CallToActionAfterErrorReport),
+                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<string>>.None());
+                
+                _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
                     // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
                     .ContinueWith(task => 
                     { 
@@ -127,15 +129,16 @@ public class MessageHandler(
             : defaultUiLanguage.Code;
     }
     
-    private static async Task<Attempt<Unit>> SendOutputAsync(
-        UiString outputMessage, IBotClientWrapper botClient, ChatId chatId)
+    private async Task<Attempt<Unit>> SendOutputAsync(
+        OutputDto output, IBotClientWrapper botClient, ChatId chatId)
     {
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator?.Translate(outputMessage) 
-                ?? throw new ArgumentNullException(nameof(outputMessage), 
-                    "UiTranslator or translated OutputMessage must not be NULL."), 
-                Option<IReplyMarkup>.None())); // ToDo: replace with ReplyMarkup to be contained in outputMessageDto
+                _uiTranslator?.Translate(output.Text) 
+                ?? throw new ArgumentNullException(nameof(output), 
+                    "UiTranslator or translated OutputMessage must not be NULL."),
+                replyMarkupConverter.GetReplyMarkup(output)
+                ));
     }
 }

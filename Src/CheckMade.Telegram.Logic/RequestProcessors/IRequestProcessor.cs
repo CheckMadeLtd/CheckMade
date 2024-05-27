@@ -8,5 +8,5 @@ public interface IRequestProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessageDto inputMessage);
+    public Task<Attempt<OutputDto>> SafelyEchoAsync(InputMessageDto inputMessage);
 }
