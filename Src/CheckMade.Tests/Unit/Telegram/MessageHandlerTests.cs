@@ -22,7 +22,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(BotType.Submissions)]
     [InlineData(BotType.Communications)]
     [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(BotType botType)
+    public async Task SafelyHandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -48,7 +48,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
     [InlineData(AttachmentType.Video)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
+    public async Task SafelyHandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
         AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -80,85 +80,68 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     [Fact]
     // Agnostic to BotType, using Submissions
-    public async Task HandleMessageAsync_LogsWarningAndReturns_ForUnhandledMessageType()
+    public async Task SafelyHandleMessageAsync_LogsWarningAndReturns_ForUnhandledMessageType()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
+        var mockLogger = new Mock<ILogger<MessageHandler>>();
+        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        
         var unknownMessage = new Message // type 'Unknown' is derived by Telegram for lack of any props!
         {
             Chat = new Chat { Id = 123L }
         };
-
+        
         var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
                                     $"{BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish()}";
 
-        var mockLogger = new Mock<ILogger<MessageHandler>>();
-        mockLogger.Setup(l => l.Log(
-                LogLevel.Warning, 
-                It.IsAny<EventId>(), 
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
-                It.IsAny<Exception>(), 
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!))
-            .Verifiable();
-        
-        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        
-        var basics = GetBasicTestingServices(_services);
-        
         // Act 
         await basics.handler.SafelyHandleMessageAsync(unknownMessage, BotType.Submissions);
         
         // Assert
-        mockLogger.Verify();
+        mockLogger.Verify(l => l.Log(
+            LogLevel.Warning, 
+            It.IsAny<EventId>(), 
+            It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
+            It.IsAny<Exception>(), 
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
     }
     
     [Fact]
     // Agnostic to BotType, using Submissions
-    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
+    public async Task SafelyHandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         // Arrange
-        var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
         const string mockErrorMessage = "Mock DataAccess Error";
         
-        mockSubmissionsRequestProcessor
-            .Setup<Task<Attempt<UiString>>>(rp => 
-                rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
-            .Returns(Task.FromResult(Attempt<UiString>
-                .Fail(new Failure(new DataAccessException(mockErrorMessage, new Exception())))));
-
-        var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
-        mockRequestProcessorSelector
-            .Setup(rps => rps.GetRequestProcessor(BotType.Submissions))
-            .Returns(mockSubmissionsRequestProcessor.Object);
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
+            GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
+                new Failure(new DataAccessException(mockErrorMessage, new Exception()))));
         
-        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockRequestProcessorSelector.Object);
         _services = serviceCollection.BuildServiceProvider();
-
         var basics = GetBasicTestingServices(_services);
         
-        basics.mockBotClient
-            .Setup(x => x.SendTextMessageOrThrowAsync(
-                It.IsAny<ChatId>(), 
-                It.Is<string>(output => output.Contains(mockErrorMessage)),
-                Option<IReplyMarkup>.None(),
-                It.IsAny<CancellationToken>()))
-            .Verifiable();
-
         var textMessage = basics.utils.GetValidTelegramTextMessage("random valid text");
         
         // Act 
         await basics.handler.SafelyHandleMessageAsync(textMessage, BotType.Submissions);
         
         // Assert
-        basics.mockBotClient.Verify();
+        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
+            It.IsAny<ChatId>(), 
+            It.Is<string>(output => output.Contains(mockErrorMessage)),
+            Option<IReplyMarkup>.None(),
+            It.IsAny<CancellationToken>()));
     }
 
     [Fact]
-    public async Task HandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
+    public async Task SafelyHandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -182,7 +165,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
+    public async Task SafelyHandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -192,6 +175,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var invalidBotCommandMessage = basics.utils.GetBotCommandMessage(invalidBotCommand);
         const string expectedErrorCode = "W3DL9";
     
+        // Writing out to OutputHelper to see the entire error message, as an additional manual verification
         basics.mockBotClient
             .Setup(
                 x => x.SendTextMessageOrThrowAsync(
@@ -219,7 +203,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(BotType.Submissions)]
     [InlineData(BotType.Communications)]
     [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
+    public async Task SafelyHandleMessageAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -242,22 +226,60 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    // [Fact]
-    // public void SafelyHandleMessageAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
-    // {
-    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
-    //     
-    //     // Arrange
-    //     var fakeInvalidLanguageCodeInTelegramMessage = "xyz";
-    //     var basics = GetBasicTestingServices(_services);
-    //     
-    //     // Act
-    //     
-    // }
+    [Fact]
+    // Agnostic to BotType, using Submissions
+    public async Task SafelyHandleMessageAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        // Arrange
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
+            GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
+                ITestUtils.EnglishUiStringForTests));
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        
+        var messageWithUnsupportedLangCode = basics.utils.GetValidTelegramTextMessage("random valid text");
+        messageWithUnsupportedLangCode.From!.LanguageCode = "xyz";
+        var expectedEnglishOutput = ITestUtils.EnglishUiStringForTests.GetFormattedEnglish();
+        
+        // Act
+        await basics.handler.SafelyHandleMessageAsync(messageWithUnsupportedLangCode, BotType.Submissions);
+        
+        // Assert
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                messageWithUnsupportedLangCode.Chat.Id,
+                expectedEnglishOutput,
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler)
         GetBasicTestingServices(IServiceProvider sp) => 
         (sp.GetRequiredService<ITestUtils>(), 
             sp.GetRequiredService<Mock<IBotClientWrapper>>(),
             sp.GetRequiredService<IMessageHandler>());
+
+    // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
+    private static IRequestProcessorSelector 
+        GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(Attempt<UiString> returnValue)
+    {
+        var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
+        
+        mockSubmissionsRequestProcessor
+            .Setup<Task<Attempt<UiString>>>(rp => 
+                rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
+            .Returns(Task.FromResult(returnValue));
+
+        var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
+        
+        mockRequestProcessorSelector
+            .Setup(rps => 
+                rps.GetRequestProcessor(BotType.Submissions))
+            .Returns(mockSubmissionsRequestProcessor.Object);
+
+        return mockRequestProcessorSelector.Object;
+    }
 }
