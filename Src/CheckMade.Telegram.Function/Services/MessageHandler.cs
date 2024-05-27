@@ -31,7 +31,7 @@ public class MessageHandler(
     
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
-        _uiTranslator = GetTranslator(telegramInputMessage);
+        _uiTranslator = translatorFactory.Create(GetUiLanguage(telegramInputMessage));
         
         ChatId chatId = telegramInputMessage.Chat.Id;
         
@@ -114,7 +114,7 @@ public class MessageHandler(
     }
 
     // FYI: There is a time delay of a couple of minutes on Telegram side when user switches lang. setting in Tlgr client
-    private IUiTranslator GetTranslator(Message telegramInputMessage)
+    private LanguageCode GetUiLanguage(Message telegramInputMessage)
     {
         var userLanguagePreferenceIsRecognized = Enum.TryParse(
             typeof(LanguageCode),
@@ -122,11 +122,9 @@ public class MessageHandler(
             true,
             out var userLanguagePreference);
         
-        var uiLanguage = userLanguagePreferenceIsRecognized
+        return userLanguagePreferenceIsRecognized
             ? (LanguageCode) userLanguagePreference!
             : defaultUiLanguage.Code;
-        
-        return translatorFactory.Create(uiLanguage);
     }
     
     private static async Task<Attempt<Unit>> SendOutputAsync(
