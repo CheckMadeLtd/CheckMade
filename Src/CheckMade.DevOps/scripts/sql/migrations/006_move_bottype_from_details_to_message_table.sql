@@ -1,0 +1,1 @@
+ALTER TABLE tlgr_messages ADD COLUMN bot_type SMALLINT;
