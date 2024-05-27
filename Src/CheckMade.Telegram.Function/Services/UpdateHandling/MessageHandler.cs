@@ -101,7 +101,7 @@ public class MessageHandler(
                         failure.Error,
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport),
-                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<BotResponsePrompt>>.None(), 
                     Option<IEnumerable<string>>.None());
                 
                 _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget

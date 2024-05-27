@@ -5,6 +5,6 @@ namespace CheckMade.Telegram.Model.DTOs;
 
 public record OutputDto(
     UiString Text,
-    Option<IEnumerable<BotOperation>> BotOperations,
+    Option<IEnumerable<BotResponsePrompt>> BotOperations,
     Option<IEnumerable<string>> PredefinedChoices);
     

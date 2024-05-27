@@ -19,14 +19,14 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
                     UiConcatenate(
                         Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications),
                         IRequestProcessor.SeeValidBotCommandsInstruction),
-                    Option<IEnumerable<BotOperation>>.None(),
+                    Option<IEnumerable<BotResponsePrompt>>.None(),
                     Option<IEnumerable<string>>.None()));
             }
 
             return Task.FromResult(new OutputDto(
                 Ui("Echo from bot {0}: {1}", BotType.Notifications,
                     inputMessage.Details.Text.GetValueOrDefault()),
-                Option<IEnumerable<BotOperation>>.None(),
+                Option<IEnumerable<BotResponsePrompt>>.None(),
                 Option<IEnumerable<string>>.None()));
         });
     }

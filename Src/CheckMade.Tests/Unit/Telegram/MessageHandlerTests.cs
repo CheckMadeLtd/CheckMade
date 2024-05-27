@@ -241,7 +241,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<BotResponsePrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
@@ -273,7 +273,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<BotResponsePrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
@@ -305,7 +305,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotOperation>>.None(), 
+                    Option<IEnumerable<BotResponsePrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
