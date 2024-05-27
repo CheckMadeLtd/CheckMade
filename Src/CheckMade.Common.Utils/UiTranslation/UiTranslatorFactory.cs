@@ -25,9 +25,9 @@ public class UiTranslatorFactory(
         var translationByKey = _targetLanguage switch
         {
 
-            LanguageCode.En => Option<IDictionary<string, string>>.None(),
+            LanguageCode.en => Option<IDictionary<string, string>>.None(),
             
-            LanguageCode.De => SafelyCreateTranslationDictionary().Match(
+            LanguageCode.de => SafelyCreateTranslationDictionary().Match(
                 Option<IDictionary<string, string>>.Some,
                 failure =>
                 {
@@ -81,7 +81,7 @@ public class UiTranslatorFactory(
         var assembly = Assembly.GetExecutingAssembly();
         
         var targetLanguagesResourceName =
-            $"{typeof(UiTranslatorFactory).Namespace}.TargetLanguages.{_targetLanguage.ToString().ToLower()}.tsv";
+            $"{typeof(UiTranslatorFactory).Namespace}.TargetLanguages.{_targetLanguage}.tsv";
 
         return assembly.GetManifestResourceStream(targetLanguagesResourceName)!;
     }

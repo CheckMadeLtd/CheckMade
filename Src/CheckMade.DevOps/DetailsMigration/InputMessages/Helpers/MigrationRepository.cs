@@ -44,8 +44,8 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new InputMessage(
             telegramUserId,
             telegramChatId,
+            BotType.Submissions,
             new MessageDetails(DateTime.MinValue,
-                BotType.Submissions,
                 Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),

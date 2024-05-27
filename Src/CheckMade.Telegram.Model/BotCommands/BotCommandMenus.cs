@@ -14,11 +14,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En, 
+                        LanguageCode.en, 
                         new ModelBotCommand("/problem", "Report a problem ❗")
                     },
                     {
-                        LanguageCode.De, 
+                        LanguageCode.de, 
                         new ModelBotCommand("/problem", "Ein Problem melden ❗")
                     }
                 }
@@ -27,11 +27,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En, 
+                        LanguageCode.en, 
                         new ModelBotCommand("/assessment", "Submit an assessment ⭐")
                     },
                     {
-                        LanguageCode.De, 
+                        LanguageCode.de, 
                         new ModelBotCommand("/bewertung", "Eine Bewertung vornehmen ⭐")
                     }
                 }
@@ -40,11 +40,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 } 
@@ -53,11 +53,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En, 
+                        LanguageCode.en, 
                         new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/ausloggen", 
                             "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }
@@ -73,11 +73,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/contact", "Contact a colleague 💬")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/kontakt", "Mit einem Kollegen Kontakt aufnehmen 💬")
                     }
                 }},
@@ -85,11 +85,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 }},
@@ -97,11 +97,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/ausloggen", 
                             "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }
@@ -116,11 +116,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/status", "Current status report 📋")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/status", "Aktueller Statusreport 📋")
                     }
                 }},
@@ -128,11 +128,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/settings", "Change settings ⚙️")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/einstellungen", "Einstellungen ändern ⚙️")
                     }
                 }},
@@ -140,11 +140,11 @@ public record BotCommandMenus
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
-                        LanguageCode.En,
+                        LanguageCode.en,
                         new ModelBotCommand("/logout", "Exit this chat in your current role 💨")
                     },
                     {
-                        LanguageCode.De,
+                        LanguageCode.de,
                         new ModelBotCommand("/ausloggen", 
                             "In Ihrer aktuellen Rolle diesen Chat verlassen 💨")
                     }

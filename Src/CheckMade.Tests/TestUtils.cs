@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
 using Telegram.Bot.Types;
@@ -7,6 +8,10 @@ namespace CheckMade.Tests;
 
 internal interface ITestUtils
 {
+    // These string values to be exactly the same as in the corresponding .tsv translation files! 
+    internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
+    internal const string GermanStringForTests = "Deutscher Text für Tests";
+    
     Randomizer Randomizer { get; }
     
     InputMessage GetValidModelInputTextMessageNoAttachment();
@@ -35,9 +40,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
+            BotType.Submissions,
             new MessageDetails(
                 DateTime.Now,
-                BotType.Submissions,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
@@ -46,9 +51,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessage GetValidModelInputTextMessageWithAttachment() =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
+            BotType.Submissions,
             new MessageDetails(
                 DateTime.Now,
-                BotType.Submissions,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 AttachmentType.Photo,

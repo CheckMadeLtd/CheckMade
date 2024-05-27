@@ -291,7 +291,7 @@ public class UiStringAndTranslationTests
         const string enKey = "My English {0} key with param.";
         const string param1 = "param1";
         
-        var uiTranslator = factory.Create(LanguageCode.En);
+        var uiTranslator = factory.Create(LanguageCode.en);
         var uiString = Ui(enKey, param1);
         
         // Act
@@ -323,9 +323,22 @@ public class UiStringAndTranslationTests
         uiString.GetFormattedEnglish().Should().Be(expected);
     }
 
+    [Fact]
+    public void GetFormattedEnglish_ReturnsCorrectResult_ForConcatenatedMessagesIncludingNull()
+    {
+        const string param1 = "param1", param2 = "param2";
+        var uiString = UiConcatenate(
+            Ui("Test 1 with {0} ", param1),
+            null,
+            Ui("Test 2 with {0}", param2));
+        const string expected = $"Test 1 with {param1} Test 2 with {param2}";
+        
+        uiString.GetFormattedEnglish().Should().Be(expected);
+    }
+
     private (Mock<IUiTranslatorFactory> mockFactory, ILogger<UiTranslator> logger, LanguageCode deLangCode) 
         GetUiTranslatorFactoryWithBasicDependencies() =>
         (new Mock<IUiTranslatorFactory>(),
             _services!.GetRequiredService<ILogger<UiTranslator>>(),
-            LanguageCode.De);
+            LanguageCode.de);
 }

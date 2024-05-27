@@ -10,3 +10,4 @@ CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
 CheckMade.Telegram.Function	Failed to convert Telegram Message to Model. 	Fehler beim Konvertieren der Telegram-Nachricht in das Modell. 
+CheckMade.Tests	English string for testing	Deutscher Text für Tests
