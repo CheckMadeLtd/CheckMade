@@ -7,9 +7,9 @@ namespace CheckMade.Telegram.Model.BotCommands;
 
 public record BotCommandMenus
 {
-    public IDictionary<SubmissionsBotCommands, IDictionary<LanguageCode, ModelBotCommand>> 
+    public IReadOnlyDictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
         SubmissionsBotCommandMenu { get; } = 
-        new Dictionary<SubmissionsBotCommands, IDictionary<LanguageCode, ModelBotCommand>>
+        new Dictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
         {
             { SubmissionsBotCommands.Problem, 
                 new Dictionary<LanguageCode, ModelBotCommand>
@@ -66,9 +66,9 @@ public record BotCommandMenus
             }
         };
     
-    public IDictionary<CommunicationsBotCommands, IDictionary<LanguageCode, ModelBotCommand>> 
+    public IReadOnlyDictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
         CommunicationsBotCommandMenu { get; } = 
-        new Dictionary<CommunicationsBotCommands, IDictionary<LanguageCode, ModelBotCommand>>
+        new Dictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
         {
             { CommunicationsBotCommands.Contact, 
                 new Dictionary<LanguageCode, ModelBotCommand>
@@ -109,9 +109,9 @@ public record BotCommandMenus
                 }}
         };
 
-    public IDictionary<NotificationsBotCommands, IDictionary<LanguageCode, ModelBotCommand>> 
+    public IReadOnlyDictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
         NotificationsBotCommandMenu { get; } = 
-        new Dictionary<NotificationsBotCommands, IDictionary<LanguageCode, ModelBotCommand>>
+        new Dictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
         {
             { NotificationsBotCommands.Status, 
                 new Dictionary<LanguageCode, ModelBotCommand>
