@@ -1,6 +1,7 @@
 ﻿using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 
@@ -8,7 +9,7 @@ public interface ICommunicationsRequestProcessor : IRequestProcessor;
 
 public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
 {
-    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
+    public Task<Attempt<UiString>> SafelyEchoAsync(InputMessageDto inputMessage)
     {
         return Attempt<UiString>.RunAsync(() => 
             Task.FromResult(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode 

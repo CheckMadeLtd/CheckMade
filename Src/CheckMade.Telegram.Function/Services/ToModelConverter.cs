@@ -1,6 +1,7 @@
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -8,12 +9,12 @@ namespace CheckMade.Telegram.Function.Services;
 
 public interface IToModelConverter
 {
-    Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<InputMessageDto>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<Attempt<InputMessage>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<InputMessageDto>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType)
     {
         return (await
                     (from attachmentDetails
@@ -26,7 +27,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                         select modelInputMessage))
             .Match(
             modelInputMessage => modelInputMessage,
-            failure => Attempt<InputMessage>.Fail(
+            failure => Attempt<InputMessageDto>.Fail(
                 failure with // preserves any contained Exception and prefixes any contained Error UiString
                 {
                     Error = UiConcatenate(
@@ -130,7 +131,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
     
-    private async Task<Attempt<InputMessage>> GetInputMessageAsync(
+    private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
         Message telegramInputMessage,
         BotType botType,
         AttachmentDetails attachmentDetails,
@@ -162,8 +163,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramInputMessage.Text
             : telegramInputMessage.Caption;
         
-        return new InputMessage(userId.Value, telegramInputMessage.Chat.Id, botType, 
-            new MessageDetails(
+        return new InputMessageDto(userId.Value, telegramInputMessage.Chat.Id, botType, 
+            new InputMessageDetails(
                 telegramInputMessage.Date, 
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 telegramAttachmentUrl,

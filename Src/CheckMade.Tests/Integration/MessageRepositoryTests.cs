@@ -3,7 +3,7 @@ using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using FluentAssertions;
@@ -32,7 +32,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
 
         foreach (var message in modelInputMessages)
         {
-            var expectedRetrieval = new List<InputMessage>
+            var expectedRetrieval = new List<InputMessageDto>
             {
                 new (message.UserId, message.ChatId, message.BotType, message.Details)
             };
@@ -119,7 +119,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
         // Act
-        Func<Task<IEnumerable<InputMessage>>> getAllAction = async () => 
+        Func<Task<IEnumerable<InputMessageDto>>> getAllAction = async () => 
             await messageRepo.GetAllOrThrowAsync(devDbUserId);
         
         // Assert 

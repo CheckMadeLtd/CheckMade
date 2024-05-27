@@ -3,6 +3,7 @@ using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -328,7 +329,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         mockSubmissionsRequestProcessor
             .Setup<Task<Attempt<UiString>>>(rp => 
-                rp.SafelyEchoAsync(It.IsAny<InputMessage>()))
+                rp.SafelyEchoAsync(It.IsAny<InputMessageDto>()))
             .Returns(Task.FromResult(returnValue));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();

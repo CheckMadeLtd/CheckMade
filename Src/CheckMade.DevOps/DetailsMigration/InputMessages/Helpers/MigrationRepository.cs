@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.DTOs;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
@@ -41,11 +42,11 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
-        var messageWithFakeEmptyDetails = new InputMessage(
+        var messageWithFakeEmptyDetails = new InputMessageDto(
             telegramUserId,
             telegramChatId,
             BotType.Submissions,
-            new MessageDetails(DateTime.MinValue,
+            new InputMessageDetails(DateTime.MinValue,
                 Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),

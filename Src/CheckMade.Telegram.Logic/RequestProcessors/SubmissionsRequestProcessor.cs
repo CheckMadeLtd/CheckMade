@@ -2,6 +2,7 @@
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 
@@ -9,7 +10,7 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<Attempt<UiString>> SafelyEchoAsync(InputMessage inputMessage)
+    public async Task<Attempt<UiString>> SafelyEchoAsync(InputMessageDto inputMessage)
     {
         return await Attempt<UiString>.RunAsync(async () =>
         {

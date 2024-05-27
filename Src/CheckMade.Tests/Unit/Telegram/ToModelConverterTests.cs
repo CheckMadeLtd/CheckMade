@@ -1,5 +1,6 @@
 using CheckMade.Telegram.Function.Services;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,11 +26,11 @@ public class ToModelConverterTests
         // Arrange
         var telegramInputMessage = basics.utils.GetValidTelegramTextMessage(textInput);
 
-        var expectedInputMessage = new InputMessage(
+        var expectedInputMessage = new InputMessageDto(
             telegramInputMessage.From!.Id,
             telegramInputMessage.Chat.Id,
             BotType.Submissions,
-            new MessageDetails(
+            new InputMessageDetails(
                 telegramInputMessage.Date,
                 !string.IsNullOrWhiteSpace(telegramInputMessage.Text) 
                     ? telegramInputMessage.Text 
@@ -71,11 +72,11 @@ public class ToModelConverterTests
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.BotToken}/" +
             $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}";
 
-        var expectedInputMessage = new InputMessage(
+        var expectedInputMessage = new InputMessageDto(
             telegramAttachmentMessage.From!.Id,
             telegramAttachmentMessage.Chat.Id,
             BotType.Submissions,
-            new MessageDetails(
+            new InputMessageDetails(
                 telegramAttachmentMessage.Date,
                 !string.IsNullOrWhiteSpace(telegramAttachmentMessage.Caption)
                     ? telegramAttachmentMessage.Caption

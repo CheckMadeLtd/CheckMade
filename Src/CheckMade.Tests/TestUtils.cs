@@ -1,6 +1,7 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Model;
+using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -14,9 +15,9 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    InputMessage GetValidModelInputTextMessageNoAttachment();
-    InputMessage GetValidModelInputTextMessageNoAttachment(long userId);
-    InputMessage GetValidModelInputTextMessageWithAttachment();
+    InputMessageDto GetValidModelInputTextMessageNoAttachment();
+    InputMessageDto GetValidModelInputTextMessageNoAttachment(long userId);
+    InputMessageDto GetValidModelInputTextMessageWithAttachment();
     
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramAudioMessage();
@@ -34,25 +35,25 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 
     public Randomizer Randomizer { get; } = randomizer;
     
-    public InputMessage GetValidModelInputTextMessageNoAttachment() =>
+    public InputMessageDto GetValidModelInputTextMessageNoAttachment() =>
         GetValidModelInputTextMessageNoAttachment(Randomizer.GenerateRandomLong());
 
-    public InputMessage GetValidModelInputTextMessageNoAttachment(long userId) =>
+    public InputMessageDto GetValidModelInputTextMessageNoAttachment(long userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,
-            new MessageDetails(
+            new InputMessageDetails(
                 DateTime.Now,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 Option<int>.None()));
     
-    public InputMessage GetValidModelInputTextMessageWithAttachment() =>
+    public InputMessageDto GetValidModelInputTextMessageWithAttachment() =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,
-            new MessageDetails(
+            new InputMessageDetails(
                 DateTime.Now,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",

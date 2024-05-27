@@ -1,7 +1,7 @@
 
-namespace CheckMade.Telegram.Model;
+namespace CheckMade.Telegram.Model.DTOs;
 
-public record MessageDetails(
+public record InputMessageDetails(
     DateTime TelegramDate,
     Option<string> Text,
     Option<string> AttachmentExternalUrl,
