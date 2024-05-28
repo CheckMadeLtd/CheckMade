@@ -24,7 +24,7 @@ public class MessageHandler(
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
-        IOutputDtoToReplyMarkupConverterFactory replyMarkupConverterFactory,
+        IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
@@ -32,7 +32,7 @@ public class MessageHandler(
         Ui("Please contact technical support or your supervisor.");
 
     private IUiTranslator? _uiTranslator;
-    private IOutputDtoToReplyMarkupConverter? _replyMarkupConverter;
+    private IOutputToReplyMarkupConverter? _replyMarkupConverter;
 
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {

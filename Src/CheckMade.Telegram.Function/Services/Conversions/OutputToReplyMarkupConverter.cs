@@ -5,12 +5,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Telegram.Function.Services.Conversions;
 
-public interface IOutputDtoToReplyMarkupConverter
+public interface IOutputToReplyMarkupConverter
 {
     Option<IReplyMarkup> GetReplyMarkup(OutputDto output);
 }
 
-internal class OutputDtoToReplyMarkupConverter(IUiTranslator translator) : IOutputDtoToReplyMarkupConverter
+internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputToReplyMarkupConverter
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {

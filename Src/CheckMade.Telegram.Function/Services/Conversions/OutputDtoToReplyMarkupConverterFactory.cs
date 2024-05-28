@@ -2,13 +2,13 @@ using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Telegram.Function.Services.Conversions;
 
-public interface IOutputDtoToReplyMarkupConverterFactory
+public interface IOutputToReplyMarkupConverterFactory
 {
-    IOutputDtoToReplyMarkupConverter Create(IUiTranslator translator);
+    IOutputToReplyMarkupConverter Create(IUiTranslator translator);
 }
 
-public class OutputDtoToReplyMarkupConverterFactory : IOutputDtoToReplyMarkupConverterFactory
+public class OutputToReplyMarkupConverterFactory : IOutputToReplyMarkupConverterFactory
 {
-    public IOutputDtoToReplyMarkupConverter Create(IUiTranslator translator) => 
-        new OutputDtoToReplyMarkupConverter(translator);
+    public IOutputToReplyMarkupConverter Create(IUiTranslator translator) => 
+        new OutputToReplyMarkupConverter(translator);
 }

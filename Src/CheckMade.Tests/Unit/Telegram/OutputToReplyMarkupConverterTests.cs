@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Tests.Unit.Telegram;
 
-public class OutputDtoToReplyMarkupConverterTests
+public class OutputToReplyMarkupConverterTests
 {
     private ServiceProvider? _services;
 
@@ -105,9 +105,9 @@ public class OutputDtoToReplyMarkupConverterTests
         Assert.Equivalent(Option<IReplyMarkup>.None(), actualReplyMarkup);
     }
 
-    private static IOutputDtoToReplyMarkupConverter GetConverter(IServiceProvider sp)
+    private static IOutputToReplyMarkupConverter GetConverter(IServiceProvider sp)
     {
-        var converterFactory = sp.GetRequiredService<IOutputDtoToReplyMarkupConverterFactory>();
+        var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
         
         return converterFactory.Create(new UiTranslator(
             Option<IReadOnlyDictionary<string, string>>.None(),
