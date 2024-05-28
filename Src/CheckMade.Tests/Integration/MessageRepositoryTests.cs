@@ -20,8 +20,6 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task MessageRepository_SavesAndRetrievesOneMessage_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
         var modelInputMessages = new[]
         {
@@ -37,18 +35,14 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
                 new (message.UserId, message.ChatId, message.BotType, message.Details)
             };
         
-            // Act
             await messageRepo.AddOrThrowAsync(message);
-    
             var retrievedMessages = 
                 (await messageRepo.GetAllOrThrowAsync(message.UserId))
                 .OrderByDescending(x => x.Details.TelegramDate)
                 .ToList().AsReadOnly();
-
             await messageRepo.HardDeleteAllOrThrowAsync(message.UserId);
         
-            // Assert
-            expectedRetrieval[0].Should().BeEquivalentTo(retrievedMessages[0]);
+            Assert.Equivalent(expectedRetrieval[0], retrievedMessages[0]);
         }
     }
 
@@ -56,8 +50,6 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidMessages()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var utils = _services.GetRequiredService<ITestUtils>();
         var userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
@@ -68,30 +60,24 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         };
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
-        // Act
         await messageRepo.AddOrThrowAsync(modelInputMessages);
         var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
         await messageRepo.HardDeleteAllOrThrowAsync(userId);
 
-        // Assert
-        retrievedMessages.Should().BeEquivalentTo(modelInputMessages);
+        Assert.Equivalent(retrievedMessages, modelInputMessages);
     }
     
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
         var randomizer = _services.GetRequiredService<Randomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         var userId = randomizer.GenerateRandomLong();
     
-        // Act
         var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
     
-        // Assert
-        retrievedMessages.Should().BeEmpty();
+        Assert.Empty(retrievedMessages);
     }
 
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
@@ -106,7 +92,6 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
-        // Arrange
         if (overwriteDefaultDbConnProviderWithPrdDbConn)
         {
             var prdDbConnString = _services.GetRequiredService<PrdDbConnStringProvider>().Get;
@@ -118,11 +103,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         
-        // Act
-        Func<Task<IEnumerable<InputMessageDto>>> getAllAction = async () => 
-            await messageRepo.GetAllOrThrowAsync(devDbUserId);
-        
-        // Assert 
-        await getAllAction.Should().NotThrowAsync<DataAccessException>();
+        // No assert needed: test fails when exception thrown!
+        await messageRepo.GetAllOrThrowAsync(devDbUserId);
     }
 }
