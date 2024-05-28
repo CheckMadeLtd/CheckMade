@@ -28,7 +28,7 @@ public class UiTranslatorFactory(
 
             LanguageCode.en => Option<IReadOnlyDictionary<string, string>>.None(),
             
-            LanguageCode.de => SafelyCreateTranslationDictionary().Match(
+            LanguageCode.de => CreateTranslationDictionary().Match(
                 Option<IReadOnlyDictionary<string, string>>.Some,
                 failure =>
                 {
@@ -46,7 +46,7 @@ public class UiTranslatorFactory(
         return new UiTranslator(translationByKey, loggerForUiTranslator);
     }
 
-    private Attempt<IReadOnlyDictionary<string, string>> SafelyCreateTranslationDictionary()
+    private Attempt<IReadOnlyDictionary<string, string>> CreateTranslationDictionary()
     {
         return Attempt<IReadOnlyDictionary<string, string>>.Run(() =>
         {

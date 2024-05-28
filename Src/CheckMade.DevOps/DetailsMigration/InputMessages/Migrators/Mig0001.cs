@@ -17,7 +17,7 @@
 //      * - update old 'details' to be compatible with current MessageDetails schema
 //      */
 //     
-//     protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+//     protected override Attempt<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
 //         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
 //     {
 //         var updatesBuilder = ImmutableArray.CreateBuilder<DetailsUpdate>();

@@ -9,16 +9,16 @@ namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {
-    Task<Attempt<InputMessageDto>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<InputMessageDto>> ConvertMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<Attempt<InputMessageDto>> SafelyConvertMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<InputMessageDto>> ConvertMessageAsync(Message telegramInputMessage, BotType botType)
     {
         return (await
                     (from attachmentDetails
-                            in SafelyGetAttachmentDetails(telegramInputMessage)
+                            in GetAttachmentDetails(telegramInputMessage)
                         from botCommandEnumCode
                             in GetBotCommandEnumCode(telegramInputMessage, botType)
                         from modelInputMessage
@@ -37,7 +37,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ));
     } 
 
-    private static Attempt<AttachmentDetails> SafelyGetAttachmentDetails(Message telegramInputMessage)
+    private static Attempt<AttachmentDetails> GetAttachmentDetails(Message telegramInputMessage)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
@@ -149,7 +149,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         
         if (attachmentDetails.FileId.IsSome)
         {
-            var pathAttempt = await filePathResolver.SafelyGetTelegramFilePathAsync(
+            var pathAttempt = await filePathResolver.GetTelegramFilePathAsync(
                 attachmentDetails.FileId.GetValueOrDefault());
             
             if (pathAttempt.IsFailure)

@@ -5,14 +5,14 @@ namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface ITelegramFilePathResolver
 {
-    Task<Attempt<string>> SafelyGetTelegramFilePathAsync(string fileId);
+    Task<Attempt<string>> GetTelegramFilePathAsync(string fileId);
 }
 
 internal class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
 {
     internal const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
     
-    public async Task<Attempt<string>> SafelyGetTelegramFilePathAsync(string fileId)
+    public async Task<Attempt<string>> GetTelegramFilePathAsync(string fileId)
     {
         var fileAttempt = await Attempt<File>.RunAsync(async () => await botClient.GetFileOrThrowAsync(fileId));
         

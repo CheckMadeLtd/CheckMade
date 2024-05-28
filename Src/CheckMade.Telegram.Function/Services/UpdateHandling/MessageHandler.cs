@@ -15,7 +15,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IMessageHandler
 {
-    Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType);
 }
 
 public class MessageHandler(
@@ -34,7 +34,7 @@ public class MessageHandler(
     private IUiTranslator? _uiTranslator;
     private IOutputToReplyMarkupConverter? _replyMarkupConverter;
 
-    public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         _uiTranslator = translatorFactory.Create(GetUiLanguage(telegramInputMessage));
         _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
@@ -75,7 +75,7 @@ public class MessageHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
-            from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
+            from modelInputMessage in await toModelConverter.ConvertMessageAsync(telegramInputMessage, botType)
             from output in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
             select SendOutputAsync(output, botClient, chatId);
         

@@ -2,7 +2,7 @@
 
 // internal class Mig0002(MigrationRepository migRepo) : MigratorBase(migRepo)
 // {
-//     protected override Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+//     protected override Attempt<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
 //         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs)
     // {
         /*

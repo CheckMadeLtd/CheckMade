@@ -21,7 +21,7 @@ internal class MigrationStartup(
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
             async migrator =>
             {
-                await (await migrator.SafelyMigrateAsync(targetEnv)).Match<Task>(
+                await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
                     failure =>
