@@ -32,24 +32,33 @@ internal class OutputDtoToReplyMarkupConverter(IUiTranslator translator) : IOutp
 
     private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<BotPrompt> prompts)
     {
-        const int numberOfColumns = 2;
+        const int inlineKeyboardNumberOfColumns = 2;
         
-        var inlineKeyboardMatrix = prompts
+        var inlineKeyboardTable = prompts
             .Select((item, index) => new { Index = index, BotPrompt = item })
-            .GroupBy(x => x.Index / numberOfColumns)
+            .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
             .Select(x => 
                 x.Select(bp => 
                         InlineKeyboardButton.WithCallbackData(
                             translator.Translate(bp.BotPrompt.Text), 
                             bp.BotPrompt.Id))
-                .ToArray())
+                    .ToArray())
             .ToArray();
         
-        return new InlineKeyboardMarkup(inlineKeyboardMatrix);
+        return new InlineKeyboardMarkup(inlineKeyboardTable);
     }
     
     private Option<ReplyKeyboardMarkup> GetReplyKeyboardMarkup(IEnumerable<string> choices)
     {
-        return Option<ReplyKeyboardMarkup>.None();
+        const int replyKeyboardNumberOfColumns = 3;
+
+        var replyKeyboardTable = choices
+            .Select((item, index) => new { Index = index, Choice = item })
+            .GroupBy(x => x.Index / replyKeyboardNumberOfColumns)
+            .Select(x =>
+                x.Select(c => new KeyboardButton(c.Choice)).ToArray())
+            .ToArray();
+        
+        return new ReplyKeyboardMarkup(replyKeyboardTable);
     }
 }
