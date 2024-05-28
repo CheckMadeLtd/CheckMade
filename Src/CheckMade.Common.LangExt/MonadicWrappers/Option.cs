@@ -4,7 +4,7 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 
 public record Option<T>
 {
-    internal T? Value { get; }
+    public T? Value { get; }
     internal bool HasValue { get; }
 
     public bool IsSome => HasValue;
