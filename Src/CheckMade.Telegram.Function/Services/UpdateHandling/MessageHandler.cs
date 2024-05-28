@@ -76,7 +76,7 @@ public class MessageHandler(
         
         var sendOutputOutcome =
             from modelInputMessage in await toModelConverter.SafelyConvertMessageAsync(telegramInputMessage, botType)
-            from output in selector.GetRequestProcessor(botType).SafelyProcessRequestAsync(modelInputMessage)
+            from output in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
             select SendOutputAsync(output, botClient, chatId);
         
         return (await sendOutputOutcome).Match(
