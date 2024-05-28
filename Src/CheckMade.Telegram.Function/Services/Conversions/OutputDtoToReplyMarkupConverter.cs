@@ -32,9 +32,11 @@ internal class OutputDtoToReplyMarkupConverter(IUiTranslator translator) : IOutp
 
     private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<BotPrompt> prompts)
     {
+        const int numberOfColumns = 2;
+        
         var inlineKeyboardMatrix = prompts
             .Select((item, index) => new { Index = index, BotPrompt = item })
-            .GroupBy(x => x.Index / 2)
+            .GroupBy(x => x.Index / numberOfColumns)
             .Select(x => 
                 x.Select(bp => 
                         InlineKeyboardButton.WithCallbackData(
