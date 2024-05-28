@@ -5,7 +5,7 @@ using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
 using CheckMade.Telegram.Model.BotCommands.DefinitionEnumsByBotType;
-using CheckMade.Telegram.Model.BotResponsePrompts;
+using CheckMade.Telegram.Model.BotPrompts;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -241,7 +241,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotResponsePrompt>>.None(), 
+                    Option<IEnumerable<BotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
@@ -273,7 +273,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotResponsePrompt>>.None(), 
+                    Option<IEnumerable<BotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();
@@ -305,7 +305,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotResponsePrompt>>.None(), 
+                    Option<IEnumerable<BotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         
         _services = serviceCollection.BuildServiceProvider();

@@ -5,7 +5,7 @@ using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotResponsePrompts;
+using CheckMade.Telegram.Model.BotPrompts;
 using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -101,7 +101,7 @@ public class MessageHandler(
                         failure.Error,
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport),
-                    Option<IEnumerable<BotResponsePrompt>>.None(), 
+                    Option<IEnumerable<BotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None());
                 
                 _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
