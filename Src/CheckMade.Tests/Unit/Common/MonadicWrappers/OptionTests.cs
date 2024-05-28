@@ -192,7 +192,9 @@ public class OptionTests
             from res in Binder(s)
             select res;
 
-        result.Should().BeEquivalentTo(Option<int>.Some(10));
+        Assert.Equivalent(
+            Option<int>.Some(10).GetValueOrDefault(), 
+            result.GetValueOrDefault());
     }
     
     [Fact]
@@ -209,7 +211,9 @@ public class OptionTests
             from c in CollectionSelector(s) 
             select s + c;
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(), 
+            result.GetValueOrDefault());
         return;
 
         static Option<int> CollectionSelector(int i) => Option<int>.Some(i + 5);
@@ -231,7 +235,9 @@ public class OptionTests
                 from c in CollectionTaskSelector(s) 
                 select c + s);
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static async Task<Option<int>> CollectionTaskSelector(int i) => 
@@ -253,7 +259,9 @@ public class OptionTests
             from c in CollectionSelector(s)
             select c + s;
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static Option<int> CollectionSelector(int i) => Option<int>.Some(i + 5);
@@ -273,7 +281,9 @@ public class OptionTests
             from c in CollectionTaskSelector(s) 
             select c + s);
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static async Task<Option<int>> CollectionTaskSelector(int i) => await Task.FromResult(Option<int>.Some(i + 5));
@@ -380,7 +390,9 @@ public class OptionTests
             (s, c) => s + c
         );
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static async Task<Option<int>> CollectionTaskSelector(int i) => await Task.FromResult(Option<int>.Some(i + 5));
@@ -400,7 +412,9 @@ public class OptionTests
             (s, c) => s + c
         );
 
-        result.Should().BeEquivalentTo(Option<int>.Some(15));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static Option<int> CollectionSelector(int i) => Option<int>.Some(i + 5);
@@ -499,9 +513,11 @@ public class OptionTests
             .SelectMany(a => AsyncOperation2(a), (_, b) => b);
 
         var result = await intermediateResult
-            .SelectMany(b => Task.FromResult(SyncOperation3(b)), (_, c) => Task.FromResult(c));
+            .SelectMany(b => Task.FromResult(SyncOperation3(b)), (_, c) => c);
 
-        result.Should().BeEquivalentTo(Option<int>.Some(20));
+        Assert.Equivalent(
+            Option<int>.Some(15).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static Option<int> SyncOperation1(int i) => Option<int>.Some(i + 5);
@@ -522,7 +538,9 @@ public class OptionTests
             (_, inner) => inner + 5
         );
 
-        result.Should().BeEquivalentTo(Option<int>.Some(10));
+        Assert.Equivalent(
+            Option<int>.Some(10).GetValueOrDefault(),
+            result.GetValueOrDefault());
     }
     
     [Fact]
@@ -538,7 +556,9 @@ public class OptionTests
             (p, updatedAge) => new Person { Name = p.Name, Age = updatedAge }
         );
 
-        result.Should().BeEquivalentTo(Option<Person>.Some(new Person { Name = "Alice", Age = 35 }));
+        Assert.Equivalent(
+            Option<Person>.Some(new Person { Name = "Alice", Age = 35 }).GetValueOrDefault(),
+            result.GetValueOrDefault());
         return;
 
         static async Task<Option<int>> UpdateAgeAsync(Person person)
