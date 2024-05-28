@@ -333,7 +333,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         mockSubmissionsRequestProcessor
             .Setup<Task<Attempt<OutputDto>>>(rp => 
-                rp.SafelyEchoAsync(It.IsAny<InputMessageDto>()))
+                rp.SafelyProcessRequestAsync(It.IsAny<InputMessageDto>()))
             .Returns(Task.FromResult(returnValue));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();

@@ -9,7 +9,7 @@ public interface ICommunicationsRequestProcessor : IRequestProcessor;
 
 public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
 {
-    public Task<Attempt<OutputDto>> SafelyEchoAsync(InputMessageDto inputMessage)
+    public Task<Attempt<OutputDto>> SafelyProcessRequestAsync(InputMessageDto inputMessage)
     {
         return Attempt<OutputDto>.RunAsync(() =>
         {

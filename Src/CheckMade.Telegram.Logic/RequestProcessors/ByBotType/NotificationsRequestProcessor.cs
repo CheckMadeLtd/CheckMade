@@ -9,7 +9,7 @@ public interface INotificationsRequestProcessor : IRequestProcessor;
 
 public class NotificationsRequestProcessor : INotificationsRequestProcessor
 {
-    public Task<Attempt<OutputDto>> SafelyEchoAsync(InputMessageDto inputMessage)
+    public Task<Attempt<OutputDto>> SafelyProcessRequestAsync(InputMessageDto inputMessage)
     {
         return Attempt<OutputDto>.RunAsync(() =>
         {

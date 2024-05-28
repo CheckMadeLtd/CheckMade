@@ -10,7 +10,7 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<Attempt<OutputDto>> SafelyEchoAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<OutputDto>> SafelyProcessRequestAsync(InputMessageDto inputMessage)
     {
         return await Attempt<OutputDto>.RunAsync(async () =>
         {
