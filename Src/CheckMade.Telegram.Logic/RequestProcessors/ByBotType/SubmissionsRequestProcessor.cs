@@ -10,27 +10,30 @@ public interface ISubmissionsRequestProcessor : IRequestProcessor;
 
 public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
 {
-    public async Task<Attempt<OutputDto>> SafelyProcessRequestAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
-        return await Attempt<OutputDto>.RunAsync(async () =>
+        try
         {
             await repo.AddOrThrowAsync(inputMessage);
+        }
+        catch (Exception ex)
+        {
+            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+        }
 
-            return inputMessage switch
-            {
-                { Details.BotCommandEnumCode.IsSome: true } => 
-                    ProcessBotCommand(inputMessage),
-                
-                { Details.AttachmentType: { IsSome: true, Value: var type }} => 
-                    ProcessMessageWithAttachment(inputMessage, type),
-                
-                _ => 
-                    ProcessNormalResponseMessage(inputMessage)
-            };
-        });
+        return inputMessage switch
+        {
+            { Details.BotCommandEnumCode.IsSome: true } =>
+                ProcessBotCommand(inputMessage),
+
+            { Details.AttachmentType: { IsSome: true, Value: var type } } =>
+                ProcessMessageWithAttachment(inputMessage, type),
+
+            _ => ProcessNormalResponseMessage(inputMessage)
+        };
     }
 
-    private static OutputDto ProcessBotCommand(InputMessageDto inputMessage)
+    private static Attempt<OutputDto> ProcessBotCommand(InputMessageDto inputMessage)
     {
         return inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() switch
         {
@@ -54,7 +57,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         };
     }
     
-    private static OutputDto ProcessMessageWithAttachment(InputMessageDto inputMessage, AttachmentType type)
+    private static Attempt<OutputDto> ProcessMessageWithAttachment(InputMessageDto inputMessage, AttachmentType type)
     {
         return new OutputDto(
             Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
@@ -62,7 +65,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
             Option<IEnumerable<string>>.None());
     }
     
-    private static OutputDto ProcessNormalResponseMessage(InputMessageDto inputMessage)
+    private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
         return new OutputDto(
             Ui("Echo from bot {0}: {1}",
