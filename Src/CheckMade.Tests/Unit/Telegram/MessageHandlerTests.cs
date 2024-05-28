@@ -1,5 +1,7 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
+using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
@@ -274,11 +276,54 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()));
     }
 
-    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler)
+    [Fact]
+    // Agnostic to BotType, using Submissions
+    // Just to confirm basic integration. Detailed unit tests for correct Output->ReplyMarkup conversions are elsewhere.
+    public async Task SafelyHandleMessageAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        var prompt1 = new BotPrompt(UiNoTranslate("Prompt-1"), "p1");
+        var prompt2 = new BotPrompt(UiNoTranslate("Prompt-2"), "p2");
+        var fakeOutputDto = new OutputDto(
+            ITestUtils.EnglishUiStringForTests,
+            new[] { prompt1, prompt2 },
+            Option<IEnumerable<string>>.None());
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
+            GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(fakeOutputDto));
+        
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var textMessage = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
+        var expectedReplyMarkup = converter.GetReplyMarkup(fakeOutputDto);
+        
+        var actualMarkup = Option<IReplyMarkup>.None();
+        basics.mockBotClient
+            .Setup(
+                x => x.SendTextMessageOrThrowAsync(
+                    It.IsAny<ChatId>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Option<IReplyMarkup>>(),
+                    It.IsAny<CancellationToken>())
+            )
+            .Callback<ChatId, string, Option<IReplyMarkup>, CancellationToken>(
+                (_, _, markup, _) => actualMarkup = markup
+            );
+        
+        await basics.handler.SafelyHandleMessageAsync(textMessage, BotType.Submissions);
+
+        Assert.Equivalent(expectedReplyMarkup, actualMarkup);
+    }
+    
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
+        IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 
         (sp.GetRequiredService<ITestUtils>(), 
             sp.GetRequiredService<Mock<IBotClientWrapper>>(),
-            sp.GetRequiredService<IMessageHandler>());
+            sp.GetRequiredService<IMessageHandler>(),
+            sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
+            new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
+                sp.GetRequiredService<ILogger<UiTranslator>>()));
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
