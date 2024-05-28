@@ -90,7 +90,9 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
+        Assert.Contains(
+            "Error message", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -122,7 +124,9 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Predicate not satisfied");
+        Assert.Contains(
+            "Predicate not satisfied", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -138,7 +142,9 @@ public class ValidationTests
         
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Error message");
+        Assert.Contains(
+            "Error message", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -164,7 +170,9 @@ public class ValidationTests
         var result = source.SelectMany(BinderInvalid);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
 
     private static Validation<int> BinderInvalid(int i) => Validation<int>.Invalid(UiNoTranslate("Simulated error"));
@@ -179,7 +187,9 @@ public class ValidationTests
         var result = source.SelectMany(Binder);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Initial error");
+        Assert.Contains(
+            "Initial error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -297,7 +307,9 @@ public class ValidationTests
         var result = from s in source from res in Binder(s) select res;
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -311,7 +323,9 @@ public class ValidationTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
 
     [Fact]
@@ -325,7 +339,9 @@ public class ValidationTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -387,7 +403,9 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
     
     [Fact]
@@ -404,7 +422,9 @@ public class ValidationTests
         );
 
         result.IsInvalid.Should().BeTrue();
-        result.Errors.Select(e => e.GetFormattedEnglish()).Should().Contain("Simulated error");
+        Assert.Contains(
+            "Simulated error", 
+            result.Errors.Select(e => e.GetFormattedEnglish()));
     }
 
     [Fact]
@@ -493,7 +513,7 @@ public class ValidationTests
         );
 
         result.IsValid.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(new Person { Name = "Alice", Age = 35 });
+        Assert.Equivalent(new Person { Name = "Alice", Age = 35 }, result.GetValueOrDefault());
     }
 
     static Validation<int> Binder(int i) => Validation<int>.Valid(i + 5);
