@@ -1,5 +1,3 @@
-using FluentAssertions;
-
 namespace CheckMade.Tests.Unit.Common.MonadicWrappers.Composition;
 
 public class MonadicCompositionTests
@@ -22,11 +20,11 @@ public class MonadicCompositionTests
                     async validUser =>
                     {
                         var registerUserAttempt = await UserService.RegisterUserAsync(validUser);
-                        registerUserAttempt.IsSuccess.Should().BeTrue();
+                        Assert.True(registerUserAttempt.IsSuccess);
 
                         var welcomeEmail = UserService
                             .GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
-                        welcomeEmail.IsSome.Should().BeTrue();
+                        Assert.True(welcomeEmail.IsSome);
                     },
                     errors => Task.FromException(new Exception(errors[0].RawEnglishText))
                     );
@@ -54,11 +52,11 @@ public class MonadicCompositionTests
                         async validUser =>
                         {
                             var registerUserAttempt = await UserService.RegisterUserAsync(validUser);
-                            registerUserAttempt.IsSuccess.Should().BeTrue();
+                            Assert.True(registerUserAttempt.IsSuccess);
 
                             var welcomeEmail = UserService
                                 .GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
-                            welcomeEmail.IsSome.Should().BeTrue();
+                            Assert.True(welcomeEmail.IsSome);
                         },
                         errors => Task
                             .FromException(new Exception(errors[0].RawEnglishText))
@@ -67,7 +65,9 @@ public class MonadicCompositionTests
                 failure => Task.FromException(new Exception("User creation failed", failure.Exception)));
         };
 
-        await act.Should().ThrowAsync<Exception>().WithMessage("User creation failed");
+        var ex = await Assert.ThrowsAsync<Exception>(act);
+        Assert.Equal("User creation failed", ex.Message);
+        // await act.Should().ThrowAsync<Exception>().WithMessage("User creation failed");
     }
 
     [Fact]
@@ -85,10 +85,10 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserAttempt.IsSuccess.Should().BeTrue();
+                Assert.True(registerUserAttempt.IsSuccess);
 
                 var welcomeEmail = UserService.GenerateWelcomeEmail(registerUserAttempt.GetValueOrDefault());
-                welcomeEmail.IsSome.Should().BeTrue();
+                Assert.True(welcomeEmail.IsSome);
             }
             else
             {
@@ -118,7 +118,7 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserAttempt.IsSuccess.Should().BeFalse();
+                Assert.True(registerUserAttempt.IsFailure);
             }
             else
             {
@@ -130,7 +130,7 @@ public class MonadicCompositionTests
             errorMessage = "User creation failed";
         }
 
-        errorMessage.Should().Be("User creation failed");
+        Assert.Equal("User creation failed", errorMessage);
     }
     
     [Fact]
@@ -148,11 +148,11 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserAttempt.IsSuccess.Should().BeFalse();
+                Assert.True(registerUserAttempt.IsFailure);
             }
             else
             {
-                userValidation.Errors.Count.Should().Be(2);
+                Assert.Equal(2, userValidation.Errors.Count);
             }
         }
         else
@@ -176,13 +176,16 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                registerUserAttempt.IsSuccess.Should().BeFalse();
+                Assert.True(registerUserAttempt.IsFailure);
             }
             else
             {
-                userValidation.Errors[0].GetFormattedEnglish().Should().Be("Valid email is required");
-                userValidation.Errors[1].GetFormattedEnglish().Should().Be(
-                    "Password must be at least 6 characters long");
+                Assert.Equal(
+                    "Valid email is required",
+                    userValidation.Errors[0].GetFormattedEnglish());
+                Assert.Equal(
+                    "Password must be at least 6 characters long",
+                    userValidation.Errors[1].GetFormattedEnglish());
             }
         }
         else
