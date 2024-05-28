@@ -11,12 +11,12 @@ public record BotPromptsDefinition
 
     public BotPromptsDefinition()
     {
-        Add(Ui("TestOp1"), "op1", BotType.Submissions);
-        Add(Ui("TestOp2"), "op2", BotType.Submissions, BotType.Communications);
+        Add(Ui("Problem type?"), "problem_type", BotType.Submissions);
+        Add(Ui("TestPrompt"), "test_prompt", BotType.Submissions, BotType.Communications);
 
         AvailableBotResponsePrompts = _builder.ToImmutable();
     }
 
-    private void Add(UiString opText, string opId, params BotType[] supportedBotTypes) =>
-        _builder.Add(new BotPrompt(opText, opId, supportedBotTypes));
+    private void Add(UiString text, string id, params BotType[] supportedBotTypes) =>
+        _builder.Add(new BotPrompt(text, id, supportedBotTypes));
 }
