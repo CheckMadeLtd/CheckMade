@@ -63,7 +63,7 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureBotBusinessServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
-        services.AddScoped<IOutputDtoToReplyMarkupConverter, OutputDtoToReplyMarkupConverter>();
+        services.AddScoped<IOutputDtoToReplyMarkupConverterFactory, OutputDtoToReplyMarkupConverterFactory>();
         services.Add_TelegramLogic_Dependencies();
     }
 

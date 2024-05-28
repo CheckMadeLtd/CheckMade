@@ -24,7 +24,7 @@ public class MessageHandler(
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
-        IOutputDtoToReplyMarkupConverter replyMarkupConverter,
+        IOutputDtoToReplyMarkupConverterFactory replyMarkupConverterFactory,
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
@@ -32,10 +32,12 @@ public class MessageHandler(
         Ui("Please contact technical support or your supervisor.");
 
     private IUiTranslator? _uiTranslator;
+    private IOutputDtoToReplyMarkupConverter? _replyMarkupConverter;
 
     public async Task<Attempt<Unit>> SafelyHandleMessageAsync(Message telegramInputMessage, BotType botType)
     {
         _uiTranslator = translatorFactory.Create(GetUiLanguage(telegramInputMessage));
+        _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
         
         ChatId chatId = telegramInputMessage.Chat.Id;
         
@@ -138,9 +140,10 @@ public class MessageHandler(
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
                 _uiTranslator?.Translate(output.Text) 
-                ?? throw new ArgumentNullException(nameof(output), 
+                ?? throw new InvalidOperationException(
                     "UiTranslator or translated OutputMessage must not be NULL."),
-                replyMarkupConverter.GetReplyMarkup(output)
-                ));
+                _replyMarkupConverter?.GetReplyMarkup(output) 
+                ?? throw new InvalidOperationException("ReplyMarkupConverter must not be null."))
+            );
     }
 }
