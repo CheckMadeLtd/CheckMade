@@ -3,7 +3,6 @@ using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
@@ -24,7 +23,6 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        // Arrange
         var telegramInputMessage = basics.utils.GetValidTelegramTextMessage(textInput);
 
         var expectedInputMessage = new InputMessageDto(
@@ -40,12 +38,10 @@ public class ToModelConverterTests
                 Option<AttachmentType>.None(),
                 Option<int>.None()));
 
-        // Act
         var actualInputMessage = 
             await basics.converter.SafelyConvertMessageAsync(telegramInputMessage, BotType.Submissions);
 
-        // Assert
-        actualInputMessage.GetValueOrDefault().Should().BeEquivalentTo(expectedInputMessage);
+        Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
     
     [Theory]
@@ -59,7 +55,6 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        // Arrange
         var telegramAttachmentMessage = attachmentType switch
         {
             AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
@@ -86,12 +81,10 @@ public class ToModelConverterTests
                 attachmentType,
                 Option<int>.None()));
         
-        // Act
         var actualInputMessage = await basics.converter.SafelyConvertMessageAsync(
             telegramAttachmentMessage, BotType.Submissions);
         
-        // Assert
-        actualInputMessage.GetValueOrDefault().Should().BeEquivalentTo(expectedInputMessage);
+        Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
     
     [Fact]
@@ -102,7 +95,7 @@ public class ToModelConverterTests
          
         var telegramMessage = new Message { From = null, Text = "not empty" };
         var conversionAttempt = await basics.converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
-        conversionAttempt.IsFailure.Should().BeTrue();
+        Assert.True(conversionAttempt.IsFailure);
     }
     
     [Fact]
@@ -113,7 +106,7 @@ public class ToModelConverterTests
         
         var telegramMessage = new Message { From = new User { Id = 123L } };
         var conversionAttempt = await basics.converter.SafelyConvertMessageAsync(telegramMessage, BotType.Submissions);
-        conversionAttempt.IsFailure.Should().BeTrue();
+        Assert.True(conversionAttempt.IsFailure);
     }
 
     [Fact]
@@ -125,9 +118,9 @@ public class ToModelConverterTests
         var voiceMessage = basics.utils.GetValidTelegramVoiceMessage();
         var conversionAttempt = await basics.converter.SafelyConvertMessageAsync(voiceMessage, BotType.Submissions);
 
-        conversionAttempt.IsFailure.Should().BeTrue();
-        conversionAttempt.Failure!.Error!.GetFormattedEnglish().Should().Be(
-            "Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!");
+        Assert.True(conversionAttempt.IsFailure);
+        Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!",
+            conversionAttempt.Failure!.Error!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)
