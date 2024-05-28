@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Model.BotCommands.DefinitionEnumsByBotType;
+namespace CheckMade.Telegram.Model.BotCommands.DefinitionsByBotType;
 
 // Explicitly assigned Enum codes here important: they are serialised in the messages history in the database!
 // Fundamentally changing the semantics of a code would require migration of historic detail data
