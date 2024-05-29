@@ -22,7 +22,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessage(),
-            utils.GetValidModelInputTextMessageWithAttachment()
+            utils.GetValidModelInputTextMessageWithPhotoAttachment()
         };
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
 

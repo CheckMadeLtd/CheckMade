@@ -46,6 +46,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
+    // ToDo: Candidate for moving detailed tests by type to RequestProcessorTests and keep here only one example
     [Theory]
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
