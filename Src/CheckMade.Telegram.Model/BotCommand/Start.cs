@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Model.BotCommands;
+namespace CheckMade.Telegram.Model.BotCommand;
 
 public static class Start
 {

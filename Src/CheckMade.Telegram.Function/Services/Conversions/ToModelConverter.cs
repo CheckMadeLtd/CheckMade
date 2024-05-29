@@ -1,6 +1,6 @@
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

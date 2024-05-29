@@ -1,3 +1,3 @@
-namespace CheckMade.Telegram.Model.BotCommands;
+namespace CheckMade.Telegram.Model.BotCommand;
 
 public record ModelBotCommand(string Command, string Description);

@@ -5,7 +5,7 @@ using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

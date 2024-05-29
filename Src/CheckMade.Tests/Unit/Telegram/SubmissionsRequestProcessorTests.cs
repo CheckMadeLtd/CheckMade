@@ -1,6 +1,6 @@
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommands.DefinitionsByBotType;
+using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

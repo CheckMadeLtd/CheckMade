@@ -6,7 +6,7 @@ using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
