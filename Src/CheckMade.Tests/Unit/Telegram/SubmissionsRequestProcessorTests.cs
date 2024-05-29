@@ -17,12 +17,12 @@ public class SubmissionsRequestProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var problemCommandMessage = basics.utils.GetValidModelInputCommandMessage(
-            BotType.Submissions, (int)SubmissionsBotCommands.Problem);
+            BotType.Submissions, (int)SubmissionsBotCommands.NewIssue);
 
         var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandMessage);
         
         Assert.True(actualOutput.IsSuccess);
-        Assert.Contains(DomainCategory.ProblemTypeCleanliness,
+        Assert.Contains(DomainCategory.SanitaryOpsIssueCleanliness,
             actualOutput.GetValueOrDefault().DomainCategorySelection.GetValueOrDefault());
     }
 

@@ -46,14 +46,14 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Option<IEnumerable<DomainCategory>>.None(), 
                 Option<IEnumerable<string>>.None()),
             
-            (int) SubmissionsBotCommands.Problem => new OutputDto(
+            (int) SubmissionsBotCommands.NewIssue => new OutputDto(
                 Ui("Ok tell me more about the problem!"),
                 Option<IEnumerable<ControlPrompts>>.None(),
                 new []
                 {
-                    DomainCategory.ProblemTypeCleanliness,
-                    DomainCategory.ProblemTypeTechnical,
-                    DomainCategory.ProblemTypeConsumable
+                    DomainCategory.SanitaryOpsIssueCleanliness,
+                    DomainCategory.SanitaryOpsIssueTechnical,
+                    DomainCategory.SanitaryOpsIssueConsumable
                 },
                 Option<IEnumerable<string>>.None()),
             

@@ -2,26 +2,27 @@ namespace CheckMade.Common.Model;
 
 public enum DomainCategory
 {
-    // 1 Trade: Sanitary Operations
+    // 1 Sanitary
+    // 10 Sanitary Operations Trade 
     
-    SanitaryOpsAdmin = 10010,
-    Inspector = 10020,
-    Engineer = 10030,
-    CleanLead = 10040,
-    Observer = 10090,
+    SanitaryOpsRoleAdmin = 10010,
+    SanitaryOpsRoleInspector = 10020,
+    SanitaryOpsRoleEngineer = 10030,
+    SanitaryOpsRoleCleanLead = 10040,
+    SanitaryOpsRoleObserver = 10090,
     
-    SanitaryProblemCleanliness = 10100,
-    SanitaryProblemTechnical = 10110,
-    SanitaryProblemConsumable = 10120,
+    SanitaryOpsIssueCleanliness = 10100,
+    SanitaryOpsIssueTechnical = 10110,
+    SanitaryOpsIssueConsumable = 10120,
     
-    SanitaryConsumableToiletPaper = 10121,
-    SanitaryConsumablePaperTowels = 10122,
-    SanitaryConsumableSoap = 10123,
+    SanitaryOpsConsumableToiletPaper = 10121,
+    SanitaryOpsConsumablePaperTowels = 10122,
+    SanitaryOpsConsumableSoap = 10123,
     
-    SanitaryFacilityToilets = 10200,
-    SanitaryFacilityShowers = 10210,
-    SanitaryFacilityStaff = 10220,
-    SanitaryFacilityOther = 10290
+    SanitaryOpsFacilityToilets = 10200,
+    SanitaryOpsFacilityShowers = 10210,
+    SanitaryOpsFacilityStaff = 10220,
+    SanitaryOpsFacilityOther = 10290
     
     
     // 2 Trade: Venue Cleaning
