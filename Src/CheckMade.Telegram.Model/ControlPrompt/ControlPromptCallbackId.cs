@@ -1,10 +1,10 @@
-namespace CheckMade.Telegram.Model.BotPrompts;
+namespace CheckMade.Telegram.Model.ControlPrompt;
 
-public record BotPromptId
+public record ControlPromptCallbackId
 {
     public string Id { get; }
 
-    public BotPromptId(int id)
+    public ControlPromptCallbackId(int id)
     {
         if(id < 1)
         {

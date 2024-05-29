@@ -1,6 +1,6 @@
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversions;
-using CheckMade.Telegram.Model.BotPrompts;
+using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,19 +14,19 @@ public class OutputToReplyMarkupConverterTests
     private ServiceProvider? _services;
 
     [Fact]
-    public void GetReplyMarkup_ReturnsCorrectlyArrangedInlineKeyboard_ForValidBotPrompts()
+    public void GetReplyMarkup_ReturnsCorrectlyArrangedInlineKeyboard_ForValidControlPrompts()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var converter = GetConverter(_services);
-        var promptUiById = new BotPromptsDefinition().BotPromptUiById;
+        var promptUiById = new ControlPromptsProvider().UiById;
         var promptSelection = 
             new[]
             {
-                (prompt: EBotPrompts.No, promptId: new BotPromptId((int)EBotPrompts.No)),
-                (prompt: EBotPrompts.Yes, promptId: new BotPromptId((int)EBotPrompts.Yes)),
-                (prompt: EBotPrompts.Bad, promptId: new BotPromptId((int)EBotPrompts.Bad)),
-                (prompt: EBotPrompts.Ok, promptId: new BotPromptId((int)EBotPrompts.Ok)),
-                (prompt: EBotPrompts.Good, promptId: new BotPromptId((int)EBotPrompts.Good))
+                (prompt: ControlPrompts.No, promptId: new ControlPromptCallbackId((int)ControlPrompts.No)),
+                (prompt: ControlPrompts.Yes, promptId: new ControlPromptCallbackId((int)ControlPrompts.Yes)),
+                (prompt: ControlPrompts.Bad, promptId: new ControlPromptCallbackId((int)ControlPrompts.Bad)),
+                (prompt: ControlPrompts.Ok, promptId: new ControlPromptCallbackId((int)ControlPrompts.Ok)),
+                (prompt: ControlPrompts.Good, promptId: new ControlPromptCallbackId((int)ControlPrompts.Good))
             };
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
@@ -81,7 +81,7 @@ public class OutputToReplyMarkupConverterTests
 
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<EBotPrompts>>.None(),
+            Option<IEnumerable<ControlPrompts>>.None(),
             new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
@@ -107,7 +107,7 @@ public class OutputToReplyMarkupConverterTests
         
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<EBotPrompts>>.None(),
+            Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None());
         
         var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);

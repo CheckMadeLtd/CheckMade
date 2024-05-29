@@ -1,7 +1,7 @@
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands.DefinitionsByBotType;
-using CheckMade.Telegram.Model.BotPrompts;
+using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,8 +22,8 @@ public class SubmissionsRequestProcessorTests
         var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandMessage);
         
         Assert.True(actualOutput.IsSuccess);
-        Assert.Contains(EBotPrompts.ProblemTypeCleanliness,
-            actualOutput.GetValueOrDefault().BotPromptSelection.GetValueOrDefault());
+        Assert.Contains(ControlPrompts.ProblemTypeCleanliness,
+            actualOutput.GetValueOrDefault().ControlPromptsSelection.GetValueOrDefault());
     }
 
     [Theory]

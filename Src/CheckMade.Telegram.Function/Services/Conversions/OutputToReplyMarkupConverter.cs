@@ -1,5 +1,5 @@
 using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Telegram.Model.BotPrompts;
+using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -14,7 +14,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
-        var inlineKeyboardMarkup = output.BotPromptSelection.Match(
+        var inlineKeyboardMarkup = output.ControlPromptsSelection.Match(
             GetInlineKeyboardMarkup,
             Option<InlineKeyboardMarkup>.None);
 
@@ -30,24 +30,24 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                     : Option<IReplyMarkup>.None();
     }
 
-    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<EBotPrompts> prompts)
+    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<ControlPrompts> prompts)
     {
         const int inlineKeyboardNumberOfColumns = 2;
-        var definition = new BotPromptsDefinition();
+        var definition = new ControlPromptsProvider();
         
         var inlineKeyboardTable = prompts
-            .Select((botPrompt, index) => 
+            .Select((controlPrompt, index) => 
                 new
                 {
                     Index = index, 
-                    BotPrompt = botPrompt, 
-                    PromptId = new BotPromptId((int)botPrompt)
+                    BotPrompt = controlPrompt, 
+                    PromptId = new ControlPromptCallbackId((int)controlPrompt)
                 })
             .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
             .Select(x => 
                 x.Select(bp => 
                         InlineKeyboardButton.WithCallbackData(
-                            translator.Translate(definition.BotPromptUiById[bp.PromptId]), 
+                            translator.Translate(definition.UiById[bp.PromptId]), 
                             bp.PromptId.Id))
                     .ToArray())
             .ToArray();

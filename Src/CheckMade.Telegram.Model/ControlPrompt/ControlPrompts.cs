@@ -1,6 +1,6 @@
-namespace CheckMade.Telegram.Model.BotPrompts;
+namespace CheckMade.Telegram.Model.ControlPrompt;
 
-public enum EBotPrompts
+public enum ControlPrompts
 {
     No = 10000,
     Yes = 10010,
