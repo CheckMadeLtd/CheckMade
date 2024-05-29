@@ -208,7 +208,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotPrompt>>.None(), 
+                    Option<IEnumerable<ModelBotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -234,7 +234,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotPrompt>>.None(), 
+                    Option<IEnumerable<ModelBotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -260,7 +260,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<BotPrompt>>.None(), 
+                    Option<IEnumerable<ModelBotPrompt>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -284,8 +284,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var prompt1 = new BotPrompt(UiNoTranslate("Prompt-1"), "p1");
-        var prompt2 = new BotPrompt(UiNoTranslate("Prompt-2"), "p2");
+        var prompt1 = new ModelBotPrompt(UiNoTranslate("Prompt-1"), "p1");
+        var prompt2 = new ModelBotPrompt(UiNoTranslate("Prompt-2"), "p2");
         var fakeOutputDto = new OutputDto(
             ITestUtils.EnglishUiStringForTests,
             new[] { prompt1, prompt2 },

@@ -30,7 +30,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                     : Option<IReplyMarkup>.None();
     }
 
-    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<BotPrompt> prompts)
+    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<ModelBotPrompt> prompts)
     {
         const int inlineKeyboardNumberOfColumns = 2;
         

@@ -41,7 +41,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 UiConcatenate(
                     Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions),
                     IRequestProcessor.SeeValidBotCommandsInstruction),
-                Option<IEnumerable<BotPrompt>>.None(),
+                Option<IEnumerable<ModelBotPrompt>>.None(),
                 Option<IEnumerable<string>>.None()),
             
             // ToDo: I think need to have an Enum for all available BotPrompts after all - for typed access in code...
@@ -55,7 +55,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 
                     UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())), 
-                Option<IEnumerable<BotPrompt>>.None(), 
+                Option<IEnumerable<ModelBotPrompt>>.None(), 
                 Option<IEnumerable<string>>.None())
         };
     }
@@ -65,7 +65,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
     {
         return new OutputDto(
             Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
-            Option<IEnumerable<BotPrompt>>.None(), 
+            Option<IEnumerable<ModelBotPrompt>>.None(), 
             Option<IEnumerable<string>>.None());
     }
     
@@ -74,7 +74,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         return new OutputDto(
             Ui("Echo from bot {0}: {1}",
                 BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()),
-            Option<IEnumerable<BotPrompt>>.None(), 
+            Option<IEnumerable<ModelBotPrompt>>.None(), 
             Option<IEnumerable<string>>.None());
     }
 }

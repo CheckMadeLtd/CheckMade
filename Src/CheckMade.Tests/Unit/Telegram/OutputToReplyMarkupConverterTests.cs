@@ -20,11 +20,11 @@ public class OutputToReplyMarkupConverterTests
         var converter = GetConverter(_services);
         
         // Arrange
-        var prompt1 = new BotPrompt(UiNoTranslate("Prompt-1"), "p1");
-        var prompt2 = new BotPrompt(UiNoTranslate("Prompt-2"), "p2");
-        var prompt3 = new BotPrompt(UiNoTranslate("Prompt-3"), "p3");
-        var prompt4 = new BotPrompt(UiNoTranslate("Prompt-4"), "p4");
-        var prompt5 = new BotPrompt(UiNoTranslate("Prompt-5"), "p5");
+        var prompt1 = new ModelBotPrompt(UiNoTranslate("Prompt-1"), "p1");
+        var prompt2 = new ModelBotPrompt(UiNoTranslate("Prompt-2"), "p2");
+        var prompt3 = new ModelBotPrompt(UiNoTranslate("Prompt-3"), "p3");
+        var prompt4 = new ModelBotPrompt(UiNoTranslate("Prompt-4"), "p4");
+        var prompt5 = new ModelBotPrompt(UiNoTranslate("Prompt-5"), "p5");
         
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
@@ -71,7 +71,7 @@ public class OutputToReplyMarkupConverterTests
 
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<BotPrompt>>.None(),
+            Option<IEnumerable<ModelBotPrompt>>.None(),
             new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
@@ -97,7 +97,7 @@ public class OutputToReplyMarkupConverterTests
         
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<BotPrompt>>.None(),
+            Option<IEnumerable<ModelBotPrompt>>.None(),
             Option<IEnumerable<string>>.None());
         
         var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);

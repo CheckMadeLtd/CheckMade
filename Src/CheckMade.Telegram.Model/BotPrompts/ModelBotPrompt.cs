@@ -2,4 +2,4 @@ using CheckMade.Common.LangExt;
 
 namespace CheckMade.Telegram.Model.BotPrompts;
 
-public record BotPrompt(UiString Text, string Id);
+public record ModelBotPrompt(UiString Text, string Id);
