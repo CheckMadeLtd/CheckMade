@@ -1,6 +1,7 @@
 ﻿using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
+using CheckMade.Telegram.Model.BotCommands.DefinitionsByBotType;
 using CheckMade.Telegram.Model.BotPrompts;
 using CheckMade.Telegram.Model.DTOs;
 
@@ -44,12 +45,15 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Option<IEnumerable<EBotPrompts>>.None(),
                 Option<IEnumerable<string>>.None()),
             
-            // ToDo: I think need to have an Enum for all available BotPrompts after all - for typed access in code...
-            // I think, I might be able to use the int of the Prompt Enum as the CallBack ID for the InlineReyplyButton!!!!
-            
-            // (int) SubmissionsBotCommands.Problem => new OutputDto(
-            //     Ui("Ok tell me more about the problem!"),
-            //     new [] {  })
+            (int) SubmissionsBotCommands.Problem => new OutputDto(
+                Ui("Ok tell me more about the problem!"),
+                new []
+                {
+                    EBotPrompts.ProblemTypeCleanliness,
+                    EBotPrompts.ProblemTypeTechnical,
+                    EBotPrompts.ProblemTypeConsumable
+                },
+                Option<IEnumerable<string>>.None()),
             
             _ => new OutputDto(
                 UiConcatenate(
