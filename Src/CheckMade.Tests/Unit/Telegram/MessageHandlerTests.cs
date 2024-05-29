@@ -129,7 +129,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         const string invalidBotCommand = "/invalid";
-        var invalidBotCommandMessage = basics.utils.GetBotCommandMessage(invalidBotCommand);
+        var invalidBotCommandMessage = basics.utils.GetValidTelegramBotCommandMessage(invalidBotCommand);
         const string expectedErrorCode = "W3DL9";
     
         // Writing out to OutputHelper to see the entire error message, as an additional manual verification
@@ -162,7 +162,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var startCommandMessage = basics.utils.GetBotCommandMessage(Start.Command);
+        var startCommandMessage = basics.utils.GetValidTelegramBotCommandMessage(Start.Command);
         var expectedWelcomeMessageSegment = IRequestProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
         await basics.handler.HandleMessageAsync(startCommandMessage, botType);
