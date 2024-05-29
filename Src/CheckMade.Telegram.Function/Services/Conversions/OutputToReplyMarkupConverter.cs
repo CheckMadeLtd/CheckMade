@@ -36,8 +36,13 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var definition = new BotPromptsDefinition();
         
         var inlineKeyboardTable = prompts
-            .Select((item, index) => 
-                new { Index = index, BotPrompt = item, PromptId = new BotPromptId((int)item) })
+            .Select((botPrompt, index) => 
+                new
+                {
+                    Index = index, 
+                    BotPrompt = botPrompt, 
+                    PromptId = new BotPromptId((int)botPrompt)
+                })
             .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
             .Select(x => 
                 x.Select(bp => 
