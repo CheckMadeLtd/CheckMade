@@ -1,16 +1,22 @@
 namespace CheckMade.Common.Model;
 
-public enum ControlPrompts
+public enum ControlPrompts : long
 {
-    Back = 10000,
-    Cancel = 10001,
-    Save = 10002,
-    Submit = 10003,
+    Back = 1L,
+    Cancel = 1L<<1,
+    Save = 1L<<2,
+    Submit = 1L<<3,
+    Edit = 1L<<4,
+    // Placeholder <<5
     
-    No = 10010,
-    Yes = 10011,
+    No = 1L<<6,
+    Yes = 1L<<7,
+    Maybe = 1L<<8,
+    // Placeholder <<9
     
-    Bad = 10020,
-    Ok = 10021,
-    Good = 10022,
+    Bad = 1L<<9,
+    Ok = 1L<<10,
+    Good = 1L<<11,
+    // Placeholder <<12
+    // Placeholder <<13
 }
