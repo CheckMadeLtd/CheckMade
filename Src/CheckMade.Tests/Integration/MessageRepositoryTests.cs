@@ -21,7 +21,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var utils = _services.GetRequiredService<ITestUtils>();
         var modelInputMessages = new[]
         {
-            utils.GetValidModelInputTextMessageNoAttachment(),
+            utils.GetValidModelInputTextMessage(),
             utils.GetValidModelInputTextMessageWithAttachment()
         };
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
@@ -52,9 +52,9 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
         {
-            utils.GetValidModelInputTextMessageNoAttachment(userId),
-            utils.GetValidModelInputTextMessageNoAttachment(userId),
-            utils.GetValidModelInputTextMessageNoAttachment(userId)
+            utils.GetValidModelInputTextMessage(userId),
+            utils.GetValidModelInputTextMessage(userId),
+            utils.GetValidModelInputTextMessage(userId)
         };
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
         

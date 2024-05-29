@@ -15,18 +15,18 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    InputMessageDto GetValidModelInputTextMessageNoAttachment();
-    InputMessageDto GetValidModelInputTextMessageNoAttachment(long userId);
+    InputMessageDto GetValidModelInputTextMessage();
+    InputMessageDto GetValidModelInputTextMessage(long userId);
     InputMessageDto GetValidModelInputTextMessageWithAttachment();
     
     Message GetValidTelegramTextMessage(string inputText);
+    Message GetValidTelegramBotCommandMessage(string botCommand);
+    
     Message GetValidTelegramAudioMessage();
     Message GetValidTelegramDocumentMessage();
     Message GetValidTelegramPhotoMessage();
     Message GetValidTelegramVideoMessage();
     Message GetValidTelegramVoiceMessage();
-
-    Message GetValidTelegramBotCommandMessage(string botCommand);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
@@ -35,10 +35,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 
     public Randomizer Randomizer { get; } = randomizer;
     
-    public InputMessageDto GetValidModelInputTextMessageNoAttachment() =>
-        GetValidModelInputTextMessageNoAttachment(Randomizer.GenerateRandomLong());
+    public InputMessageDto GetValidModelInputTextMessage() =>
+        GetValidModelInputTextMessage(Randomizer.GenerateRandomLong());
 
-    public InputMessageDto GetValidModelInputTextMessageNoAttachment(long userId) =>
+    public InputMessageDto GetValidModelInputTextMessage(long userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,
@@ -69,6 +69,23 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Text = inputText
         };
 
+    public Message GetValidTelegramBotCommandMessage(string botCommand) =>
+        new()
+        {
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            Text = botCommand,
+            Entities = [
+                new MessageEntity
+                {
+                    Length = botCommand.Length,
+                    Offset = 0,
+                    Type = MessageEntityType.BotCommand
+                }
+            ]
+        };
+
     public Message GetValidTelegramAudioMessage() => 
         new()
         {
@@ -78,7 +95,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
         };
-    
+
     public Message GetValidTelegramDocumentMessage() => 
         new()
         {
@@ -98,7 +115,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
         };
-    
+
     public Message GetValidTelegramVideoMessage() =>
         new()
         {
@@ -117,22 +134,5 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Date = DateTime.Now,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }
-        };
-
-    public Message GetValidTelegramBotCommandMessage(string botCommand) =>
-        new()
-        {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
-            Date = DateTime.Now,
-            Text = botCommand,
-            Entities = [
-                new MessageEntity
-                {
-                    Length = botCommand.Length,
-                    Offset = 0,
-                    Type = MessageEntityType.BotCommand
-                }
-            ]
         };
 }
