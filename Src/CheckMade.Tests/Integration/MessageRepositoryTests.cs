@@ -2,6 +2,7 @@ using CheckMade.Common.Interfaces;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
@@ -22,7 +23,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessage(),
-            utils.GetValidModelInputTextMessageWithPhotoAttachment()
+            utils.GetValidModelInputTextMessageWithAttachment(AttachmentType.Photo)
         };
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
 

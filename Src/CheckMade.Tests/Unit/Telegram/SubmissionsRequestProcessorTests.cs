@@ -26,17 +26,22 @@ public class SubmissionsRequestProcessorTests
             actualOutput.GetValueOrDefault().BotPromptSelection.GetValueOrDefault());
     }
 
-    [Fact]
-    public async Task ProcessRequestAsync_ReturnsEchoWithAttachmentType_ForPhotoAttachmentMessage()
+    [Theory]
+    [InlineData(AttachmentType.Photo)]
+    [InlineData(AttachmentType.Audio)]
+    [InlineData(AttachmentType.Document)]
+    [InlineData(AttachmentType.Video)]
+    public async Task ProcessRequestAsync_ReturnsEchoWithAttachmentType_ForPhotoAttachmentMessage(
+        AttachmentType type)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var attachmentMessage = basics.utils.GetValidModelInputTextMessageWithPhotoAttachment();
-
+        var attachmentMessage = basics.utils.GetValidModelInputTextMessageWithAttachment(type);
+        
         var actualOutput = await basics.processor.ProcessRequestAsync(attachmentMessage);
         
         Assert.True(actualOutput.IsSuccess);
-        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Submissions, AttachmentType.Photo),
+        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
             actualOutput.GetValueOrDefault().Text);
     }
     

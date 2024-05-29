@@ -46,27 +46,13 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    // ToDo: Candidate for moving detailed tests by type to RequestProcessorTests and keep here only one example
-    [Theory]
-    [InlineData(AttachmentType.Photo)]
-    [InlineData(AttachmentType.Audio)]
-    [InlineData(AttachmentType.Document)]
-    [InlineData(AttachmentType.Video)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidAttachmentMessageToSubmissions(
-        AttachmentType attachmentType)
+    [Fact]
+    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoAttachmentMessageToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var expectedOutputMessage = $"Echo from bot Submissions: {attachmentType}";
-        
-        var attachmentMessage = attachmentType switch
-        {
-            AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
-            AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
-            AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
-            AttachmentType.Video => basics.utils.GetValidTelegramVideoMessage(),
-            _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
-        };
+        var expectedOutputMessage = $"Echo from bot Submissions: Photo";
+        var attachmentMessage = basics.utils.GetValidTelegramPhotoMessage();
         
         await basics.handler.HandleMessageAsync(attachmentMessage, BotType.Submissions);
         
