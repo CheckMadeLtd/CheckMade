@@ -17,7 +17,9 @@ public record BotPromptsDefinition
         Add(EBotPrompts.Bad, Ui("👎 Bad"));
         Add(EBotPrompts.Ok, Ui("😐 Ok"));
         Add(EBotPrompts.Good, Ui("👍 Good"));
-        Add(EBotPrompts.ProblemType, Ui("Problem type?"));
+        Add(EBotPrompts.ProblemTypeCleanliness, Ui("❗🪣 Cleanliness"));
+        Add(EBotPrompts.ProblemTypeTechnical, Ui("❗🔧 Technical"));
+        Add(EBotPrompts.ProblemTypeConsumable, Ui("🗄 Consumables"));
 
         BotPromptUiById = _builder.ToImmutable();
     }

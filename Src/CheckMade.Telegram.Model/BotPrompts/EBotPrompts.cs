@@ -7,5 +7,7 @@ public enum EBotPrompts
     Bad = 10100,
     Ok = 10110,
     Good = 10120,
-    ProblemType = 11000,
+    ProblemTypeCleanliness = 11000,
+    ProblemTypeTechnical = 11010,
+    ProblemTypeConsumable = 11020
 }
