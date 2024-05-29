@@ -1,10 +1,10 @@
-namespace CheckMade.Telegram.Model.ControlPrompt;
+namespace CheckMade.Common.Model;
 
-public record ControlPromptCallbackId
+public record EnumCallbackId
 {
     public string Id { get; }
 
-    public ControlPromptCallbackId(int id)
+    public EnumCallbackId(int id)
     {
         if(id < 1)
         {
