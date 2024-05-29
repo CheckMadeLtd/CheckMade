@@ -1,4 +1,4 @@
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;

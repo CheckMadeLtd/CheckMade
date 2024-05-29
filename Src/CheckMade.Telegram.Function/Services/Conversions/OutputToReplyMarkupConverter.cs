@@ -1,4 +1,4 @@
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;

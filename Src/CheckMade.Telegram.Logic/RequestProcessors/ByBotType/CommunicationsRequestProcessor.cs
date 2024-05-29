@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.Model;
+﻿using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;

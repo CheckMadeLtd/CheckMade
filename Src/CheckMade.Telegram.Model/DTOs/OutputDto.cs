@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 
 namespace CheckMade.Telegram.Model.DTOs;
 

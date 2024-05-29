@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
