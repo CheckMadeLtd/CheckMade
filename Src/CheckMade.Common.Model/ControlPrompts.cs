@@ -2,12 +2,15 @@ namespace CheckMade.Telegram.Model.ControlPrompt;
 
 public enum ControlPrompts
 {
-    No = 10000,
-    Yes = 10010,
-    Bad = 10100,
-    Ok = 10110,
-    Good = 10120,
-    ProblemTypeCleanliness = 11000,
-    ProblemTypeTechnical = 11010,
-    ProblemTypeConsumable = 11020
+    Back = 10000,
+    Cancel = 10001,
+    Save = 10002,
+    Submit = 10003,
+    
+    No = 10010,
+    Yes = 10011,
+    
+    Bad = 10020,
+    Ok = 10021,
+    Good = 10022,
 }
