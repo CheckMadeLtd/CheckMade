@@ -18,17 +18,19 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var converter = GetConverter(_services);
-        
-        // Arrange
-        var prompt1 = new ModelBotPrompt(UiNoTranslate("Prompt-1"), "p1");
-        var prompt2 = new ModelBotPrompt(UiNoTranslate("Prompt-2"), "p2");
-        var prompt3 = new ModelBotPrompt(UiNoTranslate("Prompt-3"), "p3");
-        var prompt4 = new ModelBotPrompt(UiNoTranslate("Prompt-4"), "p4");
-        var prompt5 = new ModelBotPrompt(UiNoTranslate("Prompt-5"), "p5");
-        
+        var promptUiById = new BotPromptsDefinition().BotPromptUiById;
+        var promptSelection = 
+            new[]
+            {
+                (prompt: EBotPrompts.No, promptId: new BotPromptId((int)EBotPrompts.No)),
+                (prompt: EBotPrompts.Yes, promptId: new BotPromptId((int)EBotPrompts.Yes)),
+                (prompt: EBotPrompts.Bad, promptId: new BotPromptId((int)EBotPrompts.Bad)),
+                (prompt: EBotPrompts.Ok, promptId: new BotPromptId((int)EBotPrompts.Ok)),
+                (prompt: EBotPrompts.Good, promptId: new BotPromptId((int)EBotPrompts.Good))
+            };
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            new[] { prompt1, prompt2, prompt3, prompt4, prompt5 },
+            promptSelection.Select(pair => pair.prompt).ToArray(),
             Option<IEnumerable<string>>.None());
 
         // Assumes inlineKeyboardNumberOfColumns = 2;
@@ -37,22 +39,30 @@ public class OutputToReplyMarkupConverterTests
             { 
                 new [] 
                 { 
-                    InlineKeyboardButton.WithCallbackData(prompt1.Text.GetFormattedEnglish(), prompt1.Id), 
-                    InlineKeyboardButton.WithCallbackData(prompt2.Text.GetFormattedEnglish(), prompt2.Id) 
+                    InlineKeyboardButton.WithCallbackData(
+                        promptUiById[promptSelection[0].promptId].GetFormattedEnglish(), 
+                        promptSelection[0].promptId.Id), 
+                    InlineKeyboardButton.WithCallbackData(
+                        promptUiById[promptSelection[1].promptId].GetFormattedEnglish(), 
+                        promptSelection[1].promptId.Id), 
                 },
                 [
-                    InlineKeyboardButton.WithCallbackData(prompt3.Text.GetFormattedEnglish(), prompt3.Id), 
-                    InlineKeyboardButton.WithCallbackData(prompt4.Text.GetFormattedEnglish(), prompt4.Id)
+                    InlineKeyboardButton.WithCallbackData(
+                        promptUiById[promptSelection[2].promptId].GetFormattedEnglish(), 
+                        promptSelection[2].promptId.Id), 
+                    InlineKeyboardButton.WithCallbackData(
+                        promptUiById[promptSelection[3].promptId].GetFormattedEnglish(), 
+                        promptSelection[3].promptId.Id), 
                 ],
                 [
-                    InlineKeyboardButton.WithCallbackData(prompt5.Text.GetFormattedEnglish(), prompt5.Id)
+                    InlineKeyboardButton.WithCallbackData(
+                        promptUiById[promptSelection[4].promptId].GetFormattedEnglish(), 
+                        promptSelection[4].promptId.Id), 
                 ]
             }));
         
-        // Act
         var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);
         
-        // Assert
         Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
     }
 
@@ -71,7 +81,7 @@ public class OutputToReplyMarkupConverterTests
 
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<ModelBotPrompt>>.None(),
+            Option<IEnumerable<EBotPrompts>>.None(),
             new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
@@ -97,7 +107,7 @@ public class OutputToReplyMarkupConverterTests
         
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
-            Option<IEnumerable<ModelBotPrompt>>.None(),
+            Option<IEnumerable<EBotPrompts>>.None(),
             Option<IEnumerable<string>>.None());
         
         var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);

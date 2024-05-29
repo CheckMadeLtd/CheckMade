@@ -8,16 +8,20 @@ public record BotPromptsDefinition
     private readonly ImmutableDictionary<BotPromptId, UiString>.Builder _builder = 
         ImmutableDictionary.CreateBuilder<BotPromptId, UiString>();
     
-    public IReadOnlyDictionary<BotPromptId, UiString> AllBotPrompts { get; }
+    public IReadOnlyDictionary<BotPromptId, UiString> BotPromptUiById { get; }
 
     public BotPromptsDefinition()
     {
-        Add(BotPrompts.No, Ui("No"));
-        Add(BotPrompts.Yes, Ui("Yes"));
+        Add(EBotPrompts.No, Ui("☒ No"));
+        Add(EBotPrompts.Yes, Ui("☑ Yes"));
+        Add(EBotPrompts.Bad, Ui("👎 Bad"));
+        Add(EBotPrompts.Ok, Ui("😐 Ok"));
+        Add(EBotPrompts.Good, Ui("👍 Good"));
+        Add(EBotPrompts.ProblemType, Ui("Problem type?"));
 
-        AllBotPrompts = _builder.ToImmutable();
+        BotPromptUiById = _builder.ToImmutable();
     }
     
-    private void Add(BotPrompts botPrompt, UiString uiString) =>
+    private void Add(EBotPrompts botPrompt, UiString uiString) =>
         _builder.Add(new BotPromptId((int)botPrompt), uiString);
 }

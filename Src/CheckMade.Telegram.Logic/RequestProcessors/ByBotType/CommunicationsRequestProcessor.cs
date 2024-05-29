@@ -19,14 +19,14 @@ public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
                     UiConcatenate(
                         Ui("Welcome to the CheckMade {0}Bot! ", BotType.Communications),
                         IRequestProcessor.SeeValidBotCommandsInstruction),
-                    Option<IEnumerable<ModelBotPrompt>>.None(),
+                    Option<IEnumerable<EBotPrompts>>.None(),
                     Option<IEnumerable<string>>.None()));
             }
 
             return Task.FromResult(new OutputDto(
                 Ui("Echo from bot {0}: {1}", BotType.Communications,
                     inputMessage.Details.Text.GetValueOrDefault()),
-                Option<IEnumerable<ModelBotPrompt>>.None(),
+                Option<IEnumerable<EBotPrompts>>.None(),
                 Option<IEnumerable<string>>.None()));
         });
     }

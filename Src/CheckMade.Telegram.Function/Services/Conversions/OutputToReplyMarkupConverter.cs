@@ -14,7 +14,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
-        var inlineKeyboardMarkup = output.BotPrompts.Match(
+        var inlineKeyboardMarkup = output.BotPromptSelection.Match(
             GetInlineKeyboardMarkup,
             Option<InlineKeyboardMarkup>.None);
 
@@ -30,18 +30,20 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                     : Option<IReplyMarkup>.None();
     }
 
-    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<ModelBotPrompt> prompts)
+    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<EBotPrompts> prompts)
     {
         const int inlineKeyboardNumberOfColumns = 2;
+        var definition = new BotPromptsDefinition();
         
         var inlineKeyboardTable = prompts
-            .Select((item, index) => new { Index = index, BotPrompt = item })
+            .Select((item, index) => 
+                new { Index = index, BotPrompt = item, PromptId = new BotPromptId((int)item) })
             .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
             .Select(x => 
                 x.Select(bp => 
                         InlineKeyboardButton.WithCallbackData(
-                            translator.Translate(bp.BotPrompt.Text), 
-                            bp.BotPrompt.Id))
+                            translator.Translate(definition.BotPromptUiById[bp.PromptId]), 
+                            bp.PromptId.Id))
                     .ToArray())
             .ToArray();
         
