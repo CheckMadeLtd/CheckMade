@@ -26,6 +26,36 @@ public class SubmissionsRequestProcessorTests
             actualOutput.GetValueOrDefault().BotPromptSelection.GetValueOrDefault());
     }
 
+    [Fact]
+    public async Task ProcessRequestAsync_ReturnsEchoWithAttachmentType_ForPhotoAttachmentMessage()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var attachmentMessage = basics.utils.GetValidModelInputTextMessageWithPhotoAttachment();
+
+        var actualOutput = await basics.processor.ProcessRequestAsync(attachmentMessage);
+        
+        Assert.True(actualOutput.IsSuccess);
+        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Submissions, AttachmentType.Photo),
+            actualOutput.GetValueOrDefault().Text);
+    }
+    
+    [Fact]
+    public async Task ProcessRequestAsync_ReturnsNormalEcho_ForNormalResponseMessage()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var responseMessage = basics.utils.GetValidModelInputTextMessage();
+
+        var actualOutput = await basics.processor.ProcessRequestAsync(responseMessage);
+        
+        Assert.True(actualOutput.IsSuccess);
+        Assert.Equivalent(Ui("Echo from bot {0}: {1}", 
+                BotType.Submissions, responseMessage.Details.Text.GetValueOrDefault()),
+            actualOutput.GetValueOrDefault().Text);
+    }
+    
+    
     private (ITestUtils utils, ISubmissionsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
         (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<ISubmissionsRequestProcessor>());
 }
