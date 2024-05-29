@@ -5,18 +5,19 @@ namespace CheckMade.Telegram.Model.BotPrompts;
 
 public record BotPromptsDefinition
 {
-    private readonly ImmutableHashSet<ModelBotPrompt>.Builder _builder = ImmutableHashSet.CreateBuilder<ModelBotPrompt>();
+    private readonly ImmutableDictionary<BotPromptId, UiString>.Builder _builder = 
+        ImmutableDictionary.CreateBuilder<BotPromptId, UiString>();
     
-    public IReadOnlySet<ModelBotPrompt> AvailableBotResponsePrompts { get; }
+    public IReadOnlyDictionary<BotPromptId, UiString> AllBotPrompts { get; }
 
     public BotPromptsDefinition()
     {
-        Add(Ui("Problem type?"), "problem_type");
-        Add(Ui("TestPrompt"), "test_prompt");
+        Add(BotPrompts.No, Ui("No"));
+        Add(BotPrompts.Yes, Ui("Yes"));
 
-        AvailableBotResponsePrompts = _builder.ToImmutable();
+        AllBotPrompts = _builder.ToImmutable();
     }
-
-    private void Add(UiString text, string id) =>
-        _builder.Add(new ModelBotPrompt(text, id));
+    
+    private void Add(BotPrompts botPrompt, UiString uiString) =>
+        _builder.Add(new BotPromptId((int)botPrompt), uiString);
 }
