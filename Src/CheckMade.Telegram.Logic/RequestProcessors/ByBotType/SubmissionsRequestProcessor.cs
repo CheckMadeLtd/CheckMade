@@ -47,7 +47,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Option<IEnumerable<string>>.None()),
             
             (int) SubmissionsBotCommands.NewIssue => new OutputDto(
-                Ui("Ok tell me more about the problem!"),
+                Ui("What type of problem?"),
                 Option<IEnumerable<ControlPrompts>>.None(),
                 new []
                 {

@@ -11,3 +11,33 @@ CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand:
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
 CheckMade.Telegram.Function	Failed to convert Telegram Message to Model. 	Fehler beim Konvertieren der Telegram-Nachricht in das Modell. 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
+CheckMade.Telegram.Logic	What type of issue?	Welche Art von Problem?
+CheckMade.Common.Model	🔙 Back	🔙 Zurück
+CheckMade.Common.Model	❌ Cancel	❌ Abbrechen
+CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
+CheckMade.Common.Model	💾 Save	💾 Speichern
+CheckMade.Common.Model	📤 Submit	📤 Abschicken
+CheckMade.Common.Model	📋 Review	📋 Überprüfen
+CheckMade.Common.Model	✏️ Edit details	✏️ Details bearbeiten
+CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
+CheckMade.Common.Model	🚫 No	🚫 Nein
+CheckMade.Common.Model	✅ Yes	✅ Ja
+CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
+CheckMade.Common.Model	👎 Bad	👎 Schlecht
+CheckMade.Common.Model	😐 Ok	😐 Ok
+CheckMade.Common.Model	👍 Good	👍 Gut
+CheckMade.Common.Model	Sanitary Operations: Admin	Sanitärbetrieb: Administrator
+CheckMade.Common.Model	Sanitary Operations: Inspector	Sanitärbetrieb: Inspektor
+CheckMade.Common.Model	Sanitary Operations: Engineer	Sanitärbetrieb: Ingenieur
+CheckMade.Common.Model	Sanitary Operations: CleanLead	Sanitärbetrieb: Putzteamleiter
+CheckMade.Common.Model	Sanitary Operations: Observer	Sanitärbetrieb: Beobachter
+CheckMade.Common.Model	❗🪣 Cleanliness	❗🪣 Sauberkeit
+CheckMade.Common.Model	❗🔧 Technical	❗🔧 Technik
+CheckMade.Common.Model	❗🗄 Consumables	❗🗄 Verbrauchsmaterial
+CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
+CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
+CheckMade.Common.Model	🧴 Soap	🧴 Seife
+CheckMade.Common.Model	🚽 Toilets	🚽 Toiletten
+CheckMade.Common.Model	🚿 Showers	🚿 Duschen
+CheckMade.Common.Model	🙋 Staff	🙋 Personal
+CheckMade.Common.Model	Other Facility	Andere Einrichtung
