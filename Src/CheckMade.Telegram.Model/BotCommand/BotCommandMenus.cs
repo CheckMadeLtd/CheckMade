@@ -11,29 +11,29 @@ public record BotCommandMenus
         SubmissionsBotCommandMenu { get; } = 
         new Dictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
         {
-            { SubmissionsBotCommands.Problem, 
+            { SubmissionsBotCommands.NewIssue, 
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new ModelBotCommand("/problem", "❗ Report a problem")
+                        new ModelBotCommand("/issue", "❗ Report a new issue")
                     },
                     {
                         LanguageCode.de, 
-                        new ModelBotCommand("/problem", "❗ Ein Problem melden")
+                        new ModelBotCommand("/problem", "❗ Ein neues Problem melden")
                     }
                 }
             },
-            { SubmissionsBotCommands.Assessment, 
+            { SubmissionsBotCommands.NewAssessment, 
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new ModelBotCommand("/assessment", "⭐ Submit an assessment")
+                        new ModelBotCommand("/assessment", "⭐ Submit a new assessment")
                     },
                     {
                         LanguageCode.de, 
-                        new ModelBotCommand("/bewertung", "⭐ Eine Bewertung vornehmen")
+                        new ModelBotCommand("/bewertung", "⭐ Eine neue Bewertung vornehmen")
                     }
                 }
             },
