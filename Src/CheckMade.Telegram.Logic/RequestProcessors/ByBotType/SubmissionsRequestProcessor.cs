@@ -44,6 +44,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Option<IEnumerable<BotPrompt>>.None(),
                 Option<IEnumerable<string>>.None()),
             
+            // ToDo: I think need to have an Enum for all available BotPrompts after all - for typed access in code...
+            // I think, I might be able to use the int of the Prompt Enum as the CallBack ID for the InlineReyplyButton!!!!
+            
             // (int) SubmissionsBotCommands.Problem => new OutputDto(
             //     Ui("Ok tell me more about the problem!"),
             //     new [] {  })
@@ -57,7 +60,8 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         };
     }
     
-    private static Attempt<OutputDto> ProcessMessageWithAttachment(InputMessageDto inputMessage, AttachmentType type)
+    private static Attempt<OutputDto> ProcessMessageWithAttachment(
+        InputMessageDto inputMessage, AttachmentType type)
     {
         return new OutputDto(
             Ui("Echo from bot {0}: {1}", BotType.Submissions, type),

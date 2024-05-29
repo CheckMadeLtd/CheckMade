@@ -29,7 +29,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(BotType.Submissions)]
     [InlineData(BotType.Communications)]
     [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(BotType botType)
+    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(
+        BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -124,6 +125,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
+    // ToDo: Update now as more realistic command behaviour is implemented
     public async Task HandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -327,7 +329,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
-        GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(Attempt<OutputDto> returnValue)
+        GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
+            Attempt<OutputDto> returnValue)
     {
         var mockSubmissionsRequestProcessor = new Mock<ISubmissionsRequestProcessor>();
         
