@@ -1,5 +1,5 @@
+using CheckMade.Common.Model;
 using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -33,7 +33,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<ControlPrompts> prompts)
     {
         const int inlineKeyboardNumberOfColumns = 2;
-        var definition = new ControlPromptsProvider();
+        var definition = new EnumUiStringProvider();
         
         var inlineKeyboardTable = prompts
             .Select((controlPrompt, index) => 
@@ -41,13 +41,13 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                 {
                     Index = index, 
                     BotPrompt = controlPrompt, 
-                    PromptId = new ControlPromptCallbackId((int)controlPrompt)
+                    PromptId = new EnumCallbackId((int)controlPrompt)
                 })
             .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
             .Select(x => 
                 x.Select(bp => 
                         InlineKeyboardButton.WithCallbackData(
-                            translator.Translate(definition.UiById[bp.PromptId]), 
+                            translator.Translate(definition.ByControlPromptId[bp.PromptId]), 
                             bp.PromptId.Id))
                     .ToArray())
             .ToArray();

@@ -1,8 +1,8 @@
-﻿using CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Common.Model;
+using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
-using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
@@ -43,15 +43,17 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions),
                     IRequestProcessor.SeeValidBotCommandsInstruction),
                 Option<IEnumerable<ControlPrompts>>.None(),
+                Option<IEnumerable<DomainCategory>>.None(), 
                 Option<IEnumerable<string>>.None()),
             
             (int) SubmissionsBotCommands.Problem => new OutputDto(
                 Ui("Ok tell me more about the problem!"),
+                Option<IEnumerable<ControlPrompts>>.None(),
                 new []
                 {
-                    ControlPrompts.ProblemTypeCleanliness,
-                    ControlPrompts.ProblemTypeTechnical,
-                    ControlPrompts.ProblemTypeConsumable
+                    DomainCategory.ProblemTypeCleanliness,
+                    DomainCategory.ProblemTypeTechnical,
+                    DomainCategory.ProblemTypeConsumable
                 },
                 Option<IEnumerable<string>>.None()),
             
@@ -59,7 +61,8 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 
                     UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())), 
-                Option<IEnumerable<ControlPrompts>>.None(), 
+                Option<IEnumerable<ControlPrompts>>.None(),
+                Option<IEnumerable<DomainCategory>>.None(), 
                 Option<IEnumerable<string>>.None())
         };
     }
@@ -70,7 +73,8 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
     {
         return new OutputDto(
             Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
-            Option<IEnumerable<ControlPrompts>>.None(), 
+            Option<IEnumerable<ControlPrompts>>.None(),
+            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
     }
     
@@ -80,6 +84,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
             Ui("Echo from bot {0}: {1}",
                 BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()),
             Option<IEnumerable<ControlPrompts>>.None(), 
+            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
     }
 }

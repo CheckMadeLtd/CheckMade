@@ -1,6 +1,6 @@
+using CheckMade.Common.Model;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversions;
-using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,19 +18,20 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var converter = GetConverter(_services);
-        var promptUiById = new ControlPromptsProvider().UiById;
+        var promptUiById = new EnumUiStringProvider().ByControlPromptId;
         var promptSelection = 
             new[]
             {
-                (prompt: ControlPrompts.No, promptId: new ControlPromptCallbackId((int)ControlPrompts.No)),
-                (prompt: ControlPrompts.Yes, promptId: new ControlPromptCallbackId((int)ControlPrompts.Yes)),
-                (prompt: ControlPrompts.Bad, promptId: new ControlPromptCallbackId((int)ControlPrompts.Bad)),
-                (prompt: ControlPrompts.Ok, promptId: new ControlPromptCallbackId((int)ControlPrompts.Ok)),
-                (prompt: ControlPrompts.Good, promptId: new ControlPromptCallbackId((int)ControlPrompts.Good))
+                (prompt: ControlPrompts.No, promptId: new EnumCallbackId((int)ControlPrompts.No)),
+                (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((int)ControlPrompts.Yes)),
+                (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((int)ControlPrompts.Bad)),
+                (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((int)ControlPrompts.Ok)),
+                (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
             };
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
             promptSelection.Select(pair => pair.prompt).ToArray(),
+            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
 
         // Assumes inlineKeyboardNumberOfColumns = 2;
@@ -82,6 +83,7 @@ public class OutputToReplyMarkupConverterTests
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
             Option<IEnumerable<ControlPrompts>>.None(),
+            Option<IEnumerable<DomainCategory>>.None(), 
             new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
@@ -108,6 +110,7 @@ public class OutputToReplyMarkupConverterTests
         var fakeOutput = new OutputDto(
             UiNoTranslate(string.Empty),
             Option<IEnumerable<ControlPrompts>>.None(),
+            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
         
         var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);

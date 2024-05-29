@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
@@ -7,7 +8,6 @@ using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -174,6 +174,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
                     Option<IEnumerable<ControlPrompts>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -200,6 +201,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
                     Option<IEnumerable<ControlPrompts>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -226,6 +228,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
                     Option<IEnumerable<ControlPrompts>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(), 
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -252,6 +255,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var fakeOutputDto = new OutputDto(
             ITestUtils.EnglishUiStringForTests,
             new[] { ControlPrompts.Bad, ControlPrompts.Good },
+            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(fakeOutputDto));

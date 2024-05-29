@@ -1,6 +1,6 @@
-﻿using CheckMade.Telegram.Model;
+﻿using CheckMade.Common.Model;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.ControlPrompt;
 using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
@@ -20,6 +20,7 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
                         Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications),
                         IRequestProcessor.SeeValidBotCommandsInstruction),
                     Option<IEnumerable<ControlPrompts>>.None(),
+                    Option<IEnumerable<DomainCategory>>.None(), 
                     Option<IEnumerable<string>>.None()));
             }
 
@@ -27,6 +28,7 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
                 Ui("Echo from bot {0}: {1}", BotType.Notifications,
                     inputMessage.Details.Text.GetValueOrDefault()),
                 Option<IEnumerable<ControlPrompts>>.None(),
+                Option<IEnumerable<DomainCategory>>.None(), 
                 Option<IEnumerable<string>>.None()));
         });
     }

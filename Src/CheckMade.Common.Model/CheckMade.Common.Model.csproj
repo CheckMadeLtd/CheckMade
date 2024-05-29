@@ -18,4 +18,10 @@
       <ProjectReference Include="..\CheckMade.Common.LangExt\CheckMade.Common.LangExt.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
+
 </Project>

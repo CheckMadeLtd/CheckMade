@@ -1,6 +1,5 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
-using CheckMade.Telegram.Model.ControlPrompt;
 
 namespace CheckMade.Telegram.Model.DTOs;
 

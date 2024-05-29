@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Model.ControlPrompt;
+namespace CheckMade.Common.Model;
 
 public enum ControlPrompts
 {
