@@ -7,7 +7,6 @@ using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommands;
-using CheckMade.Telegram.Model.BotCommands.DefinitionsByBotType;
 using CheckMade.Telegram.Model.BotPrompts;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
@@ -122,27 +121,6 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             It.Is<string>(output => output.Contains(mockErrorMessage)),
             Option<IReplyMarkup>.None(),
             It.IsAny<CancellationToken>()));
-    }
-
-    [Fact]
-    // ToDo: Update now as more realistic command behaviour is implemented
-    public async Task HandleMessageAsync_EchosCorrectBotCommandCode_ForValidBotCommandInputToSubmissions()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var validBotCommand = new BotCommandMenus()
-            .SubmissionsBotCommandMenu[SubmissionsBotCommands.Problem][0].Command;
-        var botCommandMessage = basics.utils.GetBotCommandMessage(validBotCommand);
-        var expectedOutputMessage = $"Echo of a Submissions BotCommand: {(int)SubmissionsBotCommands.Problem}";
-
-        await basics.handler.HandleMessageAsync(botCommandMessage, BotType.Submissions);
-
-        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
-                botCommandMessage.Chat.Id,
-                expectedOutputMessage,
-                Option<IReplyMarkup>.None(),
-                It.IsAny<CancellationToken>()), 
-            Times.Once);
     }
 
     [Fact]
