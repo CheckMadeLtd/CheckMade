@@ -1,4 +1,5 @@
-﻿using CheckMade.Telegram.Model;
+﻿using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 
@@ -6,11 +7,20 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 
 public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class CommunicationsRequestProcessor : ICommunicationsRequestProcessor
+public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunicationsRequestProcessor
 {
-    public Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
-        return Attempt<OutputDto>.RunAsync(() =>
+        try
+        {
+            await repo.AddOrThrowAsync(inputMessage);
+        }
+        catch (Exception ex)
+        {
+            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+        }
+
+        return await Attempt<OutputDto>.RunAsync(() =>
         {
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
