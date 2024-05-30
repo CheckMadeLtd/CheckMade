@@ -21,14 +21,14 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var categorySelection = new[] 
         {
-            (cat: DomainCategory.SanitaryOpsFacilityToilets,
-                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
-            (cat: DomainCategory.SanitaryOpsFacilityShowers,
-                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
-            (cat: DomainCategory.SanitaryOpsFacilityStaff,
-                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff)) 
+            (category: DomainCategory.SanitaryOpsFacilityToilets,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
+            (category: DomainCategory.SanitaryOpsFacilityShowers,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
+            (category: DomainCategory.SanitaryOpsFacilityStaff,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff)) 
         };
-        var fakeOutput = OutputDto.Create(categorySelection.Select(pair => pair.cat).ToArray());
+        var fakeOutput = OutputDto.Create(categorySelection.Select(pair => pair.category).ToArray());
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -37,16 +37,16 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[0].catId].GetFormattedEnglish(),
-                        categorySelection[0].catId.Id),
+                        basics.uiByCategoryId[categorySelection[0].categoryId].GetFormattedEnglish(),
+                        categorySelection[0].categoryId.Id),
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[1].catId].GetFormattedEnglish(),
-                        categorySelection[1].catId.Id),
+                        basics.uiByCategoryId[categorySelection[1].categoryId].GetFormattedEnglish(),
+                        categorySelection[1].categoryId.Id)
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[2].catId].GetFormattedEnglish(),
-                        categorySelection[2].catId.Id)
+                        basics.uiByCategoryId[categorySelection[2].categoryId].GetFormattedEnglish(),
+                        categorySelection[2].categoryId.Id)
                 ]
             }));
 
@@ -81,7 +81,7 @@ public class OutputToReplyMarkupConverterTests
                         promptSelection[0].promptId.Id), 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[1].promptId].GetFormattedEnglish(), 
-                        promptSelection[1].promptId.Id), 
+                        promptSelection[1].promptId.Id) 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
@@ -89,12 +89,12 @@ public class OutputToReplyMarkupConverterTests
                         promptSelection[2].promptId.Id), 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[3].promptId].GetFormattedEnglish(), 
-                        promptSelection[3].promptId.Id), 
+                        promptSelection[3].promptId.Id) 
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[4].promptId].GetFormattedEnglish(), 
-                        promptSelection[4].promptId.Id), 
+                        promptSelection[4].promptId.Id) 
                 ]
             }));
         
@@ -108,11 +108,34 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        // var categorySelection = 
-        var promptSelection = new[]
+        var categorySelection = new[]
+        {
+            (category: DomainCategory.SanitaryOpsRoleCleanLead,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsRoleCleanLead))
+        };
+        var promptSelection = new[] 
         {
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
         };
+        var fakeOutput = OutputDto.Create(
+            categorySelection.Select(pair => pair.category).ToArray(), 
+            promptSelection.Select(pair => pair.prompt).ToArray());
+        
+        // Assumes inlineKeyboardNumberOfColumns = 2
+        var expectedReplyMarkup = Option<IReplyMarkup>.Some(
+            new InlineKeyboardMarkup(new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    basics.uiByCategoryId[categorySelection[0].categoryId].GetFormattedEnglish(),
+                    categorySelection[0].categoryId.Id),
+                InlineKeyboardButton.WithCallbackData(
+                    basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
+                    promptSelection[0].promptId.Id)
+            }));
+
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
     }
 
     [Fact]
@@ -140,20 +163,6 @@ public class OutputToReplyMarkupConverterTests
         Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
     }
 
-    [Fact]
-    public void GetReplyMarkup_ReturnsOnlyReplyKeyboard_WhenOutputMistakenlyProvidesBothPromptsAndPredefinedChoices()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var promptSelection = new[]
-        {
-            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
-        };
-        const string choice1 = "c1";
-        
-        // var fakeOutput = new OutputDto()
-    }
-    
     [Fact]
     public void GetReplyMarkup_ReturnsNone_ForOutputWithoutPromptsOrPredefinedChoices()
     {
