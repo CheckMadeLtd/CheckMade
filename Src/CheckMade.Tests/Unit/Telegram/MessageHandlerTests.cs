@@ -173,8 +173,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<ControlPrompts>>.None(), 
-                    Option<IEnumerable<DomainCategory>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(),
+                    Option<IEnumerable<ControlPrompts>>.None(),
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -200,8 +200,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<ControlPrompts>>.None(), 
-                    Option<IEnumerable<DomainCategory>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(),
+                    Option<IEnumerable<ControlPrompts>>.None(),
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -227,8 +227,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
                 new OutputDto(
                     ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<ControlPrompts>>.None(), 
-                    Option<IEnumerable<DomainCategory>>.None(), 
+                    Option<IEnumerable<DomainCategory>>.None(),
+                    Option<IEnumerable<ControlPrompts>>.None(),
                     Option<IEnumerable<string>>.None())));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -254,8 +254,8 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new OutputDto(
             ITestUtils.EnglishUiStringForTests,
+            Option<IEnumerable<DomainCategory>>.None(),
             new[] { ControlPrompts.Bad, ControlPrompts.Good },
-            Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(fakeOutputDto));

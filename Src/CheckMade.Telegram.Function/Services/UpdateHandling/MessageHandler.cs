@@ -103,8 +103,8 @@ public class MessageHandler(
                         failure.Error,
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport),
+                    Option<IEnumerable<DomainCategory>>.None(),
                     Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<DomainCategory>>.None(), 
                     Option<IEnumerable<string>>.None());
                 
                 _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
