@@ -142,12 +142,12 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private Attempt<Option<int>> GetDomainCategoryEnumCode(Message telegramInputMessage)
     {
-        throw new NotImplementedException();
+        return Attempt<Option<int>>.Succeed(Option<int>.None());
     }
     
     private Attempt<Option<long>> GetControlPromptEnumCode(Message telegramInputMessage)
     {
-        throw new NotImplementedException();
+        return Attempt<Option<long>>.Succeed(Option<long>.None());
     }
     
     private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
