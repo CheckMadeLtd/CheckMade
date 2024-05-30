@@ -198,16 +198,50 @@ public class ToModelConverterTests
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());        
     }
 
-    // [Theory]
-    // [InlineData((long)DomainCategory.SanitaryOpsIssueCleanliness)]
-    // [InlineData((long)ControlPrompts.Good)]
-    // public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_ToAnyBot(
-    //     long callbackQuerySource)
-    // {
-    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
-    //     var basics = GetBasicTestingServices(_services);
-    //     var callbackQueryUpdate = 
-    // }
+    [Theory]
+    [InlineData((long)DomainCategory.SanitaryOpsIssueCleanliness)]
+    [InlineData((long)ControlPrompts.Good)]
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_ToAnyBot(
+        long callbackQuerySource)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var callbackQueryData = new EnumCallbackId(callbackQuerySource).Id;
+        
+        var callbackQuerySourceType = callbackQuerySource switch
+        {
+            < 1000 => typeof(DomainCategory), // ToDo: Put the correct threshold in
+            _ => typeof(ControlPrompts)
+        };
+        var callbackQueryUpdate = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+
+        var domainCategoryEnumCode = callbackQuerySourceType == typeof(DomainCategory)
+            ? Option<int>.Some(Int32.Parse(callbackQueryUpdate.CallbackQuery!.Data!))
+            : Option<int>.None();
+
+        var controlPromptEnumCode = callbackQuerySourceType == typeof(ControlPrompts)
+            ? Option<long>.Some(Int64.Parse(callbackQueryUpdate.CallbackQuery!.Data!))
+            : Option<long>.None();
+
+        var expectedInputMessage = new InputMessageDto(
+            callbackQueryUpdate.CallbackQuery!.From.Id,
+            callbackQueryUpdate.CallbackQuery.Message!.Chat.Id,
+            BotType.Submissions,
+            new InputMessageDetails(
+                callbackQueryUpdate.CallbackQuery.Message.Date,
+                callbackQueryUpdate.CallbackQuery.Message.MessageId,
+                Option<string>.None(),
+                Option<string>.None(),
+                Option<AttachmentType>.None(),
+                Option<int>.None(),
+                domainCategoryEnumCode,
+                controlPromptEnumCode));
+
+        // var actualInputMessage = await basics.converter.ConvertToModelAsync(
+        //     callbackQueryUpdate, BotType.Submissions);
+        
+        // Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
+    }
 
     [Fact]
     public async Task ConvertToModelAsync_ReturnsFailure_WhenUserIsNull_ForAnyBotType()
