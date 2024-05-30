@@ -83,7 +83,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
 
         return builder.ToImmutable();
-    } 
+    }
     
     private static async Task<InputMessageDto> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {

@@ -50,6 +50,10 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     DomainCategory.SanitaryOps_IssueCleanliness,
                     DomainCategory.SanitaryOps_IssueTechnical,
                     DomainCategory.SanitaryOps_IssueConsumable
+                },
+                new []
+                {
+                    ControlPrompts.Save
                 }),
             
             _ => OutputDto.Create(
