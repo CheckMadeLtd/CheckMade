@@ -18,7 +18,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
-namespace CheckMade.Tests.Unit.Telegram;
+namespace CheckMade.Tests.Unit.Telegram.Function;
 
 public class MessageHandlerTests(ITestOutputHelper outputHelper)
 {

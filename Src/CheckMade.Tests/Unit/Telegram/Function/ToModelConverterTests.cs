@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Tests.Unit.Telegram;
+namespace CheckMade.Tests.Unit.Telegram.Function;
 
 public class ToModelConverterTests
 {

@@ -5,7 +5,7 @@ using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.Telegram;
+namespace CheckMade.Tests.Unit.Telegram.Logic;
 
 public class SubmissionsRequestProcessorTests
 {
