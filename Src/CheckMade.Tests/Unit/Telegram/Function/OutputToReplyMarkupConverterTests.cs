@@ -21,12 +21,12 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var categorySelection = new[] 
         {
-            (category: DomainCategory.SanitaryOpsFacilityToilets,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
-            (category: DomainCategory.SanitaryOpsFacilityShowers,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
-            (category: DomainCategory.SanitaryOpsFacilityStaff,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff)) 
+            (category: DomainCategory.SanitaryOps_FacilityToilets,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityToilets)),
+            (category: DomainCategory.SanitaryOps_FacilityShowers,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityShowers)),
+            (category: DomainCategory.SanitaryOps_FacilityStaff,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
         };
         var fakeOutput = OutputDto.Create(categorySelection.Select(pair => pair.category).ToArray());
         
@@ -110,8 +110,8 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var categorySelection = new[]
         {
-            (category: DomainCategory.SanitaryOpsRoleCleanLead,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOpsRoleCleanLead))
+            (category: DomainCategory.SanitaryOps_RoleCleanLead,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_RoleCleanLead))
         };
         var promptSelection = new[] 
         {

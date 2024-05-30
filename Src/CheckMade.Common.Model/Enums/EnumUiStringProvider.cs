@@ -35,24 +35,24 @@ public record EnumUiStringProvider
 
         ByControlPromptId = _promptsBuilder.ToImmutable();
         
-        AddCategory(DomainCategory.SanitaryOpsRoleAdmin, Ui("Sanitary Operations: Admin"));
-        AddCategory(DomainCategory.SanitaryOpsRoleInspector, Ui("Sanitary Operations: Inspector"));
-        AddCategory(DomainCategory.SanitaryOpsRoleEngineer, Ui("Sanitary Operations: Engineer"));
-        AddCategory(DomainCategory.SanitaryOpsRoleCleanLead, Ui("Sanitary Operations: CleanLead"));
-        AddCategory(DomainCategory.SanitaryOpsRoleObserver, Ui("Sanitary Operations: Observer"));
+        AddCategory(DomainCategory.SanitaryOps_RoleAdmin, Ui("Sanitary Operations: Admin"));
+        AddCategory(DomainCategory.SanitaryOps_RoleInspector, Ui("Sanitary Operations: Inspector"));
+        AddCategory(DomainCategory.SanitaryOps_RoleEngineer, Ui("Sanitary Operations: Engineer"));
+        AddCategory(DomainCategory.SanitaryOps_RoleCleanLead, Ui("Sanitary Operations: CleanLead"));
+        AddCategory(DomainCategory.SanitaryOps_RoleObserver, Ui("Sanitary Operations: Observer"));
         
-        AddCategory(DomainCategory.SanitaryOpsIssueCleanliness, Ui("❗🪣 Cleanliness"));
-        AddCategory(DomainCategory.SanitaryOpsIssueTechnical, Ui("❗🔧 Technical"));
-        AddCategory(DomainCategory.SanitaryOpsIssueConsumable, Ui("❗🗄 Consumables"));
+        AddCategory(DomainCategory.SanitaryOps_IssueCleanliness, Ui("❗🪣 Cleanliness"));
+        AddCategory(DomainCategory.SanitaryOps_IssueTechnical, Ui("❗🔧 Technical"));
+        AddCategory(DomainCategory.SanitaryOps_IssueConsumable, Ui("❗🗄 Consumables"));
         
-        AddCategory(DomainCategory.SanitaryOpsConsumableToiletPaper, Ui("🧻 Toilet Paper"));
-        AddCategory(DomainCategory.SanitaryOpsConsumablePaperTowels, Ui("🌫️ Paper Towels"));
-        AddCategory(DomainCategory.SanitaryOpsConsumableSoap, Ui("🧴 Soap"));
+        AddCategory(DomainCategory.SanitaryOps_ConsumableToiletPaper, Ui("🧻 Toilet Paper"));
+        AddCategory(DomainCategory.SanitaryOps_ConsumablePaperTowels, Ui("🌫️ Paper Towels"));
+        AddCategory(DomainCategory.SanitaryOps_ConsumableSoap, Ui("🧴 Soap"));
         
-        AddCategory(DomainCategory.SanitaryOpsFacilityToilets, Ui("🚽 Toilets"));
-        AddCategory(DomainCategory.SanitaryOpsFacilityShowers, Ui("🚿 Showers"));
-        AddCategory(DomainCategory.SanitaryOpsFacilityStaff, Ui("🙋 Staff"));
-        AddCategory(DomainCategory.SanitaryOpsFacilityOther, Ui("Other Facility"));
+        AddCategory(DomainCategory.SanitaryOps_FacilityToilets, Ui("🚽 Toilets"));
+        AddCategory(DomainCategory.SanitaryOps_FacilityShowers, Ui("🚿 Showers"));
+        AddCategory(DomainCategory.SanitaryOps_FacilityStaff, Ui("🙋 Staff"));
+        AddCategory(DomainCategory.SanitaryOps_FacilityOther, Ui("Other Facility"));
 
         ByDomainCategoryId = _categoryBuilder.ToImmutable();
     }

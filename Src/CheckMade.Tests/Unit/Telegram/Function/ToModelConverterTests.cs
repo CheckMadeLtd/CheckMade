@@ -200,7 +200,7 @@ public class ToModelConverterTests
     }
 
     [Theory]
-    [InlineData((long)DomainCategory.SanitaryOpsIssueCleanliness)]
+    [InlineData((long)DomainCategory.SanitaryOps_IssueCleanliness)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_ToAnyBot(
         long callbackQuerySource)

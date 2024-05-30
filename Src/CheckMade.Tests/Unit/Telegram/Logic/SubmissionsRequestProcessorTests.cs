@@ -22,7 +22,7 @@ public class SubmissionsRequestProcessorTests
         var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandMessage);
         
         Assert.True(actualOutput.IsSuccess);
-        Assert.Contains(DomainCategory.SanitaryOpsIssueCleanliness,
+        Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
             actualOutput.GetValueOrDefault().DomainCategorySelection.GetValueOrDefault());
     }
 

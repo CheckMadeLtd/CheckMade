@@ -7,24 +7,24 @@ public enum DomainCategory
     // 1 Sanitary
     // 10 Sanitary Operations Trade 
     
-    SanitaryOpsRoleAdmin = 10010,
-    SanitaryOpsRoleInspector = 10020,
-    SanitaryOpsRoleEngineer = 10030,
-    SanitaryOpsRoleCleanLead = 10040,
-    SanitaryOpsRoleObserver = 10090,
+    SanitaryOps_RoleAdmin = 10010,
+    SanitaryOps_RoleInspector = 10020,
+    SanitaryOps_RoleEngineer = 10030,
+    SanitaryOps_RoleCleanLead = 10040,
+    SanitaryOps_RoleObserver = 10090,
     
-    SanitaryOpsIssueCleanliness = 10100,
-    SanitaryOpsIssueTechnical = 10110,
-    SanitaryOpsIssueConsumable = 10120,
+    SanitaryOps_IssueCleanliness = 10100,
+    SanitaryOps_IssueTechnical = 10110,
+    SanitaryOps_IssueConsumable = 10120,
     
-    SanitaryOpsConsumableToiletPaper = 10121,
-    SanitaryOpsConsumablePaperTowels = 10122,
-    SanitaryOpsConsumableSoap = 10123,
+    SanitaryOps_ConsumableToiletPaper = 10121,
+    SanitaryOps_ConsumablePaperTowels = 10122,
+    SanitaryOps_ConsumableSoap = 10123,
     
-    SanitaryOpsFacilityToilets = 10200,
-    SanitaryOpsFacilityShowers = 10210,
-    SanitaryOpsFacilityStaff = 10220,
-    SanitaryOpsFacilityOther = 10290
+    SanitaryOps_FacilityToilets = 10200,
+    SanitaryOps_FacilityShowers = 10210,
+    SanitaryOps_FacilityStaff = 10220,
+    SanitaryOps_FacilityOther = 10290
     
     
     // 2 Trade: Venue Cleaning

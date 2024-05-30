@@ -47,9 +47,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Ui("What type of problem?"),
                 new []
                 {
-                    DomainCategory.SanitaryOpsIssueCleanliness,
-                    DomainCategory.SanitaryOpsIssueTechnical,
-                    DomainCategory.SanitaryOpsIssueConsumable
+                    DomainCategory.SanitaryOps_IssueCleanliness,
+                    DomainCategory.SanitaryOps_IssueTechnical,
+                    DomainCategory.SanitaryOps_IssueConsumable
                 }),
             
             _ => OutputDto.Create(
