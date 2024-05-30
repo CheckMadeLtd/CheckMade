@@ -211,11 +211,11 @@ public class ToModelConverterTests
         
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
 
-        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= 99999
+        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= EnumCallbackId.DomainCategoryThreshold
             ? Option<int>.Some(int.Parse(callbackQuery.Update.CallbackQuery!.Data!))
             : Option<int>.None();
 
-        var controlPromptEnumCode = enumSourceOfCallbackQuery >= 1L<<17
+        var controlPromptEnumCode = enumSourceOfCallbackQuery > EnumCallbackId.DomainCategoryThreshold
             ? Option<long>.Some(long.Parse(callbackQuery.Update.CallbackQuery!.Data!))
             : Option<long>.None();
 

@@ -3,6 +3,7 @@ namespace CheckMade.Common.Model.Enums;
 public enum ControlPrompts : long
 {
     // IMPORTANT: 1L<<17 (first 6-digit power of 2) is the minimum allowed, to avoid clash with DomainCategory Enum!
+    // See also const DomainCategoryThreshold
     
     Back = 1L<<17,
     Cancel = 1L<<18,

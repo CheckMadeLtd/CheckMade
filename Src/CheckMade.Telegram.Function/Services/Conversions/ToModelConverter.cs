@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model;
@@ -84,7 +85,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    private Attempt<Option<int>> GetBotCommandEnumCode(
+    private static Attempt<Option<int>> GetBotCommandEnumCode(
         UpdateWrapper telegramUpdate,
         BotType botType)
     {
@@ -140,14 +141,22 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
 
-    private Attempt<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper telegramUpdate)
+    private static Attempt<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper telegramUpdate)
     {
-        return Attempt<Option<int>>.Succeed(Option<int>.None());
+        return int.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
+            ? callBackData <= EnumCallbackId.DomainCategoryThreshold
+                ? Attempt<Option<int>>.Succeed(callBackData)
+                : Attempt<Option<int>>.Succeed(Option<int>.None())
+            : Attempt<Option<int>>.Succeed(Option<int>.None());
     }
     
-    private Attempt<Option<long>> GetControlPromptEnumCode(UpdateWrapper telegramUpdate)
+    private static Attempt<Option<long>> GetControlPromptEnumCode(UpdateWrapper telegramUpdate)
     {
-        return Attempt<Option<long>>.Succeed(Option<long>.None());
+        return long.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
+            ? callBackData > EnumCallbackId.DomainCategoryThreshold
+                ? Attempt<Option<long>>.Succeed(callBackData)
+                : Attempt<Option<long>>.Succeed(Option<long>.None())
+            : Attempt<Option<long>>.Succeed(Option<long>.None());
     }
     
     private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
