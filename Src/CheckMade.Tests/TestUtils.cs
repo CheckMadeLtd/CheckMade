@@ -117,10 +117,11 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             CallbackQuery = new CallbackQuery
             {
-                From = new User { Id = Randomizer.GenerateRandomLong() },
                 Data = callbackQueryData,
                 Message = new Message
                 {
+                    From = new User { Id = Randomizer.GenerateRandomLong() },
+                    Text = "The bot's original prompt",
                     Date = DateTime.Now,
                     Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
                     MessageId = 123,

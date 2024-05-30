@@ -220,13 +220,13 @@ public class ToModelConverterTests
             : Option<long>.None();
 
         var expectedInputMessage = new InputMessageDto(
-            callbackQuery.Update.CallbackQuery!.From.Id,
-            callbackQuery.Update.CallbackQuery.Message!.Chat.Id,
+            callbackQuery.Message.From!.Id,
+            callbackQuery.Message.Chat.Id,
             BotType.Submissions,
             new InputMessageDetails(
-                callbackQuery.Update.CallbackQuery.Message.Date,
-                callbackQuery.Update.CallbackQuery.Message.MessageId,
-                Option<string>.None(),
+                callbackQuery.Message.Date,
+                callbackQuery.Message.MessageId,
+                "The bot's original prompt",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 Option<int>.None(),
