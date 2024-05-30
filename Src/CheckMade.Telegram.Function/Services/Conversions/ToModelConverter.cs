@@ -164,7 +164,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         
         return new InputMessageDto(userId.Value, telegramInputMessage.Chat.Id, botType, 
             new InputMessageDetails(
-                telegramInputMessage.Date, 
+                telegramInputMessage.Date,
+                telegramInputMessage.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 telegramAttachmentUrl,
                 attachmentDetails.Type,
