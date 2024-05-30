@@ -46,8 +46,8 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         Func<DomainCategory, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
         
         Func<ControlPrompts, string> promptTranslationGetter =
-            prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((int)prompt)]);
-        Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((int)prompt).Id;
+            prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((long)prompt)]);
+        Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((long)prompt).Id;
 
         return CollectTextIdPairs(categorySelection, categoryTranslationGetter, categoryIdGetter)
             .Concat(CollectTextIdPairs(promptSelection, promptTranslationGetter, promptIdGetter));

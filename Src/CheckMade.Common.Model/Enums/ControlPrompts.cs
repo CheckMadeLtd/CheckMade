@@ -2,26 +2,28 @@ namespace CheckMade.Common.Model.Enums;
 
 public enum ControlPrompts : long
 {
-    Back = 1L,
-    Cancel = 1L<<1,
-    Skip = 1L<<2,
-    Save = 1L<<3,
-    Submit = 1L<<4,
-    Review = 1L<<5,
-    Edit = 1L<<6,
-    Wait = 1L<<7,
-    // Placeholder <<8
-    // Placeholder <<9
+    // IMPORTANT: 1L<<17 (first 6-digit power of 2) is the minimum allowed, to avoid clash with DomainCategory Enum!
     
-    No = 1L<<10,
-    Yes = 1L<<11,
-    Maybe = 1L<<12,
-    // Placeholder <<13
-    // Placeholder <<14
+    Back = 1L<<17,
+    Cancel = 1L<<18,
+    Skip = 1L<<19,
+    Save = 1L<<20,
+    Submit = 1L<<21,
+    Review = 1L<<22,
+    Edit = 1L<<23,
+    Wait = 1L<<24,
+    // Placeholder <<25
+    // Placeholder <<26
     
-    Bad = 1L<<15,
-    Ok = 1L<<16,
-    Good = 1L<<17,
-    // Placeholder <<18
-    // Placeholder <<19
+    No = 1L<<27,
+    Yes = 1L<<28,
+    Maybe = 1L<<29,
+    // Placeholder <<30
+    // Placeholder <<31
+    
+    Bad = 1L<<32,
+    Ok = 1L<<33,
+    Good = 1L<<34,
+    // Placeholder <<35
+    // Placeholder <<36
 }

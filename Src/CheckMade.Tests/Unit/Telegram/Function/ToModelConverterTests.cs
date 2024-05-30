@@ -211,7 +211,7 @@ public class ToModelConverterTests
         
         var callbackQuerySourceType = callbackQuerySource switch
         {
-            < 1000 => typeof(DomainCategory), // ToDo: Put the correct threshold in
+            <= 99999 => typeof(DomainCategory),
             _ => typeof(ControlPrompts)
         };
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);

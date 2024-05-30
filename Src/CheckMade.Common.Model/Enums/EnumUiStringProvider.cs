@@ -58,7 +58,7 @@ public record EnumUiStringProvider
     }
     
     private void AddPrompt(ControlPrompts prompt, UiString uiString) =>
-        _promptsBuilder.Add(new EnumCallbackId((int)prompt), uiString);
+        _promptsBuilder.Add(new EnumCallbackId((long)prompt), uiString);
     
     private void AddCategory(DomainCategory category, UiString uiString) =>
         _categoryBuilder.Add(new EnumCallbackId((int)category), uiString);

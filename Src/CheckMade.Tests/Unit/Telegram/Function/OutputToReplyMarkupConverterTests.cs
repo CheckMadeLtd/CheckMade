@@ -62,11 +62,11 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var promptSelection = new[]
         {
-            (prompt: ControlPrompts.No, promptId: new EnumCallbackId((int)ControlPrompts.No)),
-            (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((int)ControlPrompts.Yes)),
-            (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((int)ControlPrompts.Bad)),
-            (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((int)ControlPrompts.Ok)),
-            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
+            (prompt: ControlPrompts.No, promptId: new EnumCallbackId((long)ControlPrompts.No)),
+            (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((long)ControlPrompts.Yes)),
+            (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((long)ControlPrompts.Bad)),
+            (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((long)ControlPrompts.Ok)),
+            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
         var fakeOutput = OutputDto.Create(promptSelection.Select(pair => pair.prompt).ToArray());
 
@@ -115,7 +115,7 @@ public class OutputToReplyMarkupConverterTests
         };
         var promptSelection = new[] 
         {
-            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
+            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
         var fakeOutput = OutputDto.Create(
             categorySelection.Select(pair => pair.category).ToArray(), 

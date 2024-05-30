@@ -2,6 +2,8 @@ namespace CheckMade.Common.Model.Enums;
 
 public enum DomainCategory
 {
+    // IMPORTANT: 99,999 is the maximum allowed, to avoid clash with ControlPrompt Enum!
+    
     // 1 Sanitary
     // 10 Sanitary Operations Trade 
     
