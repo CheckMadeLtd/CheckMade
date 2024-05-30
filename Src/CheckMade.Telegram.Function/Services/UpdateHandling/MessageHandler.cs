@@ -14,7 +14,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IMessageHandler
 {
-    Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<Unit>> HandleMessageAsync(UpdateWrapper update, BotType botType);
 }
 
 public class MessageHandler(
@@ -33,16 +33,16 @@ public class MessageHandler(
     private IUiTranslator? _uiTranslator;
     private IOutputToReplyMarkupConverter? _replyMarkupConverter;
 
-    public async Task<Attempt<Unit>> HandleMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<Unit>> HandleMessageAsync(UpdateWrapper update, BotType botType)
     {
-        _uiTranslator = translatorFactory.Create(GetUiLanguage(telegramInputMessage));
-        _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
+        ChatId chatId = update.Message.Chat.Id;
         
-        ChatId chatId = telegramInputMessage.Chat.Id;
+        _uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
+        _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
         
         logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            botType, telegramInputMessage.From?.Id ?? 0, chatId);
+            botType, update.Message.From?.Id ?? 0, chatId);
 
         var handledMessageTypes = new[]
         {
@@ -54,10 +54,10 @@ public class MessageHandler(
             MessageType.Voice
         };
 
-        if (!handledMessageTypes.Contains(telegramInputMessage.Type))
+        if (!handledMessageTypes.Contains(update.Message.Type))
         {
             logger.LogWarning("Received message of type '{messageType}': {warning}", 
-                telegramInputMessage.Type, BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish());
+                update.Message.Type, BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish());
 
             return Unit.Value;
         }
@@ -74,7 +74,7 @@ public class MessageHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var sendOutputOutcome =
-            from modelInputMessage in await toModelConverter.ConvertToModelAsync(telegramInputMessage, botType)
+            from modelInputMessage in await toModelConverter.ConvertToModelAsync(update, botType)
             from output in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
             select SendOutputAsync(output, botClient, chatId);
         
@@ -94,8 +94,8 @@ public class MessageHandler(
                     "Next, some details to help debug the current error. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
-                    botType, telegramInputMessage.From!.Id,
-                    telegramInputMessage.Date, telegramInputMessage.Text);
+                    botType, update.Message.From!.Id,
+                    update.Message.Date, update.Message.Text);
 
                 var errorOutput = OutputDto.Create(
                     UiConcatenate(

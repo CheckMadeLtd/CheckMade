@@ -25,11 +25,8 @@ public class BotUpdateSwitch(IMessageHandler messageHandler, ILogger<BotUpdateSw
         {
             case UpdateType.Message:
             case UpdateType.EditedMessage:
-                return await messageHandler.HandleMessageAsync(update.Message!, botType);
-
             case UpdateType.CallbackQuery:
-                // ToDo: Implement separate handling of InlineKeyboardResponseReceived
-                return Unit.Value;
+                return await messageHandler.HandleMessageAsync(new UpdateWrapper(update), botType);
 
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
