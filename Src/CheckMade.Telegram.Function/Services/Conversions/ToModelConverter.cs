@@ -16,24 +16,23 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 {
     public async Task<Attempt<InputMessageDto>> ConvertMessageAsync(Message telegramInputMessage, BotType botType)
     {
-        return (await
-                    (from attachmentDetails
-                            in GetAttachmentDetails(telegramInputMessage)
-                        from botCommandEnumCode
-                            in GetBotCommandEnumCode(telegramInputMessage, botType)
-                        from modelInputMessage
-                            in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails,
-                                botCommandEnumCode)
-                        select modelInputMessage))
+        return (await 
+                (from attachmentDetails 
+                        in GetAttachmentDetails(telegramInputMessage) 
+                    from botCommandEnumCode 
+                        in GetBotCommandEnumCode(telegramInputMessage, botType) 
+                    from modelInputMessage 
+                        in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, botCommandEnumCode) 
+                    select modelInputMessage))
             .Match(
-            modelInputMessage => modelInputMessage,
-            failure => Attempt<InputMessageDto>.Fail(
-                failure with // preserves any contained Exception and prefixes any contained Error UiString
-                {
-                    Error = UiConcatenate(
-                        Ui("Failed to convert Telegram Message to Model. "),
-                        failure.Error)
-                }
+                modelInputMessage => modelInputMessage, 
+                failure => Attempt<InputMessageDto>.Fail(
+                    failure with // preserves any contained Exception and prefixes any contained Error UiString
+                    { 
+                        Error = UiConcatenate(
+                            Ui("Failed to convert Telegram Message to Model. "), 
+                            failure.Error) 
+                    }
             ));
     } 
 
