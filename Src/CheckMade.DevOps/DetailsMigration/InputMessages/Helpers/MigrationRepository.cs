@@ -51,7 +51,9 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
-                Option<int>.None()));
+                Option<int>.None(),
+                Option<int>.None(), 
+                Option<long>.None()));
 
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }

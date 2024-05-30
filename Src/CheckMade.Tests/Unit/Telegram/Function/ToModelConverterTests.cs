@@ -37,7 +37,9 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
-                Option<int>.None()));
+                Option<int>.None(),
+                Option<int>.None(), 
+                Option<long>.None()));
 
         var actualInputMessage = 
             await basics.converter.ConvertMessageAsync(telegramInputMessage, BotType.Submissions);
@@ -81,7 +83,9 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 expectedAttachmentExternalUrl,
                 attachmentType,
-                Option<int>.None()));
+                Option<int>.None(),
+                Option<int>.None(), 
+                Option<long>.None()));
         
         var actualInputMessage = await basics.converter.ConvertMessageAsync(
             telegramAttachmentMessage, BotType.Submissions);

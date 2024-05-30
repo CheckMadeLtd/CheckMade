@@ -49,7 +49,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
-                Option<int>.None()));
+                Option<int>.None(),
+                Option<int>.None(),
+                Option<long>.None()));
     
     public InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
@@ -61,7 +63,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 type,
-                Option<int>.None()));
+                Option<int>.None(),
+                Option<int>.None(), 
+                Option<long>.None()));
 
     public InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode) =>
         new(Randomizer.GenerateRandomLong(),
@@ -73,7 +77,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 Option<string>.None(), 
                 Option<string>.None(), 
                 Option<AttachmentType>.None(), 
-                botCommandEnumCode));
+                botCommandEnumCode,
+                Option<int>.None(), 
+                Option<long>.None()));
 
     public Message GetValidTelegramTextMessage(string inputText) => 
         new()

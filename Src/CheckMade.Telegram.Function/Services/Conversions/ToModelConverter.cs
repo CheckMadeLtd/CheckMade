@@ -21,8 +21,18 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                         in GetAttachmentDetails(telegramInputMessage) 
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(telegramInputMessage, botType) 
+                    from domainCategoryEnumCode
+                        in GetDomainCategoryEnumCode(telegramInputMessage)
+                    from controlPromptEnumCode
+                        in GetControlPromptEnumCode(telegramInputMessage)
                     from modelInputMessage 
-                        in GetInputMessageAsync(telegramInputMessage, botType, attachmentDetails, botCommandEnumCode) 
+                        in GetInputMessageAsync(
+                            telegramInputMessage,
+                            botType,
+                            attachmentDetails,
+                            botCommandEnumCode,
+                            domainCategoryEnumCode,
+                            controlPromptEnumCode) 
                     select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage, 
@@ -129,12 +139,24 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
+
+    private Attempt<Option<int>> GetDomainCategoryEnumCode(Message telegramInputMessage)
+    {
+        throw new NotImplementedException();
+    }
+    
+    private Attempt<Option<long>> GetControlPromptEnumCode(Message telegramInputMessage)
+    {
+        throw new NotImplementedException();
+    }
     
     private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
         Message telegramInputMessage,
         BotType botType,
         AttachmentDetails attachmentDetails,
-        Option<int> botCommandEnumCode)
+        Option<int> botCommandEnumCode,
+        Option<int> domainCategoryEnumCode,
+        Option<long> controlPromptEnumCode)
     {
         var userId = telegramInputMessage.From?.Id;
 
@@ -169,6 +191,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 telegramAttachmentUrl,
                 attachmentDetails.Type,
-                botCommandEnumCode));
+                botCommandEnumCode,
+                domainCategoryEnumCode,
+                controlPromptEnumCode));
     }
 }

@@ -7,4 +7,6 @@ public record InputMessageDetails(
     Option<string> Text,
     Option<string> AttachmentExternalUrl,
     Option<AttachmentType> AttachmentType,
-    Option<int> BotCommandEnumCode);
+    Option<int> BotCommandEnumCode,
+    Option<int> DomainCategoryEnumCode,
+    Option<long> ControlPromptEnumCode);
