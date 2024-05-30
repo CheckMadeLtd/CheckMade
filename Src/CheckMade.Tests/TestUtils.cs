@@ -23,6 +23,8 @@ internal interface ITestUtils
     Message GetValidTelegramTextMessage(string inputText);
     Message GetValidTelegramBotCommandMessage(string botCommand);
     
+    Update GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData);
+    
     Message GetValidTelegramAudioMessage();
     Message GetValidTelegramDocumentMessage();
     Message GetValidTelegramPhotoMessage();
@@ -107,6 +109,22 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                     Type = MessageEntityType.BotCommand
                 }
             ]
+        };
+
+    public Update GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData) =>
+        new()
+        {
+            CallbackQuery = new CallbackQuery
+            {
+                From = new User { Id = Randomizer.GenerateRandomLong() },
+                Data = callbackQueryData,
+                Message = new Message
+                {
+                    Date = DateTime.Now,
+                    Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+                    MessageId = 123,
+                }
+            }
         };
 
     public Message GetValidTelegramAudioMessage() => 
