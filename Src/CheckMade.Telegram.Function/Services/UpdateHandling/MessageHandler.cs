@@ -1,5 +1,4 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
@@ -98,14 +97,12 @@ public class MessageHandler(
                     botType, telegramInputMessage.From!.Id,
                     telegramInputMessage.Date, telegramInputMessage.Text);
 
-                var errorOutput = new OutputDto(UiConcatenate(
+                var errorOutput = OutputDto.Create(
+                    UiConcatenate(
                         UiNoTranslate(failure.Exception?.Message ?? string.Empty), 
                         failure.Error,
                         UiNoTranslate(" "),
-                        CallToActionAfterErrorReport),
-                    Option<IEnumerable<DomainCategory>>.None(),
-                    Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<string>>.None());
+                        CallToActionAfterErrorReport));
                 
                 _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
                     // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
@@ -140,7 +137,7 @@ public class MessageHandler(
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator?.Translate(output.Text) 
+                _uiTranslator?.Translate(output.Text.GetValueOrDefault()) 
                 ?? throw new InvalidOperationException(
                     "UiTranslator or translated OutputMessage must not be NULL."),
                 _replyMarkupConverter?.GetReplyMarkup(output) 

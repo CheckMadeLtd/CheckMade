@@ -171,11 +171,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                new OutputDto(
-                    ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<DomainCategory>>.None(),
-                    Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<string>>.None())));
+                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var messageWithEnglishInTlgrUserLangSetting = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -198,11 +194,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                new OutputDto(
-                    ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<DomainCategory>>.None(),
-                    Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<string>>.None())));
+                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var messageWithGermanInTlgrUserLangSetting = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -225,11 +217,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(
-                new OutputDto(
-                    ITestUtils.EnglishUiStringForTests,
-                    Option<IEnumerable<DomainCategory>>.None(),
-                    Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<string>>.None())));
+                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var msgWithUnsupportedLangInTlgrUserSetting = 
@@ -252,11 +240,9 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var fakeOutputDto = new OutputDto(
+        var fakeOutputDto = OutputDto.Create(
             ITestUtils.EnglishUiStringForTests,
-            Option<IEnumerable<DomainCategory>>.None(),
-            new[] { ControlPrompts.Bad, ControlPrompts.Good },
-            Option<IEnumerable<string>>.None());
+            new[] { ControlPrompts.Bad, ControlPrompts.Good });
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForSubmissionsRequestProcessorWithSetUpReturnValue(fakeOutputDto));
         

@@ -1,5 +1,4 @@
-﻿using CheckMade.Common.Model.Enums;
-using CheckMade.Telegram.Model;
+﻿using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 
@@ -15,21 +14,15 @@ public class NotificationsRequestProcessor : INotificationsRequestProcessor
         {
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
-                return Task.FromResult(new OutputDto(
+                return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
                         Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications),
-                        IRequestProcessor.SeeValidBotCommandsInstruction),
-                    Option<IEnumerable<DomainCategory>>.None(),
-                    Option<IEnumerable<ControlPrompts>>.None(),
-                    Option<IEnumerable<string>>.None()));
+                        IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
-            return Task.FromResult(new OutputDto(
+            return Task.FromResult(OutputDto.Create(
                 Ui("Echo from bot {0}: {1}", BotType.Notifications,
-                    inputMessage.Details.Text.GetValueOrDefault()),
-                Option<IEnumerable<DomainCategory>>.None(),
-                Option<IEnumerable<ControlPrompts>>.None(),
-                Option<IEnumerable<string>>.None()));
+                    inputMessage.Details.Text.GetValueOrDefault())));
         });
     }
 }

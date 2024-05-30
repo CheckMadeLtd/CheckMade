@@ -38,32 +38,24 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
     {
         return inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() switch
         {
-            Start.CommandCode => new OutputDto(
+            Start.CommandCode => OutputDto.Create(
                 UiConcatenate(
                     Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions),
-                    IRequestProcessor.SeeValidBotCommandsInstruction),
-                Option<IEnumerable<DomainCategory>>.None(),
-                Option<IEnumerable<ControlPrompts>>.None(),
-                Option<IEnumerable<string>>.None()),
+                    IRequestProcessor.SeeValidBotCommandsInstruction)),
             
-            (int) SubmissionsBotCommands.NewIssue => new OutputDto(
+            (int) SubmissionsBotCommands.NewIssue => OutputDto.Create(
                 Ui("What type of problem?"),
                 new []
                 {
                     DomainCategory.SanitaryOpsIssueCleanliness,
                     DomainCategory.SanitaryOpsIssueTechnical,
                     DomainCategory.SanitaryOpsIssueConsumable
-                },
-                Option<IEnumerable<ControlPrompts>>.None(),
-                Option<IEnumerable<string>>.None()),
+                }),
             
-            _ => new OutputDto(
+            _ => OutputDto.Create(
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 
-                    UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())), 
-                Option<IEnumerable<DomainCategory>>.None(), 
-                Option<IEnumerable<ControlPrompts>>.None(),
-                Option<IEnumerable<string>>.None())
+                    UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
         };
     }
     
@@ -71,20 +63,14 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         // ReSharper disable once UnusedParameter.Local
         InputMessageDto inputMessage, AttachmentType type)
     {
-        return new OutputDto(
-            Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
-            Option<IEnumerable<DomainCategory>>.None(),
-            Option<IEnumerable<ControlPrompts>>.None(),
-            Option<IEnumerable<string>>.None());
+        return OutputDto.Create(
+            Ui("Echo from bot {0}: {1}", BotType.Submissions, type));
     }
     
     private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
-        return new OutputDto(
+        return OutputDto.Create(
             Ui("Echo from bot {0}: {1}",
-                BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()),
-            Option<IEnumerable<DomainCategory>>.None(), 
-            Option<IEnumerable<ControlPrompts>>.None(), 
-            Option<IEnumerable<string>>.None());
+                BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()));
     }
 }

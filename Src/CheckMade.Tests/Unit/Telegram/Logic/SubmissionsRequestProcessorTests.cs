@@ -42,7 +42,7 @@ public class SubmissionsRequestProcessorTests
         
         Assert.True(actualOutput.IsSuccess);
         Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
-            actualOutput.GetValueOrDefault().Text);
+            actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
     }
     
     [Fact]
@@ -57,9 +57,8 @@ public class SubmissionsRequestProcessorTests
         Assert.True(actualOutput.IsSuccess);
         Assert.Equivalent(Ui("Echo from bot {0}: {1}", 
                 BotType.Submissions, responseMessage.Details.Text.GetValueOrDefault()),
-            actualOutput.GetValueOrDefault().Text);
+            actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
     }
-    
     
     private (ITestUtils utils, ISubmissionsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
         (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<ISubmissionsRequestProcessor>());

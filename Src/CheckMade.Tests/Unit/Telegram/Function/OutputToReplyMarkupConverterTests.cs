@@ -19,21 +19,16 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var categorySelection =
-            new[]
-            {
-                (cat: DomainCategory.SanitaryOpsFacilityToilets,
-                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
-                (cat: DomainCategory.SanitaryOpsFacilityShowers,
-                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
-                (cat: DomainCategory.SanitaryOpsFacilityStaff,
-                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff))
-            };
-        var fakeOutput = new OutputDto(
-            UiNoTranslate(string.Empty),
-            categorySelection.Select(pair => pair.cat).ToArray(),
-            Option<IEnumerable<ControlPrompts>>.None(),
-            Option<IEnumerable<string>>.None());
+        var categorySelection = new[] 
+        {
+            (cat: DomainCategory.SanitaryOpsFacilityToilets,
+                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
+            (cat: DomainCategory.SanitaryOpsFacilityShowers,
+                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
+            (cat: DomainCategory.SanitaryOpsFacilityStaff,
+                catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff)) 
+        };
+        var fakeOutput = OutputDto.Create(categorySelection.Select(pair => pair.cat).ToArray());
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -65,20 +60,15 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var promptSelection = 
-            new[]
-            {
-                (prompt: ControlPrompts.No, promptId: new EnumCallbackId((int)ControlPrompts.No)),
-                (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((int)ControlPrompts.Yes)),
-                (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((int)ControlPrompts.Bad)),
-                (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((int)ControlPrompts.Ok)),
-                (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
-            };
-        var fakeOutput = new OutputDto(
-            UiNoTranslate(string.Empty),
-            Option<IEnumerable<DomainCategory>>.None(),
-            promptSelection.Select(pair => pair.prompt).ToArray(),
-            Option<IEnumerable<string>>.None());
+        var promptSelection = new[]
+        {
+            (prompt: ControlPrompts.No, promptId: new EnumCallbackId((int)ControlPrompts.No)),
+            (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((int)ControlPrompts.Yes)),
+            (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((int)ControlPrompts.Bad)),
+            (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((int)ControlPrompts.Ok)),
+            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
+        };
+        var fakeOutput = OutputDto.Create(promptSelection.Select(pair => pair.prompt).ToArray());
 
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -119,11 +109,10 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         // var categorySelection = 
-        var promptSelection =
-            new[]
-            {
-                (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
-            };
+        var promptSelection = new[]
+        {
+            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((int)ControlPrompts.Good))
+        };
     }
 
     [Fact]
@@ -131,18 +120,12 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        
         const string choice1 = "c1";
         const string choice2 = "c2";
         const string choice3 = "c3";
         const string choice4 = "c4";
         const string choice5 = "c5";
-
-        var fakeOutput = new OutputDto(
-            UiNoTranslate(string.Empty),
-            Option<IEnumerable<DomainCategory>>.None(),
-            Option<IEnumerable<ControlPrompts>>.None(),
-            new[] { choice1, choice2, choice3, choice4, choice5 });
+        var fakeOutput = OutputDto.Create(new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
@@ -176,12 +159,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        
-        var fakeOutput = new OutputDto(
-            UiNoTranslate(string.Empty),
-            Option<IEnumerable<DomainCategory>>.None(),
-            Option<IEnumerable<ControlPrompts>>.None(),
-            Option<IEnumerable<string>>.None());
+        var fakeOutput = OutputDto.CreateEmpty();
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         

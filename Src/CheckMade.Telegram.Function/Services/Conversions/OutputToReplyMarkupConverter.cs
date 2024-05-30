@@ -22,7 +22,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var inlineKeyboardMarkup = 
             GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToList().AsReadOnly());
 
-        var replyKeyboardMarkup = output.PredefinedChoices.Match(
+        var replyKeyboardMarkup = output.PredefinedChocies.Match(
             GenerateReplyKeyboardMarkup,
             Option<ReplyKeyboardMarkup>.None);
         
