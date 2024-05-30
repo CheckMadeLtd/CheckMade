@@ -4,11 +4,11 @@ public record EnumCallbackId
 {
     public string Id { get; }
 
-    public EnumCallbackId(int id)
+    public EnumCallbackId(long id)
     {
         if(id < 1)
         {
-            throw new ArgumentException("ID must be a positive integer.");
+            throw new ArgumentException("ID must be a positive long integer.");
         }
         
         Id = id.ToString();
