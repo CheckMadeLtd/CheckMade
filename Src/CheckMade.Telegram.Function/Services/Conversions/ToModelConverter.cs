@@ -9,12 +9,12 @@ namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {
-    Task<Attempt<InputMessageDto>> ConvertMessageAsync(Message telegramInputMessage, BotType botType);
+    Task<Attempt<InputMessageDto>> ConvertToModelAsync(Message telegramInputMessage, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<Attempt<InputMessageDto>> ConvertMessageAsync(Message telegramInputMessage, BotType botType)
+    public async Task<Attempt<InputMessageDto>> ConvertToModelAsync(Message telegramInputMessage, BotType botType)
     {
         return (await 
                 (from attachmentDetails 
