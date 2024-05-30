@@ -34,7 +34,7 @@ public class OutputToReplyMarkupConverterTests
             Option<IEnumerable<DomainCategory>>.None(), 
             Option<IEnumerable<string>>.None());
 
-        // Assumes inlineKeyboardNumberOfColumns = 2;
+        // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[] 
             { 
@@ -67,6 +67,53 @@ public class OutputToReplyMarkupConverterTests
         Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
     }
 
+    [Fact]
+    public void GetReplyMarkup_ReturnsCorrectlyArrangedInlineKeyboard_ForValidDomainCategories()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var converter = GetConverter(_services);
+        var categoryUiById = new EnumUiStringProvider().ByDomainCategoryId;
+        var categorySelection =
+            new[]
+            {
+                (cat: DomainCategory.SanitaryOpsFacilityToilets,
+                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityToilets)),
+                (cat: DomainCategory.SanitaryOpsFacilityShowers,
+                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityShowers)),
+                (cat: DomainCategory.SanitaryOpsFacilityStaff,
+                    catId: new EnumCallbackId((int)DomainCategory.SanitaryOpsFacilityStaff))
+            };
+        var fakeOutput = new OutputDto(
+            UiNoTranslate(string.Empty),
+            Option<IEnumerable<ControlPrompts>>.None(),
+            categorySelection.Select(pair => pair.cat).ToArray(),
+            Option<IEnumerable<string>>.None());
+        
+        // Assumes inlineKeyboardNumberOfColumns = 2
+        var expectedReplyMarkup = Option<IReplyMarkup>.Some(
+            new InlineKeyboardMarkup(new[]
+            {
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(
+                        categoryUiById[categorySelection[0].catId].GetFormattedEnglish(),
+                        categorySelection[0].catId.Id),
+                    InlineKeyboardButton.WithCallbackData(
+                        categoryUiById[categorySelection[1].catId].GetFormattedEnglish(),
+                        categorySelection[1].catId.Id),
+                },
+                [
+                    InlineKeyboardButton.WithCallbackData(
+                        categoryUiById[categorySelection[2].catId].GetFormattedEnglish(),
+                        categorySelection[2].catId.Id)
+                ]
+            }));
+
+        var actualReplyMarkup = converter.GetReplyMarkup(fakeOutput);
+        
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
+    }
+    
     [Fact]
     public void GetReplyMarkup_ReturnsCorrectlyArrangedReplyKeyboard_ForValidPredefinedChoices()
     {

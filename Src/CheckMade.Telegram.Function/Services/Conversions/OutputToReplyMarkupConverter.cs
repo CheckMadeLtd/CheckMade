@@ -14,12 +14,16 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
-        var inlineKeyboardMarkup = output.ControlPromptsSelection.Match(
-            GetInlineKeyboardMarkup,
-            Option<InlineKeyboardMarkup>.None);
+        var textCallbackIdPairs = GetTextIdPairsForInlineKeyboardButtons(
+            output.DomainCategorySelection,
+            output.ControlPromptsSelection,
+            translator);
+        
+        var inlineKeyboardMarkup = 
+            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToList().AsReadOnly());
 
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
-            GetReplyKeyboardMarkup,
+            GenerateReplyKeyboardMarkup,
             Option<ReplyKeyboardMarkup>.None);
         
         return 
@@ -30,32 +34,60 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                     : Option<IReplyMarkup>.None();
     }
 
-    private Option<InlineKeyboardMarkup> GetInlineKeyboardMarkup(IEnumerable<ControlPrompts> prompts)
+    private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
+        Option<IEnumerable<DomainCategory>> categorySelection,
+        Option<IEnumerable<ControlPrompts>> promptSelection,
+        IUiTranslator translator)
     {
-        const int inlineKeyboardNumberOfColumns = 2;
-        var definition = new EnumUiStringProvider();
+        var uiStringProvider = new EnumUiStringProvider();
+
+        Func<DomainCategory, string> categoryTranslationGetter =
+            category => translator.Translate(uiStringProvider.ByDomainCategoryId[new EnumCallbackId((int)category)]);
+        Func<DomainCategory, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
         
-        var inlineKeyboardTable = prompts
-            .Select((controlPrompt, index) => 
-                new
-                {
-                    Index = index, 
-                    BotPrompt = controlPrompt, 
-                    PromptId = new EnumCallbackId((int)controlPrompt)
-                })
-            .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
-            .Select(x => 
-                x.Select(bp => 
-                        InlineKeyboardButton.WithCallbackData(
-                            translator.Translate(definition.ByControlPromptId[bp.PromptId]), 
-                            bp.PromptId.Id))
-                    .ToArray())
-            .ToArray();
-        
-        return new InlineKeyboardMarkup(inlineKeyboardTable);
+        Func<ControlPrompts, string> promptTranslationGetter =
+            prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((int)prompt)]);
+        Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((int)prompt).Id;
+
+        return CollectTextIdPairs(categorySelection, categoryTranslationGetter, categoryIdGetter)
+            .Concat(CollectTextIdPairs(promptSelection, promptTranslationGetter, promptIdGetter));
     }
     
-    private Option<ReplyKeyboardMarkup> GetReplyKeyboardMarkup(IEnumerable<string> choices)
+    private static IEnumerable<(string text, string id)> CollectTextIdPairs<TEnum>(
+        Option<IEnumerable<TEnum>> selections,
+        Func<TEnum, string> translationGetter,
+        Func<TEnum, string> idGetter) where TEnum : Enum
+    {
+        return selections.Match(
+            items => items.Select(item =>
+                (text: translationGetter(item),
+                    id: idGetter(item))),
+            Array.Empty<(string text, string id)>);
+    }
+    
+    private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(
+        IReadOnlyCollection<(string text, string id)> textIdPairs)
+    {
+        const int inlineKeyboardNumberOfColumns = 2;
+
+        return textIdPairs.Count switch
+        {
+            0 => Option<InlineKeyboardMarkup>.None(),
+
+            _ => new InlineKeyboardMarkup(textIdPairs
+                .Select((pair, index) => new { Index = index, Pair = pair })
+                .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
+                .Select(x =>
+                    x.Select(p =>
+                            InlineKeyboardButton.WithCallbackData(
+                                p.Pair.text,
+                                p.Pair.id))
+                        .ToArray())
+                .ToArray())
+        };
+    }
+    
+    private static Option<ReplyKeyboardMarkup> GenerateReplyKeyboardMarkup(IEnumerable<string> choices)
     {
         const int replyKeyboardNumberOfColumns = 3;
 
