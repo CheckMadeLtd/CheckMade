@@ -203,25 +203,20 @@ public class ToModelConverterTests
     [InlineData((long)DomainCategory.SanitaryOps_IssueCleanliness)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_ToAnyBot(
-        long callbackQuerySource)
+        long enumSourceOfCallbackQuery)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var callbackQueryData = new EnumCallbackId(callbackQuerySource).Id;
+        var callbackQueryData = new EnumCallbackId(enumSourceOfCallbackQuery).Id;
         
-        var callbackQuerySourceType = callbackQuerySource switch
-        {
-            <= 99999 => typeof(DomainCategory),
-            _ => typeof(ControlPrompts)
-        };
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
 
-        var domainCategoryEnumCode = callbackQuerySourceType == typeof(DomainCategory)
-            ? Option<int>.Some(Int32.Parse(callbackQuery.Update.CallbackQuery!.Data!))
+        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= 99999
+            ? Option<int>.Some(int.Parse(callbackQuery.Update.CallbackQuery!.Data!))
             : Option<int>.None();
 
-        var controlPromptEnumCode = callbackQuerySourceType == typeof(ControlPrompts)
-            ? Option<long>.Some(Int64.Parse(callbackQuery.Update.CallbackQuery!.Data!))
+        var controlPromptEnumCode = enumSourceOfCallbackQuery >= 1L<<17
+            ? Option<long>.Some(long.Parse(callbackQuery.Update.CallbackQuery!.Data!))
             : Option<long>.None();
 
         var expectedInputMessage = new InputMessageDto(
