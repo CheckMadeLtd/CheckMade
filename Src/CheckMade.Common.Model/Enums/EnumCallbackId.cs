@@ -4,7 +4,7 @@ public record EnumCallbackId
 {
     // To avoid clash between non-flagged Enum DomainCategory with flagged Enum ControlPrompt
     // These two Enums share one numeric space because they need to share Telegram.Update.CallbackQuery.Data field 
-    public const int DomainCategoryThreshold = 99999;
+    public const int DomainCategoryMaxThreshold = 99999;
     
     public string Id { get; }
 

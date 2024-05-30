@@ -144,7 +144,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     private static Attempt<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper telegramUpdate)
     {
         return int.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData <= EnumCallbackId.DomainCategoryThreshold
+            ? callBackData <= EnumCallbackId.DomainCategoryMaxThreshold
                 ? Attempt<Option<int>>.Succeed(callBackData)
                 : Attempt<Option<int>>.Succeed(Option<int>.None())
             : Attempt<Option<int>>.Succeed(Option<int>.None());
@@ -153,7 +153,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     private static Attempt<Option<long>> GetControlPromptEnumCode(UpdateWrapper telegramUpdate)
     {
         return long.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData > EnumCallbackId.DomainCategoryThreshold
+            ? callBackData > EnumCallbackId.DomainCategoryMaxThreshold
                 ? Attempt<Option<long>>.Succeed(callBackData)
                 : Attempt<Option<long>>.Succeed(Option<long>.None())
             : Attempt<Option<long>>.Succeed(Option<long>.None());
