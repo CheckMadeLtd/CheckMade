@@ -10,15 +10,15 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 echo "Checking necessary environment variables are set..."
 
-env_var_is_set "DEV_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
+env_var_is_set "DEV_CHECKMADE_OPERATIONS_BOT_TOKEN" "secret"
 env_var_is_set "DEV_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
 env_var_is_set "DEV_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
 
-env_var_is_set "STG_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
+env_var_is_set "STG_CHECKMADE_OPERATIONS_BOT_TOKEN" "secret"
 env_var_is_set "STG_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
 env_var_is_set "STG_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
 
-env_var_is_set "PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN" "secret"
+env_var_is_set "PRD_CHECKMADE_OPERATIONS_BOT_TOKEN" "secret"
 env_var_is_set "PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN" "secret"
 env_var_is_set "PRD_CHECKMADE_NOTIFICATIONS_BOT_TOKEN" "secret"
 
@@ -30,15 +30,15 @@ while true; do
   echo "---"
   echo "Please choose the bot by entering the two-digit id (or 'q' to exit):"
   
-  echo "ds = (dev) Submissions Bot"
+  echo "ds = (dev) Operations Bot"
   echo "dc = (dev) Communications Bot"
   echo "dn = (dev) Notifications Bot"
   echo " "
-  echo "ss = (stg) Submissions Bot"
+  echo "ss = (stg) Operations Bot"
   echo "sc = (stg) Communications Bot"
   echo "sn = (stg) Notifications Bot"
   echo " "
-  echo "ps = (prd) Submissions Bot"
+  echo "ps = (prd) Operations Bot"
   echo "pc = (prd) Communications Bot"
   echo "pn = (prd) Notifications Bot"
   
@@ -49,21 +49,21 @@ while true; do
     return 0
   
   elif [ "$bot_choice" == "ds" ]; then
-    bot_token="$DEV_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+    bot_token="$DEV_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "dc" ]; then
     bot_token="$DEV_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "dn" ]; then
     bot_token="$DEV_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
   
   elif [ "$bot_choice" == "ss" ]; then
-    bot_token="$STG_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+    bot_token="$STG_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "sc" ]; then
     bot_token="$STG_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "sn" ]; then
     bot_token="$STG_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
   
   elif [ "$bot_choice" == "ps" ]; then
-    bot_token="$PRD_CHECKMADE_SUBMISSIONS_BOT_TOKEN"
+    bot_token="$PRD_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "pc" ]; then
     bot_token="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "pn" ]; then
@@ -88,7 +88,7 @@ while true; do
   bot_type=${bot_choice:1:1} # the second letter
   
   if [ "$bot_type" == "s" ]; then
-    function_name="SubmissionsBot"
+    function_name="OperationsBot"
   elif [ "$bot_type" == "c" ]; then
     function_name="CommunicationsBot"
   elif [ "$bot_type" == "n" ]; then
