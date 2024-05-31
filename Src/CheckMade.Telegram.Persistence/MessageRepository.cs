@@ -26,8 +26,8 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                                             " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails," +
                                             "@lastDataMig, @botType, @updateType)");
 
-            command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
-            command.Parameters.AddWithValue("@telegramChatId", inputMessage.TelegramChatId);
+            command.Parameters.AddWithValue("@telegramUserId", (long) inputMessage.UserId);
+            command.Parameters.AddWithValue("@telegramChatId", (long) inputMessage.TelegramChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
             command.Parameters.AddWithValue("@botType", (int) inputMessage.BotType);
             command.Parameters.AddWithValue("@updateType", (int) inputMessage.ModelUpdateType);
@@ -67,7 +67,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
-            command.Parameters.AddWithValue("@userId", userId.GetValueOrDefault());
+            command.Parameters.AddWithValue("@userId", (long) userId.GetValueOrDefault());
 
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
@@ -108,7 +108,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     public async Task HardDeleteAllOrThrowAsync(UserId userId)
     {
         var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @userId");
-        command.Parameters.AddWithValue("@userId", userId);
+        command.Parameters.AddWithValue("@userId", (long) userId);
 
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
