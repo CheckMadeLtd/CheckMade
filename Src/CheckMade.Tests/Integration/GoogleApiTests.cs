@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration;
@@ -12,14 +11,12 @@ public class GoogleApiTests
     private const string SkipReason = "Google Sheets currently not in use -> reducing test execution time"; 
     
     [Fact(Skip = SkipReason)]
+    // [Fact]
     public async Task GetAllSpreadsheetDataAsync_GetsAllData()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
+        var basics = GetBasicTestingServices(_services);
         const string testSheetName = "tests_retrieve_all";
-        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
-        var sheetsService = _services.GetRequiredService<ISheetsService>();
         
         var expectedCells = new SheetData(new string[][]
         {
@@ -29,22 +26,19 @@ public class GoogleApiTests
             [string.Empty, string.Empty, "C3"]
         });
         
-        // Act
-        var actualCells = await sheetsService.GetAllSpreadsheetDataAsync(testSheetId, testSheetName);
+        var actualCells = 
+            await basics.sheetsService.GetAllSpreadsheetDataAsync(basics.testSheetId, testSheetName);
         
-        // Assert
-        actualCells.Should().BeEquivalentTo(expectedCells);
+        Assert.Equivalent(expectedCells, actualCells);
     }
 
     [Fact(Skip = SkipReason)]
+    // [Fact]
     public async Task GetSpreadsheetDataAsync_HandlesEscapedCharactersCorrectly()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
+        var basics = GetBasicTestingServices(_services);
         const string testSheetName = "tests_special_char";
-        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
-        var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
         {
@@ -57,81 +51,70 @@ public class GoogleApiTests
                 "\"Enclosed by double quotes\\n and manual linebreak\""],
         });
         
-        // Act
-        var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            testSheetId, "A1:B1", testSheetName);
+        var actualCells = await basics.sheetsService.GetSpreadsheetDataAsync(
+            basics.testSheetId, "A1:B1", testSheetName);
         
-        // Assert
-        actualCells.Should().BeEquivalentTo(expectedCells);
+        Assert.Equivalent(expectedCells, actualCells);
     }
 
     [Fact(Skip = SkipReason)]
+    // [Fact]
     public async Task GetSpreadsheetDataAsync_DoesNotTrimTrailingWhitespace()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
+        var basics = GetBasicTestingServices(_services);
         const string testSheetName = "tests_special_char";
-        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
-        var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
         {
             [" with trailing spaces that shouldn't be trimmed "]
         });
         
-        // Act
-        var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            testSheetId, "A2:A2", testSheetName);
+        var actualCells = await basics.sheetsService.GetSpreadsheetDataAsync(
+            basics.testSheetId, "A2:A2", testSheetName);
         
-        // Assert
-        actualCells.Should().BeEquivalentTo(expectedCells);
+        Assert.Equivalent(expectedCells, actualCells);
     }
     
     [Fact(Skip = SkipReason)]
+    // [Fact]
     public async Task GetSpreadsheetDataAsync_CorrectlyReturnsUnicodeCharacter()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
+        var basics = GetBasicTestingServices(_services);
         const string testSheetName = "tests_special_char";
-        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
-        var sheetService = _services.GetRequiredService<ISheetsService>();
 
         var expectedCells = new SheetData(new string[][]
         {
             ["Unicode char: 😀"]
         });
         
-        // Act
-        var actualCells = await sheetService.GetSpreadsheetDataAsync(
-            testSheetId, "C3:C3", testSheetName);
+        var actualCells = await basics.sheetsService.GetSpreadsheetDataAsync(
+            basics.testSheetId, "C3:C3", testSheetName);
         
-        // Assert
-        actualCells.Should().BeEquivalentTo(expectedCells);
+        Assert.Equivalent(expectedCells, actualCells);
     }
     
     [Fact(Skip = SkipReason)]
+    // [Fact]
     public async Task GetSpreadsheetDataAsync_ReturnsStringThatCanBeParameterized()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        
-        // Arrange
+        var basics = GetBasicTestingServices(_services);
         const string testSheetName = "tests_special_char";
-        var testSheetId = _services.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId;
-        var sheetService = _services.GetRequiredService<ISheetsService>();
-        
         const string param1 = "param1";
         const string param2 = "param2";
         const string expected = $"With first value {param1} and second value {param2} inserted with string formatting.";
         
-        // Act
-        var cell = await sheetService.GetSpreadsheetDataAsync(
-            testSheetId, "B2:B2", testSheetName);
+        var cell = await basics.sheetsService.GetSpreadsheetDataAsync(
+            basics.testSheetId, "B2:B2", testSheetName);
 
         var actual = string.Format(cell.Cells[0][0], param1, param2);
         
-        // Assert
-        actual.Should().BeEquivalentTo(expected);
+        Assert.Equal(expected, actual);
     }
+
+    private (string testSheetId, ISheetsService sheetsService) GetBasicTestingServices(IServiceProvider sp) =>
+        (testSheetId: sp.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId,
+            sheetsService: sp.GetRequiredService<ISheetsService>());
 }

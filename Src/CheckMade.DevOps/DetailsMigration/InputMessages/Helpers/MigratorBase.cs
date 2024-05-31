@@ -4,13 +4,13 @@ namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {
-    internal async Task<Attempt<int>> SafelyMigrateAsync(string env)
+    internal async Task<Attempt<int>> MigrateAsync(string env)
     {
         return ((Attempt<int>) await (
                 from historicPairs in Attempt<IEnumerable<OldFormatDetailsPair>>
                     .RunAsync(migRepo.GetMessageOldFormatDetailsPairsOrThrowAsync)
-                from updateDetails in SafelyGenerateMigrationUpdatesAsync(historicPairs)
-                from unit in SafelyMigrateHistoricMessages(updateDetails)
+                from updateDetails in GenerateMigrationUpdatesAsync(historicPairs)
+                from unit in MigrateHistoricMessages(updateDetails)
                 select updateDetails.Count())
             ).Match(
                 Attempt<int>.Succeed, 
@@ -23,10 +23,10 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 }));
     }
 
-    protected abstract Attempt<IEnumerable<DetailsUpdate>> SafelyGenerateMigrationUpdatesAsync(
+    protected abstract Attempt<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs);
     
-    private async Task<Attempt<Unit>> SafelyMigrateHistoricMessages(IEnumerable<DetailsUpdate> updates)
+    private async Task<Attempt<Unit>> MigrateHistoricMessages(IEnumerable<DetailsUpdate> updates)
     {
         try
         {

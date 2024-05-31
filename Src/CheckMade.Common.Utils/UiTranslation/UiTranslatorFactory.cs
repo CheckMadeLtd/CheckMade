@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
 using CheckMade.Common.LangExt;
@@ -25,10 +26,10 @@ public class UiTranslatorFactory(
         var translationByKey = _targetLanguage switch
         {
 
-            LanguageCode.en => Option<IDictionary<string, string>>.None(),
+            LanguageCode.en => Option<IReadOnlyDictionary<string, string>>.None(),
             
-            LanguageCode.de => SafelyCreateTranslationDictionary().Match(
-                Option<IDictionary<string, string>>.Some,
+            LanguageCode.de => CreateTranslationDictionary().Match(
+                Option<IReadOnlyDictionary<string, string>>.Some,
                 failure =>
                 {
                     logger.LogWarning(failure.Exception, 
@@ -36,7 +37,7 @@ public class UiTranslatorFactory(
                                           $"and so U.I. will be English. Exception message: " +
                                           $"'{failure.Exception?.Message ?? failure.Error?.GetFormattedEnglish()}'");
                     
-                    return Option<IDictionary<string, string>>.None();
+                    return Option<IReadOnlyDictionary<string, string>>.None();
                 }),
             
             _ => throw new ArgumentOutOfRangeException(nameof(targetLanguage))
@@ -45,11 +46,11 @@ public class UiTranslatorFactory(
         return new UiTranslator(translationByKey, loggerForUiTranslator);
     }
 
-    private Attempt<IDictionary<string, string>> SafelyCreateTranslationDictionary()
+    private Attempt<IReadOnlyDictionary<string, string>> CreateTranslationDictionary()
     {
-        return Attempt<IDictionary<string, string>>.Run(() =>
+        return Attempt<IReadOnlyDictionary<string, string>>.Run(() =>
         {
-            var translationByKey = new Dictionary<string, string>();
+            var builder = ImmutableDictionary.CreateBuilder<string, string>();
             
             var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -68,11 +69,12 @@ public class UiTranslatorFactory(
                      UiString.RawEnglishText in the Translate() method. */ 
                     var enKey = csv.GetField(1).Replace("\\n", "\n");
                     var translation = csv.GetField(2).Replace("\\n", "\n");
-                    translationByKey[enKey] = translation;
+                    
+                    builder.Add(enKey, translation);
                 }
             }
 
-            return translationByKey;
+            return builder.ToImmutable();
         });
     }
 
