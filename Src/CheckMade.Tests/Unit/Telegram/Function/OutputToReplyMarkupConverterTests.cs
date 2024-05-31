@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
@@ -175,6 +176,18 @@ public class OutputToReplyMarkupConverterTests
         Assert.Equivalent(Option<IReplyMarkup>.None(), actualReplyMarkup);
     }
 
+    [Fact]
+    public void GetReplyMarkup_Throws_WhenOutputIncludesInvalidEnum()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var fakeOutput = OutputDto.Create(new[] { ControlPrompts.Back + 1 });
+
+        var act = () => basics.converter.GetReplyMarkup(fakeOutput);
+        
+        Assert.Throws<InvalidEnumArgumentException>(act);
+    }
+    
     private static (IOutputToReplyMarkupConverter converter, 
         IReadOnlyDictionary<EnumCallbackId, UiString> uiByCategoryId,
         IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId) 

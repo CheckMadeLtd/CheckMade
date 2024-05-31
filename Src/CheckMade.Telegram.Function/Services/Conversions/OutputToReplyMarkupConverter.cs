@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -14,6 +16,9 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
+        if (!AllEnumsAreDefined(output.DomainCategorySelection, output.ControlPromptsSelection))
+            throw new InvalidEnumArgumentException("Some enums are undefined!");
+        
         var textCallbackIdPairs = GetTextIdPairsForInlineKeyboardButtons(
             output.DomainCategorySelection,
             output.ControlPromptsSelection,
@@ -34,6 +39,23 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                     : Option<IReplyMarkup>.None();
     }
 
+    private static bool AllEnumsAreDefined(
+        Option<IEnumerable<DomainCategory>> categorySelection,
+        Option<IEnumerable<ControlPrompts>> promptsSelection)
+    {
+        var allTrue = true;
+        
+        allTrue &= categorySelection.Match(
+            items => items.All(EnumChecker.IsDefined),
+            () => true);
+        
+        allTrue &= promptsSelection.Match(
+            items => items.All(EnumChecker.IsDefined),
+            () => true);
+
+        return allTrue;
+    }
+    
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
         Option<IEnumerable<DomainCategory>> categorySelection,
         Option<IEnumerable<ControlPrompts>> promptSelection,

@@ -1,5 +1,6 @@
 namespace CheckMade.Common.Model.Enums;
 
+[Flags]
 public enum ControlPrompts : long
 {
     // IMPORTANT: 1L<<17 (first 6-digit power of 2) is the minimum allowed, to avoid clash with DomainCategory Enum!
@@ -7,6 +8,7 @@ public enum ControlPrompts : long
     
     Back = 1L<<17,
     Cancel = 1L<<18,
+    BackCancel = Back | Cancel,
     Skip = 1L<<19,
     Save = 1L<<20,
     Submit = 1L<<21,
