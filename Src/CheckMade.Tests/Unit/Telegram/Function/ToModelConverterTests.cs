@@ -108,8 +108,8 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var submissionsCommandMenu = 
             new BotCommandMenus().SubmissionsBotCommandMenu;
-        var currentCommand = submissionsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var commandText = submissionsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
@@ -119,7 +119,7 @@ public class ToModelConverterTests
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
+                commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 (int)command,
@@ -143,8 +143,8 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var communicationsCommandMenu = 
             new BotCommandMenus().CommunicationsBotCommandMenu;
-        var currentCommand = communicationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
@@ -154,7 +154,7 @@ public class ToModelConverterTests
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
+                commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 (int)command,
@@ -178,8 +178,8 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var notificationsCommandMenu = 
             new BotCommandMenus().NotificationsBotCommandMenu;
-        var currentCommand = notificationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
@@ -189,7 +189,7 @@ public class ToModelConverterTests
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
+                commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
                 (int)command,
