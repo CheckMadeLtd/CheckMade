@@ -36,7 +36,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
-        UserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
+        TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
             ?? 0;
         var actualOldFormatDetails = JObject.Parse(

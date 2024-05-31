@@ -3,6 +3,6 @@ using CheckMade.Telegram.Model;
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
 internal record DetailsUpdate(
-    UserId UserId, 
+    TelegramUserId UserId, 
     DateTime TelegramDate, 
     string NewDetails);

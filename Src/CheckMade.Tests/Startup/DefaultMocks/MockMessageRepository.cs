@@ -22,12 +22,12 @@ internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) 
         return await mockMessageRepo.Object.GetAllOrThrowAsync();
     }
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(UserId userId)
+    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(TelegramUserId userId)
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }
 
-    public async Task HardDeleteAllOrThrowAsync(UserId userId)
+    public async Task HardDeleteAllOrThrowAsync(TelegramUserId userId)
     {
         await mockMessageRepo.Object.HardDeleteAllOrThrowAsync(userId);
     }

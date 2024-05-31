@@ -54,14 +54,14 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync() =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates",
-            Option<UserId>.None());
+            Option<TelegramUserId>.None());
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(UserId userId) =>
+    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(TelegramUserId userId) =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
-    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<UserId> userId)
+    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<TelegramUserId> userId)
     {
         var builder = ImmutableArray.CreateBuilder<InputMessageDto>();
         var command = new NpgsqlCommand(commandText);
@@ -88,7 +88,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     
     private static async Task<InputMessageDto> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {
-        UserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
+        TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
         var telegramBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
         var telegramUpdateType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
@@ -105,7 +105,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return message;
     }
 
-    public async Task HardDeleteAllOrThrowAsync(UserId userId)
+    public async Task HardDeleteAllOrThrowAsync(TelegramUserId userId)
     {
         var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @userId");
         command.Parameters.AddWithValue("@userId", (long) userId);

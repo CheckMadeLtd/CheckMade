@@ -17,7 +17,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     InputMessageDto GetValidModelInputTextMessage();
-    InputMessageDto GetValidModelInputTextMessage(UserId userId);
+    InputMessageDto GetValidModelInputTextMessage(TelegramUserId userId);
     InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type);
     InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
     
@@ -42,7 +42,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessageDto GetValidModelInputTextMessage() =>
         GetValidModelInputTextMessage(Randomizer.GenerateRandomLong());
 
-    public InputMessageDto GetValidModelInputTextMessage(UserId userId) =>
+    public InputMessageDto GetValidModelInputTextMessage(TelegramUserId userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,

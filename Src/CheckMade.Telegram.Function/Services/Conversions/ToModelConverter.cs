@@ -194,7 +194,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                                          "b) either have a text or an attachment."));   
         }
         
-        UserId userId = telegramUpdate.Message.From.Id;
+        TelegramUserId userId = telegramUpdate.Message.From.Id;
         TelegramChatId chatId = telegramUpdate.Message.Chat.Id;
 
         var telegramAttachmentUrl = Option<string>.None();
