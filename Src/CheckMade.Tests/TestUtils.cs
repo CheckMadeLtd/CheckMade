@@ -29,7 +29,6 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramAudioMessage();
     UpdateWrapper GetValidTelegramDocumentMessage();
     UpdateWrapper GetValidTelegramPhotoMessage();
-    UpdateWrapper GetValidTelegramVideoMessage();
     UpdateWrapper GetValidTelegramVoiceMessage();
 }
 
@@ -46,6 +45,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,
+            ModelUpdateType.TextMessage,
             new InputMessageDetails(
                 DateTime.Now,
                 1,
@@ -60,6 +60,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,
+            ModelUpdateType.AttachmentMessage,
             new InputMessageDetails(
                 DateTime.Now,
                 1,
@@ -74,6 +75,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             botType,
+            ModelUpdateType.CommandMessage,
             new InputMessageDetails(
                 DateTime.Now,
                 1,
@@ -160,17 +162,6 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             MessageId = 123,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
-        });
-
-    public UpdateWrapper GetValidTelegramVideoMessage() =>
-        new(new Message
-        {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
-            Date = DateTime.Now,
-            MessageId = 123,
-            Caption = "fakeVideoCaption",
-            Video = new Video { FileId = "fakeVideoFileId" }
         });
 
     public UpdateWrapper GetValidTelegramVoiceMessage() =>

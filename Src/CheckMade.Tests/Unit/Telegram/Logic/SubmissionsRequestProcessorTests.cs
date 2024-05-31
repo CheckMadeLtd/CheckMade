@@ -30,7 +30,6 @@ public class SubmissionsRequestProcessorTests
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
-    [InlineData(AttachmentType.Video)]
     public async Task ProcessRequestAsync_ReturnsEchoWithAttachmentType_ForPhotoAttachmentMessage(
         AttachmentType type)
     {

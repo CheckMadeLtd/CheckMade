@@ -14,7 +14,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
     {
         var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
-        var command = new NpgsqlCommand("SELECT * FROM tlgr_messages");
+        var command = new NpgsqlCommand("SELECT * FROM tlgr_updates");
         
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
@@ -46,6 +46,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             telegramUserId,
             telegramChatId,
             BotType.Submissions,
+            ModelUpdateType.TextMessage,
             new InputMessageDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),
@@ -62,7 +63,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     {
         var commands = updates.Select(update =>
         {
-            const string commandTextPrefix = "UPDATE tlgr_messages SET details = @details " +
+            const string commandTextPrefix = "UPDATE tlgr_updates SET details = @details " +
                                              "WHERE user_id = @userId " +
                                              "AND (details ->> 'TelegramDate')::timestamp = @dateTime";
 

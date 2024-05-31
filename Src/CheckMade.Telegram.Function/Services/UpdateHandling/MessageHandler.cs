@@ -48,10 +48,9 @@ public class MessageHandler(
         {
             MessageType.Audio,
             MessageType.Document,
+            MessageType.Location,
             MessageType.Photo,
-            MessageType.Text,
-            MessageType.Video,
-            MessageType.Voice
+            MessageType.Text
         };
 
         if (!handledMessageTypes.Contains(update.Message.Type))

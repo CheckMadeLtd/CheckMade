@@ -33,6 +33,7 @@ public class ToModelConverterTests
             update.Message.From!.Id,
             update.Message.Chat.Id,
             BotType.Submissions,
+            ModelUpdateType.TextMessage,
             new InputMessageDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -55,7 +56,6 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
-    [InlineData(AttachmentType.Video)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidAttachmentMessage_ToAnyBotType(
         AttachmentType attachmentType)
     {
@@ -66,7 +66,6 @@ public class ToModelConverterTests
             AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
             AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
             AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
-            AttachmentType.Video => basics.utils.GetValidTelegramVideoMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
@@ -78,6 +77,7 @@ public class ToModelConverterTests
             attachmentUpdate.Message.From!.Id,
             attachmentUpdate.Message.Chat.Id,
             BotType.Submissions,
+            ModelUpdateType.AttachmentMessage,
             new InputMessageDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
@@ -115,6 +115,7 @@ public class ToModelConverterTests
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Submissions,
+            ModelUpdateType.CommandMessage,
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -149,6 +150,7 @@ public class ToModelConverterTests
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Communications,
+            ModelUpdateType.CommandMessage,
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -183,6 +185,7 @@ public class ToModelConverterTests
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Notifications,
+            ModelUpdateType.CommandMessage,
             new InputMessageDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -223,6 +226,7 @@ public class ToModelConverterTests
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
             BotType.Submissions,
+            ModelUpdateType.CallbackQuery,
             new InputMessageDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,

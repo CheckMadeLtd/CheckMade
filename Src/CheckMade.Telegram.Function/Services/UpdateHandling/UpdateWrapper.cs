@@ -25,8 +25,10 @@ public record UpdateWrapper
 
     internal UpdateWrapper(Message message)
     {
-        Update = new Update();
         Message = message;
+        
+        // Needed only by fake messages from TestUtils, which are using this constructor overload as a shortcut.
+        Update = new Update { Message = message };
     }
     
     internal UpdateWrapper(Update update, Message message)

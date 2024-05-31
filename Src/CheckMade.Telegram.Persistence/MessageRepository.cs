@@ -21,15 +21,16 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     {
         var commands = inputMessages.Select(inputMessage =>
         {
-            var command = new NpgsqlCommand("INSERT INTO tlgr_messages " +
-                                            "(user_id, chat_id, details, last_data_migration, bot_type)" +
+            var command = new NpgsqlCommand("INSERT INTO tlgr_updates " +
+                                            "(user_id, chat_id, details, last_data_migration, bot_type, update_type)" +
                                             " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails," +
-                                            "@lastDataMig, @botType)");
+                                            "@lastDataMig, @botType, @updateType)");
 
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
             command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
             command.Parameters.AddWithValue("@botType", (int) inputMessage.BotType);
+            command.Parameters.AddWithValue("@updateType", (int) inputMessage.ModelUpdateType);
 
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
@@ -52,12 +53,12 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 
     public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync() =>
         await GetAllOrThrowExecuteAsync(
-            "SELECT * FROM tlgr_messages",
+            "SELECT * FROM tlgr_updates",
             Option<long>.None());
 
     public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(long userId) =>
         await GetAllOrThrowExecuteAsync(
-            "SELECT * FROM tlgr_messages WHERE user_id = @userId",
+            "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
     private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
@@ -90,12 +91,14 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
         var telegramBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
+        var telegramUpdateType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
         var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
         var message = new InputMessageDto(
             telegramUserId,
             telegramChatId,
-            (BotType) Enum.ToObject(typeof(BotType), telegramBotType),
+            (BotType) telegramBotType,
+            (ModelUpdateType) telegramUpdateType,
             JsonHelper.DeserializeFromJsonStrict<InputMessageDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
@@ -104,7 +107,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 
     public async Task HardDeleteAllOrThrowAsync(long userId)
     {
-        var command = new NpgsqlCommand("DELETE FROM tlgr_messages WHERE user_id = @userId");
+        var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @userId");
         command.Parameters.AddWithValue("@userId", userId);
 
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>

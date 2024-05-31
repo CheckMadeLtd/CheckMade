@@ -18,7 +18,9 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     public async Task<Attempt<InputMessageDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
     {
         return (await 
-                (from attachmentDetails 
+                (from modelUpdateType
+                        in GetModelUpdateType(telegramUpdate)
+                    from attachmentDetails 
                         in GetAttachmentDetails(telegramUpdate) 
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(telegramUpdate, botType) 
@@ -30,6 +32,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                         in GetInputMessageAsync(
                             telegramUpdate,
                             botType,
+                            modelUpdateType,
                             attachmentDetails,
                             botCommandEnumCode,
                             domainCategoryEnumCode,
@@ -45,8 +48,29 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                             failure.Error) 
                     }
             ));
-    } 
+    }
 
+    private static Attempt<ModelUpdateType> GetModelUpdateType(UpdateWrapper telegramUpdate) =>
+        telegramUpdate.Update.Type switch
+        {
+            UpdateType.Message or UpdateType.EditedMessage => telegramUpdate.Message.Type switch
+            {
+                MessageType.Text => telegramUpdate.Message.Entities?[0].Type switch
+                {
+                    MessageEntityType.BotCommand => ModelUpdateType.CommandMessage,
+                    _ => ModelUpdateType.TextMessage
+                },
+                MessageType.Location => ModelUpdateType.Location,
+                _ => ModelUpdateType.AttachmentMessage
+            },
+            
+            UpdateType.CallbackQuery => ModelUpdateType.CallbackQuery,
+            
+            _ => throw new InvalidOperationException(
+                $"Telegram Update of type {telegramUpdate.Update.Type} is not yet supported " +
+                $"and shouldn't be handled in this converter!")
+        };
+    
     private static Attempt<AttachmentDetails> GetAttachmentDetails(UpdateWrapper telegramUpdate)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
@@ -72,11 +96,6 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 telegramUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramUpdate.Message.Type)), 
                     AttachmentType.Document)),
-            
-            MessageType.Video => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                telegramUpdate.Message.Video?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, telegramUpdate.Message.Type)),
-                AttachmentType.Video)),
             
             _ => new Failure(Error:
                 Ui("Attachment type {0} is not yet supported!", telegramUpdate.Message.Type)) 
@@ -162,6 +181,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
     private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
         UpdateWrapper telegramUpdate,
         BotType botType,
+        ModelUpdateType modelUpdateType,
         AttachmentDetails attachmentDetails,
         Option<int> botCommandEnumCode,
         Option<int> domainCategoryEnumCode,
@@ -193,7 +213,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramUpdate.Message.Text
             : telegramUpdate.Message.Caption;
         
-        return new InputMessageDto(userId.Value, telegramUpdate.Message.Chat.Id, botType, 
+        return new InputMessageDto(userId.Value, telegramUpdate.Message.Chat.Id, botType, modelUpdateType,
             new InputMessageDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,
