@@ -31,7 +31,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<InputMessageDto>
             {
-                new (message.UserId, message.ChatId, message.BotType, message.ModelUpdateType, message.Details)
+                new (message.UserId, message.TelegramChatId, message.BotType, message.ModelUpdateType, message.Details)
             };
         
             await messageRepo.AddOrThrowAsync(message);

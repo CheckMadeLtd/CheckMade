@@ -37,7 +37,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         DbDataReader reader)
     {
         UserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
-        var telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
+        TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
             ?? 0;
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));

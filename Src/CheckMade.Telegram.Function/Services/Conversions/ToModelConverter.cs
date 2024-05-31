@@ -195,6 +195,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         }
         
         UserId userId = telegramUpdate.Message.From.Id;
+        TelegramChatId chatId = telegramUpdate.Message.Chat.Id;
 
         var telegramAttachmentUrl = Option<string>.None();
         
@@ -214,7 +215,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramUpdate.Message.Text
             : telegramUpdate.Message.Caption;
         
-        return new InputMessageDto(userId, telegramUpdate.Message.Chat.Id, botType, modelUpdateType,
+        return new InputMessageDto(userId, chatId, botType, modelUpdateType,
             new InputMessageDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,

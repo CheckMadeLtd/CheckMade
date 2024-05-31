@@ -2,7 +2,7 @@
 
 public record InputMessageDto(
      UserId UserId,
-     long ChatId,
+     TelegramChatId TelegramChatId,
      BotType BotType,
      ModelUpdateType ModelUpdateType,
      InputMessageDetails Details);

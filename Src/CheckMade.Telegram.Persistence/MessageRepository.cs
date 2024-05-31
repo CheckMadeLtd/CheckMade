@@ -27,7 +27,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
                                             "@lastDataMig, @botType, @updateType)");
 
             command.Parameters.AddWithValue("@telegramUserId", inputMessage.UserId);
-            command.Parameters.AddWithValue("@telegramChatId", inputMessage.ChatId);
+            command.Parameters.AddWithValue("@telegramChatId", inputMessage.TelegramChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
             command.Parameters.AddWithValue("@botType", (int) inputMessage.BotType);
             command.Parameters.AddWithValue("@updateType", (int) inputMessage.ModelUpdateType);
@@ -88,8 +88,8 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     
     private static async Task<InputMessageDto> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {
-        var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
-        var telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
+        UserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
+        TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
         var telegramBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
         var telegramUpdateType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
         var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
