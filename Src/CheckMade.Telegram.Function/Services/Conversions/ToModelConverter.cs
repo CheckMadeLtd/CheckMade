@@ -187,13 +187,14 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         Option<int> domainCategoryEnumCode,
         Option<long> controlPromptEnumCode)
     {
-        var userId = telegramUpdate.Message.From?.Id;
-
-        if (userId == null || string.IsNullOrWhiteSpace(telegramUpdate.Message.Text) && attachmentDetails.FileId.IsNone)
+        if (telegramUpdate.Message.From?.Id == null || 
+            string.IsNullOrWhiteSpace(telegramUpdate.Message.Text) && attachmentDetails.FileId.IsNone)
         {
             return new Failure(Error: Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
                                          "b) either have a text or an attachment."));   
         }
+        
+        UserId userId = telegramUpdate.Message.From.Id;
 
         var telegramAttachmentUrl = Option<string>.None();
         
@@ -213,7 +214,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramUpdate.Message.Text
             : telegramUpdate.Message.Caption;
         
-        return new InputMessageDto(userId.Value, telegramUpdate.Message.Chat.Id, botType, modelUpdateType,
+        return new InputMessageDto(userId, telegramUpdate.Message.Chat.Id, botType, modelUpdateType,
             new InputMessageDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,

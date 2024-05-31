@@ -17,7 +17,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     InputMessageDto GetValidModelInputTextMessage();
-    InputMessageDto GetValidModelInputTextMessage(long userId);
+    InputMessageDto GetValidModelInputTextMessage(UserId userId);
     InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type);
     InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
     
@@ -34,6 +34,7 @@ internal interface ITestUtils
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
+    // Needs to be 'long' instead of 'UserId' for usage in InlineData() of Tests
     internal const long TestUserDanielGorinTelegramId = 215737196L;
 
     public Randomizer Randomizer { get; } = randomizer;
@@ -41,7 +42,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessageDto GetValidModelInputTextMessage() =>
         GetValidModelInputTextMessage(Randomizer.GenerateRandomLong());
 
-    public InputMessageDto GetValidModelInputTextMessage(long userId) =>
+    public InputMessageDto GetValidModelInputTextMessage(UserId userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Submissions,

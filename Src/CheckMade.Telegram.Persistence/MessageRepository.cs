@@ -54,14 +54,14 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
     public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync() =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates",
-            Option<long>.None());
+            Option<UserId>.None());
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(long userId) =>
+    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(UserId userId) =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
-    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<long> userId)
+    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<UserId> userId)
     {
         var builder = ImmutableArray.CreateBuilder<InputMessageDto>();
         var command = new NpgsqlCommand(commandText);
@@ -105,7 +105,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return message;
     }
 
-    public async Task HardDeleteAllOrThrowAsync(long userId)
+    public async Task HardDeleteAllOrThrowAsync(UserId userId)
     {
         var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @userId");
         command.Parameters.AddWithValue("@userId", userId);

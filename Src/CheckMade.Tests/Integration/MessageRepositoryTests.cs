@@ -50,7 +50,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var userId = utils.Randomizer.GenerateRandomLong();
+        UserId userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessage(userId),
@@ -72,7 +72,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var randomizer = _services.GetRequiredService<Randomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
-        var userId = randomizer.GenerateRandomLong();
+        UserId userId = randomizer.GenerateRandomLong();
     
         var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
     
@@ -87,7 +87,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
-        long devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
+        UserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
