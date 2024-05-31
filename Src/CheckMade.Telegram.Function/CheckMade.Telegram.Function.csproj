@@ -64,4 +64,9 @@
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="logs\human\" />
+      <Folder Include="logs\machine\" />
+    </ItemGroup>
 </Project>
