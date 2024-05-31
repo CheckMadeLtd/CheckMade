@@ -20,6 +20,7 @@ public interface IBotClientWrapper
     
     Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
+        string pleaseChooseText,
         string text,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
@@ -40,6 +41,7 @@ public class BotClientWrapper(
     
     public async Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
+        string pleaseChooseText,
         string text,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
@@ -50,10 +52,22 @@ public class BotClientWrapper(
             catch earlier network issues like from our Azure Function to the Telegram Servers! */
             await retryPolicy.ExecuteAsync(async () =>
             {
+                // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
+                if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: pleaseChooseText,
+                        replyMarkup: new ReplyKeyboardRemove(),
+                        cancellationToken: cancellationToken);
+                }
+                
                 await botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: text,
-                    replyMarkup: replyMarkup.GetValueOrDefault(),
+                    replyMarkup: replyMarkup.IsSome 
+                        ? replyMarkup.GetValueOrDefault()
+                        : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
                     cancellationToken: cancellationToken);
             });
         }

@@ -9,6 +9,7 @@ using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
@@ -69,7 +70,7 @@ public class MessageHandler(
                     botClient => botClient,
                     failure => throw new InvalidOperationException(
                         "Failed to create BotClient", failure.Exception));
-
+        
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
@@ -104,11 +105,10 @@ public class MessageHandler(
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport));
                 
-                _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
-                    // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
+                _ = SendOutputAsync(errorOutput, botClient, chatId)
                     .ContinueWith(task => 
                     { 
-                        if (task.Result.IsFailure) 
+                        if (task.Result.IsFailure) // e.g. NetworkAccessException thrown downstream 
                             logger.LogError(
                                 "An error occurred while trying to send a message to report another error."); 
                     });
@@ -134,14 +134,18 @@ public class MessageHandler(
     private async Task<Attempt<Unit>> SendOutputAsync(
         OutputDto output, IBotClientWrapper botClient, ChatId chatId)
     {
+        if (_uiTranslator == null)
+            throw new InvalidOperationException("UiTranslator or translated OutputMessage must not be NULL.");
+
+        if (_replyMarkupConverter == null)
+            throw new InvalidOperationException("ReplyMarkupConverter must not be null.");
+        
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator?.Translate(output.Text.GetValueOrDefault()) 
-                ?? throw new InvalidOperationException(
-                    "UiTranslator or translated OutputMessage must not be NULL."),
-                _replyMarkupConverter?.GetReplyMarkup(output) 
-                ?? throw new InvalidOperationException("ReplyMarkupConverter must not be null."))
+                _uiTranslator.Translate(Ui("Please choose:")),
+                _uiTranslator.Translate(output.Text.GetValueOrDefault()),
+                _replyMarkupConverter.GetReplyMarkup(output))
             );
     }
 }

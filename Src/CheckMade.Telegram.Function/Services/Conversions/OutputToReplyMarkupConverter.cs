@@ -122,7 +122,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         
         return new ReplyKeyboardMarkup(replyKeyboardTable)
         {
-            IsPersistent = true,
+            IsPersistent = false,
             OneTimeKeyboard = true,
             ResizeKeyboard = true
         };
