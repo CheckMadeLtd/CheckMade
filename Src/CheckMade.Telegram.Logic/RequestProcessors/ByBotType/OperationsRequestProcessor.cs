@@ -7,9 +7,9 @@ using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 
-public interface ISubmissionsRequestProcessor : IRequestProcessor;
+public interface IOperationsRequestProcessor : IRequestProcessor;
 
-public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
+public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRequestProcessor
 {
     public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
@@ -40,10 +40,10 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             Start.CommandCode => OutputDto.Create(
                 UiConcatenate(
-                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions),
+                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Operations),
                     IRequestProcessor.SeeValidBotCommandsInstruction)),
             
-            (int) SubmissionsBotCommands.NewIssue => OutputDto.Create(
+            (int) OperationsBotCommands.NewIssue => OutputDto.Create(
                 Ui("What type of issue?"),
                 new []
                 {
@@ -56,16 +56,16 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     ControlPrompts.Save
                 }),
             
-            (int) SubmissionsBotCommands.NewAssessment => OutputDto.Create(
+            (int) OperationsBotCommands.NewAssessment => OutputDto.Create(
                 Ui("⛺ Please choose a camp."),
                 new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
             
-            // (int) SubmissionsBotCommands.Experimental => OutputDto.Create(
+            // (int) OperationsBotCommands.Experimental => OutputDto.Create(
             //     Ui("Please go here:"));
             
             _ => OutputDto.Create(
                 UiConcatenate(
-                    Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 
+                    Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
                     UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
         };
     }
@@ -75,13 +75,13 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         InputMessageDto inputMessage, AttachmentType type)
     {
         return OutputDto.Create(
-            Ui("Echo from bot {0}: {1}", BotType.Submissions, type));
+            Ui("Echo from bot {0}: {1}", BotType.Operations, type));
     }
     
     private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
         return OutputDto.Create(
             Ui("Echo from bot {0}: {1}",
-                BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()));
+                BotType.Operations, inputMessage.Details.Text.GetValueOrDefault()));
     }
 }

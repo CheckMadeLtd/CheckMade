@@ -89,8 +89,8 @@ public class BotClientWrapper(
         {
             var telegramBotCommands = botType switch
             {
-                BotType.Submissions => 
-                    GetTelegramBotCommandsFromModelCommandsMenu(menu.SubmissionsBotCommandMenu, language),
+                BotType.Operations => 
+                    GetTelegramBotCommandsFromModelCommandsMenu(menu.OperationsBotCommandMenu, language),
                 BotType.Communications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
                 BotType.Notifications => 

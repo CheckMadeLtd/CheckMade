@@ -45,7 +45,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessageDto GetValidModelInputTextMessage(TelegramUserId userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.TextMessage,
             new InputMessageDetails(
                 DateTime.Now,
@@ -60,7 +60,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.AttachmentMessage,
             new InputMessageDetails(
                 DateTime.Now,

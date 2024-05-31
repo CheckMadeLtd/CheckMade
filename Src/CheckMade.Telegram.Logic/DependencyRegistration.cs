@@ -8,7 +8,7 @@ public static class DependencyRegistration
 {
     public static void Add_TelegramLogic_Dependencies(this IServiceCollection services)
     {
-        services.AddScoped<ISubmissionsRequestProcessor, SubmissionsRequestProcessor>();
+        services.AddScoped<IOperationsRequestProcessor, OperationsRequestProcessor>();
         services.AddScoped<ICommunicationsRequestProcessor, CommunicationsRequestProcessor>();
         services.AddScoped<INotificationsRequestProcessor, NotificationsRequestProcessor>();
         

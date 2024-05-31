@@ -32,7 +32,7 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessageDto(
             update.Message.From!.Id,
             update.Message.Chat.Id,
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.TextMessage,
             new InputMessageDetails(
                 update.Message.Date,
@@ -47,7 +47,7 @@ public class ToModelConverterTests
                 Option<long>.None()));
 
         var actualInputMessage = 
-            await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
+            await basics.converter.ConvertToModelAsync(update, BotType.Operations);
 
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
@@ -76,7 +76,7 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessageDto(
             attachmentUpdate.Message.From!.Id,
             attachmentUpdate.Message.Chat.Id,
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.AttachmentMessage,
             new InputMessageDetails(
                 attachmentUpdate.Message.Date,
@@ -91,30 +91,30 @@ public class ToModelConverterTests
                 Option<long>.None()));
         
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-            attachmentUpdate, BotType.Submissions);
+            attachmentUpdate, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
 
     [Theory]
-    [InlineData(SubmissionsBotCommands.NewIssue)]
-    [InlineData(SubmissionsBotCommands.NewAssessment)]
-    [InlineData(SubmissionsBotCommands.Settings)]
-    [InlineData(SubmissionsBotCommands.Logout)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToSubmissions(
-        SubmissionsBotCommands command)
+    [InlineData(OperationsBotCommands.NewIssue)]
+    [InlineData(OperationsBotCommands.NewAssessment)]
+    [InlineData(OperationsBotCommands.Settings)]
+    [InlineData(OperationsBotCommands.Logout)]
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToOperations(
+        OperationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var submissionsCommandMenu = 
-            new BotCommandMenus().SubmissionsBotCommandMenu;
-        var commandText = submissionsCommandMenu[command][LanguageCode.en].Command;
+        var operationsCommandMenu = 
+            new BotCommandMenus().OperationsBotCommandMenu;
+        var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.CommandMessage,
             new InputMessageDetails(
                 commandUpdate.Message.Date,
@@ -127,7 +127,7 @@ public class ToModelConverterTests
                 Option<long>.None()));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-            commandUpdate, BotType.Submissions);
+            commandUpdate, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());        
     }
@@ -225,7 +225,7 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessageDto(
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
-            BotType.Submissions,
+            BotType.Operations,
             ModelUpdateType.CallbackQuery,
             new InputMessageDetails(
                 callbackQuery.Message.Date,
@@ -238,7 +238,7 @@ public class ToModelConverterTests
                 controlPromptEnumCode));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-             callbackQuery, BotType.Submissions);
+             callbackQuery, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
@@ -250,7 +250,7 @@ public class ToModelConverterTests
          var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         Assert.True(conversionAttempt.IsFailure);
     }
     
@@ -261,7 +261,7 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var update = new UpdateWrapper(new Message { From = new User { Id = 123L } });
         
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         
         Assert.True(conversionAttempt.IsFailure);
     }
@@ -272,7 +272,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var voiceMessage = basics.utils.GetValidTelegramVoiceMessage();
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Submissions);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Operations);
 
         Assert.True(conversionAttempt.IsFailure);
         Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!",

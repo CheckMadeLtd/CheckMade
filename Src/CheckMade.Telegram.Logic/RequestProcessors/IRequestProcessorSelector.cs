@@ -9,7 +9,7 @@ public interface IRequestProcessorSelector
 }
 
 public class RequestProcessorSelector(
-        ISubmissionsRequestProcessor submissionsProcessor,
+        IOperationsRequestProcessor operationsProcessor,
         ICommunicationsRequestProcessor communicationsProcessor,
         INotificationsRequestProcessor notificationsProcessor) 
     : IRequestProcessorSelector
@@ -18,7 +18,7 @@ public class RequestProcessorSelector(
     {
         return botType switch
         {
-            BotType.Submissions => submissionsProcessor,
+            BotType.Operations => operationsProcessor,
             BotType.Communications => communicationsProcessor,
             BotType.Notifications => notificationsProcessor,
             _ => throw new ArgumentOutOfRangeException(nameof(botType))

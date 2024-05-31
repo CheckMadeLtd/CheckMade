@@ -121,7 +121,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
         var botCommandMenuForCurrentBotType = botType switch
         {
-            BotType.Submissions => allBotCommandMenus.SubmissionsBotCommandMenu.Values,
+            BotType.Operations => allBotCommandMenus.OperationsBotCommandMenu.Values,
             BotType.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
             BotType.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
@@ -139,8 +139,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
-            BotType.Submissions => Option<int>.Some(
-                (int) allBotCommandMenus.SubmissionsBotCommandMenu
+            BotType.Operations => Option<int>.Some(
+                (int) allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(botCommandFromInputMessage))
                     .Key),

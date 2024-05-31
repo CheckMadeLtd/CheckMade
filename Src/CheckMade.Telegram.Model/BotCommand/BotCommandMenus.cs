@@ -7,11 +7,11 @@ namespace CheckMade.Telegram.Model.BotCommand;
 
 public record BotCommandMenus
 {
-    public IReadOnlyDictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
-        SubmissionsBotCommandMenu { get; } = 
-        new Dictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
+    public IReadOnlyDictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
+        OperationsBotCommandMenu { get; } = 
+        new Dictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
         {
-            { SubmissionsBotCommands.NewIssue, 
+            { OperationsBotCommands.NewIssue, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
@@ -24,7 +24,7 @@ public record BotCommandMenus
                     }
                 }
             },
-            { SubmissionsBotCommands.NewAssessment, 
+            { OperationsBotCommands.NewAssessment, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
@@ -37,7 +37,7 @@ public record BotCommandMenus
                     }
                 }
             },
-            { SubmissionsBotCommands.Settings, 
+            { OperationsBotCommands.Settings, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
@@ -50,7 +50,7 @@ public record BotCommandMenus
                     }
                 } 
             },
-            { SubmissionsBotCommands.Experimental, 
+            { OperationsBotCommands.Experimental, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
@@ -63,7 +63,7 @@ public record BotCommandMenus
                     }
                 } 
             },
-            { SubmissionsBotCommands.Logout, 
+            { OperationsBotCommands.Logout, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {

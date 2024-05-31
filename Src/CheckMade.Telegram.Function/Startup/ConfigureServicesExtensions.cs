@@ -76,17 +76,17 @@ internal static class ConfigureServicesExtensions
         hostingEnvironment switch
         {
             "Development" => new BotTokens(
-                GetBotToken(config, "DEV", BotType.Submissions),
+                GetBotToken(config, "DEV", BotType.Operations),
                 GetBotToken(config, "DEV", BotType.Communications),
                 GetBotToken(config, "DEV", BotType.Notifications)),
 
             "Staging" => new BotTokens(
-                GetBotToken(config, "STG", BotType.Submissions),
+                GetBotToken(config, "STG", BotType.Operations),
                 GetBotToken(config, "STG", BotType.Communications),
                 GetBotToken(config, "STG", BotType.Notifications)),
 
             "Production" => new BotTokens(
-                GetBotToken(config, "PRD", BotType.Submissions),
+                GetBotToken(config, "PRD", BotType.Operations),
                 GetBotToken(config, "PRD", BotType.Communications),
                 GetBotToken(config, "PRD", BotType.Notifications)),
 

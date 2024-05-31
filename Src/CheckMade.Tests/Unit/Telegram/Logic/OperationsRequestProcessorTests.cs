@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.Telegram.Logic;
 
-public class SubmissionsRequestProcessorTests
+public class OperationsRequestProcessorTests
 {
     private ServiceProvider? _services;
 
@@ -17,7 +17,7 @@ public class SubmissionsRequestProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var problemCommandMessage = basics.utils.GetValidModelInputCommandMessage(
-            BotType.Submissions, (int)SubmissionsBotCommands.NewIssue);
+            BotType.Operations, (int)OperationsBotCommands.NewIssue);
 
         var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandMessage);
         
@@ -40,7 +40,7 @@ public class SubmissionsRequestProcessorTests
         var actualOutput = await basics.processor.ProcessRequestAsync(attachmentMessage);
         
         Assert.True(actualOutput.IsSuccess);
-        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Submissions, type),
+        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Operations, type),
             actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
     }
     
@@ -55,10 +55,10 @@ public class SubmissionsRequestProcessorTests
         
         Assert.True(actualOutput.IsSuccess);
         Assert.Equivalent(Ui("Echo from bot {0}: {1}", 
-                BotType.Submissions, responseMessage.Details.Text.GetValueOrDefault()),
+                BotType.Operations, responseMessage.Details.Text.GetValueOrDefault()),
             actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
     }
     
-    private (ITestUtils utils, ISubmissionsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
-        (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<ISubmissionsRequestProcessor>());
+    private (ITestUtils utils, IOperationsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
+        (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<IOperationsRequestProcessor>());
 }
