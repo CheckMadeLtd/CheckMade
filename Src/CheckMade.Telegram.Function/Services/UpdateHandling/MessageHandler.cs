@@ -9,7 +9,6 @@ using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
@@ -143,7 +142,7 @@ public class MessageHandler(
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator.Translate(Ui("Please choose:")),
+                _uiTranslator.Translate(Ui("𓃑 Please choose:")),
                 _uiTranslator.Translate(output.Text.GetValueOrDefault()),
                 _replyMarkupConverter.GetReplyMarkup(output))
             );

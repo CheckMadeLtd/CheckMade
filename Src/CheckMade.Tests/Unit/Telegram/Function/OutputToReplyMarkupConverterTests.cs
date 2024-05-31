@@ -157,7 +157,12 @@ public class OutputToReplyMarkupConverterTests
             new[] 
                 { new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3) },
                 [ new KeyboardButton(choice4), new KeyboardButton(choice5) ]
-        }));
+        })
+        {
+            IsPersistent = false,
+            OneTimeKeyboard = true,
+            ResizeKeyboard = true
+        });
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         

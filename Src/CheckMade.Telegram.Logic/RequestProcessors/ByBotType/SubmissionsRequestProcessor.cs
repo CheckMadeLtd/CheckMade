@@ -60,6 +60,9 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 Ui("⛺ Please choose a camp."),
                 new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
             
+            // (int) SubmissionsBotCommands.Experimental => OutputDto.Create(
+            //     Ui("Please go here:"));
+            
             _ => OutputDto.Create(
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 

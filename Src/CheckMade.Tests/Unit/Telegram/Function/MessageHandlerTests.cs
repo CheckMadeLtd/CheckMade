@@ -40,6 +40,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 textUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
                 expectedOutputMessage,
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
@@ -58,6 +59,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
                 attachmentUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
                 expectedOutputMessage, 
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
@@ -105,6 +107,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
             It.IsAny<ChatId>(), 
+            It.IsAny<string>(),
             It.Is<string>(output => output.Contains(mockErrorMessage)),
             Option<IReplyMarkup>.None(),
             It.IsAny<CancellationToken>()));
@@ -125,9 +128,10 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 x => x.SendTextMessageOrThrowAsync(
                     invalidBotCommandUpdate.Message.Chat.Id,
                     It.IsAny<string>(),
+                    It.IsAny<string>(),
                     Option<IReplyMarkup>.None(),
                     It.IsAny<CancellationToken>()))
-            .Callback<ChatId, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _) => 
+            .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
                 outputHelper.WriteLine(msg));
         
         await basics.handler.HandleMessageAsync(invalidBotCommandUpdate, BotType.Submissions);
@@ -135,6 +139,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 invalidBotCommandUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
                 It.Is<string>(msg => msg.Contains(expectedErrorCode)),
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
@@ -157,6 +162,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 startCommandUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
                 It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
                                         output.Contains(botType.ToString())),
                 Option<IReplyMarkup>.None(),
@@ -182,6 +188,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 updateEn.Message.Chat.Id,
+                It.IsAny<string>(),
                 ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
@@ -205,6 +212,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 updateDe.Message.Chat.Id,
+                It.IsAny<string>(),
                 ITestUtils.GermanStringForTests,
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
@@ -229,6 +237,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
                 updateUnsupportedLanguage.Message.Chat.Id,
+                It.IsAny<string>(),
                 ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
@@ -258,11 +267,12 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 x => x.SendTextMessageOrThrowAsync(
                     It.IsAny<ChatId>(),
                     It.IsAny<string>(),
+                    It.IsAny<string>(),
                     It.IsAny<Option<IReplyMarkup>>(),
                     It.IsAny<CancellationToken>())
             )
-            .Callback<ChatId, string, Option<IReplyMarkup>, CancellationToken>(
-                (_, _, markup, _) => actualMarkup = markup
+            .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>(
+                (_, _, _, markup, _) => actualMarkup = markup
             );
         
         await basics.handler.HandleMessageAsync(textUpdate, BotType.Submissions);
