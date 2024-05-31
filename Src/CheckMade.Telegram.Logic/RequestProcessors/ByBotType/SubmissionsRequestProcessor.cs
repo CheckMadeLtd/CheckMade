@@ -44,7 +44,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     IRequestProcessor.SeeValidBotCommandsInstruction)),
             
             (int) SubmissionsBotCommands.NewIssue => OutputDto.Create(
-                Ui("What type of problem?"),
+                Ui("What type of issue?"),
                 new []
                 {
                     DomainCategory.SanitaryOps_IssueCleanliness,
@@ -55,6 +55,10 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                 {
                     ControlPrompts.Save
                 }),
+            
+            (int) SubmissionsBotCommands.NewAssessment => OutputDto.Create(
+                Ui("⛺ Please choose a camp."),
+                new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
             
             _ => OutputDto.Create(
                 UiConcatenate(
