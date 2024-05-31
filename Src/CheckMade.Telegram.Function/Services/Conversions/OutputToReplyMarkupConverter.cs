@@ -120,6 +120,11 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                 x.Select(c => new KeyboardButton(c.Choice)).ToArray())
             .ToArray();
         
-        return new ReplyKeyboardMarkup(replyKeyboardTable);
+        return new ReplyKeyboardMarkup(replyKeyboardTable)
+        {
+            IsPersistent = true,
+            OneTimeKeyboard = true,
+            ResizeKeyboard = true
+        };
     }
 }
