@@ -8,5 +8,6 @@ public enum SubmissionsBotCommands
     NewIssue = 10,
     NewAssessment = 20,
     Settings = 90,
+    Experimental = 98,
     Logout = 99
 }

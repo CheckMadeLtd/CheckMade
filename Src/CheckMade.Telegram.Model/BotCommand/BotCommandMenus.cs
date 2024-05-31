@@ -50,6 +50,19 @@ public record BotCommandMenus
                     }
                 } 
             },
+            { SubmissionsBotCommands.Experimental, 
+                new Dictionary<LanguageCode, ModelBotCommand>
+                {
+                    {
+                        LanguageCode.en, 
+                        new ModelBotCommand("/experiment", "A Experiment")
+                    },
+                    {
+                        LanguageCode.de, 
+                        new ModelBotCommand("/experiment", "Ein Experiment")
+                    }
+                } 
+            },
             { SubmissionsBotCommands.Logout, 
                 new Dictionary<LanguageCode, ModelBotCommand>
                 {
