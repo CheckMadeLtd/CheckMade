@@ -40,7 +40,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
         {
             Start.CommandCode => OutputDto.Create(
                 UiConcatenate(
-                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Operations),
+                    Ui("Welcome to the CheckMade {0} Bot! ", BotType.Operations),
                     IRequestProcessor.SeeValidBotCommandsInstruction)),
             
             (int) OperationsBotCommands.NewIssue => OutputDto.Create(

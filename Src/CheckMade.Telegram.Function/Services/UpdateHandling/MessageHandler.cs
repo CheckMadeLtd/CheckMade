@@ -137,7 +137,7 @@ public class MessageHandler(
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator.Translate(Ui("𓃑 Please choose:")),
+                _uiTranslator.Translate(Ui("Please choose:")),
                 _uiTranslator.Translate(output.Text.GetValueOrDefault()),
                 _replyMarkupConverter.GetReplyMarkup(output))
             );

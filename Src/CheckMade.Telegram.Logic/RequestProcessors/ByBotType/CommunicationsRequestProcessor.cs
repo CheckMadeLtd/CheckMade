@@ -26,7 +26,7 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
             {
                 return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
-                        Ui("Welcome to the CheckMade {0}Bot! ", BotType.Communications),
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications),
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 

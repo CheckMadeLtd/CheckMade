@@ -26,7 +26,7 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
             {
                 return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
-                        Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications),
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications),
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
