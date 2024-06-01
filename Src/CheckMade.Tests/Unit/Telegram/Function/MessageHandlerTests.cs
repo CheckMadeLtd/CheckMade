@@ -25,48 +25,6 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
-    [Theory]
-    [InlineData(BotType.Operations)]
-    [InlineData(BotType.Communications)]
-    [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessageByBotType_ForValidTextMessage(
-        BotType botType)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var textUpdate = basics.utils.GetValidTelegramTextMessage("simple valid text");
-        var expectedOutputMessage = $"Echo from bot {botType}: {textUpdate.Message.Text}";
-
-        await basics.handler.HandleMessageAsync(textUpdate, botType);
-        
-        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
-                textUpdate.Message.Chat.Id,
-                It.IsAny<string>(),
-                expectedOutputMessage,
-                Option<IReplyMarkup>.None(),
-                It.IsAny<CancellationToken>()), 
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task HandleMessageAsync_SendsCorrectEchoMessage_ForValidPhotoAttachmentMessageToOperations()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var expectedOutputMessage = $"Echo from bot Operations: Photo";
-        var attachmentUpdate = basics.utils.GetValidTelegramPhotoMessage();
-        
-        await basics.handler.HandleMessageAsync(attachmentUpdate, BotType.Operations);
-        
-        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
-                attachmentUpdate.Message.Chat.Id,
-                It.IsAny<string>(),
-                expectedOutputMessage, 
-                Option<IReplyMarkup>.None(),
-                It.IsAny<CancellationToken>()), 
-            Times.Once);
-    }
-
     [Fact]
     // Agnostic to BotType, using Operations
     public async Task HandleMessageAsync_LogsWarningAndReturns_ForUnhandledMessageType()

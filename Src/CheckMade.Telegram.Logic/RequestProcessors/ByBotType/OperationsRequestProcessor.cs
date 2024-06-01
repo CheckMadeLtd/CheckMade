@@ -74,14 +74,11 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
         // ReSharper disable once UnusedParameter.Local
         InputMessageDto inputMessage, AttachmentType type)
     {
-        return OutputDto.Create(
-            Ui("Echo from bot {0}: {1}", BotType.Operations, type));
+        return OutputDto.CreateEmpty();
     }
     
     private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
-        return OutputDto.Create(
-            Ui("Echo from bot {0}: {1}",
-                BotType.Operations, inputMessage.Details.Text.GetValueOrDefault()));
+        return OutputDto.CreateEmpty();
     }
 }

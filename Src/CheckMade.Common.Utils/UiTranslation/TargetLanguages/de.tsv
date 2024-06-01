@@ -6,7 +6,6 @@ CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [er
 CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
 CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
 CheckMade.Telegram.Logic	Welcome to the CheckMade {0} Bot! 	Willkommen zum CheckMade {0} Bot! 
-CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
 CheckMade.Telegram.Function	Failed to convert Telegram Message to Model. 	Fehler beim Konvertieren der Telegram-Nachricht in das Modell. 

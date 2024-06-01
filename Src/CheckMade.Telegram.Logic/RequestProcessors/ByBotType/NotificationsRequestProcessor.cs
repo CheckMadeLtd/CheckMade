@@ -30,9 +30,7 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
-            return Task.FromResult(OutputDto.Create(
-                Ui("Echo from bot {0}: {1}", BotType.Notifications,
-                    inputMessage.Details.Text.GetValueOrDefault())));
+            return Task.FromResult(OutputDto.CreateEmpty());
         });
     }
 }

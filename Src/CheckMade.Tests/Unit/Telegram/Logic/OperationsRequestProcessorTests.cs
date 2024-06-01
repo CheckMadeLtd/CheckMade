@@ -25,39 +25,6 @@ public class OperationsRequestProcessorTests
         Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
             actualOutput.GetValueOrDefault().DomainCategorySelection.GetValueOrDefault());
     }
-
-    [Theory]
-    [InlineData(AttachmentType.Photo)]
-    [InlineData(AttachmentType.Audio)]
-    [InlineData(AttachmentType.Document)]
-    public async Task ProcessRequestAsync_ReturnsEchoWithAttachmentType_ForPhotoAttachmentMessage(
-        AttachmentType type)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var attachmentMessage = basics.utils.GetValidModelInputTextMessageWithAttachment(type);
-        
-        var actualOutput = await basics.processor.ProcessRequestAsync(attachmentMessage);
-        
-        Assert.True(actualOutput.IsSuccess);
-        Assert.Equivalent(Ui("Echo from bot {0}: {1}", BotType.Operations, type),
-            actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
-    }
-    
-    [Fact]
-    public async Task ProcessRequestAsync_ReturnsNormalEcho_ForNormalResponseMessage()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var responseMessage = basics.utils.GetValidModelInputTextMessage();
-
-        var actualOutput = await basics.processor.ProcessRequestAsync(responseMessage);
-        
-        Assert.True(actualOutput.IsSuccess);
-        Assert.Equivalent(Ui("Echo from bot {0}: {1}", 
-                BotType.Operations, responseMessage.Details.Text.GetValueOrDefault()),
-            actualOutput.GetValueOrDefault().Text.GetValueOrDefault());
-    }
     
     private (ITestUtils utils, IOperationsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
         (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<IOperationsRequestProcessor>());

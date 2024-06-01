@@ -30,9 +30,7 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
-            return Task.FromResult(OutputDto.Create(
-                Ui("Echo from bot {0}: {1}", BotType.Communications,
-                    inputMessage.Details.Text.GetValueOrDefault())));
+            return Task.FromResult(OutputDto.CreateEmpty());
         });
     }
 }
