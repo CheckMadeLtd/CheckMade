@@ -251,18 +251,18 @@ public class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUserIsNull_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_ForAnyBotType()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
          var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
         var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
     }
     
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -270,20 +270,20 @@ public class ToModelConverterTests
         
         var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var voiceMessage = basics.utils.GetValidTelegramVoiceMessage();
         var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Operations);
 
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
         Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!",
-            conversionAttempt.Failure!.Error!.GetFormattedEnglish());
+            conversionAttempt.Error!.FailureMessage!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)

@@ -17,7 +17,7 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
         
         return await Attempt<OutputDto>.RunAsync(() =>

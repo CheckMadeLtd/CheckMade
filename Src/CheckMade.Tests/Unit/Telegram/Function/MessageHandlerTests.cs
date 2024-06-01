@@ -98,7 +98,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         const string mockErrorMessage = "Mock DataAccess Error";
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                new Failure(new DataAccessException(mockErrorMessage, new Exception()))));
+                new Error(new DataAccessException(mockErrorMessage, new Exception()))));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");

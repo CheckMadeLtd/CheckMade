@@ -158,10 +158,10 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             select unit))
             .Match(
                 unit => unit, 
-                failure => 
+                error => 
                 { 
-                    logger.LogError(failure.Exception, failure.Exception?.Message 
-                                                     ?? failure.Error?.GetFormattedEnglish()); 
+                    logger.LogError(error.Exception, error.Exception?.Message 
+                                                     ?? error.FailureMessage?.GetFormattedEnglish()); 
                     return Unit.Value; 
                 });
     }

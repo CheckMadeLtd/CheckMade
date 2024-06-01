@@ -44,12 +44,12 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
-                failure => Attempt<InputMessageDto>.Fail(
-                    failure with // preserves any contained Exception and prefixes any contained Error UiString
+                error => Attempt<InputMessageDto>.Fail(
+                    error with // preserves any contained Exception and prefixes any contained Error UiString
                     {
-                        Error = UiConcatenate(
+                        FailureMessage = UiConcatenate(
                             Ui("Failed to convert Telegram Message to Model. "),
-                            failure.Error)
+                            error.FailureMessage)
                     }
                 ));
     }
@@ -101,7 +101,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     string.Format(errorMessage, telegramUpdate.Message.Type)),
                 AttachmentType.Photo)),
 
-            _ => new Failure(Error:
+            _ => new Error(FailureMessage:
                 Ui("Attachment type {0} is not yet supported!", telegramUpdate.Message.Type))
         };
     }
@@ -147,7 +147,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             .FirstOrDefault(mbc => mbc.Command == telegramUpdate.Message.Text);
         
         if (botCommandFromInputMessage == null)
-            return new Failure (Error: UiConcatenate(
+            return new Error (FailureMessage: UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
                     telegramUpdate.Message.Text ?? "[empty text!]", botType, "W3DL9"),
                 IRequestProcessor.SeeValidBotCommandsInstruction));
@@ -208,7 +208,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             && attachmentDetails.FileId.IsNone
             && modelUpdateType != ModelUpdateType.Location)
         {
-            return new Failure(Error: Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
+            return new Error(FailureMessage: Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
                                          "b) either have a text or an attachment (unless it's a Location)."));   
         }
         
@@ -222,8 +222,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             var pathAttempt = await filePathResolver.GetTelegramFilePathAsync(
                 attachmentDetails.FileId.GetValueOrDefault());
             
-            if (pathAttempt.IsFailure)
-                return new Failure(Error:
+            if (pathAttempt.IsError)
+                return new Error(FailureMessage:
                     Ui("Error while trying to retrieve full Telegram server path to attachment file."));
 
             telegramAttachmentUrl = pathAttempt.GetValueOrDefault();

@@ -2,33 +2,33 @@
 // ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LangExt.MonadicWrappers;
 
-public record Failure(Exception? Exception = null, UiString? Error = null); 
+public record Error(Exception? Exception = null, UiString? FailureMessage = null); 
 
 public record Attempt<T>
 {
     internal T? Value { get; }
-    internal Failure? Failure { get; }
+    internal Error? Error { get; }
     
-    public bool IsSuccess => Failure == null;
-    public bool IsFailure => !IsSuccess;
+    public bool IsSuccess => Error == null;
+    public bool IsError => !IsSuccess;
 
     private Attempt(T value)
     {
         Value = value;
-        Failure = null;
+        Error = null;
     }
 
-    private Attempt(Failure failure)
+    private Attempt(Error error)
     {
-        Failure = failure;
+        Error = error;
         Value = default;
     }
     
     public static implicit operator Attempt<T>(T value) => Succeed(value);
-    public static implicit operator Attempt<T>(Failure failure) => Fail(failure);
+    public static implicit operator Attempt<T>(Error error) => Fail(error);
     
     public static Attempt<T> Succeed(T value) => new(value);
-    public static Attempt<T> Fail(Failure failure) => new(failure);
+    public static Attempt<T> Fail(Error error) => new(error);
     
     public static Attempt<T> Run(Func<T> func)
     {
@@ -38,7 +38,7 @@ public record Attempt<T>
         }
         catch (Exception ex)
         {
-            return new Attempt<T>(new Failure(Exception: ex));
+            return new Attempt<T>(new Error(Exception: ex));
         }
     }
     
@@ -50,13 +50,13 @@ public record Attempt<T>
         }
         catch (Exception ex)
         {
-            return new Attempt<T>(new Failure(Exception: ex));
+            return new Attempt<T>(new Error(Exception: ex));
         }
     }
 
-    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Failure, TResult> onFailure)
+    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Error, TResult> onError)
     {
-        return IsSuccess ? onSuccess(Value!) : onFailure(Failure!);
+        return IsSuccess ? onSuccess(Value!) : onError(Error!);
     }
     
     public T GetValueOrDefault(T defaultValue = default!)
@@ -71,12 +71,12 @@ public record Attempt<T>
             return Value!;
         }
 
-        if (Failure!.Exception != null)
+        if (Error!.Exception != null)
         {
-            throw Failure.Exception;   
+            throw Error.Exception;   
         }
         
-        throw new MonadicWrapperGetValueOrThrowException(Failure!.Error!.RawEnglishText);
+        throw new MonadicWrapperGetValueOrThrowException(Error!.FailureMessage!.RawEnglishText);
     }
 }
 
@@ -86,7 +86,7 @@ public static class AttemptExtensions
     {
         return source.IsSuccess 
             ? selector(source.Value!) 
-            : source.Failure!;
+            : source.Error!;
     }
 
     public static Attempt<T> Where<T>(this Attempt<T> source, Func<T, bool> predicate)
@@ -95,14 +95,14 @@ public static class AttemptExtensions
 
         return predicate(source.Value!) 
             ? source 
-            : new Failure(Error: Ui("Predicate not satisfied"));
+            : new Error(FailureMessage: Ui("Predicate not satisfied"));
     }
     
     /* Covers scenarios where you have a successful attempt and want to bind it to another
     attempt, with both operations being synchronous.*/
     public static Attempt<TResult> SelectMany<T, TResult>(this Attempt<T> source, Func<T, Attempt<TResult>> binder)
     {
-        return source.IsSuccess ? binder(source.Value!) : source.Failure!;
+        return source.IsSuccess ? binder(source.Value!) : source.Error!;
     }
     
     /* Covers scenarios where you need to combine a successful attempt with another attempt to
@@ -113,13 +113,13 @@ public static class AttemptExtensions
         Func<T, TCollection, TResult> resultSelector)
     {
         if (!source.IsSuccess)
-            return source.Failure!;
+            return source.Error!;
     
         var collectionAttempt = collectionSelector(source.Value!);
 
         return collectionAttempt.IsSuccess
             ? resultSelector(source.Value!, collectionAttempt.Value!)
-            : collectionAttempt.Failure!;
+            : collectionAttempt.Error!;
     }
     
     /* Covers scenarios where both the initial attempt and the function it binds to are
@@ -132,13 +132,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return source.Failure!;
+            return source.Error!;
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess 
             ? resultSelector(source.Value!, collection.Value!)
-            : collection.Failure!;
+            : collection.Error!;
     }
     
     /* Covers scenarios where the initial attempt is an asynchronous operation, but the function
@@ -151,13 +151,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return source.Failure!;
+            return source.Error!;
 
         var collection = collectionSelector(source.Value!);
 
         return collection.IsSuccess 
             ? resultSelector(source.Value!, collection.Value!)
-            : collection.Failure!;
+            : collection.Error!;
     }
     
     /* Handles cases where you start with a synchronous Attempt<T>, but need to perform an asynchronous operation based
@@ -168,12 +168,12 @@ public static class AttemptExtensions
         Func<TSource, TCollection, TResult> resultSelector)
     {
         if (!source.IsSuccess)
-            return source.Failure!;
+            return source.Error!;
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess
             ? resultSelector(source.Value!, collection.Value!)
-            : collection.Failure!;
+            : collection.Error!;
     }
 }

@@ -66,8 +66,8 @@ public class MessageHandler(
                 botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
                     botClient => botClient,
-                    failure => throw new InvalidOperationException(
-                        "Failed to create BotClient", failure.Exception));
+                    error => throw new InvalidOperationException(
+                        "Failed to create BotClient", error.Exception));
         
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
@@ -81,15 +81,15 @@ public class MessageHandler(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            failure =>
+            error =>
             {
-                if (failure.Error != null)
+                if (error.FailureMessage != null)
                 {
-                    logger.LogError($"Message from Attempt<T>.Failure.Error: " +
-                                    $"{failure.Error.GetFormattedEnglish()}");
+                    logger.LogError($"Message from Attempt<T>.Error.FailureMessage: " +
+                                    $"{error.FailureMessage.GetFormattedEnglish()}");
                 }
                 
-                logger.LogError(failure.Exception, 
+                logger.LogError(error.Exception, 
                     "Next, some details to help debug the current error. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
@@ -98,20 +98,20 @@ public class MessageHandler(
 
                 var errorOutput = OutputDto.Create(
                     UiConcatenate(
-                        UiNoTranslate(failure.Exception?.Message ?? string.Empty), 
-                        failure.Error,
+                        UiNoTranslate(error.Exception?.Message ?? string.Empty), 
+                        error.FailureMessage,
                         UiNoTranslate(" "),
                         CallToActionAfterErrorReport));
                 
                 _ = SendOutputAsync(errorOutput, botClient, chatId)
                     .ContinueWith(task => 
                     { 
-                        if (task.Result.IsFailure) // e.g. NetworkAccessException thrown downstream 
+                        if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
                             logger.LogError(
                                 "An error occurred while trying to send a message to report another error."); 
                     });
                 
-                return failure;
+                return error;
             });
     }
 

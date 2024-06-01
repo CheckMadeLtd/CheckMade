@@ -40,11 +40,11 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             
             return updateHandlingOutcome.Match(
             _ => defaultOkResponse,
-            failure =>
+            error =>
             {
-                logger.LogError(failure.Exception, 
-                    $"Can't process this kind of update. Message: {failure.Exception?.Message ?? 
-                                                                   failure.Error?.GetFormattedEnglish()}");
+                logger.LogError(error.Exception, 
+                    $"Can't process this kind of update. Message: {error.Exception?.Message ?? 
+                                                                   error.FailureMessage?.GetFormattedEnglish()}");
                 return defaultOkResponse;
             });
 

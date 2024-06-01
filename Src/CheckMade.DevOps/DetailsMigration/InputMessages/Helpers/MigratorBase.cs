@@ -14,12 +14,12 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 select updateDetails.Count())
             ).Match(
                 Attempt<int>.Succeed, 
-                failure => Attempt<int>.Fail(
-                    failure with // preserves any contained Exception and prefixes any contained Error UiString
+                error => Attempt<int>.Fail(
+                    error with // preserves any contained Exception and prefixes any contained Error UiString
                 {
-                    Error = UiConcatenate(
+                    FailureMessage = UiConcatenate(
                         Ui("Data migration failed."),
-                        failure.Error)
+                        error.FailureMessage)
                 }));
     }
 
@@ -34,7 +34,7 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
         }
         catch (Exception ex)
         {
-            return new Failure(new DataMigrationException(
+            return new Error(new DataMigrationException(
                 $"Exception while performing data migration updates: {ex.Message}.", ex));
         }
 

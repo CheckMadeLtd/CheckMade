@@ -17,7 +17,7 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
 
         return await Attempt<OutputDto>.RunAsync(() =>
