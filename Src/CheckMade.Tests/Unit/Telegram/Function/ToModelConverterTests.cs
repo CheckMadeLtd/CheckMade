@@ -100,6 +100,45 @@ public class ToModelConverterTests
     }
 
     [Theory]
+    [InlineData(null)]
+    [InlineData(500.23f)]
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidLocationMessage_ToAnyBotType(
+        float? horizontalAccuracy)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var locationUpdate = basics.utils.GetValidTelegramLocationMessage(
+            horizontalAccuracy ?? Option<float>.None());
+
+        var location = locationUpdate.Message.Location;
+        var expectedGeoCoordinates = new Geo(
+            location!.Latitude,
+            location.Longitude,
+            horizontalAccuracy ?? Option<float>.None());
+        
+        var expectedInputMessage = new InputMessageDto(
+                locationUpdate.Message.From!.Id,
+                locationUpdate.Message.Chat.Id,
+                BotType.Operations,
+                ModelUpdateType.Location,
+                new InputMessageDetails(
+                    locationUpdate.Message.Date,
+                    locationUpdate.Message.MessageId,
+                    Option<string>.None(),
+                    Option<string>.None(), 
+                    Option<AttachmentType>.None(), 
+                    expectedGeoCoordinates, 
+                    Option<int>.None(),
+                    Option<int>.None(), 
+                    Option<long>.None()));
+        
+        var actualInputMessage = await basics.converter.ConvertToModelAsync(
+            locationUpdate, BotType.Operations);
+        
+        Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
+    }
+
+    [Theory]
     [InlineData(OperationsBotCommands.NewIssue)]
     [InlineData(OperationsBotCommands.NewAssessment)]
     [InlineData(OperationsBotCommands.Settings)]

@@ -3,7 +3,7 @@ CheckMade.Telegram.Function	Telegram Message/Update of this type not yet support
 CheckMade.Telegram.Function	Please contact technical support or your supervisor.	Bitte kontaktiere den technischen Support oder deinen Supervisor.
 CheckMade.Telegram.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
 CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
-CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment.	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten.
+CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
 CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
 CheckMade.Telegram.Logic	Welcome to the CheckMade {0}Bot! 	Willkommen zum CheckMade {0}Bot! 
 CheckMade.Telegram.Logic	Echo from bot {0}: {1}	Echo vom Bot {0}: {1}

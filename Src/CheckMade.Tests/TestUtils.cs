@@ -24,11 +24,10 @@ internal interface ITestUtils
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand);
-    
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData);
-    
     UpdateWrapper GetValidTelegramAudioMessage();
     UpdateWrapper GetValidTelegramDocumentMessage();
+    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy);
     UpdateWrapper GetValidTelegramPhotoMessage();
     UpdateWrapper GetValidTelegramVoiceMessage();
 }
@@ -156,6 +155,23 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             MessageId = 123,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
+        });
+
+    public UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy) =>
+        new(new Message
+        {
+            From = new User { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Date = DateTime.Now,
+            MessageId = 123,
+            Location = new Location
+            {
+                Latitude = 20.0123,
+                Longitude = -17.4509,
+                HorizontalAccuracy = horizontalAccuracy.IsSome 
+                    ? horizontalAccuracy.GetValueOrDefault() 
+                    : null
+            }
         });
 
     public UpdateWrapper GetValidTelegramPhotoMessage() => 

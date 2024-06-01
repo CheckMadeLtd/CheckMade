@@ -82,7 +82,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
 
         return telegramUpdate.Message.Type switch
         {
-            MessageType.Text => new AttachmentDetails(
+            MessageType.Text or MessageType.Location => new AttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
 
             MessageType.Audio => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
@@ -90,16 +90,16 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     string.Format(errorMessage, telegramUpdate.Message.Type)),
                 AttachmentType.Audio)),
 
+            MessageType.Document => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
+                telegramUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, telegramUpdate.Message.Type)),
+                AttachmentType.Document)),
+
             MessageType.Photo => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 telegramUpdate.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, telegramUpdate.Message.Type)),
                 AttachmentType.Photo)),
-
-            MessageType.Document => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                telegramUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, telegramUpdate.Message.Type)),
-                AttachmentType.Document)),
 
             _ => new Failure(Error:
                 Ui("Attachment type {0} is not yet supported!", telegramUpdate.Message.Type))
@@ -204,10 +204,12 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         Option<long> controlPromptEnumCode)
     {
         if (telegramUpdate.Message.From?.Id == null || 
-            string.IsNullOrWhiteSpace(telegramUpdate.Message.Text) && attachmentDetails.FileId.IsNone)
+            string.IsNullOrWhiteSpace(telegramUpdate.Message.Text) 
+            && attachmentDetails.FileId.IsNone
+            && modelUpdateType != ModelUpdateType.Location)
         {
             return new Failure(Error: Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
-                                         "b) either have a text or an attachment."));   
+                                         "b) either have a text or an attachment (unless it's a Location)."));   
         }
         
         TelegramUserId userId = telegramUpdate.Message.From.Id;
