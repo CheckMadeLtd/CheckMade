@@ -40,7 +40,7 @@ public class MessageHandler(
         _uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
         
-        logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
+        logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
             botType, update.Message.From?.Id ?? 0, chatId);
 
@@ -85,31 +85,27 @@ public class MessageHandler(
             {
                 if (error.FailureMessage != null)
                 {
-                    logger.LogError($"Message from Attempt<T>.Error.FailureMessage: " +
+                    logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
+                    
+                    _ = SendOutputAsync(OutputDto.Create(error.FailureMessage), botClient, chatId)
+                        .ContinueWith(task => 
+                        { 
+                            if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
+                                logger.LogWarning($"An error occurred while trying to send " +
+                                                $"{nameof(error.FailureMessage)} to the user."); 
+                        });
                 }
-                
-                logger.LogError(error.Exception, 
-                    "Next, some details to help debug the current error. " +
-                                    "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                                    "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
-                    botType, update.Message.From!.Id,
-                    update.Message.Date, update.Message.Text);
 
-                var errorOutput = OutputDto.Create(
-                    UiConcatenate(
-                        UiNoTranslate(error.Exception?.Message ?? string.Empty), 
-                        error.FailureMessage,
-                        UiNoTranslate(" "),
-                        CallToActionAfterErrorReport));
-                
-                _ = SendOutputAsync(errorOutput, botClient, chatId)
-                    .ContinueWith(task => 
-                    { 
-                        if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
-                            logger.LogError(
-                                "An error occurred while trying to send a message to report another error."); 
-                    });
+                if (error.Exception != null)
+                {
+                    logger.LogDebug(error.Exception, 
+                        "Next, some details to help debug the current exception. " +
+                        "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
+                        "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
+                        botType, update.Message.From!.Id,
+                        update.Message.Date, update.Message.Text);
+                }
                 
                 return error;
             });

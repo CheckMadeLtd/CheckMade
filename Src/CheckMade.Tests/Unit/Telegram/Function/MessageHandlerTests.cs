@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
@@ -92,25 +93,26 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_OutputsCorrectErrorMessage_WhenDataAccessExceptionThrown()
+    public async Task HandleMessageAsync_LogsDebuggingDetails_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string mockErrorMessage = "Mock DataAccess Error";
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                new Error(new DataAccessException(mockErrorMessage, new Exception()))));
+                new Error(new DataAccessException("Mock DataAccess Error", new Exception()))));
+        var mockLogger = new Mock<ILogger<MessageHandler>>();
+        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         
         await basics.handler.HandleMessageAsync(textUpdate, BotType.Operations);
         
-        basics.mockBotClient.Verify(x => x.SendTextMessageOrThrowAsync(
-            It.IsAny<ChatId>(), 
-            It.IsAny<string>(),
-            It.Is<string>(output => output.Contains(mockErrorMessage)),
-            Option<IReplyMarkup>.None(),
-            It.IsAny<CancellationToken>()));
+        mockLogger.Verify(l => l.Log(
+            LogLevel.Debug, 
+            It.IsAny<EventId>(), 
+            It.IsAny<It.IsAnyType>(), 
+            It.IsAny<DataAccessException>(), 
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
     }
 
     [Fact]
