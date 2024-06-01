@@ -27,9 +27,6 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    private static readonly UiString CallToActionAfterErrorReport =
-        Ui("Please contact technical support or your supervisor.");
-
     private IUiTranslator? _uiTranslator;
     private IOutputToReplyMarkupConverter? _replyMarkupConverter;
 

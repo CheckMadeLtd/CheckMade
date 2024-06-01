@@ -12,7 +12,7 @@ public class OperationsRequestProcessorTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task ProcessRequestAsync_ReturnsRelevantOutput_ForProblemBotCommand()
+    public async Task ProcessRequestAsync_ReturnsRelevantOutput_ForNewIssueBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);

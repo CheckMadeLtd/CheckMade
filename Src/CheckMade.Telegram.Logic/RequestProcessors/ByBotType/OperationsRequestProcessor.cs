@@ -56,12 +56,14 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
                     ControlPrompts.Save
                 }),
             
+            // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => OutputDto.Create(
                 Ui("⛺ Please choose a camp."),
                 new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
             
-            // (int) OperationsBotCommands.Experimental => OutputDto.Create(
-            //     Ui("Please go here:"));
+            // Testing sending a Location to User
+            (int) OperationsBotCommands.Experimental => OutputDto.Create(
+                Ui("Please go here:")),
             
             _ => OutputDto.Create(
                 UiConcatenate(
@@ -71,7 +73,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
     }
     
     private static Attempt<OutputDto> ProcessMessageWithAttachment(
-        // ReSharper disable once UnusedParameter.Local
+        // ReSharper disable UnusedParameter.Local
         InputMessageDto inputMessage, AttachmentType type)
     {
         return OutputDto.CreateEmpty();
