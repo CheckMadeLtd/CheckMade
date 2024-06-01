@@ -34,7 +34,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJson(inputMessage.Details)
+                Value = JsonHelper.SerializeToJsonOrThrow(inputMessage.Details)
             });
 
             return command;
@@ -99,7 +99,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             telegramChatId,
             (BotType) telegramBotType,
             (ModelUpdateType) telegramUpdateType,
-            JsonHelper.DeserializeFromJsonStrict<InputMessageDetails>(details) 
+            JsonHelper.DeserializeFromJsonStrictOrThrow<InputMessageDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
         return message;

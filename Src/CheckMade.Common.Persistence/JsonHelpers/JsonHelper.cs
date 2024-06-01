@@ -4,7 +4,7 @@ namespace CheckMade.Common.Persistence.JsonHelpers;
 
 public static class JsonHelper
 {
-    public static string SerializeToJson(object obj)
+    public static string SerializeToJsonOrThrow(object obj)
     {
         var jsonSettings = new JsonSerializerSettings
         {
@@ -14,7 +14,7 @@ public static class JsonHelper
         return JsonConvert.SerializeObject(obj, jsonSettings);
     }
 
-    public static T? DeserializeFromJsonStrict<T>(string json)
+    public static T? DeserializeFromJsonStrictOrThrow<T>(string json)
     {
         var jsonSettings = new JsonSerializerSettings
         {
