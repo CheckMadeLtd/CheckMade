@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model;
@@ -53,6 +54,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(),
                 Option<long>.None()));
@@ -68,6 +70,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
                 type,
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 
                 Option<long>.None()));
@@ -83,6 +86,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 Option<string>.None(), 
                 Option<string>.None(), 
                 Option<AttachmentType>.None(), 
+                Option<Geo>.None(), 
                 botCommandEnumCode,
                 Option<int>.None(), 
                 Option<long>.None()));

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
@@ -52,6 +53,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 
                 Option<long>.None()));

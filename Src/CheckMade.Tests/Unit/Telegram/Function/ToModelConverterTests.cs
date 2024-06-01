@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
@@ -42,6 +43,7 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 
                 Option<long>.None()));
@@ -86,6 +88,7 @@ public class ToModelConverterTests
                     : Option<string>.None(),
                 expectedAttachmentExternalUrl,
                 attachmentType,
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 
                 Option<long>.None()));
@@ -122,6 +125,7 @@ public class ToModelConverterTests
                 commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 (int)command,
                 Option<int>.None(),
                 Option<long>.None()));
@@ -157,6 +161,7 @@ public class ToModelConverterTests
                 commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 (int)command,
                 Option<int>.None(),
                 Option<long>.None()));
@@ -192,6 +197,7 @@ public class ToModelConverterTests
                 commandText,
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 (int)command,
                 Option<int>.None(),
                 Option<long>.None()));
@@ -233,6 +239,7 @@ public class ToModelConverterTests
                 "The bot's original prompt",
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 domainCategoryEnumCode,
                 controlPromptEnumCode));
