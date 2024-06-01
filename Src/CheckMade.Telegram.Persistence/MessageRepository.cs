@@ -61,7 +61,8 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
-    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(string commandText, Option<TelegramUserId> userId)
+    private async Task<IEnumerable<InputMessageDto>> GetAllOrThrowExecuteAsync(
+        string commandText, Option<TelegramUserId> userId)
     {
         var builder = ImmutableArray.CreateBuilder<InputMessageDto>();
         var command = new NpgsqlCommand(commandText);
