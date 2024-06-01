@@ -47,49 +47,56 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Randomizer.GenerateRandomLong(),
             BotType.Operations,
             ModelUpdateType.TextMessage,
-            new InputMessageDetails(
+            CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
-                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}",
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                Option<int>.None(),
-                Option<int>.None(),
-                Option<long>.None()));
+                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
     
     public InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             BotType.Operations,
             ModelUpdateType.AttachmentMessage,
-            new InputMessageDetails(
+            CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 "fakeAttachmentUrl",
-                type,
-                Option<Geo>.None(), 
-                Option<int>.None(),
-                Option<int>.None(), 
-                Option<long>.None()));
+                type));
 
     public InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             botType,
             ModelUpdateType.CommandMessage,
-            new InputMessageDetails(
+            CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
-                Option<string>.None(), 
-                Option<string>.None(), 
-                Option<AttachmentType>.None(), 
-                Option<Geo>.None(), 
-                botCommandEnumCode,
-                Option<int>.None(), 
-                Option<long>.None()));
+                botCommandEnumCode: botCommandEnumCode));
 
+    internal static InputMessageDetails CreateFromRelevantDetails(
+        DateTime telegramDate,
+        int telegramMessageId,
+        string? text = null,
+        string? attachmentExternalUrl = null,
+        AttachmentType? attachmentType = null,
+        Geo? geoCoordinates = null,
+        int? botCommandEnumCode = null,
+        int? domainCategoryEnumCode = null,
+        long? controlPromptEnumCode = null)
+    {
+        return new InputMessageDetails(
+            telegramDate, 
+            telegramMessageId,
+            text ?? Option<string>.None(),
+            attachmentExternalUrl ?? Option<string>.None(),
+            attachmentType ?? Option<AttachmentType>.None(),
+            geoCoordinates ?? Option<Geo>.None(),
+            botCommandEnumCode ?? Option<int>.None(),
+            domainCategoryEnumCode ?? Option<int>.None(),
+            controlPromptEnumCode ?? Option<long>.None());
+    }
+    
     public UpdateWrapper GetValidTelegramTextMessage(string inputText) => 
         new(new Message 
             {

@@ -35,18 +35,10 @@ public class ToModelConverterTests
             update.Message.Chat.Id,
             BotType.Operations,
             ModelUpdateType.TextMessage,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
-                !string.IsNullOrWhiteSpace(update.Message.Text) 
-                    ? update.Message.Text 
-                    : Option<string>.None(),
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                Option<int>.None(),
-                Option<int>.None(), 
-                Option<long>.None()));
+                update.Message.Text));
 
         var actualInputMessage = 
             await basics.converter.ConvertToModelAsync(update, BotType.Operations);
@@ -80,18 +72,12 @@ public class ToModelConverterTests
             attachmentUpdate.Message.Chat.Id,
             BotType.Operations,
             ModelUpdateType.AttachmentMessage,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
-                !string.IsNullOrWhiteSpace(attachmentUpdate.Message.Caption)
-                    ? attachmentUpdate.Message.Caption
-                    : Option<string>.None(),
+                attachmentUpdate.Message.Caption,
                 expectedAttachmentExternalUrl,
-                attachmentType,
-                Option<Geo>.None(), 
-                Option<int>.None(),
-                Option<int>.None(), 
-                Option<long>.None()));
+                attachmentType));
         
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             attachmentUpdate, BotType.Operations);
@@ -121,16 +107,10 @@ public class ToModelConverterTests
                 locationUpdate.Message.Chat.Id,
                 BotType.Operations,
                 ModelUpdateType.Location,
-                new InputMessageDetails(
+                TestUtils.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
-                    Option<string>.None(),
-                    Option<string>.None(), 
-                    Option<AttachmentType>.None(), 
-                    expectedGeoCoordinates, 
-                    Option<int>.None(),
-                    Option<int>.None(), 
-                    Option<long>.None()));
+                    geoCoordinates: expectedGeoCoordinates));
         
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             locationUpdate, BotType.Operations);
@@ -158,16 +138,11 @@ public class ToModelConverterTests
             commandUpdate.Message.Chat.Id,
             BotType.Operations,
             ModelUpdateType.CommandMessage,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Operations);
@@ -194,16 +169,11 @@ public class ToModelConverterTests
             commandUpdate.Message.Chat.Id,
             BotType.Communications,
             ModelUpdateType.CommandMessage,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Communications);
@@ -230,16 +200,11 @@ public class ToModelConverterTests
             commandUpdate.Message.Chat.Id,
             BotType.Notifications,
             ModelUpdateType.CommandMessage,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Notifications);
@@ -260,28 +225,24 @@ public class ToModelConverterTests
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
 
         var domainCategoryEnumCode = enumSourceOfCallbackQuery <= EnumCallbackId.DomainCategoryMaxThreshold
-            ? Option<int>.Some(int.Parse(callbackQuery.Update.CallbackQuery!.Data!))
-            : Option<int>.None();
+            ? (int?) int.Parse(callbackQuery.Update.CallbackQuery!.Data!)
+            : null;
 
         var controlPromptEnumCode = enumSourceOfCallbackQuery > EnumCallbackId.DomainCategoryMaxThreshold
-            ? Option<long>.Some(long.Parse(callbackQuery.Update.CallbackQuery!.Data!))
-            : Option<long>.None();
+            ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
+            : null;
 
         var expectedInputMessage = new InputMessageDto(
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
             BotType.Operations,
             ModelUpdateType.CallbackQuery,
-            new InputMessageDetails(
+            TestUtils.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<Geo>.None(), 
-                Option<int>.None(),
-                domainCategoryEnumCode,
-                controlPromptEnumCode));
+                domainCategoryEnumCode: domainCategoryEnumCode,
+                controlPromptEnumCode: controlPromptEnumCode));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
              callbackQuery, BotType.Operations);
