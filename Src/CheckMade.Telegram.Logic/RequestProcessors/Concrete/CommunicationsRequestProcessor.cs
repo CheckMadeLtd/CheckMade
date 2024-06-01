@@ -3,11 +3,11 @@ using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
+namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
-public interface INotificationsRequestProcessor : IRequestProcessor;
+public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class NotificationsRequestProcessor(IMessageRepository repo) : INotificationsRequestProcessor
+public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunicationsRequestProcessor
 {
     public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
@@ -19,14 +19,14 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
         {
             return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
-        
+
         return await Attempt<OutputDto>.RunAsync(() =>
         {
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
                 return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications),
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications),
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 

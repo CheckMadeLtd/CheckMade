@@ -5,7 +5,7 @@ using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
-using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
+using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;

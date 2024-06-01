@@ -5,7 +5,7 @@ using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
+namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface IOperationsRequestProcessor : IRequestProcessor;
 

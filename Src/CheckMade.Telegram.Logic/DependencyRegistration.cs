@@ -1,5 +1,5 @@
 using CheckMade.Telegram.Logic.RequestProcessors;
-using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
+using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Logic;
