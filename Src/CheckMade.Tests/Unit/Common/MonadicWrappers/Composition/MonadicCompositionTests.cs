@@ -29,7 +29,7 @@ public class MonadicCompositionTests
                     errors => Task.FromException(new Exception(errors[0].RawEnglishText))
                     );
             },
-            failure => Task.FromException(new Exception("User creation failed", failure.Exception)));
+            error => Task.FromException(new Exception("User creation failed", error.Exception)));
     }
     
     [Fact]
@@ -62,7 +62,7 @@ public class MonadicCompositionTests
                             .FromException(new Exception(errors[0].RawEnglishText))
                     );
                 },
-                failure => Task.FromException(new Exception("User creation failed", failure.Exception)));
+                error => Task.FromException(new Exception("User creation failed", error.Exception)));
         };
 
         var ex = await Assert.ThrowsAsync<Exception>(act);
@@ -118,7 +118,7 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                Assert.True(registerUserAttempt.IsFailure);
+                Assert.True(registerUserAttempt.IsError);
             }
             else
             {
@@ -148,7 +148,7 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                Assert.True(registerUserAttempt.IsFailure);
+                Assert.True(registerUserAttempt.IsError);
             }
             else
             {
@@ -176,7 +176,7 @@ public class MonadicCompositionTests
             if (userValidation.IsValid)
             {
                 var registerUserAttempt = await UserService.RegisterUserAsync(userValidation.Value!);
-                Assert.True(registerUserAttempt.IsFailure);
+                Assert.True(registerUserAttempt.IsError);
             }
             else
             {

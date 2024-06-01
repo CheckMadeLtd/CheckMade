@@ -7,9 +7,9 @@ using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
 
-public interface ISubmissionsRequestProcessor : IRequestProcessor;
+public interface IOperationsRequestProcessor : IRequestProcessor;
 
-public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissionsRequestProcessor
+public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRequestProcessor
 {
     public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
@@ -19,7 +19,7 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
 
         return inputMessage switch
@@ -40,11 +40,11 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
         {
             Start.CommandCode => OutputDto.Create(
                 UiConcatenate(
-                    Ui("Welcome to the CheckMade {0}Bot! ", BotType.Submissions),
+                    Ui("Welcome to the CheckMade {0} Bot! ", BotType.Operations),
                     IRequestProcessor.SeeValidBotCommandsInstruction)),
             
-            (int) SubmissionsBotCommands.NewIssue => OutputDto.Create(
-                Ui("What type of problem?"),
+            (int) OperationsBotCommands.NewIssue => OutputDto.Create(
+                Ui("What type of issue?"),
                 new []
                 {
                     DomainCategory.SanitaryOps_IssueCleanliness,
@@ -56,25 +56,31 @@ public class SubmissionsRequestProcessor(IMessageRepository repo) : ISubmissions
                     ControlPrompts.Save
                 }),
             
+            // Testing ReplyKeyboard
+            (int) OperationsBotCommands.NewAssessment => OutputDto.Create(
+                Ui("⛺ Please choose a camp."),
+                new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
+            
+            // Testing sending a Location to User
+            (int) OperationsBotCommands.Experimental => OutputDto.Create(
+                Ui("Please go here:")),
+            
             _ => OutputDto.Create(
                 UiConcatenate(
-                    Ui("Echo of a {0} BotCommand: ", BotType.Submissions), 
+                    Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
                     UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
         };
     }
     
     private static Attempt<OutputDto> ProcessMessageWithAttachment(
-        // ReSharper disable once UnusedParameter.Local
+        // ReSharper disable UnusedParameter.Local
         InputMessageDto inputMessage, AttachmentType type)
     {
-        return OutputDto.Create(
-            Ui("Echo from bot {0}: {1}", BotType.Submissions, type));
+        return OutputDto.CreateEmpty();
     }
     
     private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
-        return OutputDto.Create(
-            Ui("Echo from bot {0}: {1}",
-                BotType.Submissions, inputMessage.Details.Text.GetValueOrDefault()));
+        return OutputDto.CreateEmpty();
     }
 }

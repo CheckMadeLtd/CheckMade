@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model;
 using CheckMade.Common.Persistence;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
@@ -14,7 +15,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
     {
         var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
-        var command = new NpgsqlCommand("SELECT * FROM tlgr_messages");
+        var command = new NpgsqlCommand("SELECT * FROM tlgr_updates");
         
         await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
         {
@@ -36,8 +37,8 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
-        var telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
-        var telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
+        TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
+        TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
             ?? 0;
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
@@ -45,12 +46,14 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new InputMessageDto(
             telegramUserId,
             telegramChatId,
-            BotType.Submissions,
+            BotType.Operations,
+            ModelUpdateType.TextMessage,
             new InputMessageDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),
                 Option<string>.None(),
                 Option<AttachmentType>.None(),
+                Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 
                 Option<long>.None()));
@@ -62,7 +65,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     {
         var commands = updates.Select(update =>
         {
-            const string commandTextPrefix = "UPDATE tlgr_messages SET details = @details " +
+            const string commandTextPrefix = "UPDATE tlgr_updates SET details = @details " +
                                              "WHERE user_id = @userId " +
                                              "AND (details ->> 'TelegramDate')::timestamp = @dateTime";
 

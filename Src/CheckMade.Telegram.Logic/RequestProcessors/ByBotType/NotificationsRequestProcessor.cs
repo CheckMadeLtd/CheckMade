@@ -17,7 +17,7 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
         
         return await Attempt<OutputDto>.RunAsync(() =>
@@ -26,13 +26,11 @@ public class NotificationsRequestProcessor(IMessageRepository repo) : INotificat
             {
                 return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
-                        Ui("Welcome to the CheckMade {0}Bot! ", BotType.Notifications),
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications),
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
-            return Task.FromResult(OutputDto.Create(
-                Ui("Echo from bot {0}: {1}", BotType.Notifications,
-                    inputMessage.Details.Text.GetValueOrDefault())));
+            return Task.FromResult(OutputDto.CreateEmpty());
         });
     }
 }

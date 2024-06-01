@@ -7,146 +7,159 @@ namespace CheckMade.Telegram.Model.BotCommand;
 
 public record BotCommandMenus
 {
-    public IReadOnlyDictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
-        SubmissionsBotCommandMenu { get; } = 
-        new Dictionary<SubmissionsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
+    public IReadOnlyDictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
+        OperationsBotCommandMenu { get; } = 
+        new Dictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
         {
-            { SubmissionsBotCommands.NewIssue, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+            { OperationsBotCommands.NewIssue, 
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new ModelBotCommand("/issue", "❗ Report a new issue")
+                        new TelegramBotCommand("/issue", "❗ Report a new issue")
                     },
                     {
                         LanguageCode.de, 
-                        new ModelBotCommand("/problem", "❗ Ein neues Problem melden")
+                        new TelegramBotCommand("/problem", "❗ Ein neues Problem melden")
                     }
                 }
             },
-            { SubmissionsBotCommands.NewAssessment, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+            { OperationsBotCommands.NewAssessment, 
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new ModelBotCommand("/assessment", "⭐ Submit a new assessment")
+                        new TelegramBotCommand("/assessment", "⭐ Submit a new assessment")
                     },
                     {
                         LanguageCode.de, 
-                        new ModelBotCommand("/bewertung", "⭐ Eine neue Bewertung vornehmen")
+                        new TelegramBotCommand("/bewertung", "⭐ Eine neue Bewertung vornehmen")
                     }
                 }
             },
-            { SubmissionsBotCommands.Settings, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+            { OperationsBotCommands.Settings, 
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/settings", "⚙️ Change settings")
+                        new TelegramBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 } 
             },
-            { SubmissionsBotCommands.Logout, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+            { OperationsBotCommands.Experimental, 
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new ModelBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TelegramBotCommand("/experiment", "A Experiment")
+                    },
+                    {
+                        LanguageCode.de, 
+                        new TelegramBotCommand("/experiment", "Ein Experiment")
+                    }
+                } 
+            },
+            { OperationsBotCommands.Logout, 
+                new Dictionary<LanguageCode, TelegramBotCommand>
+                {
+                    {
+                        LanguageCode.en, 
+                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/ausloggen", 
+                        new TelegramBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 } 
             }
         };
     
-    public IReadOnlyDictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
+    public IReadOnlyDictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
         CommunicationsBotCommandMenu { get; } = 
-        new Dictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
+        new Dictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
         {
             { CommunicationsBotCommands.Contact, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/contact", "💬 Contact a colleague")
+                        new TelegramBotCommand("/contact", "💬 Contact a colleague")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/kontakt", "💬 Mit einem Kollegen Kontakt aufnehmen")
+                        new TelegramBotCommand("/kontakt", "💬 Mit einem Kollegen Kontakt aufnehmen")
                     }
                 }},
             { CommunicationsBotCommands.Settings,
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/settings", "⚙️ Change settings")
+                        new TelegramBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 }},
             { CommunicationsBotCommands.Logout, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/ausloggen", 
+                        new TelegramBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 }}
         };
 
-    public IReadOnlyDictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>> 
+    public IReadOnlyDictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
         NotificationsBotCommandMenu { get; } = 
-        new Dictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, ModelBotCommand>>
+        new Dictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
         {
             { NotificationsBotCommands.Status, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/status", "📋 Current status report")
+                        new TelegramBotCommand("/status", "📋 Current status report")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/status", "📋 Aktueller Statusreport")
+                        new TelegramBotCommand("/status", "📋 Aktueller Statusreport")
                     }
                 }},
             { NotificationsBotCommands.Settings, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/settings", "⚙️ Change settings")
+                        new TelegramBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 }},
             { NotificationsBotCommands.Logout, 
-                new Dictionary<LanguageCode, ModelBotCommand>
+                new Dictionary<LanguageCode, TelegramBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new ModelBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new ModelBotCommand("/ausloggen", 
+                        new TelegramBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 }}

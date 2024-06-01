@@ -21,7 +21,7 @@ internal static class UserService
     {
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
-            return new Failure(new ArgumentException("Invalid user details"));
+            return new Error(new ArgumentException("Invalid user details"));
         }
         return new User { Username = username, Email = email, Password = password };
     }
@@ -50,7 +50,7 @@ internal static class UserService
         await Task.Delay(50); // Simulate async work
         
         return user.Username == "existingUser" 
-            ? new Failure(Error: Ui("Username already exists")) 
+            ? new Error(FailureMessage: Ui("Username already exists")) 
             : new RegisteredUser
             {
                 Id = new Random().Next(1, 1000), 

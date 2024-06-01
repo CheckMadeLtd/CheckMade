@@ -31,7 +31,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<InputMessageDto>
             {
-                new (message.UserId, message.ChatId, message.BotType, message.Details)
+                new (message.UserId, message.TelegramChatId, message.BotType, message.ModelUpdateType, message.Details)
             };
         
             await messageRepo.AddOrThrowAsync(message);
@@ -50,7 +50,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var userId = utils.Randomizer.GenerateRandomLong();
+        TelegramUserId userId = utils.Randomizer.GenerateRandomLong();
         var modelInputMessages = new[]
         {
             utils.GetValidModelInputTextMessage(userId),
@@ -72,7 +72,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var randomizer = _services.GetRequiredService<Randomizer>();
         var messageRepo = _services.GetRequiredService<IMessageRepository>();
-        var userId = randomizer.GenerateRandomLong();
+        TelegramUserId userId = randomizer.GenerateRandomLong();
     
         var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
     
@@ -87,7 +87,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
     [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
-        long devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
+        TelegramUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         

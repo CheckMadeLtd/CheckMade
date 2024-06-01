@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
@@ -32,21 +33,15 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessageDto(
             update.Message.From!.Id,
             update.Message.Chat.Id,
-            BotType.Submissions,
-            new InputMessageDetails(
+            BotType.Operations,
+            ModelUpdateType.TextMessage,
+            TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
-                !string.IsNullOrWhiteSpace(update.Message.Text) 
-                    ? update.Message.Text 
-                    : Option<string>.None(),
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<int>.None(),
-                Option<int>.None(), 
-                Option<long>.None()));
+                update.Message.Text));
 
         var actualInputMessage = 
-            await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
+            await basics.converter.ConvertToModelAsync(update, BotType.Operations);
 
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
@@ -55,7 +50,6 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
-    [InlineData(AttachmentType.Video)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidAttachmentMessage_ToAnyBotType(
         AttachmentType attachmentType)
     {
@@ -66,7 +60,6 @@ public class ToModelConverterTests
             AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
             AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
             AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
-            AttachmentType.Video => basics.utils.GetValidTelegramVideoMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
@@ -77,56 +70,82 @@ public class ToModelConverterTests
         var expectedInputMessage = new InputMessageDto(
             attachmentUpdate.Message.From!.Id,
             attachmentUpdate.Message.Chat.Id,
-            BotType.Submissions,
-            new InputMessageDetails(
+            BotType.Operations,
+            ModelUpdateType.AttachmentMessage,
+            TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
-                !string.IsNullOrWhiteSpace(attachmentUpdate.Message.Caption)
-                    ? attachmentUpdate.Message.Caption
-                    : Option<string>.None(),
+                attachmentUpdate.Message.Caption,
                 expectedAttachmentExternalUrl,
-                attachmentType,
-                Option<int>.None(),
-                Option<int>.None(), 
-                Option<long>.None()));
+                attachmentType));
         
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-            attachmentUpdate, BotType.Submissions);
+            attachmentUpdate, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
 
     [Theory]
-    [InlineData(SubmissionsBotCommands.NewIssue)]
-    [InlineData(SubmissionsBotCommands.NewAssessment)]
-    [InlineData(SubmissionsBotCommands.Settings)]
-    [InlineData(SubmissionsBotCommands.Logout)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToSubmissions(
-        SubmissionsBotCommands command)
+    [InlineData(null)]
+    [InlineData(500.23f)]
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidLocationMessage_ToAnyBotType(
+        float? horizontalAccuracy)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var submissionsCommandMenu = 
-            new BotCommandMenus().SubmissionsBotCommandMenu;
-        var currentCommand = submissionsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var locationUpdate = basics.utils.GetValidTelegramLocationMessage(
+            horizontalAccuracy ?? Option<float>.None());
+
+        var location = locationUpdate.Message.Location;
+        var expectedGeoCoordinates = new Geo(
+            location!.Latitude,
+            location.Longitude,
+            horizontalAccuracy ?? Option<float>.None());
+        
+        var expectedInputMessage = new InputMessageDto(
+                locationUpdate.Message.From!.Id,
+                locationUpdate.Message.Chat.Id,
+                BotType.Operations,
+                ModelUpdateType.Location,
+                TestUtils.CreateFromRelevantDetails(
+                    locationUpdate.Message.Date,
+                    locationUpdate.Message.MessageId,
+                    geoCoordinates: expectedGeoCoordinates));
+        
+        var actualInputMessage = await basics.converter.ConvertToModelAsync(
+            locationUpdate, BotType.Operations);
+        
+        Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
+    }
+
+    [Theory]
+    [InlineData(OperationsBotCommands.NewIssue)]
+    [InlineData(OperationsBotCommands.NewAssessment)]
+    [InlineData(OperationsBotCommands.Settings)]
+    [InlineData(OperationsBotCommands.Logout)]
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToOperations(
+        OperationsBotCommands command)
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var operationsCommandMenu = 
+            new BotCommandMenus().OperationsBotCommandMenu;
+        var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
-            BotType.Submissions,
-            new InputMessageDetails(
+            BotType.Operations,
+            ModelUpdateType.CommandMessage,
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                commandText,
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-            commandUpdate, BotType.Submissions);
+            commandUpdate, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());        
     }
@@ -142,22 +161,19 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var communicationsCommandMenu = 
             new BotCommandMenus().CommunicationsBotCommandMenu;
-        var currentCommand = communicationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Communications,
-            new InputMessageDetails(
+            ModelUpdateType.CommandMessage,
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                commandText,
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Communications);
@@ -176,22 +192,19 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var notificationsCommandMenu = 
             new BotCommandMenus().NotificationsBotCommandMenu;
-        var currentCommand = notificationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(currentCommand);
+        var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
+        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedInputMessage = new InputMessageDto(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Notifications,
-            new InputMessageDetails(
+            ModelUpdateType.CommandMessage,
+            TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
-                currentCommand,
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                (int)command,
-                Option<int>.None(),
-                Option<long>.None()));
+                commandText,
+                botCommandEnumCode: (int)command));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Notifications);
@@ -212,67 +225,65 @@ public class ToModelConverterTests
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
 
         var domainCategoryEnumCode = enumSourceOfCallbackQuery <= EnumCallbackId.DomainCategoryMaxThreshold
-            ? Option<int>.Some(int.Parse(callbackQuery.Update.CallbackQuery!.Data!))
-            : Option<int>.None();
+            ? (int?) int.Parse(callbackQuery.Update.CallbackQuery!.Data!)
+            : null;
 
         var controlPromptEnumCode = enumSourceOfCallbackQuery > EnumCallbackId.DomainCategoryMaxThreshold
-            ? Option<long>.Some(long.Parse(callbackQuery.Update.CallbackQuery!.Data!))
-            : Option<long>.None();
+            ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
+            : null;
 
         var expectedInputMessage = new InputMessageDto(
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
-            BotType.Submissions,
-            new InputMessageDetails(
+            BotType.Operations,
+            ModelUpdateType.CallbackQuery,
+            TestUtils.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",
-                Option<string>.None(),
-                Option<AttachmentType>.None(),
-                Option<int>.None(),
-                domainCategoryEnumCode,
-                controlPromptEnumCode));
+                domainCategoryEnumCode: domainCategoryEnumCode,
+                controlPromptEnumCode: controlPromptEnumCode));
 
         var actualInputMessage = await basics.converter.ConvertToModelAsync(
-             callbackQuery, BotType.Submissions);
+             callbackQuery, BotType.Operations);
         
         Assert.Equivalent(expectedInputMessage, actualInputMessage.GetValueOrDefault());
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUserIsNull_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_ForAnyBotType()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
          var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
-        Assert.True(conversionAttempt.IsFailure);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
+        Assert.True(conversionAttempt.IsError);
     }
     
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = new UpdateWrapper(new Message { From = new User { Id = 123L } });
         
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Submissions);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var voiceMessage = basics.utils.GetValidTelegramVoiceMessage();
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Submissions);
+        var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Operations);
 
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
         Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!",
-            conversionAttempt.Failure!.Error!.GetFormattedEnglish());
+            conversionAttempt.Error!.FailureMessage!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)

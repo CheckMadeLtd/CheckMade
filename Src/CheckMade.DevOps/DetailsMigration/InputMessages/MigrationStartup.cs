@@ -24,15 +24,15 @@ internal class MigrationStartup(
                 await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    failure =>
+                    error =>
                     {
                         // ReSharper disable once ConvertToLambdaExpression
-                        throw failure.Exception ?? new Exception(failure.Error!.GetFormattedEnglish());
+                        throw error.Exception ?? new Exception(error.FailureMessage!.GetFormattedEnglish());
                         // logger.LogError(ex.Message, ex.StackTrace);
                         // return Console.Error.WriteLineAsync(ex.Message);
                     });
             },
-            errorMessage => Console.Error.WriteLineAsync(errorMessage.Error!.GetFormattedEnglish())
+            errorMessage => Console.Error.WriteLineAsync(errorMessage.FailureMessage!.GetFormattedEnglish())
         );
     }
 

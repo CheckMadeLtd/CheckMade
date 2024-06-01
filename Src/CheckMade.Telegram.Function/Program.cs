@@ -61,7 +61,8 @@ var host = new HostBuilder()
         var loggerConfig = new LoggerConfiguration();
 
         loggerConfig
-            .MinimumLevel.Override("CheckMade", LogEventLevel.Debug)
+            .MinimumLevel.Override("CheckMade", LogEventLevel.Verbose)
+            .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
 
             .Enrich.WithProcessId()
             .Enrich.FromLogContext();
@@ -109,11 +110,11 @@ var host = new HostBuilder()
             loggerConfig
                 .WriteTo.Console(
                     outputTemplate: humanReadability,
-                    restrictedToMinimumLevel: LogEventLevel.Information)
+                    restrictedToMinimumLevel: LogEventLevel.Debug)
                 
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
-                    restrictedToMinimumLevel: LogEventLevel.Information);
+                    restrictedToMinimumLevel: LogEventLevel.Debug);
         }
 
         Log.Logger = loggerConfig.CreateLogger();
@@ -158,10 +159,10 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             select unit))
             .Match(
                 unit => unit, 
-                failure => 
+                error => 
                 { 
-                    logger.LogError(failure.Exception, failure.Exception?.Message 
-                                                     ?? failure.Error?.GetFormattedEnglish()); 
+                    logger.LogError(error.Exception, error.Exception?.Message 
+                                                     ?? error.FailureMessage?.GetFormattedEnglish()); 
                     return Unit.Value; 
                 });
     }

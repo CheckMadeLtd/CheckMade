@@ -20,11 +20,11 @@ public class BotClientFactory(
 {
     public IBotClientWrapper CreateBotClientOrThrow(BotType botType) => botType switch
     {
-        BotType.Submissions => new BotClientWrapper(
-            new TelegramBotClient(botTokens.SubmissionsBotToken, 
+        BotType.Operations => new BotClientWrapper(
+            new TelegramBotClient(botTokens.OperationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy, 
-            botTokens.SubmissionsBotToken,
+            botTokens.OperationsBotToken,
             loggerForClient),
         
         BotType.Communications => new BotClientWrapper(

@@ -30,12 +30,12 @@ public class UiTranslatorFactory(
             
             LanguageCode.de => CreateTranslationDictionary().Match(
                 Option<IReadOnlyDictionary<string, string>>.Some,
-                failure =>
+                error =>
                 {
-                    logger.LogWarning(failure.Exception, 
+                    logger.LogWarning(error.Exception, 
                         $"Failed to create translation dictionary for '{_targetLanguage}'," +
                                           $"and so U.I. will be English. Exception message: " +
-                                          $"'{failure.Exception?.Message ?? failure.Error?.GetFormattedEnglish()}'");
+                                          $"'{error.Exception?.Message ?? error.FailureMessage?.GetFormattedEnglish()}'");
                     
                     return Option<IReadOnlyDictionary<string, string>>.None();
                 }),

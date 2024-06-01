@@ -17,7 +17,7 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Failure(Exception: ex));
+            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
         }
 
         return await Attempt<OutputDto>.RunAsync(() =>
@@ -26,13 +26,11 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
             {
                 return Task.FromResult(OutputDto.Create(
                     UiConcatenate(
-                        Ui("Welcome to the CheckMade {0}Bot! ", BotType.Communications),
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications),
                         IRequestProcessor.SeeValidBotCommandsInstruction)));
             }
 
-            return Task.FromResult(OutputDto.Create(
-                Ui("Echo from bot {0}: {1}", BotType.Communications,
-                    inputMessage.Details.Text.GetValueOrDefault())));
+            return Task.FromResult(OutputDto.CreateEmpty());
         });
     }
 }

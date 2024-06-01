@@ -1,4 +1,5 @@
 using CheckMade.Telegram.Interfaces;
+using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using Moq;
 
@@ -21,12 +22,12 @@ internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) 
         return await mockMessageRepo.Object.GetAllOrThrowAsync();
     }
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(long userId)
+    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(TelegramUserId userId)
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }
 
-    public async Task HardDeleteAllOrThrowAsync(long userId)
+    public async Task HardDeleteAllOrThrowAsync(TelegramUserId userId)
     {
         await mockMessageRepo.Object.HardDeleteAllOrThrowAsync(userId);
     }

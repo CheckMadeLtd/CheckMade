@@ -14,7 +14,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
 
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {
-        logger.LogInformation("C# HTTP trigger function processed a request");
+        logger.LogTrace("C# HTTP trigger function processed a request");
 
         // IMPORTANT: Do NOT Use anything but HttpStatusCode.Ok (200) !!
         /* Any other response sends the Telegram Server into an endless loop reattempting the failed Update and
@@ -36,22 +36,12 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            var updateHandlingOutcome = await botUpdateSwitch.HandleUpdateAsync(update, BotType);
-            
-            return updateHandlingOutcome.Match(
-            _ => defaultOkResponse,
-            failure =>
-            {
-                logger.LogError(failure.Exception, 
-                    $"Can't process this kind of update. Message: {failure.Exception?.Message ?? 
-                                                                   failure.Error?.GetFormattedEnglish()}");
-                return defaultOkResponse;
-            });
-
+            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            return  defaultOkResponse;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An unhandled exception occurred while processing the request.");
+            logger.LogCritical(ex, "An unhandled exception occurred while processing the request.");
             return defaultOkResponse;
         }
     }

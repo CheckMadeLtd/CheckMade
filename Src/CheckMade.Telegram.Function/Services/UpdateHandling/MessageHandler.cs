@@ -27,9 +27,6 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    private static readonly UiString CallToActionAfterErrorReport =
-        Ui("Please contact technical support or your supervisor.");
-
     private IUiTranslator? _uiTranslator;
     private IOutputToReplyMarkupConverter? _replyMarkupConverter;
 
@@ -40,7 +37,7 @@ public class MessageHandler(
         _uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
         
-        logger.LogInformation("Invoked telegram update function for BotType: {botType} " +
+        logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
             botType, update.Message.From?.Id ?? 0, chatId);
 
@@ -48,10 +45,9 @@ public class MessageHandler(
         {
             MessageType.Audio,
             MessageType.Document,
+            MessageType.Location,
             MessageType.Photo,
-            MessageType.Text,
-            MessageType.Video,
-            MessageType.Voice
+            MessageType.Text
         };
 
         if (!handledMessageTypes.Contains(update.Message.Type))
@@ -67,9 +63,9 @@ public class MessageHandler(
                 botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
                     botClient => botClient,
-                    failure => throw new InvalidOperationException(
-                        "Failed to create BotClient", failure.Exception));
-
+                    error => throw new InvalidOperationException(
+                        "Failed to create BotClient", error.Exception));
+        
         var filePathResolver = new TelegramFilePathResolver(botClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
@@ -82,38 +78,33 @@ public class MessageHandler(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            failure =>
+            error =>
             {
-                if (failure.Error != null)
+                if (error.FailureMessage != null)
                 {
-                    logger.LogError($"Message from Attempt<T>.Failure.Error: " +
-                                    $"{failure.Error.GetFormattedEnglish()}");
+                    logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
+                                    $"{error.FailureMessage.GetFormattedEnglish()}");
+                    
+                    _ = SendOutputAsync(OutputDto.Create(error.FailureMessage), botClient, chatId)
+                        .ContinueWith(task => 
+                        { 
+                            if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
+                                logger.LogWarning($"An error occurred while trying to send " +
+                                                $"{nameof(error.FailureMessage)} to the user."); 
+                        });
+                }
+
+                if (error.Exception != null)
+                {
+                    logger.LogDebug(error.Exception, 
+                        "Next, some details to help debug the current exception. " +
+                        "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
+                        "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
+                        botType, update.Message.From!.Id,
+                        update.Message.Date, update.Message.Text);
                 }
                 
-                logger.LogError(failure.Exception, 
-                    "Next, some details to help debug the current error. " +
-                                    "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                                    "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
-                    botType, update.Message.From!.Id,
-                    update.Message.Date, update.Message.Text);
-
-                var errorOutput = OutputDto.Create(
-                    UiConcatenate(
-                        UiNoTranslate(failure.Exception?.Message ?? string.Empty), 
-                        failure.Error,
-                        UiNoTranslate(" "),
-                        CallToActionAfterErrorReport));
-                
-                _ = SendOutputAsync(errorOutput, botClient, chatId) // fire and forget
-                    // this ensures logging of any NetworkAccessException thrown by SendTextMessageOrThrowAsync
-                    .ContinueWith(task => 
-                    { 
-                        if (task.Result.IsFailure) 
-                            logger.LogError(
-                                "An error occurred while trying to send a message to report another error."); 
-                    });
-                
-                return failure;
+                return error;
             });
     }
 
@@ -134,14 +125,18 @@ public class MessageHandler(
     private async Task<Attempt<Unit>> SendOutputAsync(
         OutputDto output, IBotClientWrapper botClient, ChatId chatId)
     {
+        if (_uiTranslator == null)
+            throw new InvalidOperationException("UiTranslator or translated OutputMessage must not be NULL.");
+
+        if (_replyMarkupConverter == null)
+            throw new InvalidOperationException("ReplyMarkupConverter must not be null.");
+        
         return await Attempt<Unit>.RunAsync(async () =>
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
-                _uiTranslator?.Translate(output.Text.GetValueOrDefault()) 
-                ?? throw new InvalidOperationException(
-                    "UiTranslator or translated OutputMessage must not be NULL."),
-                _replyMarkupConverter?.GetReplyMarkup(output) 
-                ?? throw new InvalidOperationException("ReplyMarkupConverter must not be null."))
+                _uiTranslator.Translate(Ui("Please choose:")),
+                _uiTranslator.Translate(output.Text.GetValueOrDefault()),
+                _replyMarkupConverter.GetReplyMarkup(output))
             );
     }
 }
