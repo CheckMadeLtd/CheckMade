@@ -1,4 +1,4 @@
-namespace CheckMade.Telegram.Model;
+namespace CheckMade.Common.Model;
 
 public enum ModelUpdateType
 {

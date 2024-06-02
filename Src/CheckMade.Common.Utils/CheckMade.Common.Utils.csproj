@@ -16,7 +16,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.ExternalServices\CheckMade.Common.ExternalServices.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
     </ItemGroup>
 
     <ItemGroup>

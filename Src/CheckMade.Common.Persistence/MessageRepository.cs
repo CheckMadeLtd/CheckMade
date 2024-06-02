@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.Persistence;
+using CheckMade.Common.Interfaces;
+using CheckMade.Common.Model;
 using CheckMade.Common.Persistence.JsonHelpers;
-using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.Telegram.Persistence;
+namespace CheckMade.Common.Persistence;
 
 public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {

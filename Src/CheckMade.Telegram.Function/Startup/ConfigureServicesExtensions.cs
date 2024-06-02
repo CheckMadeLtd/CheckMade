@@ -1,11 +1,10 @@
+using CheckMade.Common.Model;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,8 +35,6 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        services.Add_TelegramPersistence_Dependencies();
-        
         var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 

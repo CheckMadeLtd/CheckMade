@@ -13,5 +13,7 @@ public static class DependencyRegistration
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>()));
+        
+        services.AddScoped<IMessageRepository, MessageRepository>();
     }
 }

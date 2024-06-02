@@ -1,5 +1,5 @@
+using CheckMade.Common.Interfaces;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Interfaces;
 using CheckMade.Tests.Startup.DefaultMocks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,6 @@
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-﻿namespace CheckMade.Telegram.Model.DTOs;
+﻿namespace CheckMade.Common.Model;
 
 public record InputMessageDto(
      TelegramUserId UserId,

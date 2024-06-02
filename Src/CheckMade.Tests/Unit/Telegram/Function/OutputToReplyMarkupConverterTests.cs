@@ -4,7 +4,6 @@ using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversions;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

@@ -2,9 +2,7 @@ using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services.Conversions;

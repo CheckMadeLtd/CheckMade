@@ -27,13 +27,13 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Telegram.Persistence\CheckMade.Telegram.Persistence.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

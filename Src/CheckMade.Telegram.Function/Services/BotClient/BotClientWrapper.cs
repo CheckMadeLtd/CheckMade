@@ -1,6 +1,6 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;

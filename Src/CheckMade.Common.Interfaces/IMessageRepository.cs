@@ -1,7 +1,6 @@
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
+using CheckMade.Common.Model;
 
-namespace CheckMade.Telegram.Interfaces;
+namespace CheckMade.Common.Interfaces;
 
 public interface IMessageRepository
 {

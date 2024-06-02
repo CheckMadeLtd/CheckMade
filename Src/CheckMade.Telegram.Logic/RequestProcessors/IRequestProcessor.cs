@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;

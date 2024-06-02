@@ -2,8 +2,6 @@ using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model;
 using CheckMade.Common.Persistence;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;

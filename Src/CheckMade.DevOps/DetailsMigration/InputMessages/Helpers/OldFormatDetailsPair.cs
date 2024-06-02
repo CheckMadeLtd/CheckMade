@@ -1,4 +1,4 @@
-using CheckMade.Telegram.Model.DTOs;
+using CheckMade.Common.Model;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;

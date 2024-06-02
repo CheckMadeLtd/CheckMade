@@ -1,5 +1,5 @@
+using CheckMade.Common.Model;
 using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
-using CheckMade.Telegram.Model;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 

@@ -2,8 +2,6 @@ using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 

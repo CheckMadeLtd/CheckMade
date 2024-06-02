@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Telegram.Model;
+using CheckMade.Common.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

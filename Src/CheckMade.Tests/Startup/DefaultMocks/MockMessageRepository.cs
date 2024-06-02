@@ -1,6 +1,5 @@
-using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
+using CheckMade.Common.Interfaces;
+using CheckMade.Common.Model;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultMocks;

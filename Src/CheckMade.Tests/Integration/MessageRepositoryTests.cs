@@ -1,9 +1,7 @@
 using CheckMade.Common.Interfaces;
+using CheckMade.Common.Model;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;
-using CheckMade.Telegram.Interfaces;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using Microsoft.Extensions.DependencyInjection;
