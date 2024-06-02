@@ -1,4 +1,5 @@
-﻿using CheckMade.Telegram.Interfaces;
+﻿using CheckMade.Common.Model;
+using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
@@ -26,13 +27,15 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
             {
                 return new List<OutputDto>
                 {
-                    OutputDto.Create(UiConcatenate(
+                    OutputDto.Create(
+                        new OutputDestination(BotType.Communications, new Role()),
+                        UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
                         IRequestProcessor.SeeValidBotCommandsInstruction))
                 };
             }
 
-            return new List<OutputDto> { OutputDto.CreateEmpty() };
+            return new List<OutputDto>();
         });
     }
 }

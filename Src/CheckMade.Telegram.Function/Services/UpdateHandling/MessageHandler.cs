@@ -58,7 +58,7 @@ public class MessageHandler(
             return Unit.Value;
         }
 
-        var botClient = 
+        var receivingBotClient = 
             Attempt<IBotClientWrapper>.Run(() => 
                 botClientFactory.CreateBotClientOrThrow(botType))
                 .Match(
@@ -66,13 +66,14 @@ public class MessageHandler(
                     error => throw new InvalidOperationException(
                         "Failed to create BotClient", error.Exception));
         
-        var filePathResolver = new TelegramFilePathResolver(botClient);
+        var filePathResolver = new TelegramFilePathResolver(receivingBotClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
+        // ToDo: below, need to probably replace receivingBotClient with a botClientByTypeDictionary 
         var sendOutputsOutcome =
             from modelInputMessage in await toModelConverter.ConvertToModelAsync(update, botType)
             from outputs in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
-            select SendOutputsAsync(outputs, botClient, chatId);
+            select SendOutputsAsync(outputs, receivingBotClient, chatId);
         
         return (await sendOutputsOutcome).Match(
             
@@ -86,7 +87,7 @@ public class MessageHandler(
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
                     
                     _ = SendOutputsAsync(new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                            botClient, chatId)
+                            receivingBotClient, chatId)
                         .ContinueWith(task => 
                         { 
                             if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 

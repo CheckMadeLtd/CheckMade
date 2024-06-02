@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -210,6 +211,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
             OutputDto.Create(
+                new OutputDestination(BotType.Operations, new Role()),
                 ITestUtils.EnglishUiStringForTests, 
                 new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
         };
@@ -262,7 +264,25 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<Option<IReplyMarkup>>(), It.IsAny<CancellationToken>()),
             Times.Exactly(fakeListOfOutputDtos.Count));
     }
-    
+
+    // [Fact]
+    // public async Task HandleMessageAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDtos()
+    // {
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     List<OutputDto> fakeListOfOutputDtos = [
+    //         OutputDto.Create(
+    //             new OutputDestination(BotType.Operations, new Role()), 
+    //             UiNoTranslate("Output1 to Operations Bot")),
+    //         OutputDto.Create(
+    //             new OutputDestination(BotType.Communications, new Role()), 
+    //             UiNoTranslate("Output2 to Communications Bot and same Role")),
+    //         OutputDto.Create(
+    //             new OutputDestination(BotType.Notifications, new Role()), 
+    //             UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
+    //     ];
+    //     
+    // }
+    //
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 

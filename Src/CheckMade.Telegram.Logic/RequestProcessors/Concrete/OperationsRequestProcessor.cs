@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Model.Enums;
+﻿using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
@@ -47,6 +48,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
             
             (int) OperationsBotCommands.NewIssue => [
                 OutputDto.Create(
+                    new OutputDestination(BotType.Operations, new Role()),
                     Ui("What type of issue?"),
                     new[]
                     {
@@ -63,6 +65,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
             // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => [
                 OutputDto.Create(
+                    new OutputDestination(BotType.Operations, new Role()),
                     Ui("⛺ Please choose a camp."),
                     new[] { "Camp1", "Camp2", "Camp3", "Camp4" })
             ],
@@ -79,11 +82,11 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
         // ReSharper disable UnusedParameter.Local
         InputMessageDto inputMessage, AttachmentType type)
     {
-        return new List<OutputDto> { OutputDto.CreateEmpty() };
+        return new List<OutputDto>();
     }
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
-        return new List<OutputDto> { OutputDto.CreateEmpty() };
+        return new List<OutputDto>();
     }
 }
