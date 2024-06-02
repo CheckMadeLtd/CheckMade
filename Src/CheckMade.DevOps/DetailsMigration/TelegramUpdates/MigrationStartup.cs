@@ -1,10 +1,10 @@
 using CheckMade.Common.Persistence;
-using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+using CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 //using Microsoft.Extensions.Logging;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages;
+namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates;
 
 internal class MigrationStartup(
     IServiceCollection services, IConfigurationRoot config,

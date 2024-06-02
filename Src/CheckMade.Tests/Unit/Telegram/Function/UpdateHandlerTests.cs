@@ -21,17 +21,17 @@ using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace CheckMade.Tests.Unit.Telegram.Function;
 
-public class MessageHandlerTests(ITestOutputHelper outputHelper)
+public class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_LogsWarningAndReturns_ForUnhandledMessageType()
+    public async Task HandleUpdateAsync_LogsWarningAndReturns_ForUnhandledMessageType()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var mockLogger = new Mock<ILogger<MessageHandler>>();
-        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
+        var mockLogger = new Mock<ILogger<UpdateHandler>>();
+        serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         // type 'Unknown' is derived by Telegram for lack of any props!
@@ -39,7 +39,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
                                     $"{BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish()}";
 
-        await basics.handler.HandleMessageAsync(unhandledMessageTypeUpdate, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(unhandledMessageTypeUpdate, BotType.Operations);
         
         mockLogger.Verify(l => l.Log(
             LogLevel.Warning, 
@@ -51,19 +51,19 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_LogsDebuggingDetails_WhenDataAccessExceptionThrown()
+    public async Task HandleUpdateAsync_LogsDebuggingDetails_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
                 new Error(new DataAccessException("Mock DataAccess Error", new Exception()))));
-        var mockLogger = new Mock<ILogger<MessageHandler>>();
-        serviceCollection.AddScoped<ILogger<MessageHandler>>(_ => mockLogger.Object);
+        var mockLogger = new Mock<ILogger<UpdateHandler>>();
+        serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         
-        await basics.handler.HandleMessageAsync(textUpdate, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(textUpdate, BotType.Operations);
         
         mockLogger.Verify(l => l.Log(
             LogLevel.Debug, 
@@ -74,7 +74,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleMessageAsync_ShowsCorrectError_ForInvalidBotCommandToOperations()
+    public async Task HandleUpdateAsync_ShowsCorrectError_ForInvalidBotCommandToOperations()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -94,7 +94,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
                 outputHelper.WriteLine(msg));
         
-        await basics.handler.HandleMessageAsync(invalidBotCommandUpdate, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, BotType.Operations);
     
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -110,14 +110,14 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(BotType.Operations)]
     [InlineData(BotType.Communications)]
     [InlineData(BotType.Notifications)]
-    public async Task HandleMessageAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
+    public async Task HandleUpdateAsync_ShowsCorrectWelcomeMessage_UponStartCommand(BotType botType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var startCommandUpdate = basics.utils.GetValidTelegramBotCommandMessage(Start.Command);
         var expectedWelcomeMessageSegment = IRequestProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
-        await basics.handler.HandleMessageAsync(startCommandUpdate, botType);
+        await basics.handler.HandleUpdateAsync(startCommandUpdate, botType);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -132,7 +132,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_ReturnsEnglishTestString_ForEnglishLanguageCode()
+    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
@@ -143,7 +143,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
         updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
         
-        await basics.handler.HandleMessageAsync(updateEn, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(updateEn, BotType.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -156,7 +156,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_ReturnsGermanTestString_ForGermanLanguageCode()
+    public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
@@ -167,7 +167,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
         updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
         
-        await basics.handler.HandleMessageAsync(updateDe, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(updateDe, BotType.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -180,7 +180,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleMessageAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
+    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
@@ -192,7 +192,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             basics.utils.GetValidTelegramTextMessage("random valid text");
         updateUnsupportedLanguage.Message.From!.LanguageCode = "xyz";
         
-        await basics.handler.HandleMessageAsync(updateUnsupportedLanguage, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(updateUnsupportedLanguage, BotType.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -206,7 +206,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     [Fact]
     // Agnostic to BotType, using Operations
     // Just to confirm basic integration. Detailed unit tests for correct Output->ReplyMarkup conversions are elsewhere.
-    public async Task HandleMessageAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
+    public async Task HandleUpdateAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
     {
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
@@ -237,13 +237,13 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
                 (_, _, _, markup, _) => actualMarkup = markup
             );
         
-        await basics.handler.HandleMessageAsync(textUpdate, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(textUpdate, BotType.Operations);
 
         Assert.Equivalent(expectedReplyMarkup, actualMarkup);
     }
 
     [Fact]
-    public async Task HandleMessageAsync_SendsMultipleMessages_ForListOfOutputDtos()
+    public async Task HandleUpdateAsync_SendsMultipleMessages_ForListOfOutputDtos()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [ 
@@ -256,7 +256,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
         
-        await basics.handler.HandleMessageAsync(update, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(update, BotType.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -266,7 +266,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleMessageAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDestinationInfos()
+    public async Task HandleUpdateAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDestinationInfos()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
@@ -286,7 +286,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
-        await basics.handler.HandleMessageAsync(update, BotType.Operations);
+        await basics.handler.HandleUpdateAsync(update, BotType.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageOrThrowAsync(
@@ -298,12 +298,12 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             Times.Exactly(fakeListOfOutputDtos.Count));
     }
     
-    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 
         (sp.GetRequiredService<ITestUtils>(), 
             sp.GetRequiredService<Mock<IBotClientWrapper>>(),
-            sp.GetRequiredService<IMessageHandler>(),
+            sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
             new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                 sp.GetRequiredService<ILogger<UiTranslator>>()));

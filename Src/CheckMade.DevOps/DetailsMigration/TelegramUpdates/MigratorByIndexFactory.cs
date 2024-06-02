@@ -1,7 +1,7 @@
 using System.Reflection;
-using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+using CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages;
+namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates;
 
 internal class MigratorByIndexFactory
 {
@@ -12,7 +12,7 @@ internal class MigratorByIndexFactory
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
-                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.InputMessages.Migrators") &&
+                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.TelegramUpdates.Migrators") &&
                            typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),

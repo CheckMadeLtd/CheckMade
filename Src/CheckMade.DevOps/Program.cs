@@ -1,5 +1,5 @@
 ﻿using CheckMade.Common.Utils;
-using CheckMade.DevOps.DetailsMigration.InputMessages;
+using CheckMade.DevOps.DetailsMigration.TelegramUpdates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

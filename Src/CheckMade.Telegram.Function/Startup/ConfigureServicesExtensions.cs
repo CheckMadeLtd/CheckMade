@@ -28,7 +28,7 @@ internal static class ConfigureServicesExtensions
 
     internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
     {
-        services.AddScoped<IMessageHandler, MessageHandler>();
+        services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
     }
     

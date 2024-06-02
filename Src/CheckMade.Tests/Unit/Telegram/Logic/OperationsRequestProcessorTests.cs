@@ -16,16 +16,17 @@ public class OperationsRequestProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var problemCommandMessage = basics.utils.GetValidModelInputCommandMessage(
+        var problemCommandUpdate = basics.utils.GetValidModelInputCommandMessage(
             BotType.Operations, (int)OperationsBotCommands.NewIssue);
 
-        var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandMessage);
+        var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandUpdate);
         
         Assert.True(actualOutput.IsSuccess);
         Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
             actualOutput.GetValueOrDefault()[0].DomainCategorySelection.GetValueOrDefault());
     }
     
-    private (ITestUtils utils, IOperationsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
-        (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<IOperationsRequestProcessor>());
+    private static (ITestUtils utils, IOperationsRequestProcessor processor) 
+        GetBasicTestingServices(IServiceProvider sp) =>
+            (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<IOperationsRequestProcessor>());
 }

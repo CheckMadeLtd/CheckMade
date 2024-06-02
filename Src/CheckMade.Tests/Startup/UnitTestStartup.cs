@@ -18,8 +18,8 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<IMessageRepository, MockMessageRepository>(_ => 
-            new MockMessageRepository(new Mock<IMessageRepository>()));
+        Services.AddScoped<ITelegramUpdateRepository, MockTelegramUpdateRepository>(_ => 
+            new MockTelegramUpdateRepository(new Mock<ITelegramUpdateRepository>()));
         
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
          in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 

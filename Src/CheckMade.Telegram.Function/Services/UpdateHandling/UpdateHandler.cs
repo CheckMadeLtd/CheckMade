@@ -12,22 +12,22 @@ using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
-public interface IMessageHandler
+public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleMessageAsync(UpdateWrapper update, BotType botType);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType botType);
 }
 
-public class MessageHandler(
+public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
         IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
-        ILogger<MessageHandler> logger)
-    : IMessageHandler
+        ILogger<UpdateHandler> logger)
+    : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleMessageAsync(UpdateWrapper update, BotType botType)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType botType)
     {
         ChatId chatId = update.Message.Chat.Id;
         
@@ -67,10 +67,10 @@ public class MessageHandler(
         
         // ToDo: below, need to probably replace receivingBotClient with a botClientByTypeDictionary 
         var sendOutputsOutcome =
-            from modelInputMessage 
+            from telegramUpdate 
                 in await toModelConverter.ConvertToModelAsync(update, botType)
             from outputs 
-                in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
+                in selector.GetRequestProcessor(botType).ProcessRequestAsync(telegramUpdate)
             select 
                 SendOutputsAsync(outputs, receivingBotClient, chatId, uiTranslator, replyMarkupConverter);
         
@@ -104,7 +104,7 @@ public class MessageHandler(
                     logger.LogDebug(error.Exception, 
                         "Next, some details to help debug the current exception. " +
                         "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                        "DateTime of received Message: '{telegramDate}'; with text: '{text}'",
+                        "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
                         botType, update.Message.From!.Id,
                         update.Message.Date, update.Message.Text);
                 }

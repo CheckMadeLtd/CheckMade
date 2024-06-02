@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
 public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
@@ -25,7 +25,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             {
                 while (await reader.ReadAsync())
                 {
-                    pairBuilder.Add(await CreateInputMessageAndDetailsInOldFormatAsync(reader));
+                    pairBuilder.Add(await CreateTelegramUpdateAndDetailsInOldFormatAsync(reader));
                 }
             }
         });
@@ -33,7 +33,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return pairBuilder.ToImmutable();
     }
 
-    private static async Task<OldFormatDetailsPair> CreateInputMessageAndDetailsInOldFormatAsync(
+    private static async Task<OldFormatDetailsPair> CreateTelegramUpdateAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
         TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));

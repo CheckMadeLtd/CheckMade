@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.TelegramUpdates;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
 internal record DetailsUpdate(
     TelegramUserId UserId, 

@@ -9,7 +9,7 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunicationsRequestProcessor
+public class CommunicationsRequestProcessor(ITelegramUpdateRepository repo) : ICommunicationsRequestProcessor
 {
     public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {

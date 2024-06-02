@@ -9,59 +9,59 @@ using Xunit.Abstractions;
 
 namespace CheckMade.Tests.Integration;
 
-public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
+public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
 {
     private ServiceProvider? _services;
     
     [Fact]
-    public async Task MessageRepository_SavesAndRetrievesOneMessage_WhenInputValid()
+    public async Task SavesAndRetrievesOneUpdate_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var modelInputMessages = new[]
+        var telegramUpdates = new[]
         {
             utils.GetValidModelInputTextMessage(),
             utils.GetValidModelInputTextMessageWithAttachment(AttachmentType.Photo)
         };
-        var messageRepo = _services.GetRequiredService<IMessageRepository>();
+        var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
 
-        foreach (var message in modelInputMessages)
+        foreach (var update in telegramUpdates)
         {
             var expectedRetrieval = new List<TelegramUpdate>
             {
-                new (message.UserId, message.TelegramChatId, message.BotType, message.ModelUpdateType, message.Details)
+                new (update.UserId, update.TelegramChatId, update.BotType, update.ModelUpdateType, update.Details)
             };
         
-            await messageRepo.AddOrThrowAsync(message);
-            var retrievedMessages = 
-                (await messageRepo.GetAllOrThrowAsync(message.UserId))
+            await updateRepo.AddOrThrowAsync(update);
+            var retrievedUpdates = 
+                (await updateRepo.GetAllOrThrowAsync(update.UserId))
                 .OrderByDescending(x => x.Details.TelegramDate)
                 .ToList().AsReadOnly();
-            await messageRepo.HardDeleteAllOrThrowAsync(message.UserId);
+            await updateRepo.HardDeleteAllOrThrowAsync(update.UserId);
         
-            Assert.Equivalent(expectedRetrieval[0], retrievedMessages[0]);
+            Assert.Equivalent(expectedRetrieval[0], retrievedUpdates[0]);
         }
     }
 
     [Fact]
-    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidMessages()
+    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidUpdates()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         TelegramUserId userId = utils.Randomizer.GenerateRandomLong();
-        var modelInputMessages = new[]
+        var telegramUpdates = new[]
         {
             utils.GetValidModelInputTextMessage(userId),
             utils.GetValidModelInputTextMessage(userId),
             utils.GetValidModelInputTextMessage(userId)
         };
-        var messageRepo = _services.GetRequiredService<IMessageRepository>();
+        var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         
-        await messageRepo.AddOrThrowAsync(modelInputMessages);
-        var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
-        await messageRepo.HardDeleteAllOrThrowAsync(userId);
+        await updateRepo.AddOrThrowAsync(telegramUpdates);
+        var retrievedUpdates = await updateRepo.GetAllOrThrowAsync(userId);
+        await updateRepo.HardDeleteAllOrThrowAsync(userId);
 
-        Assert.Equivalent(retrievedMessages, modelInputMessages);
+        Assert.Equivalent(telegramUpdates, retrievedUpdates);
     }
     
     [Fact]
@@ -69,12 +69,12 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var randomizer = _services.GetRequiredService<Randomizer>();
-        var messageRepo = _services.GetRequiredService<IMessageRepository>();
+        var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         TelegramUserId userId = randomizer.GenerateRandomLong();
     
-        var retrievedMessages = await messageRepo.GetAllOrThrowAsync(userId);
+        var retrievedUpdates = await updateRepo.GetAllOrThrowAsync(userId);
     
-        Assert.Empty(retrievedMessages);
+        Assert.Empty(retrievedUpdates);
     }
 
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
@@ -98,9 +98,9 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
             _services = serviceCollection.BuildServiceProvider();
         }
         
-        var messageRepo = _services.GetRequiredService<IMessageRepository>();
+        var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await messageRepo.GetAllOrThrowAsync(devDbUserId);
+        await updateRepo.GetAllOrThrowAsync(devDbUserId);
     }
 }

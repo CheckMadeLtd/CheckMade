@@ -8,31 +8,31 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence;
 
-public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
+public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUpdateRepository
 {
     public async Task AddOrThrowAsync(TelegramUpdate telegramUpdate)
     {
         await AddOrThrowAsync(new List<TelegramUpdate> { telegramUpdate }.ToImmutableArray());
     }
 
-    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdate> inputMessages)
+    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdate> telegramUpdates)
     {
-        var commands = inputMessages.Select(inputMessage =>
+        var commands = telegramUpdates.Select(update =>
         {
             var command = new NpgsqlCommand("INSERT INTO tlgr_updates " +
                                             "(user_id, chat_id, details, last_data_migration, bot_type, update_type)" +
                                             " VALUES (@telegramUserId, @telegramChatId, @telegramMessageDetails," +
                                             "@lastDataMig, @botType, @updateType)");
 
-            command.Parameters.AddWithValue("@telegramUserId", (long) inputMessage.UserId);
-            command.Parameters.AddWithValue("@telegramChatId", (long) inputMessage.TelegramChatId);
+            command.Parameters.AddWithValue("@telegramUserId", (long) update.UserId);
+            command.Parameters.AddWithValue("@telegramChatId", (long) update.TelegramChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
-            command.Parameters.AddWithValue("@botType", (int) inputMessage.BotType);
-            command.Parameters.AddWithValue("@updateType", (int) inputMessage.ModelUpdateType);
+            command.Parameters.AddWithValue("@botType", (int) update.BotType);
+            command.Parameters.AddWithValue("@updateType", (int) update.ModelUpdateType);
 
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJsonOrThrow(inputMessage.Details)
+                Value = JsonHelper.SerializeToJsonOrThrow(update.Details)
             });
 
             return command;
@@ -77,7 +77,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             {
                 while (await reader.ReadAsync())
                 {
-                    builder.Add(await CreateInputMessageFromReaderStrictAsync(reader));
+                    builder.Add(await CreateTelegramUpdateFromReaderStrictAsync(reader));
                 }
             }
         });
@@ -85,7 +85,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return builder.ToImmutable();
     }
     
-    private static async Task<TelegramUpdate> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
+    private static async Task<TelegramUpdate> CreateTelegramUpdateFromReaderStrictAsync(DbDataReader reader)
     {
         TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));

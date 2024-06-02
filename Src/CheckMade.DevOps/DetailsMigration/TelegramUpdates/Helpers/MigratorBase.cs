@@ -1,6 +1,6 @@
 using CheckMade.Common.LangExt;
 
-namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
+namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {

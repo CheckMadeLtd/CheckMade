@@ -14,6 +14,6 @@ public static class DependencyRegistration
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>()));
         
-        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<ITelegramUpdateRepository, TelegramUpdateRepository>();
     }
 }

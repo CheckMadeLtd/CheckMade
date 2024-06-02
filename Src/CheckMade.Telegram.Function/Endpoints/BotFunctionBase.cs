@@ -36,7 +36,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            await botUpdateSwitch.SwitchUpdateAsync(update, BotType);
             return  defaultOkResponse;
         }
         catch (Exception ex)
