@@ -1,4 +1,5 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Persistence.Repositories;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.DependencyInjection;
 

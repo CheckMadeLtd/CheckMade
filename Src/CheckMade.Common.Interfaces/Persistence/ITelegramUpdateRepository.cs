@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.TelegramUpdates;
 
-namespace CheckMade.Common.Interfaces;
+namespace CheckMade.Common.Interfaces.Persistence;
 
 public interface ITelegramUpdateRepository
 {

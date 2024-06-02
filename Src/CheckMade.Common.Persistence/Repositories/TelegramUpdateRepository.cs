@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.Interfaces;
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.Common.Persistence;
+namespace CheckMade.Common.Persistence.Repositories;
 
 public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUpdateRepository
 {

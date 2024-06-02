@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model.TelegramUpdates;
 using Moq;
 

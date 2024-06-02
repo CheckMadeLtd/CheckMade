@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.RetryPolicies;
 using Newtonsoft.Json;
