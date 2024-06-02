@@ -98,7 +98,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
             telegramChatId,
             (BotType) telegramBotType,
             (ModelUpdateType) telegramUpdateType,
-            JsonHelper.DeserializeFromJsonStrictOrThrow<InputMessageDetails>(details) 
+            JsonHelper.DeserializeFromJsonStrictOrThrow<TelegramUpdateDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
         return message;

@@ -233,7 +233,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             : telegramUpdate.Message.Caption;
         
         return new TelegramUpdate(userId, chatId, botType, modelUpdateType,
-            new InputMessageDetails(
+            new TelegramUpdateDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 

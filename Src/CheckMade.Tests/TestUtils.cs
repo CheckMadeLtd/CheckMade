@@ -73,7 +73,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    internal static InputMessageDetails CreateFromRelevantDetails(
+    internal static TelegramUpdateDetails CreateFromRelevantDetails(
         DateTime telegramDate,
         int telegramMessageId,
         string? text = null,
@@ -84,7 +84,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         int? domainCategoryEnumCode = null,
         long? controlPromptEnumCode = null)
     {
-        return new InputMessageDetails(
+        return new TelegramUpdateDetails(
             telegramDate, 
             telegramMessageId,
             text ?? Option<string>.None(),

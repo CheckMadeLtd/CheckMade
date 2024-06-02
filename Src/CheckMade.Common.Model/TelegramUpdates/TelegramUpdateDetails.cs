@@ -1,7 +1,7 @@
 
 namespace CheckMade.Common.Model.TelegramUpdates;
 
-public record InputMessageDetails(
+public record TelegramUpdateDetails(
     DateTime TelegramDate,
     int TelegramMessageId,
     Option<string> Text,

@@ -5,5 +5,5 @@ public record TelegramUpdate(
      TelegramChatId TelegramChatId,
      BotType BotType,
      ModelUpdateType ModelUpdateType,
-     InputMessageDetails Details);
+     TelegramUpdateDetails Details);
      

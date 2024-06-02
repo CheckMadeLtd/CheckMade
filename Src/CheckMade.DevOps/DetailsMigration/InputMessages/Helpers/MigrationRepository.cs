@@ -47,7 +47,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             telegramChatId,
             BotType.Operations,
             ModelUpdateType.TextMessage,
-            new InputMessageDetails(DateTime.MinValue,
+            new TelegramUpdateDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),
                 Option<string>.None(),
