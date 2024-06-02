@@ -215,7 +215,6 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         };
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeOutputDto));
-        
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -241,17 +240,28 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         Assert.Equivalent(expectedReplyMarkup, actualMarkup);
     }
 
-    // [Fact]
-    // public async Task HandleMessageAsync_SendsMultipleMessages_ForListOfOutputDtos()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     List<OutputDto> fakeListOfOutputDtos = [ 
-    //         OutputDto.Create(UiNoTranslate("Output1")),
-    //         OutputDto.Create(UiNoTranslate("Output2"))
-    //     ];
-    //     serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
-    //         GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
-    // }
+    [Fact]
+    public async Task HandleMessageAsync_SendsMultipleMessages_ForListOfOutputDtos()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        List<OutputDto> fakeListOfOutputDtos = [ 
+            OutputDto.Create(UiNoTranslate("Output1")),
+            OutputDto.Create(UiNoTranslate("Output2"))
+        ];
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        
+        await basics.handler.HandleMessageAsync(update, BotType.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<Option<IReplyMarkup>>(), It.IsAny<CancellationToken>()),
+            Times.Exactly(fakeListOfOutputDtos.Count));
+    }
     
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
