@@ -1,6 +1,7 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
@@ -316,7 +317,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         mockOperationsRequestProcessor
             .Setup<Task<Attempt<IReadOnlyList<OutputDto>>>>(rp => 
-                rp.ProcessRequestAsync(It.IsAny<InputMessageDto>()))
+                rp.ProcessRequestAsync(It.IsAny<TelegramUpdateDto>()))
             .Returns(Task.FromResult(returnValue));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();

@@ -1,4 +1,4 @@
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 

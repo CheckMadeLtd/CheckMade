@@ -1,5 +1,5 @@
-using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Tests.Startup;

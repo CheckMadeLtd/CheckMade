@@ -1,6 +1,7 @@
 ﻿using CheckMade.Common.Interfaces;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;
@@ -11,32 +12,32 @@ public interface IOperationsRequestProcessor : IRequestProcessor;
 
 public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdateDto telegramUpdate)
     {
         try
         {
-            await repo.AddOrThrowAsync(inputMessage);
+            await repo.AddOrThrowAsync(telegramUpdate);
         }
         catch (Exception ex)
         {
             return Attempt<IReadOnlyList<OutputDto>>.Fail(new Error(Exception: ex));
         }
 
-        return inputMessage switch
+        return telegramUpdate switch
         {
             { Details.BotCommandEnumCode.IsSome: true } =>
-                ProcessBotCommand(inputMessage),
+                ProcessBotCommand(telegramUpdate),
 
             { Details.AttachmentType: { IsSome: true, Value: var type } } =>
-                ProcessMessageWithAttachment(inputMessage, type),
+                ProcessMessageWithAttachment(telegramUpdate, type),
 
-            _ => ProcessNormalResponseMessage(inputMessage)
+            _ => ProcessNormalResponseMessage(telegramUpdate)
         };
     }
 
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(InputMessageDto inputMessage)
+    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(TelegramUpdateDto telegramUpdate)
     {
-        return inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() switch
+        return telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() switch
         {
             Start.CommandCode => [
                 OutputDto.Create(
@@ -72,19 +73,19 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
             _ => new List<OutputDto>{ OutputDto.Create(
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
-                    UiNoTranslate(inputMessage.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
+                    UiNoTranslate(telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
             }
         };
     }
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
-        InputMessageDto inputMessage, AttachmentType type)
+        TelegramUpdateDto telegramUpdate, AttachmentType type)
     {
         return new List<OutputDto>();
     }
     
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(InputMessageDto inputMessage)
+    private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdateDto telegramUpdate)
     {
         return new List<OutputDto>();
     }

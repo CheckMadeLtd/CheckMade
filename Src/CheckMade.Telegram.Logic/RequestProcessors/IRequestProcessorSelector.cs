@@ -1,4 +1,4 @@
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;

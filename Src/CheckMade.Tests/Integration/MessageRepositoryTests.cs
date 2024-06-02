@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces;
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
@@ -27,7 +27,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
 
         foreach (var message in modelInputMessages)
         {
-            var expectedRetrieval = new List<InputMessageDto>
+            var expectedRetrieval = new List<TelegramUpdateDto>
             {
                 new (message.UserId, message.TelegramChatId, message.BotType, message.ModelUpdateType, message.Details)
             };

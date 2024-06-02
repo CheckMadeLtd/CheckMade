@@ -1,5 +1,6 @@
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model.BotCommand;
@@ -9,12 +10,12 @@ namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {
-    Task<Attempt<InputMessageDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType);
+    Task<Attempt<TelegramUpdateDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<Attempt<InputMessageDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
+    public async Task<Attempt<TelegramUpdateDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
     {
         return (await
                 (from modelUpdateType
@@ -42,7 +43,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
-                error => Attempt<InputMessageDto>.Fail(
+                error => Attempt<TelegramUpdateDto>.Fail(
                     error with // preserves any contained Exception and prefixes any contained Error UiString
                     {
                         FailureMessage = UiConcatenate(
@@ -191,7 +192,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             : Attempt<Option<long>>.Succeed(Option<long>.None());
     }
     
-    private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
+    private async Task<Attempt<TelegramUpdateDto>> GetInputMessageAsync(
         UpdateWrapper telegramUpdate,
         BotType botType,
         ModelUpdateType modelUpdateType,
@@ -231,7 +232,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramUpdate.Message.Text
             : telegramUpdate.Message.Caption;
         
-        return new InputMessageDto(userId, chatId, botType, modelUpdateType,
+        return new TelegramUpdateDto(userId, chatId, botType, modelUpdateType,
             new InputMessageDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,

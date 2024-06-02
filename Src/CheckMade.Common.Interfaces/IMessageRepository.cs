@@ -1,12 +1,12 @@
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 
 namespace CheckMade.Common.Interfaces;
 
 public interface IMessageRepository
 {
-    Task AddOrThrowAsync(InputMessageDto inputMessage);
-    Task AddOrThrowAsync(IEnumerable<InputMessageDto> inputMessages);
-    Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync();
-    Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(TelegramUserId userId);
+    Task AddOrThrowAsync(TelegramUpdateDto telegramUpdate);
+    Task AddOrThrowAsync(IEnumerable<TelegramUpdateDto> inputMessages);
+    Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync();
+    Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync(TelegramUserId userId);
     Task HardDeleteAllOrThrowAsync(TelegramUserId userId);
 }

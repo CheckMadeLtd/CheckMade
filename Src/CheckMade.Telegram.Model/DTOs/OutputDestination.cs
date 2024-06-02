@@ -1,4 +1,5 @@
 using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 
 namespace CheckMade.Telegram.Model.DTOs;
 

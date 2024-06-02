@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Telegram.Bot.Types;
@@ -15,10 +16,10 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    InputMessageDto GetValidModelInputTextMessage();
-    InputMessageDto GetValidModelInputTextMessage(TelegramUserId userId);
-    InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type);
-    InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
+    TelegramUpdateDto GetValidModelInputTextMessage();
+    TelegramUpdateDto GetValidModelInputTextMessage(TelegramUserId userId);
+    TelegramUpdateDto GetValidModelInputTextMessageWithAttachment(AttachmentType type);
+    TelegramUpdateDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand);
@@ -37,10 +38,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 
     public Randomizer Randomizer { get; } = randomizer;
     
-    public InputMessageDto GetValidModelInputTextMessage() =>
+    public TelegramUpdateDto GetValidModelInputTextMessage() =>
         GetValidModelInputTextMessage(Randomizer.GenerateRandomLong());
 
-    public InputMessageDto GetValidModelInputTextMessage(TelegramUserId userId) =>
+    public TelegramUpdateDto GetValidModelInputTextMessage(TelegramUserId userId) =>
         new(userId,
             Randomizer.GenerateRandomLong(),
             BotType.Operations,
@@ -50,7 +51,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
     
-    public InputMessageDto GetValidModelInputTextMessageWithAttachment(AttachmentType type) =>
+    public TelegramUpdateDto GetValidModelInputTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             BotType.Operations,
@@ -62,7 +63,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 "fakeAttachmentUrl",
                 type));
 
-    public InputMessageDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode) =>
+    public TelegramUpdateDto GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             botType,

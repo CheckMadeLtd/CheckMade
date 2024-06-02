@@ -1,5 +1,5 @@
 
-namespace CheckMade.Common.Model;
+namespace CheckMade.Common.Model.TelegramUpdates;
 
 public record InputMessageDetails(
     DateTime TelegramDate,

@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model;
+namespace CheckMade.Common.Model.TelegramUpdates;
 
 public record TelegramUserId(long Id)
 {

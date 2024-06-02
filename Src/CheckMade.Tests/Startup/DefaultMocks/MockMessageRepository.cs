@@ -1,27 +1,27 @@
 using CheckMade.Common.Interfaces;
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.TelegramUpdates;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) : IMessageRepository
 {
-    public async Task AddOrThrowAsync(InputMessageDto inputMessage)
+    public async Task AddOrThrowAsync(TelegramUpdateDto telegramUpdate)
     {
-        await mockMessageRepo.Object.AddOrThrowAsync(inputMessage);
+        await mockMessageRepo.Object.AddOrThrowAsync(telegramUpdate);
     }
 
-    public async Task AddOrThrowAsync(IEnumerable<InputMessageDto> inputMessages)
+    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdateDto> inputMessages)
     {
         await mockMessageRepo.Object.AddOrThrowAsync(inputMessages);
     }
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync()
+    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync()
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync();
     }
 
-    public async Task<IEnumerable<InputMessageDto>> GetAllOrThrowAsync(TelegramUserId userId)
+    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync(TelegramUserId userId)
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }

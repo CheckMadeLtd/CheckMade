@@ -1,6 +1,7 @@
 ﻿using CheckMade.Common.Interfaces;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 
@@ -10,11 +11,11 @@ public interface ICommunicationsRequestProcessor : IRequestProcessor;
 
 public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunicationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdateDto telegramUpdate)
     {
         try
         {
-            await repo.AddOrThrowAsync(inputMessage);
+            await repo.AddOrThrowAsync(telegramUpdate);
         }
         catch (Exception ex)
         {
@@ -23,7 +24,7 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
 
         return Attempt<IReadOnlyList<OutputDto>>.Run(() =>
         {
-            if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+            if (telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
                 return new List<OutputDto>
                 {
