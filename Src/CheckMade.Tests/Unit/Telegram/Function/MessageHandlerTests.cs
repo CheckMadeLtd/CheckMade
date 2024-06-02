@@ -265,24 +265,39 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
             Times.Exactly(fakeListOfOutputDtos.Count));
     }
 
-    // [Fact]
-    // public async Task HandleMessageAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDtos()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     List<OutputDto> fakeListOfOutputDtos = [
-    //         OutputDto.Create(
-    //             new OutputDestination(BotType.Operations, new Role()), 
-    //             UiNoTranslate("Output1 to Operations Bot")),
-    //         OutputDto.Create(
-    //             new OutputDestination(BotType.Communications, new Role()), 
-    //             UiNoTranslate("Output2 to Communications Bot and same Role")),
-    //         OutputDto.Create(
-    //             new OutputDestination(BotType.Notifications, new Role()), 
-    //             UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
-    //     ];
-    //     
-    // }
-    //
+    [Fact]
+    public async Task HandleMessageAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDestinationInfos()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        List<OutputDto> fakeListOfOutputDtos = [
+            OutputDto.Create(
+                new OutputDestination(BotType.Operations, new Role()), 
+                UiNoTranslate("Output1 to Operations Bot")),
+            OutputDto.Create(
+                new OutputDestination(BotType.Communications, new Role()), 
+                UiNoTranslate("Output2 to Communications Bot and same Role")),
+            OutputDto.Create(
+                new OutputDestination(BotType.Notifications, new Role()), 
+                UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
+        ];
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+
+        await basics.handler.HandleMessageAsync(update, BotType.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                It.IsAny<ChatId>(), // ToDo: expected ChatId based on Role (look up in role_chatId_botType_link table)
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<CancellationToken>()),
+            Times.Exactly(fakeListOfOutputDtos.Count));
+    }
+    
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 
