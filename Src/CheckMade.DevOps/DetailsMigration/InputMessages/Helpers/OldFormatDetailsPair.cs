@@ -3,4 +3,4 @@ using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 
-internal record OldFormatDetailsPair(TelegramUpdateDto ModelMessage, JObject OldFormatDetailsJson);
+internal record OldFormatDetailsPair(TelegramUpdate ModelMessage, JObject OldFormatDetailsJson);

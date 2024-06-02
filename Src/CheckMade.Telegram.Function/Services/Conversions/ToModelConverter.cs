@@ -10,12 +10,12 @@ namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {
-    Task<Attempt<TelegramUpdateDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType);
+    Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType);
 }
 
 internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
 {
-    public async Task<Attempt<TelegramUpdateDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
+    public async Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
     {
         return (await
                 (from modelUpdateType
@@ -43,7 +43,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                     select modelInputMessage))
             .Match(
                 modelInputMessage => modelInputMessage,
-                error => Attempt<TelegramUpdateDto>.Fail(
+                error => Attempt<TelegramUpdate>.Fail(
                     error with // preserves any contained Exception and prefixes any contained Error UiString
                     {
                         FailureMessage = UiConcatenate(
@@ -192,7 +192,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             : Attempt<Option<long>>.Succeed(Option<long>.None());
     }
     
-    private async Task<Attempt<TelegramUpdateDto>> GetInputMessageAsync(
+    private async Task<Attempt<TelegramUpdate>> GetInputMessageAsync(
         UpdateWrapper telegramUpdate,
         BotType botType,
         ModelUpdateType modelUpdateType,
@@ -232,7 +232,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             ? telegramUpdate.Message.Text
             : telegramUpdate.Message.Caption;
         
-        return new TelegramUpdateDto(userId, chatId, botType, modelUpdateType,
+        return new TelegramUpdate(userId, chatId, botType, modelUpdateType,
             new InputMessageDetails(
                 telegramUpdate.Message.Date,
                 telegramUpdate.Message.MessageId,

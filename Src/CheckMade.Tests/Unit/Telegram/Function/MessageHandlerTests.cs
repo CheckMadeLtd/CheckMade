@@ -317,7 +317,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         
         mockOperationsRequestProcessor
             .Setup<Task<Attempt<IReadOnlyList<OutputDto>>>>(rp => 
-                rp.ProcessRequestAsync(It.IsAny<TelegramUpdateDto>()))
+                rp.ProcessRequestAsync(It.IsAny<TelegramUpdate>()))
             .Returns(Task.FromResult(returnValue));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();

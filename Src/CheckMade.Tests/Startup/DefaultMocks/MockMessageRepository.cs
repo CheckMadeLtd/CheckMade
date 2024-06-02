@@ -6,22 +6,22 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockMessageRepository(IMock<IMessageRepository> mockMessageRepo) : IMessageRepository
 {
-    public async Task AddOrThrowAsync(TelegramUpdateDto telegramUpdate)
+    public async Task AddOrThrowAsync(TelegramUpdate telegramUpdate)
     {
         await mockMessageRepo.Object.AddOrThrowAsync(telegramUpdate);
     }
 
-    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdateDto> inputMessages)
+    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdate> inputMessages)
     {
         await mockMessageRepo.Object.AddOrThrowAsync(inputMessages);
     }
 
-    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync()
+    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync()
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync();
     }
 
-    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync(TelegramUserId userId)
+    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync(TelegramUserId userId)
     {
         return await mockMessageRepo.Object.GetAllOrThrowAsync(userId);
     }

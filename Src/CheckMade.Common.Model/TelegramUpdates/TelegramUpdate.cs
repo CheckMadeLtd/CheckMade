@@ -1,6 +1,6 @@
 ﻿namespace CheckMade.Common.Model.TelegramUpdates;
 
-public record TelegramUpdateDto(
+public record TelegramUpdate(
      TelegramUserId UserId,
      TelegramChatId TelegramChatId,
      BotType BotType,

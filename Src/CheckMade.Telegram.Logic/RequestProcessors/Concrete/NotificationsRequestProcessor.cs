@@ -11,7 +11,7 @@ public interface INotificationsRequestProcessor : IRequestProcessor;
 
 public class NotificationsRequestProcessor(IMessageRepository repo) : INotificationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdateDto telegramUpdate)
+    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {
         try
         {

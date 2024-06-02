@@ -10,12 +10,12 @@ namespace CheckMade.Common.Persistence;
 
 public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
 {
-    public async Task AddOrThrowAsync(TelegramUpdateDto telegramUpdate)
+    public async Task AddOrThrowAsync(TelegramUpdate telegramUpdate)
     {
-        await AddOrThrowAsync(new List<TelegramUpdateDto> { telegramUpdate }.ToImmutableArray());
+        await AddOrThrowAsync(new List<TelegramUpdate> { telegramUpdate }.ToImmutableArray());
     }
 
-    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdateDto> inputMessages)
+    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdate> inputMessages)
     {
         var commands = inputMessages.Select(inputMessage =>
         {
@@ -49,20 +49,20 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         });
     }
 
-    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync() =>
+    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync() =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates",
             Option<TelegramUserId>.None());
 
-    public async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowAsync(TelegramUserId userId) =>
+    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync(TelegramUserId userId) =>
         await GetAllOrThrowExecuteAsync(
             "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
-    private async Task<IEnumerable<TelegramUpdateDto>> GetAllOrThrowExecuteAsync(
+    private async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowExecuteAsync(
         string commandText, Option<TelegramUserId> userId)
     {
-        var builder = ImmutableArray.CreateBuilder<TelegramUpdateDto>();
+        var builder = ImmutableArray.CreateBuilder<TelegramUpdate>();
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
@@ -85,7 +85,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         return builder.ToImmutable();
     }
     
-    private static async Task<TelegramUpdateDto> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
+    private static async Task<TelegramUpdate> CreateInputMessageFromReaderStrictAsync(DbDataReader reader)
     {
         TelegramUserId telegramUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TelegramChatId telegramChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
@@ -93,7 +93,7 @@ public class MessageRepository(IDbExecutionHelper dbHelper) : IMessageRepository
         var telegramUpdateType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
         var details = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
-        var message = new TelegramUpdateDto(
+        var message = new TelegramUpdate(
             telegramUserId,
             telegramChatId,
             (BotType) telegramBotType,

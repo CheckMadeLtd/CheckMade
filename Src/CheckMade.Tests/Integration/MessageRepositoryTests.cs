@@ -27,7 +27,7 @@ public class MessageRepositoryTests(ITestOutputHelper testOutputHelper)
 
         foreach (var message in modelInputMessages)
         {
-            var expectedRetrieval = new List<TelegramUpdateDto>
+            var expectedRetrieval = new List<TelegramUpdate>
             {
                 new (message.UserId, message.TelegramChatId, message.BotType, message.ModelUpdateType, message.Details)
             };

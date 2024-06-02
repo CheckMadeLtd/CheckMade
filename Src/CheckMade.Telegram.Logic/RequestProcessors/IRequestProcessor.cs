@@ -9,5 +9,5 @@ public interface IRequestProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdateDto telegramUpdate);
+    public Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate);
 }

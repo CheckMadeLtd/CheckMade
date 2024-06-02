@@ -29,7 +29,7 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage(textInput);
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             update.Message.From!.Id,
             update.Message.Chat.Id,
             BotType.Operations,
@@ -66,7 +66,7 @@ public class ToModelConverterTests
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.BotToken}/" +
             $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}";
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             attachmentUpdate.Message.From!.Id,
             attachmentUpdate.Message.Chat.Id,
             BotType.Operations,
@@ -101,7 +101,7 @@ public class ToModelConverterTests
             location.Longitude,
             horizontalAccuracy ?? Option<float>.None());
         
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
                 locationUpdate.Message.From!.Id,
                 locationUpdate.Message.Chat.Id,
                 BotType.Operations,
@@ -132,7 +132,7 @@ public class ToModelConverterTests
         var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Operations,
@@ -163,7 +163,7 @@ public class ToModelConverterTests
         var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Communications,
@@ -194,7 +194,7 @@ public class ToModelConverterTests
         var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
             BotType.Notifications,
@@ -231,7 +231,7 @@ public class ToModelConverterTests
             ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
             : null;
 
-        var expectedInputMessage = new TelegramUpdateDto(
+        var expectedInputMessage = new TelegramUpdate(
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
             BotType.Operations,

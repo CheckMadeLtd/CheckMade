@@ -12,7 +12,7 @@ public interface IOperationsRequestProcessor : IRequestProcessor;
 
 public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdateDto telegramUpdate)
+    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {
         try
         {
@@ -35,7 +35,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
         };
     }
 
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(TelegramUpdateDto telegramUpdate)
+    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(TelegramUpdate telegramUpdate)
     {
         return telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() switch
         {
@@ -80,12 +80,12 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
-        TelegramUpdateDto telegramUpdate, AttachmentType type)
+        TelegramUpdate telegramUpdate, AttachmentType type)
     {
         return new List<OutputDto>();
     }
     
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdateDto telegramUpdate)
+    private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
     {
         return new List<OutputDto>();
     }

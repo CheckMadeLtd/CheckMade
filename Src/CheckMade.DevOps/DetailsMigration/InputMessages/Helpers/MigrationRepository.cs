@@ -42,7 +42,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
-        var messageWithFakeEmptyDetails = new TelegramUpdateDto(
+        var messageWithFakeEmptyDetails = new TelegramUpdate(
             telegramUserId,
             telegramChatId,
             BotType.Operations,
