@@ -85,7 +85,8 @@ public class MessageHandler(
                     logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
                     
-                    _ = SendOutputAsync(OutputDto.Create(error.FailureMessage), botClient, chatId)
+                    _ = SendOutputAsync(new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
+                            botClient, chatId)
                         .ContinueWith(task => 
                         { 
                             if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
@@ -123,7 +124,7 @@ public class MessageHandler(
     }
     
     private async Task<Attempt<Unit>> SendOutputAsync(
-        OutputDto output, IBotClientWrapper botClient, ChatId chatId)
+        IReadOnlyList<OutputDto> output, IBotClientWrapper botClient, ChatId chatId)
     {
         if (_uiTranslator == null)
             throw new InvalidOperationException("UiTranslator or translated OutputMessage must not be NULL.");
@@ -135,8 +136,8 @@ public class MessageHandler(
             await botClient.SendTextMessageOrThrowAsync(
                 chatId, 
                 _uiTranslator.Translate(Ui("Please choose:")),
-                _uiTranslator.Translate(output.Text.GetValueOrDefault()),
-                _replyMarkupConverter.GetReplyMarkup(output))
+                _uiTranslator.Translate(output[0].Text.GetValueOrDefault()),
+                _replyMarkupConverter.GetReplyMarkup(output[0]))
             );
     }
 }

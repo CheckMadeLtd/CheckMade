@@ -9,7 +9,7 @@ public interface ICommunicationsRequestProcessor : IRequestProcessor;
 
 public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunicationsRequestProcessor
 {
-    public async Task<Attempt<OutputDto>> ProcessRequestAsync(InputMessageDto inputMessage)
+    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(InputMessageDto inputMessage)
     {
         try
         {
@@ -17,20 +17,22 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
         }
         catch (Exception ex)
         {
-            return Attempt<OutputDto>.Fail(new Error(Exception: ex));
+            return Attempt<IReadOnlyList<OutputDto>>.Fail(new Error(Exception: ex));
         }
 
-        return await Attempt<OutputDto>.RunAsync(() =>
+        return Attempt<IReadOnlyList<OutputDto>>.Run(() =>
         {
             if (inputMessage.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
-                return Task.FromResult(OutputDto.Create(
-                    UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications),
-                        IRequestProcessor.SeeValidBotCommandsInstruction)));
+                return new List<OutputDto>
+                {
+                    OutputDto.Create(UiConcatenate(
+                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
+                        IRequestProcessor.SeeValidBotCommandsInstruction))
+                };
             }
 
-            return Task.FromResult(OutputDto.CreateEmpty());
+            return new List<OutputDto> { OutputDto.CreateEmpty() };
         });
     }
 }

@@ -136,7 +136,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
+                new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -160,7 +160,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
+               new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -184,7 +184,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                OutputDto.Create(ITestUtils.EnglishUiStringForTests)));
+                new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var updateUnsupportedLanguage = 
@@ -208,9 +208,11 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleMessageAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var fakeOutputDto = OutputDto.Create(
-            ITestUtils.EnglishUiStringForTests,
-            new[] { ControlPrompts.Bad, ControlPrompts.Good });
+        var fakeOutputDto = new List<OutputDto>{ 
+            OutputDto.Create(
+                ITestUtils.EnglishUiStringForTests, 
+                new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
+        };
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeOutputDto));
         
@@ -218,7 +220,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
-        var expectedReplyMarkup = converter.GetReplyMarkup(fakeOutputDto);
+        var expectedReplyMarkup = converter.GetReplyMarkup(fakeOutputDto[0]);
         
         var actualMarkup = Option<IReplyMarkup>.None();
         basics.mockBotClient
@@ -238,6 +240,18 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
 
         Assert.Equivalent(expectedReplyMarkup, actualMarkup);
     }
+
+    // [Fact]
+    // public async Task HandleMessageAsync_SendsMultipleMessages_ForListOfOutputDtos()
+    // {
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     List<OutputDto> fakeListOfOutputDtos = [ 
+    //         OutputDto.Create(UiNoTranslate("Output1")),
+    //         OutputDto.Create(UiNoTranslate("Output2"))
+    //     ];
+    //     serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+    //         GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
+    // }
     
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IMessageHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
@@ -252,12 +266,12 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
         GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-            Attempt<OutputDto> returnValue)
+            Attempt<IReadOnlyList<OutputDto>> returnValue)
     {
         var mockOperationsRequestProcessor = new Mock<IOperationsRequestProcessor>();
         
         mockOperationsRequestProcessor
-            .Setup<Task<Attempt<OutputDto>>>(rp => 
+            .Setup<Task<Attempt<IReadOnlyList<OutputDto>>>>(rp => 
                 rp.ProcessRequestAsync(It.IsAny<InputMessageDto>()))
             .Returns(Task.FromResult(returnValue));
 

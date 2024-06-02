@@ -23,7 +23,7 @@ public class OperationsRequestProcessorTests
         
         Assert.True(actualOutput.IsSuccess);
         Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
-            actualOutput.GetValueOrDefault().DomainCategorySelection.GetValueOrDefault());
+            actualOutput.GetValueOrDefault()[0].DomainCategorySelection.GetValueOrDefault());
     }
     
     private (ITestUtils utils, IOperationsRequestProcessor processor) GetBasicTestingServices(IServiceProvider sp) =>
