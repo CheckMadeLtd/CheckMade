@@ -1,6 +1,4 @@
 ﻿using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.TelegramUpdates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
@@ -9,13 +7,15 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class CommunicationsRequestProcessor(ITelegramUpdateRepository repo) : ICommunicationsRequestProcessor
+public class CommunicationsRequestProcessor(
+        ITelegramUpdateRepository updateRepo) 
+    : ICommunicationsRequestProcessor
 {
     public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {
         try
         {
-            await repo.AddOrThrowAsync(telegramUpdate);
+            await updateRepo.AddOrThrowAsync(telegramUpdate);
         }
         catch (Exception ex)
         {
@@ -28,10 +28,7 @@ public class CommunicationsRequestProcessor(ITelegramUpdateRepository repo) : IC
             {
                 return new List<OutputDto>
                 {
-                    OutputDto.Create(
-                        new OutputDestination(BotType.Communications, 
-                            new Role("token", RoleType.SanitaryOps_Admin)),
-                        UiConcatenate(
+                    OutputDto.Create(UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
                         IRequestProcessor.SeeValidBotCommandsInstruction))
                 };

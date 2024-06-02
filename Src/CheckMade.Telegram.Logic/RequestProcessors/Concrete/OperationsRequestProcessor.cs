@@ -10,13 +10,19 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface IOperationsRequestProcessor : IRequestProcessor;
 
-public class OperationsRequestProcessor(ITelegramUpdateRepository repo) : IOperationsRequestProcessor
+public class OperationsRequestProcessor(
+        ITelegramUpdateRepository updateRepo,
+        IRoleRepository roleRepo) 
+    : IOperationsRequestProcessor
 {
     public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {
+        IReadOnlyList<Role> allRoles;
+        
         try
         {
-            await repo.AddOrThrowAsync(telegramUpdate);
+            await updateRepo.AddOrThrowAsync(telegramUpdate);
+            allRoles = (await roleRepo.GetAllOrThrowAsync()).ToList().AsReadOnly();
         }
         catch (Exception ex)
         {
@@ -26,7 +32,7 @@ public class OperationsRequestProcessor(ITelegramUpdateRepository repo) : IOpera
         return telegramUpdate switch
         {
             { Details.BotCommandEnumCode.IsSome: true } =>
-                ProcessBotCommand(telegramUpdate),
+                ProcessBotCommand(telegramUpdate, allRoles),
 
             { Details.AttachmentType: { IsSome: true, Value: var type } } =>
                 ProcessMessageWithAttachment(telegramUpdate, type),
@@ -35,7 +41,9 @@ public class OperationsRequestProcessor(ITelegramUpdateRepository repo) : IOpera
         };
     }
 
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(TelegramUpdate telegramUpdate)
+    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(
+        TelegramUpdate telegramUpdate,
+        IReadOnlyList<Role> allRoles)
     {
         return telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() switch
         {
@@ -48,7 +56,7 @@ public class OperationsRequestProcessor(ITelegramUpdateRepository repo) : IOpera
             
             (int) OperationsBotCommands.NewIssue => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
+                    new OutputDestination(BotType.Operations, allRoles[0]),
                     Ui("What type of issue?"),
                     new[]
                     {
@@ -65,7 +73,7 @@ public class OperationsRequestProcessor(ITelegramUpdateRepository repo) : IOpera
             // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
+                    new OutputDestination(BotType.Operations, allRoles[0]),
                     Ui("⛺ Please choose a camp."),
                     new[] { "Camp1", "Camp2", "Camp3", "Camp4" })
             ],
