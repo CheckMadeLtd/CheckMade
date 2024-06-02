@@ -61,10 +61,6 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
                 Ui("⛺ Please choose a camp."),
                 new []{ "Camp1", "Camp2", "Camp3", "Camp4" }),
             
-            // Testing sending a Location to User
-            (int) OperationsBotCommands.Experimental => OutputDto.Create(
-                Ui("Please go here:")),
-            
             _ => OutputDto.Create(
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
@@ -81,6 +77,8 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
     
     private static Attempt<OutputDto> ProcessNormalResponseMessage(InputMessageDto inputMessage)
     {
+        // ToDo: Here add processing of testing-related key messages 
+        
         return OutputDto.CreateEmpty();
     }
 }

@@ -50,19 +50,6 @@ public record BotCommandMenus
                     }
                 } 
             },
-            { OperationsBotCommands.Experimental, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
-                {
-                    {
-                        LanguageCode.en, 
-                        new TelegramBotCommand("/experiment", "A Experiment")
-                    },
-                    {
-                        LanguageCode.de, 
-                        new TelegramBotCommand("/experiment", "Ein Experiment")
-                    }
-                } 
-            },
             { OperationsBotCommands.Logout, 
                 new Dictionary<LanguageCode, TelegramBotCommand>
                 {
