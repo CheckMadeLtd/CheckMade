@@ -27,15 +27,9 @@ public class MessageHandler(
         ILogger<MessageHandler> logger)
     : IMessageHandler
 {
-    private IUiTranslator? _uiTranslator;
-    private IOutputToReplyMarkupConverter? _replyMarkupConverter;
-
     public async Task<Attempt<Unit>> HandleMessageAsync(UpdateWrapper update, BotType botType)
     {
         ChatId chatId = update.Message.Chat.Id;
-        
-        _uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
-        _replyMarkupConverter = replyMarkupConverterFactory.Create(_uiTranslator);
         
         logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
@@ -68,12 +62,17 @@ public class MessageHandler(
         
         var filePathResolver = new TelegramFilePathResolver(receivingBotClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
+        var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
+        var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
         
         // ToDo: below, need to probably replace receivingBotClient with a botClientByTypeDictionary 
         var sendOutputsOutcome =
-            from modelInputMessage in await toModelConverter.ConvertToModelAsync(update, botType)
-            from outputs in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
-            select SendOutputsAsync(outputs, receivingBotClient, chatId);
+            from modelInputMessage 
+                in await toModelConverter.ConvertToModelAsync(update, botType)
+            from outputs 
+                in selector.GetRequestProcessor(botType).ProcessRequestAsync(modelInputMessage)
+            select 
+                SendOutputsAsync(outputs, receivingBotClient, chatId, uiTranslator, replyMarkupConverter);
         
         return (await sendOutputsOutcome).Match(
             
@@ -86,8 +85,12 @@ public class MessageHandler(
                     logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
                     
-                    _ = SendOutputsAsync(new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                            receivingBotClient, chatId)
+                    _ = SendOutputsAsync(
+                            new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
+                            receivingBotClient,
+                            chatId,
+                            uiTranslator,
+                            replyMarkupConverter)
                         .ContinueWith(task => 
                         { 
                             if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
@@ -124,26 +127,26 @@ public class MessageHandler(
             : defaultUiLanguage.Code;
     }
     
-    private async Task<Attempt<Unit>> SendOutputsAsync(
-        IReadOnlyList<OutputDto> outputs, IBotClientWrapper botClient, ChatId chatId)
+    private static async Task<Attempt<Unit>> SendOutputsAsync(
+        IReadOnlyList<OutputDto> outputs,
+        IBotClientWrapper botClient,
+        ChatId chatId,
+        IUiTranslator uiTranslator,
+        IOutputToReplyMarkupConverter converter)
     {
-        if (_uiTranslator == null)
-            throw new InvalidOperationException("UiTranslator or translated OutputMessage must not be NULL.");
-
-        if (_replyMarkupConverter == null)
-            throw new InvalidOperationException("ReplyMarkupConverter must not be null.");
-
         return await Attempt<Unit>.RunAsync(async () =>
         {
             var parallelTasks = outputs.Select(async output =>
                 await botClient.SendTextMessageOrThrowAsync(
                     chatId,
-                    _uiTranslator.Translate(Ui("Please choose:")),
-                    _uiTranslator.Translate(output.Text.GetValueOrDefault()),
-                    _replyMarkupConverter.GetReplyMarkup(output)));
+                    uiTranslator.Translate(Ui("Please choose:")),
+                    uiTranslator.Translate(output.Text.GetValueOrDefault()),
+                    converter.GetReplyMarkup(output)));
 
-            // 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
-            // 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. 
+            /* FYI about Task.WhenAll() behaviour here
+             * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
+             * 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. 
+             */ 
             await Task.WhenAll(parallelTasks);
             
             return Unit.Value;
