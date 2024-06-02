@@ -28,7 +28,7 @@ public record OutputDto
 
     public static OutputDto Create(UiString text) => 
         new(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             text,
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),

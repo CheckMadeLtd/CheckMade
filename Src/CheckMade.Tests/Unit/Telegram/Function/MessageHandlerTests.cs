@@ -211,7 +211,7 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, new Role()),
+                new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
                 ITestUtils.EnglishUiStringForTests, 
                 new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
         };
@@ -271,13 +271,13 @@ public class MessageHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, new Role()), 
+                new OutputDestination(BotType.Operations, new Role("token1", RoleType.SanitaryOps_Inspector)), 
                 UiNoTranslate("Output1 to Operations Bot")),
             OutputDto.Create(
-                new OutputDestination(BotType.Communications, new Role()), 
+                new OutputDestination(BotType.Communications, new Role("token1", RoleType.SanitaryOps_Inspector)), 
                 UiNoTranslate("Output2 to Communications Bot and same Role")),
             OutputDto.Create(
-                new OutputDestination(BotType.Notifications, new Role()), 
+                new OutputDestination(BotType.Notifications, new Role("token2", RoleType.SanitaryOps_Admin)), 
                 UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>

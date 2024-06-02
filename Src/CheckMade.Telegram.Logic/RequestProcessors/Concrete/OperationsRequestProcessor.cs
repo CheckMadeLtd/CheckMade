@@ -48,7 +48,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
             
             (int) OperationsBotCommands.NewIssue => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, new Role()),
+                    new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
                     Ui("What type of issue?"),
                     new[]
                     {
@@ -65,7 +65,7 @@ public class OperationsRequestProcessor(IMessageRepository repo) : IOperationsRe
             // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, new Role()),
+                    new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
                     Ui("⛺ Please choose a camp."),
                     new[] { "Camp1", "Camp2", "Camp3", "Camp4" })
             ],

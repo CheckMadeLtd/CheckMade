@@ -35,12 +35,6 @@ public record EnumUiStringProvider
 
         ByControlPromptId = _promptsBuilder.ToImmutable();
         
-        AddCategory(DomainCategory.SanitaryOps_RoleAdmin, Ui("Sanitary Operations: Admin"));
-        AddCategory(DomainCategory.SanitaryOps_RoleInspector, Ui("Sanitary Operations: Inspector"));
-        AddCategory(DomainCategory.SanitaryOps_RoleEngineer, Ui("Sanitary Operations: Engineer"));
-        AddCategory(DomainCategory.SanitaryOps_RoleCleanLead, Ui("Sanitary Operations: CleanLead"));
-        AddCategory(DomainCategory.SanitaryOps_RoleObserver, Ui("Sanitary Operations: Observer"));
-        
         AddCategory(DomainCategory.SanitaryOps_IssueCleanliness, Ui("❗🪣 Cleanliness"));
         AddCategory(DomainCategory.SanitaryOps_IssueTechnical, Ui("❗🔧 Technical"));
         AddCategory(DomainCategory.SanitaryOps_IssueConsumable, Ui("❗🗄 Consumables"));

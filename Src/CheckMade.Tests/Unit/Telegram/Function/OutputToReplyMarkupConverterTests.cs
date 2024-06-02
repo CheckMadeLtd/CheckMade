@@ -32,7 +32,7 @@ public class OutputToReplyMarkupConverterTests
                 categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
         };
         var fakeOutput = OutputDto.Create(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             categorySelection.Select(pair => pair.category).ToArray());
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -74,7 +74,7 @@ public class OutputToReplyMarkupConverterTests
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
         var fakeOutput = OutputDto.Create(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             promptSelection.Select(pair => pair.prompt).ToArray());
 
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -117,15 +117,15 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var categorySelection = new[]
         {
-            (category: DomainCategory.SanitaryOps_RoleCleanLead,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_RoleCleanLead))
+            (category: DomainCategory.SanitaryOps_FacilityShowers,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityShowers))
         };
         var promptSelection = new[] 
         {
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
         var fakeOutput = OutputDto.Create(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             categorySelection.Select(pair => pair.category).ToArray(), 
             promptSelection.Select(pair => pair.prompt).ToArray());
         
@@ -157,7 +157,7 @@ public class OutputToReplyMarkupConverterTests
         const string choice4 = "c4";
         const string choice5 = "c5";
         var fakeOutput = OutputDto.Create(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
@@ -196,7 +196,7 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var fakeOutput = OutputDto.Create(
-            new OutputDestination(BotType.Operations, new Role()),
+            new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
             new[] { ControlPrompts.Back + 1 });
 
         var act = () => basics.converter.GetReplyMarkup(fakeOutput);

@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Telegram.Interfaces;
 using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
@@ -28,7 +29,8 @@ public class CommunicationsRequestProcessor(IMessageRepository repo) : ICommunic
                 return new List<OutputDto>
                 {
                     OutputDto.Create(
-                        new OutputDestination(BotType.Communications, new Role()),
+                        new OutputDestination(BotType.Communications, 
+                            new Role("token", RoleType.SanitaryOps_Admin)),
                         UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
                         IRequestProcessor.SeeValidBotCommandsInstruction))

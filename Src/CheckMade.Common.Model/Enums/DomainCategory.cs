@@ -8,12 +8,6 @@ public enum DomainCategory
     // 1 Sanitary
     // 10 Sanitary Operations Trade 
     
-    SanitaryOps_RoleAdmin = 10010,
-    SanitaryOps_RoleInspector = 10020,
-    SanitaryOps_RoleEngineer = 10030,
-    SanitaryOps_RoleCleanLead = 10040,
-    SanitaryOps_RoleObserver = 10090,
-    
     SanitaryOps_IssueCleanliness = 10100,
     SanitaryOps_IssueTechnical = 10110,
     SanitaryOps_IssueConsumable = 10120,
