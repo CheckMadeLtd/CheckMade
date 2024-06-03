@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model;
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;

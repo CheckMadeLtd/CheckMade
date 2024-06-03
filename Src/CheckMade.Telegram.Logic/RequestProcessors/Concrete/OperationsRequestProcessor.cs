@@ -1,7 +1,7 @@
 ﻿using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;

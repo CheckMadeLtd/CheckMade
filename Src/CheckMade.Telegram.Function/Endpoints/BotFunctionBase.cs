@@ -1,5 +1,5 @@
 using System.Net;
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

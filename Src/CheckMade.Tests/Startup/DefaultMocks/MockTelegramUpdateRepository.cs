@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultMocks;

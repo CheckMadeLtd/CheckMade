@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 
 namespace CheckMade.Common.Interfaces.Persistence;
 

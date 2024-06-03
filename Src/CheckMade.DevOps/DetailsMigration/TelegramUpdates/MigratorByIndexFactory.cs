@@ -12,7 +12,7 @@ internal class MigratorByIndexFactory
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
-                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.TelegramUpdates.Migrators") &&
+                           type.Namespace.StartsWith("CheckMade.DevOps.DetailsMigration.Updates.Migrators") &&
                            typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),

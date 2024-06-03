@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.TelegramUpdates;
+using CheckMade.Common.Model.Telegram.Updates;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
