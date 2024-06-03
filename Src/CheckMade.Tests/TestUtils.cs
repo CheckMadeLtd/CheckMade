@@ -15,9 +15,15 @@ internal interface ITestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
     
-    internal const long TestChatId1 = 111111L;
-    internal const long TestChatId2 = 222222L;
-    internal const long TestChatId3 = 333333L;
+    internal const long TestChatId_01 = 100001L;
+    internal const long TestChatId_02 = 100002L;
+    internal const long TestChatId_03 = 100003L;
+    internal const long TestChatId_04 = 100004L;
+    internal const long TestChatId_05 = 100005L;
+    internal const long TestChatId_06 = 100006L;
+    internal const long TestChatId_07 = 100007L;
+    internal const long TestChatId_08 = 100008L;
+    internal const long TestChatId_09 = 100009L;
     
     Randomizer Randomizer { get; }
     
@@ -26,14 +32,14 @@ internal interface ITestUtils
     TelegramUpdate GetValidModelInputTextMessageWithAttachment(AttachmentType type);
     TelegramUpdate GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
     
-    UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId1);
-    UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
@@ -42,11 +48,17 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     internal const long TestUserDanielGorinTelegramId = 215737196L;
 
     internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
+    
     internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);
     internal static readonly Role SanitaryOpsEngineer1 = new("3UED8", RoleType.SanitaryOps_Engineer);
     internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNM", RoleType.SanitaryOps_CleanLead);
     internal static readonly Role SanitaryOpsObserver1 = new("YEATF", RoleType.SanitaryOps_Observer);
 
+    internal static readonly Role SanitaryOpsInspector2 = new("MAM8S", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPK", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMC", RoleType.SanitaryOps_Observer);
+    
     public Randomizer Randomizer { get; } = randomizer;
     
     public TelegramUpdate GetValidModelInputTextMessage() =>

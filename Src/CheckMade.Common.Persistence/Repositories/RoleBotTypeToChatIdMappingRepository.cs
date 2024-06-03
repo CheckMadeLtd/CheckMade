@@ -6,6 +6,8 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public class RoleBotTypeToChatIdMappingRepository : IRoleBotTypeToChatIdRepository
 {
+    // The combination of Role & BotType needs to be unique i.e. each RoleBotType can only have one ChatId 
+    
     public Task<IEnumerable<RoleBotTypeToChatIdMapping>> GetAllOrThrowAsync()
     {
         var builder = ImmutableList.CreateBuilder<RoleBotTypeToChatIdMapping>();

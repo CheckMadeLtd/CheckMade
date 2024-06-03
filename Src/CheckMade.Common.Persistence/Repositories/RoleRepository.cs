@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
