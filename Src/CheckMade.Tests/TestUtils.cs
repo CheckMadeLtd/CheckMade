@@ -1,5 +1,6 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
+using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -33,8 +34,17 @@ internal interface ITestUtils
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
-    // Needs to be 'long' instead of 'UserId' for usage in InlineData() of Tests
+    // Needs to be 'long' instead of 'TelegramUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
+    internal const long TestChatId1 = 111111L;
+    internal const long TestChatId2 = 222222L;
+    internal const long TestChatId3 = 333333L;
+
+    internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNM", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATF", RoleType.SanitaryOps_Observer);
 
     public Randomizer Randomizer { get; } = randomizer;
     

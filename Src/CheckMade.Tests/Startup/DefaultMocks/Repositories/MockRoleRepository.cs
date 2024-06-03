@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
@@ -12,11 +11,11 @@ internal class MockRoleRepository : IRoleRepository
         var builder = ImmutableArray.CreateBuilder<Role>();
         
         builder.AddRange(
-            new Role("token1", RoleType.SanitaryOps_Admin),
-            new Role("token2", RoleType.SanitaryOps_Inspector),
-            new Role("token3", RoleType.SanitaryOps_Engineer),
-            new Role("token4", RoleType.SanitaryOps_CleanLead),
-            new Role("token5", RoleType.SanitaryOps_Observer));
+            TestUtils.SanitaryOpsAdmin1,
+            TestUtils.SanitaryOpsInspector1,
+            TestUtils.SanitaryOpsEngineer1,
+            TestUtils.SanitaryOpsCleanLead1,
+            TestUtils.SanitaryOpsObserver1);
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());
     }
