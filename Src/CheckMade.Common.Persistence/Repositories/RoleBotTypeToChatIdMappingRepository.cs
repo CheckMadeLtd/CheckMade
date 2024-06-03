@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Telegram;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
-public class RoleBotTypeToChatIdMappingRepository : IRoleBotTypeToChatIdRepository
+public class RoleBotTypeToChatIdMappingRepository : IRoleBotTypeToChatIdMappingRepository
 {
     // The combination of Role & BotType needs to be unique i.e. each RoleBotType can only have one ChatId 
     

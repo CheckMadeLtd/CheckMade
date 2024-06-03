@@ -323,7 +323,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<IRoleBotTypeToChatIdRepository>().GetAllOrThrowAsync().Result);
+                sp.GetRequiredService<IRoleBotTypeToChatIdMappingRepository>().GetAllOrThrowAsync().Result);
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
