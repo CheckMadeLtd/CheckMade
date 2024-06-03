@@ -8,10 +8,10 @@ public class ChatIdByOutputDestinationRepository : IChatIdByOutputDestinationRep
 {
     // The combination of Role & BotType needs to be unique i.e. each RoleBotType can only have one ChatId 
     
-    public Task<IEnumerable<RoleBotTypeToChatIdMapping>> GetAllOrThrowAsync()
+    public Task<IEnumerable<ChatIdByOutputDestination>> GetAllOrThrowAsync()
     {
-        var builder = ImmutableList.CreateBuilder<RoleBotTypeToChatIdMapping>();
+        var builder = ImmutableList.CreateBuilder<ChatIdByOutputDestination>();
         
-        return Task.FromResult<IEnumerable<RoleBotTypeToChatIdMapping>>(builder.ToImmutable());
+        return Task.FromResult<IEnumerable<ChatIdByOutputDestination>>(builder.ToImmutable());
     }
 }

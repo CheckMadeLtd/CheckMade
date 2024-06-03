@@ -1,6 +1,7 @@
 ﻿using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
@@ -56,7 +57,7 @@ public class OperationsRequestProcessor(
             
             (int) OperationsBotCommands.NewIssue => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, allRoles[0]),
+                    new TelegramOutputDestination(allRoles[0], BotType.Operations),
                     Ui("What type of issue?"),
                     new[]
                     {
@@ -73,7 +74,7 @@ public class OperationsRequestProcessor(
             // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => [
                 OutputDto.Create(
-                    new OutputDestination(BotType.Operations, allRoles[0]),
+                    new TelegramOutputDestination(allRoles[0], BotType.Operations),
                     Ui("⛺ Please choose a camp."),
                     new[] { "Camp1", "Camp2", "Camp3", "Camp4" })
             ],

@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -211,7 +212,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, TestUtils.SanitaryOpsAdmin1),
+                new TelegramOutputDestination(TestUtils.SanitaryOpsAdmin1, BotType.Operations),
                 ITestUtils.EnglishUiStringForTests, 
                 new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
         };
@@ -271,13 +272,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, TestUtils.SanitaryOpsInspector1), 
+                new TelegramOutputDestination(TestUtils.SanitaryOpsInspector1, BotType.Operations), 
                 UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")),
             OutputDto.Create(
-                new OutputDestination(BotType.Communications, TestUtils.SanitaryOpsInspector1), 
+                new TelegramOutputDestination(TestUtils.SanitaryOpsInspector1, BotType.Communications), 
                 UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists")),
             OutputDto.Create(
-                new OutputDestination(BotType.Notifications, TestUtils.SanitaryOpsEngineer1), 
+                new TelegramOutputDestination(TestUtils.SanitaryOpsEngineer1, BotType.Notifications), 
                 UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)"))
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
@@ -309,14 +310,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         }
     }
     
-    // ToDo: Add test to check correct handling of lack of explicit OutputDestination and failure to resolve ChatId
+    // ToDo: Add test to check correct handling of lack of explicit TelegramOutputDestination and failure to resolve ChatId
     
     private static (ITestUtils utils, 
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        Dictionary<OutputDestination, TelegramChatId> chatIdByOutputDestination)
+        Dictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -327,7 +328,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IChatIdByOutputDestinationRepository>().GetAllOrThrowAsync()
                     .Result
                     .ToDictionary(
-                        keySelector: map => new OutputDestination(map.BotType, map.Role),
+                        keySelector: map => map.OutputDestination,
                         elementSelector: map => map.ChatId)
                 );
 

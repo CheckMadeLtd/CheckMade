@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -64,7 +65,7 @@ public class UpdateHandler(
         var chatIdByOutputDestination = 
             (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
             .ToDictionary(
-                keySelector: map => new OutputDestination(map.BotType, map.Role),
+                keySelector: map => map.OutputDestination,
                 elementSelector: map => map.ChatId);
         var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
@@ -146,7 +147,7 @@ public class UpdateHandler(
         IDictionary<BotType, IBotClientWrapper> botClientByBotType,
         BotType updateReceivingBotType,
         ChatId updateReceivingChatId,
-        IDictionary<OutputDestination, TelegramChatId> chatIdByOutputDestination,
+        IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter)
     {

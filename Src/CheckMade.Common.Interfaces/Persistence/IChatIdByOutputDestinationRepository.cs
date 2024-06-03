@@ -4,5 +4,5 @@ namespace CheckMade.Common.Interfaces.Persistence;
 
 public interface IChatIdByOutputDestinationRepository
 {
-    Task<IEnumerable<RoleBotTypeToChatIdMapping>> GetAllOrThrowAsync();
+    Task<IEnumerable<ChatIdByOutputDestination>> GetAllOrThrowAsync();
 }

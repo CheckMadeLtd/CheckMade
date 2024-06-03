@@ -1,18 +1,19 @@
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
 
 namespace CheckMade.Telegram.Model.DTOs;
 
 public record OutputDto
 {
-    public Option<OutputDestination> ExplicitDestination { get; }
+    public Option<TelegramOutputDestination> ExplicitDestination { get; }
     public Option<UiString> Text { get; }
     public Option<IEnumerable<DomainCategory>> DomainCategorySelection { get; }
     public Option<IEnumerable<ControlPrompts>> ControlPromptsSelection { get; }
     public Option<IEnumerable<string>> PredefinedChocies { get; }
 
     private OutputDto(
-        Option<OutputDestination> explicitDestination,
+        Option<TelegramOutputDestination> explicitDestination,
         Option<UiString> text,
         Option<IEnumerable<DomainCategory>> domainCategories,
         Option<IEnumerable<ControlPrompts>> controlPrompts,
@@ -27,13 +28,13 @@ public record OutputDto
 
     public static OutputDto Create(UiString text) => 
         new(
-            Option<OutputDestination>.None(), 
+            Option<TelegramOutputDestination>.None(), 
             text,
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None());
     
-    public static OutputDto Create(OutputDestination destination, UiString text) => 
+    public static OutputDto Create(TelegramOutputDestination destination, UiString text) => 
         new(
             destination,
             text,
@@ -41,7 +42,7 @@ public record OutputDto
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None());
 
-    public static OutputDto Create(OutputDestination destination, IEnumerable<DomainCategory> domainCategories) => 
+    public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<DomainCategory> domainCategories) => 
         new(
             destination,
             Option<UiString>.None(),
@@ -49,7 +50,7 @@ public record OutputDto
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None());
 
-    public static OutputDto Create(OutputDestination destination, IEnumerable<ControlPrompts> controlPrompts) => 
+    public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<ControlPrompts> controlPrompts) => 
         new(
             destination,
             Option<UiString>.None(),
@@ -57,7 +58,7 @@ public record OutputDto
             Option<IEnumerable<ControlPrompts>>.Some(controlPrompts),
             Option<IEnumerable<string>>.None());
 
-    public static OutputDto Create(OutputDestination destination, IEnumerable<string> predefinedChocies) => 
+    public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<string> predefinedChocies) => 
         new(
             destination,
             Option<UiString>.None(),
@@ -66,7 +67,7 @@ public record OutputDto
             Option<IEnumerable<string>>.Some(predefinedChocies));
 
     public static OutputDto Create(
-        OutputDestination destination, UiString text, IEnumerable<DomainCategory> domainCategories) => 
+        TelegramOutputDestination destination, UiString text, IEnumerable<DomainCategory> domainCategories) => 
         new(
             destination,
             text,
@@ -75,7 +76,7 @@ public record OutputDto
             Option<IEnumerable<string>>.None());
 
     public static OutputDto Create(
-        OutputDestination destination, UiString text, IEnumerable<ControlPrompts> controlPrompts) => 
+        TelegramOutputDestination destination, UiString text, IEnumerable<ControlPrompts> controlPrompts) => 
         new(
             destination,
             text,
@@ -84,7 +85,7 @@ public record OutputDto
             Option<IEnumerable<string>>.None());
 
     public static OutputDto Create(
-        OutputDestination destination,
+        TelegramOutputDestination destination,
         UiString text,
         IEnumerable<DomainCategory> domainCategories,
         IEnumerable<ControlPrompts> controlPrompts) => 
@@ -96,7 +97,7 @@ public record OutputDto
             Option<IEnumerable<string>>.None());
 
     public static OutputDto Create(
-        OutputDestination destination,
+        TelegramOutputDestination destination,
         UiString text,
         IEnumerable<string> predefinedChoices) => 
         new(
@@ -107,7 +108,7 @@ public record OutputDto
             Option<IEnumerable<string>>.Some(predefinedChoices));
 
     public static OutputDto Create(
-        OutputDestination destination,
+        TelegramOutputDestination destination,
         IEnumerable<DomainCategory> domainCategories,
         IEnumerable<ControlPrompts> controlPrompts) => 
         new(
