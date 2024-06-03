@@ -35,9 +35,9 @@ public record EnumUiStringProvider
 
         ByControlPromptId = _promptsBuilder.ToImmutable();
         
-        AddCategory(DomainCategory.SanitaryOps_IssueCleanliness, Ui("❗🪣 Cleanliness"));
-        AddCategory(DomainCategory.SanitaryOps_IssueTechnical, Ui("❗🔧 Technical"));
-        AddCategory(DomainCategory.SanitaryOps_IssueConsumable, Ui("❗🗄 Consumables"));
+        AddCategory(DomainCategory.SanitaryOps_IssueCleanliness, Ui("🪣 Cleanliness"));
+        AddCategory(DomainCategory.SanitaryOps_IssueTechnical, Ui("🔧 Technical"));
+        AddCategory(DomainCategory.SanitaryOps_IssueConsumable, Ui("🗄 Consumables"));
         
         AddCategory(DomainCategory.SanitaryOps_ConsumableToiletPaper, Ui("🧻 Toilet Paper"));
         AddCategory(DomainCategory.SanitaryOps_ConsumablePaperTowels, Ui("🌫️ Paper Towels"));
