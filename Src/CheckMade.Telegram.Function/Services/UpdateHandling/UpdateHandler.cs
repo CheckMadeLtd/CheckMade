@@ -146,31 +146,8 @@ public class UpdateHandler(
                 elementSelector: map => map.ChatId)))
         .Match(
             value => value,
-            error =>
-            {
-                if (error.Exception != null)
-                {
-                    throw new DataAccessException($"An exception was thrown while trying to access " +
-                                                  $"{nameof(chatIdByOutputDestinationRepository)}", error.Exception);
-                }
-                    
-                if (error.FailureMessage != null)
-                {
-                    logger.LogWarning($"Received an unexpected failure message when trying to access " +
-                                      $"{nameof(chatIdByOutputDestinationRepository)} and will instead return " +
-                                      $"an empty one and trying to process the current update." +
-                                      $"The original error message: " +
-                                      $"{error.FailureMessage.GetFormattedEnglish()}");
-                    return new Dictionary<TelegramOutputDestination, TelegramChatId>();
-                }
-                    
-                logger.LogWarning($"Encountered an error while trying to access " +
-                                  $"{nameof(chatIdByOutputDestinationRepository)} but strangely without any" +
-                                  $"exception or {nameof(error.FailureMessage)}. Returning an empty " +
-                                  $"{nameof(chatIdByOutputDestinationRepository)} and going on trying to process" +
-                                  $"the current update.");
-                return new Dictionary<TelegramOutputDestination, TelegramChatId>();
-            });
+            error => throw new DataAccessException($"An exception was thrown while trying to access " + 
+                                                   $"{nameof(chatIdByOutputDestinationRepository)}", error.Exception));
     
     private static async Task<Attempt<Unit>> SendOutputsAsync(
         IReadOnlyList<OutputDto> outputs,
