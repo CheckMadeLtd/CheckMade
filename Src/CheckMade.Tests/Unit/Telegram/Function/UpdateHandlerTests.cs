@@ -309,8 +309,35 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Times.Once);
         }
     }
+
+    [Fact]
+    public async Task HandleUpdateAsync_SendsToUpdateReceivingChatId_WhenOutputDtoHasNoDestination()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        const string fakeOutputMessage = "Output without destination";
+        const BotType actualBotType = BotType.Communications;
+        List<OutputDto> fakeOutputDto = [ OutputDto.Create(UiNoTranslate(fakeOutputMessage)) ];
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeOutputDto, actualBotType));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        update.Message.Chat.Id = 12345654321L;
+        var expectedChatId = update.Message.Chat.Id;
     
-    // ToDo: Add test to check correct handling of lack of explicit TelegramOutputDestination and failure to resolve ChatId
+        await basics.handler.HandleUpdateAsync(update, actualBotType);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageOrThrowAsync(
+                expectedChatId,
+                It.IsAny<string>(),
+                fakeOutputMessage,
+                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+        
+        // Cannot test for correct botClient.MyBotType because the mockBotClient is not (yet) BotType-specific!
+    }
     
     private static (ITestUtils utils, 
         Mock<IBotClientWrapper> mockBotClient,
@@ -335,7 +362,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
         GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-            Attempt<IReadOnlyList<OutputDto>> returnValue)
+            Attempt<IReadOnlyList<OutputDto>> returnValue, BotType botType = BotType.Operations)
     {
         var mockOperationsRequestProcessor = new Mock<IOperationsRequestProcessor>();
         
@@ -348,7 +375,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         mockRequestProcessorSelector
             .Setup(rps => 
-                rps.GetRequestProcessor(BotType.Operations))
+                rps.GetRequestProcessor(botType))
             .Returns(mockOperationsRequestProcessor.Object);
 
         return mockRequestProcessorSelector.Object;
