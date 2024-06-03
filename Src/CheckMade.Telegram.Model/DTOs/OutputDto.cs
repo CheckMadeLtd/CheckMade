@@ -1,26 +1,24 @@
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram.Updates;
 
 namespace CheckMade.Telegram.Model.DTOs;
 
 public record OutputDto
 {
-    public OutputDestination Destination { get; }
+    public Option<OutputDestination> ExplicitDestination { get; }
     public Option<UiString> Text { get; }
     public Option<IEnumerable<DomainCategory>> DomainCategorySelection { get; }
     public Option<IEnumerable<ControlPrompts>> ControlPromptsSelection { get; }
     public Option<IEnumerable<string>> PredefinedChocies { get; }
 
     private OutputDto(
-        OutputDestination destination,
+        Option<OutputDestination> explicitDestination,
         Option<UiString> text,
         Option<IEnumerable<DomainCategory>> domainCategories,
         Option<IEnumerable<ControlPrompts>> controlPrompts,
         Option<IEnumerable<string>> predefinedChocies)
     {
-        Destination = destination;
+        ExplicitDestination = explicitDestination;
         Text = text;
         DomainCategorySelection = domainCategories;
         ControlPromptsSelection = controlPrompts;
@@ -29,7 +27,7 @@ public record OutputDto
 
     public static OutputDto Create(UiString text) => 
         new(
-            new OutputDestination(BotType.Operations, new Role("fakeToken", RoleType.SanitaryOps_Admin)),
+            Option<OutputDestination>.None(), 
             text,
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),

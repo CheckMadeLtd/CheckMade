@@ -29,11 +29,11 @@ public class UpdateHandler(
 {
     public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType botType)
     {
-        ChatId chatId = update.Message.Chat.Id;
+        ChatId updateReceivingChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            botType, update.Message.From?.Id ?? 0, chatId);
+            botType, update.Message.From?.Id ?? 0, updateReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -52,27 +52,29 @@ public class UpdateHandler(
             return Unit.Value;
         }
 
-        var receivingBotClient = 
-            Attempt<IBotClientWrapper>.Run(() => 
-                botClientFactory.CreateBotClientOrThrow(botType))
-                .Match(
-                    botClient => botClient,
-                    error => throw new InvalidOperationException(
-                        "Failed to create BotClient", error.Exception));
-        
-        var filePathResolver = new TelegramFilePathResolver(receivingBotClient);
+        var updateReceivingBotClient = botClientFactory.CreateBotClientOrThrow(botType); 
+        var filePathResolver = new TelegramFilePathResolver(updateReceivingBotClient);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
         
-        // ToDo: below, need to probably replace receivingBotClient with a botClientByTypeDictionary 
+        // ToDo: below, in addition to receivingBotClient, also pass a botClientByTypeDictionary
+        // ToDo: and pass a botClientByBotType Dictionary
+        // and allRoleBotTypeToChatIdMappings
+        // With these three resources, SendOutput can resolve botClient and chatId based on each output's destination
+        // And in case there is no mapping for the updateReceivingChatId 
         var sendOutputsOutcome =
             from telegramUpdate 
                 in await toModelConverter.ConvertToModelAsync(update, botType)
             from outputs 
                 in selector.GetRequestProcessor(botType).ProcessRequestAsync(telegramUpdate)
             select 
-                SendOutputsAsync(outputs, receivingBotClient, chatId, uiTranslator, replyMarkupConverter);
+                SendOutputsAsync(
+                    outputs, 
+                    updateReceivingBotClient,
+                    updateReceivingChatId,
+                    uiTranslator,
+                    replyMarkupConverter);
         
         return (await sendOutputsOutcome).Match(
             
@@ -87,8 +89,8 @@ public class UpdateHandler(
                     
                     _ = SendOutputsAsync(
                             new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                            receivingBotClient,
-                            chatId,
+                            updateReceivingBotClient,
+                            updateReceivingChatId,
                             uiTranslator,
                             replyMarkupConverter)
                         .ContinueWith(task => 
@@ -129,16 +131,16 @@ public class UpdateHandler(
     
     private static async Task<Attempt<Unit>> SendOutputsAsync(
         IReadOnlyList<OutputDto> outputs,
-        IBotClientWrapper botClient,
-        ChatId chatId,
+        IBotClientWrapper updateReceivingBotClient,
+        ChatId updateReceivingChatId,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter)
     {
         return await Attempt<Unit>.RunAsync(async () =>
         {
             var parallelTasks = outputs.Select(async output =>
-                await botClient.SendTextMessageOrThrowAsync(
-                    chatId,
+                await updateReceivingBotClient.SendTextMessageOrThrowAsync(
+                    updateReceivingChatId,
                     uiTranslator.Translate(Ui("Please choose:")),
                     uiTranslator.Translate(output.Text.GetValueOrDefault()),
                     converter.GetReplyMarkup(output)));

@@ -41,6 +41,11 @@ public class OperationsRequestProcessor(
         };
     }
 
+    // ToDo: Need to handle the case where the update sending ChatId has no mapping to RoleBotType
+    // ==> Maybe leave out explicit OutputDestination in that case? Yes! It's optional now!
+    // And in that case, SendOut will simply send to the updateReceivingBotClient and updateReceivingChatId by default! 
+    // And whatever the user sent/did, the answer in that case here is the same: please log in !! 
+    
     private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(
         TelegramUpdate telegramUpdate,
         IReadOnlyList<Role> allRoles)

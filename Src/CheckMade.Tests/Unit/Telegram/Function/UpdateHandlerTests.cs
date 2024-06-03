@@ -268,19 +268,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsMessagesToDifferentBotTypesAndChatIds_BasedOnOutputDestinationInfos()
+    public async Task HandleUpdateAsync_SendsMessagesToExplicitDestinations_WhenRoleBotTypeToChatIdMappingsExist()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
             OutputDto.Create(
                 new OutputDestination(BotType.Operations, TestUtils.SanitaryOpsInspector1), 
-                UiNoTranslate("Output1 to Operations Bot")),
+                UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")),
             OutputDto.Create(
                 new OutputDestination(BotType.Communications, TestUtils.SanitaryOpsInspector1), 
-                UiNoTranslate("Output2 to Communications Bot and same Role as Output1")),
+                UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists")),
             OutputDto.Create(
                 new OutputDestination(BotType.Notifications, TestUtils.SanitaryOpsEngineer1), 
-                UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
+                UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)"))
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
@@ -292,8 +292,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             .Select(output => new 
             {
                 DestinationChatId = basics.allRoleBotTypeToChatIdMappings
-                    .Where(map => map.Role == output.Destination.ReceivingRole && 
-                                  map.BotType == output.Destination.ReceivingBot)
+                    .Where(map => 
+                        map.Role == output.ExplicitDestination.GetValueOrDefault().ReceivingRole && 
+                        map.BotType == output.ExplicitDestination.GetValueOrDefault().ReceivingBot)
                     .Select(map => map.ChatId.Id)
                     .First(),
                 
