@@ -324,7 +324,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<IRoleBotTypeToChatIdMappingRepository>().GetAllOrThrowAsync()
+                sp.GetRequiredService<IChatIdByOutputDestinationRepository>().GetAllOrThrowAsync()
                     .Result
                     .ToDictionary(
                         keySelector: map => new OutputDestination(map.BotType, map.Role),

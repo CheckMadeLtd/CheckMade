@@ -21,7 +21,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
-        IRoleBotTypeToChatIdMappingRepository roleBotTypeToChatIdMappingRepository,
+        IChatIdByOutputDestinationRepository chatIdByOutputDestinationRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -62,7 +62,7 @@ public class UpdateHandler(
         };
 
         var chatIdByOutputDestination = 
-            (await roleBotTypeToChatIdMappingRepository.GetAllOrThrowAsync())
+            (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
             .ToDictionary(
                 keySelector: map => new OutputDestination(map.BotType, map.Role),
                 elementSelector: map => map.ChatId);

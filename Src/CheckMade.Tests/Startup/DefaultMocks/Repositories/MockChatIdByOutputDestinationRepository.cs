@@ -5,7 +5,7 @@ using CheckMade.Common.Model.Telegram.Updates;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
-internal class MockRoleBotTypeToChatIdMappingRepository : IRoleBotTypeToChatIdMappingRepository
+internal class MockChatIdByOutputDestinationRepository : IChatIdByOutputDestinationRepository
 {
     public Task<IEnumerable<RoleBotTypeToChatIdMapping>> GetAllOrThrowAsync()
     {
