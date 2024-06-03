@@ -16,7 +16,8 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientWrapper
 {
-    string BotToken { get; }
+    BotType MyBotType { get; }
+    string MyBotToken { get; }
     
     Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
@@ -27,17 +28,19 @@ public interface IBotClientWrapper
 
     Task<File> GetFileOrThrowAsync(string fileId);
 
-    Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType);
+    Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
 }
 
 public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
+        BotType botType,
         string botToken,
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
-    public string BotToken { get; } = botToken;
+    public BotType MyBotType { get; } = botType; 
+    public string MyBotToken { get; } = botToken;
     
     public async Task<Unit> SendTextMessageOrThrowAsync(
         ChatId chatId,
@@ -81,13 +84,13 @@ public class BotClientWrapper(
     
     public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
-    public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu, BotType botType)
+    public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu)
     {
         await botClient.DeleteMyCommandsAsync();
 
         foreach (LanguageCode language in Enum.GetValues(typeof(LanguageCode)))
         {
-            var telegramBotCommands = botType switch
+            var telegramBotCommands = MyBotType switch
             {
                 BotType.Operations => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.OperationsBotCommandMenu, language),
@@ -95,7 +98,7 @@ public class BotClientWrapper(
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
                 BotType.Notifications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
-                _ => throw new ArgumentOutOfRangeException(nameof(botType))
+                _ => throw new ArgumentOutOfRangeException(nameof(MyBotType))
             };
         
             await botClient.SetMyCommandsAsync(
@@ -105,7 +108,7 @@ public class BotClientWrapper(
                     ? language.ToString() 
                     : null); // The English BotCommands are the global default
             
-            logger.LogDebug($"Added to bot {botType} for language {language} " +
+            logger.LogDebug($"Added to bot {MyBotType} for language {language} " +
                             $"the following BotCommands: " +
                             $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
         }

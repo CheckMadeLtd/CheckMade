@@ -47,7 +47,7 @@ public class UnitTestStartup : TestStartupBase
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
             
             mockBotClient
-                .Setup(x => x.BotToken).Returns("fakeToken");
+                .Setup(x => x.MyBotToken).Returns("fakeToken");
 
             return mockBotClient;
         });

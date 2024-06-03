@@ -63,7 +63,7 @@ public class ToModelConverterTests
         };
         
         var expectedAttachmentExternalUrl =
-            TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.BotToken}/" +
+            TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.MyBotToken}/" +
             $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}";
 
         var expectedTelegramUpdate = new TelegramUpdate(

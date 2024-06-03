@@ -24,6 +24,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.OperationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy, 
+            BotType.Operations,
             botTokens.OperationsBotToken,
             loggerForClient),
         
@@ -31,6 +32,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
+            BotType.Communications,
             botTokens.CommunicationsBotToken,
             loggerForClient),
         
@@ -38,6 +40,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
+            BotType.Notifications,
             botTokens.NotificationsBotToken,
             loggerForClient),
         

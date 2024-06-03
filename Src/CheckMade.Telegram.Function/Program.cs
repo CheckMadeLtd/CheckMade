@@ -155,7 +155,7 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             (from botClient
                 in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
             from unit in Attempt<Unit>.RunAsync(async () =>
-                await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus(), botType))
+                await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus()))
             select unit))
             .Match(
                 unit => unit, 
