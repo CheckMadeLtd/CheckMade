@@ -5,7 +5,7 @@ namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates;
 
 internal class MigratorByIndexFactory
 {
-    private readonly Dictionary<string, MigratorBase> _migratorByIndex;
+    private readonly IDictionary<string, MigratorBase> _migratorByIndex;
     
     public MigratorByIndexFactory(MigrationRepository migRepo)
     {

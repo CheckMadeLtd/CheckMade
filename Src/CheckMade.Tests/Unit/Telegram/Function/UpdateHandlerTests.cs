@@ -344,7 +344,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        Dictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination)
+        IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
