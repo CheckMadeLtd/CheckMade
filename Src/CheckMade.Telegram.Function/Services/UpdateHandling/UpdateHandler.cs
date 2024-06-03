@@ -61,14 +61,10 @@ public class UpdateHandler(
             { BotType.Communications, botClientFactory.CreateBotClientOrThrow(BotType.Communications) },
             { BotType.Notifications, botClientFactory.CreateBotClientOrThrow(BotType.Notifications) }
         };
-
-        var chatIdByOutputDestination = 
-            (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
-            .ToDictionary(
-                keySelector: map => map.OutputDestination,
-                elementSelector: map => map.ChatId);
+        
         var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
+        var chatIdByOutputDestination = await GetChatIdByOutputDestinationAsync();
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
         
@@ -141,6 +137,40 @@ public class UpdateHandler(
             ? (LanguageCode) userLanguagePreference!
             : defaultUiLanguage.Code;
     }
+    
+    private async Task<IDictionary<TelegramOutputDestination, TelegramChatId>> GetChatIdByOutputDestinationAsync() =>
+        (await Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(async () =>
+            (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
+            .ToDictionary(
+                keySelector: map => map.OutputDestination,
+                elementSelector: map => map.ChatId)))
+        .Match(
+            value => value,
+            error =>
+            {
+                if (error.Exception != null)
+                {
+                    throw new DataAccessException($"An exception was thrown while trying to access " +
+                                                  $"{nameof(chatIdByOutputDestinationRepository)}", error.Exception);
+                }
+                    
+                if (error.FailureMessage != null)
+                {
+                    logger.LogWarning($"Received an unexpected failure message when trying to access " +
+                                      $"{nameof(chatIdByOutputDestinationRepository)} and will instead return " +
+                                      $"an empty one and trying to process the current update." +
+                                      $"The original error message: " +
+                                      $"{error.FailureMessage.GetFormattedEnglish()}");
+                    return new Dictionary<TelegramOutputDestination, TelegramChatId>();
+                }
+                    
+                logger.LogWarning($"Encountered an error while trying to access " +
+                                  $"{nameof(chatIdByOutputDestinationRepository)} but strangely without any" +
+                                  $"exception or {nameof(error.FailureMessage)}. Returning an empty " +
+                                  $"{nameof(chatIdByOutputDestinationRepository)} and going on trying to process" +
+                                  $"the current update.");
+                return new Dictionary<TelegramOutputDestination, TelegramChatId>();
+            });
     
     private static async Task<Attempt<Unit>> SendOutputsAsync(
         IReadOnlyList<OutputDto> outputs,
