@@ -3,7 +3,7 @@ using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 
-namespace CheckMade.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
 internal class MockRoleRepository : IRoleRepository
 {

@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Model.Telegram.Updates;
 using Moq;
 
-namespace CheckMade.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
 internal class MockTelegramUpdateRepository(IMock<ITelegramUpdateRepository> mockUpdateRepo) : ITelegramUpdateRepository
 {
