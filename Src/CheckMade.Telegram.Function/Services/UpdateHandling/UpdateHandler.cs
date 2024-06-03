@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
@@ -20,6 +21,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IRequestProcessorSelector selector,
+        IRoleBotTypeToChatIdMappingRepository roleBotTypeToChatIdMappingRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -27,13 +29,13 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType botType)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType updateReceivingBotType)
     {
         ChatId updateReceivingChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            botType, update.Message.From?.Id ?? 0, updateReceivingChatId);
+            updateReceivingBotType, update.Message.From?.Id ?? 0, updateReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -52,27 +54,35 @@ public class UpdateHandler(
             return Unit.Value;
         }
 
-        var updateReceivingBotClient = botClientFactory.CreateBotClientOrThrow(botType); 
-        var filePathResolver = new TelegramFilePathResolver(updateReceivingBotClient);
+        var botClientByBotType = new Dictionary<BotType, IBotClientWrapper>
+        {
+            { BotType.Operations,  botClientFactory.CreateBotClientOrThrow(BotType.Operations) },
+            { BotType.Communications, botClientFactory.CreateBotClientOrThrow(BotType.Communications) },
+            { BotType.Notifications, botClientFactory.CreateBotClientOrThrow(BotType.Notifications) }
+        };
+
+        var chatIdByOutputDestination = 
+            (await roleBotTypeToChatIdMappingRepository.GetAllOrThrowAsync())
+            .ToDictionary(
+                keySelector: map => new OutputDestination(map.BotType, map.Role),
+                elementSelector: map => map.ChatId);
+        var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
         
-        // ToDo: below, in addition to receivingBotClient, also pass a botClientByTypeDictionary
-        // ToDo: and pass a botClientByBotType Dictionary
-        // and allRoleBotTypeToChatIdMappings
-        // With these three resources, SendOutput can resolve botClient and chatId based on each output's destination
-        // And in case there is no mapping for the updateReceivingChatId 
         var sendOutputsOutcome =
             from telegramUpdate 
-                in await toModelConverter.ConvertToModelAsync(update, botType)
+                in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
             from outputs 
-                in selector.GetRequestProcessor(botType).ProcessRequestAsync(telegramUpdate)
+                in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
             select 
                 SendOutputsAsync(
                     outputs, 
-                    updateReceivingBotClient,
+                    botClientByBotType,
+                    updateReceivingBotType,
                     updateReceivingChatId,
+                    chatIdByOutputDestination,
                     uiTranslator,
                     replyMarkupConverter);
         
@@ -89,8 +99,10 @@ public class UpdateHandler(
                     
                     _ = SendOutputsAsync(
                             new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                            updateReceivingBotClient,
+                            botClientByBotType,
+                            updateReceivingBotType,
                             updateReceivingChatId,
+                            chatIdByOutputDestination,
                             uiTranslator,
                             replyMarkupConverter)
                         .ContinueWith(task => 
@@ -107,7 +119,7 @@ public class UpdateHandler(
                         "Next, some details to help debug the current exception. " +
                         "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                         "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                        botType, update.Message.From!.Id,
+                        updateReceivingBotType, update.Message.From!.Id,
                         update.Message.Date, update.Message.Text);
                 }
                 
@@ -131,24 +143,35 @@ public class UpdateHandler(
     
     private static async Task<Attempt<Unit>> SendOutputsAsync(
         IReadOnlyList<OutputDto> outputs,
-        IBotClientWrapper updateReceivingBotClient,
+        IDictionary<BotType, IBotClientWrapper> botClientByBotType,
+        BotType updateReceivingBotType,
         ChatId updateReceivingChatId,
+        IDictionary<OutputDestination, TelegramChatId> chatIdByOutputDestination,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter)
     {
         return await Attempt<Unit>.RunAsync(async () =>
         {
             var parallelTasks = outputs.Select(async output =>
-                await updateReceivingBotClient.SendTextMessageOrThrowAsync(
-                    updateReceivingChatId,
+            {
+                var destinationBotClient = output.ExplicitDestination.IsSome
+                    ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
+                    : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
+
+                var destinationChatId = output.ExplicitDestination.IsSome
+                    ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
+                    : updateReceivingChatId; // e.g. for a virgin, pre-login update
+
+                return await destinationBotClient.SendTextMessageOrThrowAsync(
+                    destinationChatId,
                     uiTranslator.Translate(Ui("Please choose:")),
                     uiTranslator.Translate(output.Text.GetValueOrDefault()),
-                    converter.GetReplyMarkup(output)));
+                    converter.GetReplyMarkup(output));
+            });
 
             /* FYI about Task.WhenAll() behaviour here
              * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
-             * 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. 
-             */ 
+             * 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. */ 
             await Task.WhenAll(parallelTasks);
             
             return Unit.Value;

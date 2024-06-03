@@ -1,8 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
-using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -213,7 +211,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, new Role("token", RoleType.SanitaryOps_Admin)),
+                new OutputDestination(BotType.Operations, TestUtils.SanitaryOpsAdmin1),
                 ITestUtils.EnglishUiStringForTests, 
                 new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
         };
@@ -291,10 +289,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var expectedSendParamSets = fakeListOfOutputDtos
             .Select(output => new 
             {
-                DestinationChatId = 
-                    basics.chatIdByOutputDestination[output.ExplicitDestination.GetValueOrDefault()].Id,
-                Text = 
-                    output.Text.GetValueOrDefault().GetFormattedEnglish()
+                Text = output.Text.GetValueOrDefault().GetFormattedEnglish(),
+                DestinationChatId = basics.chatIdByOutputDestination
+                    [output.ExplicitDestination.GetValueOrDefault()].Id
             });
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
@@ -311,6 +308,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Times.Once);
         }
     }
+    
+    // ToDo: Add test to check correct handling of lack of explicit OutputDestination and failure to resolve ChatId
     
     private static (ITestUtils utils, 
         Mock<IBotClientWrapper> mockBotClient,
