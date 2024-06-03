@@ -15,6 +15,10 @@ internal interface ITestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
     
+    internal const long TestChatId1 = 111111L;
+    internal const long TestChatId2 = 222222L;
+    internal const long TestChatId3 = 333333L;
+    
     Randomizer Randomizer { get; }
     
     TelegramUpdate GetValidModelInputTextMessage();
@@ -22,23 +26,20 @@ internal interface ITestUtils
     TelegramUpdate GetValidModelInputTextMessageWithAttachment(AttachmentType type);
     TelegramUpdate GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode);
     
-    UpdateWrapper GetValidTelegramTextMessage(string inputText);
-    UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand);
-    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData);
-    UpdateWrapper GetValidTelegramAudioMessage();
-    UpdateWrapper GetValidTelegramDocumentMessage();
-    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy);
-    UpdateWrapper GetValidTelegramPhotoMessage();
-    UpdateWrapper GetValidTelegramVoiceMessage();
+    UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId1);
+    UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId1);
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     // Needs to be 'long' instead of 'TelegramUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
-    internal const long TestChatId1 = 111111L;
-    internal const long TestChatId2 = 222222L;
-    internal const long TestChatId3 = 333333L;
 
     internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
     internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);
@@ -106,21 +107,21 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             controlPromptEnumCode ?? Option<long>.None());
     }
     
-    public UpdateWrapper GetValidTelegramTextMessage(string inputText) => 
+    public UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId) => 
         new(new Message 
             {
                 From = new User { Id = Randomizer.GenerateRandomLong() },
-                Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+                Chat = new Chat { Id = chatId },
                 Date = DateTime.Now,
                 MessageId = 123,
                 Text = inputText
             });
 
-    public UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand) =>
+    public UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId) =>
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Text = botCommand,
@@ -134,7 +135,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             ]
         });
 
-    public UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData) =>
+    public UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(
+        string callbackQueryData, long chatId) =>
         new(new Update
         {
             CallbackQuery = new CallbackQuery
@@ -145,39 +147,40 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                     From = new User { Id = Randomizer.GenerateRandomLong() },
                     Text = "The bot's original prompt",
                     Date = DateTime.Now,
-                    Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+                    Chat = new Chat { Id = chatId },
                     MessageId = 123,
                 }
             }
         });
 
-    public UpdateWrapper GetValidTelegramAudioMessage() => 
+    public UpdateWrapper GetValidTelegramAudioMessage(long chatId) => 
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
         });
 
-    public UpdateWrapper GetValidTelegramDocumentMessage() => 
+    public UpdateWrapper GetValidTelegramDocumentMessage(long chatId) => 
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = "fakeOtherDocumentFileId" }
         });
 
-    public UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy) =>
+    public UpdateWrapper GetValidTelegramLocationMessage(
+        Option<float> horizontalAccuracy, long chatId) =>
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Location = new Location
@@ -190,22 +193,22 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             }
         });
 
-    public UpdateWrapper GetValidTelegramPhotoMessage() => 
+    public UpdateWrapper GetValidTelegramPhotoMessage(long chatId) => 
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
         });
 
-    public UpdateWrapper GetValidTelegramVoiceMessage() =>
+    public UpdateWrapper GetValidTelegramVoiceMessage(long chatId) =>
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
-            Chat = new Chat { Id = Randomizer.GenerateRandomLong() },
+            Chat = new Chat { Id = chatId },
             Date = DateTime.Now,
             MessageId = 123,
             Caption = "fakeVoiceCaption",
