@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram;
 
@@ -12,6 +13,7 @@ public record OutputDto
     public Option<IEnumerable<ControlPrompts>> ControlPromptsSelection { get; }
     public Option<IEnumerable<string>> PredefinedChoices { get; }
     public Option<IEnumerable<OutputAttachmentDetails>> Attachments { get; }
+    public Option<Geo> Location { get; }
 
     private OutputDto(
         Option<TelegramOutputDestination> explicitDestination,
@@ -19,7 +21,8 @@ public record OutputDto
         Option<IEnumerable<DomainCategory>> domainCategories,
         Option<IEnumerable<ControlPrompts>> controlPrompts,
         Option<IEnumerable<string>> predefinedChoices, 
-        Option<IEnumerable<OutputAttachmentDetails>> attachments)
+        Option<IEnumerable<OutputAttachmentDetails>> attachments, 
+        Option<Geo> location)
     {
         ExplicitDestination = explicitDestination;
         Text = text;
@@ -27,6 +30,7 @@ public record OutputDto
         ControlPromptsSelection = controlPrompts;
         PredefinedChoices = predefinedChoices;
         Attachments = attachments;
+        Location = location;
     }
 
     public static OutputDto Create(UiString text) => 
@@ -36,7 +40,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
     
     public static OutputDto Create(TelegramOutputDestination destination, UiString text) => 
         new(
@@ -45,7 +50,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<DomainCategory> domainCategories) => 
         new(
@@ -54,7 +60,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.Some(domainCategories),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<ControlPrompts> controlPrompts) => 
         new(
@@ -63,7 +70,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.Some(controlPrompts),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(TelegramOutputDestination destination, IEnumerable<string> predefinedChocies) => 
         new(
@@ -72,7 +80,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.Some(predefinedChocies),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(
         TelegramOutputDestination destination, UiString text, IEnumerable<DomainCategory> domainCategories) => 
@@ -82,7 +91,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.Some(domainCategories),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(
         TelegramOutputDestination destination, UiString text, IEnumerable<ControlPrompts> controlPrompts) => 
@@ -92,7 +102,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.Some(controlPrompts),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(
         TelegramOutputDestination destination,
@@ -105,7 +116,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.Some(domainCategories),
             Option<IEnumerable<ControlPrompts>>.Some(controlPrompts),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(
         TelegramOutputDestination destination,
@@ -117,7 +129,8 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.None(),
             Option<IEnumerable<ControlPrompts>>.None(),
             Option<IEnumerable<string>>.Some(predefinedChoices),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 
     public static OutputDto Create(
         TelegramOutputDestination destination,
@@ -129,5 +142,6 @@ public record OutputDto
             Option<IEnumerable<DomainCategory>>.Some(domainCategories),
             Option<IEnumerable<ControlPrompts>>.Some(controlPrompts),
             Option<IEnumerable<string>>.None(),
-            Option<IEnumerable<OutputAttachmentDetails>>.None());
+            Option<IEnumerable<OutputAttachmentDetails>>.None(),
+            Option<Geo>.None());
 }
