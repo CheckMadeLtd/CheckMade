@@ -17,5 +17,6 @@ public static class DependencyRegistration
         
         services.AddScoped<ITelegramUpdateRepository, TelegramUpdateRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IChatIdByOutputDestinationRepository, ChatIdByOutputDestinationRepository>();
     }
 }
