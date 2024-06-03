@@ -144,4 +144,17 @@ public record OutputDto
             Option<IEnumerable<string>>.None(),
             Option<IEnumerable<OutputAttachmentDetails>>.None(),
             Option<Geo>.None());
+
+    public static OutputDto Create(
+        TelegramOutputDestination destination,
+        UiString text,
+        IEnumerable<OutputAttachmentDetails> attachmentDetails) =>
+        new(
+            destination,
+            text,
+            Option<IEnumerable<DomainCategory>>.None(),
+            Option<IEnumerable<ControlPrompts>>.None(),
+            Option<IEnumerable<string>>.None(),
+            Option<IEnumerable<OutputAttachmentDetails>>.Some(attachmentDetails),
+            Option<Geo>.None());
 }
