@@ -10,20 +10,20 @@ public record OutputDto
     public Option<UiString> Text { get; }
     public Option<IEnumerable<DomainCategory>> DomainCategorySelection { get; }
     public Option<IEnumerable<ControlPrompts>> ControlPromptsSelection { get; }
-    public Option<IEnumerable<string>> PredefinedChocies { get; }
+    public Option<IEnumerable<string>> PredefinedChoices { get; }
 
     private OutputDto(
         Option<TelegramOutputDestination> explicitDestination,
         Option<UiString> text,
         Option<IEnumerable<DomainCategory>> domainCategories,
         Option<IEnumerable<ControlPrompts>> controlPrompts,
-        Option<IEnumerable<string>> predefinedChocies)
+        Option<IEnumerable<string>> predefinedChoices)
     {
         ExplicitDestination = explicitDestination;
         Text = text;
         DomainCategorySelection = domainCategories;
         ControlPromptsSelection = controlPrompts;
-        PredefinedChocies = predefinedChocies;
+        PredefinedChoices = predefinedChoices;
     }
 
     public static OutputDto Create(UiString text) => 
