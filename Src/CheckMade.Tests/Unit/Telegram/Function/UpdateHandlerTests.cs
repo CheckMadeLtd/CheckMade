@@ -1,6 +1,8 @@
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -271,13 +273,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
             OutputDto.Create(
-                new OutputDestination(BotType.Operations, new Role("token1", RoleType.SanitaryOps_Inspector)), 
+                new OutputDestination(BotType.Operations, TestUtils.SanitaryOpsInspector1), 
                 UiNoTranslate("Output1 to Operations Bot")),
             OutputDto.Create(
-                new OutputDestination(BotType.Communications, new Role("token1", RoleType.SanitaryOps_Inspector)), 
-                UiNoTranslate("Output2 to Communications Bot and same Role")),
+                new OutputDestination(BotType.Communications, TestUtils.SanitaryOpsInspector1), 
+                UiNoTranslate("Output2 to Communications Bot and same Role as Output1")),
             OutputDto.Create(
-                new OutputDestination(BotType.Notifications, new Role("token2", RoleType.SanitaryOps_Admin)), 
+                new OutputDestination(BotType.Notifications, TestUtils.SanitaryOpsEngineer1), 
                 UiNoTranslate("Output3 to Notifications Bot and a different Role)"))
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
@@ -286,27 +288,42 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
+        var expectedSendParamSets = fakeListOfOutputDtos
+            .Select(output => new 
+            {
+                DestinationChatId = basics.allRoleBotTypeToChatIdMappings
+                    .Where(map => map.Role == output.Destination.ReceivingRole && 
+                                  map.BotType == output.Destination.ReceivingBot)
+                    .Select(map => map.ChatId.Id)
+                    .First(),
+                
+                Text = output.Text.GetValueOrDefault().GetFormattedEnglish()
+            });
+
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
-        
-        basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
-                It.IsAny<ChatId>(), // ToDo: expected ChatId based on Role (look up in role_chatId_botType_link table)
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<Option<IReplyMarkup>>(),
-                It.IsAny<CancellationToken>()),
-            Times.Exactly(fakeListOfOutputDtos.Count));
+
+        foreach (var expectedParamSet in expectedSendParamSets)
+        {
+            basics.mockBotClient.Verify(
+                x => x.SendTextMessageOrThrowAsync(
+                    expectedParamSet.DestinationChatId,
+                    It.IsAny<string>(),
+                    expectedParamSet.Text,
+                    It.IsAny<Option<IReplyMarkup>>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
     }
     
-    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler,
-        IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator)
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler, IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator, IEnumerable<RoleBotTypeToChatIdMapping> allRoleBotTypeToChatIdMappings)
         GetBasicTestingServices(IServiceProvider sp) => 
-        (sp.GetRequiredService<ITestUtils>(), 
-            sp.GetRequiredService<Mock<IBotClientWrapper>>(),
-            sp.GetRequiredService<IUpdateHandler>(),
-            sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
-            new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
-                sp.GetRequiredService<ILogger<UiTranslator>>()));
+            (sp.GetRequiredService<ITestUtils>(), 
+                sp.GetRequiredService<Mock<IBotClientWrapper>>(),
+                sp.GetRequiredService<IUpdateHandler>(),
+                sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
+                new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
+                    sp.GetRequiredService<ILogger<UiTranslator>>()),
+                sp.GetRequiredService<IRoleBotTypeToChatIdRepository>().GetAllOrThrowAsync().Result);
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
