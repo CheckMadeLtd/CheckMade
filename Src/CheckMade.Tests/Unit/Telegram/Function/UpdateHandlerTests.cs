@@ -316,9 +316,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         const string fakeOutputMessage = "Output without destination";
         const BotType actualBotType = BotType.Communications;
-        List<OutputDto> fakeOutputDto = [ OutputDto.Create(UiNoTranslate(fakeOutputMessage)) ];
+        List<OutputDto> outputWithoutDestination = [ OutputDto.Create(UiNoTranslate(fakeOutputMessage)) ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
-            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(fakeOutputDto, actualBotType));
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
+                outputWithoutDestination, actualBotType));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -337,6 +338,35 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
         
         // Cannot test for correct botClient.MyBotType because the mockBotClient is not (yet) BotType-specific!
+    }
+
+    [Fact]
+    public async Task HandleUpdateAsync_SendsPhoto_WhenOutputContainsPhoto()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        List<OutputDto> outputWithPhoto =
+        [
+            OutputDto.Create(
+                new TelegramOutputDestination(TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
+                UiNoTranslate("The photo's caption"),
+                new List<OutputAttachmentDetails>{ new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo) })
+        ];
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(outputWithPhoto));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+
+        await basics.handler.HandleUpdateAsync(update, BotType.Operations);
+
+        basics.mockBotClient.Verify(
+            x => x.SendPhotoOrThrowAsync(
+                It.IsAny<ChatId>(),
+                It.IsNotNull<InputFileStream>(),
+                It.IsAny<Option<string>>(),
+                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
     
     private static (ITestUtils utils, 

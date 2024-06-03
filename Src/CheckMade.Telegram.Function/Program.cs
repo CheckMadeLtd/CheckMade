@@ -53,6 +53,7 @@ var host = new HostBuilder()
         services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureUtilityServices();
         services.ConfigureBotBusinessServices();
+        services.ConfigureExternalServices();
     })
     .ConfigureLogging((hostContext, logging) =>
     {

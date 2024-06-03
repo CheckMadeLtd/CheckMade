@@ -26,6 +26,13 @@ public interface IBotClientWrapper
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
+    Task<Unit> SendPhotoOrThrowAsync(
+        ChatId chatId,
+        InputFile photoFile,
+        Option<string> caption,
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default);
+    
     Task<File> GetFileOrThrowAsync(string fileId);
 
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
@@ -81,7 +88,13 @@ public class BotClientWrapper(
         
         return Unit.Value;
     }
-    
+
+    public Task<Unit> SendPhotoOrThrowAsync(ChatId chatId, InputFile photoFile, Option<string> caption, 
+        Option<IReplyMarkup> replyMarkup, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
     public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu)

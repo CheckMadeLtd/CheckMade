@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Telegram;
@@ -27,6 +28,7 @@ public class UpdateHandler(
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
         IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
+        IBlobLoader blobLoader,
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
@@ -81,7 +83,8 @@ public class UpdateHandler(
                     updateReceivingChatId,
                     chatIdByOutputDestination,
                     uiTranslator,
-                    replyMarkupConverter);
+                    replyMarkupConverter,
+                    blobLoader);
         
         return (await sendOutputsOutcome).Match(
             
@@ -101,7 +104,8 @@ public class UpdateHandler(
                             updateReceivingChatId,
                             chatIdByOutputDestination,
                             uiTranslator,
-                            replyMarkupConverter)
+                            replyMarkupConverter,
+                            blobLoader)
                         .ContinueWith(task => 
                         { 
                             if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
@@ -156,7 +160,8 @@ public class UpdateHandler(
         ChatId updateReceivingChatId,
         IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination,
         IUiTranslator uiTranslator,
-        IOutputToReplyMarkupConverter converter)
+        IOutputToReplyMarkupConverter converter,
+        IBlobLoader blobLoader)
     {
         return await Attempt<Unit>.RunAsync(async () =>
         {
@@ -170,13 +175,53 @@ public class UpdateHandler(
                     ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
                     : updateReceivingChatId; // e.g. for a virgin, pre-login update
 
-                return await destinationBotClient.SendTextMessageOrThrowAsync(
-                    destinationChatId,
-                    uiTranslator.Translate(Ui("Please choose:")),
-                    uiTranslator.Translate(output.Text.GetValueOrDefault()),
-                    converter.GetReplyMarkup(output));
-            });
+                switch (output)
+                {
+                    case { Attachments.IsSome: false }:
+                        
+                        await destinationBotClient
+                            .SendTextMessageOrThrowAsync(
+                                destinationChatId,
+                                uiTranslator.Translate(Ui("Please choose:")),
+                                uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                                converter.GetReplyMarkup(output));
+                        break;
 
+                    case { Attachments.IsSome: true }:
+                        
+                        await Task.WhenAll(
+                            output.Attachments.Value!
+                                .Select(details => details.AttachmentType switch
+                                {
+                                    AttachmentType.Photo => SendPhotoAsync(details),
+                                    AttachmentType.Audio or AttachmentType.Document =>
+                                        throw new InvalidOperationException("Not yet supported attachment type"),
+                                    _ => 
+                                        throw new InvalidOperationException("Not yet supported attachment type")
+                                }));
+                        break;
+                    
+                    case { Location.IsSome: true }:
+                        break;
+                }
+                
+                return;
+
+                async Task SendPhotoAsync(OutputAttachmentDetails details)
+                {
+                    var (blobData, fileName) = 
+                        await blobLoader.DownloadBlobAsync(details.AttachmentUri.AbsoluteUri);
+                    var fileStream = new InputFileStream(blobData, fileName);
+                    
+                    await destinationBotClient.SendPhotoOrThrowAsync(
+                        destinationChatId,
+                        fileStream,
+                        uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                        converter.GetReplyMarkup(output)
+                    );
+                }  
+            });
+            
             /* FYI about Task.WhenAll() behaviour here
              * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
              * 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. */ 

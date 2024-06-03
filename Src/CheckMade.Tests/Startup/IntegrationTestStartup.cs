@@ -49,5 +49,7 @@ public class IntegrationTestStartup : TestStartupBase
             Config.GetValue<string>(testDataGglSheetKeyInEnv)
             ?? throw new InvalidOperationException(
                 $"Can't find: {testDataGglSheetKeyInEnv}")));
+        
+        Services.Add_AzureServices_Dependencies();
     }
 }

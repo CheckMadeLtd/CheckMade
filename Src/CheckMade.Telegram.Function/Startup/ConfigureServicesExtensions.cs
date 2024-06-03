@@ -1,3 +1,4 @@
+using CheckMade.Common.ExternalServices;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
@@ -67,6 +68,11 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureUtilityServices(this IServiceCollection services)
     {
         services.Add_CommonUtils_Dependencies();
+    }
+
+    internal static void ConfigureExternalServices(this IServiceCollection services)
+    {
+        services.Add_AzureServices_Dependencies();
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
