@@ -37,22 +37,21 @@ public class UnitTestStartup : TestStartupBase
          
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
-        
         Services.AddScoped<Mock<IBotClientWrapper>>(_ =>
         {
-            var mockBotClient = new Mock<IBotClientWrapper>();
+            var mockBotClientWrapper = new Mock<IBotClientWrapper>();
             
-            mockBotClient
+            mockBotClientWrapper
                 .Setup(x => x.GetFileOrThrowAsync(It.IsNotNull<string>()))
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
+            mockBotClientWrapper
+                .Setup(x => x.MyBotToken)
+                .Returns("fakeToken");
             
-            mockBotClient
-                .Setup(x => x.MyBotToken).Returns("fakeToken");
-
-            return mockBotClient;
+            return mockBotClientWrapper;
         });
         
         Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
-            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>().Object));
+            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
     }
 }
