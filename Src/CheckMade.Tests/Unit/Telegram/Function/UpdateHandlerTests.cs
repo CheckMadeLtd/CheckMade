@@ -341,15 +341,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsPhoto_WhenOutputContainsPhoto()
+    public async Task HandleUpdateAsync_SendsMultiplePhotos_WhenOutputContainsPhotos()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> outputWithPhoto =
         [
             OutputDto.Create(
                 new TelegramOutputDestination(TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
-                UiNoTranslate("The photo's caption"),
-                new List<OutputAttachmentDetails>{ new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo) })
+                UiNoTranslate("These photos' caption"),
+                new List<OutputAttachmentDetails>
+                {
+                    new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo),
+                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo)
+                })
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(outputWithPhoto));
@@ -366,7 +370,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<Option<string>>(),
                 It.IsAny<Option<IReplyMarkup>>(),
                 It.IsAny<CancellationToken>()), 
-            Times.Once);
+            Times.Exactly(2));
     }
     
     private static (ITestUtils utils, 
