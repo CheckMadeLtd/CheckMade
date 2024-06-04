@@ -70,23 +70,22 @@ public class UpdateHandler(
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
         
-        var sendOutputsOutcome =
-            from telegramUpdate 
-                in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
-            from outputs 
-                in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
-            select 
-                SendOutputsAsync(
-                    outputs, 
-                    botClientByBotType,
-                    updateReceivingBotType,
-                    updateReceivingChatId,
-                    chatIdByOutputDestination,
-                    uiTranslator,
-                    replyMarkupConverter,
-                    blobLoader);
-        
-        return (await sendOutputsOutcome).Match(
+        return (await 
+                (from telegramUpdate 
+                        in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
+                from outputs 
+                    in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
+                select 
+                    SendOutputsAsync(
+                        outputs, 
+                        botClientByBotType,
+                        updateReceivingBotType,
+                        updateReceivingChatId,
+                        chatIdByOutputDestination,
+                        uiTranslator,
+                        replyMarkupConverter,
+                        blobLoader)))
+            .Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
@@ -178,17 +177,10 @@ public class UpdateHandler(
                 switch (output)
                 {
                     case { Attachments.IsSome: false }:
-                        
-                        await destinationBotClient
-                            .SendTextMessageOrThrowAsync(
-                                destinationChatId,
-                                uiTranslator.Translate(Ui("Please choose:")),
-                                uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
-                                converter.GetReplyMarkup(output));
+                        await SendTextMessageAsync();
                         break;
 
                     case { Attachments.IsSome: true }:
-                        
                         await Task.WhenAll(
                             output.Attachments.Value!
                                 .Select(details => details.AttachmentType switch
@@ -207,6 +199,16 @@ public class UpdateHandler(
                 
                 return;
 
+                async Task SendTextMessageAsync()
+                {
+                    await destinationBotClient
+                        .SendTextMessageOrThrowAsync(
+                            destinationChatId,
+                            uiTranslator.Translate(Ui("Please choose:")),
+                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                            converter.GetReplyMarkup(output));
+                }
+                
                 async Task SendPhotoAsync(OutputAttachmentDetails details)
                 {
                     var (blobData, fileName) = 
