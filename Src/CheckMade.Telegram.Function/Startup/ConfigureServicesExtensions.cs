@@ -70,9 +70,25 @@ internal static class ConfigureServicesExtensions
         services.Add_CommonUtils_Dependencies();
     }
 
-    internal static void ConfigureExternalServices(this IServiceCollection services)
+    internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
     {
-        services.Add_AzureServices_Dependencies();
+        const string keyToBlobContainerUri = "BlobContainerClient:Uri";
+        const string keyToBlobContainerAccountName = "BlobContainerClient:AccountName";
+        const string keyToBlobContainerAccountKey = "BlobContainerClient:AccountKey";
+
+        var blobContainerUriKey = config.GetValue<string>(keyToBlobContainerUri)
+                                  ?? throw new InvalidOperationException($"Can't find {keyToBlobContainerUri}");
+
+        var blobContainerAccountName = config.GetValue<string>(keyToBlobContainerAccountName)
+                                       ?? throw new InvalidOperationException(
+                                           $"Can't find {keyToBlobContainerAccountName}");
+
+        var blobContainerAccountKey = config.GetValue<string>(keyToBlobContainerAccountKey)
+                                      ?? throw new InvalidOperationException(
+                                          $"Can't find {keyToBlobContainerAccountKey}");
+
+        services.Add_AzureServices_Dependencies(
+            blobContainerUriKey, blobContainerAccountName, blobContainerAccountKey);
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
