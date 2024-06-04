@@ -341,7 +341,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsMultiplePhotos_WhenOutputContainsPhotos()
+    public async Task HandleUpdateAsync_SendsMultipleAttachmentTypes_WhenOutputContainsThem()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> outputWithPhoto =
@@ -352,7 +352,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 new List<OutputAttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo),
-                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo)
+                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo),
+                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Audio),
+                    new(new Uri("https://www.gorin.de/fakeUri4.html"), AttachmentType.Document)
                 })
         ];
         serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
@@ -365,12 +367,21 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
 
         basics.mockBotClient.Verify(
             x => x.SendPhotoOrThrowAsync(
-                It.IsAny<ChatId>(),
-                It.IsNotNull<InputFileStream>(),
-                It.IsAny<Option<string>>(),
-                It.IsAny<Option<IReplyMarkup>>(),
-                It.IsAny<CancellationToken>()), 
-            Times.Exactly(2));
+                It.IsAny<AttachmentSendOutParameters>(),
+                It.IsAny<CancellationToken>()),
+                Times.Exactly(2));
+
+        basics.mockBotClient.Verify(
+            x => x.SendAudioOrThrowAsync(
+                It.IsAny<AttachmentSendOutParameters>(),
+                It.IsAny<CancellationToken>()),
+            Times.Exactly(1));
+        
+        basics.mockBotClient.Verify(
+            x => x.SendDocumentOrThrowAsync(
+                It.IsAny<AttachmentSendOutParameters>(),
+                It.IsAny<CancellationToken>()),
+            Times.Exactly(1));
     }
     
     private static (ITestUtils utils, 

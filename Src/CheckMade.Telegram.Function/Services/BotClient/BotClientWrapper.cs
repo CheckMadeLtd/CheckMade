@@ -27,12 +27,17 @@ public interface IBotClientWrapper
         CancellationToken cancellationToken = default);
 
     Task<Unit> SendPhotoOrThrowAsync(
-        ChatId chatId,
-        InputFile photoFile,
-        Option<string> caption,
-        Option<IReplyMarkup> replyMarkup,
+        AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default);
     
+    Task<Unit> SendAudioOrThrowAsync(
+        AttachmentSendOutParameters audioSendOutParams,
+        CancellationToken cancellationToken = default);
+
+    Task<Unit> SendDocumentOrThrowAsync(
+        AttachmentSendOutParameters audioSendOutParams,
+        CancellationToken cancellationToken = default);
+
     Task<File> GetFileOrThrowAsync(string fileId);
 
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
@@ -89,8 +94,20 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public Task<Unit> SendPhotoOrThrowAsync(ChatId chatId, InputFile photoFile, Option<string> caption, 
-        Option<IReplyMarkup> replyMarkup, CancellationToken cancellationToken = default)
+    public Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Unit> SendAudioOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
+        CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

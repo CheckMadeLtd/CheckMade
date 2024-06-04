@@ -181,16 +181,7 @@ public class UpdateHandler(
                         break;
 
                     case { Attachments.IsSome: true }:
-                        await Task.WhenAll(
-                            output.Attachments.Value!
-                                .Select(details => details.AttachmentType switch
-                                {
-                                    AttachmentType.Photo => SendPhotoAsync(details),
-                                    AttachmentType.Audio or AttachmentType.Document =>
-                                        throw new InvalidOperationException("Not yet supported attachment type"),
-                                    _ => 
-                                        throw new InvalidOperationException("Not yet supported attachment type")
-                                }));
+                        await Task.WhenAll(output.Attachments.Value!.Select(SendAttachmentAsync));
                         break;
                     
                     case { Location.IsSome: true }:
@@ -209,18 +200,36 @@ public class UpdateHandler(
                             converter.GetReplyMarkup(output));
                 }
                 
-                async Task SendPhotoAsync(OutputAttachmentDetails details)
+                async Task SendAttachmentAsync(OutputAttachmentDetails details)
                 {
                     var (blobData, fileName) = 
                         await blobLoader.DownloadBlobAsync(details.AttachmentUri.AbsoluteUri);
                     var fileStream = new InputFileStream(blobData, fileName);
-                    
-                    await destinationBotClient.SendPhotoOrThrowAsync(
-                        destinationChatId,
-                        fileStream,
-                        uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
-                        converter.GetReplyMarkup(output)
+
+                    var attachmentSendOutParams = new AttachmentSendOutParameters(
+                        DestinationChatId: destinationChatId,
+                        FileStream: fileStream,
+                        Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
+                        ReplyMarkup: converter.GetReplyMarkup(output)
                     );
+
+                    switch (details.AttachmentType)
+                    {
+                        case AttachmentType.Photo:
+                            await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
+                            break;
+                        
+                        case AttachmentType.Audio:
+                            await destinationBotClient.SendAudioOrThrowAsync(attachmentSendOutParams);
+                            break;
+                        
+                        case AttachmentType.Document:
+                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                            break;
+                        
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
+                    }
                 }  
             });
             
