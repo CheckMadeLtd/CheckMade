@@ -91,20 +91,15 @@ public class OperationsRequestProcessor(
         // ReSharper disable UnusedParameter.Local
         TelegramUpdate telegramUpdate, AttachmentType type)
     {
-        if (telegramUpdate.Details.AttachmentType.GetValueOrDefault() == AttachmentType.Photo)
+        return new List<OutputDto>
         {
-            return new List<OutputDto>
-            {
-                OutputDto.Create(
-                    UiNoTranslate("Here, echo of your attachment."),
-                    new List<OutputAttachmentDetails>
-                    {
-                        new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), AttachmentType.Photo)
-                    }),
-            };
-        }
-
-        return new List<OutputDto>();
+            OutputDto.Create(
+                UiNoTranslate("Here, echo of your attachment."),
+                new List<OutputAttachmentDetails>
+                {
+                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), type)
+                }),
+        };
     }
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)

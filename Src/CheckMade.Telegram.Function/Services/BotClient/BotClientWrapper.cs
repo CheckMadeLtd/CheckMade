@@ -36,7 +36,7 @@ public interface IBotClientWrapper
         CancellationToken cancellationToken = default);
 
     Task<Unit> SendDocumentOrThrowAsync(
-        AttachmentSendOutParameters audioSendOutParams,
+        AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default);
 
     Task<Unit> SendLocationOrThrowAsync(
@@ -125,16 +125,44 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public Task<Unit> SendAudioOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
+    public async Task<Unit> SendAudioOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await botClient.SendAudioAsync(
+                chatId: audioSendOutParams.DestinationChatId,
+                audio: audioSendOutParams.FileStream,
+                caption: audioSendOutParams.Caption.Value,
+                replyMarkup: audioSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
     }
 
-    public Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
+    public async Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await botClient.SendDocumentAsync(
+                chatId: documentSendOutParams.DestinationChatId,
+                document: documentSendOutParams.FileStream,
+                caption: documentSendOutParams.Caption.Value,
+                replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
     }
 
     public async Task<Unit> SendLocationOrThrowAsync(
