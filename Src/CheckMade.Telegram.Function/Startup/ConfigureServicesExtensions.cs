@@ -89,6 +89,8 @@ internal static class ConfigureServicesExtensions
 
         services.Add_AzureServices_Dependencies(
             blobContainerUriKey, blobContainerAccountName, blobContainerAccountKey);
+        
+        services.Add_OtherExternalFacingServices_Dependencies();
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 

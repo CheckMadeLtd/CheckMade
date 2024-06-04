@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils.Generic;
+namespace CheckMade.Common.ExternalServices.ExternalUtils;
 
 public interface IHttpDownloader
 {

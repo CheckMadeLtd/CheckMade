@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.ExternalServices.ExternalUtils;
 
 namespace CheckMade.Tests.Startup.DefaultMocks;
 

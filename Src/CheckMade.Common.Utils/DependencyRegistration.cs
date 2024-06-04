@@ -11,8 +11,6 @@ public static class DependencyRegistration
     public static void Add_CommonUtils_Dependencies(this IServiceCollection services)
     {
         services.AddSingleton<Randomizer>();
-        services.AddHttpClient();
-        services.AddSingleton<IHttpDownloader, HttpDownloader>();
 
         services.AddSingleton<IDbOpenRetryPolicy, DbOpenRetryPolicy>();
         services.AddSingleton<IDbCommandRetryPolicy, DbCommandRetryPolicy>();

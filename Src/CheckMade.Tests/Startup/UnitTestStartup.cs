@@ -1,6 +1,6 @@
+using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories;
@@ -57,8 +57,6 @@ public class UnitTestStartup : TestStartupBase
             new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
         
         Services.AddScoped<IBlobLoader, MockBlobLoader>();
-        
-        // Overwrites the normal one registered via ConfigureUtilityServices in TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
 }
