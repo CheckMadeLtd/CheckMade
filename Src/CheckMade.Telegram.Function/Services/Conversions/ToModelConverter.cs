@@ -212,7 +212,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         TelegramUserId userId = wrappedUpdate.Message.From.Id;
         TelegramChatId chatId = wrappedUpdate.Message.Chat.Id;
 
-        var telegramAttachmentUrl = Option<string>.None();
+        var telegramAttachmentUri = Option<Uri>.None();
         
         if (attachmentDetails.FileId.IsSome)
         {
@@ -223,7 +223,7 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 return new Error(FailureMessage:
                     Ui("Error while trying to retrieve full Telegram server path to attachment file."));
 
-            telegramAttachmentUrl = pathAttempt.GetValueOrDefault();
+            telegramAttachmentUri = new Uri(pathAttempt.GetValueOrDefault());
         }
         
         var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
@@ -235,7 +235,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 wrappedUpdate.Message.Date,
                 wrappedUpdate.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                telegramAttachmentUrl,
+                telegramAttachmentUri,
+                Option<Uri>.None(), // ToDo: actually implement upload and put real Uri here
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,

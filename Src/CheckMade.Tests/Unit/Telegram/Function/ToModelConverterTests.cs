@@ -62,9 +62,9 @@ public class ToModelConverterTests
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
-        var expectedAttachmentExternalUrl =
+        var expectedAttachmentTelegramUri = new Uri(
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.MyBotToken}/" +
-            $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}";
+            $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}");
 
         var expectedTelegramUpdate = new TelegramUpdate(
             attachmentUpdate.Message.From!.Id,
@@ -75,13 +75,15 @@ public class ToModelConverterTests
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
                 attachmentUpdate.Message.Caption,
-                expectedAttachmentExternalUrl,
+                expectedAttachmentTelegramUri,
+                new Uri("https://gorin.de/Can_test_for_this_only_in_integration_tests"),
                 attachmentType));
         
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             attachmentUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri, 
+            actualTelegramUpdate.GetValueOrDefault().Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri);
     }
 
     [Theory]

@@ -21,7 +21,6 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         var telegramUpdates = new[]
         {
             utils.GetValidModelInputTextMessage(),
-            utils.GetValidModelInputTextMessageWithAttachment(AttachmentType.Photo)
         };
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
 

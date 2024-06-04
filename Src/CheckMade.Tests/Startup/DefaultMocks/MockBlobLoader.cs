@@ -4,12 +4,12 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 public class MockBlobLoader : IBlobLoader
 {
-    public Task<string> UploadBlobAndGetLinkAsync(MemoryStream stream, string fileName)
+    public Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName)
     {
-        return Task.FromResult("https://www.gorin.de/fakeUri");
+        return Task.FromResult(new Uri("https://www.gorin.de/fakeUri"));
     }
 
-    public Task<(MemoryStream, string)> DownloadBlobAsync(string blobUrl)
+    public Task<(MemoryStream, string)> DownloadBlobAsync(Uri blobUri)
     {
         return Task.FromResult((new MemoryStream(), "fakeFileName"));
     }

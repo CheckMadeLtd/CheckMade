@@ -4,12 +4,12 @@ namespace CheckMade.Common.ExternalServices.AzureServices;
 
 public class BlobLoader : IBlobLoader
 {
-    public Task<string> UploadBlobAndGetLinkAsync(MemoryStream stream, string fileName)
+    public Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName)
     {
         throw new NotImplementedException();
     }
 
-    public Task<(MemoryStream, string)> DownloadBlobAsync(string blobUrl)
+    public Task<(MemoryStream, string)> DownloadBlobAsync(Uri blobUri)
     {
         throw new NotImplementedException();
     }

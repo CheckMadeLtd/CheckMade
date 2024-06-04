@@ -83,7 +83,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 DateTime.Now,
                 1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
-                "fakeAttachmentUrl",
+                new Uri("fakeTelegramUri"),
+                new Uri("fakeInternalUri"),
                 type));
 
     public TelegramUpdate GetValidModelInputCommandMessage(BotType botType, int botCommandEnumCode) =>
@@ -100,7 +101,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         DateTime telegramDate,
         int telegramMessageId,
         string? text = null,
-        string? attachmentExternalUrl = null,
+        Uri? attachmentTelegramUri = null,
+        Uri? attachmentInternalUri = null,
         AttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
@@ -111,7 +113,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             telegramDate, 
             telegramMessageId,
             text ?? Option<string>.None(),
-            attachmentExternalUrl ?? Option<string>.None(),
+            attachmentTelegramUri ?? Option<Uri>.None(),
+            attachmentInternalUri ?? Option<Uri>.None(), 
             attachmentType ?? Option<AttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
