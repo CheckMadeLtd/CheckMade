@@ -105,10 +105,24 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
+    public async Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await botClient.SendPhotoAsync(
+                chatId: photoSendOutParams.DestinationChatId,
+                photo: photoSendOutParams.FileStream,
+                caption: photoSendOutParams.Caption.Value,
+                replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
     }
 
     public Task<Unit> SendAudioOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,

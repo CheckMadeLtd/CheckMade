@@ -91,18 +91,20 @@ public class OperationsRequestProcessor(
         // ReSharper disable UnusedParameter.Local
         TelegramUpdate telegramUpdate, AttachmentType type)
     {
-        // Step1, implement saving arriving message in Azure Blob Storage in ToModelConverter -> fills InternalUri field. 
-        
-        // Step2, then retrieve it via its name or id and send it right back as an echo. 
-        return new List<OutputDto>
+        if (telegramUpdate.Details.AttachmentType.GetValueOrDefault() == AttachmentType.Photo)
         {
-            OutputDto.Create(
-                UiNoTranslate("Here, some attachments."),
-                new List<OutputAttachmentDetails>
-                {
-                    // new OutputAttachmentDetails()
-                }),
-        };
+            return new List<OutputDto>
+            {
+                OutputDto.Create(
+                    UiNoTranslate("Here, echo of your attachment."),
+                    new List<OutputAttachmentDetails>
+                    {
+                        new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), AttachmentType.Photo)
+                    }),
+            };
+        }
+
+        return new List<OutputDto>();
     }
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
