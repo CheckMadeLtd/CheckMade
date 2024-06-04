@@ -6,8 +6,8 @@ public record Error(Exception? Exception = null, UiString? FailureMessage = null
 
 public record Attempt<T>
 {
-    internal T? Value { get; }
-    internal Error? Error { get; }
+    public T? Value { get; }
+    public Error? Error { get; }
     
     public bool IsSuccess => Error == null;
     public bool IsError => !IsSuccess;
