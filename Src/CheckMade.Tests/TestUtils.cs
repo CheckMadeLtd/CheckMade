@@ -36,7 +36,7 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId_01, string fileId = "fakeOtherDocumentFileId");
     UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
@@ -179,7 +179,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Audio = new Audio { FileId = "fakeAudioFileId" }
         });
 
-    public UpdateWrapper GetValidTelegramDocumentMessage(long chatId) => 
+    public UpdateWrapper GetValidTelegramDocumentMessage(long chatId, string fileId) => 
         new(new Message
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
@@ -187,7 +187,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Date = DateTime.Now,
             MessageId = 123,
             Caption = "fakeDocumentCaption",
-            Document = new Document { FileId = "fakeOtherDocumentFileId" }
+            Document = new Document { FileId = fileId }
         });
 
     public UpdateWrapper GetValidTelegramLocationMessage(

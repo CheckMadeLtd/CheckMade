@@ -204,7 +204,7 @@ public class UpdateHandler(
                 async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
                 {
                     var (blobData, fileName) = 
-                        await blobLoader.DownloadBlobAsync(details.AttachmentUri);
+                        await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
                     var fileStream = new InputFileStream(blobData, fileName);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(

@@ -18,8 +18,8 @@ public class BlobLoaderTests
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(originalContent));
         const string fileName = "test_blob.txt";
         
-        var blobUri = await blobLoader.UploadBlobAndReturnUriAsync(stream, fileName);
-        var (downloadedStream, downloadedFileName) = await blobLoader.DownloadBlobAsync(blobUri);
+        var blobUri = await blobLoader.UploadBlobAndReturnUriOrThrowAsync(stream, fileName);
+        var (downloadedStream, downloadedFileName) = await blobLoader.DownloadBlobOrThrowAsync(blobUri);
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());
         
         Assert.Equal(originalContent, downloadedContent);

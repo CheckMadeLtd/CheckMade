@@ -2,6 +2,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
 using CheckMade.Telegram.Model.BotCommand;
@@ -16,7 +17,8 @@ public interface IToModelConverter
 
 internal class ToModelConverter(
         ITelegramFilePathResolver filePathResolver,
-        IBlobLoader blobLoader) 
+        IBlobLoader blobLoader,
+        IHttpDownloader downloader) 
     : IToModelConverter
 {
     public async Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType)
@@ -210,19 +212,23 @@ internal class ToModelConverter(
         TelegramChatId chatId = wrappedUpdate.Message.Chat.Id;
 
         var telegramAttachmentUriAttempt = attachmentDetails.FileId.IsSome 
-            ? await GetTelegramAttachmentUriAsync(attachmentDetails.FileId)
+            ? await GetTelegramAttachmentUriAsync(attachmentDetails.FileId.Value!)
             : Option<Uri>.None();
 
         if (telegramAttachmentUriAttempt.IsError)
             return telegramAttachmentUriAttempt.Error!;
 
-        var internalAttachmentUriAttempt = attachmentDetails.FileId.IsSome
-            ? await UploadBlobAndGetInternalUriAsync(attachmentDetails.FileId)
+        var telegramAttachmentUri = telegramAttachmentUriAttempt.Value!;
+        
+        var internalAttachmentUriAttempt = telegramAttachmentUri.IsSome
+            ? await UploadBlobAndGetInternalUriAsync(telegramAttachmentUri.Value!)
             : Option<Uri>.None();
 
         if (internalAttachmentUriAttempt.IsError)
             return internalAttachmentUriAttempt.Error!;
 
+        var internalAttachmentUri = internalAttachmentUriAttempt.Value!;
+        
         var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
             ? wrappedUpdate.Message.Text
             : wrappedUpdate.Message.Caption;
@@ -232,8 +238,8 @@ internal class ToModelConverter(
                 wrappedUpdate.Message.Date,
                 wrappedUpdate.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                telegramAttachmentUriAttempt.Value!,
-                internalAttachmentUriAttempt.Value!,
+                telegramAttachmentUri,
+                internalAttachmentUri,
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
@@ -241,7 +247,7 @@ internal class ToModelConverter(
                 controlPromptEnumCode));
     }
 
-    private async Task<Attempt<Option<Uri>>> GetTelegramAttachmentUriAsync(Option<string> fileId)
+    private async Task<Attempt<Option<Uri>>> GetTelegramAttachmentUriAsync(string fileId)
     {
         return (await GetPathAsync())
             .Match(
@@ -250,14 +256,16 @@ internal class ToModelConverter(
         );
         
         async Task<Attempt<string>> GetPathAsync() =>
-            await filePathResolver.GetTelegramFilePathAsync(fileId.GetValueOrDefault());
+            await filePathResolver.GetTelegramFilePathAsync(fileId);
 
         static Uri GetUriFromPath(string path) => new(path);
     }
 
-    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Option<string> fileId)
+    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri telegramAttachmentUri)
     {
-        throw new NotImplementedException();
-        // return await blobLoader.UploadBlobAndReturnUriAsync()
+        return await Attempt<Option<Uri>>.RunAsync(async() => 
+            await blobLoader.UploadBlobAndReturnUriOrThrowAsync(
+                await downloader.DownloadDataOrThrowAsync(telegramAttachmentUri), 
+                telegramAttachmentUri.AbsoluteUri.Split('/').Last()));
     }
 }
