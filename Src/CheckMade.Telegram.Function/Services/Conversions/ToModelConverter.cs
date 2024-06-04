@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
@@ -13,7 +14,10 @@ public interface IToModelConverter
     Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType);
 }
 
-internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
+internal class ToModelConverter(
+        ITelegramFilePathResolver filePathResolver,
+        IBlobLoader blobLoader) 
+    : IToModelConverter
 {
     public async Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType)
     {
@@ -212,20 +216,20 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         TelegramUserId userId = wrappedUpdate.Message.From.Id;
         TelegramChatId chatId = wrappedUpdate.Message.Chat.Id;
 
-        var telegramAttachmentUri = Option<Uri>.None();
-        
-        if (attachmentDetails.FileId.IsSome)
-        {
-            var pathAttempt = await filePathResolver.GetTelegramFilePathAsync(
-                attachmentDetails.FileId.GetValueOrDefault());
-            
-            if (pathAttempt.IsError)
-                return new Error(FailureMessage:
-                    Ui("Error while trying to retrieve full Telegram server path to attachment file."));
+        var telegramAttachmentUriAttempt = attachmentDetails.FileId.IsSome 
+            ? await GetTelegramAttachmentUriAsync(attachmentDetails.FileId)
+            : Option<Uri>.None();
 
-            telegramAttachmentUri = new Uri(pathAttempt.GetValueOrDefault());
-        }
-        
+        if (telegramAttachmentUriAttempt.IsError)
+            return telegramAttachmentUriAttempt.Error!;
+
+        var internalAttachmentUriAttempt = attachmentDetails.FileId.IsSome
+            ? await UploadBlobAndGetInternalUriAsync(attachmentDetails.FileId)
+            : Option<Uri>.None();
+
+        if (internalAttachmentUriAttempt.IsError)
+            return internalAttachmentUriAttempt.Error!;
+
         var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
             ? wrappedUpdate.Message.Text
             : wrappedUpdate.Message.Caption;
@@ -235,12 +239,32 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 wrappedUpdate.Message.Date,
                 wrappedUpdate.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                telegramAttachmentUri,
-                Option<Uri>.None(), // ToDo: actually implement upload and put real Uri here
+                telegramAttachmentUriAttempt.Value!,
+                internalAttachmentUriAttempt.Value!,
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
                 domainCategoryEnumCode,
                 controlPromptEnumCode));
+    }
+
+    private async Task<Attempt<Option<Uri>>> GetTelegramAttachmentUriAsync(Option<string> fileId)
+    {
+        return (await GetPathAsync())
+            .Match(
+                path => Option<Uri>.Some(GetUriFromPath(path)), 
+                Attempt<Option<Uri>>.Fail
+        );
+        
+        async Task<Attempt<string>> GetPathAsync() =>
+            await filePathResolver.GetTelegramFilePathAsync(fileId.GetValueOrDefault());
+
+        static Uri GetUriFromPath(string path) => new(path);
+    }
+
+    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Option<string> fileId)
+    {
+        throw new NotImplementedException();
+        // return await blobLoader.UploadBlobAndReturnUriAsync()
     }
 }
