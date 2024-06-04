@@ -49,7 +49,7 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Audio)]
     [InlineData(AttachmentType.Document)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidAttachmentMessage_ToAnyBotType(
+    public async Task ConvertToModelAsync_ResultsInCorrectTelegramUri_ForValidAttachmentMessage_ToAnyBotType(
         AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -82,7 +82,8 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             attachmentUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri, 
+        // Can't do a deep comparison with Equivalent on the entire updates here due to the complex Uri() type.
+        Assert.Equal(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri, 
             actualTelegramUpdate.GetValueOrDefault().Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri);
     }
 
