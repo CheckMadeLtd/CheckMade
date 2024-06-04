@@ -96,6 +96,19 @@ public class OperationsRequestProcessor(
     
     private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
     {
+        // Temp, for testing purposes only
+        if (telegramUpdate.Details.Text.GetValueOrDefault() == "n")
+        {
+            return new List<OutputDto>
+            {
+                OutputDto.Create(UiNoTranslate("Message1")),
+                OutputDto.Create(UiNoTranslate("Message2")), 
+                OutputDto.Create(
+                    UiNoTranslate("Go here now:"),
+                    new Geo(12.111, 34.007, Option<float>.None()))
+            };
+        }
+        
         return new List<OutputDto>();
     }
 }

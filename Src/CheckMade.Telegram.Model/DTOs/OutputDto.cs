@@ -159,6 +159,18 @@ public record OutputDto
             Option<Geo>.None());
     
     public static OutputDto Create(
+        UiString text,
+        Geo location) =>
+        new(
+            Option<TelegramOutputDestination>.None(), 
+            text,
+            Option<IEnumerable<DomainCategory>>.None(), 
+            Option<IEnumerable<ControlPrompts>>.None(), 
+            Option<IEnumerable<string>>.None(), 
+            Option<IEnumerable<OutputAttachmentDetails>>.None(), 
+            location);
+    
+    public static OutputDto Create(
         TelegramOutputDestination destination,
         UiString text,
         Geo location) =>

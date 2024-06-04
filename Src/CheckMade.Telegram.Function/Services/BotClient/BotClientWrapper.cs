@@ -41,7 +41,6 @@ public interface IBotClientWrapper
 
     Task<Unit> SendLocationOrThrowAsync(
         ChatId chatId,
-        Option<string> text,
         Geo location,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
@@ -59,6 +58,10 @@ public class BotClientWrapper(
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
+    private const string TelegramSendOutExceptionMessage =
+        "Either failed to construct valid SendOut parameters for " +
+        "Telegram or failed to reach its servers (after several attempts).";
+    
     public BotType MyBotType { get; } = botType; 
     public string MyBotToken { get; } = botToken;
     
@@ -96,7 +99,7 @@ public class BotClientWrapper(
         }
         catch (Exception ex)
         {
-            throw new NetworkAccessException("Failed to reach Telegram servers after several attempts.", ex);
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
         }
         
         return Unit.Value;
@@ -120,11 +123,25 @@ public class BotClientWrapper(
         throw new NotImplementedException();
     }
 
-    public Task<Unit> SendLocationOrThrowAsync(
-        ChatId chatId, Option<string> text, Geo location, Option<IReplyMarkup> replyMarkup,
+    public async Task<Unit> SendLocationOrThrowAsync(
+        ChatId chatId, Geo location, Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await botClient.SendLocationAsync(
+                chatId: chatId,
+                latitude: location.Latitude,
+                longitude: location.Longitude,
+                replyMarkup: replyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+
+        return Unit.Value;
     }
 
     public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);

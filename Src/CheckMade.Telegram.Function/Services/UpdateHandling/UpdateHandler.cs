@@ -107,7 +107,7 @@ public class UpdateHandler(
                             blobLoader)
                         .ContinueWith(task => 
                         { 
-                            if (task.Result.IsError) // e.g. NetworkAccessException thrown downstream 
+                            if (task.Result.IsError) // e.g. TelegramSendOutException thrown downstream 
                                 logger.LogWarning($"An error occurred while trying to send " +
                                                 $"{nameof(error.FailureMessage)} to the user."); 
                         });
@@ -238,7 +238,6 @@ public class UpdateHandler(
                     await destinationBotClient
                         .SendLocationOrThrowAsync(
                             destinationChatId,
-                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
                             output.Location.Value!,
                             converter.GetReplyMarkup(output));
                 }

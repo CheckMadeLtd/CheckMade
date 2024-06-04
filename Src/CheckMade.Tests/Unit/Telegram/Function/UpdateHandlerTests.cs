@@ -407,7 +407,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         basics.mockBotClient.Verify(
             x => x.SendLocationOrThrowAsync(
                 It.IsAny<ChatId>(),
-                It.IsAny<Option<string>>(),
                 It.Is<Geo>(geo => geo == outputWithLocation[0].Location),
                 It.IsAny<Option<IReplyMarkup>>(),
                 It.IsAny<CancellationToken>()),
