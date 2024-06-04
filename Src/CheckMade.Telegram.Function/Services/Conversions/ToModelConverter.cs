@@ -22,28 +22,21 @@ internal class ToModelConverter(
     public async Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType)
     {
         return (await
-                (from modelUpdateType
-                        in GetModelUpdateType(wrappedUpdate)
-                    from attachmentDetails
-                        in GetAttachmentDetails(wrappedUpdate)
-                    from geoCoordinates 
-                        in GetGeoCoordinates(wrappedUpdate)
-                    from botCommandEnumCode
-                        in GetBotCommandEnumCode(wrappedUpdate, botType)
-                    from domainCategoryEnumCode
-                        in GetDomainCategoryEnumCode(wrappedUpdate)
-                    from controlPromptEnumCode
-                        in GetControlPromptEnumCode(wrappedUpdate)
-                    from telegramUpdate
-                        in GetTelegramUpdateAsync(
-                            wrappedUpdate,
-                            botType,
-                            modelUpdateType,
-                            attachmentDetails,
-                            geoCoordinates,
-                            botCommandEnumCode,
-                            domainCategoryEnumCode,
-                            controlPromptEnumCode)
+                (from modelUpdateType in GetModelUpdateType(wrappedUpdate)
+                    from attachmentDetails in GetAttachmentDetails(wrappedUpdate)
+                    from geoCoordinates in GetGeoCoordinates(wrappedUpdate)
+                    from botCommandEnumCode in GetBotCommandEnumCode(wrappedUpdate, botType)
+                    from domainCategoryEnumCode in GetDomainCategoryEnumCode(wrappedUpdate)
+                    from controlPromptEnumCode in GetControlPromptEnumCode(wrappedUpdate)
+                    from telegramUpdate in GetTelegramUpdateAsync(
+                        wrappedUpdate,
+                        botType,
+                        modelUpdateType,
+                        attachmentDetails,
+                        geoCoordinates,
+                        botCommandEnumCode,
+                        domainCategoryEnumCode,
+                        controlPromptEnumCode)
                     select telegramUpdate))
             .Match(
                 telegramUpdate => telegramUpdate,
