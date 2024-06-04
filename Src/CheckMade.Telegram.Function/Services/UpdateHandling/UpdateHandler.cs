@@ -176,21 +176,22 @@ public class UpdateHandler(
 
                 switch (output)
                 {
-                    case { Attachments.IsSome: false }:
-                        await SendTextMessageAsync();
+                    case { Attachments.IsSome: false, Location.IsSome: false }:
+                        await InvokeSendTextMessageOrThrowAsync();
                         break;
 
                     case { Attachments.IsSome: true }:
-                        await Task.WhenAll(output.Attachments.Value!.Select(SendAttachmentAsync));
+                        await Task.WhenAll(output.Attachments.Value!.Select(InvokeSendAttachmentOrThrowAsync));
                         break;
                     
                     case { Location.IsSome: true }:
+                        await InvokeSendLocationOrThrowAsync();
                         break;
                 }
                 
                 return;
 
-                async Task SendTextMessageAsync()
+                async Task InvokeSendTextMessageOrThrowAsync()
                 {
                     await destinationBotClient
                         .SendTextMessageOrThrowAsync(
@@ -200,7 +201,7 @@ public class UpdateHandler(
                             converter.GetReplyMarkup(output));
                 }
                 
-                async Task SendAttachmentAsync(OutputAttachmentDetails details)
+                async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
                 {
                     var (blobData, fileName) = 
                         await blobLoader.DownloadBlobAsync(details.AttachmentUri.AbsoluteUri);
@@ -230,7 +231,17 @@ public class UpdateHandler(
                         default:
                             throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
                     }
-                }  
+                }
+
+                async Task InvokeSendLocationOrThrowAsync()
+                {
+                    await destinationBotClient
+                        .SendLocationOrThrowAsync(
+                            destinationChatId,
+                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                            output.Location.Value!,
+                            converter.GetReplyMarkup(output));
+                }
             });
             
             /* FYI about Task.WhenAll() behaviour here

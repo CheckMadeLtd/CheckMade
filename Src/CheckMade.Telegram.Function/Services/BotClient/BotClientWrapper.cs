@@ -1,4 +1,5 @@
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Model.BotCommand;
@@ -38,6 +39,13 @@ public interface IBotClientWrapper
         AttachmentSendOutParameters audioSendOutParams,
         CancellationToken cancellationToken = default);
 
+    Task<Unit> SendLocationOrThrowAsync(
+        ChatId chatId,
+        Option<string> text,
+        Geo location,
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default);
+    
     Task<File> GetFileOrThrowAsync(string fileId);
 
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
@@ -107,6 +115,13 @@ public class BotClientWrapper(
     }
 
     public Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Unit> SendLocationOrThrowAsync(
+        ChatId chatId, Option<string> text, Geo location, Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

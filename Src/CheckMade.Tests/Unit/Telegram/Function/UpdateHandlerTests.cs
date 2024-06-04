@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
@@ -361,7 +362,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(outputWithPhoto));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.utils.GetValidTelegramTextMessage("Hey, send me some attachments!");
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
 
@@ -382,6 +383,35 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
+    }
+
+    [Fact]
+    public async Task HandleUpdateAsync_SendsLocation_WhenOutputContainsOne()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        List<OutputDto> outputWithLocation =
+        [
+            OutputDto.Create(
+                new TelegramOutputDestination(TestUtils.SanitaryOpsEngineer1, BotType.Operations),
+                UiNoTranslate("Go to this location now:"),
+                new Geo(35.098, -17.077, Option<float>.None()))
+        ];
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ =>
+            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(outputWithLocation));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("hey where do I need to go?");
+
+        await basics.handler.HandleUpdateAsync(update, BotType.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendLocationOrThrowAsync(
+                It.IsAny<ChatId>(),
+                It.IsAny<Option<string>>(),
+                It.Is<Geo>(geo => geo == outputWithLocation[0].Location),
+                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
     
     private static (ITestUtils utils, 
