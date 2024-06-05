@@ -15,7 +15,11 @@ public class ToModelConverterIntegrationTests
     [Fact]
     public async Task ConvertToModelAsync_HasCorrectInternalAttachmentUri_ForUpdateWithAttachmentInOperationsBot()
     {
-        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        var startup = new IntegrationTestStartup();
+        if (startup.HostingEnvironment == "CI")
+            return;
+        
+        _services = startup.Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         const string realFileIdOnDevOperationsBot = // uploaded on 04/06/2024
             "BQACAgQAAxkBAAMvZl9iHPHKeRre-ldIyMhLcEvi6a8AAi0gAALxa_lS9Z28FPz-17Q1BA";

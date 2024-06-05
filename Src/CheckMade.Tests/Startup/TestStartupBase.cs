@@ -10,7 +10,7 @@ namespace CheckMade.Tests.Startup;
 public abstract class TestStartupBase
 {
     protected IConfigurationRoot Config { get; private init; }
-    protected string HostingEnvironment { get; private init; }
+    internal string HostingEnvironment { get; private init; }
     internal ServiceCollection Services { get; } = [];
     
     protected TestStartupBase()
