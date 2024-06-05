@@ -8,10 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration;
 
-public class ToModelConverterIntegrationTests
+public class ConverterIntegrationTests
 {
     private IServiceProvider? _services;
-
+    
     [Fact]
     public async Task ConvertToModelAsync_HasCorrectInternalAttachmentUri_ForUpdateWithAttachmentInOperationsBot()
     {
@@ -36,10 +36,10 @@ public class ToModelConverterIntegrationTests
         
         var actualModel = await converter.ConvertToModelAsync(
             updateWithAttachment, BotType.Operations);
-
+    
         var (downloadedStream, _) = await blobLoader.DownloadBlobOrThrowAsync(
             actualModel.Value!.Details.AttachmentInternalUri.Value!);
-
+        
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());
         
         Assert.Equal(realFileUtf8Content, downloadedContent);
