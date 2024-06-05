@@ -16,6 +16,7 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        services.AddSingleton<IBotClientFactory, BotClientFactory>();
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
 
         var botTypes = Enum.GetNames(typeof(BotType));
@@ -23,8 +24,6 @@ internal static class ConfigureServicesExtensions
         {
             services.AddHttpClient($"CheckMade{botType}Bot");            
         }    
-        
-        services.AddSingleton<IBotClientFactory, BotClientFactory>();
     }
 
     internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
