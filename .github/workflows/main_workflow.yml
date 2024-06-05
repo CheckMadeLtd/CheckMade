@@ -202,8 +202,8 @@ jobs:
           FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING: ${{ secrets.FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING }}
           GOOGLE_SHEET_ID_TEST_DATA: '1b6AHy35omBwmUsMNIfRjRIEJ__4YxLnNwviz8h8287I'
           GOOGLE_API_CREDENTIAL_FILE: '.checkmade-42aed1cb03b1-google_api_credential.json'
-          BlobContainerClientUri: ''
-          BlobContainerClientAccountName: ''
+          BlobContainerClientUri: 'https://storagedmamq.blob.core.windows.net/checkmade'
+          BlobContainerClientAccountName: 'storagedmamq'
           BlobContainerClientAccountKey: ${{ secrets.BLOB_CONTAINER_CLIENT_ACCOUNT_KEY }}
             
       #  Deploy ---------------------------------

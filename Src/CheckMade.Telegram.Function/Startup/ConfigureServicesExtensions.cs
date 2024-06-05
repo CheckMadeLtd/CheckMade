@@ -72,6 +72,7 @@ internal static class ConfigureServicesExtensions
 
     internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
     {
+        // This style of spelling of keys so they work both, in UNIX env on GitHub Actions and in Azure Keyvault!
         const string keyToBlobContainerUri = "BlobContainerClientUri";
         const string keyToBlobContainerAccountName = "BlobContainerClientAccountName";
         const string keyToBlobContainerAccountKey = "BlobContainerClientAccountKey";

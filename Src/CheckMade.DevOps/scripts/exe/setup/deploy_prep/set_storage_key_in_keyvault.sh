@@ -19,3 +19,8 @@ key1=$(az storage account keys list -n "$STORAGE_NAME" --query "[0].value" --out
 
 echo "Now setting key1 as a new secret called 'BlobContainerClientAccountKey' in keyvault..."
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name BlobContainerClientAccountKey --value "$key1"
+
+echo "Now update the BLOB_CONTAINER_CLIENT_ACCOUNT_KEY secret stored in GitHub Repo Secrets. 
+The new key has been copied to the clipboard. Continue with Enter when done."
+echo $key1 | pbcopy
+read -r
