@@ -72,9 +72,9 @@ internal static class ConfigureServicesExtensions
 
     internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
     {
-        const string keyToBlobContainerUri = "BlobContainerClient:Uri";
-        const string keyToBlobContainerAccountName = "BlobContainerClient:AccountName";
-        const string keyToBlobContainerAccountKey = "BlobContainerClient:AccountKey";
+        const string keyToBlobContainerUri = "BlobContainerClientUri";
+        const string keyToBlobContainerAccountName = "BlobContainerClientAccountName";
+        const string keyToBlobContainerAccountKey = "BlobContainerClientAccountKey";
 
         var blobContainerUriKey = config.GetValue<string>(keyToBlobContainerUri)
                                   ?? throw new InvalidOperationException($"Can't find {keyToBlobContainerUri}");
