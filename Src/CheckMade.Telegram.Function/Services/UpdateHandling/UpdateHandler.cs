@@ -70,28 +70,19 @@ public class UpdateHandler(
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
 
-        var getOutputsAttempt = await
+        var sendOutputsAttempt = await
             (from telegramUpdate
-                    in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
+                    in toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
                 from outputs
                     in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
-                select outputs);
-                
-        // ToDo: handle failure case
-        // If this works, can I reintegrate into a single from.... select ? 
+                from unit
+                    in Attempt<Unit>.RunAsync(() => 
+                        SendOutputsOrThrowAsync(
+                            outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
+                            chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader))
+                select unit);
         
-        var sendOutAttempt = await Attempt<Unit>.RunAsync(async () => 
-            await SendOutputsOrThrowAsync(
-                    getOutputsAttempt.Value!, 
-                    botClientByBotType,
-                    updateReceivingBotType,
-                    updateReceivingChatId,
-                    chatIdByOutputDestination,
-                    uiTranslator,
-                    replyMarkupConverter,
-                    blobLoader));
-            
-        return sendOutAttempt.Match(
+        return sendOutputsAttempt.Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
@@ -101,23 +92,19 @@ public class UpdateHandler(
                 {
                     logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
-                    
-                    // _ = SendOutputsOrThrowAsync(
-                    //         new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                    //         botClientByBotType,
-                    //         updateReceivingBotType,
-                    //         updateReceivingChatId,
-                    //         chatIdByOutputDestination,
-                    //         uiTranslator,
-                    //         replyMarkupConverter,
-                    //         blobLoader)
-                    //     .ContinueWith(task => 
-                    //     { 
-                    //         // ToDo: should this not be  task.IsFaulted == true instead?? Thich Task is it? Ah the one returned from SendOutputAsync. So if I fix it down there, this should be fine after all...  
-                    //         if (task.Result.IsError) // e.g. TelegramSendOutException thrown downstream 
-                    //             logger.LogWarning($"An error occurred while trying to send " +
-                    //                             $"{nameof(error.FailureMessage)} to the user."); 
-                    //     });
+
+                    _ = SendOutputsOrThrowAsync(
+                            new List<OutputDto> { OutputDto.Create(error.FailureMessage) },
+                            botClientByBotType, updateReceivingBotType, updateReceivingChatId,
+                            chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)
+                        .ContinueWith(task =>
+                        {
+                            if (task.Exception != null)
+                            {
+                                logger.LogWarning($"An error occurred while trying to send " +
+                                                         $"{nameof(error.FailureMessage)} to the user."); 
+                            }
+                        });
                 }
 
                 if (error.Exception != null)
@@ -189,13 +176,14 @@ public class UpdateHandler(
 
                 case { Attachments.IsSome: true }:
                     await Task.WhenAll(output.Attachments.Value!.Select(InvokeSendAttachmentOrThrowAsync));
-                    // await InvokeSendAttachmentOrThrowAsync(output.Attachments.Value!.First());
                     break;
 
                 case { Location.IsSome: true }:
                     await InvokeSendLocationOrThrowAsync();
                     break;
             }
+
+            return;
 
             async Task InvokeSendTextMessageOrThrowAsync()
             {
@@ -252,7 +240,7 @@ public class UpdateHandler(
         
         /* FYI about Task.WhenAll() behaviour here
          * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
-         * 2) Once all completed, thanks to 'await', rethrows any Exception that might have occurred in any one task's execution. */
+         * 2) Once all completed, the 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */
         await Task.WhenAll(parallelTasks);
 
         return Unit.Value;
