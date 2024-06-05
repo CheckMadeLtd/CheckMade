@@ -158,6 +158,8 @@ public class UpdateHandler(
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader)
     {
+        // ToDo: I suspect the independent parallel tasking leads to possibility of messages out of order (see mobile screenshot on 05/06/2024)!
+        // Parallel would be ok though per OutputDestination! But within the same destination, in series!
         var parallelTasks = outputs.Select(async output =>
         {
             var destinationBotClient = output.ExplicitDestination.IsSome
