@@ -1,4 +1,5 @@
-using CheckMade.Common.Interfaces;
+using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Persistence.Repositories;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,5 +14,9 @@ public static class DependencyRegistration
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>()));
+        
+        services.AddScoped<ITelegramUpdateRepository, TelegramUpdateRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IChatIdByOutputDestinationRepository, ChatIdByOutputDestinationRepository>();
     }
 }

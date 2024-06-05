@@ -1,11 +1,11 @@
+using CheckMade.Common.ExternalServices;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic;
-using CheckMade.Telegram.Model;
-using CheckMade.Telegram.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +16,7 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        services.AddSingleton<IBotClientFactory, BotClientFactory>();
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
 
         var botTypes = Enum.GetNames(typeof(BotType));
@@ -23,21 +24,17 @@ internal static class ConfigureServicesExtensions
         {
             services.AddHttpClient($"CheckMade{botType}Bot");            
         }    
-        
-        services.AddSingleton<IBotClientFactory, BotClientFactory>();
     }
 
     internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
     {
-        services.AddScoped<IMessageHandler, MessageHandler>();
+        services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
     }
     
     internal static void ConfigurePersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        services.Add_TelegramPersistence_Dependencies();
-        
         var dbConnectionString = hostingEnvironment switch
         {
             "Development" or "CI" => 
@@ -70,6 +67,30 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureUtilityServices(this IServiceCollection services)
     {
         services.Add_CommonUtils_Dependencies();
+    }
+
+    internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
+    {
+        // This style of spelling of keys so they work both, in UNIX env on GitHub Actions and in Azure Keyvault!
+        const string keyToBlobContainerUri = "BlobContainerClientUri";
+        const string keyToBlobContainerAccountName = "BlobContainerClientAccountName";
+        const string keyToBlobContainerAccountKey = "BlobContainerClientAccountKey";
+
+        var blobContainerUriKey = config.GetValue<string>(keyToBlobContainerUri)
+                                  ?? throw new InvalidOperationException($"Can't find {keyToBlobContainerUri}");
+
+        var blobContainerAccountName = config.GetValue<string>(keyToBlobContainerAccountName)
+                                       ?? throw new InvalidOperationException(
+                                           $"Can't find {keyToBlobContainerAccountName}");
+
+        var blobContainerAccountKey = config.GetValue<string>(keyToBlobContainerAccountKey)
+                                      ?? throw new InvalidOperationException(
+                                          $"Can't find {keyToBlobContainerAccountKey}");
+
+        services.Add_AzureServices_Dependencies(
+            blobContainerUriKey, blobContainerAccountName, blobContainerAccountKey);
+        
+        services.Add_OtherExternalFacingServices_Dependencies();
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 

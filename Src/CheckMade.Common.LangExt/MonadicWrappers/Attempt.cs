@@ -6,8 +6,8 @@ public record Error(Exception? Exception = null, UiString? FailureMessage = null
 
 public record Attempt<T>
 {
-    internal T? Value { get; }
-    internal Error? Error { get; }
+    public T? Value { get; }
+    public Error? Error { get; }
     
     public bool IsSuccess => Error == null;
     public bool IsError => !IsSuccess;
@@ -48,6 +48,7 @@ public record Attempt<T>
         {
             return new Attempt<T>(await func());
         }
+        // this also includes AggregateException type (e.g. from 'await Task.WhenAll()) thanks to recursive nature
         catch (Exception ex)
         {
             return new Attempt<T>(new Error(Exception: ex));

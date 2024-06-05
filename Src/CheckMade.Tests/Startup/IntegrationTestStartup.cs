@@ -21,6 +21,7 @@ public class IntegrationTestStartup : TestStartupBase
     {
         Services.ConfigureBotClientServices(Config, HostingEnvironment);
         Services.ConfigurePersistenceServices(Config, HostingEnvironment);
+        Services.ConfigureExternalServices(Config);
 
         /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
          also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need

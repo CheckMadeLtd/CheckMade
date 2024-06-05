@@ -1,5 +1,5 @@
-using CheckMade.Telegram.Logic.RequestProcessors.ByBotType;
-using CheckMade.Telegram.Model;
+using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 namespace CheckMade.Telegram.Logic.RequestProcessors;
 

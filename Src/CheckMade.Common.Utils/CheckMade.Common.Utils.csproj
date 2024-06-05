@@ -16,12 +16,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.ExternalServices\CheckMade.Common.ExternalServices.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="CsvHelper" Version="32.0.3" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="Polly" Version="8.4.0" />
     </ItemGroup>

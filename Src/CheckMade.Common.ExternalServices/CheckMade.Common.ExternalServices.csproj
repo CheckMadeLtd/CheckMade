@@ -15,9 +15,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
       <PackageReference Include="Google.Apis" Version="1.68.0" />
       <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3407" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     </ItemGroup>
 

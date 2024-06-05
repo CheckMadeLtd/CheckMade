@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Model.DTOs;
@@ -29,7 +31,9 @@ public class OutputToReplyMarkupConverterTests
             (category: DomainCategory.SanitaryOps_FacilityStaff,
                 categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
         };
-        var fakeOutput = OutputDto.Create(categorySelection.Select(pair => pair.category).ToArray());
+        var fakeOutput = OutputDto.Create(
+            basics.fakeDestination,
+            categorySelection.Select(pair => pair.category).ToArray());
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -69,7 +73,9 @@ public class OutputToReplyMarkupConverterTests
             (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((long)ControlPrompts.Ok)),
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
-        var fakeOutput = OutputDto.Create(promptSelection.Select(pair => pair.prompt).ToArray());
+        var fakeOutput = OutputDto.Create(
+            basics.fakeDestination,
+            promptSelection.Select(pair => pair.prompt).ToArray());
 
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -111,14 +117,15 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var categorySelection = new[]
         {
-            (category: DomainCategory.SanitaryOps_RoleCleanLead,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_RoleCleanLead))
+            (category: DomainCategory.SanitaryOps_FacilityShowers,
+                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityShowers))
         };
         var promptSelection = new[] 
         {
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
         var fakeOutput = OutputDto.Create(
+            basics.fakeDestination,
             categorySelection.Select(pair => pair.category).ToArray(), 
             promptSelection.Select(pair => pair.prompt).ToArray());
         
@@ -149,7 +156,9 @@ public class OutputToReplyMarkupConverterTests
         const string choice3 = "c3";
         const string choice4 = "c4";
         const string choice5 = "c5";
-        var fakeOutput = OutputDto.Create(new[] { choice1, choice2, choice3, choice4, choice5 });
+        var fakeOutput = OutputDto.Create(
+            basics.fakeDestination,
+            new[] { choice1, choice2, choice3, choice4, choice5 });
         
         // Assumes replyKeyboardNumberOfColumns = 3
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
@@ -174,7 +183,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = OutputDto.CreateEmpty();
+        var fakeOutput = OutputDto.Create(UiNoTranslate("some fake output text"));
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
@@ -186,7 +195,9 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = OutputDto.Create(new[] { ControlPrompts.Back + 1 });
+        var fakeOutput = OutputDto.Create(
+            basics.fakeDestination,
+            new[] { ControlPrompts.Back + 1 });
 
         var act = () => basics.converter.GetReplyMarkup(fakeOutput);
         
@@ -195,7 +206,8 @@ public class OutputToReplyMarkupConverterTests
     
     private static (IOutputToReplyMarkupConverter converter, 
         IReadOnlyDictionary<EnumCallbackId, UiString> uiByCategoryId,
-        IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId) 
+        IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId,
+        TelegramOutputDestination fakeDestination) 
         GetBasicTestingServices(IServiceProvider sp)
     {
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
@@ -206,7 +218,9 @@ public class OutputToReplyMarkupConverterTests
         var enumUiStringProvider = new EnumUiStringProvider();
         var uiByCategoryId = enumUiStringProvider.ByDomainCategoryId;
         var uiByPromptId = enumUiStringProvider.ByControlPromptId;
+        var fakeDestination = new TelegramOutputDestination(
+            TestUtils.SanitaryOpsInspector1, BotType.Operations);
         
-        return (converter, uiByCategoryId, uiByPromptId);
+        return (converter, uiByCategoryId, uiByPromptId, fakeDestination);
     }
 }

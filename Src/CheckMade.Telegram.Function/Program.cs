@@ -2,9 +2,9 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.Common.LangExt;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +53,7 @@ var host = new HostBuilder()
         services.ConfigurePersistenceServices(config, hostingEnvironment);
         services.ConfigureUtilityServices();
         services.ConfigureBotBusinessServices();
+        services.ConfigureExternalServices(config);
     })
     .ConfigureLogging((hostContext, logging) =>
     {
@@ -155,7 +156,7 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             (from botClient
                 in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClientOrThrow(botType))
             from unit in Attempt<Unit>.RunAsync(async () =>
-                await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus(), botType))
+                await botClient.SetBotCommandMenuOrThrowAsync(new BotCommandMenus()))
             select unit))
             .Match(
                 unit => unit, 

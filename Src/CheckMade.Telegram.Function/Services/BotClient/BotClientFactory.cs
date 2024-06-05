@@ -1,6 +1,6 @@
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Model;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
@@ -24,6 +24,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.OperationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy, 
+            botType,
             botTokens.OperationsBotToken,
             loggerForClient),
         
@@ -31,6 +32,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
+            botType,
             botTokens.CommunicationsBotToken,
             loggerForClient),
         
@@ -38,6 +40,7 @@ public class BotClientFactory(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{botType}Bot")),
             retryPolicy,
+            botType,
             botTokens.NotificationsBotToken,
             loggerForClient),
         

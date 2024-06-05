@@ -30,15 +30,15 @@ while true; do
   echo "---"
   echo "Please choose the bot by entering the two-digit id (or 'q' to exit):"
   
-  echo "ds = (dev) Operations Bot"
+  echo "do = (dev) Operations Bot"
   echo "dc = (dev) Communications Bot"
   echo "dn = (dev) Notifications Bot"
   echo " "
-  echo "ss = (stg) Operations Bot"
+  echo "so = (stg) Operations Bot"
   echo "sc = (stg) Communications Bot"
   echo "sn = (stg) Notifications Bot"
   echo " "
-  echo "ps = (prd) Operations Bot"
+  echo "po = (prd) Operations Bot"
   echo "pc = (prd) Communications Bot"
   echo "pn = (prd) Notifications Bot"
   
@@ -48,21 +48,21 @@ while true; do
     echo "No bot was chosen, aborting"
     return 0
   
-  elif [ "$bot_choice" == "ds" ]; then
+  elif [ "$bot_choice" == "do" ]; then
     bot_token="$DEV_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "dc" ]; then
     bot_token="$DEV_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "dn" ]; then
     bot_token="$DEV_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
   
-  elif [ "$bot_choice" == "ss" ]; then
+  elif [ "$bot_choice" == "so" ]; then
     bot_token="$STG_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "sc" ]; then
     bot_token="$STG_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "sn" ]; then
     bot_token="$STG_CHECKMADE_NOTIFICATIONS_BOT_TOKEN"
   
-  elif [ "$bot_choice" == "ps" ]; then
+  elif [ "$bot_choice" == "po" ]; then
     bot_token="$PRD_CHECKMADE_OPERATIONS_BOT_TOKEN"
   elif [ "$bot_choice" == "pc" ]; then
     bot_token="$PRD_CHECKMADE_COMMUNICATIONS_BOT_TOKEN"
@@ -87,7 +87,7 @@ while true; do
   
   bot_type=${bot_choice:1:1} # the second letter
   
-  if [ "$bot_type" == "s" ]; then
+  if [ "$bot_type" == "o" ]; then
     function_name="OperationsBot"
   elif [ "$bot_type" == "c" ]; then
     function_name="CommunicationsBot"

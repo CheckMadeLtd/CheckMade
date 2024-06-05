@@ -1,6 +1,6 @@
 using System.Net;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Model;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -36,7 +36,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            await botUpdateSwitch.HandleUpdateAsync(update, BotType);
+            await botUpdateSwitch.SwitchUpdateAsync(update, BotType);
             return  defaultOkResponse;
         }
         catch (Exception ex)

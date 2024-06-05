@@ -1,6 +1,9 @@
+using CheckMade.Common.ExternalServices.ExternalUtils;
+using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Interfaces;
 using CheckMade.Tests.Startup.DefaultMocks;
+using CheckMade.Tests.Startup.DefaultMocks.Repositories;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -18,9 +21,12 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<IMessageRepository, MockMessageRepository>(_ => 
-            new MockMessageRepository(new Mock<IMessageRepository>()));
-        
+        Services.AddScoped<ITelegramUpdateRepository, MockTelegramUpdateRepository>(_ => 
+            new MockTelegramUpdateRepository(new Mock<ITelegramUpdateRepository>()));
+        Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
+        Services.AddScoped<IChatIdByOutputDestinationRepository, MockChatIdByOutputDestinationRepository>(_ => 
+            new MockChatIdByOutputDestinationRepository());
+
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
          in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 
          mockBotClientWrapper without explicitly setting up the mock in the unit test itself.
@@ -33,22 +39,24 @@ public class UnitTestStartup : TestStartupBase
          
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
-        
         Services.AddScoped<Mock<IBotClientWrapper>>(_ =>
         {
-            var mockBotClient = new Mock<IBotClientWrapper>();
+            var mockBotClientWrapper = new Mock<IBotClientWrapper>();
             
-            mockBotClient
+            mockBotClientWrapper
                 .Setup(x => x.GetFileOrThrowAsync(It.IsNotNull<string>()))
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
+            mockBotClientWrapper
+                .Setup(x => x.MyBotToken)
+                .Returns("fakeToken");
             
-            mockBotClient
-                .Setup(x => x.BotToken).Returns("fakeToken");
-
-            return mockBotClient;
+            return mockBotClientWrapper;
         });
         
         Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
-            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>().Object));
+            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
+        
+        Services.AddScoped<IBlobLoader, MockBlobLoader>();
+        Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
 }

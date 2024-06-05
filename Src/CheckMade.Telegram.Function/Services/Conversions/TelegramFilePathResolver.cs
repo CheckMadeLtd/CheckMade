@@ -17,7 +17,7 @@ internal class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegram
         var fileAttempt = await Attempt<File>.RunAsync(async () => await botClient.GetFileOrThrowAsync(fileId));
         
         return fileAttempt.Match(
-            file => TelegramBotDownloadFileApiUrlStub + $"bot{botClient.BotToken}/{file.FilePath}",
+            file => TelegramBotDownloadFileApiUrlStub + $"bot{botClient.MyBotToken}/{file.FilePath}",
             Attempt<string>.Fail);  
     }
 }

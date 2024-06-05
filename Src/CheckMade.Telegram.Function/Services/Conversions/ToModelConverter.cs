@@ -1,50 +1,48 @@
+using CheckMade.Common.ExternalServices.ExternalUtils;
+using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.RequestProcessors;
-using CheckMade.Telegram.Model;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Telegram.Function.Services.Conversions;
 
 public interface IToModelConverter
 {
-    Task<Attempt<InputMessageDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType);
+    Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType);
 }
 
-internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IToModelConverter
+internal class ToModelConverter(
+        ITelegramFilePathResolver filePathResolver,
+        IBlobLoader blobLoader,
+        IHttpDownloader downloader) 
+    : IToModelConverter
 {
-    public async Task<Attempt<InputMessageDto>> ConvertToModelAsync(UpdateWrapper telegramUpdate, BotType botType)
+    public async Task<Attempt<TelegramUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, BotType botType)
     {
         return (await
-                (from modelUpdateType
-                        in GetModelUpdateType(telegramUpdate)
-                    from attachmentDetails
-                        in GetAttachmentDetails(telegramUpdate)
-                    from geoCoordinates 
-                        in GetGeoCoordinates(telegramUpdate)
-                    from botCommandEnumCode
-                        in GetBotCommandEnumCode(telegramUpdate, botType)
-                    from domainCategoryEnumCode
-                        in GetDomainCategoryEnumCode(telegramUpdate)
-                    from controlPromptEnumCode
-                        in GetControlPromptEnumCode(telegramUpdate)
-                    from modelInputMessage
-                        in GetInputMessageAsync(
-                            telegramUpdate,
-                            botType,
-                            modelUpdateType,
-                            attachmentDetails,
-                            geoCoordinates,
-                            botCommandEnumCode,
-                            domainCategoryEnumCode,
-                            controlPromptEnumCode)
-                    select modelInputMessage))
+                (from modelUpdateType in GetModelUpdateType(wrappedUpdate)
+                    from attachmentDetails in GetAttachmentDetails(wrappedUpdate)
+                    from geoCoordinates in GetGeoCoordinates(wrappedUpdate)
+                    from botCommandEnumCode in GetBotCommandEnumCode(wrappedUpdate, botType)
+                    from domainCategoryEnumCode in GetDomainCategoryEnumCode(wrappedUpdate)
+                    from controlPromptEnumCode in GetControlPromptEnumCode(wrappedUpdate)
+                    from telegramUpdate in GetTelegramUpdateAsync(
+                        wrappedUpdate,
+                        botType,
+                        modelUpdateType,
+                        attachmentDetails,
+                        geoCoordinates,
+                        botCommandEnumCode,
+                        domainCategoryEnumCode,
+                        controlPromptEnumCode)
+                    select telegramUpdate))
             .Match(
-                modelInputMessage => modelInputMessage,
-                error => Attempt<InputMessageDto>.Fail(
+                telegramUpdate => telegramUpdate,
+                error => Attempt<TelegramUpdate>.Fail(
                     error with // preserves any contained Exception and prefixes any contained Error UiString
                     {
                         FailureMessage = UiConcatenate(
@@ -54,12 +52,12 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                 ));
     }
 
-    private static Attempt<ModelUpdateType> GetModelUpdateType(UpdateWrapper telegramUpdate) =>
-        telegramUpdate.Update.Type switch
+    private static Attempt<ModelUpdateType> GetModelUpdateType(UpdateWrapper wrappedUpdate) =>
+        wrappedUpdate.Update.Type switch
         {
-            UpdateType.Message or UpdateType.EditedMessage => telegramUpdate.Message.Type switch
+            UpdateType.Message or UpdateType.EditedMessage => wrappedUpdate.Message.Type switch
             {
-                MessageType.Text => telegramUpdate.Message.Entities?[0].Type switch
+                MessageType.Text => wrappedUpdate.Message.Entities?[0].Type switch
                 {
                     MessageEntityType.BotCommand => ModelUpdateType.CommandMessage,
                     _ => ModelUpdateType.TextMessage
@@ -71,45 +69,45 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             UpdateType.CallbackQuery => ModelUpdateType.CallbackQuery,
 
             _ => throw new InvalidOperationException(
-                $"Telegram Update of type {telegramUpdate.Update.Type} is not yet supported " +
+                $"Telegram Update of type {wrappedUpdate.Update.Type} is not yet supported " +
                 $"and shouldn't be handled in this converter!")
         };
 
-    private static Attempt<AttachmentDetails> GetAttachmentDetails(UpdateWrapper telegramUpdate)
+    private static Attempt<AttachmentDetails> GetAttachmentDetails(UpdateWrapper wrappedUpdate)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
-        return telegramUpdate.Message.Type switch
+        return wrappedUpdate.Message.Type switch
         {
             MessageType.Text or MessageType.Location => new AttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
 
-            MessageType.Audio => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                telegramUpdate.Message.Audio?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, telegramUpdate.Message.Type)),
-                AttachmentType.Audio)),
-
             MessageType.Document => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                telegramUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, telegramUpdate.Message.Type)),
+                wrappedUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
                 AttachmentType.Document)),
 
             MessageType.Photo => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                telegramUpdate.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
+                wrappedUpdate.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, telegramUpdate.Message.Type)),
+                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
                 AttachmentType.Photo)),
 
+            MessageType.Voice => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
+                wrappedUpdate.Message.Voice?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
+                AttachmentType.Voice)),
+
             _ => new Error(FailureMessage:
-                Ui("Attachment type {0} is not yet supported!", telegramUpdate.Message.Type))
+                Ui("Attachment type {0} is not yet supported!", wrappedUpdate.Message.Type))
         };
     }
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    private static Attempt<Option<Geo>> GetGeoCoordinates(UpdateWrapper telegramUpdate) =>
-        telegramUpdate.Message.Location switch
+    private static Attempt<Option<Geo>> GetGeoCoordinates(UpdateWrapper wrappedUpdate) =>
+        wrappedUpdate.Message.Location switch
         {
             { } location => Option<Geo>.Some(new Geo(
                 location.Latitude,
@@ -119,17 +117,15 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             _ => Option<Geo>.None() 
         };
     
-    private static Attempt<Option<int>> GetBotCommandEnumCode(
-        UpdateWrapper telegramUpdate,
-        BotType botType)
+    private static Attempt<Option<int>> GetBotCommandEnumCode(UpdateWrapper wrappedUpdate, BotType botType)
     {
-        var botCommandEntity = telegramUpdate.Message.Entities?
+        var botCommandEntity = wrappedUpdate.Message.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
 
         if (botCommandEntity == null)
             return Option<int>.None();
 
-        if (telegramUpdate.Message.Text == Start.Command)
+        if (wrappedUpdate.Message.Text == Start.Command)
             return Option<int>.Some(Start.CommandCode);
         
         var allBotCommandMenus = new BotCommandMenus();
@@ -142,14 +138,14 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
 
-        var botCommandFromInputMessage = botCommandMenuForCurrentBotType
+        var botCommandFromTelegramUpdate = botCommandMenuForCurrentBotType
             .SelectMany(kvp => kvp.Values)
-            .FirstOrDefault(mbc => mbc.Command == telegramUpdate.Message.Text);
+            .FirstOrDefault(mbc => mbc.Command == wrappedUpdate.Message.Text);
         
-        if (botCommandFromInputMessage == null)
+        if (botCommandFromTelegramUpdate == null)
             return new Error (FailureMessage: UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
-                    telegramUpdate.Message.Text ?? "[empty text!]", botType, "W3DL9"),
+                    wrappedUpdate.Message.Text ?? "[empty text!]", botType, "W3DL9"),
                 IRequestProcessor.SeeValidBotCommandsInstruction));
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
@@ -157,17 +153,17 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
             BotType.Operations => Option<int>.Some(
                 (int) allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             BotType.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             BotType.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromInputMessage))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
@@ -175,26 +171,26 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
 
-    private static Attempt<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper telegramUpdate)
+    private static Attempt<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper wrappedUpdate)
     {
-        return int.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
+        return int.TryParse(wrappedUpdate.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData <= EnumCallbackId.DomainCategoryMaxThreshold
                 ? Attempt<Option<int>>.Succeed(callBackData)
                 : Attempt<Option<int>>.Succeed(Option<int>.None())
             : Attempt<Option<int>>.Succeed(Option<int>.None());
     }
     
-    private static Attempt<Option<long>> GetControlPromptEnumCode(UpdateWrapper telegramUpdate)
+    private static Attempt<Option<long>> GetControlPromptEnumCode(UpdateWrapper wrappedUpdate)
     {
-        return long.TryParse(telegramUpdate.Update.CallbackQuery?.Data, out var callBackData)
+        return long.TryParse(wrappedUpdate.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData > EnumCallbackId.DomainCategoryMaxThreshold
                 ? Attempt<Option<long>>.Succeed(callBackData)
                 : Attempt<Option<long>>.Succeed(Option<long>.None())
             : Attempt<Option<long>>.Succeed(Option<long>.None());
     }
     
-    private async Task<Attempt<InputMessageDto>> GetInputMessageAsync(
-        UpdateWrapper telegramUpdate,
+    private async Task<Attempt<TelegramUpdate>> GetTelegramUpdateAsync(
+        UpdateWrapper wrappedUpdate,
         BotType botType,
         ModelUpdateType modelUpdateType,
         AttachmentDetails attachmentDetails,
@@ -203,8 +199,8 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
         Option<int> domainCategoryEnumCode,
         Option<long> controlPromptEnumCode)
     {
-        if (telegramUpdate.Message.From?.Id == null || 
-            string.IsNullOrWhiteSpace(telegramUpdate.Message.Text) 
+        if (wrappedUpdate.Message.From?.Id == null || 
+            string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text) 
             && attachmentDetails.FileId.IsNone
             && modelUpdateType != ModelUpdateType.Location)
         {
@@ -212,37 +208,64 @@ internal class ToModelConverter(ITelegramFilePathResolver filePathResolver) : IT
                                          "b) either have a text or an attachment (unless it's a Location)."));   
         }
         
-        TelegramUserId userId = telegramUpdate.Message.From.Id;
-        TelegramChatId chatId = telegramUpdate.Message.Chat.Id;
+        TelegramUserId userId = wrappedUpdate.Message.From.Id;
+        TelegramChatId chatId = wrappedUpdate.Message.Chat.Id;
 
-        var telegramAttachmentUrl = Option<string>.None();
-        
-        if (attachmentDetails.FileId.IsSome)
-        {
-            var pathAttempt = await filePathResolver.GetTelegramFilePathAsync(
-                attachmentDetails.FileId.GetValueOrDefault());
-            
-            if (pathAttempt.IsError)
-                return new Error(FailureMessage:
-                    Ui("Error while trying to retrieve full Telegram server path to attachment file."));
+        var telegramAttachmentUriAttempt = attachmentDetails.FileId.IsSome 
+            ? await GetTelegramAttachmentUriAsync(attachmentDetails.FileId.Value!)
+            : Option<Uri>.None();
 
-            telegramAttachmentUrl = pathAttempt.GetValueOrDefault();
-        }
+        if (telegramAttachmentUriAttempt.IsError)
+            return telegramAttachmentUriAttempt.Error!;
+
+        var telegramAttachmentUri = telegramAttachmentUriAttempt.Value!;
         
-        var messageText = !string.IsNullOrWhiteSpace(telegramUpdate.Message.Text)
-            ? telegramUpdate.Message.Text
-            : telegramUpdate.Message.Caption;
+        var internalAttachmentUriAttempt = telegramAttachmentUri.IsSome
+            ? await UploadBlobAndGetInternalUriAsync(telegramAttachmentUri.Value!)
+            : Option<Uri>.None();
+
+        if (internalAttachmentUriAttempt.IsError)
+            return internalAttachmentUriAttempt.Error!;
+
+        var internalAttachmentUri = internalAttachmentUriAttempt.Value!;
         
-        return new InputMessageDto(userId, chatId, botType, modelUpdateType,
-            new InputMessageDetails(
-                telegramUpdate.Message.Date,
-                telegramUpdate.Message.MessageId,
+        var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
+            ? wrappedUpdate.Message.Text
+            : wrappedUpdate.Message.Caption;
+        
+        return new TelegramUpdate(userId, chatId, botType, modelUpdateType,
+            new TelegramUpdateDetails(
+                wrappedUpdate.Message.Date,
+                wrappedUpdate.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                telegramAttachmentUrl,
+                telegramAttachmentUri,
+                internalAttachmentUri,
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
                 domainCategoryEnumCode,
                 controlPromptEnumCode));
+    }
+
+    private async Task<Attempt<Option<Uri>>> GetTelegramAttachmentUriAsync(string fileId)
+    {
+        return (await GetPathAsync())
+            .Match(
+                path => Option<Uri>.Some(GetUriFromPath(path)), 
+                Attempt<Option<Uri>>.Fail
+        );
+        
+        async Task<Attempt<string>> GetPathAsync() =>
+            await filePathResolver.GetTelegramFilePathAsync(fileId);
+
+        static Uri GetUriFromPath(string path) => new(path);
+    }
+
+    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri telegramAttachmentUri)
+    {
+        return await Attempt<Option<Uri>>.RunAsync(async() => 
+            await blobLoader.UploadBlobAndReturnUriOrThrowAsync(
+                await downloader.DownloadDataOrThrowAsync(telegramAttachmentUri), 
+                telegramAttachmentUri.AbsoluteUri.Split('/').Last()));
     }
 }
