@@ -83,11 +83,6 @@ internal class ToModelConverter(
             MessageType.Text or MessageType.Location => new AttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
 
-            MessageType.Audio => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
-                wrappedUpdate.Message.Audio?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
-                AttachmentType.Audio)),
-
             MessageType.Document => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
                 wrappedUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, wrappedUpdate.Message.Type)),
@@ -98,6 +93,11 @@ internal class ToModelConverter(
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, wrappedUpdate.Message.Type)),
                 AttachmentType.Photo)),
+
+            MessageType.Voice => Attempt<AttachmentDetails>.Run(() => new AttachmentDetails(
+                wrappedUpdate.Message.Voice?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
+                AttachmentType.Voice)),
 
             _ => new Error(FailureMessage:
                 Ui("Attachment type {0} is not yet supported!", wrappedUpdate.Message.Type))

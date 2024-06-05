@@ -47,7 +47,7 @@ public class ToModelConverterTests
     
     [Theory]
     [InlineData(AttachmentType.Photo)]
-    [InlineData(AttachmentType.Audio)]
+    [InlineData(AttachmentType.Voice)]
     [InlineData(AttachmentType.Document)]
     public async Task ConvertToModelAsync_ResultsInCorrectTelegramUri_ForValidAttachmentMessage_ToAnyBotType(
         AttachmentType attachmentType)
@@ -56,9 +56,9 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var attachmentUpdate = attachmentType switch
         {
-            AttachmentType.Audio => basics.utils.GetValidTelegramAudioMessage(),
             AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
             AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
+            AttachmentType.Voice => basics.utils.GetValidTelegramVoiceMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
@@ -276,15 +276,15 @@ public class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeVoiceSent_ToAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_ToAnyBotType()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var voiceMessage = basics.utils.GetValidTelegramVoiceMessage();
+        var voiceMessage = basics.utils.GetValidTelegramAudioMessage();
         var conversionAttempt = await basics.converter.ConvertToModelAsync(voiceMessage, BotType.Operations);
 
         Assert.True(conversionAttempt.IsError);
-        Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Voice is not yet supported!",
+        Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Audio is not yet supported!",
             conversionAttempt.Error!.FailureMessage!.GetFormattedEnglish());
     }
 

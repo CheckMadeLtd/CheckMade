@@ -42,11 +42,11 @@ public class UpdateHandler(
 
         var handledMessageTypes = new[]
         {
-            MessageType.Audio,
             MessageType.Document,
             MessageType.Location,
             MessageType.Photo,
-            MessageType.Text
+            MessageType.Text,
+            MessageType.Voice
         };
 
         if (!handledMessageTypes.Contains(update.Message.Type))
@@ -216,16 +216,16 @@ public class UpdateHandler(
 
                     switch (details.AttachmentType)
                     {
+                        case AttachmentType.Document:
+                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                            break;
+                        
                         case AttachmentType.Photo:
                             await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
                             break;
                         
-                        case AttachmentType.Audio:
-                            await destinationBotClient.SendAudioOrThrowAsync(attachmentSendOutParams);
-                            break;
-                        
-                        case AttachmentType.Document:
-                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                        case AttachmentType.Voice:
+                            await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
                             break;
                         
                         default:

@@ -15,25 +15,14 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 /* The need for a Wrapper around ITelegramBotClient arises from the need to be able to mock it in unit tests
  and thereby allow verifications, to check that my code 'uses' this important external dependency correctly */
 
+// ToDo: Wrap all calls to Send in retry policy, like for Text (after done debugging exception and voice behaviour)
+
 public interface IBotClientWrapper
 {
     BotType MyBotType { get; }
     string MyBotToken { get; }
     
-    Task<Unit> SendTextMessageOrThrowAsync(
-        ChatId chatId,
-        string pleaseChooseText,
-        string text,
-        Option<IReplyMarkup> replyMarkup,
-        CancellationToken cancellationToken = default);
-
-    Task<Unit> SendPhotoOrThrowAsync(
-        AttachmentSendOutParameters photoSendOutParams,
-        CancellationToken cancellationToken = default);
-    
-    Task<Unit> SendAudioOrThrowAsync(
-        AttachmentSendOutParameters audioSendOutParams,
-        CancellationToken cancellationToken = default);
+    Task<File> GetFileOrThrowAsync(string fileId);
 
     Task<Unit> SendDocumentOrThrowAsync(
         AttachmentSendOutParameters documentSendOutParams,
@@ -45,8 +34,21 @@ public interface IBotClientWrapper
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
-    Task<File> GetFileOrThrowAsync(string fileId);
+    Task<Unit> SendPhotoOrThrowAsync(
+        AttachmentSendOutParameters photoSendOutParams,
+        CancellationToken cancellationToken = default);
+    
+    Task<Unit> SendTextMessageOrThrowAsync(
+        ChatId chatId,
+        string pleaseChooseText,
+        string text,
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default);
 
+    Task<Unit> SendVoiceOrThrowAsync(
+        AttachmentSendOutParameters voiceSendOutParams,
+        CancellationToken cancellationToken = default);
+    
     Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
 }
 
@@ -64,86 +66,8 @@ public class BotClientWrapper(
     
     public BotType MyBotType { get; } = botType; 
     public string MyBotToken { get; } = botToken;
-    
-    public async Task<Unit> SendTextMessageOrThrowAsync(
-        ChatId chatId,
-        string pleaseChooseText,
-        string text,
-        Option<IReplyMarkup> replyMarkup,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
-            catch earlier network issues like from our Azure Function to the Telegram Servers! */
-            await retryPolicy.ExecuteAsync(async () =>
-            {
-                // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
-                if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
-                {
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: pleaseChooseText,
-                        replyMarkup: new ReplyKeyboardRemove(),
-                        cancellationToken: cancellationToken);
-                }
-                
-                await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: text,
-                    replyMarkup: replyMarkup.IsSome 
-                        ? replyMarkup.GetValueOrDefault()
-                        : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
-                    cancellationToken: cancellationToken);
-            });
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
-        }
-        
-        return Unit.Value;
-    }
 
-    public async Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await botClient.SendPhotoAsync(
-                chatId: photoSendOutParams.DestinationChatId,
-                photo: photoSendOutParams.FileStream,
-                caption: photoSendOutParams.Caption.Value,
-                replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                cancellationToken: cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
-        }
-        
-        return Unit.Value;
-    }
-
-    public async Task<Unit> SendAudioOrThrowAsync(AttachmentSendOutParameters audioSendOutParams,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await botClient.SendAudioAsync(
-                chatId: audioSendOutParams.DestinationChatId,
-                audio: audioSendOutParams.FileStream,
-                caption: audioSendOutParams.Caption.Value,
-                replyMarkup: audioSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                cancellationToken: cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
-        }
-        
-        return Unit.Value;
-    }
+    public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
     public async Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)
@@ -186,7 +110,85 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    public async Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await botClient.SendPhotoAsync(
+                chatId: photoSendOutParams.DestinationChatId,
+                photo: photoSendOutParams.FileStream,
+                caption: photoSendOutParams.Caption.Value,
+                replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
+    }
+
+    public async Task<Unit> SendTextMessageOrThrowAsync(
+        ChatId chatId,
+        string pleaseChooseText,
+        string text,
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
+            catch earlier network issues like from our Azure Function to the Telegram Servers! */
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
+                if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: pleaseChooseText,
+                        replyMarkup: new ReplyKeyboardRemove(),
+                        cancellationToken: cancellationToken);
+                }
+                
+                await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: text,
+                    replyMarkup: replyMarkup.IsSome 
+                        ? replyMarkup.GetValueOrDefault()
+                        : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
+                    cancellationToken: cancellationToken);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
+    }
+
+    public async Task<Unit> SendVoiceOrThrowAsync(AttachmentSendOutParameters voiceSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await botClient.SendVoiceAsync(
+                chatId: voiceSendOutParams.DestinationChatId,
+                voice: voiceSendOutParams.FileStream,
+                caption: voiceSendOutParams.Caption.Value,
+                replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new TelegramSendOutException(TelegramSendOutExceptionMessage, ex);
+        }
+        
+        return Unit.Value;
+    }
 
     public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu)
     {

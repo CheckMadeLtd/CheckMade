@@ -354,7 +354,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 {
                     new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo),
-                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Audio),
+                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Voice),
                     new(new Uri("https://www.gorin.de/fakeUri4.html"), AttachmentType.Document)
                 })
         ];
@@ -373,7 +373,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Times.Exactly(2));
 
         basics.mockBotClient.Verify(
-            x => x.SendAudioOrThrowAsync(
+            x => x.SendVoiceOrThrowAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
