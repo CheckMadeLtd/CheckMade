@@ -102,6 +102,8 @@ echo "Verify deployment section of the GitHub Actions Workflow (esp. 'app-name' 
 Continue with 'Enter' when done."
 read -r
 
+confirm_script_launch "$script_dir_orchestrator/deploy_prep/set_blobstorage_settings_in_keyvault_and_env.sh"
+
 echo "--------------------"
 echo "Verify keyvault URL in Program.cs of top-level project(s)."
 if [ -n "$KEYVAULT_NAME" ]; then
