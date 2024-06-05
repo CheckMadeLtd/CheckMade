@@ -48,6 +48,7 @@ public record Attempt<T>
         {
             return new Attempt<T>(await func());
         }
+        // this also includes AggregateException type (e.g. from 'await Task.WhenAll()) thanks to recursive nature
         catch (Exception ex)
         {
             return new Attempt<T>(new Error(Exception: ex));

@@ -69,23 +69,29 @@ public class UpdateHandler(
         var chatIdByOutputDestination = await GetChatIdByOutputDestinationAsync();
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        
-        return (await 
-                (from telegramUpdate 
-                        in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
-                from outputs 
+
+        var getOutputsAttempt = await
+            (from telegramUpdate
+                    in await toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
+                from outputs
                     in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
-                select 
-                    SendOutputsAsync(
-                        outputs, 
-                        botClientByBotType,
-                        updateReceivingBotType,
-                        updateReceivingChatId,
-                        chatIdByOutputDestination,
-                        uiTranslator,
-                        replyMarkupConverter,
-                        blobLoader)))
-            .Match(
+                select outputs);
+                
+        // ToDo: handle failure case
+        // If this works, can I reintegrate into a single from.... select ? 
+        
+        var sendOutAttempt = await Attempt<Unit>.RunAsync(async () => 
+            await SendOutputsOrThrowAsync(
+                    getOutputsAttempt.Value!, 
+                    botClientByBotType,
+                    updateReceivingBotType,
+                    updateReceivingChatId,
+                    chatIdByOutputDestination,
+                    uiTranslator,
+                    replyMarkupConverter,
+                    blobLoader));
+            
+        return sendOutAttempt.Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
@@ -96,25 +102,28 @@ public class UpdateHandler(
                     logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
                                     $"{error.FailureMessage.GetFormattedEnglish()}");
                     
-                    _ = SendOutputsAsync(
-                            new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
-                            botClientByBotType,
-                            updateReceivingBotType,
-                            updateReceivingChatId,
-                            chatIdByOutputDestination,
-                            uiTranslator,
-                            replyMarkupConverter,
-                            blobLoader)
-                        .ContinueWith(task => 
-                        { 
-                            if (task.Result.IsError) // e.g. TelegramSendOutException thrown downstream 
-                                logger.LogWarning($"An error occurred while trying to send " +
-                                                $"{nameof(error.FailureMessage)} to the user."); 
-                        });
+                    // _ = SendOutputsOrThrowAsync(
+                    //         new List<OutputDto>{ OutputDto.Create(error.FailureMessage) }, 
+                    //         botClientByBotType,
+                    //         updateReceivingBotType,
+                    //         updateReceivingChatId,
+                    //         chatIdByOutputDestination,
+                    //         uiTranslator,
+                    //         replyMarkupConverter,
+                    //         blobLoader)
+                    //     .ContinueWith(task => 
+                    //     { 
+                    //         // ToDo: should this not be  task.IsFaulted == true instead?? Thich Task is it? Ah the one returned from SendOutputAsync. So if I fix it down there, this should be fine after all...  
+                    //         if (task.Result.IsError) // e.g. TelegramSendOutException thrown downstream 
+                    //             logger.LogWarning($"An error occurred while trying to send " +
+                    //                             $"{nameof(error.FailureMessage)} to the user."); 
+                    //     });
                 }
 
                 if (error.Exception != null)
                 {
+                    logger.LogError(error.Exception.Message, error.Exception);
+                    
                     logger.LogDebug(error.Exception, 
                         "Next, some details to help debug the current exception. " +
                         "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
@@ -152,7 +161,7 @@ public class UpdateHandler(
             error => throw new DataAccessException($"An exception was thrown while trying to access " + 
                                                    $"{nameof(chatIdByOutputDestinationRepository)}", error.Exception));
     
-    private static async Task<Attempt<Unit>> SendOutputsAsync(
+    private static async Task<Unit> SendOutputsOrThrowAsync(
         IReadOnlyList<OutputDto> outputs,
         IDictionary<BotType, IBotClientWrapper> botClientByBotType,
         BotType updateReceivingBotType,
@@ -162,93 +171,90 @@ public class UpdateHandler(
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader)
     {
-        return await Attempt<Unit>.RunAsync(async () =>
+        var parallelTasks = outputs.Select(async output =>
         {
-            var parallelTasks = outputs.Select(async output =>
+            var destinationBotClient = output.ExplicitDestination.IsSome
+                ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
+                : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
+
+            var destinationChatId = output.ExplicitDestination.IsSome
+                ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
+                : updateReceivingChatId; // e.g. for a virgin, pre-login update
+
+            switch (output)
             {
-                var destinationBotClient = output.ExplicitDestination.IsSome
-                    ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
-                    : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
+                case { Attachments.IsSome: false, Location.IsSome: false }:
+                    await InvokeSendTextMessageOrThrowAsync();
+                    break;
 
-                var destinationChatId = output.ExplicitDestination.IsSome
-                    ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
-                    : updateReceivingChatId; // e.g. for a virgin, pre-login update
+                case { Attachments.IsSome: true }:
+                    await Task.WhenAll(output.Attachments.Value!.Select(InvokeSendAttachmentOrThrowAsync));
+                    // await InvokeSendAttachmentOrThrowAsync(output.Attachments.Value!.First());
+                    break;
 
-                switch (output)
+                case { Location.IsSome: true }:
+                    await InvokeSendLocationOrThrowAsync();
+                    break;
+            }
+
+            async Task InvokeSendTextMessageOrThrowAsync()
+            {
+                await destinationBotClient
+                    .SendTextMessageOrThrowAsync(
+                        destinationChatId,
+                        uiTranslator.Translate(Ui("Please choose:")),
+                        uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                        converter.GetReplyMarkup(output));
+            }
+
+            async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
+            {
+                var (blobData, fileName) =
+                    await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
+                var fileStream = new InputFileStream(blobData, fileName);
+
+                var attachmentSendOutParams = new AttachmentSendOutParameters(
+                    DestinationChatId: destinationChatId,
+                    FileStream: fileStream,
+                    Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
+                    ReplyMarkup: converter.GetReplyMarkup(output)
+                );
+
+                switch (details.AttachmentType)
                 {
-                    case { Attachments.IsSome: false, Location.IsSome: false }:
-                        await InvokeSendTextMessageOrThrowAsync();
+                    case AttachmentType.Document:
+                        await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
                         break;
 
-                    case { Attachments.IsSome: true }:
-                        await Task.WhenAll(output.Attachments.Value!.Select(InvokeSendAttachmentOrThrowAsync));
+                    case AttachmentType.Photo:
+                        await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
                         break;
-                    
-                    case { Location.IsSome: true }:
-                        await InvokeSendLocationOrThrowAsync();
+
+                    case AttachmentType.Voice:
+                        await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
                         break;
-                }
-                
-                return;
 
-                async Task InvokeSendTextMessageOrThrowAsync()
-                {
-                    await destinationBotClient
-                        .SendTextMessageOrThrowAsync(
-                            destinationChatId,
-                            uiTranslator.Translate(Ui("Please choose:")),
-                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
-                            converter.GetReplyMarkup(output));
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
                 }
-                
-                async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
-                {
-                    var (blobData, fileName) = 
-                        await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
-                    var fileStream = new InputFileStream(blobData, fileName);
+            }
 
-                    var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        DestinationChatId: destinationChatId,
-                        FileStream: fileStream,
-                        Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
-                        ReplyMarkup: converter.GetReplyMarkup(output)
-                    );
+            async Task InvokeSendLocationOrThrowAsync()
+            {
+                await destinationBotClient
+                    .SendLocationOrThrowAsync(
+                        destinationChatId,
+                        output.Location.Value!,
+                        converter.GetReplyMarkup(output));
+            }
 
-                    switch (details.AttachmentType)
-                    {
-                        case AttachmentType.Document:
-                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
-                            break;
-                        
-                        case AttachmentType.Photo:
-                            await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
-                            break;
-                        
-                        case AttachmentType.Voice:
-                            await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
-                            break;
-                        
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
-                    }
-                }
-
-                async Task InvokeSendLocationOrThrowAsync()
-                {
-                    await destinationBotClient
-                        .SendLocationOrThrowAsync(
-                            destinationChatId,
-                            output.Location.Value!,
-                            converter.GetReplyMarkup(output));
-                }
-            });
-            
-            /* FYI about Task.WhenAll() behaviour here
-             * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
-             * 2) Once all completed, rethrows any Exception that might have occurred in any one task's execution. */ 
-            await Task.WhenAll(parallelTasks);
-            
-            return Unit.Value;
         });
+        
+        /* FYI about Task.WhenAll() behaviour here
+         * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
+         * 2) Once all completed, thanks to 'await', rethrows any Exception that might have occurred in any one task's execution. */
+        await Task.WhenAll(parallelTasks);
+
+        return Unit.Value;
     }
 }
