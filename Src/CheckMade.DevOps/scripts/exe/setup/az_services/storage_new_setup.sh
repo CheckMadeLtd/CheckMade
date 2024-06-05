@@ -14,5 +14,7 @@ read -r new_storage_name
 
 new_storage_name="$new_storage_name$(get_random_id)"
 az storage account create --name "$new_storage_name"
-
 STORAGE_NAME=$new_storage_name
+
+echo "Now creating the CheckMade Blob Container inside the new storage account..."
+az storage container create --account-name "$STORAGE_NAME" --name checkmade --fail-on-exist
