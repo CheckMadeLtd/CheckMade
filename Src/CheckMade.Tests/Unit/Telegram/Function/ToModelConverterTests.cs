@@ -280,11 +280,12 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var audioMessage = basics.utils.GetValidTelegramAudioMessage();
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(audioMessage, BotType.Operations);
+        var conversionOutcome = 
+            await basics.converter.ConvertToModelAsync(audioMessage, BotType.Operations);
 
-        Assert.True(conversionAttempt.IsError);
-        Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Audio is not yet supported!",
-            conversionAttempt.Error!.GetFormattedEnglish());
+        Assert.True(conversionOutcome.IsError);
+        Assert.Equal("Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
+            conversionOutcome.Error!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)

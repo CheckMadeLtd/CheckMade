@@ -8,7 +8,7 @@ CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server 
 CheckMade.Telegram.Logic	Welcome to the CheckMade {0} Bot! 	Willkommen zum CheckMade {0} Bot! 
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
-CheckMade.Telegram.Function	Failed to convert Telegram Message: 	Fehler beim Konvertieren der Telegram-Nachricht: 
+CheckMade.Telegram.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
 CheckMade.Telegram.Logic	What type of issue?	Welche Art von Problem?
 CheckMade.Common.Model	🔙 Back	🔙 Zurück

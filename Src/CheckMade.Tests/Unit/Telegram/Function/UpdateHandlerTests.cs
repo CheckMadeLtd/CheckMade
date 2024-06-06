@@ -57,7 +57,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         
         var mockIRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
-        var mockOperationsRequestProcessor = new Mock<OperationsRequestProcessor>();
+        var mockOperationsRequestProcessor = new Mock<IOperationsRequestProcessor>();
         mockOperationsRequestProcessor
             .Setup(opr => opr.ProcessRequestAsync(It.IsAny<Result<TelegramUpdate>>()))
             .Throws<DataAccessException>();
