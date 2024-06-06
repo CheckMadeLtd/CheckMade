@@ -1,5 +1,5 @@
-using CheckMade.Telegram.Logic.RequestProcessors;
-using CheckMade.Telegram.Logic.RequestProcessors.Concrete;
+using CheckMade.Telegram.Logic.UpdateProcessors;
+using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Logic;
@@ -8,10 +8,10 @@ public static class DependencyRegistration
 {
     public static void Add_TelegramLogic_Dependencies(this IServiceCollection services)
     {
-        services.AddScoped<IOperationsRequestProcessor, OperationsRequestProcessor>();
-        services.AddScoped<ICommunicationsRequestProcessor, CommunicationsRequestProcessor>();
-        services.AddScoped<INotificationsRequestProcessor, NotificationsRequestProcessor>();
+        services.AddScoped<IOperationsUpdateProcessor, OperationsUpdateProcessor>();
+        services.AddScoped<ICommunicationsUpdateProcessor, CommunicationsUpdateProcessor>();
+        services.AddScoped<INotificationsUpdateProcessor, NotificationsUpdateProcessor>();
         
-        services.AddScoped<IRequestProcessorSelector, RequestProcessorSelector>();
+        services.AddScoped<IUpdateProcessorSelector, UpdateProcessorSelector>();
     }
 }

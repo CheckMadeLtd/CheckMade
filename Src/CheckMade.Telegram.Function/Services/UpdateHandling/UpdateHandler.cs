@@ -6,7 +6,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversions;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Logic.RequestProcessors;
+using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Model.DTOs;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -21,7 +21,7 @@ public interface IUpdateHandler
 
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
-        IRequestProcessorSelector selector,
+        IUpdateProcessorSelector selector,
         IChatIdByOutputDestinationRepository chatIdByOutputDestinationRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
@@ -74,7 +74,7 @@ public class UpdateHandler(
                         toModelConverter.ConvertToModelAsync(update, updateReceivingBotType))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
-                        selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate))
+                        selector.GetUpdateProcessor(updateReceivingBotType).ProcessUpdateAsync(telegramUpdate))
                 from chatIdByOutputDestination
                     in Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(
                         GetChatIdByOutputDestinationAsync) 

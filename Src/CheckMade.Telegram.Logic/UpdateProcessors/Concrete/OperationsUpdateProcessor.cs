@@ -7,16 +7,16 @@ using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
+namespace CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 
-public interface IOperationsRequestProcessor : IRequestProcessor;
+public interface IOperationsUpdateProcessor : IUpdateProcessor;
 
-public class OperationsRequestProcessor(
+public class OperationsUpdateProcessor(
         ITelegramUpdateRepository updateRepo,
         IRoleRepository roleRepo) 
-    : IOperationsRequestProcessor
+    : IOperationsUpdateProcessor
 {
-    public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
     {
         if (telegramUpdate.IsSuccess)
         {
@@ -49,7 +49,7 @@ public class OperationsRequestProcessor(
                 OutputDto.Create(
                     UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Operations),
-                        IRequestProcessor.SeeValidBotCommandsInstruction))
+                        IUpdateProcessor.SeeValidBotCommandsInstruction))
             ],
             
             (int) OperationsBotCommands.NewIssue => [

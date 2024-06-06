@@ -4,7 +4,7 @@ using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Logic.RequestProcessors;
+using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Model.BotCommand;
 using Telegram.Bot.Types.Enums;
 
@@ -142,7 +142,7 @@ internal class ToModelConverter(
             return UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
                     wrappedUpdate.Message.Text ?? "[empty text!]", botType, "W3DL9"),
-                IRequestProcessor.SeeValidBotCommandsInstruction);
+                IUpdateProcessor.SeeValidBotCommandsInstruction);
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
