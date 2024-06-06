@@ -13,13 +13,14 @@ public class NotificationsRequestProcessor(
 {
     public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
     {
+        // ToDo: Get rid of this try/catch
         try
         {
             await updateRepo.AddOrThrowAsync(telegramUpdate);
         }
         catch (Exception ex)
         {
-            return Attempt<IReadOnlyList<OutputDto>>.Fail(new Error(Exception: ex));
+            return Attempt<IReadOnlyList<OutputDto>>.Fail(ex);
         }
         
         return Attempt<IReadOnlyList<OutputDto>>.Run(() =>

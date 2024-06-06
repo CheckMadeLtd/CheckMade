@@ -20,6 +20,7 @@ public class OperationsRequestProcessor(
     {
         IReadOnlyList<Role> allRoles;
         
+        // ToDo: Get rid of this try/catch
         try
         {
             await updateRepo.AddOrThrowAsync(telegramUpdate);
@@ -27,7 +28,7 @@ public class OperationsRequestProcessor(
         }
         catch (Exception ex)
         {
-            return Attempt<IReadOnlyList<OutputDto>>.Fail(new Error(Exception: ex));
+            return Attempt<IReadOnlyList<OutputDto>>.Fail(ex);
         }
 
         return telegramUpdate switch
