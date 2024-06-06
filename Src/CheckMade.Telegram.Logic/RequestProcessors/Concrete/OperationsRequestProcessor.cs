@@ -16,34 +16,30 @@ public class OperationsRequestProcessor(
         IRoleRepository roleRepo) 
     : IOperationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        IReadOnlyList<Role> allRoles;
-        
-        // ToDo: Get rid of this try/catch
-        try
+        if (telegramUpdate.Success)
         {
-            await updateRepo.AddOrThrowAsync(telegramUpdate);
-            allRoles = (await roleRepo.GetAllOrThrowAsync()).ToList().AsReadOnly();
-        }
-        catch (Exception ex)
-        {
-            return Attempt<IReadOnlyList<OutputDto>>.Fail(ex);
+            await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
         }
 
+        IReadOnlyList<Role> allRoles = (await roleRepo.GetAllOrThrowAsync()).ToList().AsReadOnly();
+        
         return telegramUpdate switch
         {
-            { Details.BotCommandEnumCode.IsSome: true } =>
-                ProcessBotCommand(telegramUpdate, allRoles),
+            { Success: false, Error: { } error } => [ OutputDto.Create(error) ],
+            
+            { Value.Details.BotCommandEnumCode.IsSome: true } =>
+                ProcessBotCommand(telegramUpdate.Value, allRoles),
 
-            { Details.AttachmentType: { IsSome: true, Value: var type } } =>
-                ProcessMessageWithAttachment(telegramUpdate, type),
+            { Value.Details.AttachmentType: { IsSome: true, Value: var type } } =>
+                ProcessMessageWithAttachment(telegramUpdate.Value, type),
 
-            _ => ProcessNormalResponseMessage(telegramUpdate)
+            _ => ProcessNormalResponseMessage(telegramUpdate.Value!)
         };
     }
 
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessBotCommand(
+    private static IReadOnlyList<OutputDto> ProcessBotCommand(
         TelegramUpdate telegramUpdate,
         IReadOnlyList<Role> allRoles)
     {
@@ -88,7 +84,7 @@ public class OperationsRequestProcessor(
         };
     }
     
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessMessageWithAttachment(
+    private static IReadOnlyList<OutputDto> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
         TelegramUpdate telegramUpdate, AttachmentType type)
     {
@@ -103,7 +99,7 @@ public class OperationsRequestProcessor(
         };
     }
     
-    private static Attempt<IReadOnlyList<OutputDto>> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
+    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
     {
         // Temp, for testing purposes only
         if (telegramUpdate.Details.Text.GetValueOrDefault() == "n")

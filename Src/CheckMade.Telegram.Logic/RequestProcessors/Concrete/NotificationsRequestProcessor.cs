@@ -7,35 +7,25 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface INotificationsRequestProcessor : IRequestProcessor;
 
-public class NotificationsRequestProcessor(
-        ITelegramUpdateRepository updateRepo)
-    : INotificationsRequestProcessor
+public class NotificationsRequestProcessor(ITelegramUpdateRepository updateRepo) : INotificationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        // ToDo: Get rid of this try/catch
-        try
+        if (telegramUpdate.Success)
         {
-            await updateRepo.AddOrThrowAsync(telegramUpdate);
-        }
-        catch (Exception ex)
-        {
-            return Attempt<IReadOnlyList<OutputDto>>.Fail(ex);
-        }
-        
-        return Attempt<IReadOnlyList<OutputDto>>.Run(() =>
-        {
-            if (telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+            await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
+            
+            if (telegramUpdate.Value!.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
                 return new List<OutputDto>
-                { 
+                {
                     OutputDto.Create(UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications),
                         IRequestProcessor.SeeValidBotCommandsInstruction))
                 };
             }
-
-            return new List<OutputDto>();
-        });
+        }
+        
+        return new List<OutputDto>();
     }
 }

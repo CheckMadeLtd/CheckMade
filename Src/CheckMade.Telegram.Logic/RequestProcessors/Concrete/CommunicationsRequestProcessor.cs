@@ -7,25 +7,15 @@ namespace CheckMade.Telegram.Logic.RequestProcessors.Concrete;
 
 public interface ICommunicationsRequestProcessor : IRequestProcessor; 
 
-public class CommunicationsRequestProcessor(
-        ITelegramUpdateRepository updateRepo) 
-    : ICommunicationsRequestProcessor
+public class CommunicationsRequestProcessor(ITelegramUpdateRepository updateRepo) : ICommunicationsRequestProcessor
 {
-    public async Task<Attempt<IReadOnlyList<OutputDto>>> ProcessRequestAsync(TelegramUpdate telegramUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        // ToDo: Get rid of this try/catch
-        try
+        if (telegramUpdate.Success)
         {
-            await updateRepo.AddOrThrowAsync(telegramUpdate);
-        }
-        catch (Exception ex)
-        {
-            return Attempt<IReadOnlyList<OutputDto>>.Fail(ex);
-        }
+            await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
 
-        return Attempt<IReadOnlyList<OutputDto>>.Run(() =>
-        {
-            if (telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+            if (telegramUpdate.Value!.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
                 return new List<OutputDto>
                 {
@@ -34,8 +24,8 @@ public class CommunicationsRequestProcessor(
                         IRequestProcessor.SeeValidBotCommandsInstruction))
                 };
             }
-
-            return new List<OutputDto>();
-        });
+        }        
+        
+        return new List<OutputDto>();
     }
 }
