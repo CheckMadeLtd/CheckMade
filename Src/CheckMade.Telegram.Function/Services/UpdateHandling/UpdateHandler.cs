@@ -158,93 +158,99 @@ public class UpdateHandler(
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader)
     {
-        // ToDo: I suspect the independent parallel tasking leads to possibility of messages out of order (see mobile screenshot on 05/06/2024)!
-        // Parallel would be ok though per OutputDestination! But within the same destination, in series!
-        var parallelTasks = outputs.Select(async output =>
+        Func<IReadOnlyCollection<OutputDto>, Task> sendOutputsInSeries = async outputsPerDestination =>
         {
-            var destinationBotClient = output.ExplicitDestination.IsSome
-                ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
-                : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
-
-            var destinationChatId = output.ExplicitDestination.IsSome
-                ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
-                : updateReceivingChatId; // e.g. for a virgin, pre-login update
-
-            switch (output)
+            foreach (var output in outputsPerDestination)
             {
-                case { Attachments.IsSome: false, Location.IsSome: false }:
-                    await InvokeSendTextMessageOrThrowAsync();
-                    break;
+                var destinationBotClient = output.ExplicitDestination.IsSome
+                    ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
+                    : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
 
-                case { Attachments.IsSome: true }:
-                    await Task.WhenAll(output.Attachments.Value!.Select(InvokeSendAttachmentOrThrowAsync));
-                    break;
+                var destinationChatId = output.ExplicitDestination.IsSome
+                    ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
+                    : updateReceivingChatId; // e.g. for a virgin, pre-login update
 
-                case { Location.IsSome: true }:
-                    await InvokeSendLocationOrThrowAsync();
-                    break;
-            }
-
-            return;
-
-            async Task InvokeSendTextMessageOrThrowAsync()
-            {
-                await destinationBotClient
-                    .SendTextMessageOrThrowAsync(
-                        destinationChatId,
-                        uiTranslator.Translate(Ui("Please choose:")),
-                        uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
-                        converter.GetReplyMarkup(output));
-            }
-
-            async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
-            {
-                var (blobData, fileName) =
-                    await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
-                var fileStream = new InputFileStream(blobData, fileName);
-
-                var attachmentSendOutParams = new AttachmentSendOutParameters(
-                    DestinationChatId: destinationChatId,
-                    FileStream: fileStream,
-                    Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
-                    ReplyMarkup: converter.GetReplyMarkup(output)
-                );
-
-                switch (details.AttachmentType)
+                switch (output)
                 {
-                    case AttachmentType.Document:
-                        await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                    case { Attachments.IsSome: false, Location.IsSome: false }:
+                        await InvokeSendTextMessageOrThrowAsync();
                         break;
 
-                    case AttachmentType.Photo:
-                        await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
+                    case { Attachments.IsSome: true }:
+                        foreach (var attachment in output.Attachments.Value!)
+                            await InvokeSendAttachmentOrThrowAsync(attachment);
                         break;
 
-                    case AttachmentType.Voice:
-                        await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
+                    case { Location.IsSome: true }:
+                        await InvokeSendLocationOrThrowAsync();
                         break;
+                }
 
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
+                continue;
+
+                async Task InvokeSendTextMessageOrThrowAsync()
+                {
+                    await destinationBotClient
+                        .SendTextMessageOrThrowAsync(
+                            destinationChatId,
+                            uiTranslator.Translate(Ui("Please choose:")),
+                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                            converter.GetReplyMarkup(output));
+                }
+
+                async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
+                {
+                    var (blobData, fileName) =
+                        await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
+                    var fileStream = new InputFileStream(blobData, fileName);
+
+                    var attachmentSendOutParams = new AttachmentSendOutParameters(
+                        DestinationChatId: destinationChatId,
+                        FileStream: fileStream,
+                        Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
+                        ReplyMarkup: converter.GetReplyMarkup(output)
+                    );
+
+                    switch (details.AttachmentType)
+                    {
+                        case AttachmentType.Document:
+                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                            break;
+
+                        case AttachmentType.Photo:
+                            await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
+                            break;
+
+                        case AttachmentType.Voice:
+                            await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
+                    }
+                }
+
+                async Task InvokeSendLocationOrThrowAsync()
+                {
+                    await destinationBotClient
+                        .SendLocationOrThrowAsync(
+                            destinationChatId,
+                            output.Location.Value!,
+                            converter.GetReplyMarkup(output));
                 }
             }
+        };
 
-            async Task InvokeSendLocationOrThrowAsync()
-            {
-                await destinationBotClient
-                    .SendLocationOrThrowAsync(
-                        destinationChatId,
-                        output.Location.Value!,
-                        converter.GetReplyMarkup(output));
-            }
+        var outputGroups = outputs.GroupBy(o => o.ExplicitDestination);
 
-        });
+        var parallelTasks = outputGroups
+            .Select(outputsPerDestinationGroup => 
+                sendOutputsInSeries.Invoke(outputsPerDestinationGroup.ToList().AsReadOnly()));
         
-        /* FYI about Task.WhenAll() behaviour here
-         * 1) Waits for all tasks, which started executing in parallel in the .Select() iteration, to complete
-         * 2) Once all completed, the 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */
+        /* 1) Waits for all parallel executing tasks (generated by .Select()), to complete
+         * 2) The 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */
         await Task.WhenAll(parallelTasks);
-
+        
         return Unit.Value;
     }
 }
