@@ -259,7 +259,7 @@ public class ToModelConverterTests
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
         var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
     }
     
     [Fact]
@@ -271,7 +271,7 @@ public class ToModelConverterTests
         
         var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
     }
 
     [Fact]
@@ -282,9 +282,9 @@ public class ToModelConverterTests
         var audioMessage = basics.utils.GetValidTelegramAudioMessage();
         var conversionAttempt = await basics.converter.ConvertToModelAsync(audioMessage, BotType.Operations);
 
-        Assert.True(conversionAttempt.IsFailure);
+        Assert.True(conversionAttempt.IsError);
         Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Audio is not yet supported!",
-            conversionAttempt.Exception!.FailureMessage!.GetFormattedEnglish());
+            conversionAttempt.Error!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)
