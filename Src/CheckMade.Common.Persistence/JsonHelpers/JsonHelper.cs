@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-public static class JsonHelper
+internal static class JsonHelper
 {
     public static string SerializeToJson(object obj)
     {
