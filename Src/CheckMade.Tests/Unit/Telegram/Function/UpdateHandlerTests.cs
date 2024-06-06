@@ -52,7 +52,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleUpdateAsync_LogsError_WhenDataAccessExceptionThrown()
+    public async Task HandleUpdateAsync_LogsError_WhenUpdateProcessorThrowsException()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
@@ -60,7 +60,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var mockOperationsUpdateProcessor = new Mock<IOperationsUpdateProcessor>();
         mockOperationsUpdateProcessor
             .Setup(opr => opr.ProcessUpdateAsync(It.IsAny<Result<TelegramUpdate>>()))
-            .Throws<DataAccessException>();
+            .Throws<Exception>();
         mockIUpdateProcessorSelector
             .Setup(x => x.GetUpdateProcessor(BotType.Operations))
             .Returns(mockOperationsUpdateProcessor.Object);
@@ -78,7 +78,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             LogLevel.Error, 
             It.IsAny<EventId>(), 
             It.IsAny<It.IsAnyType>(), 
-            It.IsAny<DataAccessException>(), 
+            It.IsAny<Exception>(), 
             It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
     }
 
