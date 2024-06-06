@@ -51,13 +51,21 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     [Fact]
-    Agnostic to BotType, using Operations
-    public async Task HandleUpdateAsync_LogsDebuggingDetails_WhenDataAccessExceptionThrown()
+    // Agnostic to BotType, using Operations
+    public async Task HandleUpdateAsync_LogsError_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => 
-            GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-                new Error(new DataAccessException("Mock DataAccess Error", new Exception()))));
+        
+        var mockIRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
+        var mockOperationsRequestProcessor = new Mock<OperationsRequestProcessor>();
+        mockOperationsRequestProcessor
+            .Setup(opr => opr.ProcessRequestAsync(It.IsAny<Result<TelegramUpdate>>()))
+            .Throws<DataAccessException>();
+        mockIRequestProcessorSelector
+            .Setup(x => x.GetRequestProcessor(BotType.Operations))
+            .Returns(mockOperationsRequestProcessor.Object);
+        
+        serviceCollection.AddScoped<IRequestProcessorSelector>(_ => mockIRequestProcessorSelector.Object);
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
         serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
@@ -67,7 +75,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(textUpdate, BotType.Operations);
         
         mockLogger.Verify(l => l.Log(
-            LogLevel.Debug, 
+            LogLevel.Error, 
             It.IsAny<EventId>(), 
             It.IsAny<It.IsAnyType>(), 
             It.IsAny<DataAccessException>(), 
@@ -435,13 +443,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IRequestProcessorSelector 
         GetMockSelectorForOperationsRequestProcessorWithSetUpReturnValue(
-            Attempt<IReadOnlyList<OutputDto>> returnValue, BotType botType = BotType.Operations)
+            IReadOnlyList<OutputDto> returnValue, BotType botType = BotType.Operations)
     {
         var mockOperationsRequestProcessor = new Mock<IOperationsRequestProcessor>();
         
         mockOperationsRequestProcessor
-            .Setup<Task<Attempt<IReadOnlyList<OutputDto>>>>(rp => 
-                rp.ProcessRequestAsync(It.IsAny<TelegramUpdate>()))
+            .Setup<Task<IReadOnlyList<OutputDto>>>(rp => 
+                rp.ProcessRequestAsync(It.IsAny<Result<TelegramUpdate>>()))
             .Returns(Task.FromResult(returnValue));
 
         var mockRequestProcessorSelector = new Mock<IRequestProcessorSelector>();
