@@ -4,7 +4,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 public class MockHttpDownloader : IHttpDownloader
 {
-    public Task<MemoryStream> DownloadDataOrThrowAsync(Uri fileUri)
+    public Task<MemoryStream> DownloadDataAsync(Uri fileUri)
     {
         return Task.FromResult(new MemoryStream());
     }

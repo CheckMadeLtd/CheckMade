@@ -94,7 +94,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         // Writing out to OutputHelper to see the entire error message, as an additional manual verification
         basics.mockBotClient
             .Setup(
-                x => x.SendTextMessageOrThrowAsync(
+                x => x.SendTextMessageAsync(
                     invalidBotCommandUpdate.Message.Chat.Id,
                     It.IsAny<string>(),
                     It.IsAny<string>(),
@@ -106,7 +106,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, BotType.Operations);
     
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 invalidBotCommandUpdate.Message.Chat.Id,
                 It.IsAny<string>(),
                 It.Is<string>(msg => msg.Contains(expectedErrorCode)),
@@ -129,7 +129,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(startCommandUpdate, botType);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 startCommandUpdate.Message.Chat.Id,
                 It.IsAny<string>(),
                 It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
@@ -155,7 +155,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(updateEn, BotType.Operations);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 updateEn.Message.Chat.Id,
                 It.IsAny<string>(),
                 ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
@@ -179,7 +179,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(updateDe, BotType.Operations);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 updateDe.Message.Chat.Id,
                 It.IsAny<string>(),
                 ITestUtils.GermanStringForTests,
@@ -204,7 +204,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(updateUnsupportedLanguage, BotType.Operations);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 updateUnsupportedLanguage.Message.Chat.Id,
                 It.IsAny<string>(),
                 ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
@@ -235,7 +235,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var actualMarkup = Option<IReplyMarkup>.None();
         basics.mockBotClient
             .Setup(
-                x => x.SendTextMessageOrThrowAsync(
+                x => x.SendTextMessageAsync(
                     It.IsAny<ChatId>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
@@ -268,7 +268,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<Option<IReplyMarkup>>(), It.IsAny<CancellationToken>()),
             Times.Exactly(fakeListOfOutputDtos.Count));
@@ -308,7 +308,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         foreach (var expectedParamSet in expectedSendParamSets)
         {
             basics.mockBotClient.Verify(
-                x => x.SendTextMessageOrThrowAsync(
+                x => x.SendTextMessageAsync(
                     expectedParamSet.DestinationChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
@@ -337,7 +337,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, actualBotType);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageOrThrowAsync(
+            x => x.SendTextMessageAsync(
                 expectedChatId,
                 It.IsAny<string>(),
                 fakeOutputMessage,
@@ -374,19 +374,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
 
         basics.mockBotClient.Verify(
-            x => x.SendPhotoOrThrowAsync(
+            x => x.SendPhotoAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
 
         basics.mockBotClient.Verify(
-            x => x.SendVoiceOrThrowAsync(
+            x => x.SendVoiceAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
         
         basics.mockBotClient.Verify(
-            x => x.SendDocumentOrThrowAsync(
+            x => x.SendDocumentAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
@@ -412,7 +412,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
         
         basics.mockBotClient.Verify(
-            x => x.SendLocationOrThrowAsync(
+            x => x.SendLocationAsync(
                 It.IsAny<ChatId>(),
                 It.Is<Geo>(geo => geo == outputWithLocation[0].Location),
                 It.IsAny<Option<IReplyMarkup>>(),
@@ -433,7 +433,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<IChatIdByOutputDestinationRepository>().GetAllOrThrowAsync()
+                sp.GetRequiredService<IChatIdByOutputDestinationRepository>().GetAllAsync()
                     .Result
                     .ToDictionary(
                         keySelector: map => map.OutputDestination,

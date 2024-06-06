@@ -7,7 +7,7 @@ namespace CheckMade.Common.Persistence;
 
 public interface IDbExecutionHelper
 {
-    Task ExecuteOrThrowAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation);
+    Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation);
 }
 
 internal class DbExecutionHelper(
@@ -16,7 +16,7 @@ internal class DbExecutionHelper(
         IDbCommandRetryPolicy dbCommandRetryPolicy) 
     : IDbExecutionHelper
 {
-    public async Task ExecuteOrThrowAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations)
+    public async Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations)
     {
         await using var db = dbProvider.CreateConnection() as NpgsqlConnection;
 

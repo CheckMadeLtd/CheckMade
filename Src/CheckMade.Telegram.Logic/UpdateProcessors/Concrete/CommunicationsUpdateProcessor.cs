@@ -13,7 +13,7 @@ public class CommunicationsUpdateProcessor(ITelegramUpdateRepository updateRepo)
     {
         if (telegramUpdate.IsSuccess)
         {
-            await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
+            await updateRepo.AddAsync(telegramUpdate.Value!);
 
             if (telegramUpdate.Value!.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {

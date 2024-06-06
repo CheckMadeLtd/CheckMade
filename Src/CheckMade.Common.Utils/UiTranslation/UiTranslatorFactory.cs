@@ -55,7 +55,7 @@ public class UiTranslatorFactory(
                 Delimiter = "\t"
             }; 
         
-            using (var reader = new StreamReader(GetTranslationResourceStreamOrThrow()))
+            using (var reader = new StreamReader(GetTranslationResourceStream()))
             using (var csv = new CsvReader(reader, config))
             {
                 while(csv.Read())
@@ -75,7 +75,7 @@ public class UiTranslatorFactory(
         });
     }
 
-    private Stream GetTranslationResourceStreamOrThrow()
+    private Stream GetTranslationResourceStream()
     {
         var assembly = Assembly.GetExecutingAssembly();
         

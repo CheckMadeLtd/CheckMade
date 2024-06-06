@@ -27,20 +27,20 @@ public class ResultTests
     }
 
     [Fact]
-    public void TestResult_GetValueOrThrow_Success()
+    public void TestResult_GetValue_Success()
     {
         var result = Result<int>.FromSuccess(5);
-        var value = result.GetValueOrThrow();
+        var value = result.GetValue();
 
         value.Should().Be(5);
     }
 
     [Fact]
-    public void TestResult_GetValueOrThrow_Error()
+    public void TestResult_GetValue_Error()
     {
         var result = Result<int>.FromError(UiNoTranslate("Error"));
 
-        Action action = () => result.GetValueOrThrow();
+        Action action = () => result.GetValue();
         action.Should().Throw<InvalidOperationException>().WithMessage("Error");
     }
 

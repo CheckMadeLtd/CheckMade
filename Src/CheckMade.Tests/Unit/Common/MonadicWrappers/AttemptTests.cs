@@ -28,20 +28,20 @@ public class AttemptTests
     }
 
     [Fact]
-    public void TestAttempt_GetValueOrThrow_Success()
+    public void TestAttempt_GetValue_Success()
     {
         var attempt = Attempt<int>.Succeed(5);
-        var value = attempt.GetValueOrThrow();
+        var value = attempt.GetValue();
 
         value.Should().Be(5);
     }
 
     [Fact]
-    public void TestAttempt_GetValueOrThrow_Failure()
+    public void TestAttempt_GetValue_Failure()
     {
         var attempt = Attempt<int>.Fail(new Exception("Error"));
 
-        Action action = () => attempt.GetValueOrThrow();
+        Action action = () => attempt.GetValue();
         action.Should().Throw<Exception>().WithMessage("Error");
     }
 

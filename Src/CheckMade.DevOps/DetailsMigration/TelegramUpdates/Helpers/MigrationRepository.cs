@@ -11,12 +11,12 @@ namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
 public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
-    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsOrThrowAsync()
+    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsAsync()
     {
         var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
         var command = new NpgsqlCommand("SELECT * FROM tlgr_updates");
         
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             command.Connection = db;
             command.Transaction = transaction;
@@ -61,7 +61,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateOrThrowAsync(IEnumerable<DetailsUpdate> updates)
+    internal async Task UpdateAsync(IEnumerable<DetailsUpdate> updates)
     {
         var commands = updates.Select(update =>
         {
@@ -82,7 +82,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             return command;
         }).ToImmutableArray();
 
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             foreach (var command in commands)
             {

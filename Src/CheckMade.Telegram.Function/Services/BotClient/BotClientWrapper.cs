@@ -19,34 +19,34 @@ public interface IBotClientWrapper
     BotType MyBotType { get; }
     string MyBotToken { get; }
     
-    Task<File> GetFileOrThrowAsync(string fileId);
+    Task<File> GetFileAsync(string fileId);
 
-    Task<Unit> SendDocumentOrThrowAsync(
+    Task<Unit> SendDocumentAsync(
         AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default);
 
-    Task<Unit> SendLocationOrThrowAsync(
+    Task<Unit> SendLocationAsync(
         ChatId chatId,
         Geo location,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SendPhotoOrThrowAsync(
+    Task<Unit> SendPhotoAsync(
         AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SendTextMessageOrThrowAsync(
+    Task<Unit> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
-    Task<Unit> SendVoiceOrThrowAsync(
+    Task<Unit> SendVoiceAsync(
         AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu);
+    Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu);
 }
 
 public class BotClientWrapper(
@@ -64,9 +64,9 @@ public class BotClientWrapper(
     public BotType MyBotType { get; } = botType; 
     public string MyBotToken { get; } = botToken;
 
-    public async Task<File> GetFileOrThrowAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
 
-    public async Task<Unit> SendDocumentOrThrowAsync(AttachmentSendOutParameters documentSendOutParams,
+    public async Task<Unit> SendDocumentAsync(AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)
     {
         try
@@ -89,7 +89,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SendLocationOrThrowAsync(
+    public async Task<Unit> SendLocationAsync(
         ChatId chatId, Geo location, Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
@@ -113,7 +113,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SendPhotoOrThrowAsync(AttachmentSendOutParameters photoSendOutParams,
+    public async Task<Unit> SendPhotoAsync(AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default)
     {
         try
@@ -136,7 +136,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SendTextMessageOrThrowAsync(
+    public async Task<Unit> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
@@ -176,7 +176,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SendVoiceOrThrowAsync(AttachmentSendOutParameters voiceSendOutParams,
+    public async Task<Unit> SendVoiceAsync(AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default)
     {
         try
@@ -199,7 +199,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SetBotCommandMenuOrThrowAsync(BotCommandMenus menu)
+    public async Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu)
     {
         await botClient.DeleteMyCommandsAsync();
 

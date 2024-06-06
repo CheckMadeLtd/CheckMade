@@ -32,12 +32,12 @@ public class ConverterIntegrationTests
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(
             new TelegramFilePathResolver(
-                botClientFactory.CreateBotClientOrThrow(BotType.Operations)));
+                botClientFactory.CreateBotClient(BotType.Operations)));
         
         var actualModel = await converter.ConvertToModelAsync(
             updateWithAttachment, BotType.Operations);
     
-        var (downloadedStream, _) = await blobLoader.DownloadBlobOrThrowAsync(
+        var (downloadedStream, _) = await blobLoader.DownloadBlobAsync(
             actualModel.Value!.Details.AttachmentInternalUri.Value!);
         
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());

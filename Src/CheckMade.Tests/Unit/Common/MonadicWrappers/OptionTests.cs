@@ -27,20 +27,20 @@ public class OptionTests
     }
 
     [Fact]
-    public void TestOption_GetValueOrThrow_Some()
+    public void TestOption_GetValue_Some()
     {
         var option = Option<int>.Some(5);
-        var value = option.GetValueOrThrow();
+        var value = option.GetValue();
 
         value.Should().Be(5);
     }
 
     [Fact]
-    public void TestOption_GetValueOrThrow_None()
+    public void TestOption_GetValue_None()
     {
         var option = Option<int>.None();
 
-        Action action = () => option.GetValueOrThrow();
+        Action action = () => option.GetValue();
         action.Should().Throw<InvalidOperationException>().WithMessage("No value present");
     }
 

@@ -6,7 +6,7 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public class RoleRepository : IRoleRepository
 {
-    public Task<IEnumerable<Role>> GetAllOrThrowAsync()
+    public Task<IEnumerable<Role>> GetAllAsync()
     {
         var builder = ImmutableArray.CreateBuilder<Role>();
         

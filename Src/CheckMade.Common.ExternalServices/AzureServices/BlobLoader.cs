@@ -7,7 +7,7 @@ public class BlobLoader(BlobContainerClient containerClient) : IBlobLoader
 {
     private const string FileName = "FileName";
     
-    public async Task<Uri> UploadBlobAndReturnUriOrThrowAsync(MemoryStream stream, string fileName)
+    public async Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName)
     {
         var blobName = Guid.NewGuid().ToString();
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -20,7 +20,7 @@ public class BlobLoader(BlobContainerClient containerClient) : IBlobLoader
         return blobClient.Uri;
     }
 
-    public async Task<(MemoryStream, string)> DownloadBlobOrThrowAsync(Uri blobUri)
+    public async Task<(MemoryStream, string)> DownloadBlobAsync(Uri blobUri)
     {
         var blobName = Path.GetFileName(blobUri.LocalPath);
         var blobClient = containerClient.GetBlobClient(blobName);

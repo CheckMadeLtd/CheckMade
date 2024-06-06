@@ -4,5 +4,5 @@ namespace CheckMade.Common.Interfaces.Persistence;
 
 public interface IChatIdByOutputDestinationRepository
 {
-    Task<IEnumerable<ChatIdByOutputDestination>> GetAllOrThrowAsync();
+    Task<IEnumerable<ChatIdByOutputDestination>> GetAllAsync();
 }

@@ -11,7 +11,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 internal static class OutputSender
 {
-        internal static async Task<Unit> SendOutputsOrThrowAsync(
+        internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
             IDictionary<BotType, IBotClientWrapper> botClientByBotType,
             BotType updateReceivingBotType,
@@ -36,35 +36,35 @@ internal static class OutputSender
                 switch (output)
                 {
                     case { Attachments.IsSome: false, Location.IsSome: false }:
-                        await InvokeSendTextMessageOrThrowAsync();
+                        await InvokeSendTextMessageAsync();
                         break;
 
                     case { Attachments.IsSome: true }:
                         foreach (var attachment in output.Attachments.Value!)
-                            await InvokeSendAttachmentOrThrowAsync(attachment);
+                            await InvokeSendAttachmentAsync(attachment);
                         break;
 
                     case { Location.IsSome: true }:
-                        await InvokeSendLocationOrThrowAsync();
+                        await InvokeSendLocationAsync();
                         break;
                 }
 
                 continue;
 
-                async Task InvokeSendTextMessageOrThrowAsync()
+                async Task InvokeSendTextMessageAsync()
                 {
                     await destinationBotClient
-                        .SendTextMessageOrThrowAsync(
+                        .SendTextMessageAsync(
                             destinationChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
                             uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
                             converter.GetReplyMarkup(output));
                 }
 
-                async Task InvokeSendAttachmentOrThrowAsync(OutputAttachmentDetails details)
+                async Task InvokeSendAttachmentAsync(OutputAttachmentDetails details)
                 {
                     var (blobData, fileName) =
-                        await blobLoader.DownloadBlobOrThrowAsync(details.AttachmentUri);
+                        await blobLoader.DownloadBlobAsync(details.AttachmentUri);
                     var fileStream = new InputFileStream(blobData, fileName);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
@@ -77,15 +77,15 @@ internal static class OutputSender
                     switch (details.AttachmentType)
                     {
                         case AttachmentType.Document:
-                            await destinationBotClient.SendDocumentOrThrowAsync(attachmentSendOutParams);
+                            await destinationBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
                         case AttachmentType.Photo:
-                            await destinationBotClient.SendPhotoOrThrowAsync(attachmentSendOutParams);
+                            await destinationBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
                         case AttachmentType.Voice:
-                            await destinationBotClient.SendVoiceOrThrowAsync(attachmentSendOutParams);
+                            await destinationBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 
                         default:
@@ -93,10 +93,10 @@ internal static class OutputSender
                     }
                 }
 
-                async Task InvokeSendLocationOrThrowAsync()
+                async Task InvokeSendLocationAsync()
                 {
                     await destinationBotClient
-                        .SendLocationOrThrowAsync(
+                        .SendLocationAsync(
                             destinationChatId,
                             output.Location.Value!,
                             converter.GetReplyMarkup(output));

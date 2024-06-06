@@ -62,7 +62,7 @@ public record Attempt<T>
         return IsSuccess ? Value! : defaultValue;
     }
 
-    public T GetValueOrThrow()
+    public T GetValue()
     {
         if (IsSuccess)
         {

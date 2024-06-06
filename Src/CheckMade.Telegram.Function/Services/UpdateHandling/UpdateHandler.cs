@@ -58,9 +58,9 @@ public class UpdateHandler(
 
         var botClientByBotType = new Dictionary<BotType, IBotClientWrapper>
         {
-            { BotType.Operations,  botClientFactory.CreateBotClientOrThrow(BotType.Operations) },
-            { BotType.Communications, botClientFactory.CreateBotClientOrThrow(BotType.Communications) },
-            { BotType.Notifications, botClientFactory.CreateBotClientOrThrow(BotType.Notifications) }
+            { BotType.Operations,  botClientFactory.CreateBotClient(BotType.Operations) },
+            { BotType.Communications, botClientFactory.CreateBotClient(BotType.Communications) },
+            { BotType.Notifications, botClientFactory.CreateBotClient(BotType.Notifications) }
         };
         
         var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
@@ -80,7 +80,7 @@ public class UpdateHandler(
                         GetChatIdByOutputDestinationAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
-                      OutputSender.SendOutputsOrThrowAsync(
+                      OutputSender.SendOutputsAsync(
                           outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
                           chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
@@ -116,7 +116,7 @@ public class UpdateHandler(
     }
     
     private async Task<IDictionary<TelegramOutputDestination, TelegramChatId>> GetChatIdByOutputDestinationAsync() =>
-        (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
+        (await chatIdByOutputDestinationRepository.GetAllAsync())
             .ToDictionary(
                 keySelector: map => map.OutputDestination,
                 elementSelector: map => map.ChatId);

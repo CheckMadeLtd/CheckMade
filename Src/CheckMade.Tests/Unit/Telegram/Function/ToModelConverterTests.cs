@@ -63,7 +63,7 @@ public class ToModelConverterTests
         
         var expectedAttachmentTelegramUri = new Uri(
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.MyBotToken}/" +
-            $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}");
+            $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
 
         var expectedTelegramUpdate = new TelegramUpdate(
             attachmentUpdate.Message.From!.Id,

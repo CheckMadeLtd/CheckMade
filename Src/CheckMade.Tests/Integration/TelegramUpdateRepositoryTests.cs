@@ -33,12 +33,12 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
                 new (update.UserId, update.TelegramChatId, update.BotType, update.ModelUpdateType, update.Details)
             };
         
-            await updateRepo.AddOrThrowAsync(update);
+            await updateRepo.AddAsync(update);
             var retrievedUpdates = 
-                (await updateRepo.GetAllOrThrowAsync(update.UserId))
+                (await updateRepo.GetAllAsync(update.UserId))
                 .OrderByDescending(x => x.Details.TelegramDate)
                 .ToList().AsReadOnly();
-            await updateRepo.HardDeleteAllOrThrowAsync(update.UserId);
+            await updateRepo.HardDeleteAllAsync(update.UserId);
         
             Assert.Equivalent(expectedRetrieval[0], retrievedUpdates[0]);
         }
@@ -58,9 +58,9 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         };
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         
-        await updateRepo.AddOrThrowAsync(telegramUpdates);
-        var retrievedUpdates = await updateRepo.GetAllOrThrowAsync(userId);
-        await updateRepo.HardDeleteAllOrThrowAsync(userId);
+        await updateRepo.AddAsync(telegramUpdates);
+        var retrievedUpdates = await updateRepo.GetAllAsync(userId);
+        await updateRepo.HardDeleteAllAsync(userId);
 
         Assert.Equivalent(telegramUpdates, retrievedUpdates);
     }
@@ -73,7 +73,7 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         TelegramUserId userId = randomizer.GenerateRandomLong();
     
-        var retrievedUpdates = await updateRepo.GetAllOrThrowAsync(userId);
+        var retrievedUpdates = await updateRepo.GetAllAsync(userId);
     
         Assert.Empty(retrievedUpdates);
     }
@@ -102,6 +102,6 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await updateRepo.GetAllOrThrowAsync(devDbUserId);
+        await updateRepo.GetAllAsync(devDbUserId);
     }
 }

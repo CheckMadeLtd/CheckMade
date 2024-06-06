@@ -260,8 +260,8 @@ internal class ToModelConverter(
     private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri telegramAttachmentUri)
     {
         return await Attempt<Option<Uri>>.RunAsync(async () => 
-            await blobLoader.UploadBlobAndReturnUriOrThrowAsync(
-                await downloader.DownloadDataOrThrowAsync(telegramAttachmentUri), 
+            await blobLoader.UploadBlobAndReturnUriAsync(
+                await downloader.DownloadDataAsync(telegramAttachmentUri), 
                 GetFileName(telegramAttachmentUri)));
         
         static string GetFileName(Uri aUri) => aUri.AbsoluteUri.Split('/').Last();

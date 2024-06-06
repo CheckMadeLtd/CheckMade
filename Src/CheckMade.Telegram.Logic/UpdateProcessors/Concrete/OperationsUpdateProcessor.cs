@@ -20,10 +20,10 @@ public class OperationsUpdateProcessor(
     {
         if (telegramUpdate.IsSuccess)
         {
-            await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
+            await updateRepo.AddAsync(telegramUpdate.Value!);
         }
 
-        IReadOnlyList<Role> allRoles = (await roleRepo.GetAllOrThrowAsync()).ToList().AsReadOnly();
+        IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
         
         return telegramUpdate switch
         {
