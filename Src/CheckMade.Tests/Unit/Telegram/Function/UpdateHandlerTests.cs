@@ -51,7 +51,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     [Fact]
-    // Agnostic to BotType, using Operations
+    Agnostic to BotType, using Operations
     public async Task HandleUpdateAsync_LogsDebuggingDetails_WhenDataAccessExceptionThrown()
     {
         var serviceCollection = new UnitTestStartup().Services;
