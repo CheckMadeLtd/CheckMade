@@ -18,7 +18,7 @@ public class OperationsRequestProcessor(
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        if (telegramUpdate.Success)
+        if (telegramUpdate.IsSuccess)
         {
             await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
         }
@@ -27,7 +27,7 @@ public class OperationsRequestProcessor(
         
         return telegramUpdate switch
         {
-            { Success: false, Error: { } error } => [ OutputDto.Create(error) ],
+            { IsSuccess: false, Error: { } error } => [ OutputDto.Create(error) ],
             
             { Value.Details.BotCommandEnumCode.IsSome: true } =>
                 ProcessBotCommand(telegramUpdate.Value, allRoles),

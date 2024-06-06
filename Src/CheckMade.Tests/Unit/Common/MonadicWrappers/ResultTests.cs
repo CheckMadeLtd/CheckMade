@@ -73,7 +73,7 @@ public class ResultTests
             select s * 2;
         
         // Assert
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(4);
     }
     
@@ -88,7 +88,7 @@ public class ResultTests
             select s * 2;
         
         // Assert
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Error message");
     }
     
@@ -104,7 +104,7 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(2);
     }
     
@@ -120,7 +120,7 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Predicate not satisfied");
     }
     
@@ -136,7 +136,7 @@ public class ResultTests
             select s;
         
         // Assert
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Error message");
     }
     
@@ -149,7 +149,7 @@ public class ResultTests
         var source = Result<int>.FromSuccess(5);
         var result = source.SelectMany(Binder);
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(10);
     }
 
@@ -162,7 +162,7 @@ public class ResultTests
         var source = Result<int>.FromSuccess(5);
         var result = source.SelectMany(BinderError);
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
 
         static Result<int> BinderError(int i) => Result<int>.FromError(UiNoTranslate("Simulated error"));
@@ -177,7 +177,7 @@ public class ResultTests
         var source = Result<int>.FromError(UiNoTranslate("Initial error"));
         var result = source.SelectMany(Binder);
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Initial error");
     }
     
@@ -193,7 +193,7 @@ public class ResultTests
 
         var result = from s in source from res in Binder(s) select res;
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(10);
     }
     
@@ -208,7 +208,7 @@ public class ResultTests
 
         var result = from s in source from c in CollectionSelector(s) select s + c;
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
@@ -224,7 +224,7 @@ public class ResultTests
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -240,7 +240,7 @@ public class ResultTests
 
         var result = from s in await sourceTask from c in CollectionSelector(s) select c + s;
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
@@ -255,7 +255,7 @@ public class ResultTests
 
         var result = await (from s in source from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -295,7 +295,7 @@ public class ResultTests
 
         var result = from s in source from res in Binder(s) select res;
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
     }
     
@@ -309,7 +309,7 @@ public class ResultTests
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
     }
 
@@ -323,7 +323,7 @@ public class ResultTests
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
         selectorWasCalled.Should().BeFalse();
         
@@ -350,7 +350,7 @@ public class ResultTests
             (s, c) => s + c
         );
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(15);
     }
     
@@ -368,7 +368,7 @@ public class ResultTests
             (s, c) => s + c
         );
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(11);
     }
     
@@ -385,7 +385,7 @@ public class ResultTests
             (s, c) => s + c
         );
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
     }
     
@@ -402,7 +402,7 @@ public class ResultTests
             (s, c) => s + c
         );
 
-        result.Success.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
     }
 
@@ -453,7 +453,7 @@ public class ResultTests
         var result = await intermediateResult
             .SelectMany(b => Task.FromResult(SyncOperation3(b)), (_, c) => c);
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(15);
     }
 
@@ -474,7 +474,7 @@ public class ResultTests
             (_, inner) => inner + 5
         );
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(10);
     }
     
@@ -491,7 +491,7 @@ public class ResultTests
             (p, updatedAge) => new Person { Name = p.Name, Age = updatedAge }
         );
 
-        result.Success.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(new Person { Name = "Alice", Age = 35 });
     }
 

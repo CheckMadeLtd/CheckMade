@@ -11,7 +11,7 @@ public class NotificationsRequestProcessor(ITelegramUpdateRepository updateRepo)
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessRequestAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        if (telegramUpdate.Success)
+        if (telegramUpdate.IsSuccess)
         {
             await updateRepo.AddOrThrowAsync(telegramUpdate.Value!);
             

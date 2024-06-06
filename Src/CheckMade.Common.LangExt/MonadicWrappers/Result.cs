@@ -7,7 +7,8 @@ public record Result<T>
     public T? Value { get; }
     public UiString? Error { get; }
 
-    public bool Success => Error == null;
+    public bool IsSuccess => Error == null;
+    public bool IsError => !IsSuccess;
 
     private Result(T value)
     {
@@ -27,12 +28,12 @@ public record Result<T>
     
     public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<UiString, TResult> onError)
     {
-        return Success ? onSuccess(Value!) : onError(Error!);
+        return IsSuccess ? onSuccess(Value!) : onError(Error!);
     }
 
     public T GetValueOrThrow()
     {
-        if (Success)
+        if (IsSuccess)
         {
             return Value!;
         }
@@ -41,7 +42,7 @@ public record Result<T>
 
     public T GetValueOrDefault(T defaultValue = default!)
     {
-        return Success ? Value! : defaultValue;
+        return IsSuccess ? Value! : defaultValue;
     }
 }
 
@@ -49,14 +50,14 @@ public static class ResultExtensions
 {
     public static Result<TResult> Select<T, TResult>(this Result<T> source, Func<T, TResult> selector)
     {
-        return source.Success 
+        return source.IsSuccess 
             ? Result<TResult>.FromSuccess(selector(source.Value!)) 
             : Result<TResult>.FromError(source.Error!);
     }
 
     public static Result<T> Where<T>(this Result<T> source, Func<T, bool> predicate)
     {
-        if (!source.Success) return source;
+        if (!source.IsSuccess) return source;
 
         return predicate(source.Value!) 
             ? source 
@@ -69,7 +70,7 @@ public static class ResultExtensions
         this Result<T> source,
         Func<T, Result<TResult>> binder)
     {
-        return source.Success ? binder(source.Value!) : Result<TResult>.FromError(source.Error!);
+        return source.IsSuccess ? binder(source.Value!) : Result<TResult>.FromError(source.Error!);
     }
     
     // Covers scenarios where you need to combine a successful Result with another Result to produce a final result,
@@ -79,12 +80,12 @@ public static class ResultExtensions
         Func<T, Result<TCollection>> collectionSelector,
         Func<T, TCollection, TResult> resultSelector)
     {
-        if (!source.Success)
+        if (!source.IsSuccess)
             return Result<TResult>.FromError(source.Error!);
 
         var collectionResult = collectionSelector(source.Value!);
 
-        return collectionResult.Success
+        return collectionResult.IsSuccess
             ? Result<TResult>.FromSuccess(resultSelector(source.Value!, collectionResult.Value!))
             : Result<TResult>.FromError(collectionResult.Error!);
     }
@@ -98,12 +99,12 @@ public static class ResultExtensions
     {
         var source = await sourceTask;
 
-        if (!source.Success)
+        if (!source.IsSuccess)
             return Result<TResult>.FromError(source.Error!);
 
         var collection = await collectionTaskSelector(source.Value!);
 
-        return collection.Success
+        return collection.IsSuccess
             ? Result<TResult>.FromSuccess(resultSelector(source.Value!, collection.Value!))
             : Result<TResult>.FromError(collection.Error!);
     }
@@ -117,12 +118,12 @@ public static class ResultExtensions
     {
         var source = await sourceTask;
 
-        if (!source.Success)
+        if (!source.IsSuccess)
             return Result<TResult>.FromError(source.Error!);
 
         var collection = collectionSelector(source.Value!);
 
-        return collection.Success
+        return collection.IsSuccess
             ? Result<TResult>.FromSuccess(resultSelector(source.Value!, collection.Value!))
             : Result<TResult>.FromError(collection.Error!);
     }
@@ -134,12 +135,12 @@ public static class ResultExtensions
         Func<TSource, Task<Result<TCollection>>> collectionTaskSelector,
         Func<TSource, TCollection, TResult> resultSelector)
     {
-        if (!source.Success)
+        if (!source.IsSuccess)
             return Result<TResult>.FromError(source.Error!);
 
         var collection = await collectionTaskSelector(source.Value!);
 
-        return collection.Success
+        return collection.IsSuccess
             ? Result<TResult>.FromSuccess(resultSelector(source.Value!, collection.Value!))
             : Result<TResult>.FromError(collection.Error!);
     }
