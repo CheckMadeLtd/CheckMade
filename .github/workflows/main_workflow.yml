@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - tmp/vd5j4
 
 jobs:  
   tag_version:

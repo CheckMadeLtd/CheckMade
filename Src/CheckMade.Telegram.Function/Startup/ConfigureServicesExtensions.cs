@@ -16,6 +16,8 @@ internal static class ConfigureServicesExtensions
     internal static void ConfigureBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
+        Console.Out.WriteLine($"UniqueString123 {hostingEnvironment}");
+        
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
 
