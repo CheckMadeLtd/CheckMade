@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Model.Telegram.Updates;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

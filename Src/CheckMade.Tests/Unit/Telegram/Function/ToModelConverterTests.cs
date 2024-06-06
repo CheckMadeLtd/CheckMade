@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;

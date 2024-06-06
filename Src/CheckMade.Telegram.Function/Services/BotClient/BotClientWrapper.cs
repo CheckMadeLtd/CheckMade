@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.RetryPolicies;

@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CheckMade.Common.LangExt;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils.UiTranslation;

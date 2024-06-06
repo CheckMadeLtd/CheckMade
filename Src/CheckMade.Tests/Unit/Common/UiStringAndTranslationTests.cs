@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

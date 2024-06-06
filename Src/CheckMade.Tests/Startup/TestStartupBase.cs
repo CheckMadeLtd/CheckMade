@@ -1,5 +1,4 @@
 using System.Configuration;
-using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
