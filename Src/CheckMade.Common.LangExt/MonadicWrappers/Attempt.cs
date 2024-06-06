@@ -77,8 +77,8 @@ public static class AttemptExtensions
     public static Attempt<TResult> Select<T, TResult>(this Attempt<T> source, Func<T, TResult> selector)
     {
         return source.IsSuccess 
-            ? Attempt<TResult>.Succeed(selector(source.Value!)) 
-            : Attempt<TResult>.Fail(source.Exception!);
+            ? selector(source.Value!) 
+            : source.Exception!;
     }
 
     public static Attempt<T> Where<T>(this Attempt<T> source, Func<T, bool> predicate)
@@ -87,14 +87,14 @@ public static class AttemptExtensions
 
         return predicate(source.Value!) 
             ? source 
-            : Attempt<T>.Fail(new Exception("Predicate not satisfied"));
+            : new Exception("Predicate not satisfied");
     }
     
     /* Covers scenarios where you have a successful attempt and want to bind it to another
     attempt, with both operations being synchronous.*/
     public static Attempt<TResult> SelectMany<T, TResult>(this Attempt<T> source, Func<T, Attempt<TResult>> binder)
     {
-        return source.IsSuccess ? binder(source.Value!) : Attempt<TResult>.Fail(source.Exception!);
+        return source.IsSuccess ? binder(source.Value!) : source.Exception!;
     }
     
     /* Covers scenarios where you need to combine a successful attempt with another attempt to
@@ -105,13 +105,13 @@ public static class AttemptExtensions
         Func<T, TCollection, TResult> resultSelector)
     {
         if (!source.IsSuccess)
-            return Attempt<TResult>.Fail(source.Exception!);
+            return source.Exception!;
     
         var collectionAttempt = collectionSelector(source.Value!);
 
         return collectionAttempt.IsSuccess
-            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collectionAttempt.Value!))
-            : Attempt<TResult>.Fail(collectionAttempt.Exception!);
+            ? resultSelector(source.Value!, collectionAttempt.Value!)
+            : collectionAttempt.Exception!;
     }
     
     /* Covers scenarios where both the initial attempt and the function it binds to are
@@ -124,13 +124,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return Attempt<TResult>.Fail(source.Exception!);
+            return source.Exception!;
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess 
-            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.Fail(collection.Exception!);
+            ? resultSelector(source.Value!, collection.Value!)
+            : collection.Exception!;
     }
     
     /* Covers scenarios where the initial attempt is an asynchronous operation, but the function
@@ -143,13 +143,13 @@ public static class AttemptExtensions
         var source = await sourceTask;
 
         if (!source.IsSuccess)
-            return Attempt<TResult>.Fail(source.Exception!);
+            return source.Exception!;
 
         var collection = collectionSelector(source.Value!);
 
         return collection.IsSuccess 
-            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.Fail(collection.Exception!);
+            ? resultSelector(source.Value!, collection.Value!)
+            : collection.Exception!;
     }
     
     /* Handles cases where you start with a synchronous Attempt<T>, but need to perform an asynchronous operation based
@@ -160,12 +160,12 @@ public static class AttemptExtensions
         Func<TSource, TCollection, TResult> resultSelector)
     {
         if (!source.IsSuccess)
-            return Attempt<TResult>.Fail(source.Exception!);
+            return source.Exception!;
 
         var collection = await collectionTaskSelector(source.Value!);
 
         return collection.IsSuccess
-            ? Attempt<TResult>.Succeed(resultSelector(source.Value!, collection.Value!))
-            : Attempt<TResult>.Fail(collection.Exception!);
+            ? resultSelector(source.Value!, collection.Value!)
+            : collection.Exception!;
     }
 }
