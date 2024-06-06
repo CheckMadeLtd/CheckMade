@@ -65,60 +65,39 @@ public class UpdateHandler(
         
         var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
-        var chatIdByOutputDestination = await GetChatIdByOutputDestinationAsync();
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
 
         var sendOutputsAttempt = await
             (from telegramUpdate
-                    in toModelConverter.ConvertToModelAsync(update, updateReceivingBotType)
+                    in Attempt<Result<TelegramUpdate>>.RunAsync(() => 
+                        toModelConverter.ConvertToModelAsync(update, updateReceivingBotType))
                 from outputs
-                    in selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate)
+                    in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
+                        selector.GetRequestProcessor(updateReceivingBotType).ProcessRequestAsync(telegramUpdate))
+                from chatIdByOutputDestination
+                    in Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(
+                        GetChatIdByOutputDestinationAsync) 
                 from unit
-                    in Attempt<Unit>.RunAsync(() => 
-                        OutputSender.SendOutputsOrThrowAsync(
-                            outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
-                            chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader))
+                  in Attempt<Unit>.RunAsync(() => 
+                      OutputSender.SendOutputsOrThrowAsync(
+                          outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
+                          chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
-            error =>
+            ex =>
             {
-                if (error.FailureMessage != null)
-                {
-                    logger.LogWarning($"Message to User from {nameof(error.FailureMessage)}: " +
-                                    $"{error.FailureMessage.GetFormattedEnglish()}");
-
-                    _ = OutputSender.SendOutputsOrThrowAsync(
-                            new List<OutputDto> { OutputDto.Create(error.FailureMessage) },
-                            botClientByBotType, updateReceivingBotType, updateReceivingChatId,
-                            chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)
-                        .ContinueWith(task =>
-                        {
-                            if (task.Exception != null)
-                            {
-                                logger.LogWarning($"An error occurred while trying to send " +
-                                                         $"{nameof(error.FailureMessage)} to the user."); 
-                            }
-                        });
-                }
-
-                if (error.Exception != null)
-                {
-                    logger.LogError(error.Exception.Message, error.Exception);
-                    
-                    logger.LogDebug(error.Exception, 
-                        "Next, some details to help debug the current exception. " +
-                        "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
-                        "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                        updateReceivingBotType, update.Message.From!.Id,
-                        update.Message.Date, update.Message.Text);
-                }
+                logger.LogError(ex, "Some details to help debug the current exception. " +
+                                    "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
+                                    "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
+                    updateReceivingBotType, update.Message.From!.Id,
+                    update.Message.Date, update.Message.Text);
                 
-                return error;
+                return ex;
             });
     }
 
@@ -137,13 +116,8 @@ public class UpdateHandler(
     }
     
     private async Task<IDictionary<TelegramOutputDestination, TelegramChatId>> GetChatIdByOutputDestinationAsync() =>
-        (await Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(async () =>
-            (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
+        (await chatIdByOutputDestinationRepository.GetAllOrThrowAsync())
             .ToDictionary(
                 keySelector: map => map.OutputDestination,
-                elementSelector: map => map.ChatId)))
-        .Match(
-            value => value,
-            error => throw new DataAccessException($"An exception was thrown while trying to access " + 
-                                                   $"{nameof(chatIdByOutputDestinationRepository)}", error.Exception));
+                elementSelector: map => map.ChatId);
 }
