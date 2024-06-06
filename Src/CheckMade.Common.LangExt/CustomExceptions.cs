@@ -11,8 +11,3 @@ public class DataAccessException : Exception
 public class TelegramBotClientCallException(string? message = null, Exception? innerException = null) 
     : Exception(message, innerException);
 
-public class DataMigrationException(string? message = null, Exception? innerException = null) 
-    : Exception(message, innerException);
-
-internal class MonadicWrapperGetValueOrThrowException(string? message = null, Exception? innerException = null) 
-    : Exception(message, innerException);
