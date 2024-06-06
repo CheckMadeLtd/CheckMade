@@ -21,9 +21,8 @@ public class OperationsRequestProcessorTests
 
         var actualOutput = await basics.processor.ProcessRequestAsync(problemCommandUpdate);
         
-        Assert.True(actualOutput.IsSuccess);
         Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
-            actualOutput.GetValueOrDefault()[0].DomainCategorySelection.GetValueOrDefault());
+            actualOutput[0].DomainCategorySelection.GetValueOrDefault());
     }
     
     private static (ITestUtils utils, IOperationsRequestProcessor processor) 
