@@ -38,7 +38,7 @@ public record Option<T>
         return IsSome ? Value! : defaultValue;
     }
 
-    public T GetValue()
+    public T GetValueOrThrow()
     {
         if (IsSome)
         {

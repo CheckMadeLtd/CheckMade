@@ -31,7 +31,7 @@ public class AttemptTests
     public void TestAttempt_GetValue_Success()
     {
         var attempt = Attempt<int>.Succeed(5);
-        var value = attempt.GetValue();
+        var value = attempt.GetValueOrThrow();
 
         value.Should().Be(5);
     }
@@ -41,7 +41,7 @@ public class AttemptTests
     {
         var attempt = Attempt<int>.Fail(new Exception("Error"));
 
-        Action action = () => attempt.GetValue();
+        Action action = () => attempt.GetValueOrThrow();
         action.Should().Throw<Exception>().WithMessage("Error");
     }
 

@@ -30,7 +30,7 @@ public class OptionTests
     public void TestOption_GetValue_Some()
     {
         var option = Option<int>.Some(5);
-        var value = option.GetValue();
+        var value = option.GetValueOrThrow();
 
         value.Should().Be(5);
     }
@@ -40,7 +40,7 @@ public class OptionTests
     {
         var option = Option<int>.None();
 
-        Action action = () => option.GetValue();
+        Action action = () => option.GetValueOrThrow();
         action.Should().Throw<InvalidOperationException>().WithMessage("No value present");
     }
 

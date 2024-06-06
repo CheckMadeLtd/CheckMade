@@ -30,7 +30,7 @@ public class ResultTests
     public void TestResult_GetValue_Success()
     {
         var result = Result<int>.FromSuccess(5);
-        var value = result.GetValue();
+        var value = result.GetValueOrThrow();
 
         value.Should().Be(5);
     }
@@ -40,7 +40,7 @@ public class ResultTests
     {
         var result = Result<int>.FromError(UiNoTranslate("Error"));
 
-        Action action = () => result.GetValue();
+        Action action = () => result.GetValueOrThrow();
         action.Should().Throw<InvalidOperationException>().WithMessage("Error");
     }
 

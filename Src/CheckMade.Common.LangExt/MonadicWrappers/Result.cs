@@ -31,7 +31,7 @@ public record Result<T>
         return IsSuccess ? onSuccess(Value!) : onError(Error!);
     }
 
-    public T GetValue()
+    public T GetValueOrThrow()
     {
         if (IsSuccess)
         {
