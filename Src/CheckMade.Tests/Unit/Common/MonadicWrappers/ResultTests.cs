@@ -18,10 +18,10 @@ public class ResultTests
     [Fact]
     public void TestResult_Match_Error()
     {
-        var result = Result<int>.FromError("Error");
+        var result = Result<int>.FromError(UiNoTranslate("Error"));
         var output = result.Match(
             onSuccess: value => value * 2,
-            onError: error => error.Length);
+            onError: error => error.RawEnglishText.Length);
 
         output.Should().Be(5);
     }
@@ -38,7 +38,7 @@ public class ResultTests
     [Fact]
     public void TestResult_GetValueOrThrow_Error()
     {
-        var result = Result<int>.FromError("Error");
+        var result = Result<int>.FromError(UiNoTranslate("Error"));
 
         Action action = () => result.GetValueOrThrow();
         action.Should().Throw<InvalidOperationException>().WithMessage("Error");
@@ -56,7 +56,7 @@ public class ResultTests
     [Fact]
     public void TestResult_GetValueOrDefault_Error()
     {
-        var result = Result<int>.FromError("Error");
+        var result = Result<int>.FromError(UiNoTranslate("Error"));
         var value = result.GetValueOrDefault(10);
 
         value.Should().Be(10);
@@ -81,7 +81,7 @@ public class ResultTests
     public void Select_ShouldReturnFailureResult_WhenSourceIsError()
     {
         // Arrange
-        var source = Result<int>.FromError("Error message");
+        var source = Result<int>.FromError(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
@@ -128,7 +128,7 @@ public class ResultTests
     public void Where_ShouldReturnFailureResult_WhenSourceIsError()
     {
         // Arrange
-        var source = Result<int>.FromError("Error message");
+        var source = Result<int>.FromError(UiNoTranslate("Error message"));
         
         // Act
         var result = from s in source
@@ -165,7 +165,7 @@ public class ResultTests
         result.Success.Should().BeFalse();
         result.Error.Should().Be("Simulated error");
 
-        static Result<int> BinderError(int i) => Result<int>.FromError("Simulated error");
+        static Result<int> BinderError(int i) => Result<int>.FromError(UiNoTranslate("Simulated error"));
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class ResultTests
         /* This test demonstrates binding an erroneous Result<T> to any Result<TResult>.
          The initial value is an error, and we expect the error to propagate without calling the binder function. */
 
-        var source = Result<int>.FromError("Initial error");
+        var source = Result<int>.FromError(UiNoTranslate("Initial error"));
         var result = source.SelectMany(Binder);
 
         result.Success.Should().BeFalse();
@@ -291,7 +291,7 @@ public class ResultTests
         /* This test simulates a situation where the source value is an error. We can expect that no matter 
         what operation we try to apply, the result should also be an error. */
         
-        var source = Result<int>.FromError("Simulated error");
+        var source = Result<int>.FromError(UiNoTranslate("Simulated error"));
 
         var result = from s in source from res in Binder(s) select res;
 
@@ -305,7 +305,7 @@ public class ResultTests
         /* The same scenario as the previous test, but with the source value provided by a Task. Again, 
         when the source is an error, the result is expected to be an error. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError("Simulated error"));
+        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
@@ -318,7 +318,7 @@ public class ResultTests
     {
         /* This test ensures that the selector is not called when the source value is an error. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError("Simulated error"));
+        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
         var selectorWasCalled = false;
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
@@ -378,7 +378,7 @@ public class ResultTests
         /* This test covers the scenario where the initial asynchronous operation returns an error.
         Even though the operations are asynchronous, the final result should also be an error. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError("Simulated error"));
+        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             async s => await CollectionTaskSelector(s),
@@ -395,7 +395,7 @@ public class ResultTests
         /* This test examines the behavior when the initial asynchronous operation returns an error.
         The subsequent synchronous operation should not be called, and the final result should be an error. */
         
-        var sourceTask = Task.FromResult(Result<int>.FromError("Simulated error"));
+        var sourceTask = Task.FromResult(Result<int>.FromError(UiNoTranslate("Simulated error")));
 
         var result = await sourceTask.SelectMany(
             s => CollectionSelector(s),
