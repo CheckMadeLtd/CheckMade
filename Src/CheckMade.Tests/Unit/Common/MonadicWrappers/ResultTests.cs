@@ -21,7 +21,7 @@ public class ResultTests
         var result = Result<int>.FromError(UiNoTranslate("Error"));
         var output = result.Match(
             onSuccess: value => value * 2,
-            onError: error => error.RawEnglishText.Length);
+            onError: error => error.GetFormattedEnglish().Length);
 
         output.Should().Be(5);
     }
@@ -89,7 +89,7 @@ public class ResultTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Error message");
+        result.Error!.GetFormattedEnglish().Should().Be("Error message");
     }
     
     [Fact]
@@ -121,7 +121,7 @@ public class ResultTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Predicate not satisfied");
+        result.Error!.GetFormattedEnglish().Should().Be("Predicate not satisfied");
     }
     
     [Fact]
@@ -137,7 +137,7 @@ public class ResultTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Error message");
+        result.Error!.GetFormattedEnglish().Should().Be("Error message");
     }
     
     [Fact]
@@ -163,7 +163,7 @@ public class ResultTests
         var result = source.SelectMany(BinderError);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
 
         static Result<int> BinderError(int i) => Result<int>.FromError(UiNoTranslate("Simulated error"));
     }
@@ -178,7 +178,7 @@ public class ResultTests
         var result = source.SelectMany(Binder);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Initial error");
+        result.Error!.GetFormattedEnglish().Should().Be("Initial error");
     }
     
     [Fact]
@@ -296,7 +296,7 @@ public class ResultTests
         var result = from s in source from res in Binder(s) select res;
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
     }
     
     [Fact]
@@ -310,7 +310,7 @@ public class ResultTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
     }
 
     [Fact]
@@ -324,7 +324,7 @@ public class ResultTests
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -386,7 +386,7 @@ public class ResultTests
         );
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
     }
     
     [Fact]
@@ -403,7 +403,7 @@ public class ResultTests
         );
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be("Simulated error");
+        result.Error!.GetFormattedEnglish().Should().Be("Simulated error");
     }
 
     [Fact]
