@@ -95,27 +95,34 @@ internal static class ConfigureServicesExtensions
         services.Add_OtherExternalFacingServices_Dependencies();
     }
 
-    private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
-        hostingEnvironment switch
+    private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment)
+    {
+        switch (hostingEnvironment)
         {
-            "Development" => new BotTokens(
-                GetBotToken(config, "DEV", BotType.Operations),
-                GetBotToken(config, "DEV", BotType.Communications),
-                GetBotToken(config, "DEV", BotType.Notifications)),
-
-            "Staging" => new BotTokens(
-                GetBotToken(config, "STG", BotType.Operations),
-                GetBotToken(config, "STG", BotType.Communications),
-                GetBotToken(config, "STG", BotType.Notifications)),
-
-            "Production" => new BotTokens(
-                GetBotToken(config, "PRD", BotType.Operations),
-                GetBotToken(config, "PRD", BotType.Communications),
-                GetBotToken(config, "PRD", BotType.Notifications)),
-
-            _ => throw new ArgumentException((nameof(hostingEnvironment)))
-        };
-
+            case "Development":
+                return new BotTokens(
+                    GetBotToken(config, "DEV", BotType.Operations),
+                    GetBotToken(config, "DEV", BotType.Communications),
+                    GetBotToken(config, "DEV", BotType.Notifications));
+            
+            case "Staging":
+                return new BotTokens(
+                    GetBotToken(config, "STG", BotType.Operations),
+                    GetBotToken(config, "STG", BotType.Communications),
+                    GetBotToken(config, "STG", BotType.Notifications));
+            
+            case "Production":
+                return new BotTokens(
+                    GetBotToken(config, "PRD", BotType.Operations),
+                    GetBotToken(config, "PRD", BotType.Communications),
+                    GetBotToken(config, "PRD", BotType.Notifications));
+            
+            default:
+                Console.Out.WriteLine($"UniqueString12345: {hostingEnvironment}");
+                throw new ArgumentException((nameof(hostingEnvironment)));       
+        }
+    }
+    
     private static string GetBotToken(IConfiguration config, string envAcronym, BotType botType)
     {
         var keyToBotToken = $"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN";
