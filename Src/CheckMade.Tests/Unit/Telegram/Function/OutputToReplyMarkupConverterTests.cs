@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Model.DTOs;

@@ -16,7 +16,7 @@ public class OperationsUpdateProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var issueCommandUpdate = basics.utils.GetValidModelInputCommandMessage(
+        var issueCommandUpdate = basics.utils.GetValidModelCommandMessage(
             BotType.Operations, (int)OperationsBotCommands.NewIssue);
 
         var actualOutput = await basics.processor.ProcessUpdateAsync(issueCommandUpdate);

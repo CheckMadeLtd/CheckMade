@@ -18,12 +18,14 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
+        
         var telegramUpdates = new[]
         {
-            utils.GetValidModelInputTextMessage(),
-            utils.GetValidModelInputTextMessage(),
-            utils.GetValidModelInputTextMessage()
+            utils.GetValidModelTextMessage(),
+            utils.GetValidModelTextMessage(),
+            utils.GetValidModelTextMessage()
         };
+        
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
 
         foreach (var update in telegramUpdates)
@@ -53,10 +55,11 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var telegramUpdates = new[]
         {
-            utils.GetValidModelInputTextMessage(userId),
-            utils.GetValidModelInputTextMessage(userId),
-            utils.GetValidModelInputTextMessage(userId)
+            utils.GetValidModelTextMessage(userId),
+            utils.GetValidModelTextMessage(userId),
+            utils.GetValidModelTextMessage(userId)
         };
+        
         var updateRepo = _services.GetRequiredService<ITelegramUpdateRepository>();
         
         await updateRepo.AddAsync(telegramUpdates);
