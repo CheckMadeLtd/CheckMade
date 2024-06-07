@@ -12,6 +12,7 @@ using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -384,10 +385,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         [
             new OutputDto
             {
-                ExplicitDestination = new TelegramOutputDestination(
-                    TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
-                Text = UiNoTranslate(
-                    "These photos' caption"),
                 Attachments = new List<OutputAttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
@@ -406,7 +403,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithMultipleAttachmentTypes));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("Hey, send me some attachments!");
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
 
@@ -429,29 +426,51 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Exactly(1));
     }
 
-    // [Fact]
-    // public async Task HandleUpdateAsync_SendsTextAndCaptions_ForOneOutputWithTextAndAttachmentsWithCaptions()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     
-    //     List<OutputDto> outputWithTextAndCaptions =
-    //     [
-    //         new OutputDto
-    //         {
-    //             Text = UiNoTranslate(
-    //                 "This is the main text describing all attachments"),
-    //             Attachments = new List<OutputAttachmentDetails>
-    //             {
-    //                 new(new Uri("http://www.gorin.de/fakeUri1.html"),
-    //                     AttachmentType.Photo, Ui("Caption for Attachment 1")),
-    //                 new(new Uri("http://www.gorin.de/fakeUri2.html"),
-    //                     AttachmentType.Photo, Ui("Caption for Attachment 2")),
-    //             }
-    //         }
-    //     ];
-    //     
-    //     
-    // }
+    [Fact]
+    // This test passing implies that the main Text and each attachment's caption are all seen by the user
+    public async Task HandleUpdateAsync_SendsTextAndAttachments_ForOneOutputWithTextAndAttachments()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        const string mainText = "This is the main text describing all attachments";
+        
+        List<OutputDto> outputWithTextAndCaptions =
+        [
+            new OutputDto
+            {
+                Text = UiNoTranslate(mainText),
+                Attachments = new List<OutputAttachmentDetails>
+                {
+                    new(new Uri("http://www.gorin.de/fakeUri1.html"), 
+                        AttachmentType.Photo, Ui("Random caption for Attachment 1")),
+                    new(new Uri("http://www.gorin.de/fakeUri2.html"), 
+                        AttachmentType.Photo, Ui("Random caption for Attachment 2")),
+                }
+            }
+        ];
+    
+        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithTextAndCaptions));
+        _services = serviceCollection.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        
+        await basics.handler.HandleUpdateAsync(update, BotType.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageAsync(
+                It.IsAny<ChatId>(), 
+                It.IsAny<string>(),
+                mainText,
+                It.IsAny<Option<IReplyMarkup>>(), 
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendPhotoAsync(
+                It.IsAny<AttachmentSendOutParameters>(),
+                It.IsAny<CancellationToken>()),
+            Times.Exactly(2));
+    }
     
     [Fact]
     public async Task HandleUpdateAsync_SendsLocation_WhenOutputContainsOne()
@@ -473,7 +492,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithLocation));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("hey where do I need to go?");
+        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
         
