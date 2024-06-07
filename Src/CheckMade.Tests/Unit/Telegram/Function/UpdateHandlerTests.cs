@@ -12,7 +12,6 @@ using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -228,7 +227,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var outputWithPrompts = new List<OutputDto>{ 
             new ()
             {
-              ExplicitDestination = new TelegramOutputDestination(TestUtils.SanitaryOpsAdmin1, BotType.Operations),
               Text = ITestUtils.EnglishUiStringForTests,
               ControlPromptsSelection = new[] { ControlPrompts.Bad, ControlPrompts.Good } 
             }
@@ -481,9 +479,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         [
             new OutputDto
             {
-                ExplicitDestination = new TelegramOutputDestination(
-                    TestUtils.SanitaryOpsEngineer1, BotType.Operations),
-                Text = UiNoTranslate("Go to this location now:"),
                 Location = new Geo(35.098, -17.077, Option<float>.None()) 
             }
         ];
