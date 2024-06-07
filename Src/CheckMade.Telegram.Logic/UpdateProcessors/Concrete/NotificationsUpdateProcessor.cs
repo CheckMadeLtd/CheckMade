@@ -11,21 +11,25 @@ public class NotificationsUpdateProcessor(ITelegramUpdateRepository updateRepo) 
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        if (telegramUpdate.IsSuccess)
-        {
-            await updateRepo.AddAsync(telegramUpdate.GetValueOrThrow());
-            
-            if (telegramUpdate.GetValueOrThrow().Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+        return await telegramUpdate.Match(
+            async successfulUpdate =>
             {
-                return new List<OutputDto>
+                await updateRepo.AddAsync(successfulUpdate);
+
+                if (successfulUpdate.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
                 {
-                    OutputDto.Create(UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications),
-                        IUpdateProcessor.SeeValidBotCommandsInstruction))
-                };
-            }
-        }
-        
-        return new List<OutputDto>();
+                    return new List<OutputDto>
+                    {
+                        OutputDto.Create(UiConcatenate(
+                            Ui("Welcome to the CheckMade {0} Bot! ", BotType.Notifications), 
+                            IUpdateProcessor.SeeValidBotCommandsInstruction))
+                    };
+                }
+                
+                return new[] { OutputDto.Create(Ui()) };
+            },
+
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ OutputDto.Create(error) ])
+        );
     }
 }

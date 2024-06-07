@@ -210,20 +210,18 @@ internal class ToModelConverter(
         var telegramAttachmentUriAttempt = await attachmentDetails.FileId.Match(
             GetTelegramAttachmentUriAsync,
             () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+
+        var telegramAttachmentUri = telegramAttachmentUriAttempt.Match(
+            uri => uri,
+            ex => throw ex);
         
-        if (telegramAttachmentUriAttempt.IsFailure)
-            throw telegramAttachmentUriAttempt.Exception!;
-
-        var telegramAttachmentUri = telegramAttachmentUriAttempt.GetValueOrThrow();
-
         var internalAttachmentUriAttempt = await telegramAttachmentUri.Match(
             UploadBlobAndGetInternalUriAsync,
             () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
         
-        if (internalAttachmentUriAttempt.IsFailure)
-            throw internalAttachmentUriAttempt.Exception!;
-
-        var internalAttachmentUri = internalAttachmentUriAttempt.GetValueOrThrow();
+        var internalAttachmentUri = internalAttachmentUriAttempt.Match(
+            uri => uri,
+            ex => throw ex);
         
         var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
             ? wrappedUpdate.Message.Text

@@ -30,13 +30,12 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,
             Option<ReplyKeyboardMarkup>.None);
-        
-        return 
-            inlineKeyboardMarkup.IsSome 
-                ? inlineKeyboardMarkup.GetValueOrThrow()
-                : replyKeyboardMarkup.IsSome 
-                    ? replyKeyboardMarkup.GetValueOrThrow()
-                    : Option<IReplyMarkup>.None();
+
+        return inlineKeyboardMarkup.Match(
+            markup => markup,
+            () => replyKeyboardMarkup.Match(
+                markup => markup,
+                Option<IReplyMarkup>.None));
     }
 
     private static bool AllEnumsAreDefined(
