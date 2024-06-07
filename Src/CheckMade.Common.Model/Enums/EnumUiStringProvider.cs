@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using CheckMade.Common.LangExt;
 
 namespace CheckMade.Common.Model.Enums;
 

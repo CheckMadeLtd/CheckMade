@@ -2,6 +2,6 @@ namespace CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 
 public interface IBlobLoader
 {
-    public Task<Uri> UploadBlobAndReturnUriOrThrowAsync(MemoryStream stream, string fileName);
-    public Task<(MemoryStream, string)> DownloadBlobOrThrowAsync(Uri blobUri);
+    public Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName);
+    public Task<(MemoryStream, string)> DownloadBlobAsync(Uri blobUri);
 }

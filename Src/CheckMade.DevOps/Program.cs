@@ -78,7 +78,7 @@ static IServiceCollection GetServiceCollectionWithBasics()
         loggingConfig.AddDebug(); 
     });
     
-    services.Add_CommonUtils_Dependencies();
+    services.Register_CommonUtils_Services();
 
     return services;
 }

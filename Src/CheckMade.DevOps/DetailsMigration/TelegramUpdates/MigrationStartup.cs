@@ -2,7 +2,6 @@ using CheckMade.Common.Persistence;
 using CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Logging;
 
 namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates;
 
@@ -15,7 +14,6 @@ internal class MigrationStartup(
         ConfigureDetailsMigrationServices();
         await using var sp = services.BuildServiceProvider();
 
-        // var logger = sp.GetRequiredService<ILogger<MigrationStartup>>();
         var migratorFactory = sp.GetRequiredService<MigratorByIndexFactory>();
 
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
@@ -24,15 +22,9 @@ internal class MigrationStartup(
                 await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    error =>
-                    {
-                        // ReSharper disable once ConvertToLambdaExpression
-                        throw error.Exception ?? new Exception(error.FailureMessage!.GetFormattedEnglish());
-                        // logger.LogError(ex.Message, ex.StackTrace);
-                        // return Console.Error.WriteLineAsync(ex.Message);
-                    });
+                    ex => throw ex);
             },
-            errorMessage => Console.Error.WriteLineAsync(errorMessage.FailureMessage!.GetFormattedEnglish())
+            error => Console.Error.WriteLineAsync(error.GetFormattedEnglish())
         );
     }
 
@@ -51,7 +43,7 @@ internal class MigrationStartup(
             _ => throw new ArgumentException($"Invalid argument for {nameof(targetEnv)}.")
         };
 
-        services.Add_CommonPersistence_Dependencies(dbConnString);
+        services.Register_CommonPersistence_Services(dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
         services.AddScoped<MigrationRepository>();
     }

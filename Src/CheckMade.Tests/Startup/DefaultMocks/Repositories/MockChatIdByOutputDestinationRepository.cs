@@ -7,7 +7,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
 internal class MockChatIdByOutputDestinationRepository : IChatIdByOutputDestinationRepository
 {
-    public Task<IEnumerable<ChatIdByOutputDestination>> GetAllOrThrowAsync()
+    public Task<IEnumerable<ChatIdByOutputDestination>> GetAllAsync()
     {
         var builder = ImmutableArray.CreateBuilder<ChatIdByOutputDestination>();
         

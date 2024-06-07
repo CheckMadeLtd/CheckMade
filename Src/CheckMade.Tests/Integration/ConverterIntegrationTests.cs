@@ -2,7 +2,7 @@ using System.Text;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversions;
+using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,14 +32,13 @@ public class ConverterIntegrationTests
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(
             new TelegramFilePathResolver(
-                botClientFactory.CreateBotClientOrThrow(BotType.Operations)));
+                botClientFactory.CreateBotClient(BotType.Operations)));
         
         var actualModel = await converter.ConvertToModelAsync(
             updateWithAttachment, BotType.Operations);
     
-        var (downloadedStream, _) = await blobLoader.DownloadBlobOrThrowAsync(
-            actualModel.Value!.Details.AttachmentInternalUri.Value!);
-        
+        var (downloadedStream, _) = await blobLoader.DownloadBlobAsync(
+            actualModel.GetValueOrThrow().Details.AttachmentInternalUri.GetValueOrThrow());
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());
         
         Assert.Equal(realFileUtf8Content, downloadedContent);

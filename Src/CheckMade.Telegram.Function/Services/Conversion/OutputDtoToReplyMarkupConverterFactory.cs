@@ -1,6 +1,6 @@
 using CheckMade.Common.Utils.UiTranslation;
 
-namespace CheckMade.Telegram.Function.Services.Conversions;
+namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IOutputToReplyMarkupConverterFactory
 {

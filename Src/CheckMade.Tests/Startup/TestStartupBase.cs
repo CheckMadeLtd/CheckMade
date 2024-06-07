@@ -1,5 +1,4 @@
 using System.Configuration;
-using CheckMade.Common.LangExt;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +32,7 @@ public abstract class TestStartupBase
             ?? throw new ConfigurationErrorsException($"Can't find {keyToHostEnv}");
     }
 
-    protected void ConfigureServices()
+    protected void RegisterServices()
     {
         RegisterBaseServices();
         RegisterTestTypeSpecificServices();
@@ -49,12 +48,13 @@ public abstract class TestStartupBase
         });
         
         Services.AddSingleton<ITestUtils, TestUtils>();
-
         Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        Services.ConfigureBotUpdateHandlingServices();
-        Services.ConfigureUtilityServices();
-        Services.ConfigureBotBusinessServices();
+        Services.RegisterTelegramFunctionUpdateHandlingServices();
+        Services.RegisterTelegramFunctionConversionServices();
+        Services.RegisterTelegramLogicServices();
+        
+        Services.RegisterCommonUtilsServices();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();

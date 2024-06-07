@@ -2,12 +2,12 @@ namespace CheckMade.Common.ExternalServices.ExternalUtils;
 
 public interface IHttpDownloader
 {
-    Task<MemoryStream> DownloadDataOrThrowAsync(Uri fileUri);
+    Task<MemoryStream> DownloadDataAsync(Uri fileUri);
 };
 
 public class HttpDownloader(HttpClient httpClient) : IHttpDownloader
 {
-    public async Task<MemoryStream> DownloadDataOrThrowAsync(Uri fileUri)
+    public async Task<MemoryStream> DownloadDataAsync(Uri fileUri)
     {
         using (var response = await httpClient.GetAsync(fileUri))
         {

@@ -6,9 +6,10 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public class ChatIdByOutputDestinationRepository : IChatIdByOutputDestinationRepository
 {
-    // The combination of Role & BotType needs to be unique i.e. each RoleBotType can only have one ChatId 
+    // The OutputDestination (i.e. the the combinations of Role and BotType) need to be unique
+    // i.e. each OutputDestination can only have one ChatId!
     
-    public Task<IEnumerable<ChatIdByOutputDestination>> GetAllOrThrowAsync()
+    public Task<IEnumerable<ChatIdByOutputDestination>> GetAllAsync()
     {
         var builder = ImmutableList.CreateBuilder<ChatIdByOutputDestination>();
         

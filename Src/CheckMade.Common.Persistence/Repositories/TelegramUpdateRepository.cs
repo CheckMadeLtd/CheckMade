@@ -10,12 +10,12 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUpdateRepository
 {
-    public async Task AddOrThrowAsync(TelegramUpdate telegramUpdate)
+    public async Task AddAsync(TelegramUpdate telegramUpdate)
     {
-        await AddOrThrowAsync(new List<TelegramUpdate> { telegramUpdate }.ToImmutableArray());
+        await AddAsync(new List<TelegramUpdate> { telegramUpdate }.ToImmutableArray());
     }
 
-    public async Task AddOrThrowAsync(IEnumerable<TelegramUpdate> telegramUpdates)
+    public async Task AddAsync(IEnumerable<TelegramUpdate> telegramUpdates)
     {
         var commands = telegramUpdates.Select(update =>
         {
@@ -32,13 +32,13 @@ public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUp
 
             command.Parameters.Add(new NpgsqlParameter("@telegramMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJsonOrThrow(update.Details)
+                Value = JsonHelper.SerializeToJson(update.Details)
             });
 
             return command;
         }).ToImmutableArray();
 
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             foreach (var command in commands)
             {
@@ -49,26 +49,26 @@ public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUp
         });
     }
 
-    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync() =>
-        await GetAllOrThrowExecuteAsync(
+    public async Task<IEnumerable<TelegramUpdate>> GetAllAsync() =>
+        await GetAllExecuteAsync(
             "SELECT * FROM tlgr_updates",
             Option<TelegramUserId>.None());
 
-    public async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowAsync(TelegramUserId userId) =>
-        await GetAllOrThrowExecuteAsync(
+    public async Task<IEnumerable<TelegramUpdate>> GetAllAsync(TelegramUserId userId) =>
+        await GetAllExecuteAsync(
             "SELECT * FROM tlgr_updates WHERE user_id = @userId",
             userId);
 
-    private async Task<IEnumerable<TelegramUpdate>> GetAllOrThrowExecuteAsync(
+    private async Task<IEnumerable<TelegramUpdate>> GetAllExecuteAsync(
         string commandText, Option<TelegramUserId> userId)
     {
         var builder = ImmutableArray.CreateBuilder<TelegramUpdate>();
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
-            command.Parameters.AddWithValue("@userId", (long) userId.GetValueOrDefault());
+            command.Parameters.AddWithValue("@userId", (long) userId.GetValueOrThrow());
 
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             command.Connection = db;
             command.Transaction = transaction;
@@ -98,18 +98,18 @@ public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUp
             telegramChatId,
             (BotType) telegramBotType,
             (ModelUpdateType) telegramUpdateType,
-            JsonHelper.DeserializeFromJsonStrictOrThrow<TelegramUpdateDetails>(details) 
+            JsonHelper.DeserializeFromJsonStrict<TelegramUpdateDetails>(details) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
         return message;
     }
 
-    public async Task HardDeleteAllOrThrowAsync(TelegramUserId userId)
+    public async Task HardDeleteAllAsync(TelegramUserId userId)
     {
         var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @userId");
         command.Parameters.AddWithValue("@userId", (long) userId);
 
-        await dbHelper.ExecuteOrThrowAsync(async (db, transaction) =>
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             command.Connection = db;
             command.Transaction = transaction;

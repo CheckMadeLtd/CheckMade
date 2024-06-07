@@ -5,7 +5,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.Telegram.Function.Services.Conversions;
+namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {
@@ -30,13 +30,12 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,
             Option<ReplyKeyboardMarkup>.None);
-        
-        return 
-            inlineKeyboardMarkup.IsSome 
-                ? inlineKeyboardMarkup.GetValueOrDefault()
-                : replyKeyboardMarkup.IsSome 
-                    ? replyKeyboardMarkup.GetValueOrDefault()
-                    : Option<IReplyMarkup>.None();
+
+        return inlineKeyboardMarkup.Match(
+            markup => markup,
+            () => replyKeyboardMarkup.Match(
+                markup => markup,
+                Option<IReplyMarkup>.None));
     }
 
     private static bool AllEnumsAreDefined(

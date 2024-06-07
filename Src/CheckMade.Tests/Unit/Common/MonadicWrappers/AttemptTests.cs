@@ -11,7 +11,7 @@ public class AttemptTests
         var attempt = Attempt<int>.Succeed(5);
         var result = attempt.Match(
             onSuccess: value => value * 2,
-            onError: _ => 0);
+            onFailure: _ => 0);
 
         result.Should().Be(10);
     }
@@ -19,16 +19,16 @@ public class AttemptTests
     [Fact]
     public void TestAttempt_Match_Failure()
     {
-        var attempt = Attempt<int>.Fail(new Error(new Exception("Error")));
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
         var result = attempt.Match(
             onSuccess: value => value * 2,
-            onError: ex => ex.Exception!.Message.Length);
+            onFailure: ex => ex.Message.Length);
 
         result.Should().Be(5);
     }
 
     [Fact]
-    public void TestAttempt_GetValueOrThrow_Success()
+    public void TestAttempt_GetValue_Success()
     {
         var attempt = Attempt<int>.Succeed(5);
         var value = attempt.GetValueOrThrow();
@@ -37,9 +37,9 @@ public class AttemptTests
     }
 
     [Fact]
-    public void TestAttempt_GetValueOrThrow_Failure()
+    public void TestAttempt_GetValue_Failure()
     {
-        var attempt = Attempt<int>.Fail(new Error(new Exception("Error")));
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
 
         Action action = () => attempt.GetValueOrThrow();
         action.Should().Throw<Exception>().WithMessage("Error");
@@ -57,7 +57,7 @@ public class AttemptTests
     [Fact]
     public void TestAttempt_GetValueOrDefault_Failure()
     {
-        var attempt = Attempt<int>.Fail(new Error(new Exception("Error")));
+        var attempt = Attempt<int>.Fail(new Exception("Error"));
         var value = attempt.GetValueOrDefault(10);
 
         value.Should().Be(10);
@@ -82,7 +82,7 @@ public class AttemptTests
     public void Select_ShouldReturnFailureResult_WhenSourceIsFailure()
     {
         // Arrange
-        var source = Attempt<int>.Fail(new Error(new Exception("Test exception")));
+        var source = Attempt<int>.Fail(new Exception("Test exception"));
         
         // Act
         var result = from s in source
@@ -90,7 +90,7 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error!.Exception!.Message.Should().Be("Test exception");
+        result.Exception!.Message.Should().Be("Test exception");
     }
     
     [Fact]
@@ -122,14 +122,14 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error!.FailureMessage!.GetFormattedEnglish().Should().Be("Predicate not satisfied");
+        result.Exception!.Message.Should().Be("Predicate not satisfied");
     }
     
     [Fact]
     public void Where_ShouldReturnFailureResult_WhenSourceIsFailure()
     {
         // Arrange
-        var source = Attempt<int>.Fail(new Error(new Exception("Test exception")));
+        var source = Attempt<int>.Fail(new Exception("Test exception"));
         
         // Act
         var result = from s in source
@@ -138,7 +138,7 @@ public class AttemptTests
         
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error!.Exception!.Message.Should().Be("Test exception");
+        result.Exception!.Message.Should().Be("Test exception");
     }
     
     [Fact]
@@ -163,26 +163,26 @@ public class AttemptTests
         var source = Attempt<int>.Succeed(5);
         var result = source.SelectMany(BinderFail);
 
-        result.IsError.Should().BeTrue();
-        Trace.Assert(result.Error != null, "result.Error != null");
-        result.Error.Exception!.Message.Should().Be("Simulated error");
+        result.IsFailure.Should().BeTrue();
+        Trace.Assert(result.Exception != null, "result.Exception != null");
+        result.Exception.Message.Should().Be("Simulated error");
     }
 
     [Fact]
     public void TestSelectMany_FailureToBinding()
     {
         /* This test demonstrates binding a failed Attempt<T> to any Attempt<TResult>.
-         The initial value is a error, and we expect the error to propagate without calling the binder function. */
+         The initial value is a failure, and we expect the failure to propagate without calling the binder function. */
 
-        var source = Attempt<int>.Fail(new Error(new Exception("Initial error")));
+        var source = Attempt<int>.Fail(new Exception("Initial error"));
         var result = source.SelectMany(Binder);
 
-        result.IsError.Should().BeTrue();
-        Trace.Assert(result.Error != null, "result.Error != null");
-        result.Error.Exception!.Message.Should().Be("Initial error");
+        result.IsFailure.Should().BeTrue();
+        Trace.Assert(result.Exception != null, "result.Exception != null");
+        result.Exception.Message.Should().Be("Initial error");
     }
 
-    static Attempt<int> BinderFail(int i) => Attempt<int>.Fail(new Error(new Exception("Simulated error")));
+    static Attempt<int> BinderFail(int i) => Attempt<int>.Fail(new Exception("Simulated error"));
     
     [Fact]
     public void TestSelectMany_SyncBindingSyncOps()
@@ -282,39 +282,39 @@ public class AttemptTests
     [Fact]
     public void TestSelectMany_SyncBindingToFail()
     {
-        /* This test simulates a situation where the source value is a error. We can expect that no matter 
-        what operation we try to apply, the result should also be a error. */
+        /* This test simulates a situation where the source value is a failure. We can expect that no matter 
+        what operation we try to apply, the result should also be a failure. */
         
-        var source = Attempt<int>.Fail(new Error(new Exception("Simulated exception")));
+        var source = Attempt<int>.Fail(new Exception("Simulated exception"));
         var result = from s in source from res in Binder(s) select res;
-        result.IsError.Should().BeTrue();
-        result.Error.Should().BeOfType<Error>();
+        result.IsFailure.Should().BeTrue();
+        result.Exception.Should().BeOfType<Exception>();
     }
     
     [Fact]
     public async Task TestSelectMany_AsyncBindingToFail()
     {
         /* The same scenario as the previous test, but with the source value provided by a Task. Again, 
-        when the source is a error, the result is expected to be a error. */
+        when the source is a failure, the result is expected to be a failure. */
         
-        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Error(new Exception("Simulated exception"))));
+        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Exception("Simulated exception")));
         var result = await (from s in await sourceTask from c in CollectionTaskSelector(s) select c + s);
-        result.IsError.Should().BeTrue();
-        result.Error.Should().BeOfType<Error>();
+        result.IsFailure.Should().BeTrue();
+        result.Exception.Should().BeOfType<Exception>();
     }
 
     [Fact]
     public async Task TestSelectMany_AsyncSourceNoneDoesNotCallSelector()
     {
-        /* This test ensures that the selector is not called when the source value is a error. */
+        /* This test ensures that the selector is not called when the source value is a failure. */
         
-        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Error(new Exception("Simulated exception"))));
+        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Exception("Simulated exception")));
         var selectorWasCalled = false;
 
         var result = await (from s in await sourceTask from c in CollectionTaskSelectorLocal(s) select c + s);
         
-        result.IsError.Should().BeTrue();
-        result.Error.Should().BeOfType<Error>();
+        result.IsFailure.Should().BeTrue();
+        result.Exception.Should().BeOfType<Exception>();
         selectorWasCalled.Should().BeFalse();
         
         return;
@@ -361,31 +361,31 @@ public class AttemptTests
     [Fact]
     public async Task TestSelectMany_AsyncBindingAsyncOps_SourceNone()
     {
-        /* This test covers the scenario where the initial asynchronous operation returns a error.
-        Even though the operations are asynchronous, the final result should also be a error. */
+        /* This test covers the scenario where the initial asynchronous operation returns a failure.
+        Even though the operations are asynchronous, the final result should also be a failure. */
         
-        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Error(new Exception("Simulated exception"))));
+        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Exception("Simulated exception")));
         var result = await sourceTask.SelectMany(
             async s => await CollectionTaskSelector(s),
             (s, c) => s + c
         );
-        result.IsError.Should().BeTrue();
-        result.Error.Should().BeOfType<Error>();
+        result.IsFailure.Should().BeTrue();
+        result.Exception.Should().BeOfType<Exception>();
     }
     
     [Fact]
     public async Task TestSelectMany_AsyncInitOpBindingToSyncSubsequentOp_SourceNone()
     {
-        /* This test examines the behavior when the initial asynchronous operation returns a error.
-        The subsequent synchronous operation should not be called, and the final result should be a error. */
+        /* This test examines the behavior when the initial asynchronous operation returns a failure.
+        The subsequent synchronous operation should not be called, and the final result should be a failure. */
         
-        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Error(new Exception("Simulated exception"))));
+        var sourceTask = Task.FromResult(Attempt<int>.Fail(new Exception("Simulated exception")));
         var result = await sourceTask.SelectMany(
             s => CollectionSelector(s),
             (s, c) => s + c
         );
-        result.IsError.Should().BeTrue();
-        result.Error.Should().BeOfType<Error>();
+        result.IsFailure.Should().BeTrue();
+        result.Exception.Should().BeOfType<Exception>();
     }
 
     [Fact]
@@ -471,15 +471,12 @@ public class AttemptTests
 
     static Attempt<int> Binder(int i) => Attempt<int>.Succeed(i + 5);
     static Attempt<int> CollectionSelector(int i) => Attempt<int>.Succeed(i + 1);
-    static async Task<Attempt<int>> CollectionTaskSelector(int i) => 
-        await Task.FromResult(Attempt<int>.Succeed(i + 5));
-    static async Task<Attempt<int>> FaultedSelector() => 
-        await Task.FromException<Attempt<int>>(new Exception("Simulated exception"));
+    static async Task<Attempt<int>> CollectionTaskSelector(int i) => await Task.FromResult(Attempt<int>.Succeed(i + 5));
+    static async Task<Attempt<int>> FaultedSelector() => await Task.FromException<Attempt<int>>(new Exception("Simulated exception"));
     static Attempt<int> ConditionalCollectionSelector(int i) 
     {
         int value = i + 1;
-        return value > 5 ? Attempt<int>.Succeed(value) : Attempt<int>.Fail(
-            new Error(new Exception("Not matched")));
+        return value > 5 ? Attempt<int>.Succeed(value) : Attempt<int>.Fail(new Exception("Not matched"));
     }
     static async Task<Attempt<int>> UpdateAgeAsync(Person person)
     {

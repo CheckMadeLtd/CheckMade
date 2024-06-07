@@ -4,5 +4,5 @@ namespace CheckMade.Common.Interfaces.Persistence;
 
 public interface IRoleRepository
 {
-    Task<IEnumerable<Role>> GetAllOrThrowAsync();
+    Task<IEnumerable<Role>> GetAllAsync();
 }

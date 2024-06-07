@@ -1,9 +1,8 @@
-using CheckMade.Common.LangExt;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversions;
+using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
@@ -42,7 +41,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = 
             await basics.converter.ConvertToModelAsync(update, BotType.Operations);
 
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
     
     [Theory]
@@ -64,7 +63,7 @@ public class ToModelConverterTests
         
         var expectedAttachmentTelegramUri = new Uri(
             TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + $"bot{basics.mockBotClient.Object.MyBotToken}/" +
-            $"{(await basics.mockBotClient.Object.GetFileOrThrowAsync("any")).FilePath}");
+            $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
 
         var expectedTelegramUpdate = new TelegramUpdate(
             attachmentUpdate.Message.From!.Id,
@@ -83,8 +82,8 @@ public class ToModelConverterTests
             attachmentUpdate, BotType.Operations);
         
         // Can't do a deep comparison with Equivalent on the entire updates here due to the complex Uri() type.
-        Assert.Equal(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri, 
-            actualTelegramUpdate.GetValueOrDefault().Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri);
+        Assert.Equal(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrThrow().AbsoluteUri, 
+            actualTelegramUpdate.GetValueOrThrow().Details.AttachmentTelegramUri.GetValueOrThrow().AbsoluteUri);
     }
 
     [Theory]
@@ -117,7 +116,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             locationUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
 
     [Theory]
@@ -149,7 +148,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
     
     [Theory]
@@ -180,7 +179,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Communications);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
 
     [Theory]
@@ -211,7 +210,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Notifications);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
 
     [Theory]
@@ -249,7 +248,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
              callbackQuery, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
 
     [Fact]
@@ -259,8 +258,8 @@ public class ToModelConverterTests
          var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
-        Assert.True(conversionAttempt.IsError);
+        var conversionResult = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
+        Assert.True(conversionResult.IsError);
     }
     
     [Fact]
@@ -270,9 +269,9 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var update = new UpdateWrapper(new Message { From = new User { Id = 123L } });
         
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
+        var conversionResult = await basics.converter.ConvertToModelAsync(update, BotType.Operations);
         
-        Assert.True(conversionAttempt.IsError);
+        Assert.True(conversionResult.IsError);
     }
 
     [Fact]
@@ -281,11 +280,12 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var audioMessage = basics.utils.GetValidTelegramAudioMessage();
-        var conversionAttempt = await basics.converter.ConvertToModelAsync(audioMessage, BotType.Operations);
+        var conversionResult = 
+            await basics.converter.ConvertToModelAsync(audioMessage, BotType.Operations);
 
-        Assert.True(conversionAttempt.IsError);
-        Assert.Equal("Failed to convert Telegram Message to Model. Attachment type Audio is not yet supported!",
-            conversionAttempt.Error!.FailureMessage!.GetFormattedEnglish());
+        Assert.True(conversionResult.IsError);
+        Assert.Equal("Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
+            conversionResult.Error!.GetFormattedEnglish());
     }
 
     private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter)

@@ -6,7 +6,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClientOrThrow(BotType botType)
+    public IBotClientWrapper CreateBotClient(BotType botType)
     {
         // CAREFUL PITFALL: DO NOT setup botType-dependent return values here (e.g. MyBotType)! Explanation:
         

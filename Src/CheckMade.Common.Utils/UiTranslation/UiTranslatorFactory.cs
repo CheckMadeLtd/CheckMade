@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
-using CheckMade.Common.LangExt;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 
@@ -30,12 +29,10 @@ public class UiTranslatorFactory(
             
             LanguageCode.de => CreateTranslationDictionary().Match(
                 Option<IReadOnlyDictionary<string, string>>.Some,
-                error =>
+                ex =>
                 {
-                    logger.LogWarning(error.Exception, 
-                        $"Failed to create translation dictionary for '{_targetLanguage}'," +
-                                          $"and so U.I. will be English. Exception message: " +
-                                          $"'{error.Exception?.Message ?? error.FailureMessage?.GetFormattedEnglish()}'");
+                    logger.LogWarning(ex, $"Failed to create translation dictionary for '{_targetLanguage}'," +
+                                          $"and so U.I. will be English.");
                     
                     return Option<IReadOnlyDictionary<string, string>>.None();
                 }),
@@ -58,7 +55,7 @@ public class UiTranslatorFactory(
                 Delimiter = "\t"
             }; 
         
-            using (var reader = new StreamReader(GetTranslationResourceStreamOrThrow()))
+            using (var reader = new StreamReader(GetTranslationResourceStream()))
             using (var csv = new CsvReader(reader, config))
             {
                 while(csv.Read())
@@ -78,7 +75,7 @@ public class UiTranslatorFactory(
         });
     }
 
-    private Stream GetTranslationResourceStreamOrThrow()
+    private Stream GetTranslationResourceStream()
     {
         var assembly = Assembly.GetExecutingAssembly();
         

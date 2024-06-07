@@ -6,7 +6,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks.Repositories;
 
 internal class MockRoleRepository : IRoleRepository
 {
-    public Task<IEnumerable<Role>> GetAllOrThrowAsync()
+    public Task<IEnumerable<Role>> GetAllAsync()
     {
         var builder = ImmutableArray.CreateBuilder<Role>();
         

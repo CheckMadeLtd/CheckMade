@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CheckMade.Common.LangExt;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils.UiTranslation;
@@ -25,13 +24,13 @@ public partial class UiTranslator(
                 translatedAll.Append(Translate(part));            
         }
 
-        var unformattedTranslation = translationByKey.IsSome 
-            ? translationByKey.GetValueOrDefault().TryGetValue(uiString.RawEnglishText, out var translation)
+        var unformattedTranslation = translationByKey.Match(
+            dictionary => dictionary.TryGetValue(uiString.RawEnglishText, out var translation)
                 ? translation
                 // e.g. new U.I. text hasn't been translated; a resource file w. outdated key; use of UiNoTranslate();
-                : uiString.RawEnglishText
-            // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
-            : uiString.RawEnglishText;
+                : uiString.RawEnglishText,
+                   // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
+            () => uiString.RawEnglishText);
         
         var formattedTranslation = Attempt<string>.Run(() =>
             translatedAll + 
@@ -39,10 +38,9 @@ public partial class UiTranslator(
         
         return formattedTranslation.Match(
             GetFormattedTranslationWithAnySurplusParamsAppended,
-            error =>
+            ex =>
             {
-                logger.LogWarning(error.Exception, 
-                    "Failed to format translated UiString for: '{unformatted}' " +
+                logger.LogWarning(ex, "Failed to format translated UiString for: '{unformatted}' " +
                                       "with {paramsCount} provided string formatting parameters.", 
                     unformattedTranslation, uiString.MessageParams.Length);
                 

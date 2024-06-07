@@ -16,7 +16,7 @@ public class UnitTestStartup : TestStartupBase
 {
     public UnitTestStartup()
     {
-        ConfigureServices();
+        RegisterServices();
     }
 
     protected override void RegisterTestTypeSpecificServices()
@@ -44,7 +44,7 @@ public class UnitTestStartup : TestStartupBase
             var mockBotClientWrapper = new Mock<IBotClientWrapper>();
             
             mockBotClientWrapper
-                .Setup(x => x.GetFileOrThrowAsync(It.IsNotNull<string>()))
+                .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
             mockBotClientWrapper
                 .Setup(x => x.MyBotToken)

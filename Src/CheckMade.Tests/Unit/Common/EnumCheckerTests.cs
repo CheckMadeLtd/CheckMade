@@ -53,7 +53,7 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public void ToggleEnum_In_WorksAsExpected()
+    public void ToggleEnum_WorksAsExpected()
     {
         var combinedEnum = ControlPrompts.Good;
         combinedEnum ^= ControlPrompts.Ok;

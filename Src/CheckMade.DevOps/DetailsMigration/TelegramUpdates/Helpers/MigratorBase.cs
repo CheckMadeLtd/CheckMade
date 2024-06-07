@@ -1,42 +1,31 @@
-using CheckMade.Common.LangExt;
-
 namespace CheckMade.DevOps.DetailsMigration.TelegramUpdates.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {
     internal async Task<Attempt<int>> MigrateAsync(string env)
     {
-        return ((Attempt<int>) await (
-                from historicPairs in Attempt<IEnumerable<OldFormatDetailsPair>>
-                    .RunAsync(migRepo.GetMessageOldFormatDetailsPairsOrThrowAsync)
-                from updateDetails in GenerateMigrationUpdatesAsync(historicPairs)
-                from unit in MigrateHistoricMessages(updateDetails)
-                select updateDetails.Count())
-            ).Match(
+        return (await 
+                (from historicPairs 
+                    in Attempt<IEnumerable<OldFormatDetailsPair>>.RunAsync(
+                        migRepo.GetMessageOldFormatDetailsPairsAsync)
+                from updateDetails 
+                    in Attempt<IEnumerable<DetailsUpdate>>.RunAsync(() => 
+                        GenerateMigrationUpdatesAsync(historicPairs))
+                from unit 
+                    in Attempt<Unit>.RunAsync(() => 
+                        MigrateHistoricMessagesAsync(updateDetails))
+                select updateDetails.Count()))
+            .Match(
                 Attempt<int>.Succeed, 
-                error => Attempt<int>.Fail(
-                    error with // preserves any contained Exception and prefixes any contained Error UiString
-                {
-                    FailureMessage = UiConcatenate(
-                        Ui("Data migration failed."),
-                        error.FailureMessage)
-                }));
+                ex => ex);
     }
 
-    protected abstract Attempt<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
+    protected abstract Task<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs);
     
-    private async Task<Attempt<Unit>> MigrateHistoricMessages(IEnumerable<DetailsUpdate> updates)
+    private async Task<Unit> MigrateHistoricMessagesAsync(IEnumerable<DetailsUpdate> updates)
     {
-        try
-        {
-            await migRepo.UpdateOrThrowAsync(updates);
-        }
-        catch (Exception ex)
-        {
-            return new Error(new DataMigrationException(
-                $"Exception while performing data migration updates: {ex.Message}.", ex));
-        }
+        await migRepo.UpdateAsync(updates);
 
         return Unit.Value;
     }

@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversions;
+using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Telegram.Function.Startup;
 
-internal static class ConfigureServicesExtensions
+internal static class RegisterServicesExtensions
 {
-    internal static void ConfigureBotClientServices(
+    internal static void RegisterTelegramFunctionBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
@@ -26,13 +26,13 @@ internal static class ConfigureServicesExtensions
         }    
     }
 
-    internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
+    internal static void RegisterTelegramFunctionUpdateHandlingServices(this IServiceCollection services)
     {
         services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
     }
     
-    internal static void ConfigurePersistenceServices(
+    internal static void RegisterCommonPersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         var dbConnectionString = hostingEnvironment switch
@@ -54,22 +54,26 @@ internal static class ConfigureServicesExtensions
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
         
-        services.Add_CommonPersistence_Dependencies(dbConnectionString);
+        services.Register_CommonPersistence_Services(dbConnectionString);
     }
 
-    internal static void ConfigureBotBusinessServices(this IServiceCollection services)
+    internal static void RegisterTelegramFunctionConversionServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
-        services.Add_TelegramLogic_Dependencies();
     }
 
-    internal static void ConfigureUtilityServices(this IServiceCollection services)
+    internal static void RegisterTelegramLogicServices(this IServiceCollection services)
     {
-        services.Add_CommonUtils_Dependencies();
+        services.Register_TelegramLogic_Services();
+    }
+    
+    internal static void RegisterCommonUtilsServices(this IServiceCollection services)
+    {
+        services.Register_CommonUtils_Services();
     }
 
-    internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
+    internal static void RegisterCommonExternalServices(this IServiceCollection services, IConfiguration config)
     {
         // This style of spelling of keys so they work both, in UNIX env on GitHub Actions and in Azure Keyvault!
         const string keyToBlobContainerUri = "BlobContainerClientUri";
@@ -87,10 +91,10 @@ internal static class ConfigureServicesExtensions
                                       ?? throw new InvalidOperationException(
                                           $"Can't find {keyToBlobContainerAccountKey}");
 
-        services.Add_AzureServices_Dependencies(
+        services.Register_AzureServices_Services(
             blobContainerUriKey, blobContainerAccountName, blobContainerAccountKey);
         
-        services.Add_OtherExternalFacingServices_Dependencies();
+        services.Register_OtherExternalFacingServices_Services();
     }
 
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
@@ -101,7 +105,7 @@ internal static class ConfigureServicesExtensions
                 GetBotToken(config, "DEV", BotType.Communications),
                 GetBotToken(config, "DEV", BotType.Notifications)),
 
-            "Staging" => new BotTokens(
+            "Staging" or "CI" => new BotTokens(
                 GetBotToken(config, "STG", BotType.Operations),
                 GetBotToken(config, "STG", BotType.Communications),
                 GetBotToken(config, "STG", BotType.Notifications)),

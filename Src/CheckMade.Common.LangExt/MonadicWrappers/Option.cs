@@ -4,7 +4,7 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 
 public record Option<T>
 {
-    public T? Value { get; }
+    internal T? Value { get; }
     internal bool HasValue { get; }
 
     public bool IsSome => HasValue;
@@ -44,7 +44,8 @@ public record Option<T>
         {
             return Value!;
         }
-        throw new InvalidOperationException("No value present");
+        throw new InvalidOperationException(
+            $"No value present for type '{typeof(T)}' even though we expected there would have to be one!");
     }
 }
 
