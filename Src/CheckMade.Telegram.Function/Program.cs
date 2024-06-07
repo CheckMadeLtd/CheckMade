@@ -43,16 +43,17 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
+        // Part of 'StartUp' rather than in shared Services method below b/c different value for Tests starutp.
         services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.de));
         
-        // These two are separated into two because only one of them is relevant for Integration tests
-        services.ConfigureBotClientServices(config, hostingEnvironment);
-        services.ConfigureBotUpdateHandlingServices();
+        services.ConfigureTelegramFunctionBotClientServices(config, hostingEnvironment);
+        services.ConfigureTelegramFunctionUpdateHandlingServices();
+        services.ConfigureTelegramFunctionConversionServices();
+        services.ConfigureTelegramLogicServices();
         
-        services.ConfigurePersistenceServices(config, hostingEnvironment);
-        services.ConfigureUtilityServices();
-        services.ConfigureBotBusinessServices();
-        services.ConfigureExternalServices(config);
+        services.ConfigureCommonPersistenceServices(config, hostingEnvironment);
+        services.ConfigureCommonUtilsServices();
+        services.ConfigureCommonExternalServices(config);
     })
     .ConfigureLogging((hostContext, logging) =>
     {

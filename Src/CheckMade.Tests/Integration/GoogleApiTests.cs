@@ -115,6 +115,6 @@ public class GoogleApiTests
     }
 
     private (string testSheetId, ISheetsService sheetsService) GetBasicTestingServices(IServiceProvider sp) =>
-        (testSheetId: sp.GetRequiredService<UiSourceSheetIdProvider>().UiSourceSheetId,
+        (testSheetId: sp.GetRequiredService<TestDataSheetIdProvider>().TestDataSheetId,
             sheetsService: sp.GetRequiredService<ISheetsService>());
 }

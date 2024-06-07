@@ -8,7 +8,7 @@ using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Model.BotCommand;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.Telegram.Function.Services.Conversions;
+namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IToModelConverter
 {

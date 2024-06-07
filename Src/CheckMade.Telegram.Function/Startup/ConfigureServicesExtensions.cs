@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversions;
+using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +13,7 @@ namespace CheckMade.Telegram.Function.Startup;
 
 internal static class ConfigureServicesExtensions
 {
-    internal static void ConfigureBotClientServices(
+    internal static void ConfigureTelegramFunctionBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
@@ -26,13 +26,13 @@ internal static class ConfigureServicesExtensions
         }    
     }
 
-    internal static void ConfigureBotUpdateHandlingServices(this IServiceCollection services)
+    internal static void ConfigureTelegramFunctionUpdateHandlingServices(this IServiceCollection services)
     {
         services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
     }
     
-    internal static void ConfigurePersistenceServices(
+    internal static void ConfigureCommonPersistenceServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         var dbConnectionString = hostingEnvironment switch
@@ -57,19 +57,23 @@ internal static class ConfigureServicesExtensions
         services.Add_CommonPersistence_Dependencies(dbConnectionString);
     }
 
-    internal static void ConfigureBotBusinessServices(this IServiceCollection services)
+    internal static void ConfigureTelegramFunctionConversionServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
-        services.Add_TelegramLogic_Dependencies();
     }
 
-    internal static void ConfigureUtilityServices(this IServiceCollection services)
+    internal static void ConfigureTelegramLogicServices(this IServiceCollection services)
+    {
+        services.Add_TelegramLogic_Dependencies();
+    }
+    
+    internal static void ConfigureCommonUtilsServices(this IServiceCollection services)
     {
         services.Add_CommonUtils_Dependencies();
     }
 
-    internal static void ConfigureExternalServices(this IServiceCollection services, IConfiguration config)
+    internal static void ConfigureCommonExternalServices(this IServiceCollection services, IConfiguration config)
     {
         // This style of spelling of keys so they work both, in UNIX env on GitHub Actions and in Azure Keyvault!
         const string keyToBlobContainerUri = "BlobContainerClientUri";

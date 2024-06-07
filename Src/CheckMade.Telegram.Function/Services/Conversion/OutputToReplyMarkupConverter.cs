@@ -5,7 +5,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.Telegram.Function.Services.Conversions;
+namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {

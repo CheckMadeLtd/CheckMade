@@ -19,9 +19,9 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.ConfigureBotClientServices(Config, HostingEnvironment);
-        Services.ConfigurePersistenceServices(Config, HostingEnvironment);
-        Services.ConfigureExternalServices(Config);
+        Services.ConfigureTelegramFunctionBotClientServices(Config, HostingEnvironment);
+        Services.ConfigureCommonPersistenceServices(Config, HostingEnvironment);
+        Services.ConfigureCommonExternalServices(Config);
 
         /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
          also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need
@@ -33,7 +33,11 @@ public class IntegrationTestStartup : TestStartupBase
         
         Services.AddSingleton<PrdDbConnStringProvider>(_ => new PrdDbConnStringProvider(prdDbConnString));
         
-        
+        RegisterGoogleApiServices();
+    }
+
+    private void RegisterGoogleApiServices()
+    {
         var gglApiCredentialFileName = Config.GetValue<string>(GoogleAuth.GglApiCredentialFileKey)
                                        ?? throw new InvalidOperationException(
                                            $"Can't find: {GoogleAuth.GglApiCredentialFileKey}");
@@ -46,7 +50,7 @@ public class IntegrationTestStartup : TestStartupBase
 
         const string testDataGglSheetKeyInEnv = "GOOGLE_SHEET_ID_TEST_DATA";
         
-        Services.AddScoped<UiSourceSheetIdProvider>(_ => new UiSourceSheetIdProvider(
+        Services.AddScoped<TestDataSheetIdProvider>(_ => new TestDataSheetIdProvider(
             Config.GetValue<string>(testDataGglSheetKeyInEnv)
             ?? throw new InvalidOperationException(
                 $"Can't find: {testDataGglSheetKeyInEnv}")));
