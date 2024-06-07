@@ -1,4 +1,6 @@
+using System.Data.Common;
 using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace CheckMade.Common.Utils.RetryPolicies;
 
@@ -7,5 +9,16 @@ public interface IDbCommandRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbCommandRetryPolicy(ILogger<RetryPolicyBase> logger) 
-    : RetryPolicyBase(1, "Execute Database Command", logger), IDbCommandRetryPolicy;
+public class DbCommandRetryPolicy : RetryPolicyBase, IDbCommandRetryPolicy
+{
+    public DbCommandRetryPolicy(ILogger<RetryPolicyBase> logger) : base("Execute Database Command", logger)
+    {
+        const int retryCount = 3;
+
+        Policy = Polly.Policy
+            .Handle<DbException>()
+            .WaitAndRetryAsync(retryCount,
+                retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
+                (exception, timeSpan, retryAttempt, _) => LogError(exception, timeSpan, retryAttempt));
+    }
+}

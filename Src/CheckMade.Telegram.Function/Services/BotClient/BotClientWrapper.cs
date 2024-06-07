@@ -4,6 +4,7 @@ using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
@@ -57,10 +58,6 @@ public class BotClientWrapper(
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
-    private const string TelegramBotClientCallExceptionMessage =
-        "Either failed to construct valid operation (e.g. SendOutX) parameters for " +
-        "Telegram or failed to reach its servers (after several attempts).";
-    
     public BotType MyBotType { get; } = botType; 
     public string MyBotToken { get; } = botToken;
 
@@ -69,22 +66,15 @@ public class BotClientWrapper(
     public async Task<Unit> SendDocumentAsync(AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await retryPolicy.ExecuteAsync(async () =>
-                
-                await botClient.SendDocumentAsync(
-                    chatId: documentSendOutParams.DestinationChatId,
-                    document: documentSendOutParams.FileStream,
-                    caption: documentSendOutParams.Caption.Value,
-                    replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                    cancellationToken: cancellationToken)
-                );
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
-        }
+        await retryPolicy.ExecuteAsync(async () =>
+            
+            await botClient.SendDocumentAsync(
+                chatId: documentSendOutParams.DestinationChatId,
+                document: documentSendOutParams.FileStream,
+                caption: documentSendOutParams.Caption.Value,
+                replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken)
+            );
         
         return Unit.Value;
     }
@@ -93,22 +83,15 @@ public class BotClientWrapper(
         ChatId chatId, Geo location, Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await retryPolicy.ExecuteAsync(async () =>
-                
-                await botClient.SendLocationAsync(
-                    chatId: chatId,
-                    latitude: location.Latitude,
-                    longitude: location.Longitude,
-                    replyMarkup: replyMarkup.GetValueOrDefault(),
-                    cancellationToken: cancellationToken)
-                );
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
-        }
+        await retryPolicy.ExecuteAsync(async () =>
+            
+            await botClient.SendLocationAsync(
+                chatId: chatId,
+                latitude: location.Latitude,
+                longitude: location.Longitude,
+                replyMarkup: replyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken)
+            );
 
         return Unit.Value;
     }
@@ -116,22 +99,15 @@ public class BotClientWrapper(
     public async Task<Unit> SendPhotoAsync(AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await retryPolicy.ExecuteAsync(async () =>
-                
-                await botClient.SendPhotoAsync(
-                    chatId: photoSendOutParams.DestinationChatId,
-                    photo: photoSendOutParams.FileStream,
-                    caption: photoSendOutParams.Caption.Value,
-                    replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                    cancellationToken: cancellationToken)
-                );
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
-        }
+        await retryPolicy.ExecuteAsync(async () =>
+            
+            await botClient.SendPhotoAsync(
+                chatId: photoSendOutParams.DestinationChatId,
+                photo: photoSendOutParams.FileStream,
+                caption: photoSendOutParams.Caption.Value,
+                replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken)
+            );
         
         return Unit.Value;
     }
@@ -143,35 +119,28 @@ public class BotClientWrapper(
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
-        try
+        /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
+        catch earlier network issues like from our Azure Function to the Telegram Servers! */
+        await retryPolicy.ExecuteAsync(async () =>
         {
-            /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
-            catch earlier network issues like from our Azure Function to the Telegram Servers! */
-            await retryPolicy.ExecuteAsync(async () =>
+            // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
+            if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
             {
-                // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
-                if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
-                {
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: pleaseChooseText,
-                        replyMarkup: new ReplyKeyboardRemove(),
-                        cancellationToken: cancellationToken);
-                }
-                
                 await botClient.SendTextMessageAsync(
                     chatId: chatId,
-                    text: text,
-                    replyMarkup: replyMarkup.IsSome 
-                        ? replyMarkup.GetValueOrDefault()
-                        : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
+                    text: pleaseChooseText,
+                    replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-            });
-        }
-        catch (Exception ex)
-        {
-            throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
-        }
+            }
+            
+            await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: text,
+                replyMarkup: replyMarkup.IsSome 
+                    ? replyMarkup.GetValueOrDefault()
+                    : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
+                cancellationToken: cancellationToken);
+        });
         
         return Unit.Value;
     }
@@ -191,9 +160,9 @@ public class BotClientWrapper(
                     cancellationToken: cancellationToken)
                 );
         }
-        catch (Exception ex)
+        catch (ApiRequestException ex)
         {
-            throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
+            throw;
         }
         
         return Unit.Value;
@@ -216,26 +185,19 @@ public class BotClientWrapper(
                 _ => throw new ArgumentOutOfRangeException(nameof(MyBotType))
             };
 
-            try
-            {
-                await retryPolicy.ExecuteAsync(async () =>
-                    
-                    await botClient.SetMyCommandsAsync(
-                        telegramBotCommands,
-                        scope: null,
-                        languageCode: language != LanguageCode.en
-                            ? language.ToString()
-                            : null) // The English BotCommands are the global default
-                    ); 
+            await retryPolicy.ExecuteAsync(async () =>
+                
+                await botClient.SetMyCommandsAsync(
+                    telegramBotCommands,
+                    scope: null,
+                    languageCode: language != LanguageCode.en
+                        ? language.ToString()
+                        : null) // The English BotCommands are the global default
+                ); 
 
-                logger.LogDebug($"Added to bot {MyBotType} for language {language} " +
-                                $"the following BotCommands: " +
-                                $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
-            }
-            catch (Exception ex)
-            {
-                throw new TelegramBotClientCallException(TelegramBotClientCallExceptionMessage, ex);
-            }
+            logger.LogDebug($"Added to bot {MyBotType} for language {language} " +
+                            $"the following BotCommands: " +
+                            $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
         }
         
         return Unit.Value;

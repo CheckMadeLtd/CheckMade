@@ -91,10 +91,11 @@ public class UpdateHandler(
 
             ex =>
             {
-                logger.LogError(ex, "Some details to help debug the current exception. " +
+                logger.LogError(ex, "Exception with message '{exMessage}' was thrown. " +
+                                    "Next, some details to help debug the current exception. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    updateReceivingBotType, update.Message.From!.Id,
+                    ex.Message, updateReceivingBotType, update.Message.From!.Id,
                     update.Message.Date, update.Message.Text);
                 
                 return ex;
