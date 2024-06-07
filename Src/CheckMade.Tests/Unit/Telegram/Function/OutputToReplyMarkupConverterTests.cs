@@ -31,9 +31,8 @@ public class OutputToReplyMarkupConverterTests
             (category: DomainCategory.SanitaryOps_FacilityStaff,
                 categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
         };
-        var fakeOutput = new OutputDto
+        var outputWithDomainCategories = new OutputDto
         {
-            ExplicitDestination = basics.fakeDestination,
             DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray()
         };
         
@@ -57,7 +56,7 @@ public class OutputToReplyMarkupConverterTests
                 ]
             }));
 
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithDomainCategories);
         
         Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
@@ -76,9 +75,8 @@ public class OutputToReplyMarkupConverterTests
             (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((long)ControlPrompts.Ok)),
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
-        var fakeOutput = new OutputDto
+        var outputWithPrompts = new OutputDto
         {
-            ExplicitDestination = basics.fakeDestination,
             ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
         };
 
@@ -110,7 +108,7 @@ public class OutputToReplyMarkupConverterTests
                 ]
             }));
         
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithPrompts);
         
         Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
@@ -130,9 +128,8 @@ public class OutputToReplyMarkupConverterTests
         {
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
-        var fakeOutput = new OutputDto
+        var outputWithBoth = new OutputDto
         {
-            ExplicitDestination = basics.fakeDestination,
             DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray(),
             ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
         };
@@ -149,7 +146,7 @@ public class OutputToReplyMarkupConverterTests
                     promptSelection[0].promptId.Id)
             }));
 
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithBoth);
         
         Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
@@ -165,11 +162,11 @@ public class OutputToReplyMarkupConverterTests
         const string choice4 = "c4";
         const string choice5 = "c5";
         
-        var fakeOutput = new OutputDto
+        var outputWithChoices = new OutputDto
         {
-            ExplicitDestination = basics.fakeDestination,
             PredefinedChoices = new[] { choice1, choice2, choice3, choice4, choice5 }   
         };
+        
         // Assumes replyKeyboardNumberOfColumns = 3
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
         {
@@ -183,7 +180,7 @@ public class OutputToReplyMarkupConverterTests
             ResizeKeyboard = true
         });
         
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithChoices);
         
         Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
@@ -193,9 +190,9 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = new OutputDto { Text = UiNoTranslate("some fake output text") };
+        var outputWithout = new OutputDto();
         
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithout);
         
         Assert.Equivalent(Option<IReplyMarkup>.None(), actualReplyMarkup);
     }
@@ -205,21 +202,19 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = new OutputDto
+        var outputWithInvalid = new OutputDto
         {
-            ExplicitDestination = basics.fakeDestination,
             ControlPromptsSelection = new[] { ControlPrompts.Back + 1 }
         };
 
-        var act = () => basics.converter.GetReplyMarkup(fakeOutput);
+        var act = () => basics.converter.GetReplyMarkup(outputWithInvalid);
         
         Assert.Throws<InvalidEnumArgumentException>(act);
     }
     
     private static (IOutputToReplyMarkupConverter converter, 
         IReadOnlyDictionary<EnumCallbackId, UiString> uiByCategoryId,
-        IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId,
-        TelegramOutputDestination fakeDestination) 
+        IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId) 
         GetBasicTestingServices(IServiceProvider sp)
     {
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
@@ -230,9 +225,7 @@ public class OutputToReplyMarkupConverterTests
         var enumUiStringProvider = new EnumUiStringProvider();
         var uiByCategoryId = enumUiStringProvider.ByDomainCategoryId;
         var uiByPromptId = enumUiStringProvider.ByControlPromptId;
-        var fakeDestination = new TelegramOutputDestination(
-            TestUtils.SanitaryOpsInspector1, BotType.Operations);
         
-        return (converter, uiByCategoryId, uiByPromptId, fakeDestination);
+        return (converter, uiByCategoryId, uiByPromptId);
     }
 }
