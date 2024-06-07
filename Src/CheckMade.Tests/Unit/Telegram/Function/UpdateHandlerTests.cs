@@ -223,7 +223,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var fakeOutputDto = new List<OutputDto>{ 
+        
+        var outputWithPrompts = new List<OutputDto>{ 
             new ()
             {
               ExplicitDestination = new TelegramOutputDestination(TestUtils.SanitaryOpsAdmin1, BotType.Operations),
@@ -231,14 +232,15 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
               ControlPromptsSelection = new[] { ControlPrompts.Bad, ControlPrompts.Good } 
             }
         };
+        
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeOutputDto));
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithPrompts));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
-        var expectedReplyMarkup = converter.GetReplyMarkup(fakeOutputDto[0]);
+        var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
         var actualMarkup = Option<IReplyMarkup>.None();
         basics.mockBotClient
@@ -263,12 +265,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_SendsMultipleMessages_ForListOfOutputDtos()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        List<OutputDto> fakeListOfOutputDtos = [ 
+        
+        List<OutputDto> outputsMultiple = [ 
             new OutputDto { Text = UiNoTranslate("Output1") },
             new OutputDto { Text = UiNoTranslate("Output2") }
         ];
+        
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsMultiple));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -280,14 +284,15 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<Option<IReplyMarkup>>(), It.IsAny<CancellationToken>()),
-            Times.Exactly(fakeListOfOutputDtos.Count));
+            Times.Exactly(outputsMultiple.Count));
     }
 
     [Fact]
     public async Task HandleUpdateAsync_SendsMessagesToExplicitDestinations_WhenOutputDestinationToChatIdMappingsExist()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        List<OutputDto> fakeListOfOutputDtos = [
+        
+        List<OutputDto> outputsWithDestination = [
             new OutputDto
             { 
                 ExplicitDestination = new TelegramOutputDestination(
@@ -309,13 +314,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsWithDestination));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
-        var expectedSendParamSets = fakeListOfOutputDtos
+        var expectedSendParamSets = outputsWithDestination
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
@@ -374,18 +379,18 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_SendsMultipleAttachmentTypes_WhenOutputContainsThem()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        List<OutputDto> outputWithPhoto =
+        
+        List<OutputDto> outputWithMultipleAttachmentTypes =
         [
             new OutputDto
             {
                 ExplicitDestination = new TelegramOutputDestination(
                     TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
-                
-                Text = UiNoTranslate("These photos' caption"),
-                
+                Text = UiNoTranslate(
+                    "These photos' caption"),
                 Attachments = new List<OutputAttachmentDetails>
                 {
-                    new(new Uri("https://www.gorin.de/fakeUri.html"), 
+                    new(new Uri("https://www.gorin.de/fakeUri1.html"), 
                         AttachmentType.Photo, Option<UiString>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), 
                         AttachmentType.Photo, Option<UiString>.None()),
@@ -398,7 +403,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithPhoto));
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithMultipleAttachmentTypes));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("Hey, send me some attachments!");
@@ -424,10 +429,35 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Exactly(1));
     }
 
+    // [Fact]
+    // public async Task HandleUpdateAsync_SendsTextAndCaptions_ForOneOutputWithTextAndAttachmentsWithCaptions()
+    // {
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     
+    //     List<OutputDto> outputWithTextAndCaptions =
+    //     [
+    //         new OutputDto
+    //         {
+    //             Text = UiNoTranslate(
+    //                 "This is the main text describing all attachments"),
+    //             Attachments = new List<OutputAttachmentDetails>
+    //             {
+    //                 new(new Uri("http://www.gorin.de/fakeUri1.html"),
+    //                     AttachmentType.Photo, Ui("Caption for Attachment 1")),
+    //                 new(new Uri("http://www.gorin.de/fakeUri2.html"),
+    //                     AttachmentType.Photo, Ui("Caption for Attachment 2")),
+    //             }
+    //         }
+    //     ];
+    //     
+    //     
+    // }
+    
     [Fact]
     public async Task HandleUpdateAsync_SendsLocation_WhenOutputContainsOne()
     {
         var serviceCollection = new UnitTestStartup().Services;
+        
         List<OutputDto> outputWithLocation =
         [
             new OutputDto
