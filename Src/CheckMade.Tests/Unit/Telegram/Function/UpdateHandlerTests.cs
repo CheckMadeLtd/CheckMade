@@ -34,6 +34,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
         serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         // type 'Unknown' is derived by Telegram for lack of any props!
         var unhandledMessageTypeUpdate = new UpdateWrapper(new Message { Chat = new Chat { Id = 123L } });
@@ -55,9 +56,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_LogsError_WhenUpdateProcessorThrowsException()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        
         var mockIUpdateProcessorSelector = new Mock<IUpdateProcessorSelector>();
         var mockOperationsUpdateProcessor = new Mock<IOperationsUpdateProcessor>();
+        
         mockOperationsUpdateProcessor
             .Setup(opr => opr.ProcessUpdateAsync(It.IsAny<Result<TelegramUpdate>>()))
             .Throws<Exception>();
@@ -69,6 +70,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
         serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         
@@ -146,8 +148,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
-                new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
+                new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
         updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
@@ -170,8 +173,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
-               new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
+               new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
         updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
@@ -194,8 +198,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
-                new List<OutputDto>{ OutputDto.Create(ITestUtils.EnglishUiStringForTests) }));
+                new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var updateUnsupportedLanguage = 
             basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -219,14 +224,17 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         var fakeOutputDto = new List<OutputDto>{ 
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsAdmin1, BotType.Operations),
-                ITestUtils.EnglishUiStringForTests, 
-                new[] { ControlPrompts.Bad, ControlPrompts.Good }) 
+            new ()
+            {
+              ExplicitDestination = new TelegramOutputDestination(TestUtils.SanitaryOpsAdmin1, BotType.Operations),
+              Text = ITestUtils.EnglishUiStringForTests,
+              ControlPromptsSelection = new[] { ControlPrompts.Bad, ControlPrompts.Good } 
+            }
         };
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeOutputDto));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
@@ -256,12 +264,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [ 
-            OutputDto.Create(UiNoTranslate("Output1")),
-            OutputDto.Create(UiNoTranslate("Output2"))
+            new OutputDto { Text = UiNoTranslate("Output1") },
+            new OutputDto { Text = UiNoTranslate("Output2") }
         ];
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
         
@@ -275,23 +284,34 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsMessagesToExplicitDestinations_WhenRoleBotTypeToChatIdMappingsExist()
+    public async Task HandleUpdateAsync_SendsMessagesToExplicitDestinations_WhenOutputDestinationToChatIdMappingsExist()
     {
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> fakeListOfOutputDtos = [
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsInspector1, BotType.Operations), 
-                UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")),
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsInspector1, BotType.Communications), 
-                UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists")),
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsEngineer1, BotType.Notifications), 
-                UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)"))
+            new OutputDto
+            { 
+                ExplicitDestination = new TelegramOutputDestination(
+                    TestUtils.SanitaryOpsInspector1, BotType.Operations), 
+                Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
+            },
+            new OutputDto
+            {
+                ExplicitDestination = new TelegramOutputDestination(
+                    TestUtils.SanitaryOpsInspector1, BotType.Communications),
+                Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
+            },
+            new OutputDto
+            {
+                ExplicitDestination = new TelegramOutputDestination(
+                    TestUtils.SanitaryOpsEngineer1, BotType.Notifications),
+                Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
+            }
         ];
+        
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(fakeListOfOutputDtos));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
@@ -324,11 +344,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         const string fakeOutputMessage = "Output without destination";
         const BotType actualBotType = BotType.Communications;
-        List<OutputDto> outputWithoutDestination = [ OutputDto.Create(UiNoTranslate(fakeOutputMessage)) ];
+        
+        List<OutputDto> outputWithoutDestination = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
                 outputWithoutDestination, actualBotType));
         _services = serviceCollection.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
         update.Message.Chat.Id = 12345654321L;
@@ -354,17 +376,27 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> outputWithPhoto =
         [
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
-                UiNoTranslate("These photos' caption"),
-                new List<OutputAttachmentDetails>
+            new OutputDto
+            {
+                ExplicitDestination = new TelegramOutputDestination(
+                    TestUtils.SanitaryOpsCleanLead1, BotType.Operations),
+                
+                Text = UiNoTranslate("These photos' caption"),
+                
+                Attachments = new List<OutputAttachmentDetails>
                 {
-                    new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo, Option<UiString>.None()),
-                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo, Option<UiString>.None()),
-                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Voice, Option<UiString>.None()),
-                    new(new Uri("https://www.gorin.de/fakeUri4.html"), AttachmentType.Document, Option<UiString>.None())
-                })
+                    new(new Uri("https://www.gorin.de/fakeUri.html"), 
+                        AttachmentType.Photo, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri2.html"), 
+                        AttachmentType.Photo, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri3.html"), 
+                        AttachmentType.Voice, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri4.html"), 
+                        AttachmentType.Document, Option<UiString>.None())
+                } 
+            }
         ];
+        
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithPhoto));
         _services = serviceCollection.BuildServiceProvider();
@@ -398,11 +430,15 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         List<OutputDto> outputWithLocation =
         [
-            OutputDto.Create(
-                new TelegramOutputDestination(TestUtils.SanitaryOpsEngineer1, BotType.Operations),
-                UiNoTranslate("Go to this location now:"),
-                new Geo(35.098, -17.077, Option<float>.None()))
+            new OutputDto
+            {
+                ExplicitDestination = new TelegramOutputDestination(
+                    TestUtils.SanitaryOpsEngineer1, BotType.Operations),
+                Text = UiNoTranslate("Go to this location now:"),
+                Location = new Geo(35.098, -17.077, Option<float>.None()) 
+            }
         ];
+        
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithLocation));
         _services = serviceCollection.BuildServiceProvider();

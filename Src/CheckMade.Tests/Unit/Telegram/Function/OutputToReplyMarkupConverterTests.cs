@@ -21,6 +21,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
+        
         var categorySelection = new[] 
         {
             (category: DomainCategory.SanitaryOps_FacilityToilets,
@@ -30,9 +31,11 @@ public class OutputToReplyMarkupConverterTests
             (category: DomainCategory.SanitaryOps_FacilityStaff,
                 categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
         };
-        var fakeOutput = OutputDto.Create(
-            basics.fakeDestination,
-            categorySelection.Select(pair => pair.category).ToArray());
+        var fakeOutput = new OutputDto
+        {
+            ExplicitDestination = basics.fakeDestination,
+            DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray()
+        };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -64,6 +67,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
+        
         var promptSelection = new[]
         {
             (prompt: ControlPrompts.No, promptId: new EnumCallbackId((long)ControlPrompts.No)),
@@ -72,9 +76,11 @@ public class OutputToReplyMarkupConverterTests
             (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((long)ControlPrompts.Ok)),
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
-        var fakeOutput = OutputDto.Create(
-            basics.fakeDestination,
-            promptSelection.Select(pair => pair.prompt).ToArray());
+        var fakeOutput = new OutputDto
+        {
+            ExplicitDestination = basics.fakeDestination,
+            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
+        };
 
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -114,6 +120,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
+        
         var categorySelection = new[]
         {
             (category: DomainCategory.SanitaryOps_FacilityShowers,
@@ -123,10 +130,12 @@ public class OutputToReplyMarkupConverterTests
         {
             (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
         };
-        var fakeOutput = OutputDto.Create(
-            basics.fakeDestination,
-            categorySelection.Select(pair => pair.category).ToArray(), 
-            promptSelection.Select(pair => pair.prompt).ToArray());
+        var fakeOutput = new OutputDto
+        {
+            ExplicitDestination = basics.fakeDestination,
+            DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray(),
+            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
+        };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
@@ -155,10 +164,12 @@ public class OutputToReplyMarkupConverterTests
         const string choice3 = "c3";
         const string choice4 = "c4";
         const string choice5 = "c5";
-        var fakeOutput = OutputDto.Create(
-            basics.fakeDestination,
-            new[] { choice1, choice2, choice3, choice4, choice5 });
         
+        var fakeOutput = new OutputDto
+        {
+            ExplicitDestination = basics.fakeDestination,
+            PredefinedChoices = new[] { choice1, choice2, choice3, choice4, choice5 }   
+        };
         // Assumes replyKeyboardNumberOfColumns = 3
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
         {
@@ -182,7 +193,7 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = OutputDto.Create(UiNoTranslate("some fake output text"));
+        var fakeOutput = new OutputDto { Text = UiNoTranslate("some fake output text") };
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
@@ -194,9 +205,11 @@ public class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var fakeOutput = OutputDto.Create(
-            basics.fakeDestination,
-            new[] { ControlPrompts.Back + 1 });
+        var fakeOutput = new OutputDto
+        {
+            ExplicitDestination = basics.fakeDestination,
+            ControlPromptsSelection = new[] { ControlPrompts.Back + 1 }
+        };
 
         var act = () => basics.converter.GetReplyMarkup(fakeOutput);
         

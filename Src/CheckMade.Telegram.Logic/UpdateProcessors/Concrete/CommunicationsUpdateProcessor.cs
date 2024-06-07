@@ -20,16 +20,19 @@ public class CommunicationsUpdateProcessor(ITelegramUpdateRepository updateRepo)
                 {
                     return new List<OutputDto>
                     {
-                        OutputDto.Create(UiConcatenate(
-                            Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
-                            IUpdateProcessor.SeeValidBotCommandsInstruction))
+                        new()
+                        {
+                            Text = UiConcatenate(
+                                Ui("Welcome to the CheckMade {0} Bot! ", BotType.Communications), 
+                                IUpdateProcessor.SeeValidBotCommandsInstruction)
+                        }
                     };
                 }
                 
-                return new[] { OutputDto.Create(Ui()) };
+                return new[] { new OutputDto() };
             },
 
-            error => Task.FromResult<IReadOnlyList<OutputDto>>([ OutputDto.Create(error) ])
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
     }
 }

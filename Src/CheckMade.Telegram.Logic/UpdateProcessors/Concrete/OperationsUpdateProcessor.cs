@@ -32,7 +32,7 @@ public class OperationsUpdateProcessor(
                     _ => ProcessNormalResponseMessage(successfulUpdate)
                 };
             },
-            error => Task.FromResult<IReadOnlyList<OutputDto>>([ OutputDto.Create(error) ])
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
     }
 
@@ -45,40 +45,45 @@ public class OperationsUpdateProcessor(
         return currentBotCommand switch
         {
             Start.CommandCode => [
-                OutputDto.Create(
-                    UiConcatenate(
+                new OutputDto
+                {
+                    Text = UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", BotType.Operations),
-                        IUpdateProcessor.SeeValidBotCommandsInstruction))
+                        IUpdateProcessor.SeeValidBotCommandsInstruction) 
+                }
             ],
             
             (int) OperationsBotCommands.NewIssue => [
-                OutputDto.Create(
-                    new TelegramOutputDestination(allRoles[0], BotType.Operations),
-                    Ui("What type of issue?"),
-                    new[]
+                new OutputDto
+                {
+                    ExplicitDestination = new TelegramOutputDestination(allRoles[0], BotType.Operations),
+                    Text = Ui("What type of issue?"),
+                    DomainCategorySelection = new[]
                     {
                         DomainCategory.SanitaryOps_IssueCleanliness,
                         DomainCategory.SanitaryOps_IssueTechnical,
                         DomainCategory.SanitaryOps_IssueConsumable
                     },
-                    new[]
-                    {
-                        ControlPrompts.Save
-                    })
+                    ControlPromptsSelection = new[] { ControlPrompts.Save } 
+                }
             ],
             
             // Testing ReplyKeyboard
             (int) OperationsBotCommands.NewAssessment => [
-                OutputDto.Create(
-                    new TelegramOutputDestination(allRoles[0], BotType.Operations),
-                    Ui("⛺ Please choose a camp."),
-                    new[] { "Camp1", "Camp2", "Camp3", "Camp4" })
+                new OutputDto
+                {
+                    ExplicitDestination = new TelegramOutputDestination(allRoles[0], BotType.Operations),
+                    Text = Ui("⛺ Please choose a camp."),
+                    PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
+                }
             ],
             
-            _ => new List<OutputDto>{ OutputDto.Create(
-                UiConcatenate(
-                    Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
-                    UiNoTranslate(currentBotCommand.ToString())))
+            _ => new List<OutputDto>{ new()
+                {
+                    Text = UiConcatenate(
+                        Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
+                        UiNoTranslate(currentBotCommand.ToString())) 
+                }
             }
         };
     }
@@ -87,16 +92,15 @@ public class OperationsUpdateProcessor(
         // ReSharper disable UnusedParameter.Local
         TelegramUpdate telegramUpdate, AttachmentType type)
     {
-        return new List<OutputDto>
-        {
-            OutputDto.Create(
-                UiNoTranslate("Here, echo of your attachment."),
-                new List<OutputAttachmentDetails>
+        return new List<OutputDto> { new()
+            {
+                Text = UiNoTranslate("Here, echo of your attachment."),
+                Attachments = new List<OutputAttachmentDetails>
                 {
                     new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
-                        type, 
-                        Option<UiString>.None())
-                }),
+                        type, Option<UiString>.None())
+                } 
+            }
         };
     }
     
@@ -107,11 +111,13 @@ public class OperationsUpdateProcessor(
         {
             return new List<OutputDto>
             {
-                OutputDto.Create(UiNoTranslate("Message1")),
-                OutputDto.Create(UiNoTranslate("Message2")), 
-                OutputDto.Create(
-                    UiNoTranslate("Go here now:"),
-                    new Geo(12.111, 34.007, Option<float>.None()))
+                new() { Text = UiNoTranslate("Message1") },
+                new() { Text = UiNoTranslate("Message2") }, 
+                new() 
+                { 
+                    Text = UiNoTranslate("Go here now:"),
+                    Location = new Geo(12.111, 34.007, Option<float>.None()) 
+                }
             };
         }
 
