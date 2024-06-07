@@ -148,22 +148,21 @@ public class BotClientWrapper(
     public async Task<Unit> SendVoiceAsync(AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await retryPolicy.ExecuteAsync(async () =>
-            
-                await botClient.SendVoiceAsync(
-                    chatId: voiceSendOutParams.DestinationChatId,
-                    voice: voiceSendOutParams.FileStream,
-                    caption: voiceSendOutParams.Caption.Value,
-                    replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                    cancellationToken: cancellationToken)
-                );
-        }
-        catch (ApiRequestException ex)
-        {
-            throw;
-        }
+        await retryPolicy.ExecuteAsync(async () =>
+        
+            /* This will throw 'Telegram.Bot.Exceptions.ApiRequestException: Bad Request: VOICE_MESSAGES_FORBIDDEN'
+             for Telegram Premium users that in their privacy settings have the default setting that Voice messages
+             are only allowed for 'My Contacts'. These exceptions will show up in our Error Logs alongside the User's
+             Telegram ID. For now, we need to manually inform them that they need to change their settings to enable
+             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list). 
+             */ 
+            await botClient.SendVoiceAsync(
+                chatId: voiceSendOutParams.DestinationChatId,
+                voice: voiceSendOutParams.FileStream,
+                caption: voiceSendOutParams.Caption.Value,
+                replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken)
+            );
         
         return Unit.Value;
     }
