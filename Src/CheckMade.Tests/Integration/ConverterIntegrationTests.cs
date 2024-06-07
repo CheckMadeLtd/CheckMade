@@ -38,7 +38,7 @@ public class ConverterIntegrationTests
             updateWithAttachment, BotType.Operations);
     
         var (downloadedStream, _) = await blobLoader.DownloadBlobAsync(
-            actualModel.Value!.Details.AttachmentInternalUri.Value!);
+            actualModel.GetValueOrThrow().Details.AttachmentInternalUri.GetValueOrThrow());
         
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());
         
