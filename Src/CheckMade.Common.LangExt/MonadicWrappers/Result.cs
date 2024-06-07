@@ -4,8 +4,8 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 
 public record Result<T>
 {
-    public T? Value { get; }
-    public UiString? Error { get; }
+    internal T? Value { get; }
+    internal UiString? Error { get; }
 
     public bool IsSuccess => Error == null;
     public bool IsError => !IsSuccess;
