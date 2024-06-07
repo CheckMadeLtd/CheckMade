@@ -39,7 +39,6 @@ public class ConverterIntegrationTests
     
         var (downloadedStream, _) = await blobLoader.DownloadBlobAsync(
             actualModel.GetValueOrThrow().Details.AttachmentInternalUri.GetValueOrThrow());
-        
         var downloadedContent = Encoding.UTF8.GetString(downloadedStream.ToArray());
         
         Assert.Equal(realFileUtf8Content, downloadedContent);

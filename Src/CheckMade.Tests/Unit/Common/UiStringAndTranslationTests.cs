@@ -16,6 +16,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = " English key with param {0} and \n linebreak and leading space.";
         const string trans = " Deutscher Schlüssel mit Parameter {0} und \n Zeilenumbruch und Leerzeichen am Anfang."; 
         const string param1 = "param1";
@@ -44,6 +45,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey1 = "Key1 with {0}";
         const string enKey2 = "Key2 with {0}";
         const string enKey3 = "Const value to test UiIndirect";
@@ -84,6 +86,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = "Key is present";
         const string trans = "Der Schlüssel ist present";
         
@@ -109,6 +112,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = "Key with {0} and {1} as two params.";
         const string trans = "Schlüssel mit {0} und {1} als zwei Parameter.";
 
@@ -134,6 +138,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = "Key with {0} and {1} as two params.";
         const string trans = "Schlüssel mit {0} und {1} als zwei Parameter.";
         const string param1 = "param1";
@@ -162,6 +167,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = "Key with {0} as only param.";
         const string trans = "Schlüssel mit {0} als einziger Parameter.";
         const string param1 = "param1";
@@ -192,8 +198,10 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enKey = "My English {0} key with param.";
         const string param1 = "param1";
+        
         var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.None();
         factory.mockFactory
             .Setup(f => f.Create(factory.deLangCode))
@@ -211,6 +219,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
         const string enString = "My English {0} string with one param.";
         const string param1 = "param1";
         
@@ -236,6 +245,7 @@ public class UiStringAndTranslationTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var factory = _services.GetRequiredService<IUiTranslatorFactory>();
+        
         const string enKey = "My English {0} key with param.";
         const string param1 = "param1";
         var uiTranslator = factory.Create(LanguageCode.en);

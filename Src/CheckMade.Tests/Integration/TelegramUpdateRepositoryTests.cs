@@ -50,6 +50,7 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         TelegramUserId userId = utils.Randomizer.GenerateRandomLong();
+        
         var telegramUpdates = new[]
         {
             utils.GetValidModelInputTextMessage(userId),
