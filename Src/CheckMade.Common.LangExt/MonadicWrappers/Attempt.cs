@@ -4,8 +4,8 @@ namespace CheckMade.Common.LangExt.MonadicWrappers;
 
 public record Attempt<T>
 {
-    public T? Value { get; }
-    public Exception? Exception { get; }
+    internal T? Value { get; }
+    internal Exception? Exception { get; }
     
     public bool IsSuccess => Exception == null;
     public bool IsFailure => !IsSuccess;
