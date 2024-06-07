@@ -8,7 +8,7 @@ internal class OptionJsonConverter<T> : JsonConverter<Option<T>>
     {
         if (value is { IsSome: true })
         {
-            serializer.Serialize(writer, value.GetValueOrDefault());
+            serializer.Serialize(writer, value.GetValueOrThrow());
         }
         else
         {

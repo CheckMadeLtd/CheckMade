@@ -20,7 +20,7 @@ public class OperationsUpdateProcessor(
     {
         if (telegramUpdate.IsSuccess)
         {
-            await updateRepo.AddAsync(telegramUpdate.Value!);
+            await updateRepo.AddAsync(telegramUpdate.GetValueOrThrow());
         }
 
         IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
@@ -30,12 +30,12 @@ public class OperationsUpdateProcessor(
             { IsSuccess: false, Error: { } error } => [ OutputDto.Create(error) ],
             
             { Value.Details.BotCommandEnumCode.IsSome: true } =>
-                ProcessBotCommand(telegramUpdate.Value, allRoles),
+                ProcessBotCommand(telegramUpdate.GetValueOrThrow(), allRoles),
 
             { Value.Details.AttachmentType: { IsSome: true, Value: var type } } =>
-                ProcessMessageWithAttachment(telegramUpdate.Value, type),
+                ProcessMessageWithAttachment(telegramUpdate.GetValueOrThrow(), type),
 
-            _ => ProcessNormalResponseMessage(telegramUpdate.Value!)
+            _ => ProcessNormalResponseMessage(telegramUpdate.GetValueOrThrow())
         };
     }
 
@@ -43,7 +43,9 @@ public class OperationsUpdateProcessor(
         TelegramUpdate telegramUpdate,
         IReadOnlyList<Role> allRoles)
     {
-        return telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault() switch
+        var currentBotCommand = telegramUpdate.Details.BotCommandEnumCode.GetValueOrThrow();
+        
+        return currentBotCommand switch
         {
             Start.CommandCode => [
                 OutputDto.Create(
@@ -79,7 +81,7 @@ public class OperationsUpdateProcessor(
             _ => new List<OutputDto>{ OutputDto.Create(
                 UiConcatenate(
                     Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
-                    UiNoTranslate(telegramUpdate.Details.BotCommandEnumCode.GetValueOrDefault().ToString())))
+                    UiNoTranslate(currentBotCommand.ToString())))
             }
         };
     }
@@ -94,7 +96,7 @@ public class OperationsUpdateProcessor(
                 UiNoTranslate("Here, echo of your attachment."),
                 new List<OutputAttachmentDetails>
                 {
-                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), 
+                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
                         type, 
                         Option<UiString>.None())
                 }),

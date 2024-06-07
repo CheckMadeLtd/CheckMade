@@ -136,7 +136,7 @@ public class BotClientWrapper(
                 chatId: chatId,
                 text: text,
                 replyMarkup: replyMarkup.IsSome 
-                    ? replyMarkup.GetValueOrDefault()
+                    ? replyMarkup.GetValueOrThrow()
                     : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
                 cancellationToken: cancellationToken);
         });

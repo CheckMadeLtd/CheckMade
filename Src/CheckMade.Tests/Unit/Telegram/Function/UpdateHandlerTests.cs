@@ -298,9 +298,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var expectedSendParamSets = fakeListOfOutputDtos
             .Select(output => new 
             {
-                Text = output.Text.GetValueOrDefault().GetFormattedEnglish(),
+                Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 DestinationChatId = basics.chatIdByOutputDestination
-                    [output.ExplicitDestination.GetValueOrDefault()].Id
+                    [output.ExplicitDestination.GetValueOrThrow()].Id
             });
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);

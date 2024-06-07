@@ -202,7 +202,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 Latitude = 20.0123,
                 Longitude = -17.4509,
                 HorizontalAccuracy = horizontalAccuracy.IsSome 
-                    ? horizontalAccuracy.GetValueOrDefault() 
+                    ? horizontalAccuracy.GetValueOrThrow() 
                     : null
             }
         });

@@ -56,7 +56,7 @@ public class OutputToReplyMarkupConverterTests
 
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class OutputToReplyMarkupConverterTests
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class OutputToReplyMarkupConverterTests
 
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class OutputToReplyMarkupConverterTests
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(fakeOutput);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrDefault(), actualReplyMarkup.GetValueOrDefault());
+        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]

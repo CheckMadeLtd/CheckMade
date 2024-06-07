@@ -25,7 +25,7 @@ public partial class UiTranslator(
         }
 
         var unformattedTranslation = translationByKey.IsSome 
-            ? translationByKey.GetValueOrDefault().TryGetValue(uiString.RawEnglishText, out var translation)
+            ? translationByKey.GetValueOrThrow().TryGetValue(uiString.RawEnglishText, out var translation)
                 ? translation
                 // e.g. new U.I. text hasn't been translated; a resource file w. outdated key; use of UiNoTranslate();
                 : uiString.RawEnglishText

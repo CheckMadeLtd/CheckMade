@@ -16,13 +16,13 @@ public class OperationsUpdateProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var problemCommandUpdate = basics.utils.GetValidModelInputCommandMessage(
+        var issueCommandUpdate = basics.utils.GetValidModelInputCommandMessage(
             BotType.Operations, (int)OperationsBotCommands.NewIssue);
 
-        var actualOutput = await basics.processor.ProcessUpdateAsync(problemCommandUpdate);
+        var actualOutput = await basics.processor.ProcessUpdateAsync(issueCommandUpdate);
         
         Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
-            actualOutput[0].DomainCategorySelection.GetValueOrDefault());
+            actualOutput[0].DomainCategorySelection.GetValueOrThrow());
     }
     
     private static (ITestUtils utils, IOperationsUpdateProcessor processor) 

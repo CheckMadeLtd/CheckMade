@@ -41,7 +41,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = 
             await basics.converter.ConvertToModelAsync(update, BotType.Operations);
 
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
     
     [Theory]
@@ -82,8 +82,8 @@ public class ToModelConverterTests
             attachmentUpdate, BotType.Operations);
         
         // Can't do a deep comparison with Equivalent on the entire updates here due to the complex Uri() type.
-        Assert.Equal(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri, 
-            actualTelegramUpdate.GetValueOrDefault().Details.AttachmentTelegramUri.GetValueOrDefault().AbsoluteUri);
+        Assert.Equal(expectedTelegramUpdate.Details.AttachmentTelegramUri.GetValueOrThrow().AbsoluteUri, 
+            actualTelegramUpdate.GetValueOrThrow().Details.AttachmentTelegramUri.GetValueOrThrow().AbsoluteUri);
     }
 
     [Theory]
@@ -116,7 +116,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             locationUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
 
     [Theory]
@@ -148,7 +148,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
     
     [Theory]
@@ -179,7 +179,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Communications);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
 
     [Theory]
@@ -210,7 +210,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
             commandUpdate, BotType.Notifications);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());        
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());        
     }
 
     [Theory]
@@ -248,7 +248,7 @@ public class ToModelConverterTests
         var actualTelegramUpdate = await basics.converter.ConvertToModelAsync(
              callbackQuery, BotType.Operations);
         
-        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrDefault());
+        Assert.Equivalent(expectedTelegramUpdate, actualTelegramUpdate.GetValueOrThrow());
     }
 
     [Fact]

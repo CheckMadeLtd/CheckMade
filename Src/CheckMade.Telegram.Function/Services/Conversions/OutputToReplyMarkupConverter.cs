@@ -33,9 +33,9 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         
         return 
             inlineKeyboardMarkup.IsSome 
-                ? inlineKeyboardMarkup.GetValueOrDefault()
+                ? inlineKeyboardMarkup.GetValueOrThrow()
                 : replyKeyboardMarkup.IsSome 
-                    ? replyKeyboardMarkup.GetValueOrDefault()
+                    ? replyKeyboardMarkup.GetValueOrThrow()
                     : Option<IReplyMarkup>.None();
     }
 

@@ -13,9 +13,9 @@ public class NotificationsUpdateProcessor(ITelegramUpdateRepository updateRepo) 
     {
         if (telegramUpdate.IsSuccess)
         {
-            await updateRepo.AddAsync(telegramUpdate.Value!);
+            await updateRepo.AddAsync(telegramUpdate.GetValueOrThrow());
             
-            if (telegramUpdate.Value!.Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
+            if (telegramUpdate.GetValueOrThrow().Details.BotCommandEnumCode.GetValueOrDefault() == Start.CommandCode)
             {
                 return new List<OutputDto>
                 {

@@ -66,7 +66,7 @@ public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUp
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
-            command.Parameters.AddWithValue("@userId", (long) userId.GetValueOrDefault());
+            command.Parameters.AddWithValue("@userId", (long) userId.GetValueOrThrow());
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
