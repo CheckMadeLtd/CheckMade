@@ -18,25 +18,22 @@ public class OperationsUpdateProcessor(
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
     {
-        if (telegramUpdate.IsSuccess)
-        {
-            await updateRepo.AddAsync(telegramUpdate.GetValueOrThrow());
-        }
-
-        IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
-        
-        return telegramUpdate switch
-        {
-            { IsSuccess: false, Error: { } error } => [ OutputDto.Create(error) ],
-            
-            { Value.Details.BotCommandEnumCode.IsSome: true } =>
-                ProcessBotCommand(telegramUpdate.GetValueOrThrow(), allRoles),
-
-            { Value.Details.AttachmentType: { IsSome: true, Value: var type } } =>
-                ProcessMessageWithAttachment(telegramUpdate.GetValueOrThrow(), type),
-
-            _ => ProcessNormalResponseMessage(telegramUpdate.GetValueOrThrow())
-        };
+        return await telegramUpdate.Match(
+            async successfulUpdate =>
+            {
+                IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
+                await updateRepo.AddAsync(successfulUpdate);
+                
+                return successfulUpdate switch
+                {
+                    { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
+                    { Details.AttachmentType: { IsSome: true, Value: var type } } => ProcessMessageWithAttachment(
+                        successfulUpdate, type),
+                    _ => ProcessNormalResponseMessage(successfulUpdate)
+                };
+            },
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ OutputDto.Create(error) ])
+        );
     }
 
     private static IReadOnlyList<OutputDto> ProcessBotCommand(

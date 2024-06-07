@@ -24,13 +24,13 @@ public partial class UiTranslator(
                 translatedAll.Append(Translate(part));            
         }
 
-        var unformattedTranslation = translationByKey.IsSome 
-            ? translationByKey.GetValueOrThrow().TryGetValue(uiString.RawEnglishText, out var translation)
+        var unformattedTranslation = translationByKey.Match(
+            dictionary => dictionary.TryGetValue(uiString.RawEnglishText, out var translation)
                 ? translation
                 // e.g. new U.I. text hasn't been translated; a resource file w. outdated key; use of UiNoTranslate();
-                : uiString.RawEnglishText
-            // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
-            : uiString.RawEnglishText;
+                : uiString.RawEnglishText,
+                   // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
+            () => uiString.RawEnglishText);
         
         var formattedTranslation = Attempt<string>.Run(() =>
             translatedAll + 

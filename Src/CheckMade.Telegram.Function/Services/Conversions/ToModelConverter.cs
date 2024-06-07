@@ -207,19 +207,19 @@ internal class ToModelConverter(
         TelegramUserId userId = wrappedUpdate.Message.From.Id;
         TelegramChatId chatId = wrappedUpdate.Message.Chat.Id;
 
-        var telegramAttachmentUriAttempt = attachmentDetails.FileId.IsSome 
-            ? await GetTelegramAttachmentUriAsync(attachmentDetails.FileId.GetValueOrThrow())
-            : Option<Uri>.None();
-
+        var telegramAttachmentUriAttempt = await attachmentDetails.FileId.Match(
+            GetTelegramAttachmentUriAsync,
+            () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+        
         if (telegramAttachmentUriAttempt.IsFailure)
             throw telegramAttachmentUriAttempt.Exception!;
 
         var telegramAttachmentUri = telegramAttachmentUriAttempt.GetValueOrThrow();
-        
-        var internalAttachmentUriAttempt = telegramAttachmentUri.IsSome
-            ? await UploadBlobAndGetInternalUriAsync(telegramAttachmentUri.GetValueOrThrow())
-            : Option<Uri>.None();
 
+        var internalAttachmentUriAttempt = await telegramAttachmentUri.Match(
+            UploadBlobAndGetInternalUriAsync,
+            () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+        
         if (internalAttachmentUriAttempt.IsFailure)
             throw internalAttachmentUriAttempt.Exception!;
 
