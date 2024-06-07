@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.Persistence;
 
-public static class DependencyRegistration
+public static class ServiceRegistration
 {
-    public static void Add_CommonPersistence_Dependencies(this IServiceCollection services, string dbConnectionString)
+    public static void Register_CommonPersistence_Services(this IServiceCollection services, string dbConnectionString)
     {
         services.AddScoped<IDbConnectionProvider>(_ => new DbConnectionProvider(dbConnectionString));
         services.AddScoped<IDbExecutionHelper>(sp =>

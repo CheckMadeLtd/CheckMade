@@ -16,7 +16,7 @@ public class UnitTestStartup : TestStartupBase
 {
     public UnitTestStartup()
     {
-        ConfigureServices();
+        RegisterServices();
     }
 
     protected override void RegisterTestTypeSpecificServices()

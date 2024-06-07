@@ -46,14 +46,14 @@ var host = new HostBuilder()
         // Part of 'StartUp' rather than in shared Services method below b/c different value for Tests starutp.
         services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.de));
         
-        services.ConfigureTelegramFunctionBotClientServices(config, hostingEnvironment);
-        services.ConfigureTelegramFunctionUpdateHandlingServices();
-        services.ConfigureTelegramFunctionConversionServices();
-        services.ConfigureTelegramLogicServices();
+        services.RegisterTelegramFunctionBotClientServices(config, hostingEnvironment);
+        services.RegisterTelegramFunctionUpdateHandlingServices();
+        services.RegisterTelegramFunctionConversionServices();
+        services.RegisterTelegramLogicServices();
         
-        services.ConfigureCommonPersistenceServices(config, hostingEnvironment);
-        services.ConfigureCommonUtilsServices();
-        services.ConfigureCommonExternalServices(config);
+        services.RegisterCommonPersistenceServices(config, hostingEnvironment);
+        services.RegisterCommonUtilsServices();
+        services.RegisterCommonExternalServices(config);
     })
     .ConfigureLogging((hostContext, logging) =>
     {

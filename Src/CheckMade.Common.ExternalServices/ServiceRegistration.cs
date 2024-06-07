@@ -9,15 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.ExternalServices;
 
-public static class DependencyRegistration
+public static class ServiceRegistration
 {
-    public static void Add_GoogleApi_Dependencies(this IServiceCollection services, string googleApiCredential)
+    public static void Register_GoogleApi_Services(this IServiceCollection services, string googleApiCredential)
     {
         services.AddScoped<GoogleAuth>(_ => new GoogleAuth(googleApiCredential));
         services.AddScoped<ISheetsService, GoogleSheetsService>();
     }
 
-    public static void Add_AzureServices_Dependencies(
+    public static void Register_AzureServices_Services(
         this IServiceCollection services,
         string blobContainerUri, string blobContainerAccountName, string blobContainerAccountKey)
     {
@@ -28,7 +28,7 @@ public static class DependencyRegistration
                 new StorageSharedKeyCredential(blobContainerAccountName, blobContainerAccountKey)));
     }
 
-    public static void Add_OtherExternalFacingServices_Dependencies(this IServiceCollection services)
+    public static void Register_OtherExternalFacingServices_Services(this IServiceCollection services)
     {
         services.AddHttpClient();
         services.AddSingleton<IHttpDownloader, HttpDownloader>();

@@ -43,7 +43,7 @@ internal class MigrationStartup(
             _ => throw new ArgumentException($"Invalid argument for {nameof(targetEnv)}.")
         };
 
-        services.Add_CommonPersistence_Dependencies(dbConnString);
+        services.Register_CommonPersistence_Services(dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
         services.AddScoped<MigrationRepository>();
     }

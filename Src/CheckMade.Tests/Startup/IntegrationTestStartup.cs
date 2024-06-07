@@ -14,14 +14,14 @@ public class IntegrationTestStartup : TestStartupBase
 {
     public IntegrationTestStartup()
     {
-        ConfigureServices();
+        RegisterServices();
     }
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.ConfigureTelegramFunctionBotClientServices(Config, HostingEnvironment);
-        Services.ConfigureCommonPersistenceServices(Config, HostingEnvironment);
-        Services.ConfigureCommonExternalServices(Config);
+        Services.RegisterTelegramFunctionBotClientServices(Config, HostingEnvironment);
+        Services.RegisterCommonPersistenceServices(Config, HostingEnvironment);
+        Services.RegisterCommonExternalServices(Config);
 
         /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
          also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need
@@ -46,7 +46,7 @@ public class IntegrationTestStartup : TestStartupBase
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             gglApiCredentialFileName);
         
-        Services.Add_GoogleApi_Dependencies(gglApiCredentialFilePath);
+        Services.Register_GoogleApi_Services(gglApiCredentialFilePath);
 
         const string testDataGglSheetKeyInEnv = "GOOGLE_SHEET_ID_TEST_DATA";
         

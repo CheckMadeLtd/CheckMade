@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils;
 
-public static class DependencyRegistration
+public static class ServiceRegistration
 {
-    public static void Add_CommonUtils_Dependencies(this IServiceCollection services)
+    public static void Register_CommonUtils_Services(this IServiceCollection services)
     {
         services.AddSingleton<Randomizer>();
 

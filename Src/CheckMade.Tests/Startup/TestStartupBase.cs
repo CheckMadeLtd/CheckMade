@@ -32,7 +32,7 @@ public abstract class TestStartupBase
             ?? throw new ConfigurationErrorsException($"Can't find {keyToHostEnv}");
     }
 
-    protected void ConfigureServices()
+    protected void RegisterServices()
     {
         RegisterBaseServices();
         RegisterTestTypeSpecificServices();
@@ -50,11 +50,11 @@ public abstract class TestStartupBase
         Services.AddSingleton<ITestUtils, TestUtils>();
         Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        Services.ConfigureTelegramFunctionUpdateHandlingServices();
-        Services.ConfigureTelegramFunctionConversionServices();
-        Services.ConfigureTelegramLogicServices();
+        Services.RegisterTelegramFunctionUpdateHandlingServices();
+        Services.RegisterTelegramFunctionConversionServices();
+        Services.RegisterTelegramLogicServices();
         
-        Services.ConfigureCommonUtilsServices();
+        Services.RegisterCommonUtilsServices();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();
