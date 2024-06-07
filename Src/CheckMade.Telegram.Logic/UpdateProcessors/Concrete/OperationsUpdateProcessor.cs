@@ -27,8 +27,8 @@ public class OperationsUpdateProcessor(
                 return successfulUpdate switch
                 {
                     { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
-                    { Details.AttachmentType: { IsSome: true, Value: var type } } => ProcessMessageWithAttachment(
-                        successfulUpdate, type),
+                    { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
+                        successfulUpdate, successfulUpdate.Details.AttachmentType.GetValueOrThrow()),
                     _ => ProcessNormalResponseMessage(successfulUpdate)
                 };
             },

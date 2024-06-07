@@ -70,7 +70,7 @@ public class BotClientWrapper(
             await botClient.SendDocumentAsync(
                 chatId: documentSendOutParams.DestinationChatId,
                 document: documentSendOutParams.FileStream,
-                caption: documentSendOutParams.Caption.Value,
+                caption: documentSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
             );
@@ -103,7 +103,7 @@ public class BotClientWrapper(
             await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.DestinationChatId,
                 photo: photoSendOutParams.FileStream,
-                caption: photoSendOutParams.Caption.Value,
+                caption: photoSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
             );
@@ -158,7 +158,7 @@ public class BotClientWrapper(
             await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.DestinationChatId,
                 voice: voiceSendOutParams.FileStream,
-                caption: voiceSendOutParams.Caption.Value,
+                caption: voiceSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
             );
