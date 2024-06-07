@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
@@ -25,39 +26,41 @@ internal static class OutputSender
         {
             foreach (var output in outputsPerDestination)
             {
-                var destinationBotClient = output.ExplicitDestination.IsSome
-                    ? botClientByBotType[output.ExplicitDestination.Value!.DestinationBotType]
-                    : botClientByBotType[updateReceivingBotType]; // e.g. for a virgin, pre-login update
+                var destinationBotClient = output.ExplicitDestination.Match(
+                    destination => botClientByBotType[destination.DestinationBotType],
+                    () => botClientByBotType[updateReceivingBotType]); // e.g. for a virgin, pre-login update
 
-                var destinationChatId = output.ExplicitDestination.IsSome
-                    ? chatIdByOutputDestination[output.ExplicitDestination.Value!].Id
-                    : updateReceivingChatId; // e.g. for a virgin, pre-login update
-
+                var destinationChatId = output.ExplicitDestination.Match(
+                    destination => chatIdByOutputDestination[destination].Id,
+                    () => updateReceivingChatId); // e.g. for a virgin, pre-login update
+                    
                 switch (output)
                 {
-                    case { Attachments.IsSome: false, Location.IsSome: false }:
-                        await InvokeSendTextMessageAsync();
+                    case { Text.IsSome: true, Attachments.IsSome: false, Location.IsSome: false }:
+                        await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                         break;
 
                     case { Attachments.IsSome: true }:
-                        foreach (var attachment in output.Attachments.Value!)
+                        if (output.Text.IsSome)
+                            await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
+                        foreach (var attachment in output.Attachments.GetValueOrThrow())
                             await InvokeSendAttachmentAsync(attachment);
                         break;
 
                     case { Location.IsSome: true }:
-                        await InvokeSendLocationAsync();
+                        await InvokeSendLocationAsync(output.Location.GetValueOrThrow());
                         break;
                 }
 
                 continue;
 
-                async Task InvokeSendTextMessageAsync()
+                async Task InvokeSendTextMessageAsync(UiString outputText)
                 {
                     await destinationBotClient
                         .SendTextMessageAsync(
                             destinationChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
-                            uiTranslator.Translate(output.Text.GetValueOrDefault(Ui())),
+                            uiTranslator.Translate(outputText),
                             converter.GetReplyMarkup(output));
                 }
 
@@ -66,12 +69,16 @@ internal static class OutputSender
                     var (blobData, fileName) =
                         await blobLoader.DownloadBlobAsync(details.AttachmentUri);
                     var fileStream = new InputFileStream(blobData, fileName);
+                    
+                    var caption = details.Caption.Match(
+                        value => Option<string>.Some(uiTranslator.Translate(value)),
+                        Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        DestinationChatId: destinationChatId,
-                        FileStream: fileStream,
-                        Caption: Option<string>.Some(uiTranslator.Translate(output.Text.GetValueOrDefault(Ui()))),
-                        ReplyMarkup: converter.GetReplyMarkup(output)
+                        destinationChatId,
+                        fileStream,
+                        caption,
+                        converter.GetReplyMarkup(output)
                     );
 
                     switch (details.AttachmentType)
@@ -93,12 +100,12 @@ internal static class OutputSender
                     }
                 }
 
-                async Task InvokeSendLocationAsync()
+                async Task InvokeSendLocationAsync(Geo location)
                 {
                     await destinationBotClient
                         .SendLocationAsync(
                             destinationChatId,
-                            output.Location.Value!,
+                            location,
                             converter.GetReplyMarkup(output));
                 }
             }
