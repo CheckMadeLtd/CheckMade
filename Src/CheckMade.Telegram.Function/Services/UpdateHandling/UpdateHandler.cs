@@ -102,7 +102,6 @@ public class UpdateHandler(
             });
     }
 
-    // FYI: There is a time delay of a couple of minutes on Telegram side when user switches lang. setting in Tlgr client
     private LanguageCode GetUiLanguage(Message telegramInputMessage)
     {
         var userLanguagePreferenceIsRecognized = Enum.TryParse(
