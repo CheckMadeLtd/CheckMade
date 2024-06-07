@@ -4,7 +4,6 @@ using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;

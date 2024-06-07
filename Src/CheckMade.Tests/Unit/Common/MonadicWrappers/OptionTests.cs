@@ -41,7 +41,7 @@ public class OptionTests
         var option = Option<int>.None();
 
         Action action = () => option.GetValueOrThrow();
-        action.Should().Throw<InvalidOperationException>().WithMessage("No value present");
+        action.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]

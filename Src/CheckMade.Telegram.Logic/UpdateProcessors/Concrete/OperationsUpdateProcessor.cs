@@ -94,7 +94,9 @@ public class OperationsUpdateProcessor(
                 UiNoTranslate("Here, echo of your attachment."),
                 new List<OutputAttachmentDetails>
                 {
-                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), type)
+                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrDefault(), 
+                        type, 
+                        Option<UiString>.None())
                 }),
         };
     }

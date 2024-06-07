@@ -359,10 +359,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 UiNoTranslate("These photos' caption"),
                 new List<OutputAttachmentDetails>
                 {
-                    new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo),
-                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo),
-                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Voice),
-                    new(new Uri("https://www.gorin.de/fakeUri4.html"), AttachmentType.Document)
+                    new(new Uri("https://www.gorin.de/fakeUri.html"), AttachmentType.Photo, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri2.html"), AttachmentType.Photo, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri3.html"), AttachmentType.Voice, Option<UiString>.None()),
+                    new(new Uri("https://www.gorin.de/fakeUri4.html"), AttachmentType.Document, Option<UiString>.None())
                 })
         ];
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
