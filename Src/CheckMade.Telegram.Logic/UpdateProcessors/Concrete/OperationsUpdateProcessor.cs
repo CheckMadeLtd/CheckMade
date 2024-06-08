@@ -13,7 +13,8 @@ public interface IOperationsUpdateProcessor : IUpdateProcessor;
 
 public class OperationsUpdateProcessor(
         ITelegramUpdateRepository updateRepo,
-        IRoleRepository roleRepo) 
+        IRoleRepository roleRepo,
+        IChatIdByOutputDestinationRepository chatIdMappingRepo) 
     : IOperationsUpdateProcessor
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
@@ -22,15 +23,24 @@ public class OperationsUpdateProcessor(
             async successfulUpdate =>
             {
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
+                IReadOnlyList<ChatIdByOutputDestination> allChatIdMappings =
+                    (await chatIdMappingRepo.GetAllAsync()).ToList().AsReadOnly();
                 await updateRepo.AddAsync(successfulUpdate);
                 
-                return successfulUpdate switch
-                {
-                    { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
-                    { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
-                        successfulUpdate, successfulUpdate.Details.AttachmentType.GetValueOrThrow()),
-                    _ => ProcessNormalResponseMessage(successfulUpdate)
-                };
+                return allChatIdMappings.FirstOrDefault(cmp => 
+                    cmp.ChatId == successfulUpdate.TelegramChatId) == null 
+                    
+                    ? new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } }
+                    
+                    : successfulUpdate switch 
+                    {
+                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
+                        
+                        { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
+                            successfulUpdate, successfulUpdate.Details.AttachmentType.GetValueOrThrow()),
+                        
+                        _ => ProcessNormalResponseMessage(successfulUpdate)
+                    };
             },
             error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
@@ -99,7 +109,7 @@ public class OperationsUpdateProcessor(
                 {
                     new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
                         type, Option<UiString>.None())
-                } 
+                }
             }
         };
     }

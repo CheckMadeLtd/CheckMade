@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Enums;
 using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Tests.Startup;
@@ -11,6 +12,35 @@ public class OperationsUpdateProcessorTests
 {
     private ServiceProvider? _services;
 
+    [Fact]
+    public async Task ProcessUpdateAsync_AsksForTokenForAnyInputOtherThanStart_WhenChatIdNotMappedToOutputDestination()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        
+        const long userId = 2468L;
+        // const long mappedChatId = ITestUtils.TestChatId_02; // mapped via MockChatIdByOutputDestinationRepository
+        const long unmappedChatId = 13563897L; // random choice
+        
+        // var updateInMappedChatId = basics.utils.GetValidModelTextMessage(userId, mappedChatId);
+        var updateInUnmappedChatId = basics.utils.GetValidModelTextMessage(userId, unmappedChatId);
+    
+        // var outputInMappedChatId = 
+        //     await basics.processor.ProcessUpdateAsync(updateInMappedChatId);
+        var outputInUnMappedChatId = 
+            await basics.processor.ProcessUpdateAsync(updateInUnmappedChatId);
+        
+        Assert.Equal(outputInUnMappedChatId[0].Text.GetValueOrThrow(), IUpdateProcessor.AuthenticateWithToken);
+        
+        // ToDo: activate this again once a mapped chatId to any input actually returns a non-zero output.
+        // Assert.NotEqual(outputInMappedChatId[0].Text.GetValueOrThrow(), IUpdateProcessor.AuthenticateWithToken);
+    }
+    
+    // Test: every bot should ask for token etc. this is shared behaviour
+    
+    // Test: adapt test so it actually checks for 'current' mapping, i.e. chatIdToDestination mapping need to have status, 
+    // historic ones are preserved, but if mapping is non-current, it asks for a new auth. 
+    
     [Fact]
     public async Task ProcessUpdateAsync_ReturnsRelevantOutput_ForNewIssueBotCommand()
     {

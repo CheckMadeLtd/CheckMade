@@ -27,7 +27,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     TelegramUpdate GetValidModelTextMessage();
-    TelegramUpdate GetValidModelTextMessage(TelegramUserId userId);
+    TelegramUpdate GetValidModelTextMessage(TelegramUserId userId, long chatId = TestChatId_01);
     TelegramUpdate GetValidModelTextMessageWithAttachment(AttachmentType type);
     TelegramUpdate GetValidModelCommandMessage(BotType botType, int botCommandEnumCode);
     
@@ -61,11 +61,11 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Randomizer Randomizer { get; } = randomizer;
     
     public TelegramUpdate GetValidModelTextMessage() =>
-        GetValidModelTextMessage(Randomizer.GenerateRandomLong());
+        GetValidModelTextMessage(Randomizer.GenerateRandomLong(), Randomizer.GenerateRandomLong());
 
-    public TelegramUpdate GetValidModelTextMessage(TelegramUserId userId) =>
+    public TelegramUpdate GetValidModelTextMessage(TelegramUserId userId, long chatId) =>
         new(userId,
-            Randomizer.GenerateRandomLong(),
+            chatId,
             BotType.Operations,
             ModelUpdateType.TextMessage,
             CreateFromRelevantDetails(

@@ -15,7 +15,13 @@ internal class MockRoleRepository : IRoleRepository
             TestUtils.SanitaryOpsInspector1,
             TestUtils.SanitaryOpsEngineer1,
             TestUtils.SanitaryOpsCleanLead1,
-            TestUtils.SanitaryOpsObserver1);
+            TestUtils.SanitaryOpsObserver1,
+            
+            TestUtils.SanitaryOpsInspector2,
+            TestUtils.SanitaryOpsEngineer2,
+            TestUtils.SanitaryOpsCleanLead2,
+            TestUtils.SanitaryOpsObserver2
+            );
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());
     }
