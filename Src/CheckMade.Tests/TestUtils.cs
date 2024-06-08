@@ -14,6 +14,8 @@ internal interface ITestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
 
+    // Needs to be 'long' instead of 'TelegramUserId' for usage in InlineData() of Tests - but they implicitly convert
+    internal const long TestUserDanielGorinTelegramId = 215737196L;
     internal const long TestUserId_01 = 101L;
     internal const long TestUserId_02 = 102L;
     internal const long TestUserId_03 = 103L;
@@ -47,9 +49,6 @@ internal interface ITestUtils
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
-    // Needs to be 'long' instead of 'TelegramUserId' for usage in InlineData() of Tests - but they implicitly convert
-    internal const long TestUserDanielGorinTelegramId = 215737196L;
-
     internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
     
     internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);

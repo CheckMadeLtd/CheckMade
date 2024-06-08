@@ -87,8 +87,8 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
     // [Theory(Skip = "Waiting to migrate the old DB data")]
     // [Theory(Skip = "Running tests from unknown IP / internet")]
     [Theory]
-    [InlineData(TestUtils.TestUserDanielGorinTelegramId, false)]
-    [InlineData(TestUtils.TestUserDanielGorinTelegramId, true)]
+    [InlineData(ITestUtils.TestUserDanielGorinTelegramId, false)]
+    [InlineData(ITestUtils.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
         TelegramUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
