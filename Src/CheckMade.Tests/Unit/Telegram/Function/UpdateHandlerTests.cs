@@ -287,26 +287,26 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsMessagesToExplicitDestinations_WhenOutputDestinationToChatIdMappingsExist()
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalDestinations_WhenMappingsExist()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
         List<OutputDto> outputsWithDestination = [
             new OutputDto
             { 
-                ExplicitDestination = new TelegramOutputDestination(
+                LogicalDestination = new LogicalOutputDestination(
                     TestUtils.SanitaryOpsInspector1, BotType.Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
             },
             new OutputDto
             {
-                ExplicitDestination = new TelegramOutputDestination(
+                LogicalDestination = new LogicalOutputDestination(
                     TestUtils.SanitaryOpsInspector1, BotType.Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
             },
             new OutputDto
             {
-                ExplicitDestination = new TelegramOutputDestination(
+                LogicalDestination = new LogicalOutputDestination(
                     TestUtils.SanitaryOpsEngineer1, BotType.Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
             }
@@ -323,8 +323,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
-                DestinationChatId = basics.chatIdByOutputDestination
-                    [output.ExplicitDestination.GetValueOrThrow()].Id
+                DestinationChatId = basics.roleByUserChatDestination
+                    .First(kvp => 
+                        kvp.Value == output.LogicalDestination.GetValueOrThrow().DestinationRole)
+                    .Key.ChatId.Id
             });
 
         await basics.handler.HandleUpdateAsync(update, BotType.Operations);
@@ -501,11 +503,11 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     private static (ITestUtils utils, 
-        Mock<IBotClientWrapper> mockBotClient,
-        IUpdateHandler handler,
+        Mock<IBotClientWrapper> mockBotClient, 
+        IUpdateHandler handler, 
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator,
-        IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination)
+        IUiTranslator emptyTranslator, 
+        IDictionary<TelegramUserChatDestination, Role> roleByUserChatDestination)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -513,11 +515,11 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<IChatIdByOutputDestinationRepository>().GetAllAsync()
+                sp.GetRequiredService<ITelegramUserChatDestinationToRoleMapRepository>().GetAllAsync()
                     .Result
                     .ToDictionary(
-                        keySelector: map => map.OutputDestination,
-                        elementSelector: map => map.ChatId)
+                        keySelector: map => map.UserChatDestination,
+                        elementSelector: map => map.Role)
                 );
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics

@@ -13,6 +13,10 @@ internal interface ITestUtils
     // These string values to be exactly the same as in the corresponding .tsv translation files! 
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
+
+    internal const long TestUserId_01 = 101L;
+    internal const long TestUserId_02 = 102L;
+    internal const long TestUserId_03 = 103L;
     
     internal const long TestChatId_01 = 100001L;
     internal const long TestChatId_02 = 100002L;
@@ -26,10 +30,10 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    TelegramUpdate GetValidModelTextMessage();
-    TelegramUpdate GetValidModelTextMessage(TelegramUserId userId, long chatId = TestChatId_01);
+    TelegramUpdate GetValidModelTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
     TelegramUpdate GetValidModelTextMessageWithAttachment(AttachmentType type);
-    TelegramUpdate GetValidModelCommandMessage(BotType botType, int botCommandEnumCode);
+    TelegramUpdate GetValidModelCommandMessage(
+        BotType botType, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -60,10 +64,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TelegramUpdate GetValidModelTextMessage() =>
-        GetValidModelTextMessage(Randomizer.GenerateRandomLong(), Randomizer.GenerateRandomLong());
-
-    public TelegramUpdate GetValidModelTextMessage(TelegramUserId userId, long chatId) =>
+    public TelegramUpdate GetValidModelTextMessage(long userId, long chatId) =>
         new(userId,
             chatId,
             BotType.Operations,
@@ -86,9 +87,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 new Uri("fakeInternalUri"),
                 type));
 
-    public TelegramUpdate GetValidModelCommandMessage(BotType botType, int botCommandEnumCode) =>
-        new(Randomizer.GenerateRandomLong(),
-            Randomizer.GenerateRandomLong(),
+    public TelegramUpdate GetValidModelCommandMessage(
+        BotType botType, int botCommandEnumCode, long userId, long chatId) =>
+        new(userId,
+            chatId,
             botType,
             ModelUpdateType.CommandMessage,
             CreateFromRelevantDetails(

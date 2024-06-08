@@ -24,8 +24,8 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITelegramUpdateRepository, MockTelegramUpdateRepository>(_ => 
             new MockTelegramUpdateRepository(new Mock<ITelegramUpdateRepository>()));
         Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
-        Services.AddScoped<IChatIdByOutputDestinationRepository, MockChatIdByOutputDestinationRepository>(_ => 
-            new MockChatIdByOutputDestinationRepository());
+        Services.AddScoped<ITelegramUserChatDestinationToRoleMapRepository, MockTelegramUserChatDestinationToRoleMapRepository>(_ => 
+            new MockTelegramUserChatDestinationToRoleMapRepository());
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
          in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 

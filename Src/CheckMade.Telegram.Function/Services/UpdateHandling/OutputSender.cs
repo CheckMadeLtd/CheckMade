@@ -17,7 +17,7 @@ internal static class OutputSender
             IDictionary<BotType, IBotClientWrapper> botClientByBotType,
             BotType updateReceivingBotType,
             ChatId updateReceivingChatId,
-            IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination,
+            IDictionary<TelegramUserChatDestination, Role> roleByUserChatDestination,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -27,12 +27,14 @@ internal static class OutputSender
         {
             foreach (var output in outputsPerDestination)
             {
-                var destinationBotClient = output.ExplicitDestination.Match(
+                var destinationBotClient = output.LogicalDestination.Match(
                     destination => botClientByBotType[destination.DestinationBotType],
                     () => botClientByBotType[updateReceivingBotType]); // e.g. for a virgin, pre-login update
 
-                var destinationChatId = output.ExplicitDestination.Match(
-                    destination => chatIdByOutputDestination[destination].Id,
+                var destinationChatId = output.LogicalDestination.Match(
+                    destination => roleByUserChatDestination
+                        .First(kvp => kvp.Value == destination.DestinationRole)
+                        .Key.ChatId.Id,
                     () => updateReceivingChatId); // e.g. for a virgin, pre-login update
                     
                 switch (output)
@@ -112,7 +114,7 @@ internal static class OutputSender
             }
         };
 
-        var outputGroups = outputs.GroupBy(o => o.ExplicitDestination);
+        var outputGroups = outputs.GroupBy(o => o.LogicalDestination);
 
         var parallelTasks = outputGroups
             .Select(outputsPerDestinationGroup => 

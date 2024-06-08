@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Common.Utils.UiTranslation;
@@ -22,7 +23,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IUpdateProcessorSelector selector,
-        IChatIdByOutputDestinationRepository chatIdByOutputDestinationRepository,
+        ITelegramUserChatDestinationToRoleMapRepository telegramUserChatDestinationToRoleMapRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -75,14 +76,14 @@ public class UpdateHandler(
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
                         selector.GetUpdateProcessor(updateReceivingBotType).ProcessUpdateAsync(telegramUpdate))
-                from chatIdByOutputDestination
-                    in Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(
-                        GetChatIdByOutputDestinationAsync) 
+                from roleByUserChatDestination
+                    in Attempt<IDictionary<TelegramUserChatDestination, Role>>.RunAsync(
+                        GetRoleByTelegramUserChatDestinationAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
-                          chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          roleByUserChatDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -115,9 +116,9 @@ public class UpdateHandler(
             : defaultUiLanguage.Code;
     }
     
-    private async Task<IDictionary<TelegramOutputDestination, TelegramChatId>> GetChatIdByOutputDestinationAsync() =>
-        (await chatIdByOutputDestinationRepository.GetAllAsync())
+    private async Task<IDictionary<TelegramUserChatDestination, Role>> GetRoleByTelegramUserChatDestinationAsync() =>
+        (await telegramUserChatDestinationToRoleMapRepository.GetAllAsync())
             .ToDictionary(
-                keySelector: map => map.OutputDestination,
-                elementSelector: map => map.ChatId);
+                keySelector: map => map.UserChatDestination,
+                elementSelector: map => map.Role);
 }

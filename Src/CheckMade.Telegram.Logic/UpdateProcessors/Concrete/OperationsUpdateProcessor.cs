@@ -14,7 +14,7 @@ public interface IOperationsUpdateProcessor : IUpdateProcessor;
 public class OperationsUpdateProcessor(
         ITelegramUpdateRepository updateRepo,
         IRoleRepository roleRepo,
-        IChatIdByOutputDestinationRepository chatIdMappingRepo) 
+        ITelegramUserChatDestinationToRoleMapRepository telegramUserChatDestinationToRoleMapRepo) 
     : IOperationsUpdateProcessor
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
@@ -23,12 +23,12 @@ public class OperationsUpdateProcessor(
             async successfulUpdate =>
             {
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
-                IReadOnlyList<ChatIdByOutputDestination> allChatIdMappings =
-                    (await chatIdMappingRepo.GetAllAsync()).ToList().AsReadOnly();
+                IReadOnlyList<TelegramUserChatDestinationToRoleMap> allDestinationToRoleMaps =
+                    (await telegramUserChatDestinationToRoleMapRepo.GetAllAsync()).ToList().AsReadOnly();
                 await updateRepo.AddAsync(successfulUpdate);
                 
-                return allChatIdMappings.FirstOrDefault(cmp => 
-                    cmp.ChatId == successfulUpdate.TelegramChatId) == null 
+                return allDestinationToRoleMaps.FirstOrDefault(cmp => 
+                    cmp.UserChatDestination.ChatId == successfulUpdate.TelegramChatId) == null 
                     
                     ? new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } }
                     
@@ -66,7 +66,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    ExplicitDestination = new TelegramOutputDestination(allRoles[0], BotType.Operations),
+                    LogicalDestination = new LogicalOutputDestination(allRoles[0], BotType.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -82,7 +82,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    ExplicitDestination = new TelegramOutputDestination(allRoles[0], BotType.Operations),
+                    LogicalDestination = new LogicalOutputDestination(allRoles[0], BotType.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }

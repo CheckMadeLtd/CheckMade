@@ -6,8 +6,8 @@ namespace CheckMade.Telegram.Model.DTOs;
 
 public record OutputDto
 {
-    public Option<TelegramOutputDestination> ExplicitDestination { get; init; } 
-        = Option<TelegramOutputDestination>.None();
+    public Option<LogicalOutputDestination> LogicalDestination { get; init; } 
+        = Option<LogicalOutputDestination>.None();
     
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();

@@ -17,6 +17,6 @@ public static class ServiceRegistration
         
         services.AddScoped<ITelegramUpdateRepository, TelegramUpdateRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IChatIdByOutputDestinationRepository, ChatIdByOutputDestinationRepository>();
+        services.AddScoped<ITelegramUserChatDestinationToRoleMapRepository, TelegramUserChatDestinationToRoleMapRepository>();
     }
 }

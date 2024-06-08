@@ -19,7 +19,7 @@ public class OperationsUpdateProcessorTests
         var basics = GetBasicTestingServices(_services);
         
         const long userId = 2468L;
-        // const long mappedChatId = ITestUtils.TestChatId_02; // mapped via MockChatIdByOutputDestinationRepository
+        // const long mappedChatId = ITestUtils.TestChatId_02; // mapped via MockTelegramUserChatDestinationToRoleMapRepository
         const long unmappedChatId = 13563897L; // random choice
         
         // var updateInMappedChatId = basics.utils.GetValidModelTextMessage(userId, mappedChatId);
