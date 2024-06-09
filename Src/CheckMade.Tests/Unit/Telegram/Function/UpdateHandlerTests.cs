@@ -1,10 +1,9 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -389,13 +388,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<OutputAttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
-                        AttachmentType.Photo, Option<UiString>.None()),
+                        TlgAttachmentType.Photo, Option<UiString>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), 
-                        AttachmentType.Photo, Option<UiString>.None()),
+                        TlgAttachmentType.Photo, Option<UiString>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri3.html"), 
-                        AttachmentType.Voice, Option<UiString>.None()),
+                        TlgAttachmentType.Voice, Option<UiString>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri4.html"), 
-                        AttachmentType.Document, Option<UiString>.None())
+                        TlgAttachmentType.Document, Option<UiString>.None())
                 } 
             }
         ];
@@ -442,9 +441,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<OutputAttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
-                        AttachmentType.Photo, Ui("Random caption for Attachment 1")),
+                        TlgAttachmentType.Photo, Ui("Random caption for Attachment 1")),
                     new(new Uri("http://www.gorin.de/fakeUri2.html"), 
-                        AttachmentType.Photo, Ui("Random caption for Attachment 2")),
+                        TlgAttachmentType.Photo, Ui("Random caption for Attachment 2")),
                 }
             }
         ];

@@ -1,5 +1,5 @@
 using CheckMade.Common.ExternalServices;
-using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;

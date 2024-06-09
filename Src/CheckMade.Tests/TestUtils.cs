@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Telegram.Bot.Types;
@@ -34,7 +34,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
-    TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type);
+    TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type);
     TlgInput GetValidTlgCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     
@@ -74,7 +74,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
     
-    public TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type) =>
+    public TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             InteractionMode.Operations,
@@ -104,7 +104,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
-        AttachmentType? attachmentType = null,
+        TlgAttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
         int? domainCategoryEnumCode = null,
@@ -116,7 +116,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             text ?? Option<string>.None(),
             attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
-            attachmentType ?? Option<AttachmentType>.None(),
+            attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
             domainCategoryEnumCode ?? Option<int>.None(),

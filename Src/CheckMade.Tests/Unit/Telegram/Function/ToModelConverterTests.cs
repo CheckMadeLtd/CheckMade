@@ -1,8 +1,8 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
-using CheckMade.Common.Model.Enums.UserInteraction.Helpers;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -47,19 +47,19 @@ public class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(AttachmentType.Photo)]
-    [InlineData(AttachmentType.Voice)]
-    [InlineData(AttachmentType.Document)]
+    [InlineData(TlgAttachmentType.Photo)]
+    [InlineData(TlgAttachmentType.Voice)]
+    [InlineData(TlgAttachmentType.Document)]
     public async Task ConvertToModelAsync_ResultsInCorrectTlgUri_ForValidAttachmentMessage_InAnyMode(
-        AttachmentType attachmentType)
+        TlgAttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var attachmentUpdate = attachmentType switch
         {
-            AttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
-            AttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
-            AttachmentType.Voice => basics.utils.GetValidTelegramVoiceMessage(),
+            TlgAttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
+            TlgAttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
+            TlgAttachmentType.Voice => basics.utils.GetValidTelegramVoiceMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         

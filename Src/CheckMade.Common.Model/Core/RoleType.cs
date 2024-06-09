@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Enums;
+namespace CheckMade.Common.Model.Core;
 
 public enum RoleType
 {

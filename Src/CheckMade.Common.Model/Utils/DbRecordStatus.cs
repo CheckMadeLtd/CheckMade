@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Enums;
+namespace CheckMade.Common.Model.Utils;
 
 public enum DbRecordStatus
 {

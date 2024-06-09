@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using CheckMade.Common.Model.Enums.UserInteraction;
-using CheckMade.Common.Model.Enums.UserInteraction.Helpers;
 using CheckMade.Common.Model.Tlg.Output;
+using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Tests.Startup;

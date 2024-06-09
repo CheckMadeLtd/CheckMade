@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;
@@ -54,7 +54,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<string>.None(),
                 Option<Uri>.None(),
                 Option<Uri>.None(), 
-                Option<AttachmentType>.None(),
+                Option<TlgAttachmentType>.None(),
                 Option<Geo>.None(), 
                 Option<int>.None(),
                 Option<int>.None(), 

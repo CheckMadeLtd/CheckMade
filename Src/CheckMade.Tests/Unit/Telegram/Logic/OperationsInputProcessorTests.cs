@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;

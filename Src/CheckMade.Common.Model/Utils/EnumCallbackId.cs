@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Enums.UserInteraction.Helpers;
+namespace CheckMade.Common.Model.Utils;
 
 public record EnumCallbackId
 {

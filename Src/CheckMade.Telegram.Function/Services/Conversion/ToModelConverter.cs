@@ -1,10 +1,10 @@
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
-using CheckMade.Common.Model.Enums.UserInteraction.Helpers;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Model.BotCommand;
@@ -80,29 +80,29 @@ internal class ToModelConverter(
         return update.Message.Type switch
         {
             MessageType.Text or MessageType.Location => new AttachmentDetails(
-                Option<string>.None(), Option<AttachmentType>.None()),
+                Option<string>.None(), Option<TlgAttachmentType>.None()),
 
             MessageType.Document => new AttachmentDetails(
                 update.Message.Document?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
-                AttachmentType.Document),
+                TlgAttachmentType.Document),
 
             MessageType.Photo => new AttachmentDetails(
                 update.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
-                AttachmentType.Photo),
+                TlgAttachmentType.Photo),
 
             MessageType.Voice => new AttachmentDetails(
                 update.Message.Voice?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
-                AttachmentType.Voice),
+                TlgAttachmentType.Voice),
 
             _ => Ui("Attachment type {0} is not yet supported!", update.Message.Type)
         };
     }
 
-    private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
+    private record AttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch

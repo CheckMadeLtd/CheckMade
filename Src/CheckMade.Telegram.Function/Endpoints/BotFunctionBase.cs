@@ -1,5 +1,5 @@
 using System.Net;
-using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

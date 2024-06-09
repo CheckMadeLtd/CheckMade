@@ -1,9 +1,8 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Output;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -88,15 +87,15 @@ internal static class OutputSender
 
                     switch (details.AttachmentType)
                     {
-                        case AttachmentType.Document:
+                        case TlgAttachmentType.Document:
                             await portBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
-                        case AttachmentType.Photo:
+                        case TlgAttachmentType.Photo:
                             await portBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
-                        case AttachmentType.Voice:
+                        case TlgAttachmentType.Voice:
                             await portBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 

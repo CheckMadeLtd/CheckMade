@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Tlg;
 

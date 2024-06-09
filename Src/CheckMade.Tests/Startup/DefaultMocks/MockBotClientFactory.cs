@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Function.Services.BotClient;
 using Moq;
 

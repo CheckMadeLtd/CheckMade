@@ -1,11 +1,10 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
+using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 
@@ -112,7 +111,7 @@ public class OperationsInputProcessor(
     
     private static IReadOnlyList<OutputDto> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
-        TlgInput tlgInput, AttachmentType type)
+        TlgInput tlgInput, TlgAttachmentType type)
     {
         return new List<OutputDto> { new()
             {
