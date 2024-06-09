@@ -2,4 +2,4 @@ using CheckMade.Common.Model.Telegram.Updates;
 
 namespace CheckMade.Common.Model.Telegram;
 
-public record TelegramUserChatDestination(TelegramUserId UserId, TelegramChatId ChatId);
+public record TelegramPort(TelegramUserId UserId, TelegramChatId ChatId);

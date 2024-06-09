@@ -14,18 +14,18 @@ public interface IOperationsUpdateProcessor : IUpdateProcessor;
 public class OperationsUpdateProcessor(
         ITelegramUpdateRepository updateRepo,
         IRoleRepository roleRepo,
-        ITelegramUserChatPortToRoleMapRepository userChatPortToRoleMapRepo) 
+        ITelegramPortToRoleMapRepository portToRoleMapRepo) 
     : IOperationsUpdateProcessor
 {
-    private readonly Func<TelegramUserChatPort, ITelegramUserChatPortToRoleMapRepository, Task<bool>>
-        _isUserChatMappedToRoleAsync = async (destination, repository) =>
+    private readonly Func<TelegramPort, ITelegramPortToRoleMapRepository, Task<bool>>
+        _isTelegramPortOfIncomingUpdateMappedToRoleAsync = async (updatePort, mapRepo) =>
         {
-            IReadOnlyList<TelegramUserChatPortToRoleMap> allDestinationToRoleMaps =
-                (await repository.GetAllAsync()).ToList().AsReadOnly();
+            IReadOnlyList<TelegramPortToRoleMap> portToRoleMap =
+                (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
             
             // ToDo: fix to actual algorithm
-            return allDestinationToRoleMaps.FirstOrDefault(map =>
-                map.UserChatPort.ChatId == destination.ChatId) == null;
+            return portToRoleMap
+                .FirstOrDefault(map => map.Port.ChatId == updatePort.ChatId) != null;
         };
     
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
@@ -36,14 +36,11 @@ public class OperationsUpdateProcessor(
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
                 await updateRepo.AddAsync(successfulUpdate);
 
-                var userChatDestination = new TelegramUserChatPort(
-                    successfulUpdate.UserId, successfulUpdate.ChatId);
+                var updatePort = new TelegramPort(successfulUpdate.UserId, successfulUpdate.ChatId);
                 
-                return await _isUserChatMappedToRoleAsync(userChatDestination, userChatPortToRoleMapRepo) 
+                return await _isTelegramPortOfIncomingUpdateMappedToRoleAsync(updatePort, portToRoleMapRepo) 
                     
-                    ? new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } }
-                    
-                    : successfulUpdate switch 
+                    ? successfulUpdate switch 
                     {
                         { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
                         
@@ -51,7 +48,9 @@ public class OperationsUpdateProcessor(
                             successfulUpdate, successfulUpdate.Details.AttachmentType.GetValueOrThrow()),
                         
                         _ => ProcessNormalResponseMessage(successfulUpdate)
-                    };
+                    } 
+                    
+                    : new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } };
             },
             error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
@@ -77,7 +76,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalDestination = new LogicalOutputPort(allRoles[0], BotType.Operations),
+                    LogicalPort = new LogicalPort(allRoles[0], BotType.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -93,7 +92,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalDestination = new LogicalOutputPort(allRoles[0], BotType.Operations),
+                    LogicalPort = new LogicalPort(allRoles[0], BotType.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }

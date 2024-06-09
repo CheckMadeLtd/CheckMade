@@ -2,4 +2,4 @@ using CheckMade.Common.Model.Telegram.Updates;
 
 namespace CheckMade.Common.Model.Telegram;
 
-public record LogicalOutputDestination(Role DestinationRole, BotType DestinationBotType);
+public record LogicalPort(Role Role, BotType BotType);

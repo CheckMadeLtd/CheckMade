@@ -287,45 +287,45 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalDestinations_WhenMappingsExist()
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenMappingsExist()
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsWithDestination = [
+        List<OutputDto> outputsWithLogicalPort = [
             new OutputDto
             { 
-                LogicalDestination = new LogicalOutputDestination(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, BotType.Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
             },
             new OutputDto
             {
-                LogicalDestination = new LogicalOutputDestination(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, BotType.Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
             },
             new OutputDto
             {
-                LogicalDestination = new LogicalOutputDestination(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsEngineer1, BotType.Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
             }
         ];
         
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsWithDestination));
+            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsWithLogicalPort));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
 
-        var expectedSendParamSets = outputsWithDestination
+        var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
-                DestinationChatId = basics.roleByUserChatDestination
+                TelegramPortChatId = basics.roleByTelegramPort
                     .First(kvp => 
-                        kvp.Value == output.LogicalDestination.GetValueOrThrow().DestinationRole)
+                        kvp.Value == output.LogicalPort.GetValueOrThrow().Role)
                     .Key.ChatId.Id
             });
 
@@ -335,7 +335,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         {
             basics.mockBotClient.Verify(
                 x => x.SendTextMessageAsync(
-                    expectedParamSet.DestinationChatId,
+                    expectedParamSet.TelegramPortChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
                     It.IsAny<Option<IReplyMarkup>>(),
@@ -345,16 +345,16 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public async Task HandleUpdateAsync_SendsToUpdateReceivingChatId_WhenOutputDtoHasNoDestination()
+    public async Task HandleUpdateAsync_SendsToCurrentlyReceivingChatId_WhenOutputDtoHasNoLogicalPort()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string fakeOutputMessage = "Output without destination";
+        const string fakeOutputMessage = "Output without port";
         const BotType actualBotType = BotType.Communications;
         
-        List<OutputDto> outputWithoutDestination = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
+        List<OutputDto> outputWithoutPort = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
         serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
             GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
-                outputWithoutDestination, actualBotType));
+                outputWithoutPort, actualBotType));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -502,12 +502,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
     
-    private static (ITestUtils utils, 
-        Mock<IBotClientWrapper> mockBotClient, 
-        IUpdateHandler handler, 
-        IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator, 
-        IDictionary<TelegramUserChatDestination, Role> roleByUserChatDestination)
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler, IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator, IDictionary<TelegramPort, Role> roleByTelegramPort)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -515,10 +510,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITelegramUserChatDestinationToRoleMapRepository>().GetAllAsync()
+                sp.GetRequiredService<ITelegramPortToRoleMapRepository>().GetAllAsync()
                     .Result
                     .ToDictionary(
-                        keySelector: map => map.UserChatDestination,
+                        keySelector: map => map.Port,
                         elementSelector: map => map.Role)
                 );
 

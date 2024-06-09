@@ -23,7 +23,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IUpdateProcessorSelector selector,
-        ITelegramUserChatDestinationToRoleMapRepository telegramUserChatDestinationToRoleMapRepository,
+        ITelegramPortToRoleMapRepository telegramPortToRoleMapRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -32,13 +32,13 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType updateReceivingBotType)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType currentlyReceivingBotType)
     {
-        ChatId updateReceivingChatId = update.Message.Chat.Id;
+        ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            updateReceivingBotType, update.Message.From?.Id ?? 0, updateReceivingChatId);
+            currentlyReceivingBotType, update.Message.From?.Id ?? 0, currentlyReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -64,7 +64,7 @@ public class UpdateHandler(
             { BotType.Notifications, botClientFactory.CreateBotClient(BotType.Notifications) }
         };
         
-        var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
+        var filePathResolver = new TelegramFilePathResolver(botClientByBotType[currentlyReceivingBotType]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
@@ -72,18 +72,18 @@ public class UpdateHandler(
         var sendOutputsAttempt = await
             (from telegramUpdate
                     in Attempt<Result<TelegramUpdate>>.RunAsync(() => 
-                        toModelConverter.ConvertToModelAsync(update, updateReceivingBotType))
+                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingBotType))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
-                        selector.GetUpdateProcessor(updateReceivingBotType).ProcessUpdateAsync(telegramUpdate))
-                from roleByUserChatDestination
-                    in Attempt<IDictionary<TelegramUserChatDestination, Role>>.RunAsync(
-                        GetRoleByTelegramUserChatDestinationAsync) 
+                        selector.GetUpdateProcessor(currentlyReceivingBotType).ProcessUpdateAsync(telegramUpdate))
+                from roleByTelegramPort
+                    in Attempt<IDictionary<TelegramPort, Role>>.RunAsync(
+                        GetRoleByTelegramPortAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
-                          outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
-                          roleByUserChatDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          outputs, botClientByBotType, currentlyReceivingBotType, currentlyReceivingChatId,
+                          roleByTelegramPort, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -96,7 +96,7 @@ public class UpdateHandler(
                                     "Next, some details to help debug the current exception. " +
                                     "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    ex.Message, updateReceivingBotType, update.Message.From!.Id,
+                    ex.Message, currentlyReceivingBotType, update.Message.From!.Id,
                     update.Message.Date, update.Message.Text);
                 
                 return ex;
@@ -116,9 +116,9 @@ public class UpdateHandler(
             : defaultUiLanguage.Code;
     }
     
-    private async Task<IDictionary<TelegramUserChatDestination, Role>> GetRoleByTelegramUserChatDestinationAsync() =>
-        (await telegramUserChatDestinationToRoleMapRepository.GetAllAsync())
+    private async Task<IDictionary<TelegramPort, Role>> GetRoleByTelegramPortAsync() =>
+        (await telegramPortToRoleMapRepository.GetAllAsync())
             .ToDictionary(
-                keySelector: map => map.UserChatDestination,
+                keySelector: map => map.Port,
                 elementSelector: map => map.Role);
 }

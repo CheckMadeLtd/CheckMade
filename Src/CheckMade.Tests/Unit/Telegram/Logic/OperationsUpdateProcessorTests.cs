@@ -14,12 +14,13 @@ public class OperationsUpdateProcessorTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task ProcessUpdateAsync_PromptsAuthentication_ForAnyInputOtherThanStart_WhenUserChatNotMapped()
+    public async Task ProcessUpdateAsync_PromptsAuth_ForAnyInputExceptStartCommand_WhenTelegramPortNotMappedToRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var unmappedUserChat = new TelegramUserChatPort(2468L, 13563897L);
-        var update = basics.utils.GetValidModelTextMessage(unmappedUserChat.UserId, unmappedUserChat.ChatId);
+        var unmappedTelegramPort = new TelegramPort(2468L, 13563897L);
+        var update = basics.utils.GetValidModelTextMessage(
+            unmappedTelegramPort.UserId, unmappedTelegramPort.ChatId);
     
         var outputInUnMappedChatId = await basics.processor.ProcessUpdateAsync(update);
         

@@ -15,27 +15,26 @@ internal static class OutputSender
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
             IDictionary<BotType, IBotClientWrapper> botClientByBotType,
-            BotType updateReceivingBotType,
-            ChatId updateReceivingChatId,
-            IDictionary<TelegramUserChatDestination, Role> roleByUserChatDestination,
+            BotType currentlyReceivingBotType,
+            ChatId currentlyReceivingChatId,
+            IDictionary<TelegramPort, Role> roleByTelegramPort,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
     {
         Func<IReadOnlyCollection<OutputDto>, Task> sendOutputsInSeriesAndOriginalOrder 
-            = async outputsPerDestination =>
+            = async outputsPerPort =>
         {
-            foreach (var output in outputsPerDestination)
+            foreach (var output in outputsPerPort)
             {
-                var destinationBotClient = output.LogicalDestination.Match(
-                    destination => botClientByBotType[destination.DestinationBotType],
-                    () => botClientByBotType[updateReceivingBotType]); // e.g. for a virgin, pre-login update
+                var portBotClient = output.LogicalPort.Match(
+                    logicalPort => botClientByBotType[logicalPort.BotType],
+                    () => botClientByBotType[currentlyReceivingBotType]); // e.g. for a virgin, pre-auth update
 
-                var destinationChatId = output.LogicalDestination.Match(
-                    destination => roleByUserChatDestination
-                        .First(kvp => kvp.Value == destination.DestinationRole)
-                        .Key.ChatId.Id,
-                    () => updateReceivingChatId); // e.g. for a virgin, pre-login update
+                var portChatId = output.LogicalPort.Match(
+                    logicalPort => roleByTelegramPort
+                        .First(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
+                    () => currentlyReceivingChatId); // e.g. for a virgin, pre-auth update
                     
                 switch (output)
                 {
@@ -59,9 +58,9 @@ internal static class OutputSender
 
                 async Task InvokeSendTextMessageAsync(UiString outputText)
                 {
-                    await destinationBotClient
+                    await portBotClient
                         .SendTextMessageAsync(
-                            destinationChatId,
+                            portChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
                             uiTranslator.Translate(outputText),
                             converter.GetReplyMarkup(output));
@@ -78,7 +77,7 @@ internal static class OutputSender
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        destinationChatId,
+                        portChatId,
                         fileStream,
                         caption,
                         converter.GetReplyMarkup(output)
@@ -87,15 +86,15 @@ internal static class OutputSender
                     switch (details.AttachmentType)
                     {
                         case AttachmentType.Document:
-                            await destinationBotClient.SendDocumentAsync(attachmentSendOutParams);
+                            await portBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
                         case AttachmentType.Photo:
-                            await destinationBotClient.SendPhotoAsync(attachmentSendOutParams);
+                            await portBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
                         case AttachmentType.Voice:
-                            await destinationBotClient.SendVoiceAsync(attachmentSendOutParams);
+                            await portBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 
                         default:
@@ -105,20 +104,20 @@ internal static class OutputSender
 
                 async Task InvokeSendLocationAsync(Geo location)
                 {
-                    await destinationBotClient
+                    await portBotClient
                         .SendLocationAsync(
-                            destinationChatId,
+                            portChatId,
                             location,
                             converter.GetReplyMarkup(output));
                 }
             }
         };
 
-        var outputGroups = outputs.GroupBy(o => o.LogicalDestination);
+        var outputGroups = outputs.GroupBy(o => o.LogicalPort);
 
         var parallelTasks = outputGroups
-            .Select(outputsPerDestinationGroup => 
-                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerDestinationGroup.ToList().AsReadOnly()));
+            .Select(outputsPerLogicalPortGroup => 
+                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerLogicalPortGroup.ToList().AsReadOnly()));
         
         /* 1) Waits for all parallel executing tasks (generated by .Select()), to complete
          * 2) The 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */
