@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;

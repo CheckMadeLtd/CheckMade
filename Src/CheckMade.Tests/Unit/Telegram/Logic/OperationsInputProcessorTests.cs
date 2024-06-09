@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;

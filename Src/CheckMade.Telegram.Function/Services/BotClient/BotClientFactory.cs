@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;

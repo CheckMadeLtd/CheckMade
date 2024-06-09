@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace CheckMade.Common.Model.Core.Enums.UserInteraction.Helpers;
+namespace CheckMade.Common.Model.Enums.UserInteraction.Helpers;
 
 public record EnumUiStringProvider
 {

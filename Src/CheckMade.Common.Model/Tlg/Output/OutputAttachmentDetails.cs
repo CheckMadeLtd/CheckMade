@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Enums;
 
 namespace CheckMade.Common.Model.Tlg.Output;
 

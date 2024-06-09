@@ -1,8 +1,8 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;

@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
-using CheckMade.Common.Model.Core.Enums.UserInteraction.Helpers;
+using CheckMade.Common.Model.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums.UserInteraction.Helpers;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 // ReSharper disable ConditionIsAlwaysTrueOrFalse

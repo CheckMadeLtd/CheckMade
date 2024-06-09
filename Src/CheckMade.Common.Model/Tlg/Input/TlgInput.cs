@@ -1,4 +1,4 @@
-﻿using CheckMade.Common.Model.Core.Enums.UserInteraction;
+﻿using CheckMade.Common.Model.Enums.UserInteraction;
 
 namespace CheckMade.Common.Model.Tlg.Input;
 

@@ -1,5 +1,5 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Telegram.Model.BotCommand;
