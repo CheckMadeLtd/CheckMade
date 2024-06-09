@@ -47,7 +47,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new TlgInput(
             tlgUserId,
             tlgChatId,
-            TlgInteractionMode.Operations,
+            InteractionMode.Operations,
             TlgInputType.TextMessage,
             new TlgInputDetails(DateTime.MinValue,
                 0,

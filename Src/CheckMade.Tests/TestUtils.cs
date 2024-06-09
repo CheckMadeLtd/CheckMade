@@ -36,7 +36,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type);
     TlgInput GetValidTlgCommandMessage(
-        TlgInteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+        InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -67,7 +67,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgTextMessage(long userId, long chatId) =>
         new(userId,
             chatId,
-            TlgInteractionMode.Operations,
+            InteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
@@ -77,7 +77,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
-            TlgInteractionMode.Operations,
+            InteractionMode.Operations,
             TlgInputType.AttachmentMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
@@ -88,7 +88,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 type));
 
     public TlgInput GetValidTlgCommandMessage(
-        TlgInteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
+        InteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
         new(userId,
             chatId,
             interactionMode,

@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
@@ -8,7 +9,7 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientFactory
 {
-    IBotClientWrapper CreateBotClient(TlgInteractionMode interactionMode);
+    IBotClientWrapper CreateBotClient(InteractionMode interactionMode);
 }
 
 public class BotClientFactory(
@@ -18,9 +19,9 @@ public class BotClientFactory(
         ILogger<BotClientWrapper> loggerForClient) 
     : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClient(TlgInteractionMode interactionMode) => interactionMode switch
+    public IBotClientWrapper CreateBotClient(InteractionMode interactionMode) => interactionMode switch
     {
-        TlgInteractionMode.Operations => new BotClientWrapper(
+        InteractionMode.Operations => new BotClientWrapper(
             new TelegramBotClient(botTokens.OperationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy, 
@@ -28,7 +29,7 @@ public class BotClientFactory(
             botTokens.OperationsBotToken,
             loggerForClient),
         
-        TlgInteractionMode.Communications => new BotClientWrapper(
+        InteractionMode.Communications => new BotClientWrapper(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
                 httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy,
@@ -36,7 +37,7 @@ public class BotClientFactory(
             botTokens.CommunicationsBotToken,
             loggerForClient),
         
-        TlgInteractionMode.Notifications => new BotClientWrapper(
+        InteractionMode.Notifications => new BotClientWrapper(
             new TelegramBotClient(botTokens.NotificationsBotToken,
                 httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy,

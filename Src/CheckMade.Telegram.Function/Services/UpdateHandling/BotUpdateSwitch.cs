@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -7,7 +8,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IBotUpdateSwitch
 {
-    Task<Attempt<Unit>> SwitchUpdateAsync(Update update, TlgInteractionMode interactionMode);
+    Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode);
 }
 
 public class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
@@ -17,7 +18,7 @@ public class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwit
                                           "No special handling is taking place for it, but that doesn't mean that a " +
                                           "Telegram-System-related update didn't work. You may assume it did.");
     
-    public async Task<Attempt<Unit>> SwitchUpdateAsync(Update update, TlgInteractionMode interactionMode)
+    public async Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
     {
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)

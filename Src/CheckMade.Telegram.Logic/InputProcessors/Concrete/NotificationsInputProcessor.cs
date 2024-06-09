@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
@@ -24,7 +25,7 @@ public class NotificationsInputProcessor(ITlgInputRepository inputRepo) : INotif
                         new()
                         {
                             Text = UiConcatenate(
-                                Ui("Welcome to the CheckMade {0} Bot! ", TlgInteractionMode.Notifications), 
+                                Ui("Welcome to the CheckMade {0} Bot! ", InteractionMode.Notifications), 
                                 IInputProcessor.SeeValidBotCommandsInstruction) 
                         }
                     };

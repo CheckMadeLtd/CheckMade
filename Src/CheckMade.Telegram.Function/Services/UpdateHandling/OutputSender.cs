@@ -14,8 +14,8 @@ internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
-            IDictionary<TlgInteractionMode, IBotClientWrapper> botClientByMode,
-            TlgInteractionMode currentlyReceivingInteractionMode,
+            IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
+            InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
             IDictionary<TlgClientPort, Role> roleByTelegramPort,
             IUiTranslator uiTranslator,

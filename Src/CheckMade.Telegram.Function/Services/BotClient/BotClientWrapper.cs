@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -17,7 +18,7 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientWrapper
 {
-    TlgInteractionMode MyInteractionMode { get; }
+    InteractionMode MyInteractionMode { get; }
     string MyBotToken { get; }
     
     Task<File> GetFileAsync(string fileId);
@@ -53,12 +54,12 @@ public interface IBotClientWrapper
 public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        TlgInteractionMode interactionMode,
+        InteractionMode interactionMode,
         string botToken,
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
-    public TlgInteractionMode MyInteractionMode { get; } = interactionMode; 
+    public InteractionMode MyInteractionMode { get; } = interactionMode; 
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
@@ -175,11 +176,11 @@ public class BotClientWrapper(
         {
             var telegramBotCommands = MyInteractionMode switch
             {
-                TlgInteractionMode.Operations => 
+                InteractionMode.Operations => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.OperationsBotCommandMenu, language),
-                TlgInteractionMode.Communications => 
+                InteractionMode.Communications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
-                TlgInteractionMode.Notifications => 
+                InteractionMode.Notifications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
                 _ => throw new ArgumentOutOfRangeException(nameof(MyInteractionMode))
             };

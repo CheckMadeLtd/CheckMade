@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Function.Services.BotClient;
 using Moq;
@@ -6,7 +7,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClient(TlgInteractionMode interactionMode)
+    public IBotClientWrapper CreateBotClient(InteractionMode interactionMode)
     {
         // CAREFUL PITFALL: DO NOT setup interactionMode-dependent return values here (e.g. MyInteractionMode)!
         // Explanation:

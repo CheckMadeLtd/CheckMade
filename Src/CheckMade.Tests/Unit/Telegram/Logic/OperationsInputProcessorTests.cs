@@ -33,7 +33,7 @@ public class OperationsInputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var issueCommandInput = basics.utils.GetValidTlgCommandMessage(
-            TlgInteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
+            InteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
 
         var actualOutput = await basics.processor.ProcessInputAsync(issueCommandInput);
         

@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker;
@@ -9,7 +10,7 @@ namespace CheckMade.Telegram.Function.Endpoints;
 public class NotificationsBot(ILogger<NotificationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
     : BotFunctionBase(logger, botUpdateSwitch)
 {
-    protected override TlgInteractionMode InteractionMode => TlgInteractionMode.Notifications;
+    protected override InteractionMode InteractionMode => InteractionMode.Notifications;
 
     [Function("NotificationsBot")]
     public async Task<HttpResponseData> 

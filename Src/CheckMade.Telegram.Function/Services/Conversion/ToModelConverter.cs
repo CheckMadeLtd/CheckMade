@@ -13,7 +13,7 @@ namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IToModelConverter
 {
-    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgInteractionMode interactionMode);
+    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
 internal class ToModelConverter(
@@ -22,7 +22,7 @@ internal class ToModelConverter(
         IHttpDownloader downloader) 
     : IToModelConverter
 {
-    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgInteractionMode interactionMode)
+    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
     {
         return (await
                 (from tlgInputType 
@@ -114,7 +114,7 @@ internal class ToModelConverter(
             _ => Option<Geo>.None() 
         };
     
-    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, TlgInteractionMode interactionMode)
+    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, InteractionMode interactionMode)
     {
         var botCommandEntity = update.Message.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
@@ -129,9 +129,9 @@ internal class ToModelConverter(
 
         var botCommandMenuForCurrentMode = interactionMode switch
         {
-            TlgInteractionMode.Operations => allBotCommandMenus.OperationsBotCommandMenu.Values,
-            TlgInteractionMode.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
-            TlgInteractionMode.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
+            InteractionMode.Operations => allBotCommandMenus.OperationsBotCommandMenu.Values,
+            InteractionMode.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
+            InteractionMode.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
             _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
 
@@ -147,17 +147,17 @@ internal class ToModelConverter(
 
         var botCommandUnderlyingEnumCodeForModeAgnosticRepresentation = interactionMode switch
         {
-            TlgInteractionMode.Operations => Option<int>.Some(
+            InteractionMode.Operations => Option<int>.Some(
                 (int) allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
-            TlgInteractionMode.Communications => Option<int>.Some(
+            InteractionMode.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
-            TlgInteractionMode.Notifications => Option<int>.Some(
+            InteractionMode.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
@@ -188,7 +188,7 @@ internal class ToModelConverter(
     
     private async Task<Result<TlgInput>> GetTlgInputAsync(
         UpdateWrapper update,
-        TlgInteractionMode interactionMode,
+        InteractionMode interactionMode,
         TlgInputType tlgInputType,
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,

@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
@@ -17,7 +18,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgInteractionMode interactionMode);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
 public class UpdateHandler(
@@ -32,7 +33,7 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgInteractionMode currentlyReceivingInteractionMode)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode)
     {
         ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
@@ -57,11 +58,11 @@ public class UpdateHandler(
             return Unit.Value;
         }
 
-        var botClientByMode = new Dictionary<TlgInteractionMode, IBotClientWrapper>
+        var botClientByMode = new Dictionary<InteractionMode, IBotClientWrapper>
         {
-            { TlgInteractionMode.Operations,  botClientFactory.CreateBotClient(TlgInteractionMode.Operations) },
-            { TlgInteractionMode.Communications, botClientFactory.CreateBotClient(TlgInteractionMode.Communications) },
-            { TlgInteractionMode.Notifications, botClientFactory.CreateBotClient(TlgInteractionMode.Notifications) }
+            { InteractionMode.Operations,  botClientFactory.CreateBotClient(InteractionMode.Operations) },
+            { InteractionMode.Communications, botClientFactory.CreateBotClient(InteractionMode.Communications) },
+            { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
         var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
