@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -35,7 +36,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type);
     TlgInput GetValidTlgCommandMessage(
-        TlgBotType botType, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+        TlgInteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -66,7 +67,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgTextMessage(long userId, long chatId) =>
         new(userId,
             chatId,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
@@ -76,7 +77,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.AttachmentMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
@@ -87,10 +88,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 type));
 
     public TlgInput GetValidTlgCommandMessage(
-        TlgBotType botType, int botCommandEnumCode, long userId, long chatId) =>
+        TlgInteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
         new(userId,
             chatId,
-            botType,
+            interactionMode,
             TlgInputType.CommandMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,

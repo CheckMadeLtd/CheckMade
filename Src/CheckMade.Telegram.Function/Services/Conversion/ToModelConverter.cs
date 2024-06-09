@@ -2,6 +2,7 @@ using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.InputProcessors;
@@ -12,7 +13,7 @@ namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IToModelConverter
 {
-    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgBotType botType);
+    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgInteractionMode interactionMode);
 }
 
 internal class ToModelConverter(
@@ -21,7 +22,7 @@ internal class ToModelConverter(
         IHttpDownloader downloader) 
     : IToModelConverter
 {
-    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgBotType botType)
+    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgInteractionMode interactionMode)
     {
         return (await
                 (from tlgInputType 
@@ -31,14 +32,14 @@ internal class ToModelConverter(
                     from geoCoordinates 
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
-                        in GetBotCommandEnumCode(update, botType)
+                        in GetBotCommandEnumCode(update, interactionMode)
                     from domainCategoryEnumCode 
                         in GetDomainCategoryEnumCode(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from tlgInput 
                         in GetTlgInputAsync(
-                            update, botType, tlgInputType, attachmentDetails, geoCoordinates, 
+                            update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
                             botCommandEnumCode, domainCategoryEnumCode, controlPromptEnumCode) 
                     select tlgInput))
             .Match(
@@ -113,7 +114,7 @@ internal class ToModelConverter(
             _ => Option<Geo>.None() 
         };
     
-    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, TlgBotType botType)
+    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, TlgInteractionMode interactionMode)
     {
         var botCommandEntity = update.Message.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
@@ -126,45 +127,45 @@ internal class ToModelConverter(
         
         var allBotCommandMenus = new BotCommandMenus();
 
-        var botCommandMenuForCurrentBotType = botType switch
+        var botCommandMenuForCurrentMode = interactionMode switch
         {
-            TlgBotType.Operations => allBotCommandMenus.OperationsBotCommandMenu.Values,
-            TlgBotType.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
-            TlgBotType.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
-            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            TlgInteractionMode.Operations => allBotCommandMenus.OperationsBotCommandMenu.Values,
+            TlgInteractionMode.Communications => allBotCommandMenus.CommunicationsBotCommandMenu.Values,
+            TlgInteractionMode.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
+            _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
 
-        var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentBotType
+        var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
             .SelectMany(kvp => kvp.Values)
             .FirstOrDefault(mbc => mbc.Command == update.Message.Text);
         
         if (tlgBotCommandFromTelegramUpdate == null)
             return UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
-                    update.Message.Text ?? "[empty text!]", botType, "W3DL9"),
+                    update.Message.Text ?? "[empty text!]", interactionMode, "W3DL9"),
                 IInputProcessor.SeeValidBotCommandsInstruction);
 
-        var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
+        var botCommandUnderlyingEnumCodeForModeAgnosticRepresentation = interactionMode switch
         {
-            TlgBotType.Operations => Option<int>.Some(
+            TlgInteractionMode.Operations => Option<int>.Some(
                 (int) allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
-            TlgBotType.Communications => Option<int>.Some(
+            TlgInteractionMode.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
-            TlgBotType.Notifications => Option<int>.Some(
+            TlgInteractionMode.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
-            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
 
-        return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
+        return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
     private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper update)
@@ -187,7 +188,7 @@ internal class ToModelConverter(
     
     private async Task<Result<TlgInput>> GetTlgInputAsync(
         UpdateWrapper update,
-        TlgBotType botType,
+        TlgInteractionMode interactionMode,
         TlgInputType tlgInputType,
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
@@ -227,7 +228,7 @@ internal class ToModelConverter(
             ? update.Message.Text
             : update.Message.Caption;
         
-        return new TlgInput(userId, chatId, botType, tlgInputType,
+        return new TlgInput(userId, chatId, interactionMode, tlgInputType,
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

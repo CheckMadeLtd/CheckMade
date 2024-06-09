@@ -5,7 +5,7 @@ using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
+using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 using CheckMade.Telegram.Model.DTOs;
 
 namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
@@ -69,7 +69,7 @@ public class OperationsInputProcessor(
                 new OutputDto
                 {
                     Text = UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", TlgBotType.Operations),
+                        Ui("Welcome to the CheckMade {0} Bot! ", TlgInteractionMode.Operations),
                         IInputProcessor.SeeValidBotCommandsInstruction) 
                 }
             ],
@@ -77,7 +77,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalPort = new TlgLogicPort(allRoles[0], TlgBotType.Operations),
+                    LogicalPort = new TlgLogicPort(allRoles[0], TlgInteractionMode.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -93,7 +93,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalPort = new TlgLogicPort(allRoles[0], TlgBotType.Operations),
+                    LogicalPort = new TlgLogicPort(allRoles[0], TlgInteractionMode.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }
@@ -102,7 +102,7 @@ public class OperationsInputProcessor(
             _ => new List<OutputDto>{ new()
                 {
                     Text = UiConcatenate(
-                        Ui("Echo of a {0} BotCommand: ", TlgBotType.Operations), 
+                        Ui("Echo of a {0} BotCommand: ", TlgInteractionMode.Operations), 
                         UiNoTranslate(currentBotCommand.ToString())) 
                 }
             }

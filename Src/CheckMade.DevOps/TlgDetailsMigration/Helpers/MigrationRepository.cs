@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;
@@ -46,7 +47,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new TlgInput(
             tlgUserId,
             tlgChatId,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.TextMessage,
             new TlgInputDetails(DateTime.MinValue,
                 0,

@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
@@ -23,7 +24,7 @@ public class NotificationsInputProcessor(ITlgInputRepository inputRepo) : INotif
                         new()
                         {
                             Text = UiConcatenate(
-                                Ui("Welcome to the CheckMade {0} Bot! ", TlgBotType.Notifications), 
+                                Ui("Welcome to the CheckMade {0} Bot! ", TlgInteractionMode.Notifications), 
                                 IInputProcessor.SeeValidBotCommandsInstruction) 
                         }
                     };

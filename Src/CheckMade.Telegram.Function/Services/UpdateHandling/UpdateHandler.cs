@@ -17,7 +17,7 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgBotType botType);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgInteractionMode interactionMode);
 }
 
 public class UpdateHandler(
@@ -32,13 +32,13 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgBotType currentlyReceivingBotType)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, TlgInteractionMode currentlyReceivingInteractionMode)
     {
         ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
-        logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
+        logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            currentlyReceivingBotType, update.Message.From?.Id ?? 0, currentlyReceivingChatId);
+            currentlyReceivingInteractionMode, update.Message.From?.Id ?? 0, currentlyReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -57,14 +57,14 @@ public class UpdateHandler(
             return Unit.Value;
         }
 
-        var botClientByBotType = new Dictionary<TlgBotType, IBotClientWrapper>
+        var botClientByMode = new Dictionary<TlgInteractionMode, IBotClientWrapper>
         {
-            { TlgBotType.Operations,  botClientFactory.CreateBotClient(TlgBotType.Operations) },
-            { TlgBotType.Communications, botClientFactory.CreateBotClient(TlgBotType.Communications) },
-            { TlgBotType.Notifications, botClientFactory.CreateBotClient(TlgBotType.Notifications) }
+            { TlgInteractionMode.Operations,  botClientFactory.CreateBotClient(TlgInteractionMode.Operations) },
+            { TlgInteractionMode.Communications, botClientFactory.CreateBotClient(TlgInteractionMode.Communications) },
+            { TlgInteractionMode.Notifications, botClientFactory.CreateBotClient(TlgInteractionMode.Notifications) }
         };
         
-        var filePathResolver = new TelegramFilePathResolver(botClientByBotType[currentlyReceivingBotType]);
+        var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
@@ -72,17 +72,17 @@ public class UpdateHandler(
         var sendOutputsAttempt = await
             (from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
-                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingBotType))
+                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
-                        selector.GetInputProcessor(currentlyReceivingBotType).ProcessInputAsync(tlgInput))
+                        selector.GetInputProcessor(currentlyReceivingInteractionMode).ProcessInputAsync(tlgInput))
                 from roleByTlgClientPort
                     in Attempt<IDictionary<TlgClientPort, Role>>.RunAsync(
                         GetRoleByTlgClientPortAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
-                          outputs, botClientByBotType, currentlyReceivingBotType, currentlyReceivingChatId,
+                          outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
                           roleByTlgClientPort, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
@@ -94,9 +94,9 @@ public class UpdateHandler(
             {
                 logger.LogError(ex, "Exception with message '{exMessage}' was thrown. " +
                                     "Next, some details to help debug the current exception. " +
-                                    "BotType: '{botType}'; Telegram User Id: '{userId}'; " +
+                                    "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    ex.Message, currentlyReceivingBotType, update.Message.From!.Id,
+                    ex.Message, currentlyReceivingInteractionMode, update.Message.From!.Id,
                     update.Message.Date, update.Message.Text);
                 
                 return ex;

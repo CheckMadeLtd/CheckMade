@@ -1,6 +1,6 @@
 // ReSharper disable StringLiteralTypo
 
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
+using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 
 namespace CheckMade.Telegram.Model.BotCommand;
 

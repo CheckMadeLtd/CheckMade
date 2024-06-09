@@ -1,11 +1,12 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
+using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -21,7 +22,7 @@ public class ToModelConverterTests
     [InlineData("Normal valid text message")]
     [InlineData("_")]
     [InlineData(" valid text message \n with line break and trailing spaces ")]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidTextMessage_ToAnyBotType(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidTextMessage_InAnyMode(
         string textInput)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -31,7 +32,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             update.Message.From!.Id,
             update.Message.Chat.Id,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.TextMessage,
             TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
@@ -39,7 +40,7 @@ public class ToModelConverterTests
                 update.Message.Text));
 
         var actualTlgInput = 
-            await basics.converter.ConvertToModelAsync(update, TlgBotType.Operations);
+            await basics.converter.ConvertToModelAsync(update, TlgInteractionMode.Operations);
 
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());
     }
@@ -48,7 +49,7 @@ public class ToModelConverterTests
     [InlineData(AttachmentType.Photo)]
     [InlineData(AttachmentType.Voice)]
     [InlineData(AttachmentType.Document)]
-    public async Task ConvertToModelAsync_ResultsInCorrectTlgUri_ForValidAttachmentMessage_ToAnyBotType(
+    public async Task ConvertToModelAsync_ResultsInCorrectTlgUri_ForValidAttachmentMessage_InAnyMode(
         AttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -68,7 +69,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             attachmentUpdate.Message.From!.Id,
             attachmentUpdate.Message.Chat.Id,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.AttachmentMessage,
             TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
@@ -79,7 +80,7 @@ public class ToModelConverterTests
                 attachmentType));
         
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-            attachmentUpdate, TlgBotType.Operations);
+            attachmentUpdate, TlgInteractionMode.Operations);
         
         // Can't do a deep comparison with Equivalent on the entire input here due to the complex Uri() type.
         Assert.Equal(expectedTlgInput.Details.AttachmentTlgUri.GetValueOrThrow().AbsoluteUri, 
@@ -89,7 +90,7 @@ public class ToModelConverterTests
     [Theory]
     [InlineData(null)]
     [InlineData(500.23f)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidLocationMessage_ToAnyBotType(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForValidLocationMessage_InAnyMode(
         float? horizontalAccuracy)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -106,7 +107,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
                 locationUpdate.Message.From!.Id,
                 locationUpdate.Message.Chat.Id,
-                TlgBotType.Operations,
+                TlgInteractionMode.Operations,
                 TlgInputType.Location,
                 TestUtils.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
@@ -114,7 +115,7 @@ public class ToModelConverterTests
                     geoCoordinates: expectedGeoCoordinates));
         
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-            locationUpdate, TlgBotType.Operations);
+            locationUpdate, TlgInteractionMode.Operations);
         
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());
     }
@@ -124,7 +125,7 @@ public class ToModelConverterTests
     [InlineData(OperationsBotCommands.NewAssessment)]
     [InlineData(OperationsBotCommands.Settings)]
     [InlineData(OperationsBotCommands.Logout)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToOperations(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InOperationsMode(
         OperationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -137,7 +138,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -146,7 +147,7 @@ public class ToModelConverterTests
                 botCommandEnumCode: (int)command));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-            commandUpdate, TlgBotType.Operations);
+            commandUpdate, TlgInteractionMode.Operations);
         
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());        
     }
@@ -155,7 +156,7 @@ public class ToModelConverterTests
     [InlineData(CommunicationsBotCommands.Contact)]
     [InlineData(CommunicationsBotCommands.Settings)]
     [InlineData(CommunicationsBotCommands.Logout)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToCommunications(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InCommunicationsMode(
         CommunicationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -168,7 +169,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
-            TlgBotType.Communications,
+            TlgInteractionMode.Communications,
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -177,7 +178,7 @@ public class ToModelConverterTests
                 botCommandEnumCode: (int)command));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-            commandUpdate, TlgBotType.Communications);
+            commandUpdate, TlgInteractionMode.Communications);
         
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());        
     }
@@ -186,7 +187,7 @@ public class ToModelConverterTests
     [InlineData(NotificationsBotCommands.Status)]
     [InlineData(NotificationsBotCommands.Settings)]
     [InlineData(NotificationsBotCommands.Logout)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_ToNotifications(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InNotificationsMode(
         NotificationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -199,7 +200,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             commandUpdate.Message.From!.Id,
             commandUpdate.Message.Chat.Id,
-            TlgBotType.Notifications,
+            TlgInteractionMode.Notifications,
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -208,7 +209,7 @@ public class ToModelConverterTests
                 botCommandEnumCode: (int)command));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-            commandUpdate, TlgBotType.Notifications);
+            commandUpdate, TlgInteractionMode.Notifications);
         
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());        
     }
@@ -216,7 +217,7 @@ public class ToModelConverterTests
     [Theory]
     [InlineData((long)DomainCategory.SanitaryOps_IssueCleanliness)]
     [InlineData((long)ControlPrompts.Good)]
-    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_ToAnyBot(
+    public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_InAnyMode(
         long enumSourceOfCallbackQuery)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -236,7 +237,7 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             callbackQuery.Message.From!.Id,
             callbackQuery.Message.Chat.Id,
-            TlgBotType.Operations,
+            TlgInteractionMode.Operations,
             TlgInputType.CallbackQuery,
             TestUtils.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
@@ -246,42 +247,42 @@ public class ToModelConverterTests
                 controlPromptEnumCode: controlPromptEnumCode));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(
-             callbackQuery, TlgBotType.Operations);
+             callbackQuery, TlgInteractionMode.Operations);
         
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_InAnyMode()
     {
          _services = new UnitTestStartup().Services.BuildServiceProvider();
          var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
-        var conversionResult = await basics.converter.ConvertToModelAsync(update, TlgBotType.Operations);
+        var conversionResult = await basics.converter.ConvertToModelAsync(update, TlgInteractionMode.Operations);
         Assert.True(conversionResult.IsError);
     }
     
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_ForAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = new UpdateWrapper(new Message { From = new User { Id = 123L } });
         
-        var conversionResult = await basics.converter.ConvertToModelAsync(update, TlgBotType.Operations);
+        var conversionResult = await basics.converter.ConvertToModelAsync(update, TlgInteractionMode.Operations);
         
         Assert.True(conversionResult.IsError);
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_ToAnyBotType()
+    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var audioMessage = basics.utils.GetValidTelegramAudioMessage();
         var conversionResult = 
-            await basics.converter.ConvertToModelAsync(audioMessage, TlgBotType.Operations);
+            await basics.converter.ConvertToModelAsync(audioMessage, TlgInteractionMode.Operations);
 
         Assert.True(conversionResult.IsError);
         Assert.Equal("Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",

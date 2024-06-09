@@ -2,7 +2,6 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
-using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -15,8 +14,8 @@ internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
-            IDictionary<TlgBotType, IBotClientWrapper> botClientByBotType,
-            TlgBotType currentlyReceivingBotType,
+            IDictionary<TlgInteractionMode, IBotClientWrapper> botClientByMode,
+            TlgInteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
             IDictionary<TlgClientPort, Role> roleByTelegramPort,
             IUiTranslator uiTranslator,
@@ -29,13 +28,15 @@ internal static class OutputSender
             foreach (var output in outputsPerPort)
             {
                 var portBotClient = output.LogicalPort.Match(
-                    logicalPort => botClientByBotType[logicalPort.BotType],
-                    () => botClientByBotType[currentlyReceivingBotType]); // e.g. for a virgin, pre-auth update
+                    logicalPort => botClientByMode[logicalPort.InteractionMode],
+                    // e.g. for a virgin, pre-auth update
+                    () => botClientByMode[currentlyReceivingInteractionMode]);
 
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => roleByTelegramPort
                         .First(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
-                    () => currentlyReceivingChatId); // e.g. for a virgin, pre-auth update
+                    // e.g. for a virgin, pre-auth update
+                    () => currentlyReceivingChatId);
                     
                 switch (output)
                 {

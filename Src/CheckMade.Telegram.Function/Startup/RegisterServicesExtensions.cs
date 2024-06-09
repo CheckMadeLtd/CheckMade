@@ -1,5 +1,5 @@
 using CheckMade.Common.ExternalServices;
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -19,10 +19,10 @@ internal static class RegisterServicesExtensions
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
 
-        var botTypes = Enum.GetNames(typeof(TlgBotType));
-        foreach (var botType in botTypes)
+        var interactionModes = Enum.GetNames(typeof(TlgInteractionMode));
+        foreach (var mode in interactionModes)
         {
-            services.AddHttpClient($"CheckMade{botType}Bot");            
+            services.AddHttpClient($"CheckMade{mode}Bot");            
         }    
     }
 
@@ -101,26 +101,26 @@ internal static class RegisterServicesExtensions
         hostingEnvironment switch
         {
             "Development" => new BotTokens(
-                GetBotToken(config, "DEV", TlgBotType.Operations),
-                GetBotToken(config, "DEV", TlgBotType.Communications),
-                GetBotToken(config, "DEV", TlgBotType.Notifications)),
+                GetBotToken(config, "DEV", TlgInteractionMode.Operations),
+                GetBotToken(config, "DEV", TlgInteractionMode.Communications),
+                GetBotToken(config, "DEV", TlgInteractionMode.Notifications)),
 
             "Staging" or "CI" => new BotTokens(
-                GetBotToken(config, "STG", TlgBotType.Operations),
-                GetBotToken(config, "STG", TlgBotType.Communications),
-                GetBotToken(config, "STG", TlgBotType.Notifications)),
+                GetBotToken(config, "STG", TlgInteractionMode.Operations),
+                GetBotToken(config, "STG", TlgInteractionMode.Communications),
+                GetBotToken(config, "STG", TlgInteractionMode.Notifications)),
 
             "Production" => new BotTokens(
-                GetBotToken(config, "PRD", TlgBotType.Operations),
-                GetBotToken(config, "PRD", TlgBotType.Communications),
-                GetBotToken(config, "PRD", TlgBotType.Notifications)),
+                GetBotToken(config, "PRD", TlgInteractionMode.Operations),
+                GetBotToken(config, "PRD", TlgInteractionMode.Communications),
+                GetBotToken(config, "PRD", TlgInteractionMode.Notifications)),
 
             _ => throw new ArgumentException((nameof(hostingEnvironment)))
         };
 
-    private static string GetBotToken(IConfiguration config, string envAcronym, TlgBotType botType)
+    private static string GetBotToken(IConfiguration config, string envAcronym, TlgInteractionMode interactionMode)
     {
-        var keyToBotToken = $"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{botType}-BOT-TOKEN";
+        var keyToBotToken = $"TelegramBotConfiguration:{envAcronym}-CHECKMADE-{interactionMode}-BOT-TOKEN";
         
         return config.GetValue<string>(keyToBotToken) 
                ?? throw new InvalidOperationException($"Not found: {keyToBotToken}");

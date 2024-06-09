@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
@@ -20,14 +21,14 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
         var commands = tlgInputs.Select(tlgInput =>
         {
             var command = new NpgsqlCommand("INSERT INTO tlg_inputs " +
-                                            "(user_id, chat_id, details, last_data_migration, channel, input_type)" +
+                                            "(user_id, chat_id, details, last_data_migration, interaction_mode, input_type)" +
                                             " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
-                                            "@lastDataMig, @tlgBotType, @tlgInputType)");
+                                            "@lastDataMig, @tlgInteractionMode, @tlgInputType)");
 
             command.Parameters.AddWithValue("@tlgUserId", (long) tlgInput.UserId);
             command.Parameters.AddWithValue("@tlgChatId", (long) tlgInput.ChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
-            command.Parameters.AddWithValue("@tlgBotType", (int) tlgInput.BotType);
+            command.Parameters.AddWithValue("@tlgInteractionMode", (int) tlgInput.InteractionMode);
             command.Parameters.AddWithValue("@tlgInputType", (int) tlgInput.TlgInputType);
 
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
@@ -89,14 +90,14 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
     {
         TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TlgChatId tlgChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
-        var tlgBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("channel"));
+        var tlgInteractionMode = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("interaction_mode"));
         var tlgInputType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("input_type"));
         var tlgDetails = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
         var message = new TlgInput(
             tlgUserId,
             tlgChatId,
-            (TlgBotType) tlgBotType,
+            (TlgInteractionMode) tlgInteractionMode,
             (TlgInputType) tlgInputType,
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
             ?? throw new InvalidOperationException("Failed to deserialize"));

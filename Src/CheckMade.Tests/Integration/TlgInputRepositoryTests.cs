@@ -33,7 +33,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<TlgInput>
             {
-                new (input.UserId, input.ChatId, input.BotType, input.TlgInputType, input.Details)
+                new (input.UserId, input.ChatId, input.InteractionMode, input.TlgInputType, input.Details)
             };
         
             await inputRepo.AddAsync(input);

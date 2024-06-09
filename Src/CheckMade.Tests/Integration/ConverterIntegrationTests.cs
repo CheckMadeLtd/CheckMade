@@ -1,6 +1,6 @@
 using System.Text;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Tests.Startup;
@@ -32,10 +32,10 @@ public class ConverterIntegrationTests
         var converterFactory = _services.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(
             new TelegramFilePathResolver(
-                botClientFactory.CreateBotClient(TlgBotType.Operations)));
+                botClientFactory.CreateBotClient(TlgInteractionMode.Operations)));
         
         var actualModel = await converter.ConvertToModelAsync(
-            updateWithAttachment, TlgBotType.Operations);
+            updateWithAttachment, TlgInteractionMode.Operations);
     
         var (downloadedStream, _) = await blobLoader.DownloadBlobAsync(
             actualModel.GetValueOrThrow().Details.AttachmentInternalUri.GetValueOrThrow());

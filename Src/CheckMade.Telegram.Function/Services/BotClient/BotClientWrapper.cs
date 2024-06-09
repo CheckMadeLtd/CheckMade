@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;
@@ -17,7 +17,7 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientWrapper
 {
-    TlgBotType MyBotType { get; }
+    TlgInteractionMode MyInteractionMode { get; }
     string MyBotToken { get; }
     
     Task<File> GetFileAsync(string fileId);
@@ -53,12 +53,12 @@ public interface IBotClientWrapper
 public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        TlgBotType botType,
+        TlgInteractionMode interactionMode,
         string botToken,
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
-    public TlgBotType MyBotType { get; } = botType; 
+    public TlgInteractionMode MyInteractionMode { get; } = interactionMode; 
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
@@ -173,15 +173,15 @@ public class BotClientWrapper(
 
         foreach (LanguageCode language in Enum.GetValues(typeof(LanguageCode)))
         {
-            var telegramBotCommands = MyBotType switch
+            var telegramBotCommands = MyInteractionMode switch
             {
-                TlgBotType.Operations => 
+                TlgInteractionMode.Operations => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.OperationsBotCommandMenu, language),
-                TlgBotType.Communications => 
+                TlgInteractionMode.Communications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
-                TlgBotType.Notifications => 
+                TlgInteractionMode.Notifications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
-                _ => throw new ArgumentOutOfRangeException(nameof(MyBotType))
+                _ => throw new ArgumentOutOfRangeException(nameof(MyInteractionMode))
             };
 
             await retryPolicy.ExecuteAsync(async () =>
@@ -194,7 +194,7 @@ public class BotClientWrapper(
                         : null) // The English BotCommands are the global default
                 ); 
 
-            logger.LogDebug($"Added to bot {MyBotType} for language {language} " +
+            logger.LogDebug($"Added to bot {MyInteractionMode} for language {language} " +
                             $"the following BotCommands: " +
                             $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
         }

@@ -1,11 +1,11 @@
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;
 
 namespace CheckMade.Telegram.Logic.InputProcessors;
 
 public interface IInputProcessorSelector
 {
-    IInputProcessor GetInputProcessor(TlgBotType botType);
+    IInputProcessor GetInputProcessor(TlgInteractionMode interactionMode);
 }
 
 public class InputProcessorSelector(
@@ -14,14 +14,14 @@ public class InputProcessorSelector(
         INotificationsInputProcessor notificationsProcessor) 
     : IInputProcessorSelector
 {
-    public IInputProcessor GetInputProcessor(TlgBotType botType)
+    public IInputProcessor GetInputProcessor(TlgInteractionMode interactionMode)
     {
-        return botType switch
+        return interactionMode switch
         {
-            TlgBotType.Operations => operationsProcessor,
-            TlgBotType.Communications => communicationsProcessor,
-            TlgBotType.Notifications => notificationsProcessor,
-            _ => throw new ArgumentOutOfRangeException(nameof(botType))
+            TlgInteractionMode.Operations => operationsProcessor,
+            TlgInteractionMode.Communications => communicationsProcessor,
+            TlgInteractionMode.Notifications => notificationsProcessor,
+            _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
     }
 }

@@ -1,9 +1,8 @@
 using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
-using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
+using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +33,7 @@ public class OperationsInputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var issueCommandInput = basics.utils.GetValidTlgCommandMessage(
-            TlgBotType.Operations, (int)OperationsBotCommands.NewIssue);
+            TlgInteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
 
         var actualOutput = await basics.processor.ProcessInputAsync(issueCommandInput);
         

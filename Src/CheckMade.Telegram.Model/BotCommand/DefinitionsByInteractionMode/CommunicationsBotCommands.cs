@@ -1,11 +1,11 @@
-namespace CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
+namespace CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 
 // Explicitly assigned Enum codes here important: they are serialised in the messages history in the database!
 // Fundamentally changing the semantics of a code would require migration of historic detail data
-public enum NotificationsBotCommands
+public enum CommunicationsBotCommands
 {
     // Code '1' is reserved for '/start' command, which is not part of the menu however
-    Status = 10,
+    Contact = 10,
     Settings = 90,
     Logout = 99
 }

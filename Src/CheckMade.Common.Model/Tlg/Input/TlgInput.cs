@@ -3,7 +3,7 @@
 public record TlgInput(
      TlgUserId UserId,
      TlgChatId ChatId,
-     TlgBotType BotType,
+     TlgInteractionMode InteractionMode,
      TlgInputType TlgInputType,
      TlgInputDetails Details);
      

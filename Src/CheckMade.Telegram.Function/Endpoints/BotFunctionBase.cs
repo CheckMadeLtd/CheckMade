@@ -1,5 +1,5 @@
 using System.Net;
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ namespace CheckMade.Telegram.Function.Endpoints;
 
 public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {
-    protected abstract TlgBotType BotType { get; }
+    protected abstract TlgInteractionMode InteractionMode { get; }
 
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {
@@ -36,7 +36,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            await botUpdateSwitch.SwitchUpdateAsync(update, BotType);
+            await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
             return  defaultOkResponse;
         }
         catch (Exception ex)

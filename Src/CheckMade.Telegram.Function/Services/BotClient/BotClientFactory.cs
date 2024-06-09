@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientFactory
 {
-    IBotClientWrapper CreateBotClient(TlgBotType botType);
+    IBotClientWrapper CreateBotClient(TlgInteractionMode interactionMode);
 }
 
 public class BotClientFactory(
@@ -18,32 +18,32 @@ public class BotClientFactory(
         ILogger<BotClientWrapper> loggerForClient) 
     : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClient(TlgBotType botType) => botType switch
+    public IBotClientWrapper CreateBotClient(TlgInteractionMode interactionMode) => interactionMode switch
     {
-        TlgBotType.Operations => new BotClientWrapper(
+        TlgInteractionMode.Operations => new BotClientWrapper(
             new TelegramBotClient(botTokens.OperationsBotToken, 
-                httpFactory.CreateClient($"CheckMade{botType}Bot")),
+                httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy, 
-            botType,
+            interactionMode,
             botTokens.OperationsBotToken,
             loggerForClient),
         
-        TlgBotType.Communications => new BotClientWrapper(
+        TlgInteractionMode.Communications => new BotClientWrapper(
             new TelegramBotClient(botTokens.CommunicationsBotToken, 
-                httpFactory.CreateClient($"CheckMade{botType}Bot")),
+                httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy,
-            botType,
+            interactionMode,
             botTokens.CommunicationsBotToken,
             loggerForClient),
         
-        TlgBotType.Notifications => new BotClientWrapper(
+        TlgInteractionMode.Notifications => new BotClientWrapper(
             new TelegramBotClient(botTokens.NotificationsBotToken,
-                httpFactory.CreateClient($"CheckMade{botType}Bot")),
+                httpFactory.CreateClient($"CheckMade{interactionMode}Bot")),
             retryPolicy,
-            botType,
+            interactionMode,
             botTokens.NotificationsBotToken,
             loggerForClient),
         
-        _ => throw new ArgumentOutOfRangeException(nameof(botType))
+        _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
     };
 }
