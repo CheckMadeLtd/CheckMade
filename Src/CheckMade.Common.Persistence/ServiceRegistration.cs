@@ -18,7 +18,7 @@ public static class ServiceRegistration
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>()));
         
-        services.AddScoped<ITlgUpdateRepository, TlgUpdateRepository>();
+        services.AddScoped<ITlgInputRepository, TlgInputRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ITlgClientPortToRoleMapRepository, TlgClientPortToRoleMapRepository>();
     }

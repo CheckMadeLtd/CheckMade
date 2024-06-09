@@ -8,13 +8,13 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 (from historicPairs 
                     in Attempt<IEnumerable<OldFormatDetailsPair>>.RunAsync(
                         migRepo.GetMessageOldFormatDetailsPairsAsync)
-                from updateDetails 
+                from detailsUpdate 
                     in Attempt<IEnumerable<DetailsUpdate>>.RunAsync(() => 
                         GenerateMigrationUpdatesAsync(historicPairs))
                 from unit 
                     in Attempt<Unit>.RunAsync(() => 
-                        MigrateHistoricMessagesAsync(updateDetails))
-                select updateDetails.Count()))
+                        MigrateHistoricMessagesAsync(detailsUpdate))
+                select detailsUpdate.Count()))
             .Match(
                 Attempt<int>.Succeed, 
                 ex => ex);
@@ -23,9 +23,9 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
     protected abstract Task<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
         IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs);
     
-    private async Task<Unit> MigrateHistoricMessagesAsync(IEnumerable<DetailsUpdate> updates)
+    private async Task<Unit> MigrateHistoricMessagesAsync(IEnumerable<DetailsUpdate> detailsUpdates)
     {
-        await migRepo.UpdateAsync(updates);
+        await migRepo.UpdateAsync(detailsUpdates);
 
         return Unit.Value;
     }

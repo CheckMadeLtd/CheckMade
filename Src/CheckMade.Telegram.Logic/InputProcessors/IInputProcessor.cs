@@ -1,14 +1,14 @@
 ﻿using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.UpdateProcessors;
+namespace CheckMade.Telegram.Logic.InputProcessors;
 
-public interface IUpdateProcessor
+public interface IInputProcessor
 {
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
     public static readonly UiString AuthenticateWithToken = Ui("🌀 Please enter your 'role token' to authenticate: ");
 
-    public Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TlgUpdate> tlgUpdate);
+    public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
 }

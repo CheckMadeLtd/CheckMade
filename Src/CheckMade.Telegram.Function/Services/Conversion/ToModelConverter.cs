@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Logic.UpdateProcessors;
+using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Model.BotCommand;
 using Telegram.Bot.Types.Enums;
 
@@ -12,7 +12,7 @@ namespace CheckMade.Telegram.Function.Services.Conversion;
 
 public interface IToModelConverter
 {
-    Task<Result<TlgUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, TlgBotType botType);
+    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgBotType botType);
 }
 
 internal class ToModelConverter(
@@ -21,89 +21,89 @@ internal class ToModelConverter(
         IHttpDownloader downloader) 
     : IToModelConverter
 {
-    public async Task<Result<TlgUpdate>> ConvertToModelAsync(UpdateWrapper wrappedUpdate, TlgBotType botType)
+    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, TlgBotType botType)
     {
         return (await
-                (from modelUpdateType 
-                        in GetModelUpdateType(wrappedUpdate)
+                (from tlgInputType 
+                        in GetTlgInputType(update)
                     from attachmentDetails 
-                        in GetAttachmentDetails(wrappedUpdate)
+                        in GetAttachmentDetails(update)
                     from geoCoordinates 
-                        in GetGeoCoordinates(wrappedUpdate)
+                        in GetGeoCoordinates(update)
                     from botCommandEnumCode 
-                        in GetBotCommandEnumCode(wrappedUpdate, botType)
+                        in GetBotCommandEnumCode(update, botType)
                     from domainCategoryEnumCode 
-                        in GetDomainCategoryEnumCode(wrappedUpdate)
+                        in GetDomainCategoryEnumCode(update)
                     from controlPromptEnumCode 
-                        in GetControlPromptEnumCode(wrappedUpdate)
-                    from telegramUpdate 
-                        in GetTelegramUpdateAsync(
-                            wrappedUpdate, botType, modelUpdateType, attachmentDetails, geoCoordinates, 
+                        in GetControlPromptEnumCode(update)
+                    from tlgInput 
+                        in GetTlgInputAsync(
+                            update, botType, tlgInputType, attachmentDetails, geoCoordinates, 
                             botCommandEnumCode, domainCategoryEnumCode, controlPromptEnumCode) 
-                    select telegramUpdate))
+                    select tlgInput))
             .Match(
-                Result<TlgUpdate>.FromSuccess,
+                Result<TlgInput>.FromSuccess,
                 error => UiConcatenate(
                     Ui("Failed to convert your Telegram Message: "),
                     error)
             );
     }
 
-    private static Result<TlgUpdateType> GetModelUpdateType(UpdateWrapper wrappedUpdate) =>
-        wrappedUpdate.Update.Type switch
+    private static Result<TlgInputType> GetTlgInputType(UpdateWrapper update) =>
+        update.Update.Type switch
         {
-            UpdateType.Message or UpdateType.EditedMessage => wrappedUpdate.Message.Type switch
+            UpdateType.Message or UpdateType.EditedMessage => update.Message.Type switch
             {
-                MessageType.Text => wrappedUpdate.Message.Entities?[0].Type switch
+                MessageType.Text => update.Message.Entities?[0].Type switch
                 {
-                    MessageEntityType.BotCommand => TlgUpdateType.CommandMessage,
-                    _ => TlgUpdateType.TextMessage
+                    MessageEntityType.BotCommand => TlgInputType.CommandMessage,
+                    _ => TlgInputType.TextMessage
                 },
-                MessageType.Location => TlgUpdateType.Location,
-                _ => TlgUpdateType.AttachmentMessage
+                MessageType.Location => TlgInputType.Location,
+                _ => TlgInputType.AttachmentMessage
             },
 
-            UpdateType.CallbackQuery => TlgUpdateType.CallbackQuery,
+            UpdateType.CallbackQuery => TlgInputType.CallbackQuery,
 
             _ => throw new InvalidOperationException(
-                $"Telegram Update of type {wrappedUpdate.Update.Type} is not yet supported " +
+                $"Telegram Update of type {update.Update.Type} is not yet supported " +
                 $"and shouldn't be handled in this converter!")
         };
 
-    private static Result<AttachmentDetails> GetAttachmentDetails(UpdateWrapper wrappedUpdate)
+    private static Result<AttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
-        return wrappedUpdate.Message.Type switch
+        return update.Message.Type switch
         {
             MessageType.Text or MessageType.Location => new AttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
 
             MessageType.Document => new AttachmentDetails(
-                wrappedUpdate.Message.Document?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
+                update.Message.Document?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, update.Message.Type)),
                 AttachmentType.Document),
 
             MessageType.Photo => new AttachmentDetails(
-                wrappedUpdate.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
+                update.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
+                    string.Format(errorMessage, update.Message.Type)),
                 AttachmentType.Photo),
 
             MessageType.Voice => new AttachmentDetails(
-                wrappedUpdate.Message.Voice?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, wrappedUpdate.Message.Type)),
+                update.Message.Voice?.FileId ?? throw new InvalidOperationException(
+                    string.Format(errorMessage, update.Message.Type)),
                 AttachmentType.Voice),
 
-            _ => Ui("Attachment type {0} is not yet supported!", wrappedUpdate.Message.Type)
+            _ => Ui("Attachment type {0} is not yet supported!", update.Message.Type)
         };
     }
 
     private record AttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
-    private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper wrappedUpdate) =>
-        wrappedUpdate.Message.Location switch
+    private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
+        update.Message.Location switch
         {
             { } location => Option<Geo>.Some(new Geo(
                 location.Latitude,
@@ -113,15 +113,15 @@ internal class ToModelConverter(
             _ => Option<Geo>.None() 
         };
     
-    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper wrappedUpdate, TlgBotType botType)
+    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, TlgBotType botType)
     {
-        var botCommandEntity = wrappedUpdate.Message.Entities?
+        var botCommandEntity = update.Message.Entities?
             .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
 
         if (botCommandEntity == null)
             return Option<int>.None();
 
-        if (wrappedUpdate.Message.Text == TlgStart.Command)
+        if (update.Message.Text == TlgStart.Command)
             return Option<int>.Some(TlgStart.CommandCode);
         
         var allBotCommandMenus = new BotCommandMenus();
@@ -134,32 +134,32 @@ internal class ToModelConverter(
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
 
-        var botCommandFromTelegramUpdate = botCommandMenuForCurrentBotType
+        var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentBotType
             .SelectMany(kvp => kvp.Values)
-            .FirstOrDefault(mbc => mbc.Command == wrappedUpdate.Message.Text);
+            .FirstOrDefault(mbc => mbc.Command == update.Message.Text);
         
-        if (botCommandFromTelegramUpdate == null)
+        if (tlgBotCommandFromTelegramUpdate == null)
             return UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
-                    wrappedUpdate.Message.Text ?? "[empty text!]", botType, "W3DL9"),
-                IUpdateProcessor.SeeValidBotCommandsInstruction);
+                    update.Message.Text ?? "[empty text!]", botType, "W3DL9"),
+                IInputProcessor.SeeValidBotCommandsInstruction);
 
         var botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation = botType switch
         {
             TlgBotType.Operations => Option<int>.Some(
                 (int) allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
             TlgBotType.Communications => Option<int>.Some(
                 (int) allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
             TlgBotType.Notifications => Option<int>.Some(
                 (int) allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
@@ -167,45 +167,45 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForBotTypeAgnosticRepresentation;
     }
 
-    private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper wrappedUpdate)
+    private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper update)
     {
-        return int.TryParse(wrappedUpdate.Update.CallbackQuery?.Data, out var callBackData)
+        return int.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData <= EnumCallbackId.DomainCategoryMaxThreshold
                 ? callBackData
                 : Option<int>.None()
             : Option<int>.None();
     }
     
-    private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper wrappedUpdate)
+    private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
-        return long.TryParse(wrappedUpdate.Update.CallbackQuery?.Data, out var callBackData)
+        return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData > EnumCallbackId.DomainCategoryMaxThreshold
                 ? callBackData
                 : Option<long>.None()
             : Option<long>.None();
     }
     
-    private async Task<Result<TlgUpdate>> GetTelegramUpdateAsync(
-        UpdateWrapper wrappedUpdate,
+    private async Task<Result<TlgInput>> GetTlgInputAsync(
+        UpdateWrapper update,
         TlgBotType botType,
-        TlgUpdateType tlgUpdateType,
+        TlgInputType tlgInputType,
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<int> domainCategoryEnumCode,
         Option<long> controlPromptEnumCode)
     {
-        if (wrappedUpdate.Message.From?.Id == null || 
-            string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text) 
+        if (update.Message.From?.Id == null || 
+            string.IsNullOrWhiteSpace(update.Message.Text) 
             && attachmentDetails.FileId.IsNone
-            && tlgUpdateType != TlgUpdateType.Location)
+            && tlgInputType != TlgInputType.Location)
         {
             return Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
                                          "b) either have a text or an attachment (unless it's a Location).");   
         }
         
-        TlgUserId userId = wrappedUpdate.Message.From.Id;
-        TlgChatId chatId = wrappedUpdate.Message.Chat.Id;
+        TlgUserId userId = update.Message.From.Id;
+        TlgChatId chatId = update.Message.Chat.Id;
 
         var telegramAttachmentUriAttempt = await attachmentDetails.FileId.Match(
             GetTelegramAttachmentUriAsync,
@@ -223,14 +223,14 @@ internal class ToModelConverter(
             uri => uri,
             ex => throw ex);
         
-        var messageText = !string.IsNullOrWhiteSpace(wrappedUpdate.Message.Text)
-            ? wrappedUpdate.Message.Text
-            : wrappedUpdate.Message.Caption;
+        var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)
+            ? update.Message.Text
+            : update.Message.Caption;
         
-        return new TlgUpdate(userId, chatId, botType, tlgUpdateType,
-            new TlgUpdateDetails(
-                wrappedUpdate.Message.Date,
-                wrappedUpdate.Message.MessageId,
+        return new TlgInput(userId, chatId, botType, tlgInputType,
+            new TlgInputDetails(
+                update.Message.Date,
+                update.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 telegramAttachmentUri,
                 internalAttachmentUri,

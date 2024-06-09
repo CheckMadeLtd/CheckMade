@@ -7,8 +7,8 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Logic.UpdateProcessors;
-using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
+using CheckMade.Telegram.Logic.InputProcessors;
+using CheckMade.Telegram.Logic.InputProcessors.Concrete;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 using CheckMade.Tests.Startup;
@@ -53,20 +53,20 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     
     [Fact]
     // Agnostic to BotType, using Operations
-    public async Task HandleUpdateAsync_LogsError_WhenUpdateProcessorThrowsException()
+    public async Task HandleUpdateAsync_LogsError_WhenInputProcessorThrowsException()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var mockIUpdateProcessorSelector = new Mock<IUpdateProcessorSelector>();
-        var mockOperationsUpdateProcessor = new Mock<IOperationsUpdateProcessor>();
+        var mockIInputProcessorSelector = new Mock<IInputProcessorSelector>();
+        var mockOperationsInputProcessor = new Mock<IOperationsInputProcessor>();
         
-        mockOperationsUpdateProcessor
-            .Setup(opr => opr.ProcessUpdateAsync(It.IsAny<Result<TlgUpdate>>()))
+        mockOperationsInputProcessor
+            .Setup(opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Throws<Exception>();
-        mockIUpdateProcessorSelector
-            .Setup(x => x.GetUpdateProcessor(TlgBotType.Operations))
-            .Returns(mockOperationsUpdateProcessor.Object);
+        mockIInputProcessorSelector
+            .Setup(x => x.GetInputProcessor(TlgBotType.Operations))
+            .Returns(mockOperationsInputProcessor.Object);
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => mockIUpdateProcessorSelector.Object);
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ => mockIInputProcessorSelector.Object);
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
         serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
         _services = serviceCollection.BuildServiceProvider();
@@ -126,7 +126,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var startCommandUpdate = basics.utils.GetValidTelegramBotCommandMessage(TlgStart.Command);
-        var expectedWelcomeMessageSegment = IUpdateProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
+        var expectedWelcomeMessageSegment = IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
         
         await basics.handler.HandleUpdateAsync(startCommandUpdate, botType);
         
@@ -146,8 +146,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ => 
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(
                 new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -171,8 +171,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ => 
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(
                new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -196,8 +196,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ => 
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(
                 new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -232,8 +232,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         };
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ => 
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithPrompts));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ => 
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputWithPrompts));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -270,8 +270,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto { Text = UiNoTranslate("Output2") }
         ];
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsMultiple));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputsMultiple));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -312,8 +312,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputsWithLogicalPort));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputsWithLogicalPort));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -352,8 +352,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         const TlgBotType actualBotType = TlgBotType.Communications;
         
         List<OutputDto> outputWithoutPort = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(
                 outputWithoutPort, actualBotType));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -399,8 +399,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithMultipleAttachmentTypes));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputWithMultipleAttachmentTypes));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -448,8 +448,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
     
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithTextAndCaptions));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputWithTextAndCaptions));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -485,8 +485,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
         
-        serviceCollection.AddScoped<IUpdateProcessorSelector>(_ =>
-            GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(outputWithLocation));
+        serviceCollection.AddScoped<IInputProcessorSelector>(_ =>
+            GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(outputWithLocation));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
@@ -518,24 +518,24 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 );
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
-    private static IUpdateProcessorSelector 
-        GetMockSelectorForOperationsUpdateProcessorWithSetUpReturnValue(
+    private static IInputProcessorSelector 
+        GetMockSelectorForOperationsInputProcessorWithSetUpReturnValue(
             IReadOnlyList<OutputDto> returnValue, TlgBotType botType = TlgBotType.Operations)
     {
-        var mockOperationsUpdateProcessor = new Mock<IOperationsUpdateProcessor>();
+        var mockOperationsInputProcessor = new Mock<IOperationsInputProcessor>();
         
-        mockOperationsUpdateProcessor
+        mockOperationsInputProcessor
             .Setup<Task<IReadOnlyList<OutputDto>>>(rp => 
-                rp.ProcessUpdateAsync(It.IsAny<Result<TlgUpdate>>()))
+                rp.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Returns(Task.FromResult(returnValue));
 
-        var mockUpdateProcessorSelector = new Mock<IUpdateProcessorSelector>();
+        var mockInputProcessorSelector = new Mock<IInputProcessorSelector>();
         
-        mockUpdateProcessorSelector
+        mockInputProcessorSelector
             .Setup(rps => 
-                rps.GetUpdateProcessor(botType))
-            .Returns(mockOperationsUpdateProcessor.Object);
+                rps.GetInputProcessor(botType))
+            .Returns(mockOperationsInputProcessor.Object);
 
-        return mockUpdateProcessorSelector.Object;
+        return mockInputProcessorSelector.Object;
     }
 }

@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.Enums;
 
 namespace CheckMade.Common.Model.Tlg.Input;
 
-public record TlgUpdateDetails(
+public record TlgInputDetails(
     DateTime TlgDate,
     int TlgMessageId,
     Option<string> Text,

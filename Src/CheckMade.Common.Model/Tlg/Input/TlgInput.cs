@@ -1,9 +1,9 @@
 ﻿namespace CheckMade.Common.Model.Tlg.Input;
 
-public record TlgUpdate(
+public record TlgInput(
      TlgUserId UserId,
      TlgChatId ChatId,
      TlgBotType BotType,
-     TlgUpdateType TlgUpdateType,
-     TlgUpdateDetails Details);
+     TlgInputType TlgInputType,
+     TlgInputDetails Details);
      

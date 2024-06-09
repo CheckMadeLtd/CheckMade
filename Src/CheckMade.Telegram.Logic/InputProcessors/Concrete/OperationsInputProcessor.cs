@@ -8,60 +8,60 @@ using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
+namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
 
-public interface IOperationsUpdateProcessor : IUpdateProcessor;
+public interface IOperationsInputProcessor : IInputProcessor;
 
-public class OperationsUpdateProcessor(
-        ITlgUpdateRepository updateRepo,
+public class OperationsInputProcessor(
+        ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
         ITlgClientPortToRoleMapRepository clientPortToRoleMapRepo) 
-    : IOperationsUpdateProcessor
+    : IOperationsInputProcessor
 {
     private readonly Func<TlgClientPort, ITlgClientPortToRoleMapRepository, Task<bool>>
-        _isTlgClientPortOfIncomingUpdateMappedToRoleAsync = async (updatePort, mapRepo) =>
+        _isInputTlgClientPortMappedToRoleAsync = async (inputPort, mapRepo) =>
         {
             IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
                 (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
             
             // ToDo: fix to actual algorithm
             return tlgClientPortToRoleMap
-                .FirstOrDefault(map => map.ClientPort.ChatId == updatePort.ChatId) != null;
+                .FirstOrDefault(map => map.ClientPort.ChatId == inputPort.ChatId) != null;
         };
     
-    public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TlgUpdate> tlgUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
     {
-        return await tlgUpdate.Match(
-            async successfulUpdate =>
+        return await tlgInput.Match(
+            async input =>
             {
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
-                await updateRepo.AddAsync(successfulUpdate);
+                await inputRepo.AddAsync(input);
 
-                var updatePort = new TlgClientPort(successfulUpdate.UserId, successfulUpdate.ChatId);
+                var inputPort = new TlgClientPort(input.UserId, input.ChatId);
                 
-                return await _isTlgClientPortOfIncomingUpdateMappedToRoleAsync(updatePort, clientPortToRoleMapRepo) 
+                return await _isInputTlgClientPortMappedToRoleAsync(inputPort, clientPortToRoleMapRepo) 
                     
-                    ? successfulUpdate switch 
+                    ? input switch 
                     {
-                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(successfulUpdate, allRoles),
+                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(input, allRoles),
                         
                         { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
-                            successfulUpdate, successfulUpdate.Details.AttachmentType.GetValueOrThrow()),
+                            input, input.Details.AttachmentType.GetValueOrThrow()),
                         
-                        _ => ProcessNormalResponseMessage(successfulUpdate)
+                        _ => ProcessNormalResponseMessage(input)
                     } 
                     
-                    : new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } };
+                    : new List<OutputDto>{ new() { Text = IInputProcessor.AuthenticateWithToken } };
             },
             error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
     }
 
     private static IReadOnlyList<OutputDto> ProcessBotCommand(
-        TlgUpdate tlgUpdate,
+        TlgInput tlgInput,
         IReadOnlyList<Role> allRoles)
     {
-        var currentBotCommand = tlgUpdate.Details.BotCommandEnumCode.GetValueOrThrow();
+        var currentBotCommand = tlgInput.Details.BotCommandEnumCode.GetValueOrThrow();
         
         return currentBotCommand switch
         {
@@ -70,7 +70,7 @@ public class OperationsUpdateProcessor(
                 {
                     Text = UiConcatenate(
                         Ui("Welcome to the CheckMade {0} Bot! ", TlgBotType.Operations),
-                        IUpdateProcessor.SeeValidBotCommandsInstruction) 
+                        IInputProcessor.SeeValidBotCommandsInstruction) 
                 }
             ],
             
@@ -111,24 +111,24 @@ public class OperationsUpdateProcessor(
     
     private static IReadOnlyList<OutputDto> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
-        TlgUpdate tlgUpdate, AttachmentType type)
+        TlgInput tlgInput, AttachmentType type)
     {
         return new List<OutputDto> { new()
             {
                 Text = UiNoTranslate("Here, echo of your attachment."),
                 Attachments = new List<OutputAttachmentDetails>
                 {
-                    new(tlgUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
+                    new(tlgInput.Details.AttachmentInternalUri.GetValueOrThrow(), 
                         type, Option<UiString>.None())
                 }
             }
         };
     }
     
-    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TlgUpdate tlgUpdate)
+    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TlgInput tlgInput)
     {
         // Temp, for testing purposes only
-        if (tlgUpdate.Details.Text.GetValueOrDefault() == "n")
+        if (tlgInput.Details.Text.GetValueOrDefault() == "n")
         {
             return new List<OutputDto>
             {

@@ -23,8 +23,8 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<ITlgUpdateRepository, MockTlgUpdateRepository>(_ => 
-            new MockTlgUpdateRepository(new Mock<ITlgUpdateRepository>()));
+        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
+            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
         Services.AddScoped<ITlgClientPortToRoleMapRepository, MockTlgClientPortToRoleMapRepository>(_ => 
             new MockTlgClientPortToRoleMapRepository());

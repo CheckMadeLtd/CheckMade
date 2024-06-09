@@ -8,31 +8,31 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.Tlg;
 
-public class TlgUpdateRepository(IDbExecutionHelper dbHelper) : ITlgUpdateRepository
+public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputRepository
 {
-    public async Task AddAsync(TlgUpdate tlgUpdate)
+    public async Task AddAsync(TlgInput tlgInput)
     {
-        await AddAsync(new List<TlgUpdate> { tlgUpdate }.ToImmutableArray());
+        await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableArray());
     }
 
-    public async Task AddAsync(IEnumerable<TlgUpdate> tlgUpdates)
+    public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
     {
-        var commands = tlgUpdates.Select(update =>
+        var commands = tlgInputs.Select(tlgInput =>
         {
             var command = new NpgsqlCommand("INSERT INTO tlgr_updates " +
                                             "(user_id, chat_id, details, last_data_migration, bot_type, update_type)" +
                                             " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
-                                            "@lastDataMig, @tlgBotType, @tlgUpdateType)");
+                                            "@lastDataMig, @tlgBotType, @tlgInputType)");
 
-            command.Parameters.AddWithValue("@tlgUserId", (long) update.UserId);
-            command.Parameters.AddWithValue("@tlgChatId", (long) update.ChatId);
+            command.Parameters.AddWithValue("@tlgUserId", (long) tlgInput.UserId);
+            command.Parameters.AddWithValue("@tlgChatId", (long) tlgInput.ChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
-            command.Parameters.AddWithValue("@tlgBotType", (int) update.BotType);
-            command.Parameters.AddWithValue("@tlgUpdateType", (int) update.TlgUpdateType);
+            command.Parameters.AddWithValue("@tlgBotType", (int) tlgInput.BotType);
+            command.Parameters.AddWithValue("@tlgInputType", (int) tlgInput.TlgInputType);
 
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJson(update.Details)
+                Value = JsonHelper.SerializeToJson(tlgInput.Details)
             });
 
             return command;
@@ -49,20 +49,20 @@ public class TlgUpdateRepository(IDbExecutionHelper dbHelper) : ITlgUpdateReposi
         });
     }
 
-    public async Task<IEnumerable<TlgUpdate>> GetAllAsync() =>
+    public async Task<IEnumerable<TlgInput>> GetAllAsync() =>
         await GetAllExecuteAsync(
             "SELECT * FROM tlgr_updates",
             Option<TlgUserId>.None());
 
-    public async Task<IEnumerable<TlgUpdate>> GetAllAsync(TlgUserId userId) =>
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
         await GetAllExecuteAsync(
             "SELECT * FROM tlgr_updates WHERE user_id = @tlgUserId",
             userId);
 
-    private async Task<IEnumerable<TlgUpdate>> GetAllExecuteAsync(
+    private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
         string commandText, Option<TlgUserId> userId)
     {
-        var builder = ImmutableArray.CreateBuilder<TlgUpdate>();
+        var builder = ImmutableArray.CreateBuilder<TlgInput>();
         var command = new NpgsqlCommand(commandText);
             
         if (userId.IsSome)
@@ -77,7 +77,7 @@ public class TlgUpdateRepository(IDbExecutionHelper dbHelper) : ITlgUpdateReposi
             {
                 while (await reader.ReadAsync())
                 {
-                    builder.Add(await CreateTlgUpdateFromReaderStrictAsync(reader));
+                    builder.Add(await CreateTlgInputFromReaderStrictAsync(reader));
                 }
             }
         });
@@ -85,20 +85,20 @@ public class TlgUpdateRepository(IDbExecutionHelper dbHelper) : ITlgUpdateReposi
         return builder.ToImmutable();
     }
     
-    private static async Task<TlgUpdate> CreateTlgUpdateFromReaderStrictAsync(DbDataReader reader)
+    private static async Task<TlgInput> CreateTlgInputFromReaderStrictAsync(DbDataReader reader)
     {
         TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TlgChatId tlgChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
         var tlgBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
-        var tlgUpdateType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
+        var tlgInputType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
         var tlgDetails = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
-        var message = new TlgUpdate(
+        var message = new TlgInput(
             tlgUserId,
             tlgChatId,
             (TlgBotType) tlgBotType,
-            (TlgUpdateType) tlgUpdateType,
-            JsonHelper.DeserializeFromJsonStrict<TlgUpdateDetails>(tlgDetails) 
+            (TlgInputType) tlgInputType,
+            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
             ?? throw new InvalidOperationException("Failed to deserialize"));
 
         return message;

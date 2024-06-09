@@ -26,7 +26,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             {
                 while (await reader.ReadAsync())
                 {
-                    pairBuilder.Add(await CreateTelegramUpdateAndDetailsInOldFormatAsync(reader));
+                    pairBuilder.Add(await CreateTlgInputAndDetailsInOldFormatAsync(reader));
                 }
             }
         });
@@ -34,7 +34,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return pairBuilder.ToImmutable();
     }
 
-    private static async Task<OldFormatDetailsPair> CreateTelegramUpdateAndDetailsInOldFormatAsync(
+    private static async Task<OldFormatDetailsPair> CreateTlgInputAndDetailsInOldFormatAsync(
         DbDataReader reader)
     {
         TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
@@ -43,12 +43,12 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
-        var messageWithFakeEmptyDetails = new TlgUpdate(
+        var messageWithFakeEmptyDetails = new TlgInput(
             tlgUserId,
             tlgChatId,
             TlgBotType.Operations,
-            TlgUpdateType.TextMessage,
-            new TlgUpdateDetails(DateTime.MinValue,
+            TlgInputType.TextMessage,
+            new TlgInputDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),
                 Option<Uri>.None(),
@@ -62,9 +62,9 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateAsync(IEnumerable<DetailsUpdate> updates)
+    internal async Task UpdateAsync(IEnumerable<DetailsUpdate> detailsUpdates)
     {
-        var commands = updates.Select(update =>
+        var commands = detailsUpdates.Select(detailUpdate =>
         {
             const string commandTextPrefix = "UPDATE tlgr_updates SET details = @tlgDetails " +
                                              "WHERE user_id = @tlgUserId " +
@@ -72,12 +72,12 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            command.Parameters.AddWithValue("@tlgUserId", update.UserId);
-            command.Parameters.AddWithValue("@tlgDateTime", update.TelegramDate);
+            command.Parameters.AddWithValue("@tlgUserId", detailUpdate.UserId);
+            command.Parameters.AddWithValue("@tlgDateTime", detailUpdate.TelegramDate);
             
             command.Parameters.Add(new NpgsqlParameter($"@tlgDetails", NpgsqlDbType.Jsonb)
             {
-                Value = update.NewDetails
+                Value = detailUpdate.NewDetails
             });
             
             return command;

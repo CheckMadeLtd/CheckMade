@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Tlg.Input;
 
-public enum TlgUpdateType
+public enum TlgInputType
 {
     CommandMessage = 10,
     TextMessage = 11,

@@ -3,20 +3,20 @@ using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.DTOs;
 
-namespace CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
+namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
 
-public interface ICommunicationsUpdateProcessor : IUpdateProcessor; 
+public interface ICommunicationsInputProcessor : IInputProcessor; 
 
-public class CommunicationsUpdateProcessor(ITlgUpdateRepository updateRepo) : ICommunicationsUpdateProcessor
+public class CommunicationsInputProcessor(ITlgInputRepository inputRepo) : ICommunicationsInputProcessor
 {
-    public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TlgUpdate> tlgUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
     {
-        return await tlgUpdate.Match(
-            async successfulUpdate =>
+        return await tlgInput.Match(
+            async input =>
             {
-                await updateRepo.AddAsync(successfulUpdate);
+                await inputRepo.AddAsync(input);
 
-                if (successfulUpdate.Details.BotCommandEnumCode.GetValueOrDefault() == TlgStart.CommandCode)
+                if (input.Details.BotCommandEnumCode.GetValueOrDefault() == TlgStart.CommandCode)
                 {
                     return new List<OutputDto>
                     {
@@ -24,7 +24,7 @@ public class CommunicationsUpdateProcessor(ITlgUpdateRepository updateRepo) : IC
                         {
                             Text = UiConcatenate(
                                 Ui("Welcome to the CheckMade {0} Bot! ", TlgBotType.Communications), 
-                                IUpdateProcessor.SeeValidBotCommandsInstruction)
+                                IInputProcessor.SeeValidBotCommandsInstruction)
                         }
                     };
                 }

@@ -10,64 +10,64 @@ using Xunit.Abstractions;
 
 namespace CheckMade.Tests.Integration;
 
-public class TlgUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
+public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
 {
     private ServiceProvider? _services;
     
     [Fact]
-    public async Task SavesAndRetrievesOneUpdate_WhenInputValid()
+    public async Task SavesAndRetrievesOneInput_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         
-        var tlgUpdates = new[]
+        var tlgInputs = new[]
         {
             utils.GetValidTlgTextMessage(),
             utils.GetValidTlgTextMessage(),
             utils.GetValidTlgTextMessage()
         };
         
-        var updateRepo = _services.GetRequiredService<ITlgUpdateRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
 
-        foreach (var update in tlgUpdates)
+        foreach (var input in tlgInputs)
         {
-            var expectedRetrieval = new List<TlgUpdate>
+            var expectedRetrieval = new List<TlgInput>
             {
-                new (update.UserId, update.ChatId, update.BotType, update.TlgUpdateType, update.Details)
+                new (input.UserId, input.ChatId, input.BotType, input.TlgInputType, input.Details)
             };
         
-            await updateRepo.AddAsync(update);
-            var retrievedUpdates = 
-                (await updateRepo.GetAllAsync(update.UserId))
+            await inputRepo.AddAsync(input);
+            var retrievedInputs = 
+                (await inputRepo.GetAllAsync(input.UserId))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToList().AsReadOnly();
-            await updateRepo.HardDeleteAllAsync(update.UserId);
+            await inputRepo.HardDeleteAllAsync(input.UserId);
         
-            Assert.Equivalent(expectedRetrieval[0], retrievedUpdates[0]);
+            Assert.Equivalent(expectedRetrieval[0], retrievedInputs[0]);
         }
     }
 
     [Fact]
-    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidUpdates()
+    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidInputs()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         TlgUserId userId = utils.Randomizer.GenerateRandomLong();
         
-        var tlgUpdates = new[]
+        var tlgInputs = new[]
         {
             utils.GetValidTlgTextMessage(userId),
             utils.GetValidTlgTextMessage(userId),
             utils.GetValidTlgTextMessage(userId)
         };
         
-        var updateRepo = _services.GetRequiredService<ITlgUpdateRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         
-        await updateRepo.AddAsync(tlgUpdates);
-        var retrievedUpdates = await updateRepo.GetAllAsync(userId);
-        await updateRepo.HardDeleteAllAsync(userId);
+        await inputRepo.AddAsync(tlgInputs);
+        var retrievedInputs = await inputRepo.GetAllAsync(userId);
+        await inputRepo.HardDeleteAllAsync(userId);
 
-        Assert.Equivalent(tlgUpdates, retrievedUpdates);
+        Assert.Equivalent(tlgInputs, retrievedInputs);
     }
     
     [Fact]
@@ -75,12 +75,12 @@ public class TlgUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var randomizer = _services.GetRequiredService<Randomizer>();
-        var updateRepo = _services.GetRequiredService<ITlgUpdateRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         TlgUserId userId = randomizer.GenerateRandomLong();
     
-        var retrievedUpdates = await updateRepo.GetAllAsync(userId);
+        var retrievedInputs = await inputRepo.GetAllAsync(userId);
     
-        Assert.Empty(retrievedUpdates);
+        Assert.Empty(retrievedInputs);
     }
 
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
@@ -104,9 +104,9 @@ public class TlgUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
             _services = serviceCollection.BuildServiceProvider();
         }
         
-        var updateRepo = _services.GetRequiredService<ITlgUpdateRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await updateRepo.GetAllAsync(devDbUserId);
+        await inputRepo.GetAllAsync(devDbUserId);
     }
 }
