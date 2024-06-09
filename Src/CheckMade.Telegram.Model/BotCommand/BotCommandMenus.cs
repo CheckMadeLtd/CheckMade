@@ -6,146 +6,146 @@ namespace CheckMade.Telegram.Model.BotCommand;
 
 public record BotCommandMenus
 {
-    public IReadOnlyDictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
+    public IReadOnlyDictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> 
         OperationsBotCommandMenu { get; } = 
-        new Dictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
+        new Dictionary<OperationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>>
         {
             { OperationsBotCommands.NewIssue, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new TelegramBotCommand("/issue", "❗ Report a new issue")
+                        new TlgBotCommand("/issue", "❗ Report a new issue")
                     },
                     {
                         LanguageCode.de, 
-                        new TelegramBotCommand("/problem", "❗ Ein neues Problem melden")
+                        new TlgBotCommand("/problem", "❗ Ein neues Problem melden")
                     }
                 }
             },
             { OperationsBotCommands.NewAssessment, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new TelegramBotCommand("/assessment", "⭐ Submit a new assessment")
+                        new TlgBotCommand("/assessment", "⭐ Submit a new assessment")
                     },
                     {
                         LanguageCode.de, 
-                        new TelegramBotCommand("/bewertung", "⭐ Eine neue Bewertung vornehmen")
+                        new TlgBotCommand("/bewertung", "⭐ Eine neue Bewertung vornehmen")
                     }
                 }
             },
             { OperationsBotCommands.Settings, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 } 
             },
             { OperationsBotCommands.Logout, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en, 
-                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TlgBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/ausloggen", 
+                        new TlgBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 } 
             }
         };
     
-    public IReadOnlyDictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
+    public IReadOnlyDictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> 
         CommunicationsBotCommandMenu { get; } = 
-        new Dictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
+        new Dictionary<CommunicationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>>
         {
             { CommunicationsBotCommands.Contact, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/contact", "💬 Contact a colleague")
+                        new TlgBotCommand("/contact", "💬 Contact a colleague")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/kontakt", "💬 Mit einem Kollegen Kontakt aufnehmen")
+                        new TlgBotCommand("/kontakt", "💬 Mit einem Kollegen Kontakt aufnehmen")
                     }
                 }},
             { CommunicationsBotCommands.Settings,
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 }},
             { CommunicationsBotCommands.Logout, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TlgBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/ausloggen", 
+                        new TlgBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 }}
         };
 
-    public IReadOnlyDictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> 
+    public IReadOnlyDictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> 
         NotificationsBotCommandMenu { get; } = 
-        new Dictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>>
+        new Dictionary<NotificationsBotCommands, IReadOnlyDictionary<LanguageCode, TlgBotCommand>>
         {
             { NotificationsBotCommands.Status, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/status", "📋 Current status report")
+                        new TlgBotCommand("/status", "📋 Current status report")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/status", "📋 Aktueller Statusreport")
+                        new TlgBotCommand("/status", "📋 Aktueller Statusreport")
                     }
                 }},
             { NotificationsBotCommands.Settings, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change settings")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
                     }
                 }},
             { NotificationsBotCommands.Logout, 
-                new Dictionary<LanguageCode, TelegramBotCommand>
+                new Dictionary<LanguageCode, TlgBotCommand>
                 {
                     {
                         LanguageCode.en,
-                        new TelegramBotCommand("/logout", "💨 Exit this chat in your current role")
+                        new TlgBotCommand("/logout", "💨 Exit this chat in your current role")
                     },
                     {
                         LanguageCode.de,
-                        new TelegramBotCommand("/ausloggen", 
+                        new TlgBotCommand("/ausloggen", 
                             "💨 In Ihrer aktuellen Rolle diesen Chat verlassen")
                     }
                 }}

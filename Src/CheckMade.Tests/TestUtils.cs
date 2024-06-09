@@ -1,6 +1,6 @@
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Telegram.Bot.Types;
@@ -14,7 +14,7 @@ internal interface ITestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
 
-    // Needs to be 'long' instead of 'TelegramUserId' for usage in InlineData() of Tests - but they implicitly convert
+    // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
     internal const long TestUserId_01 = 101L;
     internal const long TestUserId_02 = 102L;
@@ -32,10 +32,10 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    TelegramUpdate GetValidModelTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
-    TelegramUpdate GetValidModelTextMessageWithAttachment(AttachmentType type);
-    TelegramUpdate GetValidModelCommandMessage(
-        BotType botType, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgUpdate GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgUpdate GetValidTlgTextMessageWithAttachment(AttachmentType type);
+    TlgUpdate GetValidTlgCommandMessage(
+        TlgBotType botType, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -63,21 +63,21 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TelegramUpdate GetValidModelTextMessage(long userId, long chatId) =>
+    public TlgUpdate GetValidTlgTextMessage(long userId, long chatId) =>
         new(userId,
             chatId,
-            BotType.Operations,
-            ModelUpdateType.TextMessage,
+            TlgBotType.Operations,
+            TlgUpdateType.TextMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
                 $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
     
-    public TelegramUpdate GetValidModelTextMessageWithAttachment(AttachmentType type) =>
+    public TlgUpdate GetValidTlgTextMessageWithAttachment(AttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
-            BotType.Operations,
-            ModelUpdateType.AttachmentMessage,
+            TlgBotType.Operations,
+            TlgUpdateType.AttachmentMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
@@ -86,22 +86,22 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 new Uri("fakeInternalUri"),
                 type));
 
-    public TelegramUpdate GetValidModelCommandMessage(
-        BotType botType, int botCommandEnumCode, long userId, long chatId) =>
+    public TlgUpdate GetValidTlgCommandMessage(
+        TlgBotType botType, int botCommandEnumCode, long userId, long chatId) =>
         new(userId,
             chatId,
             botType,
-            ModelUpdateType.CommandMessage,
+            TlgUpdateType.CommandMessage,
             CreateFromRelevantDetails(
                 DateTime.Now,
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    internal static TelegramUpdateDetails CreateFromRelevantDetails(
+    internal static TlgUpdateDetails CreateFromRelevantDetails(
         DateTime telegramDate,
         int telegramMessageId,
         string? text = null,
-        Uri? attachmentTelegramUri = null,
+        Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
         AttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
@@ -109,11 +109,11 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         int? domainCategoryEnumCode = null,
         long? controlPromptEnumCode = null)
     {
-        return new TelegramUpdateDetails(
+        return new TlgUpdateDetails(
             telegramDate, 
             telegramMessageId,
             text ?? Option<string>.None(),
-            attachmentTelegramUri ?? Option<Uri>.None(),
+            attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
             attachmentType ?? Option<AttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),

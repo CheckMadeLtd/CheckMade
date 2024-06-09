@@ -1,11 +1,11 @@
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 
 namespace CheckMade.Telegram.Logic.UpdateProcessors;
 
 public interface IUpdateProcessorSelector
 {
-    IUpdateProcessor GetUpdateProcessor(BotType botType);
+    IUpdateProcessor GetUpdateProcessor(TlgBotType botType);
 }
 
 public class UpdateProcessorSelector(
@@ -14,13 +14,13 @@ public class UpdateProcessorSelector(
         INotificationsUpdateProcessor notificationsProcessor) 
     : IUpdateProcessorSelector
 {
-    public IUpdateProcessor GetUpdateProcessor(BotType botType)
+    public IUpdateProcessor GetUpdateProcessor(TlgBotType botType)
     {
         return botType switch
         {
-            BotType.Operations => operationsProcessor,
-            BotType.Communications => communicationsProcessor,
-            BotType.Notifications => notificationsProcessor,
+            TlgBotType.Operations => operationsProcessor,
+            TlgBotType.Communications => communicationsProcessor,
+            TlgBotType.Notifications => notificationsProcessor,
             _ => throw new ArgumentOutOfRangeException(nameof(botType))
         };
     }

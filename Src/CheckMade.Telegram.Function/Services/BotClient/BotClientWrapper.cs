@@ -1,5 +1,5 @@
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;
@@ -17,7 +17,7 @@ namespace CheckMade.Telegram.Function.Services.BotClient;
 
 public interface IBotClientWrapper
 {
-    BotType MyBotType { get; }
+    TlgBotType MyBotType { get; }
     string MyBotToken { get; }
     
     Task<File> GetFileAsync(string fileId);
@@ -53,12 +53,12 @@ public interface IBotClientWrapper
 public class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
-        BotType botType,
+        TlgBotType botType,
         string botToken,
         ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
-    public BotType MyBotType { get; } = botType; 
+    public TlgBotType MyBotType { get; } = botType; 
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
@@ -175,11 +175,11 @@ public class BotClientWrapper(
         {
             var telegramBotCommands = MyBotType switch
             {
-                BotType.Operations => 
+                TlgBotType.Operations => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.OperationsBotCommandMenu, language),
-                BotType.Communications => 
+                TlgBotType.Communications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.CommunicationsBotCommandMenu, language),
-                BotType.Notifications => 
+                TlgBotType.Notifications => 
                     GetTelegramBotCommandsFromModelCommandsMenu(menu.NotificationsBotCommandMenu, language),
                 _ => throw new ArgumentOutOfRangeException(nameof(MyBotType))
             };
@@ -203,7 +203,7 @@ public class BotClientWrapper(
     }
 
     private static BotCommand[] GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TelegramBotCommand>> menu, LanguageCode language) 
+        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
             .SelectMany(kvp => kvp.Value)

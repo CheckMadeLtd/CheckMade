@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Telegram.Function.Services.BotClient;
 using Moq;
 
@@ -6,7 +6,7 @@ namespace CheckMade.Tests.Startup.DefaultMocks;
 
 internal class MockBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
 {
-    public IBotClientWrapper CreateBotClient(BotType botType)
+    public IBotClientWrapper CreateBotClient(TlgBotType botType)
     {
         // CAREFUL PITFALL: DO NOT setup botType-dependent return values here (e.g. MyBotType)! Explanation:
         

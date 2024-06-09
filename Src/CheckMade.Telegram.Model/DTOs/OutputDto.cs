@@ -1,13 +1,13 @@
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
 
 namespace CheckMade.Telegram.Model.DTOs;
 
 public record OutputDto
 {
-    public Option<LogicalPort> LogicalPort { get; init; } 
-        = Option<LogicalPort>.None();
+    public Option<TlgLogicPort> LogicalPort { get; init; } 
+        = Option<TlgLogicPort>.None();
     
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();

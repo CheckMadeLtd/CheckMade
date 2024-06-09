@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Core.Enums;
 
 namespace CheckMade.Telegram.Model.DTOs;
 

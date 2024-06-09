@@ -1,5 +1,5 @@
 using System.Net;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ namespace CheckMade.Telegram.Function.Endpoints;
 
 public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {
-    protected abstract BotType BotType { get; }
+    protected abstract TlgBotType BotType { get; }
 
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
     {

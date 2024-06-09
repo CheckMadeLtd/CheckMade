@@ -1,5 +1,8 @@
 using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Persistence.Repositories;
+using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Persistence.Repositories.Core;
+using CheckMade.Common.Persistence.Repositories.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +18,8 @@ public static class ServiceRegistration
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>()));
         
-        services.AddScoped<ITelegramUpdateRepository, TelegramUpdateRepository>();
+        services.AddScoped<ITlgUpdateRepository, TlgUpdateRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ITelegramPortToRoleMapRepository, TelegramPortToRoleMapRepository>();
+        services.AddScoped<ITlgClientPortToRoleMapRepository, TlgClientPortToRoleMapRepository>();
     }
 }

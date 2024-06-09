@@ -1,5 +1,6 @@
 using System.ComponentModel;
-using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Model.DTOs;

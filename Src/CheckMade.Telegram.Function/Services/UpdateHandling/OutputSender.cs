@@ -1,7 +1,8 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -14,10 +15,10 @@ internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
-            IDictionary<BotType, IBotClientWrapper> botClientByBotType,
-            BotType currentlyReceivingBotType,
+            IDictionary<TlgBotType, IBotClientWrapper> botClientByBotType,
+            TlgBotType currentlyReceivingBotType,
             ChatId currentlyReceivingChatId,
-            IDictionary<TelegramPort, Role> roleByTelegramPort,
+            IDictionary<TlgClientPort, Role> roleByTelegramPort,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)

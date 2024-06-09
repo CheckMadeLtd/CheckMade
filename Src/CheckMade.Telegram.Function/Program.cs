@@ -1,7 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model.BotCommand;
@@ -150,7 +150,7 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
 {
     var botClientFactory = sp.GetRequiredService<IBotClientFactory>();
 
-    foreach (var botType in Enum.GetValues<BotType>())
+    foreach (var botType in Enum.GetValues<TlgBotType>())
     {
         (await  
             (from botClient

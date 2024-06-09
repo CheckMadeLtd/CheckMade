@@ -1,8 +1,9 @@
-﻿using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.Enums;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Updates;
+﻿using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.Updates;
 using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Telegram.Model.BotCommand.DefinitionsByBotType;
 using CheckMade.Telegram.Model.DTOs;
@@ -12,33 +13,33 @@ namespace CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 public interface IOperationsUpdateProcessor : IUpdateProcessor;
 
 public class OperationsUpdateProcessor(
-        ITelegramUpdateRepository updateRepo,
+        ITlgUpdateRepository updateRepo,
         IRoleRepository roleRepo,
-        ITelegramPortToRoleMapRepository portToRoleMapRepo) 
+        ITlgClientPortToRoleMapRepository clientPortToRoleMapRepo) 
     : IOperationsUpdateProcessor
 {
-    private readonly Func<TelegramPort, ITelegramPortToRoleMapRepository, Task<bool>>
-        _isTelegramPortOfIncomingUpdateMappedToRoleAsync = async (updatePort, mapRepo) =>
+    private readonly Func<TlgClientPort, ITlgClientPortToRoleMapRepository, Task<bool>>
+        _isTlgClientPortOfIncomingUpdateMappedToRoleAsync = async (updatePort, mapRepo) =>
         {
-            IReadOnlyList<TelegramPortToRoleMap> portToRoleMap =
+            IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
                 (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
             
             // ToDo: fix to actual algorithm
-            return portToRoleMap
-                .FirstOrDefault(map => map.Port.ChatId == updatePort.ChatId) != null;
+            return tlgClientPortToRoleMap
+                .FirstOrDefault(map => map.ClientPort.ChatId == updatePort.ChatId) != null;
         };
     
-    public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
+    public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TlgUpdate> tlgUpdate)
     {
-        return await telegramUpdate.Match(
+        return await tlgUpdate.Match(
             async successfulUpdate =>
             {
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
                 await updateRepo.AddAsync(successfulUpdate);
 
-                var updatePort = new TelegramPort(successfulUpdate.UserId, successfulUpdate.ChatId);
+                var updatePort = new TlgClientPort(successfulUpdate.UserId, successfulUpdate.ChatId);
                 
-                return await _isTelegramPortOfIncomingUpdateMappedToRoleAsync(updatePort, portToRoleMapRepo) 
+                return await _isTlgClientPortOfIncomingUpdateMappedToRoleAsync(updatePort, clientPortToRoleMapRepo) 
                     
                     ? successfulUpdate switch 
                     {
@@ -57,18 +58,18 @@ public class OperationsUpdateProcessor(
     }
 
     private static IReadOnlyList<OutputDto> ProcessBotCommand(
-        TelegramUpdate telegramUpdate,
+        TlgUpdate tlgUpdate,
         IReadOnlyList<Role> allRoles)
     {
-        var currentBotCommand = telegramUpdate.Details.BotCommandEnumCode.GetValueOrThrow();
+        var currentBotCommand = tlgUpdate.Details.BotCommandEnumCode.GetValueOrThrow();
         
         return currentBotCommand switch
         {
-            Start.CommandCode => [
+            TlgStart.CommandCode => [
                 new OutputDto
                 {
                     Text = UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", BotType.Operations),
+                        Ui("Welcome to the CheckMade {0} Bot! ", TlgBotType.Operations),
                         IUpdateProcessor.SeeValidBotCommandsInstruction) 
                 }
             ],
@@ -76,7 +77,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalPort = new LogicalPort(allRoles[0], BotType.Operations),
+                    LogicalPort = new TlgLogicPort(allRoles[0], TlgBotType.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -92,7 +93,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalPort = new LogicalPort(allRoles[0], BotType.Operations),
+                    LogicalPort = new TlgLogicPort(allRoles[0], TlgBotType.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }
@@ -101,7 +102,7 @@ public class OperationsUpdateProcessor(
             _ => new List<OutputDto>{ new()
                 {
                     Text = UiConcatenate(
-                        Ui("Echo of a {0} BotCommand: ", BotType.Operations), 
+                        Ui("Echo of a {0} BotCommand: ", TlgBotType.Operations), 
                         UiNoTranslate(currentBotCommand.ToString())) 
                 }
             }
@@ -110,24 +111,24 @@ public class OperationsUpdateProcessor(
     
     private static IReadOnlyList<OutputDto> ProcessMessageWithAttachment(
         // ReSharper disable UnusedParameter.Local
-        TelegramUpdate telegramUpdate, AttachmentType type)
+        TlgUpdate tlgUpdate, AttachmentType type)
     {
         return new List<OutputDto> { new()
             {
                 Text = UiNoTranslate("Here, echo of your attachment."),
                 Attachments = new List<OutputAttachmentDetails>
                 {
-                    new(telegramUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
+                    new(tlgUpdate.Details.AttachmentInternalUri.GetValueOrThrow(), 
                         type, Option<UiString>.None())
                 }
             }
         };
     }
     
-    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TelegramUpdate telegramUpdate)
+    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TlgUpdate tlgUpdate)
     {
         // Temp, for testing purposes only
-        if (telegramUpdate.Details.Text.GetValueOrDefault() == "n")
+        if (tlgUpdate.Details.Text.GetValueOrDefault() == "n")
         {
             return new List<OutputDto>
             {

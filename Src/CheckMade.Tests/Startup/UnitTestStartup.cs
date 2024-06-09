@@ -1,9 +1,11 @@
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Tests.Startup.DefaultMocks;
-using CheckMade.Tests.Startup.DefaultMocks.Repositories;
+using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
+using CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -21,11 +23,11 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<ITelegramUpdateRepository, MockTelegramUpdateRepository>(_ => 
-            new MockTelegramUpdateRepository(new Mock<ITelegramUpdateRepository>()));
+        Services.AddScoped<ITlgUpdateRepository, MockTlgUpdateRepository>(_ => 
+            new MockTlgUpdateRepository(new Mock<ITlgUpdateRepository>()));
         Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
-        Services.AddScoped<ITelegramPortToRoleMapRepository, MockTelegramPortToRoleMapRepository>(_ => 
-            new MockTelegramPortToRoleMapRepository());
+        Services.AddScoped<ITlgClientPortToRoleMapRepository, MockTlgClientPortToRoleMapRepository>(_ => 
+            new MockTlgClientPortToRoleMapRepository());
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
          in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 
