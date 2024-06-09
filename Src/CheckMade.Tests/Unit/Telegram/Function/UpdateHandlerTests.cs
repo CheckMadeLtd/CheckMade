@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.BotCommands;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Model.UserInteraction;
@@ -10,7 +11,6 @@ using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;
-using CheckMade.Telegram.Model.BotCommand;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

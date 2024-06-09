@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Model.Utils;

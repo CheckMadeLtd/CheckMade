@@ -1,13 +1,13 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.BotCommands;
+using CheckMade.Common.Model.Tlg.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Model.BotCommand;
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -132,7 +132,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var operationsCommandMenu = 
-            new BotCommandMenus().OperationsBotCommandMenu;
+            new TlgBotCommandMenus().OperationsBotCommandMenu;
         var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
@@ -163,7 +163,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var communicationsCommandMenu = 
-            new BotCommandMenus().CommunicationsBotCommandMenu;
+            new TlgBotCommandMenus().CommunicationsBotCommandMenu;
         var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
@@ -194,7 +194,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var notificationsCommandMenu = 
-            new BotCommandMenus().NotificationsBotCommandMenu;
+            new TlgBotCommandMenus().NotificationsBotCommandMenu;
         var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 

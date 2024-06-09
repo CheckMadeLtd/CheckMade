@@ -1,8 +1,9 @@
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Logic.InputProcessors;
 using CheckMade.Telegram.Logic.InputProcessors.Concrete;
-using CheckMade.Telegram.Model.BotCommand.DefinitionsByInteractionMode;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

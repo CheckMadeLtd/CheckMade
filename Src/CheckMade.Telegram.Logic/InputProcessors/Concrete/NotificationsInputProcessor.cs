@@ -1,8 +1,8 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Tlg.BotCommands;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Model.UserInteraction;
-using CheckMade.Telegram.Model.BotCommand;
 
 namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
 

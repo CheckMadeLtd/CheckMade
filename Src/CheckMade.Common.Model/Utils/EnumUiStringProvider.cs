@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.UserInteraction;
 
 namespace CheckMade.Common.Model.Utils;

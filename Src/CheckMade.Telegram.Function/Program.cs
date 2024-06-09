@@ -1,10 +1,10 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Common.Model.Tlg.BotCommands;
 using CheckMade.Common.Model.UserInteraction;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Model.BotCommand;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -156,7 +156,7 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
             (from botClient
                 in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClient(mode))
             from unit in Attempt<Unit>.RunAsync(() =>
-                botClient.SetBotCommandMenuAsync(new BotCommandMenus()))
+                botClient.SetBotCommandMenuAsync(new TlgBotCommandMenus()))
             select unit))
             .Match(
                 unit => unit, 
