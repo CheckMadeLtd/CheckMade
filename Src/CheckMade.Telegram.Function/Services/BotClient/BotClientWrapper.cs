@@ -69,7 +69,7 @@ public class BotClientWrapper(
         await retryPolicy.ExecuteAsync(async () =>
             
             await botClient.SendDocumentAsync(
-                chatId: documentSendOutParams.PortChatId,
+                chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
                 caption: documentSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
@@ -102,7 +102,7 @@ public class BotClientWrapper(
         await retryPolicy.ExecuteAsync(async () =>
             
             await botClient.SendPhotoAsync(
-                chatId: photoSendOutParams.PortChatId,
+                chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
@@ -157,7 +157,7 @@ public class BotClientWrapper(
              receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list). 
              */ 
             await botClient.SendVoiceAsync(
-                chatId: voiceSendOutParams.PortChatId,
+                chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
