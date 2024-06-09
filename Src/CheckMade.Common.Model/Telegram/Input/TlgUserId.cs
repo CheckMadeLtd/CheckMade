@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Tlg.Input;
+namespace CheckMade.Common.Model.Telegram.Input;
 
 public record TlgUserId(long Id)
 {

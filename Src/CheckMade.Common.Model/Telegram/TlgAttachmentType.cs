@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Tlg;
+namespace CheckMade.Common.Model.Telegram;
 
 public enum TlgAttachmentType
 {

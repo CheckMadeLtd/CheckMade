@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.UserInteraction;
+namespace CheckMade.Common.Model.Telegram.UserInteraction;
 
 [Flags]
 public enum ControlPrompts : long

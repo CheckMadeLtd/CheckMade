@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Telegram;
 
 namespace CheckMade.Common.Interfaces.Persistence.Tlg;
 

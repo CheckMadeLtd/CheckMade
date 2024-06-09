@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg.BotCommands;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Extensions.Logging;
@@ -47,7 +47,7 @@ public interface IBotClientWrapper
         AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SetBotCommandMenuAsync(TlgBotCommandMenus menu);
+    Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu);
 }
 
 public class BotClientWrapper(
@@ -167,7 +167,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> SetBotCommandMenuAsync(TlgBotCommandMenus menu)
+    public async Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu)
     {
         await botClient.DeleteMyCommandsAsync();
 

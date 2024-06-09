@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Input;
+using CheckMade.Common.Model.Telegram.Input;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;

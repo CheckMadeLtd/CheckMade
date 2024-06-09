@@ -1,10 +1,10 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg;
-using CheckMade.Common.Model.Tlg.BotCommands;
-using CheckMade.Common.Model.Tlg.Input;
-using CheckMade.Common.Model.Tlg.Output;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -294,19 +294,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         List<OutputDto> outputsWithLogicalPort = [
             new OutputDto
             { 
-                LogicalPort = new TlgLogicPort(
+                LogicalPort = new LogicPort(
                     TestUtils.SanitaryOpsInspector1, InteractionMode.Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
             },
             new OutputDto
             {
-                LogicalPort = new TlgLogicPort(
+                LogicalPort = new LogicPort(
                     TestUtils.SanitaryOpsInspector1, InteractionMode.Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
             },
             new OutputDto
             {
-                LogicalPort = new TlgLogicPort(
+                LogicalPort = new LogicPort(
                     TestUtils.SanitaryOpsEngineer1, InteractionMode.Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
             }

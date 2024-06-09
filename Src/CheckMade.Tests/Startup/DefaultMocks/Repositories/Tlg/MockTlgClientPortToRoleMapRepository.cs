@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Telegram;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;
 

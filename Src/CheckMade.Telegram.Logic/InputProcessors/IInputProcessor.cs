@@ -1,5 +1,5 @@
-﻿using CheckMade.Common.Model.Tlg.Input;
-using CheckMade.Common.Model.Tlg.Output;
+﻿using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
 
 namespace CheckMade.Telegram.Logic.InputProcessors;
 

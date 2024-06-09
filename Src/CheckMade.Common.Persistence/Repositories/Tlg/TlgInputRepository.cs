@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Tlg.Input;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;

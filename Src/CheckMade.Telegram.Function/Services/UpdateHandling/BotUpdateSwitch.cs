@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

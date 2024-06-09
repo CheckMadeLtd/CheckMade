@@ -1,12 +1,12 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 
-namespace CheckMade.Common.Model.Tlg.Output;
+namespace CheckMade.Common.Model.Telegram.Output;
 
 public record OutputDto
 {
-    public Option<TlgLogicPort> LogicalPort { get; init; } 
-        = Option<TlgLogicPort>.None();
+    public Option<LogicPort> LogicalPort { get; init; } 
+        = Option<LogicPort>.None();
     
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();

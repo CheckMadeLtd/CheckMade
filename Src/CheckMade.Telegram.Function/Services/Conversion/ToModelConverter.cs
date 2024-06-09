@@ -1,10 +1,10 @@
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg;
-using CheckMade.Common.Model.Tlg.BotCommands;
-using CheckMade.Common.Model.Tlg.Input;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.InputProcessors;
@@ -126,7 +126,7 @@ internal class ToModelConverter(
         if (update.Message.Text == TlgStart.Command)
             return Option<int>.Some(TlgStart.CommandCode);
         
-        var allBotCommandMenus = new TlgBotCommandMenus();
+        var allBotCommandMenus = new BotCommandMenus();
 
         var botCommandMenuForCurrentMode = interactionMode switch
         {

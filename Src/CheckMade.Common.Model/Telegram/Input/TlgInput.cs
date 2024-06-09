@@ -1,6 +1,6 @@
-﻿using CheckMade.Common.Model.UserInteraction;
+﻿using CheckMade.Common.Model.Telegram.UserInteraction;
 
-namespace CheckMade.Common.Model.Tlg.Input;
+namespace CheckMade.Common.Model.Telegram.Input;
 
 public record TlgInput(
      TlgUserId UserId,

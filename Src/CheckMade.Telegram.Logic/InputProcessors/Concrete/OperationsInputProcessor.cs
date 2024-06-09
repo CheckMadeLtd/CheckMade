@@ -1,12 +1,12 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg;
-using CheckMade.Common.Model.Tlg.BotCommands;
-using CheckMade.Common.Model.Tlg.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Tlg.Input;
-using CheckMade.Common.Model.Tlg.Output;
-using CheckMade.Common.Model.UserInteraction;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
 
 namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
 
@@ -77,7 +77,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalPort = new TlgLogicPort(allRoles[0], InteractionMode.Operations),
+                    LogicalPort = new LogicPort(allRoles[0], InteractionMode.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -93,7 +93,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalPort = new TlgLogicPort(allRoles[0], InteractionMode.Operations),
+                    LogicalPort = new LogicPort(allRoles[0], InteractionMode.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }
