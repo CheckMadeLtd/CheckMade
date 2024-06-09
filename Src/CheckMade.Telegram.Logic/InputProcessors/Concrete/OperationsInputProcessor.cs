@@ -15,20 +15,9 @@ public interface IOperationsInputProcessor : IInputProcessor;
 public class OperationsInputProcessor(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortToRoleMapRepository clientPortToRoleMapRepo) 
+        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
     : IOperationsInputProcessor
 {
-    private readonly Func<TlgClientPort, ITlgClientPortToRoleMapRepository, Task<bool>>
-        _isInputTlgClientPortMappedToRoleAsync = async (inputPort, mapRepo) =>
-        {
-            IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
-                (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
-            
-            // ToDo: fix to actual algorithm
-            return tlgClientPortToRoleMap
-                .FirstOrDefault(map => map.ClientPort.ChatId == inputPort.ChatId) != null;
-        };
-    
     public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
     {
         return await tlgInput.Match(
@@ -39,7 +28,7 @@ public class OperationsInputProcessor(
 
                 var inputPort = new TlgClientPort(input.UserId, input.ChatId);
                 
-                return await _isInputTlgClientPortMappedToRoleAsync(inputPort, clientPortToRoleMapRepo) 
+                return await IInputProcessor.IsUserAuthenticated(inputPort, portToRoleMapRepo) 
                     
                     ? input switch 
                     {

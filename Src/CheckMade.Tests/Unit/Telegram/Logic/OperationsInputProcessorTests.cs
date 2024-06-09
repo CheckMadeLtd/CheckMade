@@ -14,7 +14,7 @@ public class OperationsInputProcessorTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task ProcessInputAsync_PromptsAuth_ForAnyInputExceptStartCommand_WhenTlgClientPortNotMappedToRole()
+    public async Task ProcessInputAsync_PromptsAuth_ForAnyInputExceptStartCommand_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);

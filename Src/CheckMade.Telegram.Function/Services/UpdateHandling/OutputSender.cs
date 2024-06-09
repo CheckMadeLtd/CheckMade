@@ -34,7 +34,8 @@ internal static class OutputSender
 
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => roleByTelegramPort
-                        .First(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
+                        // Using 'Last' so the message gets send only to the last ChatId where the user authenticated
+                        .Last(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
                     // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingChatId);
                     
