@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Core.Enums.UserInteraction.Helpers;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;

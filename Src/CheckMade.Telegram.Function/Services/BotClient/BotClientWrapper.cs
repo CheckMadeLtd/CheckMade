@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;

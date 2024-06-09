@@ -1,6 +1,7 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
+using CheckMade.Common.Model.Core.Enums.UserInteraction.Helpers;
 using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;

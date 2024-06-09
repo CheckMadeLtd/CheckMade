@@ -1,7 +1,6 @@
 using System.Text;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Tests.Startup;

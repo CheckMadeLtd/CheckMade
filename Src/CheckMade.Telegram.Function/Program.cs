@@ -1,8 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Model.BotCommand;

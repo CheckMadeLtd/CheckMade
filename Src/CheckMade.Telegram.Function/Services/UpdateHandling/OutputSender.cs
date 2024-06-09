@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
+using CheckMade.Common.Model.Core.Enums.UserInteraction;
 using CheckMade.Common.Model.Tlg;
 using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Utils.UiTranslation;

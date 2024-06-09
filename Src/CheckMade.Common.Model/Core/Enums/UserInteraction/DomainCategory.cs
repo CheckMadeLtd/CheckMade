@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Enums;
+namespace CheckMade.Common.Model.Core.Enums.UserInteraction;
 
 public enum DomainCategory
 {
