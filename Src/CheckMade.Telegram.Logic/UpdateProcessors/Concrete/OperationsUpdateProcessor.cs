@@ -14,21 +14,32 @@ public interface IOperationsUpdateProcessor : IUpdateProcessor;
 public class OperationsUpdateProcessor(
         ITelegramUpdateRepository updateRepo,
         IRoleRepository roleRepo,
-        ITelegramUserChatDestinationToRoleMapRepository telegramUserChatDestinationToRoleMapRepo) 
+        ITelegramUserChatPortToRoleMapRepository userChatPortToRoleMapRepo) 
     : IOperationsUpdateProcessor
 {
+    private readonly Func<TelegramUserChatPort, ITelegramUserChatPortToRoleMapRepository, Task<bool>>
+        _isUserChatMappedToRoleAsync = async (destination, repository) =>
+        {
+            IReadOnlyList<TelegramUserChatPortToRoleMap> allDestinationToRoleMaps =
+                (await repository.GetAllAsync()).ToList().AsReadOnly();
+            
+            // ToDo: fix to actual algorithm
+            return allDestinationToRoleMaps.FirstOrDefault(map =>
+                map.UserChatPort.ChatId == destination.ChatId) == null;
+        };
+    
     public async Task<IReadOnlyList<OutputDto>> ProcessUpdateAsync(Result<TelegramUpdate> telegramUpdate)
     {
         return await telegramUpdate.Match(
             async successfulUpdate =>
             {
                 IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
-                IReadOnlyList<TelegramUserChatDestinationToRoleMap> allDestinationToRoleMaps =
-                    (await telegramUserChatDestinationToRoleMapRepo.GetAllAsync()).ToList().AsReadOnly();
                 await updateRepo.AddAsync(successfulUpdate);
+
+                var userChatDestination = new TelegramUserChatPort(
+                    successfulUpdate.UserId, successfulUpdate.ChatId);
                 
-                return allDestinationToRoleMaps.FirstOrDefault(cmp => 
-                    cmp.UserChatDestination.ChatId == successfulUpdate.TelegramChatId) == null 
+                return await _isUserChatMappedToRoleAsync(userChatDestination, userChatPortToRoleMapRepo) 
                     
                     ? new List<OutputDto>{ new() { Text = IUpdateProcessor.AuthenticateWithToken } }
                     
@@ -66,7 +77,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalDestination = new LogicalOutputDestination(allRoles[0], BotType.Operations),
+                    LogicalDestination = new LogicalOutputPort(allRoles[0], BotType.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -82,7 +93,7 @@ public class OperationsUpdateProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalDestination = new LogicalOutputDestination(allRoles[0], BotType.Operations),
+                    LogicalDestination = new LogicalOutputPort(allRoles[0], BotType.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }

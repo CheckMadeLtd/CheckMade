@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Updates;
 using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
@@ -13,25 +14,18 @@ public class OperationsUpdateProcessorTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task ProcessUpdateAsync_AsksForTokenForAnyInputOtherThanStart_WhenUserChatNotMapped()
+    public async Task ProcessUpdateAsync_PromptsAuthentication_ForAnyInputOtherThanStart_WhenUserChatNotMapped()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        const long userId = 2468L;
-        const long unmappedChatId = 13563897L; // random choice
-        
-        var updateInUnmappedChatId = basics.utils.GetValidModelTextMessage(userId, unmappedChatId);
+        var unmappedUserChat = new TelegramUserChatPort(2468L, 13563897L);
+        var update = basics.utils.GetValidModelTextMessage(unmappedUserChat.UserId, unmappedUserChat.ChatId);
     
-        var outputInUnMappedChatId = 
-            await basics.processor.ProcessUpdateAsync(updateInUnmappedChatId);
+        var outputInUnMappedChatId = await basics.processor.ProcessUpdateAsync(update);
         
-        Assert.Equal(outputInUnMappedChatId[0].Text.GetValueOrThrow(), IUpdateProcessor.AuthenticateWithToken);
+        Assert.Equal(outputInUnMappedChatId[0].Text.GetValueOrThrow(), 
+            IUpdateProcessor.AuthenticateWithToken);
     }
-    
-    // Test: every bot should ask for token etc. this is shared behaviour
-    
-    // Test: adapt test so it actually checks for 'current' mapping, i.e. chatIdToDestination mapping need to have status, 
-    // historic ones are preserved, but if mapping is non-current, it asks for a new auth. 
     
     [Fact]
     public async Task ProcessUpdateAsync_ReturnsRelevantOutput_ForNewIssueBotCommand()
