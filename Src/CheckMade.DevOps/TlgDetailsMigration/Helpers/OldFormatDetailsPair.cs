@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;

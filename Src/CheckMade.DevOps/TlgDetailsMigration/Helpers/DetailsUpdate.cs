@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 
 namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;
 

@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Logic.UpdateProcessors.Concrete;
 
 namespace CheckMade.Telegram.Logic.UpdateProcessors;

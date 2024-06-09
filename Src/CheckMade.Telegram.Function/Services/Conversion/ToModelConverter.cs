@@ -2,7 +2,7 @@ using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic.UpdateProcessors;
 using CheckMade.Telegram.Model.BotCommand;

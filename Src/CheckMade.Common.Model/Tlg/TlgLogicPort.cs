@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 
 namespace CheckMade.Common.Model.Tlg;
 

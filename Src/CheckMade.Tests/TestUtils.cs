@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Telegram.Bot.Types;

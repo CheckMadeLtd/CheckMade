@@ -1,6 +1,6 @@
 using System.Text;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Tests.Startup;

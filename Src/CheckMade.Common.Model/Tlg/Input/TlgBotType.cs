@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Tlg.Updates;
+namespace CheckMade.Common.Model.Tlg.Input;
 
 // Explicit numbers to avoid 'Operations' implicilty being the default (= 0).
 // There shouldn't be a 'default' e.g. to avoid Json Serializer to assigning it implicitly in some cases.

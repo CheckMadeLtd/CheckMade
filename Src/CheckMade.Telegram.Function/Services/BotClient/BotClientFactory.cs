@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;

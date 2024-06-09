@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Tlg.Updates;
+namespace CheckMade.Common.Model.Tlg.Input;
 
 public record TlgChatId(long Id)
 {

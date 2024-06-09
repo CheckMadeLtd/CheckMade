@@ -1,6 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;

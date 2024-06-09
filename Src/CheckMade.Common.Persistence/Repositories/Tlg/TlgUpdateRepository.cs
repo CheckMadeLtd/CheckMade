@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;

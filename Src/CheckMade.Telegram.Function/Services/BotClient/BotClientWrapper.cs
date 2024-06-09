@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Model.BotCommand;

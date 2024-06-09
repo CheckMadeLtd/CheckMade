@@ -24,4 +24,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Tlg\Output\" />
+    </ItemGroup>
+
 </Project>

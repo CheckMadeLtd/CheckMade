@@ -1,5 +1,5 @@
 using CheckMade.Common.ExternalServices;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;

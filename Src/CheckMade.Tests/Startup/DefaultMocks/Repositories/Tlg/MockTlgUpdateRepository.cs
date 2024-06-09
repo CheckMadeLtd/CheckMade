@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Tlg.Updates;
+using CheckMade.Common.Model.Tlg.Input;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;
