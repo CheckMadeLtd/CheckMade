@@ -32,7 +32,7 @@ public class TelegramUpdateRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<TelegramUpdate>
             {
-                new (update.UserId, update.TelegramChatId, update.BotType, update.ModelUpdateType, update.Details)
+                new (update.UserId, update.ChatId, update.BotType, update.ModelUpdateType, update.Details)
             };
         
             await updateRepo.AddAsync(update);

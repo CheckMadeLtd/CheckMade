@@ -25,7 +25,7 @@ public class TelegramUpdateRepository(IDbExecutionHelper dbHelper) : ITelegramUp
                                             "@lastDataMig, @botType, @updateType)");
 
             command.Parameters.AddWithValue("@telegramUserId", (long) update.UserId);
-            command.Parameters.AddWithValue("@telegramChatId", (long) update.TelegramChatId);
+            command.Parameters.AddWithValue("@telegramChatId", (long) update.ChatId);
             command.Parameters.AddWithValue("@lastDataMig", 0);
             command.Parameters.AddWithValue("@botType", (int) update.BotType);
             command.Parameters.AddWithValue("@updateType", (int) update.ModelUpdateType);

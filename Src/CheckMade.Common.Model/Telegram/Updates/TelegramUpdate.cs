@@ -2,7 +2,7 @@
 
 public record TelegramUpdate(
      TelegramUserId UserId,
-     TelegramChatId TelegramChatId,
+     TelegramChatId ChatId,
      BotType BotType,
      ModelUpdateType ModelUpdateType,
      TelegramUpdateDetails Details);
