@@ -21,7 +21,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
         var commands = tlgInputs.Select(tlgInput =>
         {
             var command = new NpgsqlCommand("INSERT INTO tlg_inputs " +
-                                            "(user_id, chat_id, details, last_data_migration, interaction_mode, input_type)" +
+                                            "(user_id, chat_id, details, last_data_migration, " +
+                                            "interaction_mode, input_type)" +
                                             " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
                                             "@lastDataMig, @tlgInteractionMode, @tlgInputType)");
 

@@ -1,8 +1,7 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
-using CheckMade.Common.Model.Tlg;
 
-namespace CheckMade.Telegram.Model.DTOs;
+namespace CheckMade.Common.Model.Tlg.Output;
 
 public record OutputDto
 {

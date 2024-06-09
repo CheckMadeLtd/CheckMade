@@ -2,10 +2,10 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Enums;
 using CheckMade.Common.Model.Tlg;
+using CheckMade.Common.Model.Tlg.Output;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
-using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Services.UpdateHandling;
