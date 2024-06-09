@@ -19,8 +19,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
     {
         var commands = tlgInputs.Select(tlgInput =>
         {
-            var command = new NpgsqlCommand("INSERT INTO tlgr_updates " +
-                                            "(user_id, chat_id, details, last_data_migration, bot_type, update_type)" +
+            var command = new NpgsqlCommand("INSERT INTO tlg_inputs " +
+                                            "(user_id, chat_id, details, last_data_migration, channel, input_type)" +
                                             " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
                                             "@lastDataMig, @tlgBotType, @tlgInputType)");
 
@@ -51,12 +51,12 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync() =>
         await GetAllExecuteAsync(
-            "SELECT * FROM tlgr_updates",
+            "SELECT * FROM tlg_inputs",
             Option<TlgUserId>.None());
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
         await GetAllExecuteAsync(
-            "SELECT * FROM tlgr_updates WHERE user_id = @tlgUserId",
+            "SELECT * FROM tlg_inputs WHERE user_id = @tlgUserId",
             userId);
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
@@ -89,8 +89,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
     {
         TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TlgChatId tlgChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
-        var tlgBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("bot_type"));
-        var tlgInputType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("update_type"));
+        var tlgBotType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("channel"));
+        var tlgInputType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("input_type"));
         var tlgDetails = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
 
         var message = new TlgInput(
@@ -106,7 +106,7 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
 
     public async Task HardDeleteAllAsync(TlgUserId userId)
     {
-        var command = new NpgsqlCommand("DELETE FROM tlgr_updates WHERE user_id = @tlgUserId");
+        var command = new NpgsqlCommand("DELETE FROM tlg_inputs WHERE user_id = @tlgUserId");
         command.Parameters.AddWithValue("@tlgUserId", (long) userId);
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>

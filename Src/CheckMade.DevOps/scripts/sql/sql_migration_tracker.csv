@@ -6,3 +6,4 @@ SqlMig_Index;DevDb;PrdDb;Related_To_DataMig;Required_by_Vers;Note
 005;1;1;;0.8.1;
 006;1;0;0002;0.8.5;
 007;1;1;;0.8.7;
+008;1;1;;0.9.1;
