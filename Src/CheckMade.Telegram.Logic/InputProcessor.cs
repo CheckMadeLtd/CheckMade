@@ -7,16 +7,39 @@ using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Telegram.Logic.InputProcessors.Concrete;
+namespace CheckMade.Telegram.Logic;
 
-public interface IOperationsInputProcessor : IInputProcessor;
+public interface IInputProcessor
+{
+    public static readonly UiString SeeValidBotCommandsInstruction = 
+        Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-public class OperationsInputProcessor(
+    public static readonly UiString AuthenticateWithToken = Ui("🌀 Please enter your 'role token' to authenticate: ");
+
+    public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+
+    // ToDo: Move this back into the main class as a private static function?
+    protected static async Task<bool> IsUserAuthenticated(
+        TlgClientPort inputPort, ITlgClientPortToRoleMapRepository mapRepo)
+    {
+        IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
+            (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
+
+        return tlgClientPortToRoleMap
+                   .FirstOrDefault(map => map.ClientPort.ChatId == inputPort.ChatId &&
+                                          map.Status == DbRecordStatus.Active) 
+               != null;
+    }
+}
+
+public class InputProcessor(
+        InteractionMode interactionMode,    
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
         ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
-    : IOperationsInputProcessor
+    : IInputProcessor
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
     {
@@ -46,7 +69,7 @@ public class OperationsInputProcessor(
         );
     }
 
-    private static IReadOnlyList<OutputDto> ProcessBotCommand(
+    private IReadOnlyList<OutputDto> ProcessBotCommand(
         TlgInput tlgInput,
         IReadOnlyList<Role> allRoles)
     {
@@ -58,7 +81,7 @@ public class OperationsInputProcessor(
                 new OutputDto
                 {
                     Text = UiConcatenate(
-                        Ui("Welcome to the CheckMade {0} Bot! ", InteractionMode.Operations),
+                        Ui("Welcome to the CheckMade {0} Bot! ", interactionMode),
                         IInputProcessor.SeeValidBotCommandsInstruction) 
                 }
             ],

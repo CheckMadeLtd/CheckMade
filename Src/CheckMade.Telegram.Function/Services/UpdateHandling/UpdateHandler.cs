@@ -9,7 +9,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Logic.InputProcessors;
+using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -23,7 +23,7 @@ public interface IUpdateHandler
 
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
-        IInputProcessorSelector selector,
+        IInputProcessorFactory inputProcessorFactory,
         ITlgClientPortToRoleMapRepository tlgClientPortToRoleMapRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
@@ -76,7 +76,8 @@ public class UpdateHandler(
                         toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
-                        selector.GetInputProcessor(currentlyReceivingInteractionMode).ProcessInputAsync(tlgInput))
+                        inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
+                            .ProcessInputAsync(tlgInput))
                 from roleByTlgClientPort
                     in Attempt<IDictionary<TlgClientPort, Role>>.RunAsync(
                         GetRoleByTlgClientPortAsync) 

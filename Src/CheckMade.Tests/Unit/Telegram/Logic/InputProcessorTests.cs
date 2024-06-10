@@ -2,22 +2,24 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Telegram.Logic.InputProcessors;
-using CheckMade.Telegram.Logic.InputProcessors.Concrete;
+using CheckMade.Telegram.Logic;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.Telegram.Logic;
 
-public class OperationsInputProcessorTests
+public class InputProcessorTests
 {
     private ServiceProvider? _services;
 
-    [Fact]
-    public async Task ProcessInputAsync_PromptsAuth_ForAnyInput_WhenUserNotAuthenticated()
+    [Theory]
+    [InlineData(InteractionMode.Operations)]
+    [InlineData(InteractionMode.Communications)]
+    [InlineData(InteractionMode.Notifications)]
+    public async Task ProcessInputAsync_PromptsAuth_ForAnyInput_WhenUserNotAuthenticated(InteractionMode mode)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = GetBasicTestingServices(_services, mode);
         var unmappedTlgClientPort = new TlgClientPort(2468L, 13563897L);
         var input = basics.utils.GetValidTlgTextMessage(
             unmappedTlgClientPort.UserId, unmappedTlgClientPort.ChatId);
@@ -28,11 +30,14 @@ public class OperationsInputProcessorTests
             IInputProcessor.AuthenticateWithToken);
     }
     
-    [Fact]
-    public async Task ProcessInputAsync_ReturnsRelevantOutput_ForNewIssueBotCommand()
+    [Theory]
+    [InlineData(InteractionMode.Operations)]
+    [InlineData(InteractionMode.Communications)]
+    [InlineData(InteractionMode.Notifications)]
+    public async Task ProcessInputAsync_ReturnsRelevantOutput_ForNewIssueBotCommand(InteractionMode mode)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = GetBasicTestingServices(_services, mode);
         var issueCommandInput = basics.utils.GetValidTlgCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
 
@@ -42,7 +47,8 @@ public class OperationsInputProcessorTests
             actualOutput[0].DomainCategorySelection.GetValueOrThrow());
     }
     
-    private static (ITestUtils utils, IOperationsInputProcessor processor) 
-        GetBasicTestingServices(IServiceProvider sp) =>
-            (sp.GetRequiredService<ITestUtils>(), sp.GetRequiredService<IOperationsInputProcessor>());
+    private static (ITestUtils utils, IInputProcessor processor) 
+        GetBasicTestingServices(IServiceProvider sp, InteractionMode mode) =>
+            (sp.GetRequiredService<ITestUtils>(), 
+                sp.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(mode));
 }
