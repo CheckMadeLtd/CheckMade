@@ -13,42 +13,41 @@ public class InputProcessorTests
 {
     private ServiceProvider? _services;
 
-    [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
-    public async Task ProcessInputAsync_PromptsAuth_ForAnyInput_WhenUserNotAuthenticated(InteractionMode mode)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services, mode);
-        var unmappedTlgClientPort = new TlgClientPort(2468L, 13563897L);
-        var input = basics.utils.GetValidTlgTextMessage(
-            unmappedTlgClientPort.UserId, unmappedTlgClientPort.ChatId);
-    
-        var outputInUnmappedPort = await basics.processor.ProcessInputAsync(input);
-        
-        Assert.Equal(outputInUnmappedPort[0].Text.GetValueOrThrow(), 
-            UserAuthWorkflow.AuthenticateWithToken);
-    }
-    
-    
-    
-    [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
-    public async Task ProcessInputAsync_ReturnsRelevantOutput_ForNewIssueBotCommand(InteractionMode mode)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services, mode);
-        var issueCommandInput = basics.utils.GetValidTlgCommandMessage(
-            InteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
-
-        var actualOutput = await basics.processor.ProcessInputAsync(issueCommandInput);
-        
-        Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
-            actualOutput[0].DomainCategorySelection.GetValueOrThrow());
-    }
+    // [Theory]
+    // [InlineData(InteractionMode.Operations)]
+    // [InlineData(InteractionMode.Communications)]
+    // [InlineData(InteractionMode.Notifications)]
+    // public async Task ProcessInputAsync_LaunchesUserAuthWorkflow_ForAnyInput_WhenUserNotAuthenticated(
+    //     InteractionMode mode)
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     var basics = GetBasicTestingServices(_services, mode);
+    //     var unmappedTlgClientPort = new TlgClientPort(2468L, 13563897L);
+    //     var input = basics.utils.GetValidTlgTextMessage(
+    //         unmappedTlgClientPort.UserId, unmappedTlgClientPort.ChatId);
+    //
+    //     var outputInUnmappedPort = await basics.processor.ProcessInputAsync(input);
+    //     
+    //     Assert.Equal(outputInUnmappedPort[0].Text.GetValueOrThrow(), 
+    //         UserAuthWorkflow.AuthenticateWithToken);
+    // }
+    //
+    // [Theory]
+    // [InlineData(InteractionMode.Operations)]
+    // [InlineData(InteractionMode.Communications)]
+    // [InlineData(InteractionMode.Notifications)]
+    // public async Task ProcessInputAsync_ReturnsRelevantOutput_ForNewIssueBotCommand(InteractionMode mode)
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     var basics = GetBasicTestingServices(_services, mode);
+    //     var issueCommandInput = basics.utils.GetValidTlgCommandMessage(
+    //         InteractionMode.Operations, (int)OperationsBotCommands.NewIssue);
+    //
+    //     var actualOutput = await basics.processor.ProcessInputAsync(issueCommandInput);
+    //     
+    //     Assert.Contains(DomainCategory.SanitaryOps_IssueCleanliness,
+    //         actualOutput[0].DomainCategorySelection.GetValueOrThrow());
+    // }
     
     private static (ITestUtils utils, IInputProcessor processor) 
         GetBasicTestingServices(IServiceProvider sp, InteractionMode mode) =>

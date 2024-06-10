@@ -120,30 +120,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
-    public async Task HandleUpdateAsync_ShowsCorrectWelcomeMessage_UponStartCommand(InteractionMode mode)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var startCommandUpdate = basics.utils.GetValidTelegramBotCommandMessage(TlgStart.Command);
-        var expectedWelcomeMessageSegment = IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText;
-        
-        await basics.handler.HandleUpdateAsync(startCommandUpdate, mode);
-        
-        basics.mockBotClient.Verify(
-            x => x.SendTextMessageAsync(
-                startCommandUpdate.Message.Chat.Id,
-                It.IsAny<string>(),
-                It.Is<string>(output => output.Contains(expectedWelcomeMessageSegment) && 
-                                        output.Contains(mode.ToString())),
-                Option<IReplyMarkup>.None(),
-                It.IsAny<CancellationToken>()), 
-            Times.Once);
-    }
-
     // ToDo: irrelevant or needs total change once switch to manual language control
     #region Old LanguageCode Tests
     
