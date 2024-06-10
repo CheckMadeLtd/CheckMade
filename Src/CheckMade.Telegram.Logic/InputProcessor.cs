@@ -8,6 +8,7 @@ using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Utils;
+using CheckMade.Telegram.Logic.Workflows;
 
 namespace CheckMade.Telegram.Logic;
 
@@ -19,9 +20,48 @@ public interface IInputProcessor
     public static readonly UiString AuthenticateWithToken = Ui("🌀 Please enter your 'role token' to authenticate: ");
 
     public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+}
 
-    // ToDo: Move this back into the main class as a private static function?
-    protected static async Task<bool> IsUserAuthenticated(
+public class InputProcessor(
+        InteractionMode interactionMode,    
+        ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
+        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+    : IInputProcessor
+{
+    private IWorkflow? _workflow;
+    
+    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
+    {
+        return await tlgInput.Match(
+            async input =>
+            {
+                IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
+                await inputRepo.AddAsync(input);
+
+                var inputPort = new TlgClientPort(input.UserId, input.ChatId);
+
+                return await IsUserAuthenticated(inputPort, portToRoleMapRepo)
+
+                    ? input switch
+                    {
+                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(input, allRoles),
+
+                        { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
+                            input, input.Details.AttachmentType.GetValueOrThrow()),
+
+                        _ => ProcessNormalResponseMessage(input)
+                    }
+
+                    : (await new UserAuthWorkflow().GetNextOutputAsync(input)).Match(
+                        outputs => outputs,
+                        error => [new OutputDto { Text = error }]);
+            },
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
+        );
+    }
+
+    private static async Task<bool> IsUserAuthenticated(
         TlgClientPort inputPort, ITlgClientPortToRoleMapRepository mapRepo)
     {
         IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
@@ -32,43 +72,7 @@ public interface IInputProcessor
                                           map.Status == DbRecordStatus.Active) 
                != null;
     }
-}
-
-public class InputProcessor(
-        InteractionMode interactionMode,    
-        ITlgInputRepository inputRepo,
-        IRoleRepository roleRepo,
-        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
-    : IInputProcessor
-{
-    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
-    {
-        return await tlgInput.Match(
-            async input =>
-            {
-                IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
-                await inputRepo.AddAsync(input);
-
-                var inputPort = new TlgClientPort(input.UserId, input.ChatId);
-                
-                return await IInputProcessor.IsUserAuthenticated(inputPort, portToRoleMapRepo) 
-                    
-                    ? input switch 
-                    {
-                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(input, allRoles),
-                        
-                        { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
-                            input, input.Details.AttachmentType.GetValueOrThrow()),
-                        
-                        _ => ProcessNormalResponseMessage(input)
-                    } 
-                    
-                    : new List<OutputDto>{ new() { Text = IInputProcessor.AuthenticateWithToken } };
-            },
-            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
-        );
-    }
-
+    
     private IReadOnlyList<OutputDto> ProcessBotCommand(
         TlgInput tlgInput,
         IReadOnlyList<Role> allRoles)
