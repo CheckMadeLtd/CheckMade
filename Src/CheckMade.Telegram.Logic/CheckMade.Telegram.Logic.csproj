@@ -23,6 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>CheckMade.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>

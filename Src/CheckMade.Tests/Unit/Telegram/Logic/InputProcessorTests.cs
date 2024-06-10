@@ -3,6 +3,7 @@ using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Telegram.Logic;
+using CheckMade.Telegram.Logic.Workflows;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,8 +28,10 @@ public class InputProcessorTests
         var outputInUnmappedPort = await basics.processor.ProcessInputAsync(input);
         
         Assert.Equal(outputInUnmappedPort[0].Text.GetValueOrThrow(), 
-            IInputProcessor.AuthenticateWithToken);
+            UserAuthWorkflow.AuthenticateWithToken);
     }
+    
+    
     
     [Theory]
     [InlineData(InteractionMode.Operations)]
