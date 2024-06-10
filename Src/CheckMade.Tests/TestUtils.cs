@@ -33,10 +33,15 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgInput GetValidTlgTextMessage(
+        long userId = TestUserId_01, long chatId = TestChatId_01, string text = "Hello World");
     TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type);
     TlgInput GetValidTlgCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgInput GetValidTlgCallbackQueryForDomainCategory(
+        DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgInput GetValidTlgCallbackQueryForControlPrompts(
+        ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -64,15 +69,13 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgTextMessage(long userId, long chatId) =>
+    public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text) =>
         new(userId,
             chatId,
             InteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
-                1,
-                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
+                DateTime.Now, 1, text));
     
     public TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
@@ -97,6 +100,23 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 DateTime.Now,
                 1,
                 botCommandEnumCode: botCommandEnumCode));
+
+    public TlgInput GetValidTlgCallbackQueryForDomainCategory(DomainCategory category, long userId = ITestUtils.TestUserId_01,
+        long chatId = ITestUtils.TestChatId_01)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TlgInput GetValidTlgCallbackQueryForControlPrompts(ControlPrompts prompts,
+        long userId = ITestUtils.TestUserId_01,
+        long chatId = ITestUtils.TestChatId_01) =>
+        new(userId,
+            chatId,
+            InteractionMode.Operations,
+            TlgInputType.CallbackQuery,
+            CreateFromRelevantDetails(
+                DateTime.Now, 1,
+                controlPromptEnumCode: (long)prompts));
 
     internal static TlgInputDetails CreateFromRelevantDetails(
         DateTime telegramDate,

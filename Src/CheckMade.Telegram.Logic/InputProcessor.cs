@@ -53,7 +53,7 @@ internal class InputProcessor(
 
         if (!(await IsUserAuthenticated(inputPort, portToRoleMapRepo)))
         {
-            return new UserAuthWorkflow();
+            return new UserAuthWorkflow(inputRepo);
         }
         
         return Option<IWorkflow>.None();

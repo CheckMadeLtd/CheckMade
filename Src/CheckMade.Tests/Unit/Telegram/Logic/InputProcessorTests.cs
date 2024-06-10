@@ -26,7 +26,7 @@ public class InputProcessorTests
     
         var workflow = await basics.processor.IdentifyCurrentWorkflowAsync(input);
         
-        Assert.Equal(typeof(UserAuthWorkflow), workflow.GetValueOrThrow().GetType());
+        Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
     
     private static (ITestUtils utils, IInputProcessor processor) 
