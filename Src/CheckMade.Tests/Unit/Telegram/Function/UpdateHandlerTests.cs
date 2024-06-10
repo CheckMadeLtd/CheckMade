@@ -294,19 +294,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         List<OutputDto> outputsWithLogicalPort = [
             new OutputDto
             { 
-                LogicalPort = new LogicPort(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, InteractionMode.Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
             },
             new OutputDto
             {
-                LogicalPort = new LogicPort(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, InteractionMode.Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
             },
             new OutputDto
             {
-                LogicalPort = new LogicPort(
+                LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsEngineer1, InteractionMode.Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
             }

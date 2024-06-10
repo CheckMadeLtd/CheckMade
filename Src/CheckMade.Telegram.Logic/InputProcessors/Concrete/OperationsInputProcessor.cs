@@ -66,7 +66,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewIssue => [
                 new OutputDto
                 {
-                    LogicalPort = new LogicPort(allRoles[0], InteractionMode.Operations),
+                    LogicalPort = new LogicalPort(allRoles[0], InteractionMode.Operations),
                     Text = Ui("What type of issue?"),
                     DomainCategorySelection = new[]
                     {
@@ -82,7 +82,7 @@ public class OperationsInputProcessor(
             (int) OperationsBotCommands.NewAssessment => [
                 new OutputDto
                 {
-                    LogicalPort = new LogicPort(allRoles[0], InteractionMode.Operations),
+                    LogicalPort = new LogicalPort(allRoles[0], InteractionMode.Operations),
                     Text = Ui("⛺ Please choose a camp."),
                     PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
                 }

@@ -5,8 +5,8 @@ namespace CheckMade.Common.Model.Telegram.Output;
 
 public record OutputDto
 {
-    public Option<LogicPort> LogicalPort { get; init; } 
-        = Option<LogicPort>.None();
+    public Option<LogicalPort> LogicalPort { get; init; } 
+        = Option<LogicalPort>.None();
     
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
