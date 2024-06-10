@@ -1,4 +1,6 @@
-using CheckMade.Common.Model.Enums;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 // ReSharper disable ConditionIsAlwaysTrueOrFalse

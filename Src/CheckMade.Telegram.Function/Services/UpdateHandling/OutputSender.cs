@@ -1,11 +1,11 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Model;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
-using CheckMade.Telegram.Model.DTOs;
 using Telegram.Bot.Types;
 
 namespace CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -14,26 +14,30 @@ internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyList<OutputDto> outputs,
-            IDictionary<BotType, IBotClientWrapper> botClientByBotType,
-            BotType updateReceivingBotType,
-            ChatId updateReceivingChatId,
-            IDictionary<TelegramOutputDestination, TelegramChatId> chatIdByOutputDestination,
+            IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
+            InteractionMode currentlyReceivingInteractionMode,
+            ChatId currentlyReceivingChatId,
+            IDictionary<TlgClientPort, Role> roleByTelegramPort,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
     {
         Func<IReadOnlyCollection<OutputDto>, Task> sendOutputsInSeriesAndOriginalOrder 
-            = async outputsPerDestination =>
+            = async outputsPerPort =>
         {
-            foreach (var output in outputsPerDestination)
+            foreach (var output in outputsPerPort)
             {
-                var destinationBotClient = output.ExplicitDestination.Match(
-                    destination => botClientByBotType[destination.DestinationBotType],
-                    () => botClientByBotType[updateReceivingBotType]); // e.g. for a virgin, pre-login update
+                var portBotClient = output.LogicalPort.Match(
+                    logicalPort => botClientByMode[logicalPort.InteractionMode],
+                    // e.g. for a virgin, pre-auth update
+                    () => botClientByMode[currentlyReceivingInteractionMode]);
 
-                var destinationChatId = output.ExplicitDestination.Match(
-                    destination => chatIdByOutputDestination[destination].Id,
-                    () => updateReceivingChatId); // e.g. for a virgin, pre-login update
+                var portChatId = output.LogicalPort.Match(
+                    logicalPort => roleByTelegramPort
+                        // Using 'Last' so the message gets send only to the last ChatId where the user authenticated
+                        .Last(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
+                    // e.g. for a virgin, pre-auth update
+                    () => currentlyReceivingChatId);
                     
                 switch (output)
                 {
@@ -57,9 +61,9 @@ internal static class OutputSender
 
                 async Task InvokeSendTextMessageAsync(UiString outputText)
                 {
-                    await destinationBotClient
+                    await portBotClient
                         .SendTextMessageAsync(
-                            destinationChatId,
+                            portChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
                             uiTranslator.Translate(outputText),
                             converter.GetReplyMarkup(output));
@@ -76,7 +80,7 @@ internal static class OutputSender
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        destinationChatId,
+                        portChatId,
                         fileStream,
                         caption,
                         converter.GetReplyMarkup(output)
@@ -84,16 +88,16 @@ internal static class OutputSender
 
                     switch (details.AttachmentType)
                     {
-                        case AttachmentType.Document:
-                            await destinationBotClient.SendDocumentAsync(attachmentSendOutParams);
+                        case TlgAttachmentType.Document:
+                            await portBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
-                        case AttachmentType.Photo:
-                            await destinationBotClient.SendPhotoAsync(attachmentSendOutParams);
+                        case TlgAttachmentType.Photo:
+                            await portBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
-                        case AttachmentType.Voice:
-                            await destinationBotClient.SendVoiceAsync(attachmentSendOutParams);
+                        case TlgAttachmentType.Voice:
+                            await portBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 
                         default:
@@ -103,20 +107,20 @@ internal static class OutputSender
 
                 async Task InvokeSendLocationAsync(Geo location)
                 {
-                    await destinationBotClient
+                    await portBotClient
                         .SendLocationAsync(
-                            destinationChatId,
+                            portChatId,
                             location,
                             converter.GetReplyMarkup(output));
                 }
             }
         };
 
-        var outputGroups = outputs.GroupBy(o => o.ExplicitDestination);
+        var outputGroups = outputs.GroupBy(o => o.LogicalPort);
 
         var parallelTasks = outputGroups
-            .Select(outputsPerDestinationGroup => 
-                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerDestinationGroup.ToList().AsReadOnly()));
+            .Select(outputsPerLogicalPortGroup => 
+                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerLogicalPortGroup.ToList().AsReadOnly()));
         
         /* 1) Waits for all parallel executing tasks (generated by .Select()), to complete
          * 2) The 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */

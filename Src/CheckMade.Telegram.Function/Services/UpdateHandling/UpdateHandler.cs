@@ -1,13 +1,15 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Updates;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
 using CheckMade.Telegram.Function.Startup;
-using CheckMade.Telegram.Logic.UpdateProcessors;
-using CheckMade.Telegram.Model.DTOs;
+using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,13 +18,13 @@ namespace CheckMade.Telegram.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType botType);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
-        IUpdateProcessorSelector selector,
-        IChatIdByOutputDestinationRepository chatIdByOutputDestinationRepository,
+        IInputProcessorFactory inputProcessorFactory,
+        ITlgClientPortToRoleMapRepository tlgClientPortToRoleMapRepository,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -31,13 +33,13 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, BotType updateReceivingBotType)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode)
     {
-        ChatId updateReceivingChatId = update.Message.Chat.Id;
+        ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
-        logger.LogTrace("Invoked telegram update function for BotType: {botType} " +
+        logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " +
                               "with Message from UserId/ChatId: {userId}/{chatId}", 
-            updateReceivingBotType, update.Message.From?.Id ?? 0, updateReceivingChatId);
+            currentlyReceivingInteractionMode, update.Message.From?.Id ?? 0, currentlyReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -56,33 +58,34 @@ public class UpdateHandler(
             return Unit.Value;
         }
 
-        var botClientByBotType = new Dictionary<BotType, IBotClientWrapper>
+        var botClientByMode = new Dictionary<InteractionMode, IBotClientWrapper>
         {
-            { BotType.Operations,  botClientFactory.CreateBotClient(BotType.Operations) },
-            { BotType.Communications, botClientFactory.CreateBotClient(BotType.Communications) },
-            { BotType.Notifications, botClientFactory.CreateBotClient(BotType.Notifications) }
+            { InteractionMode.Operations,  botClientFactory.CreateBotClient(InteractionMode.Operations) },
+            { InteractionMode.Communications, botClientFactory.CreateBotClient(InteractionMode.Communications) },
+            { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        var filePathResolver = new TelegramFilePathResolver(botClientByBotType[updateReceivingBotType]);
+        var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
 
         var sendOutputsAttempt = await
-            (from telegramUpdate
-                    in Attempt<Result<TelegramUpdate>>.RunAsync(() => 
-                        toModelConverter.ConvertToModelAsync(update, updateReceivingBotType))
+            (from tlgInput
+                    in Attempt<Result<TlgInput>>.RunAsync(() => 
+                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
-                        selector.GetUpdateProcessor(updateReceivingBotType).ProcessUpdateAsync(telegramUpdate))
-                from chatIdByOutputDestination
-                    in Attempt<IDictionary<TelegramOutputDestination, TelegramChatId>>.RunAsync(
-                        GetChatIdByOutputDestinationAsync) 
+                        inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
+                            .ProcessInputAsync(tlgInput))
+                from roleByTlgClientPort
+                    in Attempt<IDictionary<TlgClientPort, Role>>.RunAsync(
+                        GetRoleByTlgClientPortAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
-                          outputs, botClientByBotType, updateReceivingBotType, updateReceivingChatId,
-                          chatIdByOutputDestination, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
+                          roleByTlgClientPort, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -93,9 +96,9 @@ public class UpdateHandler(
             {
                 logger.LogError(ex, "Exception with message '{exMessage}' was thrown. " +
                                     "Next, some details to help debug the current exception. " +
-                                    "BotType: '{botType}'; Telegram user Id: '{userId}'; " +
+                                    "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    ex.Message, updateReceivingBotType, update.Message.From!.Id,
+                    ex.Message, currentlyReceivingInteractionMode, update.Message.From!.Id,
                     update.Message.Date, update.Message.Text);
                 
                 return ex;
@@ -115,9 +118,9 @@ public class UpdateHandler(
             : defaultUiLanguage.Code;
     }
     
-    private async Task<IDictionary<TelegramOutputDestination, TelegramChatId>> GetChatIdByOutputDestinationAsync() =>
-        (await chatIdByOutputDestinationRepository.GetAllAsync())
+    private async Task<IDictionary<TlgClientPort, Role>> GetRoleByTlgClientPortAsync() =>
+        (await tlgClientPortToRoleMapRepository.GetAllAsync())
             .ToDictionary(
-                keySelector: map => map.OutputDestination,
-                elementSelector: map => map.ChatId);
+                keySelector: map => map.ClientPort,
+                elementSelector: map => map.Role);
 }

@@ -1,0 +1,159 @@
+﻿using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
+using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Utils;
+
+namespace CheckMade.Telegram.Logic;
+
+public interface IInputProcessor
+{
+    public static readonly UiString SeeValidBotCommandsInstruction = 
+        Ui("Tap on the menu button or type '/' to see available BotCommands.");
+
+    public static readonly UiString AuthenticateWithToken = Ui("🌀 Please enter your 'role token' to authenticate: ");
+
+    public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+
+    // ToDo: Move this back into the main class as a private static function?
+    protected static async Task<bool> IsUserAuthenticated(
+        TlgClientPort inputPort, ITlgClientPortToRoleMapRepository mapRepo)
+    {
+        IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
+            (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
+
+        return tlgClientPortToRoleMap
+                   .FirstOrDefault(map => map.ClientPort.ChatId == inputPort.ChatId &&
+                                          map.Status == DbRecordStatus.Active) 
+               != null;
+    }
+}
+
+public class InputProcessor(
+        InteractionMode interactionMode,    
+        ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
+        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+    : IInputProcessor
+{
+    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
+    {
+        return await tlgInput.Match(
+            async input =>
+            {
+                IReadOnlyList<Role> allRoles = (await roleRepo.GetAllAsync()).ToList().AsReadOnly();
+                await inputRepo.AddAsync(input);
+
+                var inputPort = new TlgClientPort(input.UserId, input.ChatId);
+                
+                return await IInputProcessor.IsUserAuthenticated(inputPort, portToRoleMapRepo) 
+                    
+                    ? input switch 
+                    {
+                        { Details.BotCommandEnumCode.IsSome: true } => ProcessBotCommand(input, allRoles),
+                        
+                        { Details.AttachmentType.IsSome: true } => ProcessMessageWithAttachment(
+                            input, input.Details.AttachmentType.GetValueOrThrow()),
+                        
+                        _ => ProcessNormalResponseMessage(input)
+                    } 
+                    
+                    : new List<OutputDto>{ new() { Text = IInputProcessor.AuthenticateWithToken } };
+            },
+            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
+        );
+    }
+
+    private IReadOnlyList<OutputDto> ProcessBotCommand(
+        TlgInput tlgInput,
+        IReadOnlyList<Role> allRoles)
+    {
+        var currentBotCommand = tlgInput.Details.BotCommandEnumCode.GetValueOrThrow();
+        
+        return currentBotCommand switch
+        {
+            TlgStart.CommandCode => [
+                new OutputDto
+                {
+                    Text = UiConcatenate(
+                        Ui("Welcome to the CheckMade {0} Bot! ", interactionMode),
+                        IInputProcessor.SeeValidBotCommandsInstruction) 
+                }
+            ],
+            
+            (int) OperationsBotCommands.NewIssue => [
+                new OutputDto
+                {
+                    LogicalPort = new LogicalPort(allRoles[0], InteractionMode.Operations),
+                    Text = Ui("What type of issue?"),
+                    DomainCategorySelection = new[]
+                    {
+                        DomainCategory.SanitaryOps_IssueCleanliness,
+                        DomainCategory.SanitaryOps_IssueTechnical,
+                        DomainCategory.SanitaryOps_IssueConsumable
+                    },
+                    ControlPromptsSelection = new[] { ControlPrompts.Save } 
+                }
+            ],
+            
+            // Testing ReplyKeyboard
+            (int) OperationsBotCommands.NewAssessment => [
+                new OutputDto
+                {
+                    LogicalPort = new LogicalPort(allRoles[0], InteractionMode.Operations),
+                    Text = Ui("⛺ Please choose a camp."),
+                    PredefinedChoices = new[] { "Camp1", "Camp2", "Camp3", "Camp4" } 
+                }
+            ],
+            
+            _ => new List<OutputDto>{ new()
+                {
+                    Text = UiConcatenate(
+                        Ui("Echo of a {0} BotCommand: ", InteractionMode.Operations), 
+                        UiNoTranslate(currentBotCommand.ToString())) 
+                }
+            }
+        };
+    }
+    
+    private static IReadOnlyList<OutputDto> ProcessMessageWithAttachment(
+        // ReSharper disable UnusedParameter.Local
+        TlgInput tlgInput, TlgAttachmentType type)
+    {
+        return new List<OutputDto> { new()
+            {
+                Text = UiNoTranslate("Here, echo of your attachment."),
+                Attachments = new List<OutputAttachmentDetails>
+                {
+                    new(tlgInput.Details.AttachmentInternalUri.GetValueOrThrow(), 
+                        type, Option<UiString>.None())
+                }
+            }
+        };
+    }
+    
+    private static IReadOnlyList<OutputDto> ProcessNormalResponseMessage(TlgInput tlgInput)
+    {
+        // Temp, for testing purposes only
+        if (tlgInput.Details.Text.GetValueOrDefault() == "n")
+        {
+            return new List<OutputDto>
+            {
+                new() { Text = UiNoTranslate("Message1") },
+                new() { Text = UiNoTranslate("Message2") }, 
+                new() 
+                { 
+                    Text = UiNoTranslate("Go here now:"),
+                    Location = new Geo(12.111, 34.007, Option<float>.None()) 
+                }
+            };
+        }
+
+        return new List<OutputDto>();
+    }
+}
