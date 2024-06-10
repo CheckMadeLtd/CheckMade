@@ -4,7 +4,6 @@ using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;

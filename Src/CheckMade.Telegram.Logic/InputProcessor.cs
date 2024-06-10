@@ -14,6 +14,9 @@ public interface IInputProcessor
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
     public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+
+    // internal because outside of InputProcessor, only accessible to tests.
+    internal Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input);
 }
 
 internal class InputProcessor(
@@ -44,7 +47,7 @@ internal class InputProcessor(
         );
     }
 
-    private async Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input)
+    public async Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input)
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId);
 
