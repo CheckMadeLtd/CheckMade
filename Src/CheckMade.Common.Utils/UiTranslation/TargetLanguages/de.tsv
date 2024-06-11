@@ -42,5 +42,6 @@ CheckMade.Common.Model	🙋 Staff	🙋 Personal
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.Telegram.Function	Please choose:	Bitte wählen:
-CheckMade.Telegram.Logic	When you have your 'role token' ready (format 'ABC123'), click 'authenticate'.	Wenn Sie Ihren Rollentoken bereit haben (Format 'ABC123') klicken Sie auf 'authentifizieren'.
+CheckMade.Telegram.Logic	When you have your 'role token' ready (format '{0}'), click 'authenticate'.	Wenn Sie Ihren Rollentoken bereit haben (Format '{0}') klicken Sie auf 'authentifizieren'.
 CheckMade.Telegram.Logic	🌀 Please enter your role token: 	🌀 Bitte geben Sie Ihren Rollentoken ein: 
+CheckMade.Telegram.Logic	You have successfully authenticated.	Sie haben sich erfolgreich authentifiziert.

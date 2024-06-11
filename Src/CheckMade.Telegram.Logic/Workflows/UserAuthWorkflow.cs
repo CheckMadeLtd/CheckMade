@@ -1,10 +1,12 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Common.Utils.Generic;
+using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
+using static CheckMade.Common.Utils.Generic.InputValidator;
 
 namespace CheckMade.Telegram.Logic.Workflows;
+
+using static UserAuthWorkflow.States;
 
 internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
 {
@@ -12,28 +14,30 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
     {
         return await DetermineCurrentStateAsync(tlgInput.UserId) switch
         {
-            States.Virgin => new List<OutputDto> { new()
+            Virgin => new List<OutputDto> { new()
                 {
-                    Text = Ui("When you have your 'role token' ready (format 'ABC123'), click 'authenticate'."),
-                    ControlPromptsSelection = ControlPrompts.Authenticate
+                    Text = Ui("When you have your 'role token' ready (format '{0}'), click 'authenticate'.",
+                        GetTokenFormatExample()),
+                    ControlPromptsSelection = Authenticate
                 } 
             },
             
-            States.ReadyToEnterToken => new List<OutputDto> { new()
+            ReadyToEnterToken => new List<OutputDto> { new()
                 {
                     Text = Ui("🌀 Please enter your role token: "),
-                    ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel
+                    ControlPromptsSelection = Submit | Cancel
                 }
             },
             
-            States.TokenSubmitted => InputValidator.IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
+            TokenSubmitted => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
                 true => new List<OutputDto> { new ()
                     {
                         Text = Ui("You have successfully authenticated.")
                     }
                 },
-                false => Result<IReadOnlyList<OutputDto>>.FromError(Ui("Bad token!"))
+                false => Result<IReadOnlyList<OutputDto>>.FromError(
+                    Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample()))
             },
             
             _ => Result<IReadOnlyList<OutputDto>>.FromError(UiNoTranslate("Error"))
@@ -44,17 +48,16 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
     {
         var allInputs = await inputRepo.GetAllAsync(userId);
 
-        if (allInputs.FirstOrDefault(x => 
-                x.Details.ControlPromptEnumCode == (long)ControlPrompts.Submit) != null)
+        if (allInputs.FirstOrDefault(x => x.Details.ControlPromptEnumCode == (long)Submit) != null)
         {
-            return States.TokenSubmitted;
+            return TokenSubmitted;
         }
         
-        return States.Virgin;
+        return Virgin;
     }
 
     [Flags]
-    private enum States
+    internal enum States
     {
         Virgin = 1,
         ReadyToEnterToken = 1<<1,
