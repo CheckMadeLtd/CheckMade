@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
@@ -13,6 +14,7 @@ public interface IWorkflowIdentifier
 
 internal class WorkflowIdentifier(
         ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
         ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
     : IWorkflowIdentifier
 {
@@ -22,7 +24,7 @@ internal class WorkflowIdentifier(
 
         if (!await IsUserAuthenticated(inputPort, portToRoleMapRepo))
         {
-            return new UserAuthWorkflow(inputRepo, portToRoleMapRepo);
+            return new UserAuthWorkflow(inputRepo, roleRepo, portToRoleMapRepo);
         }
         
         return Option<IWorkflow>.None();

@@ -55,17 +55,17 @@ internal interface ITestUtils
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
-    internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
+    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", RoleType.SanitaryOps_Admin);
     
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNM", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATF", RoleType.SanitaryOps_Observer);
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", RoleType.SanitaryOps_Observer);
 
-    internal static readonly Role SanitaryOpsInspector2 = new("MAM8S", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPK", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMC", RoleType.SanitaryOps_Observer);
+    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", RoleType.SanitaryOps_Observer);
     
     public Randomizer Randomizer { get; } = randomizer;
     

@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
@@ -12,6 +13,7 @@ using static UserAuthWorkflow.States;
 
 internal class UserAuthWorkflow(
         ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
         ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
     : IWorkflow
 {
@@ -36,10 +38,14 @@ internal class UserAuthWorkflow(
             
             TokenSubmitted => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
-                true => new List<OutputDto> { new ()
-                    {
-                        Text = Ui("You have successfully authenticated.")
-                    }
+                true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
+                {
+                    true => new List<OutputDto> { new ()
+                        {
+                            Text = Ui("You have successfully authenticated.")
+                        }
+                    },
+                    false => Result<IReadOnlyList<OutputDto>>.FromError(Ui("This token is not registered. Try again.")) 
                 },
                 false => Result<IReadOnlyList<OutputDto>>.FromError(
                     Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample()))
@@ -79,6 +85,9 @@ internal class UserAuthWorkflow(
         };
     }
 
+    private async Task<bool> TokenExists(string token) =>
+        (await roleRepo.GetAllAsync()).Any(role => role.Token == token);
+    
     [Flags]
     internal enum States
     {
