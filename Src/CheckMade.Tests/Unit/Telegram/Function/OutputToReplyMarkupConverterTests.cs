@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using CheckMade.Common.Model.Core;
+using static CheckMade.Common.Model.Core.DomainCategory;
 using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
+using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -24,12 +24,9 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[] 
         {
-            (category: DomainCategory.SanitaryOps_FacilityToilets,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityToilets)),
-            (category: DomainCategory.SanitaryOps_FacilityShowers,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityShowers)),
-            (category: DomainCategory.SanitaryOps_FacilityStaff,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityStaff)) 
+            (category: SanitaryOps_FacilityToilets, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityToilets)),
+            (category: SanitaryOps_FacilityShowers, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityShowers)),
+            (category: SanitaryOps_FacilityStaff, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityStaff)) 
         };
         var outputWithDomainCategories = new OutputDto
         {
@@ -69,11 +66,11 @@ public class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[]
         {
-            (prompt: ControlPrompts.No, promptId: new EnumCallbackId((long)ControlPrompts.No)),
-            (prompt: ControlPrompts.Yes, promptId: new EnumCallbackId((long)ControlPrompts.Yes)),
-            (prompt: ControlPrompts.Bad, promptId: new EnumCallbackId((long)ControlPrompts.Bad)),
-            (prompt: ControlPrompts.Ok, promptId: new EnumCallbackId((long)ControlPrompts.Ok)),
-            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
+            (prompt: No, promptId: new EnumCallbackId((long)No)),
+            (prompt: Yes, promptId: new EnumCallbackId((long)Yes)),
+            (prompt: Bad, promptId: new EnumCallbackId((long)Bad)),
+            (prompt: Ok, promptId: new EnumCallbackId((long)Ok)),
+            (prompt: Good, promptId: new EnumCallbackId((long)Good))
         };
         var outputWithPrompts = new OutputDto
         {
@@ -122,12 +119,12 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[]
         {
-            (category: DomainCategory.SanitaryOps_FacilityShowers,
-                categoryId: new EnumCallbackId((int)DomainCategory.SanitaryOps_FacilityShowers))
+            (category: SanitaryOps_FacilityShowers,
+                categoryId: new EnumCallbackId((int)SanitaryOps_FacilityShowers))
         };
         var promptSelection = new[] 
         {
-            (prompt: ControlPrompts.Good, promptId: new EnumCallbackId((long)ControlPrompts.Good))
+            (prompt: Good, promptId: new EnumCallbackId((long)Good))
         };
         var outputWithBoth = new OutputDto
         {
@@ -206,7 +203,7 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var outputWithInvalid = new OutputDto
         {
-            ControlPromptsSelection = ControlPrompts.Back + 1
+            ControlPromptsSelection = Back + 1
         };
 
         var act = () => basics.converter.GetReplyMarkup(outputWithInvalid);
