@@ -4,6 +4,7 @@ using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
+using static CheckMade.Common.Model.Telegram.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
@@ -26,9 +27,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     private ServiceProvider? _services;
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_LogsWarningAndReturns_ForUnhandledMessageType(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -53,9 +54,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_LogsError_WhenInputProcessorThrowsException(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -108,7 +109,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
                 outputHelper.WriteLine(msg));
         
-        await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, InteractionMode.Operations);
+        await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, Operations);
     
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -204,9 +205,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     #endregion
     
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     // Just to confirm basic integration. Detailed unit tests for correct Output->ReplyMarkup conversions are elsewhere.
     public async Task HandleUpdateAsync_SendsMessageWithCorrectReplyMarkup_ForOutputWithPrompts(InteractionMode mode)
     {
@@ -249,9 +250,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_SendsMultipleMessages_ForListOfOutputDtos(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -278,9 +279,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenMappingsExist(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -289,19 +290,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsInspector1, InteractionMode.Operations), 
+                    TestUtils.SanitaryOpsInspector1, Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsInspector1, InteractionMode.Communications),
+                    TestUtils.SanitaryOpsInspector1, Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsEngineer1, InteractionMode.Notifications),
+                    TestUtils.SanitaryOpsEngineer1, Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
             }
         ];
@@ -343,9 +344,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_SendsToCurrentlyReceivingChatId_WhenOutputDtoHasNoLogicalPort(
         InteractionMode mode)
     {
@@ -377,9 +378,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_SendsMultipleAttachmentTypes_WhenOutputContainsThem(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -430,9 +431,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     // This test passing implies that the main Text and each attachment's caption are all seen by the user
     public async Task HandleUpdateAsync_SendsTextAndAttachments_ForOneOutputWithTextAndAttachments(InteractionMode mode)
     {
@@ -479,9 +480,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task HandleUpdateAsync_SendsLocation_WhenOutputContainsOne(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -529,7 +530,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IInputProcessorFactory 
         GetMockInputProcessorFactoryWithSetUpReturnValue(
-            IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = InteractionMode.Operations)
+            IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = Operations)
     {
         var mockOperationsInputProcessor = new Mock<IInputProcessor>();
         
