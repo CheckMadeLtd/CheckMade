@@ -9,12 +9,12 @@ public interface IInputProcessorFactory
 }
 
 public class InputProcessorFactory(
-        ITlgInputRepository inputRepo, 
-        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+        IWorkflowIdentifier workflowIdentifier,    
+        ITlgInputRepository inputRepo) 
     : IInputProcessorFactory
 {
     public IInputProcessor GetInputProcessor(InteractionMode interactionMode)
     {
-        return new InputProcessor(interactionMode, inputRepo, portToRoleMapRepo);
+        return new InputProcessor(interactionMode, workflowIdentifier, inputRepo);
     }
 }
