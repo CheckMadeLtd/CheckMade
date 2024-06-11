@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Utils.Generic;
 using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
 using CheckMade.Telegram.Logic.Workflows;
 using CheckMade.Tests.Startup;
@@ -16,7 +17,7 @@ public class UserAuthWorkflowTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsReadyToEnterTokenState_AfterUserConfirmedReadiness()
+    public async Task DetermineCurrentStateAsync_ReturnsReadyToReceiveToken_AfterUserConfirmedReadiness()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -33,11 +34,11 @@ public class UserAuthWorkflowTests
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
-        Assert.Equal(ReadyToEnterToken, actualState);
+        Assert.Equal(ReadyToReceiveToken, actualState);
     }
     
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnTokenSubmittedState_AfterUserSubmittedToken()
+    public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -48,38 +49,16 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput>
             {
                 basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Submit)
+                basics.utils.GetValidTlgTextMessage()
             });
         
         var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
-        Assert.Equal(TokenSubmittedWithUnknownOutcome, actualState);
+        Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
 
-    [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsVirginState_WhenUserCancelsTokenEntry()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
-
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Cancel)
-            });
-        
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
-        
-        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
-        
-        Assert.Equal(Virgin, actualState);
-    }
-        
     [Fact]
     public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceEndDateOfLastTlgClientPortToRoleMapping()
     {
@@ -87,30 +66,27 @@ public class UserAuthWorkflowTests
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Uses a set up 'expired' mapping in MockTlgClientPortToRoleMapRepository 
-        var tlgPastSubmitInputToBeIgnored = basics.utils.GetValidTlgCallbackQueryForControlPrompts(
-            Submit, 
+        // Depends on an 'expired' mapping set up by default in the MockTlgClientPortToRoleMapRepository 
+        var tlgPastInputToBeIgnored = basics.utils.GetValidTlgCallbackQueryForControlPrompts(
+            Authenticate,
             TestUserId_02,
             TestChatId_03,
             new DateTime(1999, 01, 05));
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_02))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                tlgPastSubmitInputToBeIgnored,
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate)
-            });
+            .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
         
-        Assert.Equal(ReadyToEnterToken, actualState);
+        Assert.Equal(Virgin, actualState);
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_StaysInTokenSubmittedState_AfterFailedSubmissionAttempt()
+    // We know it's failed because a successful submission means no revisiting of the UserAuthWorkflow!
+    public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -121,45 +97,59 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput>
             {
                 basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Submit)
+                basics.utils.GetValidTlgTextMessage()
             });
         
         var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
-        Assert.Equal(TokenSubmittedWithUnknownOutcome, actualState);
+        Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsErrorMessage_WhenSubmittedTokenNotExists()
+    public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
+        var nonExistingTokenInput = basics.utils.GetValidTlgTextMessage(
+            text: InputValidator.GetTokenFormatExample(),
+            dateTime: basics.baseDateTime.AddSeconds(1));
+        
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
             .ReturnsAsync(new List<TlgInput>
             {
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Submit)
+                basics.utils.GetValidTlgCallbackQueryForControlPrompts(
+                    Authenticate, dateTime: basics.baseDateTime),
+                nonExistingTokenInput
             });
         
         var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
-        const string nonExistingToken = "AAAAAA";
-        var nonExistingTokenInput = basics.utils.GetValidTlgTextMessage(text: nonExistingToken);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
         Assert.Equal("This is an unknown token. Try again...", GetFirstRawEnglish(actualOutputs));
     }
 
-    [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenIsCurrentlyMapped()
-    {
-        // ToDo: in this case, use a static Ui() in the workflow which can be reused here for verification of output.
-    }
+    // [Fact]
+    // public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenIsCurrentlyMapped()
+    // {
+    //     // this requires looking up in the mapRepo whether an active mapping exists
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     var basics = GetBasicTestingServices(_services);
+    //     var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+    //
+    //     mockTlgInputsRepo
+    //         .Setup(repo => repo.GetAllAsync(TestUserId_01))
+    //         .ReturnsAsync(new List<TlgInput>
+    //         {
+    //             basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
+    //             //
+    //         });
+    // }
 
     [Fact]
     public async Task GetNextOutputAsync_MapsPortToRoleAndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
@@ -175,32 +165,40 @@ public class UserAuthWorkflowTests
     [InlineData(" ")]
     [InlineData(" some text with trailing spaces and \n line break ")]
     [InlineData("")]
-    public async Task GetNextOutputAsync_ReturnsErrorMessage_WhenFormatOfEnteredTokenIsInvalid(
-        string badToken)
+    public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
+        var badTokenInput = basics.utils.GetValidTlgTextMessage(
+            text: badToken,
+            dateTime: basics.baseDateTime.AddSeconds(1));
+        
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
             .ReturnsAsync(new List<TlgInput>
             {
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Submit)
+                basics.utils.GetValidTlgCallbackQueryForControlPrompts(
+                    Authenticate, dateTime: basics.baseDateTime),
+                badTokenInput
             });
         
         var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
-        var badTokenInput = basics.utils.GetValidTlgTextMessage(text: badToken);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
         Assert.Equal("Bad token format! The correct format is: '{0}'", GetFirstRawEnglish(actualOutputs));
     }
 
-    private (ITestUtils utils, ITlgClientPortToRoleMapRepository portToRoleMapRepo, IRoleRepository roleRepo) 
+    private static (
+        ITestUtils utils,
+        ITlgClientPortToRoleMapRepository portToRoleMapRepo,
+        IRoleRepository roleRepo,
+        DateTime baseDateTime) 
         GetBasicTestingServices(IServiceProvider sp) =>
             (sp.GetRequiredService<ITestUtils>(),
             sp.GetRequiredService<ITlgClientPortToRoleMapRepository>(),
-            sp.GetRequiredService<IRoleRepository>());
+            sp.GetRequiredService<IRoleRepository>(),
+            DateTime.Now);
 }

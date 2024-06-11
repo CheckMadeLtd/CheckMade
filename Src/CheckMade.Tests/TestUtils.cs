@@ -34,8 +34,8 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    TlgInput GetValidTlgTextMessage(
-        long userId = TestUserId_01, long chatId = TestChatId_01, string text = "Hello World");
+    TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
+        string text = "Hello World", DateTime? dateTime = null);
     TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type);
     TlgInput GetValidTlgCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
@@ -73,13 +73,15 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text) =>
+    public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
         new(userId,
             chatId,
             InteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
-                DateTime.Now, 1, text));
+                dateTime ?? DateTime.Now, 
+                1, 
+                text));
     
     public TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),

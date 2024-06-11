@@ -3,7 +3,6 @@ using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 
@@ -35,9 +34,9 @@ internal class UserAuthWorkflow(
                 } 
             },
             
-            ReadyToEnterToken => new List<OutputDto> { _enterTokenPrompt },
+            ReadyToReceiveToken => new List<OutputDto> { _enterTokenPrompt },
             
-            TokenSubmittedWithUnknownOutcome => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
+            ReceivedTokenSubmissionAttempt => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
                 true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
                 {
@@ -72,25 +71,30 @@ internal class UserAuthWorkflow(
                 map.DeactivationDate.IsSome)
             .MaxBy(map => map.DeactivationDate.GetValueOrThrow());
 
-        var cutOffDate = lastUsedTlgClientPortToRoleMapping != null
+        var dateOfLastMappingDeactivationForCutOff = lastUsedTlgClientPortToRoleMapping != null
             ? lastUsedTlgClientPortToRoleMapping.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        var allInputsSinceDeactivationOfLastMapping = (await inputRepo.GetAllAsync(userId))
-            .Where(i => i.Details.TlgDate > cutOffDate)
+        var allRelevantInputs = (await inputRepo.GetAllAsync(userId))
+            .Where(i => i.Details.TlgDate > dateOfLastMappingDeactivationForCutOff)
             .ToList().AsReadOnly();
 
-        var allControlPromptsRespondedTo = (ControlPrompts)allInputsSinceDeactivationOfLastMapping
-            .Where(i => i.Details.ControlPromptEnumCode.IsSome)
-            .Select(i => i.Details.ControlPromptEnumCode.GetValueOrThrow())
-            .Aggregate((current, next) => current | next);
+        var lastAuthenticatePrompt = allRelevantInputs
+            .LastOrDefault(i => i.Details.ControlPromptEnumCode.GetValueOrDefault() == (long)Authenticate);
         
-        return allControlPromptsRespondedTo switch
+        var lastTextSubmitted = allRelevantInputs
+            .LastOrDefault(i => i.TlgInputType == TlgInputType.TextMessage);
+
+        return (lastAuthenticatePrompt, lastTextSubmitted) switch
         {
-            var prompts when prompts.HasFlag(Cancel) => Virgin,
-            var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
-            var prompts when prompts.HasFlag(Submit) => TokenSubmittedWithUnknownOutcome,
-            _ => Virgin
+            (null, _) => Virgin,
+            
+            (_,null) => ReadyToReceiveToken,
+            
+            ({ } lastAuth, { } lastText) 
+                when lastText.Details.TlgDate > lastAuth.Details.TlgDate => ReceivedTokenSubmissionAttempt,
+            
+            _ => throw new InvalidOperationException($"Undetermined current State in {GetType()}")
         };
     }
 
@@ -101,7 +105,7 @@ internal class UserAuthWorkflow(
     internal enum States
     {
         Virgin = 1,
-        ReadyToEnterToken = 1<<1,
-        TokenSubmittedWithUnknownOutcome = 1<<2,
+        ReadyToReceiveToken = 1<<1,
+        ReceivedTokenSubmissionAttempt = 1<<2,
     }
 }
