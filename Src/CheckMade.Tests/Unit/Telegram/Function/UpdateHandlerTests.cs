@@ -4,6 +4,7 @@ using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -311,15 +312,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
-
+        var portToRoleMap = await basics.portToRoleMapTask;
+        
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
-                TelegramPortChatId = basics.roleByTelegramPort
-                    .First(kvp => 
-                        kvp.Value == output.LogicalPort.GetValueOrThrow().Role)
-                    .Key.ChatId.Id
+                
+                TelegramPortChatId = portToRoleMap
+                    .Where(map => 
+                        map.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        map.Status == DbRecordStatus.Active)
+                    .MaxBy(map => map.ActivationDate)!
+                    .ClientPort.ChatId.Id
             });
 
         await basics.handler.HandleUpdateAsync(update, mode);
@@ -511,7 +516,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        IDictionary<TlgClientPort, Role> roleByTelegramPort)
+        Task<IEnumerable<TlgClientPortToRoleMap>> portToRoleMapTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -519,12 +524,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgClientPortToRoleMapRepository>().GetAllAsync()
-                    .Result
-                    .ToDictionary(
-                        keySelector: map => map.ClientPort,
-                        elementSelector: map => map.Role)
-                );
+                sp.GetRequiredService<ITlgClientPortToRoleMapRepository>().GetAllAsync());
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IInputProcessorFactory 

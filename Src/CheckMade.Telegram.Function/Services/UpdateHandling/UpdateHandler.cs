@@ -1,7 +1,5 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
@@ -24,7 +22,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgClientPortToRoleMapRepository tlgClientPortToRoleMapRepository,
+        ITlgClientPortToRoleMapRepository tlgClientPortToRoleMapRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -69,6 +67,7 @@ public class UpdateHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
+        var portToRoleMap = await tlgClientPortToRoleMapRepo.GetAllAsync();
 
         var sendOutputsAttempt = await
             (from tlgInput
@@ -78,14 +77,11 @@ public class UpdateHandler(
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
-                from roleByTlgClientPort
-                    in Attempt<IDictionary<TlgClientPort, Role>>.RunAsync(
-                        GetRoleByTlgClientPortAsync) 
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          roleByTlgClientPort, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          portToRoleMap, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -117,10 +113,4 @@ public class UpdateHandler(
             ? (LanguageCode) userLanguagePreference!
             : defaultUiLanguage.Code;
     }
-    
-    private async Task<IDictionary<TlgClientPort, Role>> GetRoleByTlgClientPortAsync() =>
-        (await tlgClientPortToRoleMapRepository.GetAllAsync())
-            .ToDictionary(
-                keySelector: map => map.ClientPort,
-                elementSelector: map => map.Role);
 }

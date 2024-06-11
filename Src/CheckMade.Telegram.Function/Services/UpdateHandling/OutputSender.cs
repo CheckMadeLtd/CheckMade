@@ -3,6 +3,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Telegram.Function.Services.Conversion;
@@ -17,7 +18,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IDictionary<TlgClientPort, Role> roleByTelegramPort,
+            IEnumerable<TlgClientPortToRoleMap> portToRoleMap,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -33,9 +34,12 @@ internal static class OutputSender
                     () => botClientByMode[currentlyReceivingInteractionMode]);
 
                 var portChatId = output.LogicalPort.Match(
-                    logicalPort => roleByTelegramPort
-                        // Using 'Last' so the message gets send only to the last ChatId where the user authenticated
-                        .Last(kvp => kvp.Value == logicalPort.Role).Key.ChatId.Id,
+                    logicalPort => portToRoleMap
+                        .Where(map => 
+                            map.Role == logicalPort.Role &&
+                            map.Status == DbRecordStatus.Active)
+                        .MaxBy(map => map.ActivationDate)! // returns the port where this role authenticated last 
+                        .ClientPort.ChatId.Id,
                     // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingChatId);
                     
