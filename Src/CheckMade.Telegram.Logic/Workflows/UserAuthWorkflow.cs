@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Telegram.UserInteraction;
 using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 
@@ -44,16 +45,23 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
         };
     }
 
-    private async Task<States> DetermineCurrentStateAsync(TlgUserId userId)
+    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId)
     {
-        var allInputs = await inputRepo.GetAllAsync(userId);
+        // ToDo: this needs to become not all of the user's inputs ever, but only inputs relevant to this workflow
+        // i.e. since last 'reset'? This is a general problem that needs solving for each workflow
+        var allInputs = (await inputRepo.GetAllAsync(userId)).ToList().AsReadOnly();
 
-        if (allInputs.FirstOrDefault(x => x.Details.ControlPromptEnumCode == (long)Submit) != null)
-        {
-            return TokenSubmitted;
-        }
+        var controlPrompts = (ControlPrompts)allInputs
+            .Where(i => i.Details.ControlPromptEnumCode.IsSome)
+            .Select(i => i.Details.ControlPromptEnumCode.GetValueOrThrow())
+            .Aggregate((current, next) => current | next);
         
-        return Virgin;
+        return controlPrompts switch
+        {
+            var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
+            var prompts when prompts.HasFlag(Submit) => TokenSubmitted,
+            _ => Virgin
+        };
     }
 
     [Flags]
