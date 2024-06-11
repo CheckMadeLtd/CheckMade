@@ -1,6 +1,7 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
+using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Function.Services.UpdateHandling;
@@ -51,6 +52,9 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
+    
+    internal static string GetFirstRawEnglish(Result<IReadOnlyList<OutputDto>> actualOutput) =>
+        actualOutput.GetValueOrThrow()[0].Text.GetValueOrThrow().RawEnglishText;
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils

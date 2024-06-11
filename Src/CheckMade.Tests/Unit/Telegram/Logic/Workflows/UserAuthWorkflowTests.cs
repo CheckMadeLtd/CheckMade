@@ -132,7 +132,7 @@ public class UserAuthWorkflowTests
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsError_WhenSubmittedTokenNotExists()
+    public async Task GetNextOutputAsync_ReturnsErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -152,7 +152,7 @@ public class UserAuthWorkflowTests
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
-        Assert.True(actualOutputs.IsError);
+        Assert.Equal("This is an unknown token. Try again...", GetFirstRawEnglish(actualOutputs));
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public class UserAuthWorkflowTests
     [InlineData(" ")]
     [InlineData(" some text with trailing spaces and \n line break ")]
     [InlineData("")]
-    public async Task GetNextOutputAsync_ReturnsFailedResult_WhenFormatOfEnteredTokenIsInvalid(
+    public async Task GetNextOutputAsync_ReturnsErrorMessage_WhenFormatOfEnteredTokenIsInvalid(
         string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -195,7 +195,7 @@ public class UserAuthWorkflowTests
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
-        Assert.True(actualOutputs.IsError);
+        Assert.Equal("Bad token format! The correct format is: '{0}'", GetFirstRawEnglish(actualOutputs));
     }
 
     private (ITestUtils utils, ITlgClientPortToRoleMapRepository portToRoleMapRepo, IRoleRepository roleRepo) 
