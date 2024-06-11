@@ -12,12 +12,19 @@ public class UserAuthWorkflowTests
 {
     private ServiceProvider? _services;
 
+    // ToDo Add tests: 
+    // 1. ReadyToEnterToken status
+    // 2. Success auth message also shows role and event and name "Lukas, you have authenticated as SanitaryAdmin in Event xy" 
+    
+    // [Fact]
+    // public async Task GetNextOutputAsync_
+    
     [Theory]
     [InlineData("5JFU")]
     [InlineData(" ")]
     [InlineData(" some text with trailing spaces and \n line break ")]
     [InlineData("")]
-    public async Task GetNextOutputAsync_ReturnsFailedResultWithUsefulErrorMessage_WhenFormatOfEnteredTokenIsInvalid(
+    public async Task GetNextOutputAsync_ReturnsFailedResult_WhenFormatOfEnteredTokenIsInvalid(
         string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();

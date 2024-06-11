@@ -47,6 +47,7 @@ internal class InputProcessor(
         );
     }
 
+    // ToDo: Pull out into its own class CurrentWorkflowIdentifier - it's so central for testing
     public async Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input)
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId);
