@@ -14,8 +14,8 @@ public record OutputDto
     public Option<IEnumerable<DomainCategory>> DomainCategorySelection { get; init; } 
         = Option<IEnumerable<DomainCategory>>.None();
     
-    public Option<IEnumerable<ControlPrompts>> ControlPromptsSelection { get; init; } 
-        = Option<IEnumerable<ControlPrompts>>.None();
+    public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
+        = Option<ControlPrompts>.None();
     
     public Option<IEnumerable<string>> PredefinedChoices { get; init; } 
         = Option<IEnumerable<string>>.None();

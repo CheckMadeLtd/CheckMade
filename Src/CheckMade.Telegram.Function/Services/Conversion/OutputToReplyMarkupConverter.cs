@@ -42,7 +42,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 
     private static bool AllEnumsAreDefined(
         Option<IEnumerable<DomainCategory>> categorySelection,
-        Option<IEnumerable<ControlPrompts>> promptsSelection)
+        Option<ControlPrompts> promptsSelection)
     {
         var allTrue = true;
         
@@ -51,7 +51,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             () => true);
         
         allTrue &= promptsSelection.Match(
-            items => items.All(EnumChecker.IsDefined),
+            EnumChecker.IsDefined,
             () => true);
 
         return allTrue;
@@ -59,7 +59,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
         Option<IEnumerable<DomainCategory>> categorySelection,
-        Option<IEnumerable<ControlPrompts>> promptSelection,
+        Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {
         var uiStringProvider = new EnumUiStringProvider();
@@ -72,8 +72,14 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((long)prompt)]);
         Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((long)prompt).Id;
 
+        // For uniformity, convert the combined flagged enum into an array.
+        var allControlPrompts = Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
+        var promptSelectionAsArray = allControlPrompts
+            .Where(prompts => promptSelection.GetValueOrDefault().HasFlag(prompts));
+        
         return CollectTextIdPairs(categorySelection, categoryTranslationGetter, categoryIdGetter)
-            .Concat(CollectTextIdPairs(promptSelection, promptTranslationGetter, promptIdGetter));
+            .Concat(CollectTextIdPairs(Option<IEnumerable<ControlPrompts>>.Some(promptSelectionAsArray), 
+                promptTranslationGetter, promptIdGetter));
     }
     
     private static IEnumerable<(string text, string id)> CollectTextIdPairs<TEnum>(

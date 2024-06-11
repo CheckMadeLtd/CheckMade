@@ -14,18 +14,14 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
             States.Virgin => new List<OutputDto> { new()
                 {
                     Text = Ui("When you have your 'role token' ready (format 'ABC123'), click 'authenticate'."),
-                    ControlPromptsSelection = new List<ControlPrompts> { ControlPrompts.Authenticate }
+                    ControlPromptsSelection = ControlPrompts.Authenticate
                 } 
             },
             
             States.ReadyToEnterToken => new List<OutputDto> { new()
                 {
                     Text = Ui("🌀 Please enter your role token: "),
-                    ControlPromptsSelection = new List<ControlPrompts>
-                    {
-                        ControlPrompts.Submit,
-                        ControlPrompts.Cancel
-                    }
+                    ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel
                 }
             },
             

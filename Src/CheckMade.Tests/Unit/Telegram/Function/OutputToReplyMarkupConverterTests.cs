@@ -77,7 +77,8 @@ public class OutputToReplyMarkupConverterTests
         };
         var outputWithPrompts = new OutputDto
         {
-            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
+            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
+                .Aggregate((current, next) => current | next)
         };
 
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -131,7 +132,8 @@ public class OutputToReplyMarkupConverterTests
         var outputWithBoth = new OutputDto
         {
             DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray(),
-            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt).ToArray()
+            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
+                .Aggregate((current, next) => current | next)
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -204,7 +206,7 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var outputWithInvalid = new OutputDto
         {
-            ControlPromptsSelection = new[] { ControlPrompts.Back + 1 }
+            ControlPromptsSelection = ControlPrompts.Back + 1
         };
 
         var act = () => basics.converter.GetReplyMarkup(outputWithInvalid);

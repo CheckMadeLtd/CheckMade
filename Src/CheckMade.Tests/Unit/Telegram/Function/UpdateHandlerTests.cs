@@ -215,7 +215,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new ()
             {
               Text = ITestUtils.EnglishUiStringForTests,
-              ControlPromptsSelection = new[] { ControlPrompts.Bad, ControlPrompts.Good } 
+              ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
             }
         };
         
@@ -506,7 +506,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
     
-    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler, IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator, IDictionary<TlgClientPort, Role> roleByTelegramPort)
+    private static (ITestUtils utils, 
+        Mock<IBotClientWrapper> mockBotClient,
+        IUpdateHandler handler,
+        IOutputToReplyMarkupConverterFactory markupConverterFactory,
+        IUiTranslator emptyTranslator,
+        IDictionary<TlgClientPort, Role> roleByTelegramPort)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),

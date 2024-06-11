@@ -16,7 +16,7 @@ public interface IInputProcessor
     public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
 
     // internal because outside of InputProcessor, only accessible to tests.
-    internal Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input);
+    public Task<Option<IWorkflow>> IdentifyCurrentWorkflowAsync(TlgInput input);
 }
 
 internal class InputProcessor(
