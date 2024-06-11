@@ -2,6 +2,7 @@ using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Utils.Generic;
 
 namespace CheckMade.Telegram.Logic.Workflows;
 
@@ -25,7 +26,7 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
                 }
             },
             
-            States.TokenSubmitted => VerifyToken(tlgInput.Details.Text) switch
+            States.TokenSubmitted => InputValidator.IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
                 true => new List<OutputDto> { new ()
                     {
@@ -52,11 +53,6 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
         return States.Virgin;
     }
 
-    private static bool VerifyToken(Option<string> enteredToken)
-    {
-        return false; // ToDo: implement actual rules
-    }
-    
     [Flags]
     private enum States
     {
