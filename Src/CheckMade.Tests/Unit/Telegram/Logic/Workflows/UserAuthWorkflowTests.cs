@@ -55,7 +55,7 @@ public class UserAuthWorkflowTests
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
-        Assert.Equal(TokenSubmitted, actualState);
+        Assert.Equal(TokenSubmittedWithUnknownOutcome, actualState);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsReadyToEnterTokenState_AfterFailedSubmissionAttempt()
+    public async Task DetermineCurrentStateAsync_StaysInTokenSubmittedState_AfterFailedSubmissionAttempt()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -128,7 +128,7 @@ public class UserAuthWorkflowTests
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
-        Assert.Equal(ReadyToEnterToken, actualState);
+        Assert.Equal(TokenSubmittedWithUnknownOutcome, actualState);
     }
     
     [Fact]

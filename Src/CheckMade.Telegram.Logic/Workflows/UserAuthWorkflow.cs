@@ -37,7 +37,7 @@ internal class UserAuthWorkflow(
             
             ReadyToEnterToken => new List<OutputDto> { _enterTokenPrompt },
             
-            TokenSubmitted => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
+            TokenSubmittedWithUnknownOutcome => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
                 true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
                 {
@@ -88,9 +88,8 @@ internal class UserAuthWorkflow(
         return allControlPromptsRespondedTo switch
         {
             var prompts when prompts.HasFlag(Cancel) => Virgin,
-            // ToDo: this will not work now with re-attempt after failed submission.
             var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
-            var prompts when prompts.HasFlag(Submit) => TokenSubmitted,
+            var prompts when prompts.HasFlag(Submit) => TokenSubmittedWithUnknownOutcome,
             _ => Virgin
         };
     }
@@ -103,6 +102,6 @@ internal class UserAuthWorkflow(
     {
         Virgin = 1,
         ReadyToEnterToken = 1<<1,
-        TokenSubmitted = 1<<2,
+        TokenSubmittedWithUnknownOutcome = 1<<2,
     }
 }
