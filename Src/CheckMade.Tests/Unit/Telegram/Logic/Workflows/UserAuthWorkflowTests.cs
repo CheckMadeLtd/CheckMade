@@ -92,6 +92,10 @@ public class UserAuthWorkflowTests
         Assert.Equal(ReadyToEnterToken, actualState);
     }
     
+    // ToDo: write test for when user clicks 'cancel' -> back to Virgin!
+    
+    // ToDo: write test that, for well-formatted token, checks a) if it exists and b) if it is already used (-> warning but success)
+    
     [Theory]
     [InlineData("5JFU")]
     [InlineData(" ")]
