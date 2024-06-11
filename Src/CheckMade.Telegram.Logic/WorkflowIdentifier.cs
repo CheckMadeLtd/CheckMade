@@ -22,7 +22,7 @@ internal class WorkflowIdentifier(
 
         if (!await IsUserAuthenticated(inputPort, portToRoleMapRepo))
         {
-            return new UserAuthWorkflow(inputRepo);
+            return new UserAuthWorkflow(inputRepo, portToRoleMapRepo);
         }
         
         return Option<IWorkflow>.None();

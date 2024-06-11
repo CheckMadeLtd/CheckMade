@@ -41,7 +41,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgCallbackQueryForDomainCategory(
         DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgCallbackQueryForControlPrompts(
-        ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01);
+        ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -101,21 +101,23 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    public TlgInput GetValidTlgCallbackQueryForDomainCategory(DomainCategory category, long userId = ITestUtils.TestUserId_01,
-        long chatId = ITestUtils.TestChatId_01)
+    public TlgInput GetValidTlgCallbackQueryForDomainCategory(DomainCategory category, long userId, long chatId)
     {
         throw new NotImplementedException();
     }
 
-    public TlgInput GetValidTlgCallbackQueryForControlPrompts(ControlPrompts prompts,
-        long userId = ITestUtils.TestUserId_01,
-        long chatId = ITestUtils.TestChatId_01) =>
+    public TlgInput GetValidTlgCallbackQueryForControlPrompts(
+        ControlPrompts prompts,
+        long userId,
+        long chatId,
+        DateTime? dateTime) =>
         new(userId,
             chatId,
             InteractionMode.Operations,
             TlgInputType.CallbackQuery,
             CreateFromRelevantDetails(
-                DateTime.Now, 1,
+                dateTime ?? DateTime.Now,
+                1,
                 controlPromptEnumCode: (long)prompts));
 
     internal static TlgInputDetails CreateFromRelevantDetails(

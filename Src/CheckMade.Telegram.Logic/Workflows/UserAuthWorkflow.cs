@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
@@ -9,11 +10,14 @@ namespace CheckMade.Telegram.Logic.Workflows;
 
 using static UserAuthWorkflow.States;
 
-internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
+internal class UserAuthWorkflow(
+        ITlgInputRepository inputRepo,
+        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+    : IWorkflow
 {
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
-        return await DetermineCurrentStateAsync(tlgInput.UserId) switch
+        return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId) switch
         {
             Virgin => new List<OutputDto> { new()
                 {
@@ -45,10 +49,14 @@ internal class UserAuthWorkflow(ITlgInputRepository inputRepo) : IWorkflow
         };
     }
 
-    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId)
+    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
-        // ToDo: this needs to become not all of the user's inputs ever, but only inputs relevant to this workflow
-        // i.e. since last 'reset'? This is a general problem that needs solving for each workflow
+        var cutOffDate = (await portToRoleMapRepo.GetAllAsync())
+            .Where(map =>
+                map.ClientPort == new TlgClientPort(userId, chatId) &&
+                map.DeactivationDate.IsSome)
+            .MaxBy(map => map.DeactivationDate.GetValueOrThrow());
+        
         var allInputs = (await inputRepo.GetAllAsync(userId)).ToList().AsReadOnly();
 
         var controlPrompts = (ControlPrompts)allInputs
