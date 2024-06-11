@@ -15,11 +15,8 @@ public class UserAuthWorkflowTests
 {
     private ServiceProvider? _services;
 
-    // ToDo Add tests: 
-    // Success auth message also shows role and event and name "Lukas, you have authenticated as SanitaryAdmin in Event xy" 
-
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsCorrectState_AfterUserConfirmedReadinessForTokenEntry()
+    public async Task DetermineCurrentStateAsync_ReturnsReadyToEnterTokenState_AfterUserConfirmedReadiness()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -40,7 +37,7 @@ public class UserAuthWorkflowTests
     }
     
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsCorrectState_AfterUserSubmittedToken()
+    public async Task DetermineCurrentStateAsync_ReturnTokenSubmittedState_AfterUserSubmittedToken()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -113,7 +110,29 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsError_WhenSubmittedTokenNotExists()
+    public async Task DetermineCurrentStateAsync_ReturnsReadyToEnterTokenState_AfterFailedSubmissionAttempt()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
+                basics.utils.GetValidTlgCallbackQueryForControlPrompts(Submit)
+            });
+        
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        
+        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
+        
+        Assert.Equal(ReadyToEnterToken, actualState);
+    }
+    
+    [Fact]
+    public async Task GetNextOutputAsync_ReturnsError_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -135,8 +154,21 @@ public class UserAuthWorkflowTests
         
         Assert.True(actualOutputs.IsError);
     }
-    
-    // ToDo: write test that, for well-formatted token, checks a) if it exists and b) if it is already used (-> warning but success)
+
+    [Fact]
+    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenIsCurrentlyMapped()
+    {
+        // ToDo: in this case, use a static Ui() in the workflow which can be reused here for verification of output.
+    }
+
+    [Fact]
+    public async Task GetNextOutputAsync_MapsPortToRoleAndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
+    {
+        // ToDo: probably verify that 'Add' was called on the mockedPortToRoleMap!
+        
+        // Success auth message also shows role and event and name "Lukas, you have authenticated as SanitaryAdmin in Event xy"
+        // This now requires implementing additional fields in RoleRepo as well as LiveEventRepo. 
+    }
     
     [Theory]
     [InlineData("5JFUX")]

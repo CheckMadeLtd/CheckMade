@@ -36,9 +36,10 @@ internal class InputProcessor(
 
                 return nextWorkflowStepResult.Match(
                     outputs => outputs,
-                    error => [new OutputDto { Text = error }]
+                    error => [new OutputDto { Text = error }] // ToDo: this should also log a warning!
                 );
             },
+            // ToDo: this should also log a warning!
             error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
         );
     }

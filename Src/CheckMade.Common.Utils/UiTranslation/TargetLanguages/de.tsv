@@ -45,4 +45,5 @@ CheckMade.Telegram.Function	Please choose:	Bitte wählen:
 CheckMade.Telegram.Logic	When you have your 'role token' ready (format '{0}'), click 'authenticate'.	Wenn Sie Ihren Rollentoken bereit haben (Format '{0}') klicken Sie auf 'authentifizieren'.
 CheckMade.Telegram.Logic	🌀 Please enter your role token: 	🌀 Bitte geben Sie Ihren Rollentoken ein: 
 CheckMade.Telegram.Logic	You have successfully authenticated.	Sie haben sich erfolgreich authentifiziert.
-CheckMade.Telegram.Logic	This token is not registered. Try again.	Dieser Token ist nicht registriert. Bitte erneut versuchen.
+CheckMade.Telegram.Logic	This is an unknown token. Try again...	Dieser Token ist unbekannt. Erneut versuchen...
+CheckMade.Telegram.Logic	Bad token format! The correct format is: '{0}. Try again...	Falsches Tokenformat! Das korrekte Format ist: '{0}'. Erneut versuchen...

@@ -17,6 +17,12 @@ internal class UserAuthWorkflow(
         ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
     : IWorkflow
 {
+    private readonly OutputDto _enterTokenPrompt = new()
+    {
+        Text = Ui("🌀 Please enter your role token: "),
+        ControlPromptsSelection = Submit | Cancel
+    };
+    
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId) switch
@@ -29,12 +35,7 @@ internal class UserAuthWorkflow(
                 } 
             },
             
-            ReadyToEnterToken => new List<OutputDto> { new()
-                {
-                    Text = Ui("🌀 Please enter your role token: "),
-                    ControlPromptsSelection = Submit | Cancel
-                }
-            },
+            ReadyToEnterToken => new List<OutputDto> { _enterTokenPrompt },
             
             TokenSubmitted => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
             {
@@ -45,16 +46,24 @@ internal class UserAuthWorkflow(
                             Text = Ui("You have successfully authenticated.")
                         }
                     },
-                    false => Result<IReadOnlyList<OutputDto>>.FromError(Ui("This token is not registered. Try again.")) 
+                    false => [ new OutputDto
+                        {
+                            Text = Ui("This is an unknown token. Try again...")
+                        },
+                        _enterTokenPrompt ]
                 },
-                false => Result<IReadOnlyList<OutputDto>>.FromError(
-                    Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample()))
+                false => [ new OutputDto
+                    {
+                        Text = Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample())
+                    },
+                    _enterTokenPrompt ]
             },
             
-            _ => Result<IReadOnlyList<OutputDto>>.FromError(UiNoTranslate("Error"))
+            _ => Result<IReadOnlyList<OutputDto>>.FromError(
+                UiNoTranslate("Can't determine State in UserAuthWorkflow"))
         };
     }
-
+    
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
         var lastUsedTlgClientPortToRoleMapping = (await portToRoleMapRepo.GetAllAsync())
@@ -79,6 +88,7 @@ internal class UserAuthWorkflow(
         return allControlPromptsRespondedTo switch
         {
             var prompts when prompts.HasFlag(Cancel) => Virgin,
+            // ToDo: this will not work now with re-attempt after failed submission.
             var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
             var prompts when prompts.HasFlag(Submit) => TokenSubmitted,
             _ => Virgin
@@ -94,6 +104,5 @@ internal class UserAuthWorkflow(
         Virgin = 1,
         ReadyToEnterToken = 1<<1,
         TokenSubmitted = 1<<2,
-        AuthenticationConfirmed = 1<<3
     }
 }
