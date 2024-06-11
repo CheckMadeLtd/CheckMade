@@ -51,20 +51,26 @@ internal class UserAuthWorkflow(
 
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
-        var cutOffDate = (await portToRoleMapRepo.GetAllAsync())
+        var lastUsedTlgClientPortToRoleMapping = (await portToRoleMapRepo.GetAllAsync())
             .Where(map =>
                 map.ClientPort == new TlgClientPort(userId, chatId) &&
                 map.DeactivationDate.IsSome)
             .MaxBy(map => map.DeactivationDate.GetValueOrThrow());
-        
-        var allInputs = (await inputRepo.GetAllAsync(userId)).ToList().AsReadOnly();
 
-        var controlPrompts = (ControlPrompts)allInputs
+        var cutOffDate = lastUsedTlgClientPortToRoleMapping != null
+            ? lastUsedTlgClientPortToRoleMapping.DeactivationDate.GetValueOrThrow()
+            : DateTime.MinValue;
+        
+        var allInputsSinceDeactivationOfLastMapping = (await inputRepo.GetAllAsync(userId))
+            .Where(i => i.Details.TlgDate > cutOffDate)
+            .ToList().AsReadOnly();
+
+        var allControlPromptsRespondedTo = (ControlPrompts)allInputsSinceDeactivationOfLastMapping
             .Where(i => i.Details.ControlPromptEnumCode.IsSome)
             .Select(i => i.Details.ControlPromptEnumCode.GetValueOrThrow())
             .Aggregate((current, next) => current | next);
         
-        return controlPrompts switch
+        return allControlPromptsRespondedTo switch
         {
             var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
             var prompts when prompts.HasFlag(Submit) => TokenSubmitted,
