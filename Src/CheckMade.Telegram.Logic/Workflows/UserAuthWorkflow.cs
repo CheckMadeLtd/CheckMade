@@ -72,6 +72,7 @@ internal class UserAuthWorkflow(
         
         return allControlPromptsRespondedTo switch
         {
+            var prompts when prompts.HasFlag(Cancel) => Virgin,
             var prompts when prompts.HasFlag(Authenticate) && !prompts.HasFlag(Submit) => ReadyToEnterToken,
             var prompts when prompts.HasFlag(Submit) => TokenSubmitted,
             _ => Virgin

@@ -61,7 +61,30 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(TokenSubmitted, actualState);
     }
-    
+
+    [Fact]
+    public async Task DetermineCurrentStateAsync_ReturnsVirginState_WhenUserCancelsTokenEntry()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
+                utils.GetValidTlgCallbackQueryForControlPrompts(Cancel)
+            });
+        
+        var mockPortToRoleRepo = _services.GetRequiredService<ITlgClientPortToRoleMapRepository>();
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, mockPortToRoleRepo);
+        
+        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
+        
+        Assert.Equal(Virgin, actualState);
+    }
+        
     [Fact]
     public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceEndDateOfLastTlgClientPortToRoleMapping()
     {
@@ -91,8 +114,6 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(ReadyToEnterToken, actualState);
     }
-    
-    // ToDo: write test for when user clicks 'cancel' -> back to Virgin!
     
     // ToDo: write test that, for well-formatted token, checks a) if it exists and b) if it is already used (-> warning but success)
     
