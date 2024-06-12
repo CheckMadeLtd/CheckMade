@@ -24,13 +24,10 @@ public class UserAuthWorkflowTests
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                basics.utils.GetValidTlgTextMessage()
-            });
+            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage() });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -56,7 +53,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
         
@@ -73,13 +70,10 @@ public class UserAuthWorkflowTests
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                basics.utils.GetValidTlgTextMessage(text: "InvalidToken")
-            });
+            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage(text: "InvalidToken") });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -98,13 +92,10 @@ public class UserAuthWorkflowTests
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                nonExistingTokenInput
-            });
+            .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -112,7 +103,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenHasActivePortRole()
+    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenAlreadyHasActivePortRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -122,17 +113,14 @@ public class UserAuthWorkflowTests
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                inputTokenWithActivePortRole
-            });
+            .ReturnsAsync(new List<TlgInput> { inputTokenWithActivePortRole });
 
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another chat. 
                                        This will be the new chat where you receive messages in your role {0} at {1}. 
                                        """;
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
         
         var actualOutputs = await workflow.GetNextOutputAsync(inputTokenWithActivePortRole);
         
@@ -142,10 +130,29 @@ public class UserAuthWorkflowTests
     [Fact]
     public async Task GetNextOutputAsync_CreatesPortRole_AndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
     {
-        // ToDo: probably verify that 'Add' was called on the mockedPortRolesRepo!
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+            userId: TestUserId_03,
+            chatId: TestChatId_08,
+            text: SanitaryOpsInspector2.Token);
+
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(TestUserId_03))
+            .ReturnsAsync(new List<TlgInput> { inputValidToken });
+
+        const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
         
-        // Success auth message also shows role and event and name "Lukas, you have authenticated as SanitaryAdmin in Event xy"
-        // This now requires implementing additional fields in RoleRepo as well as LiveEventRepo. 
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+
+        var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
+        
+        Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
+        
+        
     }
     
     [Theory]
@@ -169,17 +176,20 @@ public class UserAuthWorkflowTests
             });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
         Assert.Equal("Bad token format! The correct format is: '{0}'", GetFirstRawEnglish(actualOutputs));
     }
 
-    private static (ITestUtils utils, ITlgClientPortRoleRepository portRolesRepo, IRoleRepository roleRepo, DateTime baseDateTime) 
+    private static (ITestUtils utils, 
+        Mock<ITlgClientPortRoleRepository> mockPortRolesRepo, 
+        IRoleRepository mockRoleRepo, 
+        DateTime baseDateTime) 
         GetBasicTestingServices(IServiceProvider sp) =>
             (sp.GetRequiredService<ITestUtils>(),
-            sp.GetRequiredService<ITlgClientPortRoleRepository>(),
+            sp.GetRequiredService<Mock<ITlgClientPortRoleRepository>>(),
             sp.GetRequiredService<IRoleRepository>(),
             DateTime.Now);
 }

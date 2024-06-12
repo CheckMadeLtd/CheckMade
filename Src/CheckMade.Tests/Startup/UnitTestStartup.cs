@@ -23,22 +23,26 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
-            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
-        Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
-        Services.AddScoped<ITlgClientPortRoleRepository, MockTlgClientPortRoleRepository>(_ => 
-            new MockTlgClientPortRoleRepository());
+        RegisterPersistenceMocks();
+        RegisterBotClientMocks();
+        RegisterExternalServicesMocks();        
+    }
+
+    private void RegisterBotClientMocks()
+    {
+        Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
+            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
-         in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 
+         in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the
          mockBotClientWrapper without explicitly setting up the mock in the unit test itself.
-         
-         We choose 'AddScoped' because we want our dependencies scoped to the execution of each test method. 
+
+         We choose 'AddScoped' because we want our dependencies scoped to the execution of each test method.
          That's why each test method creates its own ServiceProvider. That prevents:
-         
-         a) interference between test runs e.g. because of shared state in some dependency (which could e.g. 
+
+         a) interference between test runs e.g. because of shared state in some dependency (which could e.g.
          falsify Moq's behaviour 'verifications'
-         
+
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
         Services.AddScoped<Mock<IBotClientWrapper>>(_ =>
@@ -54,10 +58,25 @@ public class UnitTestStartup : TestStartupBase
             
             return mockBotClientWrapper;
         });
+    }
+
+    private void RegisterPersistenceMocks()
+    {
+        // ToDo: unify the appraoch here. _ => needed or not? and fix failing test.
         
-        Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
-            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
+        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
+            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
+        Services.AddScoped<IRoleRepository, MockRoleRepository>();
+
+        Services.AddScoped<Mock<ITlgClientPortRoleRepository>, MockTlgClientPortRoleRepository>(_ =>
+            new MockTlgClientPortRoleRepository());
+        // Services.AddScoped<ITlgClientPortRoleRepository, MockTlgClientPortRoleRepository>(_ => 
+        //     new MockTlgClientPortRoleRepository());
+    }
+
+    private void RegisterExternalServicesMocks()
+    {
         Services.AddScoped<IBlobLoader, MockBlobLoader>();
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }

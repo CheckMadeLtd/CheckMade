@@ -116,30 +116,38 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task<bool> TokenExists(string tokenAttempt) =>
         (await _roleRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
 
+    // ToDo: replace Placeholders with actual data from DB/Setup
     private async Task<List<OutputDto>> AuthenticateUserAsync(string tokenAttempt)
     {
         var outputs = new List<OutputDto>();
+
+        var identifiedRole = _preExistingRoles.First(r => r.Token == tokenAttempt);
         
-        var hasActivePortRole = _preExistingPortRoles.Any(cpr => 
+        var hasActivePortRoleAlready = _preExistingPortRoles.Any(cpr => 
             cpr.Role.Token == tokenAttempt && 
             cpr.Status == DbRecordStatus.Active);
         
-        if (hasActivePortRole)
+        if (hasActivePortRoleAlready)
             outputs.Add(new OutputDto
             {
                 Text = Ui("""
                           Warning: you were already authenticated with this token in another chat. 
                           This will be the new chat where you receive messages in your role {0} at {1}. 
                           """, 
-                    _preExistingRoles.First(r => r.Token == tokenAttempt),
-                    "Placeholder LiveEvent XY") // ToDo: replace with actual LiveEvent
+                    identifiedRole.RoleType,
+                    "Placeholder LiveEvent")
             });
         
         outputs.Add(new OutputDto()
         {
-            Text = Ui("You have successfully authenticated.")
+            Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.",
+                "Placeholder Name",
+                identifiedRole.RoleType,
+                "Placeholder LiveEvent")
         });
 
+        // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
+        
         return outputs;
     }
     
