@@ -30,5 +30,4 @@ public enum ControlPrompts : long
     // Placeholder <<35
     // Placeholder <<36
     
-    Authenticate = 1L<<37
 }

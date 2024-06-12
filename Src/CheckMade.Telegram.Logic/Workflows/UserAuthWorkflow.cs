@@ -3,7 +3,6 @@ using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
-using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 
 namespace CheckMade.Telegram.Logic.Workflows;
@@ -18,22 +17,13 @@ internal class UserAuthWorkflow(
 {
     private readonly OutputDto _enterTokenPrompt = new()
     {
-        Text = Ui("🌀 Please enter your role token: "),
-        ControlPromptsSelection = Submit | Cancel
+        Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
     
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId) switch
         {
-            Virgin => new List<OutputDto> { new()
-                {
-                    Text = Ui("When you have your 'role token' ready (format '{0}'), click 'authenticate'.",
-                        GetTokenFormatExample()),
-                    ControlPromptsSelection = Authenticate
-                } 
-            },
-            
             ReadyToReceiveToken => new List<OutputDto> { _enterTokenPrompt },
             
             ReceivedTokenSubmissionAttempt => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
@@ -79,22 +69,13 @@ internal class UserAuthWorkflow(
             .Where(i => i.Details.TlgDate > dateOfLastDeactivationForCutOff)
             .ToList().AsReadOnly();
 
-        var lastAuthenticatePrompt = allRelevantInputs
-            .LastOrDefault(i => i.Details.ControlPromptEnumCode.GetValueOrDefault() == (long)Authenticate);
-        
         var lastTextSubmitted = allRelevantInputs
             .LastOrDefault(i => i.TlgInputType == TlgInputType.TextMessage);
 
-        return (lastAuthenticatePrompt, lastTextSubmitted) switch
+        return lastTextSubmitted switch
         {
-            (null, _) => Virgin,
-            
-            (_,null) => ReadyToReceiveToken,
-            
-            ({ } lastAuth, { } lastText) 
-                when lastText.Details.TlgDate > lastAuth.Details.TlgDate => ReceivedTokenSubmissionAttempt,
-            
-            _ => throw new InvalidOperationException($"Undetermined current State in {GetType()}")
+            null => ReadyToReceiveToken,
+            _ => ReceivedTokenSubmissionAttempt,
         };
     }
 
@@ -104,8 +85,7 @@ internal class UserAuthWorkflow(
     [Flags]
     internal enum States
     {
-        Virgin = 1,
-        ReadyToReceiveToken = 1<<1,
-        ReceivedTokenSubmissionAttempt = 1<<2,
+        ReadyToReceiveToken = 1,
+        ReceivedTokenSubmissionAttempt = 1<<1,
     }
 }
