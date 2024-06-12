@@ -13,7 +13,7 @@ using static UserAuthWorkflow.States;
 internal class UserAuthWorkflow(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+        ITlgClientPortRoleRepository portRoleRepo) 
     : IWorkflow
 {
     private readonly OutputDto _enterTokenPrompt = new()
@@ -65,18 +65,18 @@ internal class UserAuthWorkflow(
     
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
-        var lastUsedTlgClientPortToRoleMapping = (await portToRoleMapRepo.GetAllAsync())
-            .Where(map =>
-                map.ClientPort == new TlgClientPort(userId, chatId) &&
-                map.DeactivationDate.IsSome)
-            .MaxBy(map => map.DeactivationDate.GetValueOrThrow());
+        var lastUsedTlgClientPortRole = (await portRoleRepo.GetAllAsync())
+            .Where(cpr =>
+                cpr.ClientPort == new TlgClientPort(userId, chatId) &&
+                cpr.DeactivationDate.IsSome)
+            .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastMappingDeactivationForCutOff = lastUsedTlgClientPortToRoleMapping != null
-            ? lastUsedTlgClientPortToRoleMapping.DeactivationDate.GetValueOrThrow()
+        var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortRole != null
+            ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         var allRelevantInputs = (await inputRepo.GetAllAsync(userId))
-            .Where(i => i.Details.TlgDate > dateOfLastMappingDeactivationForCutOff)
+            .Where(i => i.Details.TlgDate > dateOfLastDeactivationForCutOff)
             .ToList().AsReadOnly();
 
         var lastAuthenticatePrompt = allRelevantInputs

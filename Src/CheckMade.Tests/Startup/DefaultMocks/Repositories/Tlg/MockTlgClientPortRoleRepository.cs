@@ -5,57 +5,57 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;
 
-internal class MockTlgClientPortToRoleMapRepository : ITlgClientPortToRoleMapRepository
+internal class MockTlgClientPortRoleRepository : ITlgClientPortRoleRepository
 {
-    public Task<IEnumerable<TlgClientPortToRoleMap>> GetAllAsync()
+    public Task<IEnumerable<TlgClientPortRole>> GetAllAsync()
     {
-        var builder = ImmutableArray.CreateBuilder<TlgClientPortToRoleMap>();
+        var builder = ImmutableArray.CreateBuilder<TlgClientPortRole>();
         
         // #1
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsAdmin1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01),
             DateTime.Now, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
             DateTime.Now, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
             DateTime.Now, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
             new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
             DbRecordStatus.Historic));
 
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsCleanLead1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04),
             DateTime.Now, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsObserver1, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05),
             DateTime.Now, Option<DateTime>.None()));
         
         // #2
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsEngineer2, 
             new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06),
             DateTime.Now, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortToRoleMap(
+        builder.Add(new TlgClientPortRole(
             TestUtils.SanitaryOpsCleanLead2, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07),
             DateTime.Now, Option<DateTime>.None()));
         
-        return Task.FromResult<IEnumerable<TlgClientPortToRoleMap>>(builder.ToImmutable());
+        return Task.FromResult<IEnumerable<TlgClientPortRole>>(builder.ToImmutable());
     }
 }

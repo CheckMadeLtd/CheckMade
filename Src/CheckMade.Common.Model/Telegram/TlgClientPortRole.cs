@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Telegram;
 
-public record TlgClientPortToRoleMap(
+public record TlgClientPortRole(
     Role Role,
     TlgClientPort ClientPort,
     DateTime ActivationDate,

@@ -30,7 +30,7 @@ public class UserAuthWorkflowTests
                 basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate)
             });
 
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -52,7 +52,7 @@ public class UserAuthWorkflowTests
                 basics.utils.GetValidTlgTextMessage()
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -60,13 +60,13 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceEndDateOfLastTlgClientPortToRoleMapping()
+    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Depends on an 'expired' mapping set up by default in the MockTlgClientPortToRoleMapRepository 
+        // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
         var tlgPastInputToBeIgnored = basics.utils.GetValidTlgCallbackQueryForControlPrompts(
             Authenticate,
             TestUserId_02,
@@ -77,7 +77,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(TestUserId_02))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
         
@@ -100,7 +100,7 @@ public class UserAuthWorkflowTests
                 basics.utils.GetValidTlgTextMessage()
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -127,7 +127,7 @@ public class UserAuthWorkflowTests
                 nonExistingTokenInput
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -135,9 +135,9 @@ public class UserAuthWorkflowTests
     }
 
     // [Fact]
-    // public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenIsCurrentlyMapped()
+    // public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenHasActivePortRole()
     // {
-    //     // this requires looking up in the mapRepo whether an active mapping exists
+    //     // this requires looking up in the portRoleRepo whether an active portRole exists
     //     _services = new UnitTestStartup().Services.BuildServiceProvider();
     //     var basics = GetBasicTestingServices(_services);
     //     var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
@@ -152,9 +152,9 @@ public class UserAuthWorkflowTests
     // }
 
     [Fact]
-    public async Task GetNextOutputAsync_MapsPortToRoleAndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
+    public async Task GetNextOutputAsync_CreatesPortRole_AndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
     {
-        // ToDo: probably verify that 'Add' was called on the mockedPortToRoleMap!
+        // ToDo: probably verify that 'Add' was called on the mockedPortRolesRepo!
         
         // Success auth message also shows role and event and name "Lukas, you have authenticated as SanitaryAdmin in Event xy"
         // This now requires implementing additional fields in RoleRepo as well as LiveEventRepo. 
@@ -184,21 +184,17 @@ public class UserAuthWorkflowTests
                 badTokenInput
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portToRoleMapRepo);
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
         Assert.Equal("Bad token format! The correct format is: '{0}'", GetFirstRawEnglish(actualOutputs));
     }
 
-    private static (
-        ITestUtils utils,
-        ITlgClientPortToRoleMapRepository portToRoleMapRepo,
-        IRoleRepository roleRepo,
-        DateTime baseDateTime) 
+    private static (ITestUtils utils, ITlgClientPortRoleRepository portRolesRepo, IRoleRepository roleRepo, DateTime baseDateTime) 
         GetBasicTestingServices(IServiceProvider sp) =>
             (sp.GetRequiredService<ITestUtils>(),
-            sp.GetRequiredService<ITlgClientPortToRoleMapRepository>(),
+            sp.GetRequiredService<ITlgClientPortRoleRepository>(),
             sp.GetRequiredService<IRoleRepository>(),
             DateTime.Now);
 }

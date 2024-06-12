@@ -22,7 +22,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgClientPortToRoleMapRepository tlgClientPortToRoleMapRepo,
+        ITlgClientPortRoleRepository tlgClientPortRoleRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -67,7 +67,7 @@ public class UpdateHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        var portToRoleMap = await tlgClientPortToRoleMapRepo.GetAllAsync();
+        var tlgClientPortRoles = await tlgClientPortRoleRepo.GetAllAsync();
 
         var sendOutputsAttempt = await
             (from tlgInput
@@ -81,7 +81,7 @@ public class UpdateHandler(
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          portToRoleMap, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          tlgClientPortRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(

@@ -282,7 +282,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenMappingsExist(InteractionMode mode)
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgClientPortRolesExist(
+        InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
@@ -291,19 +292,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             { 
                 LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, Operations), 
-                Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot - mapping exists")   
+                Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsInspector1, Communications),
-                Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot - mapping exists") 
+                Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
                     TestUtils.SanitaryOpsEngineer1, Notifications),
-                Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot - mapping exists)") 
+                Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot)") 
             }
         ];
         
@@ -313,18 +314,18 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
-        var portToRoleMap = await basics.portToRoleMapTask;
+        var portRoles = await basics.portRoleTask;
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TelegramPortChatId = portToRoleMap
-                    .Where(map => 
-                        map.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        map.Status == DbRecordStatus.Active)
-                    .MaxBy(map => map.ActivationDate)!
+                TelegramPortChatId = portRoles
+                    .Where(cpr => 
+                        cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        cpr.Status == DbRecordStatus.Active)
+                    .MaxBy(cpr => cpr.ActivationDate)!
                     .ClientPort.ChatId.Id
             });
 
@@ -512,12 +513,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
     
-    private static (ITestUtils utils, 
-        Mock<IBotClientWrapper> mockBotClient,
-        IUpdateHandler handler,
-        IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator,
-        Task<IEnumerable<TlgClientPortToRoleMap>> portToRoleMapTask)
+    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler, IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator, Task<IEnumerable<TlgClientPortRole>> portRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -525,7 +521,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgClientPortToRoleMapRepository>().GetAllAsync());
+                sp.GetRequiredService<ITlgClientPortRoleRepository>().GetAllAsync());
 
     // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
     private static IInputProcessorFactory 

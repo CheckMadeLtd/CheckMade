@@ -26,8 +26,8 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         Services.AddScoped<IRoleRepository, MockRoleRepository>(_ => new MockRoleRepository());
-        Services.AddScoped<ITlgClientPortToRoleMapRepository, MockTlgClientPortToRoleMapRepository>(_ => 
-            new MockTlgClientPortToRoleMapRepository());
+        Services.AddScoped<ITlgClientPortRoleRepository, MockTlgClientPortRoleRepository>(_ => 
+            new MockTlgClientPortRoleRepository());
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
          in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the 

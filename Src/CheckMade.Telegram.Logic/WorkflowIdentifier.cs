@@ -15,30 +15,30 @@ public interface IWorkflowIdentifier
 internal class WorkflowIdentifier(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortToRoleMapRepository portToRoleMapRepo) 
+        ITlgClientPortRoleRepository portRoleRepo) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId);
 
-        if (!await IsUserAuthenticated(inputPort, portToRoleMapRepo))
+        if (!await IsUserAuthenticated(inputPort, portRoleRepo))
         {
-            return new UserAuthWorkflow(inputRepo, roleRepo, portToRoleMapRepo);
+            return new UserAuthWorkflow(inputRepo, roleRepo, portRoleRepo);
         }
         
         return Option<IWorkflow>.None();
     }
     
     private static async Task<bool> IsUserAuthenticated(
-        TlgClientPort inputPort, ITlgClientPortToRoleMapRepository mapRepo)
+        TlgClientPort inputPort, ITlgClientPortRoleRepository portRoleRepo)
     {
-        IReadOnlyList<TlgClientPortToRoleMap> tlgClientPortToRoleMap =
-            (await mapRepo.GetAllAsync()).ToList().AsReadOnly();
+        IReadOnlyList<TlgClientPortRole> tlgClientPortRoles =
+            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
-        return tlgClientPortToRoleMap
-                   .FirstOrDefault(map => map.ClientPort.ChatId == inputPort.ChatId &&
-                                          map.Status == DbRecordStatus.Active) 
+        return tlgClientPortRoles
+                   .FirstOrDefault(cpr => cpr.ClientPort.ChatId == inputPort.ChatId &&
+                                          cpr.Status == DbRecordStatus.Active) 
                != null;
     }
 }

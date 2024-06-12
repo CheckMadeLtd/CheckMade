@@ -18,7 +18,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgClientPortToRoleMap> portToRoleMap,
+            IEnumerable<TlgClientPortRole> tlgClientPortRole,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -34,11 +34,11 @@ internal static class OutputSender
                     () => botClientByMode[currentlyReceivingInteractionMode]);
 
                 var portChatId = output.LogicalPort.Match(
-                    logicalPort => portToRoleMap
-                        .Where(map => 
-                            map.Role == logicalPort.Role &&
-                            map.Status == DbRecordStatus.Active)
-                        .MaxBy(map => map.ActivationDate)! // returns the port where this role authenticated last 
+                    logicalPort => tlgClientPortRole
+                        .Where(cpr => 
+                            cpr.Role == logicalPort.Role &&
+                            cpr.Status == DbRecordStatus.Active)
+                        .MaxBy(cpr => cpr.ActivationDate)! // returns the port where this role authenticated last 
                         .ClientPort.ChatId.Id,
                     // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingChatId);
