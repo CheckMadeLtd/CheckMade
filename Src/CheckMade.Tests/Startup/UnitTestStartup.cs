@@ -1,7 +1,10 @@
+using System.Collections.Immutable;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Telegram.Function.Services.BotClient;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
@@ -62,22 +65,81 @@ public class UnitTestStartup : TestStartupBase
 
     private void RegisterPersistenceMocks()
     {
-        // ToDo: unify the appraoch here. _ => needed or not? and fix failing test.
+        Services.AddScoped<IRoleRepository, MockRoleRepository>();
         
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
-        Services.AddScoped<IRoleRepository, MockRoleRepository>();
+        Services.AddScoped<Mock<ITlgClientPortRoleRepository>>(_ =>
+        {
+            var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortRoleRepository>();
 
-        Services.AddScoped<Mock<ITlgClientPortRoleRepository>, MockTlgClientPortRoleRepository>(_ =>
-            new MockTlgClientPortRoleRepository());
-        // Services.AddScoped<ITlgClientPortRoleRepository, MockTlgClientPortRoleRepository>(_ => 
-        //     new MockTlgClientPortRoleRepository());
+            mockTlgClientPortRoleRepo
+                .Setup(cpr => cpr.GetAllAsync())
+                .ReturnsAsync(GetTestingPortRoles());
+            
+            return mockTlgClientPortRoleRepo;
+        });
     }
 
     private void RegisterExternalServicesMocks()
     {
         Services.AddScoped<IBlobLoader, MockBlobLoader>();
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
+    }
+    
+    private static ImmutableArray<TlgClientPortRole> GetTestingPortRoles()
+    {
+        var builder = ImmutableArray.CreateBuilder<TlgClientPortRole>();
+
+        // #1
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsAdmin1, 
+            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsInspector1, 
+            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsEngineer1, 
+            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        // Expired on purpose - for Unit Tests!
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsEngineer1, 
+            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
+            new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
+            DbRecordStatus.Historic));
+
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsCleanLead1, 
+            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsObserver1, 
+            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        // #2
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsEngineer2, 
+            new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        builder.Add(new TlgClientPortRole(
+            ITestUtils.SanitaryOpsCleanLead2, 
+            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07),
+            DateTime.Now, Option<DateTime>.None()));
+        
+        // No TlgClientPortRole for role 'Inspector2' on purpose - for Unit Tests!
+
+        return builder.ToImmutable();
     }
 }

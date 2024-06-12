@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Telegram.Logic.Workflows;
@@ -152,7 +153,9 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
         
-        
+        basics.mockPortRolesRepo.Verify(
+            x => x.AddAsync(It.IsAny<TlgClientPortRole>()),
+            Times.Once);
     }
     
     [Theory]

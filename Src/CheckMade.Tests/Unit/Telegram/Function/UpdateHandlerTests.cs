@@ -533,9 +533,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         GetMockInputProcessorFactoryWithSetUpReturnValue(
             IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = Operations)
     {
-        var mockOperationsInputProcessor = new Mock<IInputProcessor>();
+        var mockInputProcessor = new Mock<IInputProcessor>();
         
-        mockOperationsInputProcessor
+        mockInputProcessor
             .Setup<Task<IReadOnlyList<OutputDto>>>(rp => 
                 rp.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Returns(Task.FromResult(returnValue));
@@ -545,7 +545,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         mockInputProcessorFactory
             .Setup(rps => 
                 rps.GetInputProcessor(interactionMode))
-            .Returns(mockOperationsInputProcessor.Object);
+            .Returns(mockInputProcessor.Object);
 
         return mockInputProcessorFactory.Object;
     }

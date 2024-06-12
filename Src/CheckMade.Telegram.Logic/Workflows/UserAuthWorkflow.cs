@@ -67,7 +67,7 @@ internal class UserAuthWorkflow : IWorkflow
             {
                 true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
                 {
-                    true => await AuthenticateUserAsync(inputText),
+                    true => await AuthenticateUserAsync(tlgInput),
                     
                     false => [ new OutputDto
                         {
@@ -117,15 +117,21 @@ internal class UserAuthWorkflow : IWorkflow
         (await _roleRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
 
     // ToDo: replace Placeholders with actual data from DB/Setup
-    private async Task<List<OutputDto>> AuthenticateUserAsync(string tokenAttempt)
+    private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
-        var outputs = new List<OutputDto>();
-
-        var identifiedRole = _preExistingRoles.First(r => r.Token == tokenAttempt);
+        var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
+        
+        var newPortRole = new TlgClientPortRole(
+            _preExistingRoles.First(r => r.Token == inputText),
+            new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
+            DateTime.Now,
+            Option<DateTime>.None());
         
         var hasActivePortRoleAlready = _preExistingPortRoles.Any(cpr => 
-            cpr.Role.Token == tokenAttempt && 
+            cpr.Role.Token == inputText && 
             cpr.Status == DbRecordStatus.Active);
+        
+        var outputs = new List<OutputDto>();
         
         if (hasActivePortRoleAlready)
             outputs.Add(new OutputDto
@@ -134,7 +140,7 @@ internal class UserAuthWorkflow : IWorkflow
                           Warning: you were already authenticated with this token in another chat. 
                           This will be the new chat where you receive messages in your role {0} at {1}. 
                           """, 
-                    identifiedRole.RoleType,
+                    newPortRole.Role.RoleType,
                     "Placeholder LiveEvent")
             });
         
@@ -142,11 +148,13 @@ internal class UserAuthWorkflow : IWorkflow
         {
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.",
                 "Placeholder Name",
-                identifiedRole.RoleType,
+                newPortRole.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
         // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
+
+        await _portRoleRepo.AddAsync(newPortRole);
         
         return outputs;
     }

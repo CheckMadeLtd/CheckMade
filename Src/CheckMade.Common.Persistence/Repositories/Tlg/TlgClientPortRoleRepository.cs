@@ -6,6 +6,11 @@ namespace CheckMade.Common.Persistence.Repositories.Tlg;
 
 public class TlgClientPortRoleRepository : ITlgClientPortRoleRepository
 {
+    public Task AddAsync(TlgClientPortRole portRole)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<TlgClientPortRole>> GetAllAsync()
     {
         var builder = ImmutableList.CreateBuilder<TlgClientPortRole>();
