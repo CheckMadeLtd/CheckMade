@@ -35,9 +35,11 @@ public class UpdateHandler(
     {
         ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
-        logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " +
-                              "with Message from UserId/ChatId: {userId}/{chatId}", 
-            currentlyReceivingInteractionMode, update.Message.From?.Id ?? 0, currentlyReceivingChatId);
+        logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
+                        "with Message from UserId/ChatId: {userId}/{chatId}", 
+            currentlyReceivingInteractionMode, 
+            update.Message.From?.Id ?? 0,
+            currentlyReceivingChatId);
 
         var handledMessageTypes = new[]
         {
@@ -94,8 +96,11 @@ public class UpdateHandler(
                                     "Next, some details to help debug the current exception. " +
                                     "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    ex.Message, currentlyReceivingInteractionMode, update.Message.From!.Id,
-                    update.Message.Date, update.Message.Text);
+                    ex.Message, 
+                    currentlyReceivingInteractionMode, 
+                    update.Message.From!.Id,
+                    update.Message.Date,
+                    update.Message.Text);
                 
                 return ex;
             });

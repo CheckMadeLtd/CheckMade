@@ -513,7 +513,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
     
-    private static (ITestUtils utils, Mock<IBotClientWrapper> mockBotClient, IUpdateHandler handler, IOutputToReplyMarkupConverterFactory markupConverterFactory, IUiTranslator emptyTranslator, Task<IEnumerable<TlgClientPortRole>> portRoleTask)
+    private static (ITestUtils utils, 
+        Mock<IBotClientWrapper> mockBotClient, 
+        IUpdateHandler handler, 
+        IOutputToReplyMarkupConverterFactory markupConverterFactory, 
+        IUiTranslator emptyTranslator, 
+        Task<IEnumerable<TlgClientPortRole>> portRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),

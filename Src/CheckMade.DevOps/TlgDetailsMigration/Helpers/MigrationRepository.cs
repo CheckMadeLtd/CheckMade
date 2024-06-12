@@ -16,7 +16,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsAsync()
     {
         var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
-        var command = new NpgsqlCommand("SELECT * FROM tlgr_updates");
+        var command = new NpgsqlCommand("SELECT * FROM tlg_inputs");
         
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
@@ -67,7 +67,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
     {
         var commands = detailsUpdates.Select(detailUpdate =>
         {
-            const string commandTextPrefix = "UPDATE tlgr_updates SET details = @tlgDetails " +
+            const string commandTextPrefix = "UPDATE tlg_inputs SET details = @tlgDetails " +
                                              "WHERE user_id = @tlgUserId " +
                                              "AND (details ->> 'TlgDate')::timestamp = @tlgDateTime";
 

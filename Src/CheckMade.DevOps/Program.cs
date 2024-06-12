@@ -25,9 +25,11 @@ switch (operation)
         
         if (args.Length != 3)
         {
-            Console.Error.WriteLine($"2 arguments are required to launch the 'mig' operation:\n" +
-                              $"1) {nameof(migDbTargetEnvironment)} ('dev' or 'prd'),\n" +
-                              $"2) {nameof(migIndex)} (in format 'xxxx')");
+            Console.Error.WriteLine($"""
+                                    2 arguments are required to launch the 'mig' operation:
+                                    1) {nameof(migDbTargetEnvironment)} ('dev' or 'prd'),
+                                    2) {nameof(migIndex)} (in format 'xxxx')
+                                    """);
             Environment.Exit(1);
         }
 
@@ -35,8 +37,10 @@ switch (operation)
         
         if (migDbTargetEnvironment is not ("dev" or "prd"))
         {
-            Console.Error.WriteLine($"Not a valid data migration target environment: '{migDbTargetEnvironment}'. " +
-                              $"Choose 'dev' or 'prd'.");
+            Console.Error.WriteLine($""" 
+                                    Not a valid data migration target environment: '{migDbTargetEnvironment}'. 
+                                    Choose 'dev' or 'prd'.
+                                    """);
             Environment.Exit(1);
         }
 

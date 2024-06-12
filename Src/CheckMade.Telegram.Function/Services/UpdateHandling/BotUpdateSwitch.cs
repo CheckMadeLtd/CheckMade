@@ -13,9 +13,11 @@ public interface IBotUpdateSwitch
 public class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
     internal static readonly UiString
-        NoSpecialHandlingWarning = Ui("Telegram Message/Update of this type not yet supported. " +
-                                          "No special handling is taking place for it, but that doesn't mean that a " +
-                                          "Telegram-System-related update didn't work. You may assume it did.");
+        NoSpecialHandlingWarning = Ui("""
+                                      Telegram Message/Update of this type not yet supported.
+                                      No special handling is taking place for it, but that doesn't mean that 
+                                      a Telegram-System-related update didn't work. You may assume it did.
+                                      """);
     
     public async Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
     {
@@ -30,7 +32,8 @@ public class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwit
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
                                       "and new status '{NewStatus}'",
-                    update.MyChatMember!.From.Username, update.MyChatMember.OldChatMember.Status, 
+                    update.MyChatMember!.From.Username, 
+                    update.MyChatMember.OldChatMember.Status, 
                     update.MyChatMember.NewChatMember.Status);
                 return Unit.Value;
             

@@ -202,8 +202,11 @@ internal class ToModelConverter(
             && attachmentDetails.FileId.IsNone
             && tlgInputType != TlgInputType.Location)
         {
-            return Ui("A valid message must a) have a User Id ('From.Id' in Telegram); " +
-                                         "b) either have a text or an attachment (unless it's a Location).");   
+            return Ui("""
+                      A valid message must:  
+                      a) have a User Id ('From.Id' in Telegram); 
+                      b) either have a text or an attachment (unless it's a Location).
+                      """);   
         }
         
         TlgUserId userId = update.Message.From.Id;
