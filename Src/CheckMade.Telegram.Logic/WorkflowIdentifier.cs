@@ -24,7 +24,7 @@ internal class WorkflowIdentifier(
 
         if (!await IsUserAuthenticated(inputPort, portRoleRepo))
         {
-            return new UserAuthWorkflow(inputRepo, roleRepo, portRoleRepo);
+            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portRoleRepo);
         }
         
         return Option<IWorkflow>.None();

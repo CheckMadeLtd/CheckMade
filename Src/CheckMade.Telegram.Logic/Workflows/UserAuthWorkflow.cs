@@ -1,51 +1,85 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 
 namespace CheckMade.Telegram.Logic.Workflows;
 
 using static UserAuthWorkflow.States;
 
-internal class UserAuthWorkflow(
-        ITlgInputRepository inputRepo,
-        IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo) 
-    : IWorkflow
+internal class UserAuthWorkflow : IWorkflow
 {
-    private readonly OutputDto _enterTokenPrompt = new()
+    private static readonly OutputDto EnterTokenPrompt = new()
     {
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
+
+    private readonly ITlgInputRepository _inputRepo;
+    private readonly IRoleRepository _roleRepo;
+    private readonly ITlgClientPortRoleRepository _portRoleRepo;
+
+    private IEnumerable<Role> _preExistingRoles = new List<Role>();
+    private IEnumerable<TlgClientPortRole> _preExistingPortRoles = new List<TlgClientPortRole>();
+
+    private UserAuthWorkflow(ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
+        ITlgClientPortRoleRepository portRoleRepo)
+    {
+        _inputRepo = inputRepo;
+        _roleRepo = roleRepo;
+        _portRoleRepo = portRoleRepo;
+    }
+
+    public static async Task<UserAuthWorkflow> CreateAsync(
+        ITlgInputRepository inputRepo,
+        IRoleRepository roleRepo,
+        ITlgClientPortRoleRepository portRoleRepo)
+    {
+        var workflow = new UserAuthWorkflow(inputRepo, roleRepo, portRoleRepo);
+        await workflow.InitAsync();
+        return workflow;
+    }
+
+    private async Task InitAsync()
+    {
+        var getRolesTask = _roleRepo.GetAllAsync();
+        var getPortRolesTask = _portRoleRepo.GetAllAsync();
+        
+        await Task.WhenAll(getRolesTask, getPortRolesTask);
+
+        _preExistingRoles = getRolesTask.Result;
+        _preExistingPortRoles = getPortRolesTask.Result;
+    }
     
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
+        var inputText = tlgInput.Details.Text.GetValueOrDefault();
+        
         return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId) switch
         {
-            ReadyToReceiveToken => new List<OutputDto> { _enterTokenPrompt },
+            ReadyToReceiveToken => new List<OutputDto> { EnterTokenPrompt },
             
-            ReceivedTokenSubmissionAttempt => IsValidToken(tlgInput.Details.Text.GetValueOrDefault()) switch
+            ReceivedTokenSubmissionAttempt => IsValidToken(inputText) switch
             {
                 true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
                 {
-                    true => new List<OutputDto> { new ()
-                        {
-                            Text = Ui("You have successfully authenticated.")
-                        }
-                    },
+                    true => await AuthenticateUserAsync(inputText),
+                    
                     false => [ new OutputDto
                         {
                             Text = Ui("This is an unknown token. Try again...")
                         },
-                        _enterTokenPrompt ]
+                        EnterTokenPrompt ]
                 },
                 false => [ new OutputDto
                     {
                         Text = Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample())
                     },
-                    _enterTokenPrompt ]
+                    EnterTokenPrompt ]
             },
             
             _ => Result<IReadOnlyList<OutputDto>>.FromError(
@@ -55,7 +89,7 @@ internal class UserAuthWorkflow(
     
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
-        var lastUsedTlgClientPortRole = (await portRoleRepo.GetAllAsync())
+        var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpr =>
                 cpr.ClientPort == new TlgClientPort(userId, chatId) &&
                 cpr.DeactivationDate.IsSome)
@@ -65,7 +99,7 @@ internal class UserAuthWorkflow(
             ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        var allRelevantInputs = (await inputRepo.GetAllAsync(userId))
+        var allRelevantInputs = (await _inputRepo.GetAllAsync(userId))
             .Where(i => i.Details.TlgDate > dateOfLastDeactivationForCutOff)
             .ToList().AsReadOnly();
 
@@ -79,8 +113,35 @@ internal class UserAuthWorkflow(
         };
     }
 
-    private async Task<bool> TokenExists(string token) =>
-        (await roleRepo.GetAllAsync()).Any(role => role.Token == token);
+    private async Task<bool> TokenExists(string tokenAttempt) =>
+        (await _roleRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
+
+    private async Task<List<OutputDto>> AuthenticateUserAsync(string tokenAttempt)
+    {
+        var outputs = new List<OutputDto>();
+        
+        var hasActivePortRole = _preExistingPortRoles.Any(cpr => 
+            cpr.Role.Token == tokenAttempt && 
+            cpr.Status == DbRecordStatus.Active);
+        
+        if (hasActivePortRole)
+            outputs.Add(new OutputDto
+            {
+                Text = Ui("""
+                          Warning: you were already authenticated with this token in another chat. 
+                          This will be the new chat where you receive messages in your role {0} at {1}. 
+                          """, 
+                    _preExistingRoles.First(r => r.Token == tokenAttempt),
+                    "Placeholder LiveEvent XY") // ToDo: replace with actual LiveEvent
+            });
+        
+        outputs.Add(new OutputDto()
+        {
+            Text = Ui("You have successfully authenticated.")
+        });
+
+        return outputs;
+    }
     
     [Flags]
     internal enum States

@@ -41,6 +41,38 @@ public class UiStringAndTranslationTests
     }
 
     [Fact]
+    public void Translate_ReturnsCorrectValue_ForKeyWithParamsAndLineBreakUsingRawStringLiteral()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var factory = GetUiTranslatorFactoryWithBasicDependencies();
+        
+        const string enKeyUsingRaw = """
+                                     English key with param {0} and
+                                     linebreak in raw string literal format.
+                                     """;
+        const string trans = "Deutscher Schlüssel mit Parameter {0} und \n Zeilenumbruch."; 
+        const string param1 = "param1";
+        
+        var fakeTranslationByKey = Option<IReadOnlyDictionary<string, string>>.Some(
+            new Dictionary<string, string>
+            {
+                { "key1", "translation1" },
+                { "English key with param {0} and\nlinebreak in raw string literal format.", trans },
+                { "key3", "translation3" }
+            });
+        
+        factory.mockFactory
+            .Setup(f => f.Create(factory.deLangCode))
+            .Returns(new UiTranslator(fakeTranslationByKey, factory.logger));
+        var uiTranslator = factory.mockFactory.Object.Create(factory.deLangCode);
+        var uiString = Ui(enKeyUsingRaw, param1);
+
+        var actualTranslation = uiTranslator.Translate(uiString);
+
+        Assert.Equal(string.Format(trans, param1), actualTranslation);
+    }
+
+    [Fact]
     public void Translate_ReturnsCorrectValue_ForConcatWithParamsAndNoTranslateAndIndirect()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -257,7 +289,7 @@ public class UiStringAndTranslationTests
     }
     
     [Fact]
-    public void GetFormattedEnglish_ReturnsCorrectResult_ForSingleRawMessage()
+    public void GetFormattedEnglish_ReturnsCorrectResult_ForSingleMessageWithParams()
     {
         const string param1 = "param1", param2 = "param2";
         var uiString = Ui("This is a test message with {0} and {1}.", param1, param2);

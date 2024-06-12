@@ -29,7 +29,8 @@ public class UserAuthWorkflowTests
                 basics.utils.GetValidTlgTextMessage()
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -54,7 +55,8 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(TestUserId_02))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
         
@@ -76,7 +78,8 @@ public class UserAuthWorkflowTests
                 basics.utils.GetValidTlgTextMessage(text: "InvalidToken")
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -100,7 +103,8 @@ public class UserAuthWorkflowTests
                 nonExistingTokenInput
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -123,11 +127,12 @@ public class UserAuthWorkflowTests
                 inputTokenWithActivePortRole
             });
 
-        var expectedWarning = """
-                              Warning: you were already authenticated with this token in another chat. 
-                              This will be the new chat where you receive messages in your role {0} at {1}. 
-                              """;
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        const string expectedWarning = """
+                                       Warning: you were already authenticated with this token in another chat. 
+                                       This will be the new chat where you receive messages in your role {0} at {1}. 
+                                       """;
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
         
         var actualOutputs = await workflow.GetNextOutputAsync(inputTokenWithActivePortRole);
         
@@ -163,7 +168,8 @@ public class UserAuthWorkflowTests
                 badTokenInput
             });
         
-        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
