@@ -134,22 +134,36 @@ public class UserAuthWorkflowTests
         Assert.Equal("This is an unknown token. Try again...", GetFirstRawEnglish(actualOutputs));
     }
 
-    // [Fact]
-    // public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenHasActivePortRole()
-    // {
-    //     // this requires looking up in the portRoleRepo whether an active portRole exists
-    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
-    //     var basics = GetBasicTestingServices(_services);
-    //     var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
-    //
-    //     mockTlgInputsRepo
-    //         .Setup(repo => repo.GetAllAsync(TestUserId_01))
-    //         .ReturnsAsync(new List<TlgInput>
-    //         {
-    //             basics.utils.GetValidTlgCallbackQueryForControlPrompts(Authenticate),
-    //             //
-    //         });
-    // }
+    [Fact]
+    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenHasActivePortRole()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        var inputTokenWithActivePortRole = basics.utils.GetValidTlgTextMessage(
+            text: SanitaryOpsAdmin1.Token,
+            dateTime: basics.baseDateTime.AddSeconds(1));
+        
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                basics.utils.GetValidTlgCallbackQueryForControlPrompts(
+                    Authenticate, dateTime: basics.baseDateTime),
+                inputTokenWithActivePortRole
+            });
+
+        var expectedWarning = """
+                              Warning: you were already authenticated with this token in another chat. 
+                              This will be the new chat where you receive messages in your role {0} at {1}. 
+                              """;
+        var workflow = new UserAuthWorkflow(mockTlgInputsRepo.Object, basics.roleRepo, basics.portRolesRepo);
+        
+        var actualOutputs = await workflow.GetNextOutputAsync(inputTokenWithActivePortRole);
+        
+        Assert.Equal(expectedWarning, GetFirstRawEnglish(actualOutputs));
+    }
 
     [Fact]
     public async Task GetNextOutputAsync_CreatesPortRole_AndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
