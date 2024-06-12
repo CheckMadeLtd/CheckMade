@@ -32,6 +32,18 @@ internal interface ITestUtils
     internal const long TestChatId_08 = 100008L;
     internal const long TestChatId_09 = 100009L;
     
+    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", RoleType.SanitaryOps_Admin);
+    
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", RoleType.SanitaryOps_Observer);
+
+    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", RoleType.SanitaryOps_Observer);
+    
     Randomizer Randomizer { get; }
     
     TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
@@ -59,18 +71,6 @@ internal interface ITestUtils
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
-    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", RoleType.SanitaryOps_Admin);
-    
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", RoleType.SanitaryOps_Observer);
-
-    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", RoleType.SanitaryOps_Observer);
-    
     public Randomizer Randomizer { get; } = randomizer;
     
     public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>

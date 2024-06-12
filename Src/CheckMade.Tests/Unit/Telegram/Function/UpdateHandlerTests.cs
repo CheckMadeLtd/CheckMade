@@ -291,19 +291,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsInspector1, Operations), 
+                    ITestUtils.SanitaryOpsInspector1, Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsInspector1, Communications),
+                    ITestUtils.SanitaryOpsInspector1, Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    TestUtils.SanitaryOpsEngineer1, Notifications),
+                    ITestUtils.SanitaryOpsEngineer1, Notifications),
                 Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot)") 
             }
         ];
