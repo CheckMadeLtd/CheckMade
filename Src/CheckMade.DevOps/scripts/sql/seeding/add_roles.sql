@@ -1,0 +1,1 @@
+INSERT INTO roles (token, role_type, status) VALUES ('AAA111', 1002, 0);

@@ -79,7 +79,7 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
             {
                 while (await reader.ReadAsync())
                 {
-                    builder.Add(await CreateTlgInputFromReaderStrictAsync(reader));
+                    builder.Add(CreateTlgInputFromReaderStrict(reader));
                 }
             }
         });
@@ -87,13 +87,13 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
         return builder.ToImmutable();
     }
     
-    private static async Task<TlgInput> CreateTlgInputFromReaderStrictAsync(DbDataReader reader)
+    private static TlgInput CreateTlgInputFromReaderStrict(DbDataReader reader)
     {
-        TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
-        TlgChatId tlgChatId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("chat_id"));
-        var interactionMode = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("interaction_mode"));
-        var tlgInputType = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("input_type"));
-        var tlgDetails = await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details"));
+        TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("user_id"));
+        TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("chat_id"));
+        var interactionMode = reader.GetInt16(reader.GetOrdinal("interaction_mode"));
+        var tlgInputType = reader.GetInt16(reader.GetOrdinal("input_type"));
+        var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
         var message = new TlgInput(
             tlgUserId,
