@@ -145,6 +145,16 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
+        var expectedClientPortRoleAdded = new TlgClientPortRole(
+            SanitaryOpsInspector2,
+            new TlgClientPort(TestUserId_03, TestChatId_08),
+            DateTime.Now,
+            Option<DateTime>.None());
+        
+        TlgClientPortRole? actualClientPortRoleAdded = null; 
+        basics.mockPortRolesRepo
+            .Setup(x => x.AddAsync(It.IsAny<TlgClientPortRole>()))
+            .Callback<TlgClientPortRole>(portRole => actualClientPortRoleAdded = portRole);
         
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
@@ -152,10 +162,9 @@ public class UserAuthWorkflowTests
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
-        
-        basics.mockPortRolesRepo.Verify(
-            x => x.AddAsync(It.IsAny<TlgClientPortRole>()),
-            Times.Once);
+        Assert.Equivalent(expectedClientPortRoleAdded.Role, actualClientPortRoleAdded!.Role);
+        Assert.Equivalent(expectedClientPortRoleAdded.ClientPort, actualClientPortRoleAdded!.ClientPort);
+        Assert.Equivalent(expectedClientPortRoleAdded.Status, actualClientPortRoleAdded!.Status);
     }
     
     [Theory]
