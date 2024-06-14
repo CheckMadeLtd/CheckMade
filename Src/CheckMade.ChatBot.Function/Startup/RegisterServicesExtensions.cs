@@ -13,7 +13,7 @@ namespace CheckMade.ChatBot.Function.Startup;
 
 internal static class RegisterServicesExtensions
 {
-    internal static void RegisterTelegramFunctionBotClientServices(
+    internal static void RegisterChatBotFunctionBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         services.AddSingleton<IBotClientFactory, BotClientFactory>();
@@ -26,7 +26,7 @@ internal static class RegisterServicesExtensions
         }    
     }
 
-    internal static void RegisterTelegramFunctionUpdateHandlingServices(this IServiceCollection services)
+    internal static void RegisterChatBotFunctionUpdateHandlingServices(this IServiceCollection services)
     {
         services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
@@ -57,15 +57,15 @@ internal static class RegisterServicesExtensions
         services.Register_CommonPersistence_Services(dbConnectionString);
     }
 
-    internal static void RegisterTelegramFunctionConversionServices(this IServiceCollection services)
+    internal static void RegisterChatBotFunctionConversionServices(this IServiceCollection services)
     {
         services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
     }
 
-    internal static void RegisterTelegramLogicServices(this IServiceCollection services)
+    internal static void RegisterChatBotLogicServices(this IServiceCollection services)
     {
-        services.Register_TelegramLogic_Services();
+        services.Register_ChatBotLogic_Services();
     }
     
     internal static void RegisterCommonUtilsServices(this IServiceCollection services)

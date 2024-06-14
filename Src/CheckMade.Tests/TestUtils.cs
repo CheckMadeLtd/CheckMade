@@ -127,8 +127,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 controlPromptEnumCode: (long)prompts));
 
     internal static TlgInputDetails CreateFromRelevantDetails(
-        DateTime telegramDate,
-        int telegramMessageId,
+        DateTime tlgDate,
+        int tlgMessageId,
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
@@ -139,8 +139,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
-            telegramDate, 
-            telegramMessageId,
+            tlgDate, 
+            tlgMessageId,
             text ?? Option<string>.None(),
             attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 

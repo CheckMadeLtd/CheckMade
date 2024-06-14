@@ -19,7 +19,7 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.RegisterTelegramFunctionBotClientServices(Config, HostingEnvironment);
+        Services.RegisterChatBotFunctionBotClientServices(Config, HostingEnvironment);
         Services.RegisterCommonPersistenceServices(Config, HostingEnvironment);
         Services.RegisterCommonExternalServices(Config);
 

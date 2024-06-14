@@ -50,9 +50,9 @@ public abstract class TestStartupBase
         Services.AddSingleton<ITestUtils, TestUtils>();
         Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        Services.RegisterTelegramFunctionUpdateHandlingServices();
-        Services.RegisterTelegramFunctionConversionServices();
-        Services.RegisterTelegramLogicServices();
+        Services.RegisterChatBotFunctionUpdateHandlingServices();
+        Services.RegisterChatBotFunctionConversionServices();
+        Services.RegisterChatBotLogicServices();
         
         Services.RegisterCommonUtilsServices();
     }

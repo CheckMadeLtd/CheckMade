@@ -212,15 +212,15 @@ internal class ToModelConverter(
         TlgUserId userId = update.Message.From.Id;
         TlgChatId chatId = update.Message.Chat.Id;
 
-        var telegramAttachmentUriAttempt = await attachmentDetails.FileId.Match(
-            GetTelegramAttachmentUriAsync,
+        var tlgAttachmentUriAttempt = await attachmentDetails.FileId.Match(
+            GetTlgAttachmentUriAsync,
             () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
 
-        var telegramAttachmentUri = telegramAttachmentUriAttempt.Match(
+        var tlgAttachmentUri = tlgAttachmentUriAttempt.Match(
             uri => uri,
             ex => throw ex);
         
-        var internalAttachmentUriAttempt = await telegramAttachmentUri.Match(
+        var internalAttachmentUriAttempt = await tlgAttachmentUri.Match(
             UploadBlobAndGetInternalUriAsync,
             () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
         
@@ -237,7 +237,7 @@ internal class ToModelConverter(
                 update.Message.Date,
                 update.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                telegramAttachmentUri,
+                tlgAttachmentUri,
                 internalAttachmentUri,
                 attachmentDetails.Type,
                 geoCoordinates,
@@ -246,7 +246,7 @@ internal class ToModelConverter(
                 controlPromptEnumCode));
     }
 
-    private async Task<Attempt<Option<Uri>>> GetTelegramAttachmentUriAsync(string fileId)
+    private async Task<Attempt<Option<Uri>>> GetTlgAttachmentUriAsync(string fileId)
     {
         return (await GetPathAsync())
             .Match(
@@ -260,12 +260,12 @@ internal class ToModelConverter(
         static Uri GetUriFromPath(string path) => new(path);
     }
 
-    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri telegramAttachmentUri)
+    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri tlgAttachmentUri)
     {
         return await Attempt<Option<Uri>>.RunAsync(async () => 
             await blobLoader.UploadBlobAndReturnUriAsync(
-                await downloader.DownloadDataAsync(telegramAttachmentUri), 
-                GetFileName(telegramAttachmentUri)));
+                await downloader.DownloadDataAsync(tlgAttachmentUri), 
+                GetFileName(tlgAttachmentUri)));
         
         static string GetFileName(Uri aUri) => aUri.AbsoluteUri.Split('/').Last();
     }

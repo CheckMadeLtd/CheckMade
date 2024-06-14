@@ -4,5 +4,5 @@ namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 internal record DetailsUpdate(
     TlgUserId UserId, 
-    DateTime TelegramDate, 
+    DateTime TlgDate, 
     string NewDetails);
