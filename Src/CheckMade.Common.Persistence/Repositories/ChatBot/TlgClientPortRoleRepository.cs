@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using Npgsql;
 
-namespace CheckMade.Common.Persistence.Repositories.Tlg;
+namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
 public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) : ITlgClientPortRoleRepository
 {

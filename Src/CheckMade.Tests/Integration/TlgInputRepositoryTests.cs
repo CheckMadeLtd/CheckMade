@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;

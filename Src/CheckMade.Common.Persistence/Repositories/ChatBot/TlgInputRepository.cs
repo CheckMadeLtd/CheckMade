@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.Common.Persistence.Repositories.Tlg;
+namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
 public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputRepository
 {

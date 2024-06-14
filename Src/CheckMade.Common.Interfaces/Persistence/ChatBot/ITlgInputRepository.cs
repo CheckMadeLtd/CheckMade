@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.ChatBot.Input;
 
-namespace CheckMade.Common.Interfaces.Persistence.Tlg;
+namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
 public interface ITlgInputRepository
 {

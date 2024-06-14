@@ -1,4 +1,3 @@
-using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.Utils;
@@ -7,6 +6,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
