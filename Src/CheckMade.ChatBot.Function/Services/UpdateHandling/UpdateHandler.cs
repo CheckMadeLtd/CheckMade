@@ -1,18 +1,18 @@
+using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversion;
-using CheckMade.Telegram.Function.Startup;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.Telegram.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {

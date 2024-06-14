@@ -5,7 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Utils;
-using CheckMade.Telegram.Function.Services.BotClient;
+using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;

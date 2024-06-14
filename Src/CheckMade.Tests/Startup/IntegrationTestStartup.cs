@@ -1,7 +1,7 @@
 using CheckMade.Common.ExternalServices;
 using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Persistence;
-using CheckMade.Telegram.Function.Startup;
+using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;

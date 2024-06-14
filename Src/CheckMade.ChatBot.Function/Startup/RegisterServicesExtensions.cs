@@ -1,15 +1,15 @@
+using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.ExternalServices;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
-using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversion;
-using CheckMade.Telegram.Function.Services.UpdateHandling;
 using CheckMade.Telegram.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Function.Startup;
+namespace CheckMade.ChatBot.Function.Startup;
 
 internal static class RegisterServicesExtensions
 {

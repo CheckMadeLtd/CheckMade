@@ -7,7 +7,7 @@ using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.Telegram.Function.Services.Conversion;
+namespace CheckMade.ChatBot.Function.Services.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {

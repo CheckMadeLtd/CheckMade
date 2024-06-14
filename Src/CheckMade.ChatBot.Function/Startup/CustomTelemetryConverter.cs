@@ -3,7 +3,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Serilog.Events;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
-namespace CheckMade.Telegram.Function.Startup;
+namespace CheckMade.ChatBot.Function.Startup;
 
 internal class CustomTelemetryConverter : TraceTelemetryConverter
 {

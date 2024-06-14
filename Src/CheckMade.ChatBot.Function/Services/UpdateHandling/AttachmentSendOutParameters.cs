@@ -1,7 +1,7 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.Telegram.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public record AttachmentSendOutParameters(
     ChatId ChatId,

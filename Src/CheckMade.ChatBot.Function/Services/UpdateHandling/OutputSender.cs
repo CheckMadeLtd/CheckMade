@@ -1,3 +1,5 @@
+using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Telegram;
@@ -5,11 +7,9 @@ using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Telegram.Function.Services.BotClient;
-using CheckMade.Telegram.Function.Services.Conversion;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 internal static class OutputSender
 {

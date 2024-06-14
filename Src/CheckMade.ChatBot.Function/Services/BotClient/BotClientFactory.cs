@@ -1,10 +1,10 @@
+using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.RetryPolicies;
-using CheckMade.Telegram.Function.Startup;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace CheckMade.Telegram.Function.Services.BotClient;
+namespace CheckMade.ChatBot.Function.Services.BotClient;
 
 public interface IBotClientFactory
 {

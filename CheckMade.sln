@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.ViewModels", "Src\CheckMade.Desktop.ViewModels\CheckMade.Desktop.ViewModels.csproj", "{012B9519-33F7-4AE1-A604-2CA3E54423CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Telegram.Function", "Src\CheckMade.Telegram.Function\CheckMade.Telegram.Function.csproj", "{575C0F42-CB8A-4531-9150-20B7EE460676}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.ChatBot.Function", "Src\CheckMade.ChatBot.Function\CheckMade.ChatBot.Function.csproj", "{575C0F42-CB8A-4531-9150-20B7EE460676}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Tests", "Src\CheckMade.Tests\CheckMade.Tests.csproj", "{E11437BF-47AE-4FFB-9AED-1601007BC72D}"
 EndProject

@@ -1,5 +1,5 @@
 using System.Configuration;
-using CheckMade.Telegram.Function.Startup;
+using CheckMade.ChatBot.Function.Startup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

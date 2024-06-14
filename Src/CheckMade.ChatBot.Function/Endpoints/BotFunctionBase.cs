@@ -1,12 +1,12 @@
 using System.Net;
+using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 
-namespace CheckMade.Telegram.Function.Endpoints;
+namespace CheckMade.ChatBot.Function.Endpoints;
 
 public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {

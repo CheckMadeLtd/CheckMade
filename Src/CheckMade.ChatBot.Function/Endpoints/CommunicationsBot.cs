@@ -1,17 +1,17 @@
+using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Telegram.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Telegram.Function.Endpoints;
+namespace CheckMade.ChatBot.Function.Endpoints;
 
-public class OperationsBot(ILogger<OperationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
+public class CommunicationsBot(ILogger<CommunicationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
     : BotFunctionBase(logger, botUpdateSwitch)
 {
-    protected override InteractionMode InteractionMode => InteractionMode.Operations;
+    protected override InteractionMode InteractionMode => InteractionMode.Communications;
 
-    [Function("OperationsBot")]
+    [Function("CommunicationsBot")]
     public async Task<HttpResponseData> 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {

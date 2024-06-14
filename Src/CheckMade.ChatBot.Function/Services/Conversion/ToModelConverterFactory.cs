@@ -1,7 +1,7 @@
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 
-namespace CheckMade.Telegram.Function.Services.Conversion;
+namespace CheckMade.ChatBot.Function.Services.Conversion;
 
 public interface IToModelConverterFactory
 {
