@@ -7,7 +7,7 @@ using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Telegram.Logic;
+using CheckMade.ChatBot.Logic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

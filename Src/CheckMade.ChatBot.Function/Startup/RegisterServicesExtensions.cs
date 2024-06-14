@@ -5,7 +5,7 @@ using CheckMade.Common.ExternalServices;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
-using CheckMade.Telegram.Logic;
+using CheckMade.ChatBot.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.ChatBot.Logic;
 
 public static class ServiceRegistration
 {

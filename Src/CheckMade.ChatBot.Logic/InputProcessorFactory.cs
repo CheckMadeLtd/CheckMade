@@ -1,7 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.ChatBot.Logic;
 
 public interface IInputProcessorFactory
 {

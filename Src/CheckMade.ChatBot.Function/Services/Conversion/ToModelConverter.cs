@@ -7,7 +7,7 @@ using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Utils;
-using CheckMade.Telegram.Logic;
+using CheckMade.ChatBot.Logic;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.ChatBot.Function.Services.Conversion;

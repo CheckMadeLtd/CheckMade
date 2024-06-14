@@ -7,7 +7,7 @@ using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 
-namespace CheckMade.Telegram.Logic.Workflows;
+namespace CheckMade.ChatBot.Logic.Workflows;
 
 using static UserAuthWorkflow.States;
 

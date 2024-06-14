@@ -1,14 +1,14 @@
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Utils.Generic;
-using CheckMade.Telegram.Logic.Workflows;
 using CheckMade.Tests.Startup;
 using static CheckMade.Tests.ITestUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.Telegram.Logic.Workflows.UserAuthWorkflow.States;
+using static CheckMade.ChatBot.Logic.Workflows.UserAuthWorkflow.States;
 
 namespace CheckMade.Tests.Unit.Telegram.Logic.Workflows;
 

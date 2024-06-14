@@ -2,7 +2,7 @@
 // with WorkflowIdentifier and actual Workflows.
 
 // using CheckMade.Common.Model.Telegram.UserInteraction;
-// using CheckMade.Telegram.Logic;
+// using CheckMade.ChatBot.Logic;
 // using Microsoft.Extensions.DependencyInjection;
 //
 // namespace CheckMade.Tests.Unit.Telegram.Logic;

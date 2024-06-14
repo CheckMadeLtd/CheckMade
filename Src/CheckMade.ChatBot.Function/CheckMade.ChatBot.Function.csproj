@@ -54,7 +54,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
-      <ProjectReference Include="..\CheckMade.Telegram.Logic\CheckMade.Telegram.Logic.csproj" />
+      <ProjectReference Include="..\CheckMade.ChatBot.Logic\CheckMade.ChatBot.Logic.csproj" />
     </ItemGroup>
     
     <ItemGroup>

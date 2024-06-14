@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Telegram.Input;
 using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Telegram.UserInteraction;
 
-namespace CheckMade.Telegram.Logic;
+namespace CheckMade.ChatBot.Logic;
 
 public interface IInputProcessor
 {

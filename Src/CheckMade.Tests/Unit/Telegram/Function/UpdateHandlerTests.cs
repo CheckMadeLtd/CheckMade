@@ -10,7 +10,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Telegram.Logic;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
