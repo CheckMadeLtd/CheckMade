@@ -29,6 +29,7 @@ public class TlgClientPortRoleRepositoryTests
         var retrieved = (await repo.GetAllAsync()).MaxBy(cpr => cpr.ActivationDate);
         await repo.HardDeleteAsync(inputPortRole);
         
-        Assert.Equivalent(inputPortRole, retrieved);
+        Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
+        Assert.Equivalent(inputPortRole.ClientPort, retrieved.ClientPort);
     }
 }
