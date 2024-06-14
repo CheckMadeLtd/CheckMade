@@ -51,7 +51,7 @@ jobs:
     
     strategy:
       matrix:
-        toplevel_project: [ "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]
+        toplevel_project: [ "${{ vars.CHATBOT_TOPLEVEL_PROJECT }}" ]
 #                           "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}", 
 #                           "${{ vars.ANDROID_TOPLEVEL_PROJECT }}"]
 
@@ -84,10 +84,10 @@ jobs:
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
           if [[ "${{ matrix.toplevel_project }}" == "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chatbot*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.ANDROID_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*telegram*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.TELEGRAM_TOPLEVEL_PROJECT }}" ]]; then
+            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chatbot*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+          elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.CHATBOT_TOPLEVEL_PROJECT }}" ]]; then
             HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
             echo "Error: The current toplevel_project is not handled for hash generation."
@@ -144,7 +144,7 @@ jobs:
       # the paths for build output, project dir, project file, test project file etc. by extracting them from .sln file
       # This allows us to keep the build/test commands below generic and use explicit build-output dirs for deployment. 
       # All of this relies on implicit project naming conventions in the CheckMade solution:
-      # E.g. if toplevel project is CheckMade.Telegram.Function then test project is assumed to start with CheckMade.Telegram
+      # E.g. if toplevel project is CheckMade.ChatBot.Function then test project is assumed to start with CheckMade.ChatBot
       # and to end with 'Tests' (with other possible parts in the middle).
       
       - name: Set Build & Output Parameters
@@ -208,8 +208,8 @@ jobs:
             
       #  Deploy ---------------------------------
 
-      - name: Deploy Telegram Function to Azure
-        if: ${{ matrix.toplevel_project == vars.TELEGRAM_TOPLEVEL_PROJECT }}
+      - name: Deploy ChatBot Function to Azure
+        if: ${{ matrix.toplevel_project == vars.CHATBOT_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
           app-name: 'telegram-k3zyl'
