@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - tmp/oxihg
 
 jobs:  
   tag_version:
