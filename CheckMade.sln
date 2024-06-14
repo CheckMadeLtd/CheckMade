@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{D26C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E5835236-896A-4576-8A1F-EBF20213872E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Telegram", "Telegram", "{442F01A3-80F3-4BE3-8D51-4E4505216822}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ChatBot", "ChatBot", "{442F01A3-80F3-4BE3-8D51-4E4505216822}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Persistence", "Src\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj", "{B5FF670E-F6EA-418D-A1AB-46726997181D}"
 EndProject
