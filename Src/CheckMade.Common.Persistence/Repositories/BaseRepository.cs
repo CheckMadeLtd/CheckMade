@@ -6,13 +6,16 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 {
-    protected static NpgsqlCommand GenerateCommand(string query, Dictionary<string, object> parameters)
+    protected static NpgsqlCommand GenerateCommand(string query, Option<Dictionary<string, object>> parameters)
     {
         var command = new NpgsqlCommand(query);
 
-        foreach (var parameter in parameters)
+        if (parameters.IsSome)
         {
-            command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+            foreach (var parameter in parameters.GetValueOrThrow())
+            {
+                command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+            }
         }
 
         return command;
