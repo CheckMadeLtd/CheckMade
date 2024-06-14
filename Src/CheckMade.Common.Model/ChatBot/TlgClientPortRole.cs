@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Common.Model.Telegram;
+namespace CheckMade.Common.Model.ChatBot;
 
 public record TlgClientPortRole(
     Role Role,

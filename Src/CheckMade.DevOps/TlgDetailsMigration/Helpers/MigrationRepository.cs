@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;

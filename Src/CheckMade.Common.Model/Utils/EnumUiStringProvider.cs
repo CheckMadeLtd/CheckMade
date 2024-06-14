@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 
 namespace CheckMade.Common.Model.Utils;
 

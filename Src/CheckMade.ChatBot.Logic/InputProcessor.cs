@@ -1,7 +1,7 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.ChatBot.Logic;
 

@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;

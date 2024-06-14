@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.Output;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 

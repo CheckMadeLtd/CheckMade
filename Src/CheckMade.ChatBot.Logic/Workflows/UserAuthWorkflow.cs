@@ -1,9 +1,9 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.Output;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Utils.Generic.InputValidator;
 

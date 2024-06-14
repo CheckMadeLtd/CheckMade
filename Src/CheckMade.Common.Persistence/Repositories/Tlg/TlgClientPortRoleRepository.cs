@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
 using CheckMade.Common.Model.Utils;
 using Npgsql;
 

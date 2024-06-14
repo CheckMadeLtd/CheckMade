@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Telegram;
+namespace CheckMade.Common.Model.ChatBot;
 
 public enum TlgAttachmentType
 {

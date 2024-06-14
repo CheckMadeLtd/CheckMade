@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.ChatBot;
 
 namespace CheckMade.Common.Interfaces.Persistence.Tlg;
 

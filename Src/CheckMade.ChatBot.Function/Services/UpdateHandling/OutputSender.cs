@@ -1,10 +1,10 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types;

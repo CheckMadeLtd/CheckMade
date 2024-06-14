@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
-using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.ChatBot.Logic;
 

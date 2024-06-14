@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Common.Model.Telegram.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

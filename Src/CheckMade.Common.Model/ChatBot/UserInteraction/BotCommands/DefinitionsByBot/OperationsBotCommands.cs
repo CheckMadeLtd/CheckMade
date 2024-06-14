@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
+namespace CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 
 // Explicitly assigned Enum codes here important: they are serialised in the messages history in the database!
 // Fundamentally changing the semantics of a code would require migration of historic detail data

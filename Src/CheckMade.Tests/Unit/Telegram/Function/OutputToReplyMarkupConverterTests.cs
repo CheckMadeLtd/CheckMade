@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using static CheckMade.Common.Model.Core.DomainCategory;
-using CheckMade.Common.Model.Telegram.Output;
-using static CheckMade.Common.Model.Telegram.UserInteraction.ControlPrompts;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

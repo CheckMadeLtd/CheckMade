@@ -1,8 +1,8 @@
 // ReSharper disable StringLiteralTypo
 
-using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 
-namespace CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
+namespace CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 
 public record BotCommandMenus
 {

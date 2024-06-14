@@ -1,16 +1,16 @@
 using CheckMade.Common.Interfaces.Persistence.Tlg;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.Output;
-using CheckMade.Common.Model.Telegram.UserInteraction;
-using static CheckMade.Common.Model.Telegram.UserInteraction.InteractionMode;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -528,7 +528,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
                 sp.GetRequiredService<ITlgClientPortRoleRepository>().GetAllAsync());
 
-    // Useful when we need to mock up what Telegram.Logic returns, e.g. to test Telegram.Function related mechanics
+    // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 
         GetMockInputProcessorFactoryWithSetUpReturnValue(
             IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = Operations)

@@ -2,12 +2,12 @@ using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.UserInteraction;
-using CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.ChatBot.Function.Services.Conversion;

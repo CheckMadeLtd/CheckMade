@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Telegram.Input;
+namespace CheckMade.Common.Model.ChatBot.Input;
 
 public record TlgChatId(long Id)
 {

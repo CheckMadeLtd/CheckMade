@@ -1,6 +1,6 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.Common.Model.Telegram;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

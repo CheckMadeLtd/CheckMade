@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Telegram.UserInteraction.BotCommands;
+namespace CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 
 public static class TlgStart
 {

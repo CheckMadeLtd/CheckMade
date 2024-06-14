@@ -1,6 +1,6 @@
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 
-namespace CheckMade.Common.Model.Telegram;
+namespace CheckMade.Common.Model.ChatBot;
 
 public record LogicalPort(Role Role, InteractionMode InteractionMode);
