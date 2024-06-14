@@ -1,9 +1,9 @@
 using CheckMade.Common.Persistence;
-using CheckMade.DevOps.TlgDetailsMigration.Helpers;
+using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.DevOps.TlgDetailsMigration;
+namespace CheckMade.DevOps.TlgInputDetailsMigration;
 
 internal class MigrationStartup(
     IServiceCollection services, IConfigurationRoot config,

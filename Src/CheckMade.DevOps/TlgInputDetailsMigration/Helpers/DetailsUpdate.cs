@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.ChatBot.Input;
 
-namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;
+namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 internal record DetailsUpdate(
     TlgUserId UserId, 

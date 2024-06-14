@@ -1,7 +1,7 @@
 using System.Reflection;
-using CheckMade.DevOps.TlgDetailsMigration.Helpers;
+using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
-namespace CheckMade.DevOps.TlgDetailsMigration;
+namespace CheckMade.DevOps.TlgInputDetailsMigration;
 
 internal class MigratorByIndexFactory
 {
@@ -12,7 +12,7 @@ internal class MigratorByIndexFactory
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
-                           type.Namespace.StartsWith("CheckMade.DevOps.TlgDetailsMigration.Migrators") &&
+                           type.Namespace.StartsWith("CheckMade.DevOps.TlgInputDetailsMigration.Migrators") &&
                            typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 type => GetMigratorIndexFromTypeName(type.Name),

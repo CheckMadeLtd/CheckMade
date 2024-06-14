@@ -1,4 +1,4 @@
-namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;
+namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {

@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace CheckMade.DevOps.TlgDetailsMigration.Helpers;
+namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
