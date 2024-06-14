@@ -1,7 +1,3 @@
-using CheckMade.Common.Model.Core;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
-using CheckMade.Common.Model.Utils;
-using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -11,6 +7,9 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,9 +17,10 @@ using Moq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
-namespace CheckMade.Tests.Unit.Telegram.Function;
+namespace CheckMade.Tests.Unit.ChatBot.Function;
 
 public class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {

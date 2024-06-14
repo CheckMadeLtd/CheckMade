@@ -1,6 +1,3 @@
-using CheckMade.Common.Model.Core;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
-using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -9,12 +6,15 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 
-namespace CheckMade.Tests.Unit.Telegram.Function;
+namespace CheckMade.Tests.Unit.ChatBot.Function;
 
 public class ToModelConverterTests
 {

@@ -1,16 +1,16 @@
 using System.ComponentModel;
-using static CheckMade.Common.Model.Core.DomainCategory;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
-using CheckMade.Common.Model.Utils;
-using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
+using static CheckMade.Common.Model.Core.DomainCategory;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 
-namespace CheckMade.Tests.Unit.Telegram.Function;
+namespace CheckMade.Tests.Unit.ChatBot.Function;
 
 public class OutputToReplyMarkupConverterTests
 {

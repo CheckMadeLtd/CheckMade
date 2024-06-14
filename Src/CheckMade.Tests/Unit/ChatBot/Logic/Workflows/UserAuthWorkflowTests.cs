@@ -5,12 +5,12 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
-using static CheckMade.Tests.ITestUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using static CheckMade.Tests.ITestUtils;
 using static CheckMade.ChatBot.Logic.Workflows.UserAuthWorkflow.States;
 
-namespace CheckMade.Tests.Unit.Telegram.Logic.Workflows;
+namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
 public class UserAuthWorkflowTests
 {
