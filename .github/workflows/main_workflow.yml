@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - tmp/oxihg
 
 jobs:  
   tag_version:
@@ -202,8 +203,8 @@ jobs:
           FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING: ${{ secrets.FOR_TESTS_AND_DEVOPS_PG_PRD_DB_CONNSTRING }}
           GOOGLE_SHEET_ID_TEST_DATA: '1b6AHy35omBwmUsMNIfRjRIEJ__4YxLnNwviz8h8287I'
           GOOGLE_API_CREDENTIAL_FILE: ${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
-          BlobContainerClientUri: 'https://storagedmamq.blob.core.windows.net/checkmade'
-          BlobContainerClientAccountName: 'storagedmamq'
+          BlobContainerClientUri: 'https://storagewgypo.blob.core.windows.net/checkmade'
+          BlobContainerClientAccountName: 'storagewgypo'
           BlobContainerClientAccountKey: ${{ secrets.BLOB_CONTAINER_CLIENT_ACCOUNT_KEY }}
             
       #  Deploy ---------------------------------
@@ -212,8 +213,8 @@ jobs:
         if: ${{ matrix.toplevel_project == vars.CHATBOT_TOPLEVEL_PROJECT }}
         uses: Azure/functions-action@v1
         with:
-          app-name: 'telegram-k3zyl'
+          app-name: 'chatbot-yjr87'
           slot-name: 'staging'
           package: ${{ env.BUILD_OUTPUT_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_TELEGRAM_K3ZYL }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CHATBOT_YJR87 }}
           
