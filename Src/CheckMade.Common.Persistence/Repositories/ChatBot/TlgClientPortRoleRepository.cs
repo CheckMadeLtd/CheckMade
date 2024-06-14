@@ -6,7 +6,8 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgClientPortRoleRepository
+public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgClientPortRoleRepository
 {
     public async Task AddAsync(TlgClientPortRole portRole)
     {
@@ -26,6 +27,8 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) : BaseRepo
 
         if (portRole.DeactivationDate.IsSome)
             normalParameters.Add("@deactivationDate", portRole.DeactivationDate.GetValueOrThrow());
+        else
+            normalParameters.Add("@deactivationDate", DBNull.Value);
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand>
         {
@@ -63,5 +66,23 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) : BaseRepo
 
             return new TlgClientPortRole(role, clientPort, activationDate, deactivationDate, status);
         });
+    }
+    
+    public async Task HardDeleteAsync(TlgClientPortRole portRole)
+    {
+        const string rawQuery = "DELETE FROM tlg_client_port_roles " +
+                                "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
+                                "AND tlg_user_id = @tlgUserId " +
+                                "AND tlg_chat_id = @tlgChatId";
+        
+        var normalParameters = new Dictionary<string, object>
+        {
+            { "@token", portRole.Role.Token },
+            { "tlgUserId", (long)portRole.ClientPort.UserId },
+            { "tlgChatId", (long)portRole.ClientPort.ChatId },
+        };
+        var command = GenerateCommand(rawQuery, normalParameters);
+
+        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
 }
