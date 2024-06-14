@@ -6,17 +6,7 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 {
-    protected async Task ExecuteCommandAsync(NpgsqlCommand command)
-    {
-        await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            command.Connection = db;
-            command.Transaction = transaction;
-            await command.ExecuteNonQueryAsync();
-        });
-    }
-
-    protected NpgsqlCommand GenerateCommand(string query, Dictionary<string, object> parameters)
+    protected static NpgsqlCommand GenerateCommand(string query, Dictionary<string, object> parameters)
     {
         var command = new NpgsqlCommand(query);
 
@@ -26,6 +16,19 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         }
 
         return command;
+    }
+
+    protected async Task ExecuteTransactionAsync(IEnumerable<NpgsqlCommand> commands)
+    {
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
+        {
+            foreach (var cmd in commands)
+            {
+                cmd.Connection = db;
+                cmd.Transaction = transaction;
+                await cmd.ExecuteNonQueryAsync();
+            }
+        });
     }
 
     protected async Task<IEnumerable<TModel>> ExecuteReaderAsync<TModel>(

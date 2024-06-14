@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -9,46 +8,41 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputRepository
+public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgInputRepository
 {
-    public async Task AddAsync(TlgInput tlgInput)
-    {
+    public async Task AddAsync(TlgInput tlgInput) =>
         await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableArray());
-    }
 
     public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
     {
+        const string rawQuery = "INSERT INTO tlg_inputs " +
+                                "(user_id, chat_id, details, last_data_migration, " +
+                                "interaction_mode, input_type)" +
+                                " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
+                                "@lastDataMig, @interactionMode, @tlgInputType)";
+        
         var commands = tlgInputs.Select(tlgInput =>
         {
-            var command = new NpgsqlCommand("INSERT INTO tlg_inputs " +
-                                            "(user_id, chat_id, details, last_data_migration, " +
-                                            "interaction_mode, input_type)" +
-                                            " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
-                                            "@lastDataMig, @interactionMode, @tlgInputType)");
-
-            command.Parameters.AddWithValue("@tlgUserId", (long) tlgInput.UserId);
-            command.Parameters.AddWithValue("@tlgChatId", (long) tlgInput.ChatId);
-            command.Parameters.AddWithValue("@lastDataMig", 0);
-            command.Parameters.AddWithValue("@interactionMode", (int) tlgInput.InteractionMode);
-            command.Parameters.AddWithValue("@tlgInputType", (int) tlgInput.TlgInputType);
-
+            var normalParameters = new Dictionary<string, object>
+            {
+                { "@tlgUserId", (long)tlgInput.UserId },
+                { "@tlgChatId", (long)tlgInput.ChatId },
+                { "@lastDataMig", 0 },
+                { "@interactionMode", (int)tlgInput.InteractionMode },
+                { "@tlgInputType", (int) tlgInput.TlgInputType }
+            };
+            
+            var command = GenerateCommand(rawQuery, normalParameters);
+            
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(tlgInput.Details)
             });
-
+            
             return command;
         }).ToImmutableArray();
 
-        await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            foreach (var command in commands)
-            {
-                command.Connection = db;
-                command.Transaction = transaction;        
-                await command.ExecuteNonQueryAsync();
-            }
-        });
+        await ExecuteTransactionAsync(commands);
     }
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync() =>
@@ -62,60 +56,41 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : ITlgInputReposito
             userId);
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
-        string commandText, Option<TlgUserId> userId)
+        string rawQuery, Option<TlgUserId> userId)
     {
-        var builder = ImmutableArray.CreateBuilder<TlgInput>();
-        var command = new NpgsqlCommand(commandText);
-            
+        var normalParameters = new Dictionary<string, object>();
+        
         if (userId.IsSome)
-            command.Parameters.AddWithValue("@tlgUserId", (long) userId.GetValueOrThrow());
+            normalParameters.Add("@tlgUserId", (long) userId.GetValueOrThrow());
 
-        await dbHelper.ExecuteAsync(async (db, transaction) =>
+        var command = GenerateCommand(rawQuery, normalParameters);
+
+        return await ExecuteReaderAsync(command, reader =>
         {
-            command.Connection = db;
-            command.Transaction = transaction;
-            
-            await using (var reader = await command.ExecuteReaderAsync())
-            {
-                while (await reader.ReadAsync())
-                {
-                    builder.Add(CreateTlgInputFromReaderStrict(reader));
-                }
-            }
-        });
+            TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("user_id"));
+            TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("chat_id"));
+            var interactionMode = reader.GetInt16(reader.GetOrdinal("interaction_mode"));
+            var tlgInputType = reader.GetInt16(reader.GetOrdinal("input_type"));
+            var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
-        return builder.ToImmutable();
+            var message = new TlgInput(
+                tlgUserId,
+                tlgChatId,
+                (InteractionMode) interactionMode,
+                (TlgInputType) tlgInputType,
+                JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
+                ?? throw new InvalidOperationException("Failed to deserialize"));
+
+            return message;
+        });
     }
     
-    private static TlgInput CreateTlgInputFromReaderStrict(DbDataReader reader)
-    {
-        TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("user_id"));
-        TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("chat_id"));
-        var interactionMode = reader.GetInt16(reader.GetOrdinal("interaction_mode"));
-        var tlgInputType = reader.GetInt16(reader.GetOrdinal("input_type"));
-        var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
-
-        var message = new TlgInput(
-            tlgUserId,
-            tlgChatId,
-            (InteractionMode) interactionMode,
-            (TlgInputType) tlgInputType,
-            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
-            ?? throw new InvalidOperationException("Failed to deserialize"));
-
-        return message;
-    }
-
     public async Task HardDeleteAllAsync(TlgUserId userId)
     {
-        var command = new NpgsqlCommand("DELETE FROM tlg_inputs WHERE user_id = @tlgUserId");
-        command.Parameters.AddWithValue("@tlgUserId", (long) userId);
+        const string rawQuery = "DELETE FROM tlg_inputs WHERE user_id = @tlgUserId";
+        var normalParameters = new Dictionary<string, object> { { "@tlgUserId", (long)userId } };
+        var command = GenerateCommand(rawQuery, normalParameters);
 
-        await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            command.Connection = db;
-            command.Transaction = transaction;
-            await command.ExecuteNonQueryAsync();
-        });
+        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
 }
