@@ -16,9 +16,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
     public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
     {
         const string rawQuery = "INSERT INTO tlg_inputs " +
-                                "(user_id, chat_id, details, last_data_migration, " +
-                                "interaction_mode, input_type)" +
-                                " VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails," +
+                                "(user_id, chat_id, details, last_data_migration, interaction_mode, input_type) " +
+                                "VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, " +
                                 "@lastDataMig, @interactionMode, @tlgInputType)";
         
         var commands = tlgInputs.Select(tlgInput =>
