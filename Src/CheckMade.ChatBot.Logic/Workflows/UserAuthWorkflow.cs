@@ -102,7 +102,9 @@ internal class UserAuthWorkflow : IWorkflow
             : DateTime.MinValue;
         
         var allRelevantInputs = (await _inputRepo.GetAllAsync(userId))
-            .Where(i => i.Details.TlgDate > dateOfLastDeactivationForCutOff)
+            .Where(i => 
+                i.Details.TlgDate.ToUniversalTime() > 
+                dateOfLastDeactivationForCutOff.ToUniversalTime())
             .ToList().AsReadOnly();
 
         var lastTextSubmitted = allRelevantInputs
@@ -172,7 +174,11 @@ internal class UserAuthWorkflow : IWorkflow
             portModeRolesToAdd.AddRange(
                 from mode in nonOriginatingModes 
                 where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
-                select newPortModeRoleForOriginatingMode with { Mode = mode });
+                select newPortModeRoleForOriginatingMode with
+                {
+                    Mode = mode,
+                    ActivationDate = DateTime.UtcNow
+                });
         }
         
         await _portModeRoleRepo.AddAsync(portModeRolesToAdd);
