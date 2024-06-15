@@ -33,10 +33,10 @@ internal class WorkflowIdentifier(
     private static async Task<bool> IsUserAuthenticated(
         TlgClientPort inputPort, ITlgClientPortModeRoleRepository portModeRoleRepo)
     {
-        IReadOnlyList<TlgClientPortModeRole> tlgClientPortRoles =
+        IReadOnlyList<TlgClientPortModeRole> tlgClientPortModeRoles =
             (await portModeRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
-        return tlgClientPortRoles
+        return tlgClientPortModeRoles
                    .FirstOrDefault(cpr => cpr.ClientPort.ChatId == inputPort.ChatId &&
                                           cpr.Status == DbRecordStatus.Active) 
                != null;

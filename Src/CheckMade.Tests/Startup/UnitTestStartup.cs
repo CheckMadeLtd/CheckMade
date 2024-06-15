@@ -70,14 +70,14 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
-        var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortModeRoleRepository>();
+        var mockTlgClientPortModeRoleRepo = new Mock<ITlgClientPortModeRoleRepository>();
 
-        mockTlgClientPortRoleRepo
+        mockTlgClientPortModeRoleRepo
             .Setup(cpr => cpr.GetAllAsync())
-            .ReturnsAsync(GetTestingPortRoles());
+            .ReturnsAsync(GetTestingPortModeRoles());
 
-        Services.AddScoped<ITlgClientPortModeRoleRepository>(_ => mockTlgClientPortRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgClientPortModeRoleRepository>>(_ => mockTlgClientPortRoleRepo);
+        Services.AddScoped<ITlgClientPortModeRoleRepository>(_ => mockTlgClientPortModeRoleRepo.Object);
+        Services.AddScoped<Mock<ITlgClientPortModeRoleRepository>>(_ => mockTlgClientPortModeRoleRepo);
     }
 
     private void RegisterExternalServicesMocks()
@@ -86,7 +86,7 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
     
-    private static ImmutableArray<TlgClientPortModeRole> GetTestingPortRoles()
+    private static ImmutableArray<TlgClientPortModeRole> GetTestingPortModeRoles()
     {
         var builder = ImmutableArray.CreateBuilder<TlgClientPortModeRole>();
 

@@ -284,7 +284,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgClientPortRolesExist(
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgClientPortModeRolesExist(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -316,14 +316,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
-        var portRoles = await basics.portRoleTask;
+        var portModeRoles = await basics.portModeRoleTask;
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TelegramPortChatId = portRoles
+                TelegramPortChatId = portModeRoles
                     .Where(cpr => 
                         cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
                         cpr.Status == DbRecordStatus.Active)
@@ -516,11 +516,11 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
     
     private static (ITestUtils utils, 
-        Mock<IBotClientWrapper> mockBotClient, 
-        IUpdateHandler handler, 
-        IOutputToReplyMarkupConverterFactory markupConverterFactory, 
-        IUiTranslator emptyTranslator, 
-        Task<IEnumerable<TlgClientPortModeRole>> portRoleTask)
+        Mock<IBotClientWrapper> mockBotClient,
+        IUpdateHandler handler,
+        IOutputToReplyMarkupConverterFactory markupConverterFactory,
+        IUiTranslator emptyTranslator,
+        Task<IEnumerable<TlgClientPortModeRole>> portModeRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),

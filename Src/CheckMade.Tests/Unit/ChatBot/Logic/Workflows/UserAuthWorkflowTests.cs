@@ -29,7 +29,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage() });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -37,13 +37,13 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortRole()
+    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortModeRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
+        // Depends on an 'expired' clientPortModeRole set up by default in the MockTlgClientPortModeRoleRepository 
         var tlgPastInputToBeIgnored = basics.utils.GetValidTlgTextMessage(
             TestUserId_02,
             TestChatId_03,
@@ -55,7 +55,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
         
@@ -75,7 +75,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage(text: "InvalidToken") });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
         
@@ -97,7 +97,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -105,19 +105,19 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActivePortRole()
+    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActivePortModeRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        var inputTokenWithPreExistingActivePortRole = basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
-        var preExistingActivePortRole = (await basics.mockPortRolesRepo.Object.GetAllAsync())
+        var inputTokenWithPreExistingActivePortModeRole = basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
+        var preExistingActivePortModeRole = (await basics.mockPortModeRolesRepo.Object.GetAllAsync())
             .First(cpr => cpr.Role.Token == SanitaryOpsAdmin1.Token);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortRole });
+            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortModeRole });
 
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another chat. 
@@ -125,19 +125,19 @@ public class UserAuthWorkflowTests
                                        """;
 
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
         var actualOutputs = 
-            await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortRole);
+            await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortModeRole);
         
         Assert.Equal(expectedWarning, GetFirstRawEnglish(actualOutputs));
         
-        basics.mockPortRolesRepo.Verify(
-            x => x.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic));
+        basics.mockPortModeRolesRepo.Verify(
+            x => x.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic));
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesPortRole_AndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
+    public async Task GetNextOutputAsync_CreatesPortModeRole_AndReturnsDetailedConfirmation_WhenSubmittedTokenValid()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -153,26 +153,26 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
-        var expectedClientPortRoleAdded = new TlgClientPortModeRole(
+        var expectedClientPortModeRoleAdded = new TlgClientPortModeRole(
             SanitaryOpsInspector2,
             new TlgClientPort(TestUserId_03, TestChatId_08),
             DateTime.Now,
             Option<DateTime>.None());
         
-        TlgClientPortModeRole? actualClientPortRoleAdded = null; 
-        basics.mockPortRolesRepo
+        TlgClientPortModeRole? actualClientPortModeRoleAdded = null; 
+        basics.mockPortModeRolesRepo
             .Setup(x => x.AddAsync(It.IsAny<TlgClientPortModeRole>()))
-            .Callback<TlgClientPortModeRole>(portRole => actualClientPortRoleAdded = portRole);
+            .Callback<TlgClientPortModeRole>(portModeRole => actualClientPortModeRoleAdded = portModeRole);
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
 
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
-        Assert.Equivalent(expectedClientPortRoleAdded.Role, actualClientPortRoleAdded!.Role);
-        Assert.Equivalent(expectedClientPortRoleAdded.ClientPort, actualClientPortRoleAdded!.ClientPort);
-        Assert.Equivalent(expectedClientPortRoleAdded.Status, actualClientPortRoleAdded!.Status);
+        Assert.Equivalent(expectedClientPortModeRoleAdded.Role, actualClientPortModeRoleAdded!.Role);
+        Assert.Equivalent(expectedClientPortModeRoleAdded.ClientPort, actualClientPortModeRoleAdded!.ClientPort);
+        Assert.Equivalent(expectedClientPortModeRoleAdded.Status, actualClientPortModeRoleAdded!.Status);
     }
     
     [Theory]
@@ -196,7 +196,7 @@ public class UserAuthWorkflowTests
             });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
@@ -204,7 +204,7 @@ public class UserAuthWorkflowTests
     }
 
     private static (ITestUtils utils, 
-        Mock<ITlgClientPortModeRoleRepository> mockPortRolesRepo, 
+        Mock<ITlgClientPortModeRoleRepository> mockPortModeRolesRepo, 
         IRoleRepository mockRoleRepo, 
         DateTime baseDateTime) 
         GetBasicTestingServices(IServiceProvider sp) =>

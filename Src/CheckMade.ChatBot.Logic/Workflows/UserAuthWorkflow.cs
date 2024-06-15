@@ -23,7 +23,7 @@ internal class UserAuthWorkflow : IWorkflow
     private readonly ITlgClientPortModeRoleRepository _portModeRoleRepo;
 
     private IEnumerable<Role> _preExistingRoles = new List<Role>();
-    private IEnumerable<TlgClientPortModeRole> _preExistingPortRoles = new List<TlgClientPortModeRole>();
+    private IEnumerable<TlgClientPortModeRole> _preExistingPortModeRoles = new List<TlgClientPortModeRole>();
 
     private UserAuthWorkflow(ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
@@ -47,12 +47,12 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task InitAsync()
     {
         var getRolesTask = _roleRepo.GetAllAsync();
-        var getPortRolesTask = _portModeRoleRepo.GetAllAsync();
+        var getPortModeRolesTask = _portModeRoleRepo.GetAllAsync();
         
-        await Task.WhenAll(getRolesTask, getPortRolesTask);
+        await Task.WhenAll(getRolesTask, getPortModeRolesTask);
 
         _preExistingRoles = getRolesTask.Result;
-        _preExistingPortRoles = getPortRolesTask.Result;
+        _preExistingPortModeRoles = getPortModeRolesTask.Result;
     }
     
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
@@ -89,14 +89,14 @@ internal class UserAuthWorkflow : IWorkflow
     
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
-        var lastUsedTlgClientPortRole = _preExistingPortRoles
+        var lastUsedTlgClientPortModeRole = _preExistingPortModeRoles
             .Where(cpr =>
                 cpr.ClientPort == new TlgClientPort(userId, chatId) &&
                 cpr.DeactivationDate.IsSome)
             .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortRole != null
-            ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
+        var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortModeRole != null
+            ? lastUsedTlgClientPortModeRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         var allRelevantInputs = (await _inputRepo.GetAllAsync(userId))
@@ -122,19 +122,19 @@ internal class UserAuthWorkflow : IWorkflow
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var outputs = new List<OutputDto>();
         
-        var newPortRole = new TlgClientPortModeRole(
+        var newPortModeRole = new TlgClientPortModeRole(
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
             DateTime.Now,
             Option<DateTime>.None());
         
-        var preExistingActivePortRole = _preExistingPortRoles.FirstOrDefault(cpr => 
+        var preExistingActivePortModeRole = _preExistingPortModeRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText && 
             cpr.Status == DbRecordStatus.Active);
 
-        if (preExistingActivePortRole != null)
+        if (preExistingActivePortModeRole != null)
         {
-            await _portModeRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            await _portModeRoleRepo.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -142,7 +142,7 @@ internal class UserAuthWorkflow : IWorkflow
                           Warning: you were already authenticated with this token in another chat. 
                           This will be the new chat where you receive messages in your role {0} at {1}. 
                           """, 
-                    newPortRole.Role.RoleType,
+                    newPortModeRole.Role.RoleType,
                     "Placeholder LiveEvent")
             });
         }
@@ -151,13 +151,13 @@ internal class UserAuthWorkflow : IWorkflow
         {
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.",
                 "Placeholder Name",
-                newPortRole.Role.RoleType,
+                newPortModeRole.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
         // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
 
-        await _portModeRoleRepo.AddAsync(newPortRole);
+        await _portModeRoleRepo.AddAsync(newPortModeRole);
         
         return outputs;
     }

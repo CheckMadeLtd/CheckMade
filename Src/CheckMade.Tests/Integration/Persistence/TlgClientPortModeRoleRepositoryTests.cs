@@ -12,13 +12,13 @@ public class TlgClientPortModeRoleRepositoryTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task SavesAndRetrieves_OneTlgClientPortRole_WhenInputValid()
+    public async Task SavesAndRetrieves_OneTlgClientPortModeRole_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var inputPortRole = new TlgClientPortModeRole(
+        var inputPortModeRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             DateTime.Now,
@@ -26,13 +26,13 @@ public class TlgClientPortModeRoleRepositoryTests
 
         var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
 
-        await repo.AddAsync(inputPortRole);
+        await repo.AddAsync(inputPortModeRole);
         var retrieved = (await repo.GetAllAsync())
             .MaxBy(cpr => cpr.ActivationDate);
-        await repo.HardDeleteAsync(inputPortRole);
+        await repo.HardDeleteAsync(inputPortModeRole);
         
-        Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
-        Assert.Equivalent(inputPortRole.ClientPort, retrieved.ClientPort);
+        Assert.Equivalent(inputPortModeRole.Role, retrieved!.Role);
+        Assert.Equivalent(inputPortModeRole.ClientPort, retrieved.ClientPort);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class TlgClientPortModeRoleRepositoryTests
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var preExistingActivePortRole = new TlgClientPortModeRole(
+        var preExistingActivePortModeRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             DateTime.Now,
@@ -50,14 +50,14 @@ public class TlgClientPortModeRoleRepositoryTests
             DbRecordStatus.Active);
 
         var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
-        await repo.AddAsync(preExistingActivePortRole);
+        await repo.AddAsync(preExistingActivePortModeRole);
         
-        await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+        await repo.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic);
         
         var retrievedUpdated = (await repo.GetAllAsync())
             .MaxBy(cpr => cpr.ActivationDate);
         
-        await repo.HardDeleteAsync(preExistingActivePortRole);
+        await repo.HardDeleteAsync(preExistingActivePortModeRole);
         
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated!.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);

@@ -69,7 +69,7 @@ public class UpdateHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        var tlgClientPortRoles = await tlgClientPortModeRoleRepo.GetAllAsync();
+        var tlgClientPortModeRoles = await tlgClientPortModeRoleRepo.GetAllAsync();
 
         var sendOutputsAttempt = await
             (from tlgInput
@@ -83,7 +83,7 @@ public class UpdateHandler(
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          tlgClientPortRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          tlgClientPortModeRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
