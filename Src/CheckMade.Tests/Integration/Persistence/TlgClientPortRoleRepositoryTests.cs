@@ -60,5 +60,6 @@ public class TlgClientPortRoleRepositoryTests
         await repo.HardDeleteAsync(preExistingActivePortRole);
         
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated!.Status);
+        Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }
 }

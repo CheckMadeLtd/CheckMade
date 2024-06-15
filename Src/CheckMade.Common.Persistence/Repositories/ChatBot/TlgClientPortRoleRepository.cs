@@ -71,18 +71,23 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
     public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_client_port_roles " +
-                                "SET status = @status " +
+                                "SET status = @status, deactivation_date = @date " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
                                 "AND tlg_chat_id = @tlgChatId";
     
         var normalParameters = new Dictionary<string, object>
         {
+            { "@status", (int)newStatus },
             { "@token", portRole.Role.Token },
             { "@tlgUserId", (long)portRole.ClientPort.UserId },
             { "@tlgChatId", (long)portRole.ClientPort.ChatId },
-            { "@status", (int)newStatus }
         };
+
+        if (newStatus != DbRecordStatus.Active)
+            normalParameters.Add("@date", DateTime.Now);
+        else
+            normalParameters.Add("@date", DBNull.Value);
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
