@@ -92,8 +92,7 @@ internal class UserAuthWorkflow : IWorkflow
     {
         var lastUsedTlgClientPortModeRole = _preExistingPortModeRoles
             .Where(cpmr =>
-                cpmr.ClientPort == new TlgClientPort(userId, chatId) &&
-                cpmr.Mode == mode &&
+                cpmr.ClientPort == new TlgClientPort(userId, chatId, mode) &&
                 cpmr.DeactivationDate.IsSome)
             .MaxBy(cpmr => cpmr.DeactivationDate.GetValueOrThrow());
 
@@ -129,8 +128,7 @@ internal class UserAuthWorkflow : IWorkflow
         
         var newPortModeRoleForOriginatingMode = new TlgClientPortModeRole(
             _preExistingRoles.First(r => r.Token == inputText),
-            new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
-            originatingMode,
+            new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId, originatingMode),
             DateTime.UtcNow,
             Option<DateTime>.None());
         
@@ -184,7 +182,7 @@ internal class UserAuthWorkflow : IWorkflow
         TlgClientPortModeRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
         _preExistingPortModeRoles.FirstOrDefault(cpmr => 
             cpmr.Role.Token == inputText &&
-            cpmr.Mode == mode && 
+            cpmr.ClientPort.Mode == mode && 
             cpmr.Status == DbRecordStatus.Active);
 
         void AddPortModeRolesForOtherNonOriginatingAndVirginModes()
@@ -197,7 +195,7 @@ internal class UserAuthWorkflow : IWorkflow
                 where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
                 select newPortModeRoleForOriginatingMode with
                 {
-                    Mode = mode,
+                    ClientPort = newPortModeRoleForOriginatingMode.ClientPort with { Mode = mode },
                     ActivationDate = DateTime.UtcNow
                 });
         }

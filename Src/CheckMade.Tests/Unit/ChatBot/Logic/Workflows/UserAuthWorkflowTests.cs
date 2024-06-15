@@ -122,7 +122,7 @@ public class UserAuthWorkflowTests
         var preExistingActivePortModeRole = (await basics.mockPortModeRolesRepo.Object.GetAllAsync())
             .First(cpmr => 
                 cpmr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpmr.Mode == Operations);
+                cpmr.ClientPort.Mode == Operations);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
@@ -169,8 +169,7 @@ public class UserAuthWorkflowTests
         
         var expectedClientPortModeRoleAdded = new TlgClientPortModeRole(
             SanitaryOpsInspector2,
-            new TlgClientPort(TestUserId_03, TestChatId_08),
-            Operations,
+            new TlgClientPort(TestUserId_03, TestChatId_08, Operations),
             DateTime.UtcNow,
             Option<DateTime>.None());
         
@@ -189,7 +188,6 @@ public class UserAuthWorkflowTests
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
         Assert.Equivalent(expectedClientPortModeRoleAdded.Role, actualClientPortModeRoleAdded[0].Role);
         Assert.Equivalent(expectedClientPortModeRoleAdded.ClientPort, actualClientPortModeRoleAdded[0].ClientPort);
-        Assert.Equal(expectedClientPortModeRoleAdded.Mode, actualClientPortModeRoleAdded[0].Mode);
         Assert.Equivalent(expectedClientPortModeRoleAdded.Status, actualClientPortModeRoleAdded[0].Status);
     }
 
@@ -215,8 +213,7 @@ public class UserAuthWorkflowTests
         var expectedClientPortModeRolesAdded = allModes.Select(im => 
             new TlgClientPortModeRole(
                 SanitaryOpsInspector2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId),
-                im,
+                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, im),
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
             .ToList();
@@ -240,7 +237,6 @@ public class UserAuthWorkflowTests
         {
             Assert.Equivalent(expectedClientPortModeRolesAdded[i].ClientPort, actualPortModeRoles[i].ClientPort);
             Assert.Equivalent(expectedClientPortModeRolesAdded[i].Role, actualPortModeRoles[i].Role);
-            Assert.Equivalent(expectedClientPortModeRolesAdded[i].Mode, actualPortModeRoles[i].Mode);
             Assert.Equivalent(expectedClientPortModeRolesAdded[i].Status, actualPortModeRoles[i].Status);
         }
     }

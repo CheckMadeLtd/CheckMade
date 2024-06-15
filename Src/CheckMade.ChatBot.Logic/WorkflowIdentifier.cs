@@ -21,7 +21,7 @@ internal class WorkflowIdentifier(
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
-        var inputPort = new TlgClientPort(input.UserId, input.ChatId);
+        var inputPort = new TlgClientPort(input.UserId, input.ChatId, input.InteractionMode);
 
         if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portModeRoleRepo))
         {
@@ -40,7 +40,7 @@ internal class WorkflowIdentifier(
         return tlgClientPortModeRoles
                    .FirstOrDefault(cpmr => 
                        cpmr.ClientPort.ChatId == inputPort.ChatId &&
-                       cpmr.Mode == mode &&
+                       cpmr.ClientPort.Mode == mode &&
                        cpmr.Status == DbRecordStatus.Active) 
                != null;
     }

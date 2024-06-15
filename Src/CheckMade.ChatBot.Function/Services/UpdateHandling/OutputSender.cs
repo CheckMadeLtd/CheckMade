@@ -18,7 +18,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgClientPortModeRole> tlgClientPortModeRole,
+            IEnumerable<TlgClientPortModeRole> tlgClientPortModeRoles,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -42,10 +42,10 @@ internal static class OutputSender
                 var portBotClient = botClientByMode[relevantMode];
 
                 var portChatId = output.LogicalPort.Match(
-                    logicalPort => tlgClientPortModeRole
+                    logicalPort => tlgClientPortModeRoles
                         .First(cpmr => 
                             cpmr.Role == logicalPort.Role &&
-                            cpmr.Mode == relevantMode &&
+                            cpmr.ClientPort.Mode == relevantMode &&
                             cpmr.Status == DbRecordStatus.Active)
                         .ClientPort.ChatId.Id,
                     () => currentlyReceivingChatId);

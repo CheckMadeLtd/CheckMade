@@ -30,7 +30,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
                 { "@tlgChatId", (long)cpmr.ClientPort.ChatId },
                 { "@activationDate", cpmr.ActivationDate },
                 { "@status", (int)cpmr.Status },
-                { "@mode", (int)cpmr.Mode }
+                { "@mode", (int)cpmr.ClientPort.Mode }
             };
 
             if (cpmr.DeactivationDate.IsSome)
@@ -62,10 +62,9 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
                     
             var clientPort = new TlgClientPort(
                 reader.GetInt64(3),
-                reader.GetInt64(4));
+                reader.GetInt64(4),
+                (InteractionMode)reader.GetInt16(5));
 
-            var mode = (InteractionMode)reader.GetInt16(5);
-            
             var activationDate = reader.GetDateTime(6);
                     
             var deactivationDate = !reader.IsDBNull(7) 
@@ -74,7 +73,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
                     
             var status = (DbRecordStatus)reader.GetInt16(8);
 
-            return new TlgClientPortModeRole(role, clientPort, mode, activationDate, deactivationDate, status);
+            return new TlgClientPortModeRole(role, clientPort, activationDate, deactivationDate, status);
         });
     }
 
@@ -93,7 +92,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
             { "@token", portModeRole.Role.Token },
             { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
             { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
-            { "@mode", (int)portModeRole.Mode }
+            { "@mode", (int)portModeRole.ClientPort.Mode }
         };
 
         if (newStatus != DbRecordStatus.Active)
@@ -119,7 +118,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
             { "@token", portModeRole.Role.Token },
             { "tlgUserId", (long)portModeRole.ClientPort.UserId },
             { "tlgChatId", (long)portModeRole.ClientPort.ChatId },
-            { "@mode", (int)portModeRole.Mode }
+            { "@mode", (int)portModeRole.ClientPort.Mode }
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

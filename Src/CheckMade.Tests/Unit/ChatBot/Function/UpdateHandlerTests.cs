@@ -326,7 +326,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 TelegramPortChatId = portModeRoles
                     .First(cpmr => 
                         cpmr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpmr.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
+                        cpmr.ClientPort.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
                         cpmr.Status == DbRecordStatus.Active)
                     .ClientPort.ChatId.Id
             });

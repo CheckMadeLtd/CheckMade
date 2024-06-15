@@ -24,8 +24,7 @@ public class TlgClientPortModeRoleRepositoryTests
         
         var inputPortModeRole = new TlgClientPortModeRole(
             existingTestRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
-            mode,
+            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
@@ -38,7 +37,6 @@ public class TlgClientPortModeRoleRepositoryTests
         
         Assert.Equivalent(inputPortModeRole.Role, retrieved!.Role);
         Assert.Equivalent(inputPortModeRole.ClientPort, retrieved.ClientPort);
-        Assert.Equivalent(inputPortModeRole.Mode, retrieved.Mode);
     }
 
     [Theory]
@@ -53,8 +51,7 @@ public class TlgClientPortModeRoleRepositoryTests
         
         var preExistingActivePortModeRole = new TlgClientPortModeRole(
             existingTestRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
-            mode,
+            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
@@ -70,7 +67,6 @@ public class TlgClientPortModeRoleRepositoryTests
         await repo.HardDeleteAsync(preExistingActivePortModeRole);
         
         Assert.Equivalent(preExistingActivePortModeRole.ClientPort, retrievedUpdated!.ClientPort);
-        Assert.Equal(preExistingActivePortModeRole.Mode, retrievedUpdated.Mode);
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }
