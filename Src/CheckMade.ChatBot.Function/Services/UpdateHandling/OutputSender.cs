@@ -28,9 +28,15 @@ internal static class OutputSender
         {
             foreach (var output in outputsPerPort)
             {
+                /*
+                 * LogicalPort will typically not be set explicitly in these cases:
+                 * a) For an update from a User who hasn't done the UserAuth workflow yet i.e. is unknown
+                 * b) For outputs aimed at the originator of the last input i.e. the default case
+                 * => LogicalPorts therefore mostly used to send e.g. notifications to other users
+                 */
+                
                 var relevantMode = output.LogicalPort.Match(
                     logicalPort => logicalPort.InteractionMode,
-                    // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingInteractionMode);
 
                 var portBotClient = botClientByMode[relevantMode];
@@ -42,7 +48,6 @@ internal static class OutputSender
                             cpmr.Mode == relevantMode &&
                             cpmr.Status == DbRecordStatus.Active)
                         .ClientPort.ChatId.Id,
-                    // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingChatId);
                     
                 switch (output)

@@ -4,6 +4,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
@@ -32,7 +33,8 @@ public class UserAuthWorkflowTests
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
-        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
+        var actualState = await workflow.DetermineCurrentStateAsync(
+            TestUserId_01, TestChatId_01, Operations);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
@@ -58,7 +60,8 @@ public class UserAuthWorkflowTests
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
-        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_02, TestChatId_03);
+        var actualState = await workflow.DetermineCurrentStateAsync(
+            TestUserId_02, TestChatId_03, Operations);
         
         Assert.Equal(ReadyToReceiveToken, actualState);
     }
@@ -78,7 +81,8 @@ public class UserAuthWorkflowTests
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortModeRolesRepo.Object);
         
-        var actualState = await workflow.DetermineCurrentStateAsync(TestUserId_01, TestChatId_01);
+        var actualState = await workflow.DetermineCurrentStateAsync(
+            TestUserId_01, TestChatId_01, Operations);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
@@ -118,7 +122,7 @@ public class UserAuthWorkflowTests
         var preExistingActivePortModeRole = (await basics.mockPortModeRolesRepo.Object.GetAllAsync())
             .First(cpmr => 
                 cpmr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpmr.Mode == InteractionMode.Operations);
+                cpmr.Mode == Operations);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
@@ -162,7 +166,7 @@ public class UserAuthWorkflowTests
         var expectedClientPortModeRoleAdded = new TlgClientPortModeRole(
             SanitaryOpsInspector2,
             new TlgClientPort(TestUserId_03, TestChatId_08),
-            InteractionMode.Operations,
+            Operations,
             DateTime.Now,
             Option<DateTime>.None());
         

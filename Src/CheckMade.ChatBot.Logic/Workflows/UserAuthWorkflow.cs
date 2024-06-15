@@ -60,7 +60,7 @@ internal class UserAuthWorkflow : IWorkflow
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId) switch
+        return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId, tlgInput.InteractionMode) switch
         {
             ReadyToReceiveToken => new List<OutputDto> { EnterTokenPrompt },
             
@@ -88,11 +88,12 @@ internal class UserAuthWorkflow : IWorkflow
         };
     }
     
-    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
+    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
     {
         var lastUsedTlgClientPortModeRole = _preExistingPortModeRoles
             .Where(cpmr =>
                 cpmr.ClientPort == new TlgClientPort(userId, chatId) &&
+                cpmr.Mode == mode &&
                 cpmr.DeactivationDate.IsSome)
             .MaxBy(cpmr => cpmr.DeactivationDate.GetValueOrThrow());
 

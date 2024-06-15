@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
@@ -22,7 +23,7 @@ internal class WorkflowIdentifier(
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId);
 
-        if (!await IsUserAuthenticated(inputPort, portModeRoleRepo))
+        if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portModeRoleRepo))
         {
             return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portModeRoleRepo);
         }
@@ -31,14 +32,16 @@ internal class WorkflowIdentifier(
     }
     
     private static async Task<bool> IsUserAuthenticated(
-        TlgClientPort inputPort, ITlgClientPortModeRoleRepository portModeRoleRepo)
+        TlgClientPort inputPort, InteractionMode mode, ITlgClientPortModeRoleRepository portModeRoleRepo)
     {
         IReadOnlyList<TlgClientPortModeRole> tlgClientPortModeRoles =
             (await portModeRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
         return tlgClientPortModeRoles
-                   .FirstOrDefault(cpmr => cpmr.ClientPort.ChatId == inputPort.ChatId &&
-                                          cpmr.Status == DbRecordStatus.Active) 
+                   .FirstOrDefault(cpmr => 
+                       cpmr.ClientPort.ChatId == inputPort.ChatId &&
+                       cpmr.Mode == mode &&
+                       cpmr.Status == DbRecordStatus.Active) 
                != null;
     }
 }
