@@ -162,7 +162,11 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(TestUserId_03))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
-        const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
+        const string expectedConfirmation = """
+                                            {0}, welcome to the CheckMade ChatBot!
+                                            You have successfully authenticated as a {1} at live-event {2}.
+                                            """;
+        
         var expectedClientPortModeRoleAdded = new TlgClientPortModeRole(
             SanitaryOpsInspector2,
             new TlgClientPort(TestUserId_03, TestChatId_08),

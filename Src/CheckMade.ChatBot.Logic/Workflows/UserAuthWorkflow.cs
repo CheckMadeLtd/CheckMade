@@ -152,21 +152,42 @@ internal class UserAuthWorkflow : IWorkflow
             });
         }
         
-        outputs.Add(new OutputDto()
+        outputs.Add(new OutputDto
         {
-            Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.",
+            Text = Ui("""
+                      {0}, welcome to the CheckMade ChatBot!
+                      You have successfully authenticated as a {1} at live-event {2}.
+                      """, 
                 "Placeholder Name",
                 newPortModeRoleForOriginatingMode.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
-        // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
+        outputs.Add(new OutputDto
+        {
+            Text = IInputProcessor.SeeValidBotCommandsInstruction
+        });
 
         var portModeRolesToAdd = new List<TlgClientPortModeRole> { newPortModeRoleForOriginatingMode };
         
         var isInputTlgClientPortPrivateChat = tokenInputAttempt.ChatId == tokenInputAttempt.UserId;
 
         if (isInputTlgClientPortPrivateChat)
+        {
+            AddPortModeRolesForOtherNonOriginatingAndVirginModes();
+        }
+        
+        await _portModeRoleRepo.AddAsync(portModeRolesToAdd);
+        
+        return outputs;
+        
+        TlgClientPortModeRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        _preExistingPortModeRoles.FirstOrDefault(cpmr => 
+            cpmr.Role.Token == inputText &&
+            cpmr.Mode == mode && 
+            cpmr.Status == DbRecordStatus.Active);
+
+        void AddPortModeRolesForOtherNonOriginatingAndVirginModes()
         {
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
             var nonOriginatingModes = allModes.Except(new [] { originatingMode });
@@ -180,16 +201,6 @@ internal class UserAuthWorkflow : IWorkflow
                     ActivationDate = DateTime.UtcNow
                 });
         }
-        
-        await _portModeRoleRepo.AddAsync(portModeRolesToAdd);
-        
-        return outputs;
-        
-        TlgClientPortModeRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
-        _preExistingPortModeRoles.FirstOrDefault(cpmr => 
-            cpmr.Role.Token == inputText &&
-            cpmr.Mode == mode && 
-            cpmr.Status == DbRecordStatus.Active);
     }
     
     [Flags]
