@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using Moq;
 
-namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Tlg;
+namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
 
 internal class MockTlgInputRepository(IMock<ITlgInputRepository> mockInputRepo) : ITlgInputRepository
 {
