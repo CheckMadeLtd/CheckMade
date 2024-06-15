@@ -32,7 +32,14 @@ internal class InputProcessor(
 
                 var nextWorkflowStepResult = await currentWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
-                    () => Task.FromResult(Result<IReadOnlyList<OutputDto>>.FromSuccess(new List<OutputDto>())));
+                    () => Task.FromResult(Result<IReadOnlyList<OutputDto>>.FromSuccess(
+                        new List<OutputDto>
+                        {
+                            new()
+                            {
+                                Text = Ui("My placeholder answer for lack of a workflow handling your input."),
+                            }
+                        })));
 
                 return nextWorkflowStepResult.Match(
                     outputs => outputs,
