@@ -5,8 +5,8 @@ namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
 public interface ITlgClientPortRoleRepository
 {
-    Task AddAsync(TlgClientPortRole portRole);
-    Task<IEnumerable<TlgClientPortRole>> GetAllAsync();
-    Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus);
-    Task HardDeleteAsync(TlgClientPortRole portRole);
+    Task AddAsync(TlgClientPortModeRole portModeRole);
+    Task<IEnumerable<TlgClientPortModeRole>> GetAllAsync();
+    Task UpdateStatusAsync(TlgClientPortModeRole portModeRole, DbRecordStatus newStatus);
+    Task HardDeleteAsync(TlgClientPortModeRole portModeRole);
 }

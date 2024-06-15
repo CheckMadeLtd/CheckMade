@@ -18,7 +18,7 @@ public class TlgClientPortRoleRepositoryTests
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var inputPortRole = new TlgClientPortRole(
+        var inputPortRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             DateTime.Now,
@@ -42,7 +42,7 @@ public class TlgClientPortRoleRepositoryTests
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var preExistingActivePortRole = new TlgClientPortRole(
+        var preExistingActivePortRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             DateTime.Now,

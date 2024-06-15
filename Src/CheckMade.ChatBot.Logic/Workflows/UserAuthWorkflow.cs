@@ -23,7 +23,7 @@ internal class UserAuthWorkflow : IWorkflow
     private readonly ITlgClientPortRoleRepository _portRoleRepo;
 
     private IEnumerable<Role> _preExistingRoles = new List<Role>();
-    private IEnumerable<TlgClientPortRole> _preExistingPortRoles = new List<TlgClientPortRole>();
+    private IEnumerable<TlgClientPortModeRole> _preExistingPortRoles = new List<TlgClientPortModeRole>();
 
     private UserAuthWorkflow(ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
@@ -122,7 +122,7 @@ internal class UserAuthWorkflow : IWorkflow
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var outputs = new List<OutputDto>();
         
-        var newPortRole = new TlgClientPortRole(
+        var newPortRole = new TlgClientPortModeRole(
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
             DateTime.Now,

@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot;
 
-public record TlgClientPortRole(
+public record TlgClientPortModeRole(
     Role Role,
     TlgClientPort ClientPort,
     DateTime ActivationDate,

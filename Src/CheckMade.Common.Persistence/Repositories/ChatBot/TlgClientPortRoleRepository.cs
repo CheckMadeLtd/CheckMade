@@ -9,7 +9,7 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) 
     : BaseRepository(dbHelper), ITlgClientPortRoleRepository
 {
-    public async Task AddAsync(TlgClientPortRole portRole)
+    public async Task AddAsync(TlgClientPortModeRole portModeRole)
     {
         const string rawQuery = "INSERT INTO tlg_client_port_roles (" +
                                 "role_id, tlg_user_id, tlg_chat_id, activation_date, deactivation_date, status) " +
@@ -18,15 +18,15 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
         var normalParameters = new Dictionary<string, object>
         {
-            { "@token", portRole.Role.Token },
-            { "@tlgUserId", (long)portRole.ClientPort.UserId },
-            { "@tlgChatId", (long)portRole.ClientPort.ChatId },
-            { "@activationDate", portRole.ActivationDate },
-            { "@status", (int)portRole.Status }
+            { "@token", portModeRole.Role.Token },
+            { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
+            { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
+            { "@activationDate", portModeRole.ActivationDate },
+            { "@status", (int)portModeRole.Status }
         };
 
-        if (portRole.DeactivationDate.IsSome)
-            normalParameters.Add("@deactivationDate", portRole.DeactivationDate.GetValueOrThrow());
+        if (portModeRole.DeactivationDate.IsSome)
+            normalParameters.Add("@deactivationDate", portModeRole.DeactivationDate.GetValueOrThrow());
         else
             normalParameters.Add("@deactivationDate", DBNull.Value);
 
@@ -36,7 +36,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         });
     }
 
-    public async Task<IEnumerable<TlgClientPortRole>> GetAllAsync()
+    public async Task<IEnumerable<TlgClientPortModeRole>> GetAllAsync()
     {
         const string rawQuery = "SELECT r.token, r.role_type, r.status, tlr.tlg_user_id, tlr.tlg_chat_id, " +
                                 "tlr.activation_date, tlr.deactivation_date, tlr.status " +
@@ -64,11 +64,11 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                     
             var status = (DbRecordStatus)reader.GetInt16(7);
 
-            return new TlgClientPortRole(role, clientPort, activationDate, deactivationDate, status);
+            return new TlgClientPortModeRole(role, clientPort, activationDate, deactivationDate, status);
         });
     }
 
-    public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(TlgClientPortModeRole portModeRole, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_client_port_roles " +
                                 "SET status = @status, deactivation_date = @date " +
@@ -79,9 +79,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         var normalParameters = new Dictionary<string, object>
         {
             { "@status", (int)newStatus },
-            { "@token", portRole.Role.Token },
-            { "@tlgUserId", (long)portRole.ClientPort.UserId },
-            { "@tlgChatId", (long)portRole.ClientPort.ChatId },
+            { "@token", portModeRole.Role.Token },
+            { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
+            { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
         };
 
         if (newStatus != DbRecordStatus.Active)
@@ -94,7 +94,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
     
-    public async Task HardDeleteAsync(TlgClientPortRole portRole)
+    public async Task HardDeleteAsync(TlgClientPortModeRole portModeRole)
     {
         const string rawQuery = "DELETE FROM tlg_client_port_roles " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
@@ -103,9 +103,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         
         var normalParameters = new Dictionary<string, object>
         {
-            { "@token", portRole.Role.Token },
-            { "tlgUserId", (long)portRole.ClientPort.UserId },
-            { "tlgChatId", (long)portRole.ClientPort.ChatId },
+            { "@token", portModeRole.Role.Token },
+            { "tlgUserId", (long)portModeRole.ClientPort.UserId },
+            { "tlgChatId", (long)portModeRole.ClientPort.ChatId },
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

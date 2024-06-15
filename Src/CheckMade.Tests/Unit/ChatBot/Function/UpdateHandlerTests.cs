@@ -520,7 +520,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler, 
         IOutputToReplyMarkupConverterFactory markupConverterFactory, 
         IUiTranslator emptyTranslator, 
-        Task<IEnumerable<TlgClientPortRole>> portRoleTask)
+        Task<IEnumerable<TlgClientPortModeRole>> portRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
