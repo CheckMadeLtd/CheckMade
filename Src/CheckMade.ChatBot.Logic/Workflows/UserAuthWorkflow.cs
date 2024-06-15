@@ -120,6 +120,7 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
+        var outputs = new List<OutputDto>();
         
         var newPortRole = new TlgClientPortRole(
             _preExistingRoles.First(r => r.Token == inputText),
@@ -127,13 +128,14 @@ internal class UserAuthWorkflow : IWorkflow
             DateTime.Now,
             Option<DateTime>.None());
         
-        var hasActivePortRoleAlready = _preExistingPortRoles.Any(cpr => 
+        var preExistingActivePortRole = _preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText && 
             cpr.Status == DbRecordStatus.Active);
-        
-        var outputs = new List<OutputDto>();
-        
-        if (hasActivePortRoleAlready)
+
+        if (preExistingActivePortRole != null)
+        {
+            await _portRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            
             outputs.Add(new OutputDto
             {
                 Text = Ui("""
@@ -143,6 +145,7 @@ internal class UserAuthWorkflow : IWorkflow
                     newPortRole.Role.RoleType,
                     "Placeholder LiveEvent")
             });
+        }
         
         outputs.Add(new OutputDto()
         {

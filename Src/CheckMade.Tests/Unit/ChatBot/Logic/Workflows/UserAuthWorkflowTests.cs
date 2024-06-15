@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -104,28 +105,35 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarningMessage_WhenSubmittedTokenAlreadyHasActivePortRole()
+    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActivePortRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        var inputTokenWithActivePortRole = basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
+        var inputTokenWithPreExistingActivePortRole = basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
+        var preExistingActivePortRole = (await basics.mockPortRolesRepo.Object.GetAllAsync())
+            .First(cpr => cpr.Role.Token == SanitaryOpsAdmin1.Token);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { inputTokenWithActivePortRole });
+            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortRole });
 
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another chat. 
                                        This will be the new chat where you receive messages in your role {0} at {1}. 
                                        """;
+
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
         
-        var actualOutputs = await workflow.GetNextOutputAsync(inputTokenWithActivePortRole);
+        var actualOutputs = 
+            await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortRole);
         
         Assert.Equal(expectedWarning, GetFirstRawEnglish(actualOutputs));
+        
+        basics.mockPortRolesRepo.Verify(
+            x => x.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic));
     }
 
     [Fact]
