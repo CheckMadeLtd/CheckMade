@@ -200,7 +200,7 @@ public class UserAuthWorkflowTests
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
-        Assert.Equal("Bad token format! The correct format is: '{0}'", GetFirstRawEnglish(actualOutputs));
+        Assert.Equal("Bad token format! Try again...", GetFirstRawEnglish(actualOutputs));
     }
 
     private static (ITestUtils utils, 

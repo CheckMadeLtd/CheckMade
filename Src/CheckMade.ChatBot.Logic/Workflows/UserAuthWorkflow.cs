@@ -77,7 +77,7 @@ internal class UserAuthWorkflow : IWorkflow
                 },
                 false => [ new OutputDto
                     {
-                        Text = Ui("Bad token format! The correct format is: '{0}'", GetTokenFormatExample())
+                        Text = Ui("Bad token format! Try again...")
                     },
                     EnterTokenPrompt ]
             },
