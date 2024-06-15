@@ -97,7 +97,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
         };
 
         if (newStatus != DbRecordStatus.Active)
-            normalParameters.Add("@date", DateTime.Now);
+            normalParameters.Add("@date", DateTime.UtcNow);
         else
             normalParameters.Add("@date", DBNull.Value);
         

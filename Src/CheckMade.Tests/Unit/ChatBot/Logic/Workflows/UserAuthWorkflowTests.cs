@@ -167,7 +167,7 @@ public class UserAuthWorkflowTests
             SanitaryOpsInspector2,
             new TlgClientPort(TestUserId_03, TestChatId_08),
             Operations,
-            DateTime.Now,
+            DateTime.UtcNow,
             Option<DateTime>.None());
         
         var actualClientPortModeRoleAdded = new List<TlgClientPortModeRole>(); 
@@ -213,7 +213,7 @@ public class UserAuthWorkflowTests
                 SanitaryOpsInspector2,
                 new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId),
                 im,
-                DateTime.Now,
+                DateTime.UtcNow,
                 Option<DateTime>.None()))
             .ToList();
 
@@ -277,5 +277,5 @@ public class UserAuthWorkflowTests
             (sp.GetRequiredService<ITestUtils>(),
             sp.GetRequiredService<Mock<ITlgClientPortModeRoleRepository>>(),
             sp.GetRequiredService<IRoleRepository>(),
-            DateTime.Now);
+            DateTime.UtcNow);
 }

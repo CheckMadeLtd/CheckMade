@@ -26,7 +26,7 @@ public class TlgClientPortModeRoleRepositoryTests
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             mode,
-            DateTime.Now,
+            DateTime.UtcNow,
             Option<DateTime>.None());
 
         var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
@@ -55,7 +55,7 @@ public class TlgClientPortModeRoleRepositoryTests
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
             mode,
-            DateTime.Now,
+            DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 

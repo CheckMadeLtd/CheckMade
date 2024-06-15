@@ -79,7 +79,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             InteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.Now, 
+                dateTime ?? DateTime.UtcNow, 
                 1, 
                 text));
     
@@ -89,7 +89,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             InteractionMode.Operations,
             TlgInputType.AttachmentMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
+                DateTime.UtcNow,
                 1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 new Uri("fakeTelegramUri"),
@@ -103,7 +103,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             interactionMode,
             TlgInputType.CommandMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
+                DateTime.UtcNow,
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
@@ -122,7 +122,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             InteractionMode.Operations,
             TlgInputType.CallbackQuery,
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.Now,
+                dateTime ?? DateTime.UtcNow,
                 1,
                 controlPromptEnumCode: (long)prompts));
 
@@ -156,7 +156,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             {
                 From = new User { Id = Randomizer.GenerateRandomLong() },
                 Chat = new Chat { Id = chatId },
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
                 MessageId = 123,
                 Text = inputText
             });
@@ -166,7 +166,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Text = botCommand,
             Entities = [
@@ -190,7 +190,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 {
                     From = new User { Id = Randomizer.GenerateRandomLong() },
                     Text = "The bot's original prompt",
-                    Date = DateTime.Now,
+                    Date = DateTime.UtcNow,
                     Chat = new Chat { Id = chatId },
                     MessageId = 123,
                 }
@@ -202,7 +202,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
@@ -213,7 +213,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = fileId }
@@ -225,7 +225,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Location = new Location
             {
@@ -242,7 +242,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
@@ -253,7 +253,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }

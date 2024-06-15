@@ -129,7 +129,7 @@ internal class UserAuthWorkflow : IWorkflow
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
             originatingMode,
-            DateTime.Now,
+            DateTime.UtcNow,
             Option<DateTime>.None());
         
         var preExistingActivePortModeRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
