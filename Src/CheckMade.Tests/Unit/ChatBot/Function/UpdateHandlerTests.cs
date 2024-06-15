@@ -50,7 +50,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             It.IsAny<EventId>(), 
             It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
             It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+            Times.Once);
     }
     
     [Theory]
@@ -85,7 +86,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             It.IsAny<EventId>(), 
             It.IsAny<It.IsAnyType>(), 
             It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!));
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+            Times.Once);
     }
 
     [Fact]
