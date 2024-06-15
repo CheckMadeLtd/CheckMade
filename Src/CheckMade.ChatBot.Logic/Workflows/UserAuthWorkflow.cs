@@ -125,6 +125,7 @@ internal class UserAuthWorkflow : IWorkflow
         var newPortModeRole = new TlgClientPortModeRole(
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
+            tokenInputAttempt.InteractionMode,
             DateTime.Now,
             Option<DateTime>.None());
         

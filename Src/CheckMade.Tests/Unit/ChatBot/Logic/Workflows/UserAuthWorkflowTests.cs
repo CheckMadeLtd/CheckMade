@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
@@ -156,6 +157,7 @@ public class UserAuthWorkflowTests
         var expectedClientPortModeRoleAdded = new TlgClientPortModeRole(
             SanitaryOpsInspector2,
             new TlgClientPort(TestUserId_03, TestChatId_08),
+            InteractionMode.Operations,
             DateTime.Now,
             Option<DateTime>.None());
         
@@ -171,8 +173,9 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
         Assert.Equivalent(expectedClientPortModeRoleAdded.Role, actualClientPortModeRoleAdded!.Role);
-        Assert.Equivalent(expectedClientPortModeRoleAdded.ClientPort, actualClientPortModeRoleAdded!.ClientPort);
-        Assert.Equivalent(expectedClientPortModeRoleAdded.Status, actualClientPortModeRoleAdded!.Status);
+        Assert.Equivalent(expectedClientPortModeRoleAdded.ClientPort, actualClientPortModeRoleAdded.ClientPort);
+        Assert.Equal(expectedClientPortModeRoleAdded.Mode, actualClientPortModeRoleAdded.Mode);
+        Assert.Equivalent(expectedClientPortModeRoleAdded.Status, actualClientPortModeRoleAdded.Status);
     }
     
     [Theory]

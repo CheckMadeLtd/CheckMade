@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
@@ -11,8 +12,11 @@ public class TlgClientPortModeRoleRepositoryTests
 {
     private ServiceProvider? _services;
 
-    [Fact]
-    public async Task SavesAndRetrieves_OneTlgClientPortModeRole_WhenInputValid()
+    [Theory]
+    [InlineData(InteractionMode.Operations)]
+    [InlineData(InteractionMode.Communications)]
+    [InlineData(InteractionMode.Notifications)]
+    public async Task SavesAndRetrieves_OneTlgClientPortModeRole_WhenInputValid(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
@@ -21,6 +25,7 @@ public class TlgClientPortModeRoleRepositoryTests
         var inputPortModeRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
+            mode,
             DateTime.Now,
             Option<DateTime>.None());
 
@@ -33,10 +38,14 @@ public class TlgClientPortModeRoleRepositoryTests
         
         Assert.Equivalent(inputPortModeRole.Role, retrieved!.Role);
         Assert.Equivalent(inputPortModeRole.ClientPort, retrieved.ClientPort);
+        Assert.Equivalent(inputPortModeRole.Mode, retrieved.Mode);
     }
 
-    [Fact]
-    public async Task SuccessfullyUpdatesStatus_FromActiveToHistoric()
+    [Theory]
+    [InlineData(InteractionMode.Operations)]
+    [InlineData(InteractionMode.Communications)]
+    [InlineData(InteractionMode.Notifications)]
+    public async Task SuccessfullyUpdatesStatus_FromActiveToHistoric(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
@@ -45,13 +54,14 @@ public class TlgClientPortModeRoleRepositoryTests
         var preExistingActivePortModeRole = new TlgClientPortModeRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02),
+            mode,
             DateTime.Now,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
         var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
-        await repo.AddAsync(preExistingActivePortModeRole);
         
+        await repo.AddAsync(preExistingActivePortModeRole);
         await repo.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic);
         
         var retrievedUpdated = (await repo.GetAllAsync())
@@ -59,7 +69,9 @@ public class TlgClientPortModeRoleRepositoryTests
         
         await repo.HardDeleteAsync(preExistingActivePortModeRole);
         
-        Assert.Equal(DbRecordStatus.Historic, retrievedUpdated!.Status);
+        Assert.Equivalent(preExistingActivePortModeRole.ClientPort, retrievedUpdated!.ClientPort);
+        Assert.Equal(preExistingActivePortModeRole.Mode, retrievedUpdated.Mode);
+        Assert.Equal(DbRecordStatus.Historic, retrievedUpdated.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }
 }

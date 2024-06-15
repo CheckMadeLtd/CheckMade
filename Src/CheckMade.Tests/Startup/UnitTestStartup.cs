@@ -6,6 +6,7 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
@@ -95,33 +96,39 @@ public class UnitTestStartup : TestStartupBase
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsAdmin1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         // Expired on purpose - for Unit Tests!
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
+            InteractionMode.Operations,
             new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
             DbRecordStatus.Historic));
 
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsCleanLead1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsObserver1, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         // #2
@@ -129,11 +136,13 @@ public class UnitTestStartup : TestStartupBase
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsEngineer2, 
             new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsCleanLead2, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07),
+            InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
         // No TlgClientPortModeRole for role 'Inspector2' on purpose - for Unit Tests!

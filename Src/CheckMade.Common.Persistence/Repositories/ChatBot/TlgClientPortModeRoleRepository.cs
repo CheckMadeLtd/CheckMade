@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using Npgsql;
@@ -11,10 +12,11 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
 {
     public async Task AddAsync(TlgClientPortModeRole portModeRole)
     {
-        const string rawQuery = "INSERT INTO tlg_client_port_roles (" +
-                                "role_id, tlg_user_id, tlg_chat_id, activation_date, deactivation_date, status) " +
+        const string rawQuery = "INSERT INTO tlg_client_port_mode_roles (" +
+                                "role_id, tlg_user_id, tlg_chat_id, activation_date, " +
+                                "deactivation_date, status, interaction_mode) " +
                                 "VALUES ((SELECT id FROM roles WHERE token = @token), @tlgUserId, @tlgChatId, " +
-                                "@activationDate, @deactivationDate, @status)";
+                                "@activationDate, @deactivationDate, @status, @mode)";
 
         var normalParameters = new Dictionary<string, object>
         {
@@ -22,7 +24,8 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
             { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
             { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
             { "@activationDate", portModeRole.ActivationDate },
-            { "@status", (int)portModeRole.Status }
+            { "@status", (int)portModeRole.Status },
+            { "@mode", (int)portModeRole.Mode }
         };
 
         if (portModeRole.DeactivationDate.IsSome)
@@ -38,10 +41,10 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
 
     public async Task<IEnumerable<TlgClientPortModeRole>> GetAllAsync()
     {
-        const string rawQuery = "SELECT r.token, r.role_type, r.status, tlr.tlg_user_id, tlr.tlg_chat_id, " +
-                                "tlr.activation_date, tlr.deactivation_date, tlr.status " +
-                                "FROM tlg_client_port_roles tlr " +
-                                "JOIN roles r on tlr.role_id = r.id";
+        const string rawQuery = "SELECT r.token, r.role_type, r.status, tcpmr.tlg_user_id, tcpmr.tlg_chat_id, " +
+                                "tcpmr.interaction_mode, tcpmr.activation_date, tcpmr.deactivation_date, tcpmr.status " +
+                                "FROM tlg_client_port_mode_roles tcpmr " +
+                                "JOIN roles r on tcpmr.role_id = r.id";
 
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
@@ -55,26 +58,29 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
             var clientPort = new TlgClientPort(
                 reader.GetInt64(3),
                 reader.GetInt64(4));
+
+            var mode = (InteractionMode)reader.GetInt16(5);
+            
+            var activationDate = reader.GetDateTime(6);
                     
-            var activationDate = reader.GetDateTime(5);
-                    
-            var deactivationDate = !reader.IsDBNull(6) 
-                ? Option<DateTime>.Some(reader.GetDateTime(6)) 
+            var deactivationDate = !reader.IsDBNull(7) 
+                ? Option<DateTime>.Some(reader.GetDateTime(7)) 
                 : Option<DateTime>.None();
                     
-            var status = (DbRecordStatus)reader.GetInt16(7);
+            var status = (DbRecordStatus)reader.GetInt16(8);
 
-            return new TlgClientPortModeRole(role, clientPort, activationDate, deactivationDate, status);
+            return new TlgClientPortModeRole(role, clientPort, mode, activationDate, deactivationDate, status);
         });
     }
 
     public async Task UpdateStatusAsync(TlgClientPortModeRole portModeRole, DbRecordStatus newStatus)
     {
-        const string rawQuery = "UPDATE tlg_client_port_roles " +
+        const string rawQuery = "UPDATE tlg_client_port_mode_roles " +
                                 "SET status = @status, deactivation_date = @date " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
-                                "AND tlg_chat_id = @tlgChatId";
+                                "AND tlg_chat_id = @tlgChatId " + 
+                                "AND interaction_mode = @mode";
     
         var normalParameters = new Dictionary<string, object>
         {
@@ -82,6 +88,7 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
             { "@token", portModeRole.Role.Token },
             { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
             { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
+            { "@mode", (int)portModeRole.Mode }
         };
 
         if (newStatus != DbRecordStatus.Active)
@@ -96,16 +103,18 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
     
     public async Task HardDeleteAsync(TlgClientPortModeRole portModeRole)
     {
-        const string rawQuery = "DELETE FROM tlg_client_port_roles " +
+        const string rawQuery = "DELETE FROM tlg_client_port_mode_roles " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
-                                "AND tlg_chat_id = @tlgChatId";
+                                "AND tlg_chat_id = @tlgChatId " +
+                                "AND interaction_mode = @mode";
         
         var normalParameters = new Dictionary<string, object>
         {
             { "@token", portModeRole.Role.Token },
             { "tlgUserId", (long)portModeRole.ClientPort.UserId },
             { "tlgChatId", (long)portModeRole.ClientPort.ChatId },
+            { "@mode", (int)portModeRole.Mode }
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);
