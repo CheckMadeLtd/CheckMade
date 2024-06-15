@@ -71,14 +71,14 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
-        var mockTlgClientPortModeRoleRepo = new Mock<ITlgClientPortModeRoleRepository>();
+        var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortRoleRepository>();
 
-        mockTlgClientPortModeRoleRepo
+        mockTlgClientPortRoleRepo
             .Setup(cpmr => cpmr.GetAllAsync())
-            .ReturnsAsync(GetTestingPortModeRoles());
+            .ReturnsAsync(GetTestingPortRoles());
 
-        Services.AddScoped<ITlgClientPortModeRoleRepository>(_ => mockTlgClientPortModeRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgClientPortModeRoleRepository>>(_ => mockTlgClientPortModeRoleRepo);
+        Services.AddScoped<ITlgClientPortRoleRepository>(_ => mockTlgClientPortRoleRepo.Object);
+        Services.AddScoped<Mock<ITlgClientPortRoleRepository>>(_ => mockTlgClientPortRoleRepo);
     }
 
     private void RegisterExternalServicesMocks()
@@ -87,70 +87,70 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
     
-    private static ImmutableArray<TlgClientPortModeRole> GetTestingPortModeRoles()
+    private static ImmutableArray<TlgClientPortRole> GetTestingPortRoles()
     {
-        var builder = ImmutableArray.CreateBuilder<TlgClientPortModeRole>();
+        var builder = ImmutableArray.CreateBuilder<TlgClientPortRole>();
 
         // #1
         
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsAdmin1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Group: same Role & ClientPort - all three InteractionModes
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Notifications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
 
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Expired on purpose - for Unit Tests!
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
             DbRecordStatus.Historic));
 
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsCleanLead1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsObserver1, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // #2
         
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer2, 
             new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgClientPortModeRole(
+        builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsCleanLead2, 
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        // No TlgClientPortModeRole for role 'Inspector2' on purpose for Unit Test, e.g.
-        // GetNextOutputAsync_CreatesPortModeRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
+        // No TlgClientPortRole for role 'Inspector2' on purpose for Unit Test, e.g.
+        // GetNextOutputAsync_CreatesPortRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
 
         return builder.ToImmutable();
     }

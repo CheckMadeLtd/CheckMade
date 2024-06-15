@@ -21,26 +21,26 @@ internal class UserAuthWorkflow : IWorkflow
 
     private readonly ITlgInputRepository _inputRepo;
     private readonly IRoleRepository _roleRepo;
-    private readonly ITlgClientPortModeRoleRepository _portModeRoleRepo;
+    private readonly ITlgClientPortRoleRepository _portRoleRepo;
 
     private IEnumerable<Role> _preExistingRoles = new List<Role>();
-    private IEnumerable<TlgClientPortModeRole> _preExistingPortModeRoles = new List<TlgClientPortModeRole>();
+    private IEnumerable<TlgClientPortRole> _preExistingPortRoles = new List<TlgClientPortRole>();
 
     private UserAuthWorkflow(ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortModeRoleRepository portModeRoleRepo)
+        ITlgClientPortRoleRepository portRoleRepo)
     {
         _inputRepo = inputRepo;
         _roleRepo = roleRepo;
-        _portModeRoleRepo = portModeRoleRepo;
+        _portRoleRepo = portRoleRepo;
     }
 
     public static async Task<UserAuthWorkflow> CreateAsync(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortModeRoleRepository portModeRoleRepo)
+        ITlgClientPortRoleRepository portRoleRepo)
     {
-        var workflow = new UserAuthWorkflow(inputRepo, roleRepo, portModeRoleRepo);
+        var workflow = new UserAuthWorkflow(inputRepo, roleRepo, portRoleRepo);
         await workflow.InitAsync();
         return workflow;
     }
@@ -48,12 +48,12 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task InitAsync()
     {
         var getRolesTask = _roleRepo.GetAllAsync();
-        var getPortModeRolesTask = _portModeRoleRepo.GetAllAsync();
+        var getPortRolesTask = _portRoleRepo.GetAllAsync();
         
-        await Task.WhenAll(getRolesTask, getPortModeRolesTask);
+        await Task.WhenAll(getRolesTask, getPortRolesTask);
 
         _preExistingRoles = getRolesTask.Result;
-        _preExistingPortModeRoles = getPortModeRolesTask.Result;
+        _preExistingPortRoles = getPortRolesTask.Result;
     }
     
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
@@ -90,14 +90,14 @@ internal class UserAuthWorkflow : IWorkflow
     
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
     {
-        var lastUsedTlgClientPortModeRole = _preExistingPortModeRoles
+        var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpmr =>
                 cpmr.ClientPort == new TlgClientPort(userId, chatId, mode) &&
                 cpmr.DeactivationDate.IsSome)
             .MaxBy(cpmr => cpmr.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortModeRole != null
-            ? lastUsedTlgClientPortModeRole.DeactivationDate.GetValueOrThrow()
+        var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortRole != null
+            ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         var allRelevantInputs = (await _inputRepo.GetAllAsync(userId))
@@ -126,17 +126,17 @@ internal class UserAuthWorkflow : IWorkflow
         var originatingMode = tokenInputAttempt.InteractionMode;
         var outputs = new List<OutputDto>();
         
-        var newPortModeRoleForOriginatingMode = new TlgClientPortModeRole(
+        var newPortRoleForOriginatingMode = new TlgClientPortRole(
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId, originatingMode),
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var preExistingActivePortModeRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
+        var preExistingActivePortRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
 
-        if (preExistingActivePortModeRole != null)
+        if (preExistingActivePortRole != null)
         {
-            await _portModeRoleRepo.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic);
+            await _portRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -145,7 +145,7 @@ internal class UserAuthWorkflow : IWorkflow
                           This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                           """, 
                     originatingMode,
-                    newPortModeRoleForOriginatingMode.Role.RoleType,
+                    newPortRoleForOriginatingMode.Role.RoleType,
                     "Placeholder LiveEvent")
             });
         }
@@ -157,7 +157,7 @@ internal class UserAuthWorkflow : IWorkflow
                       You have successfully authenticated as a {1} at live-event {2}.
                       """, 
                 "Placeholder Name",
-                newPortModeRoleForOriginatingMode.Role.RoleType,
+                newPortRoleForOriginatingMode.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
@@ -166,36 +166,36 @@ internal class UserAuthWorkflow : IWorkflow
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var portModeRolesToAdd = new List<TlgClientPortModeRole> { newPortModeRoleForOriginatingMode };
+        var portRolesToAdd = new List<TlgClientPortRole> { newPortRoleForOriginatingMode };
         
         var isInputTlgClientPortPrivateChat = tokenInputAttempt.ChatId == tokenInputAttempt.UserId;
 
         if (isInputTlgClientPortPrivateChat)
         {
-            AddPortModeRolesForOtherNonOriginatingAndVirginModes();
+            AddPortRolesForOtherNonOriginatingAndVirginModes();
         }
         
-        await _portModeRoleRepo.AddAsync(portModeRolesToAdd);
+        await _portRoleRepo.AddAsync(portRolesToAdd);
         
         return outputs;
         
-        TlgClientPortModeRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
-        _preExistingPortModeRoles.FirstOrDefault(cpmr => 
+        TlgClientPortRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        _preExistingPortRoles.FirstOrDefault(cpmr => 
             cpmr.Role.Token == inputText &&
             cpmr.ClientPort.Mode == mode && 
             cpmr.Status == DbRecordStatus.Active);
 
-        void AddPortModeRolesForOtherNonOriginatingAndVirginModes()
+        void AddPortRolesForOtherNonOriginatingAndVirginModes()
         {
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
             var nonOriginatingModes = allModes.Except(new [] { originatingMode });
 
-            portModeRolesToAdd.AddRange(
+            portRolesToAdd.AddRange(
                 from mode in nonOriginatingModes 
                 where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
-                select newPortModeRoleForOriginatingMode with
+                select newPortRoleForOriginatingMode with
                 {
-                    ClientPort = newPortModeRoleForOriginatingMode.ClientPort with { Mode = mode },
+                    ClientPort = newPortRoleForOriginatingMode.ClientPort with { Mode = mode },
                     ActivationDate = DateTime.UtcNow
                 });
         }

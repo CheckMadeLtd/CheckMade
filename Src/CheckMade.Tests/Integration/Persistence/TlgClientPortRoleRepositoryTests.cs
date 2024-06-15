@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class TlgClientPortModeRoleRepositoryTests
+public class TlgClientPortRoleRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -16,27 +16,27 @@ public class TlgClientPortModeRoleRepositoryTests
     [InlineData(InteractionMode.Operations)]
     [InlineData(InteractionMode.Communications)]
     [InlineData(InteractionMode.Notifications)]
-    public async Task SavesAndRetrieves_OneTlgClientPortModeRole_WhenInputValid(InteractionMode mode)
+    public async Task SavesAndRetrieves_OneTlgClientPortRole_WhenInputValid(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var inputPortModeRole = new TlgClientPortModeRole(
+        var inputPortRole = new TlgClientPortRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
-        var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
 
-        await repo.AddAsync(inputPortModeRole);
+        await repo.AddAsync(inputPortRole);
         var retrieved = (await repo.GetAllAsync())
             .MaxBy(cpmr => cpmr.ActivationDate);
-        await repo.HardDeleteAsync(inputPortModeRole);
+        await repo.HardDeleteAsync(inputPortRole);
         
-        Assert.Equivalent(inputPortModeRole.Role, retrieved!.Role);
-        Assert.Equivalent(inputPortModeRole.ClientPort, retrieved.ClientPort);
+        Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
+        Assert.Equivalent(inputPortRole.ClientPort, retrieved.ClientPort);
     }
 
     [Theory]
@@ -49,24 +49,24 @@ public class TlgClientPortModeRoleRepositoryTests
 
         var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
         
-        var preExistingActivePortModeRole = new TlgClientPortModeRole(
+        var preExistingActivePortRole = new TlgClientPortRole(
             existingTestRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
-        var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
         
-        await repo.AddAsync(preExistingActivePortModeRole);
-        await repo.UpdateStatusAsync(preExistingActivePortModeRole, DbRecordStatus.Historic);
+        await repo.AddAsync(preExistingActivePortRole);
+        await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
         
         var retrievedUpdated = (await repo.GetAllAsync())
             .MaxBy(cpmr => cpmr.ActivationDate);
         
-        await repo.HardDeleteAsync(preExistingActivePortModeRole);
+        await repo.HardDeleteAsync(preExistingActivePortRole);
         
-        Assert.Equivalent(preExistingActivePortModeRole.ClientPort, retrievedUpdated!.ClientPort);
+        Assert.Equivalent(preExistingActivePortRole.ClientPort, retrievedUpdated!.ClientPort);
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }

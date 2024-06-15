@@ -16,28 +16,28 @@ public interface IWorkflowIdentifier
 internal class WorkflowIdentifier(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortModeRoleRepository portModeRoleRepo) 
+        ITlgClientPortRoleRepository portRoleRepo) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId, input.InteractionMode);
 
-        if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portModeRoleRepo))
+        if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portRoleRepo))
         {
-            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portModeRoleRepo);
+            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portRoleRepo);
         }
         
         return Option<IWorkflow>.None();
     }
     
     private static async Task<bool> IsUserAuthenticated(
-        TlgClientPort inputPort, InteractionMode mode, ITlgClientPortModeRoleRepository portModeRoleRepo)
+        TlgClientPort inputPort, InteractionMode mode, ITlgClientPortRoleRepository portRoleRepo)
     {
-        IReadOnlyList<TlgClientPortModeRole> tlgClientPortModeRoles =
-            (await portModeRoleRepo.GetAllAsync()).ToList().AsReadOnly();
+        IReadOnlyList<TlgClientPortRole> tlgClientPortRoles =
+            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
-        return tlgClientPortModeRoles
+        return tlgClientPortRoles
                    .FirstOrDefault(cpmr => 
                        cpmr.ClientPort.ChatId == inputPort.ChatId &&
                        cpmr.ClientPort.Mode == mode &&

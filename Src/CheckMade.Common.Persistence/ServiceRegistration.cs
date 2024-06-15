@@ -20,6 +20,6 @@ public static class ServiceRegistration
         
         services.AddScoped<ITlgInputRepository, TlgInputRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ITlgClientPortModeRoleRepository, TlgClientPortModeRoleRepository>();
+        services.AddScoped<ITlgClientPortRoleRepository, TlgClientPortRoleRepository>();
     }
 }
