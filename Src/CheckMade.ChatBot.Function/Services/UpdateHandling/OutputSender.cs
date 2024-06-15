@@ -35,10 +35,9 @@ internal static class OutputSender
 
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => tlgClientPortRole
-                        .Where(cpr => 
+                        .First(cpr => 
                             cpr.Role == logicalPort.Role &&
                             cpr.Status == DbRecordStatus.Active)
-                        .MaxBy(cpr => cpr.ActivationDate)! // returns the port where this role authenticated last 
                         .ClientPort.ChatId.Id,
                     // e.g. for a virgin, pre-auth update
                     () => currentlyReceivingChatId);
