@@ -85,4 +85,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
+
+    public Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
+    {
+        throw new NotImplementedException();
+    }
 }
