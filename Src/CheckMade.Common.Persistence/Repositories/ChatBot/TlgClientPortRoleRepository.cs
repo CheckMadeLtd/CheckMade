@@ -67,6 +67,27 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
             return new TlgClientPortRole(role, clientPort, activationDate, deactivationDate, status);
         });
     }
+
+    public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
+    {
+        const string rawQuery = "UPDATE tlg_client_port_roles " +
+                                "SET status = @status " +
+                                "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
+                                "AND tlg_user_id = @tlgUserId " +
+                                "AND tlg_chat_id = @tlgChatId";
+    
+        var normalParameters = new Dictionary<string, object>
+        {
+            { "@token", portRole.Role.Token },
+            { "@tlgUserId", (long)portRole.ClientPort.UserId },
+            { "@tlgChatId", (long)portRole.ClientPort.ChatId },
+            { "@status", (int)newStatus }
+        };
+        
+        var command = GenerateCommand(rawQuery, normalParameters);
+
+        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+    }
     
     public async Task HardDeleteAsync(TlgClientPortRole portRole)
     {
@@ -81,13 +102,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
             { "tlgUserId", (long)portRole.ClientPort.UserId },
             { "tlgChatId", (long)portRole.ClientPort.ChatId },
         };
+        
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
-    }
-
-    public Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
-    {
-        throw new NotImplementedException();
     }
 }
