@@ -28,15 +28,18 @@ internal static class OutputSender
         {
             foreach (var output in outputsPerPort)
             {
-                var portBotClient = output.LogicalPort.Match(
-                    logicalPort => botClientByMode[logicalPort.InteractionMode],
+                var relevantMode = output.LogicalPort.Match(
+                    logicalPort => logicalPort.InteractionMode,
                     // e.g. for a virgin, pre-auth update
-                    () => botClientByMode[currentlyReceivingInteractionMode]);
+                    () => currentlyReceivingInteractionMode);
+
+                var portBotClient = botClientByMode[relevantMode];
 
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => tlgClientPortModeRole
                         .First(cpmr => 
                             cpmr.Role == logicalPort.Role &&
+                            cpmr.Mode == relevantMode &&
                             cpmr.Status == DbRecordStatus.Active)
                         .ClientPort.ChatId.Id,
                     // e.g. for a virgin, pre-auth update

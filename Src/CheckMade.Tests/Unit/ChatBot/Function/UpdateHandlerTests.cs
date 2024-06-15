@@ -305,8 +305,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    ITestUtils.SanitaryOpsEngineer1, Notifications),
-                Text = UiNoTranslate("Output3: Send to Engineer1 on NotificationsBot)") 
+                    ITestUtils.SanitaryOpsInspector1, Notifications),
+                Text = UiNoTranslate("Output3: Send to Inspector1 on NotificationsBot)") 
             }
         ];
         
@@ -324,10 +324,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 TelegramPortChatId = portModeRoles
-                    .Where(cpmr => 
+                    .First(cpmr => 
                         cpmr.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        cpmr.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
                         cpmr.Status == DbRecordStatus.Active)
-                    .MaxBy(cpmr => cpmr.ActivationDate)!
                     .ClientPort.ChatId.Id
             });
 

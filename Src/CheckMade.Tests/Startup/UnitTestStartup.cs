@@ -99,12 +99,26 @@ public class UnitTestStartup : TestStartupBase
             InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
+        // Group: same Role & ClientPort - all three InteractionModes
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
             InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
+        builder.Add(new TlgClientPortModeRole(
+            ITestUtils.SanitaryOpsInspector1, 
+            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
+            InteractionMode.Communications,
+            DateTime.Now, Option<DateTime>.None()));
+
+        builder.Add(new TlgClientPortModeRole(
+            ITestUtils.SanitaryOpsInspector1, 
+            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02),
+            InteractionMode.Notifications,
+            DateTime.Now, Option<DateTime>.None()));
+
+
         builder.Add(new TlgClientPortModeRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03),
@@ -145,7 +159,8 @@ public class UnitTestStartup : TestStartupBase
             InteractionMode.Operations,
             DateTime.Now, Option<DateTime>.None()));
         
-        // No TlgClientPortModeRole for role 'Inspector2' on purpose - for Unit Tests!
+        // No TlgClientPortModeRole for role 'Inspector2' on purpose for Unit Test, e.g.
+        // GetNextOutputAsync_CreatesPortModeRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
 
         return builder.ToImmutable();
     }

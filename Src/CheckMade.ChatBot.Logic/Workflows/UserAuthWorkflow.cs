@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Utils.Generic.InputValidator;
@@ -120,18 +121,17 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
+        var originatingMode = tokenInputAttempt.InteractionMode;
         var outputs = new List<OutputDto>();
         
-        var newPortModeRole = new TlgClientPortModeRole(
+        var newPortModeRoleForOriginatingMode = new TlgClientPortModeRole(
             _preExistingRoles.First(r => r.Token == inputText),
             new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId),
-            tokenInputAttempt.InteractionMode,
+            originatingMode,
             DateTime.Now,
             Option<DateTime>.None());
         
-        var preExistingActivePortModeRole = _preExistingPortModeRoles.FirstOrDefault(cpmr => 
-            cpmr.Role.Token == inputText && 
-            cpmr.Status == DbRecordStatus.Active);
+        var preExistingActivePortModeRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
 
         if (preExistingActivePortModeRole != null)
         {
@@ -140,10 +140,11 @@ internal class UserAuthWorkflow : IWorkflow
             outputs.Add(new OutputDto
             {
                 Text = Ui("""
-                          Warning: you were already authenticated with this token in another chat. 
-                          This will be the new chat where you receive messages in your role {0} at {1}. 
+                          Warning: you were already authenticated with this token in another {0} chat. 
+                          This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                           """, 
-                    newPortModeRole.Role.RoleType,
+                    originatingMode,
+                    newPortModeRoleForOriginatingMode.Role.RoleType,
                     "Placeholder LiveEvent")
             });
         }
@@ -152,15 +153,36 @@ internal class UserAuthWorkflow : IWorkflow
         {
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.",
                 "Placeholder Name",
-                newPortModeRole.Role.RoleType,
+                newPortModeRoleForOriginatingMode.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
         // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
 
-        await _portModeRoleRepo.AddAsync(newPortModeRole);
+        var portModeRolesToAdd = new List<TlgClientPortModeRole> { newPortModeRoleForOriginatingMode };
+        
+        var isInputTlgClientPortPrivateChat = tokenInputAttempt.ChatId == tokenInputAttempt.UserId;
+
+        if (isInputTlgClientPortPrivateChat)
+        {
+            var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
+            var nonOriginatingModes = allModes.Except(new [] { originatingMode });
+
+            portModeRolesToAdd.AddRange(
+                from mode in nonOriginatingModes 
+                where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
+                select newPortModeRoleForOriginatingMode with { Mode = mode });
+        }
+        
+        await _portModeRoleRepo.AddAsync(portModeRolesToAdd);
         
         return outputs;
+        
+        TlgClientPortModeRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        _preExistingPortModeRoles.FirstOrDefault(cpmr => 
+            cpmr.Role.Token == inputText &&
+            cpmr.Mode == mode && 
+            cpmr.Status == DbRecordStatus.Active);
     }
     
     [Flags]

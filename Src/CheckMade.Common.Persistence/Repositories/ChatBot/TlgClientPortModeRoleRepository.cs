@@ -10,7 +10,10 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper) 
     : BaseRepository(dbHelper), ITlgClientPortModeRoleRepository
 {
-    public async Task AddAsync(TlgClientPortModeRole portModeRole)
+    public async Task AddAsync(TlgClientPortModeRole portModeRole) =>
+        await AddAsync(new List<TlgClientPortModeRole> { portModeRole });
+
+    public async Task AddAsync(IEnumerable<TlgClientPortModeRole> portModeRole)
     {
         const string rawQuery = "INSERT INTO tlg_client_port_mode_roles (" +
                                 "role_id, tlg_user_id, tlg_chat_id, activation_date, " +
@@ -18,25 +21,27 @@ public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper)
                                 "VALUES ((SELECT id FROM roles WHERE token = @token), @tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var normalParameters = new Dictionary<string, object>
+        var commands = portModeRole.Select(cpmr =>
         {
-            { "@token", portModeRole.Role.Token },
-            { "@tlgUserId", (long)portModeRole.ClientPort.UserId },
-            { "@tlgChatId", (long)portModeRole.ClientPort.ChatId },
-            { "@activationDate", portModeRole.ActivationDate },
-            { "@status", (int)portModeRole.Status },
-            { "@mode", (int)portModeRole.Mode }
-        };
+            var normalParameters = new Dictionary<string, object>
+            {
+                { "@token", cpmr.Role.Token },
+                { "@tlgUserId", (long)cpmr.ClientPort.UserId },
+                { "@tlgChatId", (long)cpmr.ClientPort.ChatId },
+                { "@activationDate", cpmr.ActivationDate },
+                { "@status", (int)cpmr.Status },
+                { "@mode", (int)cpmr.Mode }
+            };
 
-        if (portModeRole.DeactivationDate.IsSome)
-            normalParameters.Add("@deactivationDate", portModeRole.DeactivationDate.GetValueOrThrow());
-        else
-            normalParameters.Add("@deactivationDate", DBNull.Value);
+            if (cpmr.DeactivationDate.IsSome)
+                normalParameters.Add("@deactivationDate", cpmr.DeactivationDate.GetValueOrThrow());
+            else
+                normalParameters.Add("@deactivationDate", DBNull.Value);
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand>
-        {
-            GenerateCommand(rawQuery, normalParameters)
+            return GenerateCommand(rawQuery, normalParameters);
         });
+
+        await ExecuteTransactionAsync(commands);
     }
 
     public async Task<IEnumerable<TlgClientPortModeRole>> GetAllAsync()
