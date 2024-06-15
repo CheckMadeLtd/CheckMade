@@ -37,8 +37,8 @@ internal class WorkflowIdentifier(
             (await portModeRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
         return tlgClientPortModeRoles
-                   .FirstOrDefault(cpr => cpr.ClientPort.ChatId == inputPort.ChatId &&
-                                          cpr.Status == DbRecordStatus.Active) 
+                   .FirstOrDefault(cpmr => cpmr.ClientPort.ChatId == inputPort.ChatId &&
+                                          cpmr.Status == DbRecordStatus.Active) 
                != null;
     }
 }

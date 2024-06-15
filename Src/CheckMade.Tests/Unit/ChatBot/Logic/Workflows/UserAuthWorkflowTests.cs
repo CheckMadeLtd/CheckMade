@@ -113,7 +113,7 @@ public class UserAuthWorkflowTests
 
         var inputTokenWithPreExistingActivePortModeRole = basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
         var preExistingActivePortModeRole = (await basics.mockPortModeRolesRepo.Object.GetAllAsync())
-            .First(cpr => cpr.Role.Token == SanitaryOpsAdmin1.Token);
+            .First(cpmr => cpmr.Role.Token == SanitaryOpsAdmin1.Token);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))

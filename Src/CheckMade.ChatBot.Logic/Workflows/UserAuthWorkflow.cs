@@ -90,10 +90,10 @@ internal class UserAuthWorkflow : IWorkflow
     internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId)
     {
         var lastUsedTlgClientPortModeRole = _preExistingPortModeRoles
-            .Where(cpr =>
-                cpr.ClientPort == new TlgClientPort(userId, chatId) &&
-                cpr.DeactivationDate.IsSome)
-            .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
+            .Where(cpmr =>
+                cpmr.ClientPort == new TlgClientPort(userId, chatId) &&
+                cpmr.DeactivationDate.IsSome)
+            .MaxBy(cpmr => cpmr.DeactivationDate.GetValueOrThrow());
 
         var dateOfLastDeactivationForCutOff = lastUsedTlgClientPortModeRole != null
             ? lastUsedTlgClientPortModeRole.DeactivationDate.GetValueOrThrow()
@@ -128,9 +128,9 @@ internal class UserAuthWorkflow : IWorkflow
             DateTime.Now,
             Option<DateTime>.None());
         
-        var preExistingActivePortModeRole = _preExistingPortModeRoles.FirstOrDefault(cpr => 
-            cpr.Role.Token == inputText && 
-            cpr.Status == DbRecordStatus.Active);
+        var preExistingActivePortModeRole = _preExistingPortModeRoles.FirstOrDefault(cpmr => 
+            cpmr.Role.Token == inputText && 
+            cpmr.Status == DbRecordStatus.Active);
 
         if (preExistingActivePortModeRole != null)
         {

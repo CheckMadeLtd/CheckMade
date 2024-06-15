@@ -324,10 +324,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 TelegramPortChatId = portModeRoles
-                    .Where(cpr => 
-                        cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpr.Status == DbRecordStatus.Active)
-                    .MaxBy(cpr => cpr.ActivationDate)!
+                    .Where(cpmr => 
+                        cpmr.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        cpmr.Status == DbRecordStatus.Active)
+                    .MaxBy(cpmr => cpmr.ActivationDate)!
                     .ClientPort.ChatId.Id
             });
 

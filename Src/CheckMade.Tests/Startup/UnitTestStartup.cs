@@ -73,7 +73,7 @@ public class UnitTestStartup : TestStartupBase
         var mockTlgClientPortModeRoleRepo = new Mock<ITlgClientPortModeRoleRepository>();
 
         mockTlgClientPortModeRoleRepo
-            .Setup(cpr => cpr.GetAllAsync())
+            .Setup(cpmr => cpmr.GetAllAsync())
             .ReturnsAsync(GetTestingPortModeRoles());
 
         Services.AddScoped<ITlgClientPortModeRoleRepository>(_ => mockTlgClientPortModeRoleRepo.Object);
