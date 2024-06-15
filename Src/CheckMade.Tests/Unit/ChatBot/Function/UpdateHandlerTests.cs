@@ -528,7 +528,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgClientPortRoleRepository>().GetAllAsync());
+                sp.GetRequiredService<ITlgClientPortModeRoleRepository>().GetAllAsync());
 
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 

@@ -22,7 +22,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgClientPortRoleRepository tlgClientPortRoleRepo,
+        ITlgClientPortModeRoleRepository tlgClientPortModeRoleRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -69,7 +69,7 @@ public class UpdateHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        var tlgClientPortRoles = await tlgClientPortRoleRepo.GetAllAsync();
+        var tlgClientPortRoles = await tlgClientPortModeRoleRepo.GetAllAsync();
 
         var sendOutputsAttempt = await
             (from tlgInput

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class TlgClientPortRoleRepositoryTests
+public class TlgClientPortModeRoleRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -24,7 +24,7 @@ public class TlgClientPortRoleRepositoryTests
             DateTime.Now,
             Option<DateTime>.None());
 
-        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
 
         await repo.AddAsync(inputPortRole);
         var retrieved = (await repo.GetAllAsync())
@@ -49,7 +49,7 @@ public class TlgClientPortRoleRepositoryTests
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
-        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgClientPortModeRoleRepository>();
         await repo.AddAsync(preExistingActivePortRole);
         
         await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);

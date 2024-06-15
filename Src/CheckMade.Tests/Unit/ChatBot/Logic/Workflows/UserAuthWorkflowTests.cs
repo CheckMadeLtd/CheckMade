@@ -204,12 +204,12 @@ public class UserAuthWorkflowTests
     }
 
     private static (ITestUtils utils, 
-        Mock<ITlgClientPortRoleRepository> mockPortRolesRepo, 
+        Mock<ITlgClientPortModeRoleRepository> mockPortRolesRepo, 
         IRoleRepository mockRoleRepo, 
         DateTime baseDateTime) 
         GetBasicTestingServices(IServiceProvider sp) =>
             (sp.GetRequiredService<ITestUtils>(),
-            sp.GetRequiredService<Mock<ITlgClientPortRoleRepository>>(),
+            sp.GetRequiredService<Mock<ITlgClientPortModeRoleRepository>>(),
             sp.GetRequiredService<IRoleRepository>(),
             DateTime.Now);
 }

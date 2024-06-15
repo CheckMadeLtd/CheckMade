@@ -70,14 +70,14 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
-        var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortRoleRepository>();
+        var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortModeRoleRepository>();
 
         mockTlgClientPortRoleRepo
             .Setup(cpr => cpr.GetAllAsync())
             .ReturnsAsync(GetTestingPortRoles());
 
-        Services.AddScoped<ITlgClientPortRoleRepository>(_ => mockTlgClientPortRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgClientPortRoleRepository>>(_ => mockTlgClientPortRoleRepo);
+        Services.AddScoped<ITlgClientPortModeRoleRepository>(_ => mockTlgClientPortRoleRepo.Object);
+        Services.AddScoped<Mock<ITlgClientPortModeRoleRepository>>(_ => mockTlgClientPortRoleRepo);
     }
 
     private void RegisterExternalServicesMocks()

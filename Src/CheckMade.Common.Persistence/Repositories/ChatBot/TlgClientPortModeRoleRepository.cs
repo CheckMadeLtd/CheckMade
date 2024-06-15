@@ -6,8 +6,8 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgClientPortRoleRepository
+public class TlgClientPortModeRoleRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgClientPortModeRoleRepository
 {
     public async Task AddAsync(TlgClientPortModeRole portModeRole)
     {

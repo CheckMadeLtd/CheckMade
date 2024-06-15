@@ -15,26 +15,26 @@ public interface IWorkflowIdentifier
 internal class WorkflowIdentifier(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo) 
+        ITlgClientPortModeRoleRepository portModeRoleRepo) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
         var inputPort = new TlgClientPort(input.UserId, input.ChatId);
 
-        if (!await IsUserAuthenticated(inputPort, portRoleRepo))
+        if (!await IsUserAuthenticated(inputPort, portModeRoleRepo))
         {
-            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portRoleRepo);
+            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portModeRoleRepo);
         }
         
         return Option<IWorkflow>.None();
     }
     
     private static async Task<bool> IsUserAuthenticated(
-        TlgClientPort inputPort, ITlgClientPortRoleRepository portRoleRepo)
+        TlgClientPort inputPort, ITlgClientPortModeRoleRepository portModeRoleRepo)
     {
         IReadOnlyList<TlgClientPortModeRole> tlgClientPortRoles =
-            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
+            (await portModeRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
         return tlgClientPortRoles
                    .FirstOrDefault(cpr => cpr.ClientPort.ChatId == inputPort.ChatId &&

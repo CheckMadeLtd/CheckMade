@@ -20,26 +20,26 @@ internal class UserAuthWorkflow : IWorkflow
 
     private readonly ITlgInputRepository _inputRepo;
     private readonly IRoleRepository _roleRepo;
-    private readonly ITlgClientPortRoleRepository _portRoleRepo;
+    private readonly ITlgClientPortModeRoleRepository _portModeRoleRepo;
 
     private IEnumerable<Role> _preExistingRoles = new List<Role>();
     private IEnumerable<TlgClientPortModeRole> _preExistingPortRoles = new List<TlgClientPortModeRole>();
 
     private UserAuthWorkflow(ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo)
+        ITlgClientPortModeRoleRepository portModeRoleRepo)
     {
         _inputRepo = inputRepo;
         _roleRepo = roleRepo;
-        _portRoleRepo = portRoleRepo;
+        _portModeRoleRepo = portModeRoleRepo;
     }
 
     public static async Task<UserAuthWorkflow> CreateAsync(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo)
+        ITlgClientPortModeRoleRepository portModeRoleRepo)
     {
-        var workflow = new UserAuthWorkflow(inputRepo, roleRepo, portRoleRepo);
+        var workflow = new UserAuthWorkflow(inputRepo, roleRepo, portModeRoleRepo);
         await workflow.InitAsync();
         return workflow;
     }
@@ -47,7 +47,7 @@ internal class UserAuthWorkflow : IWorkflow
     private async Task InitAsync()
     {
         var getRolesTask = _roleRepo.GetAllAsync();
-        var getPortRolesTask = _portRoleRepo.GetAllAsync();
+        var getPortRolesTask = _portModeRoleRepo.GetAllAsync();
         
         await Task.WhenAll(getRolesTask, getPortRolesTask);
 
@@ -134,7 +134,7 @@ internal class UserAuthWorkflow : IWorkflow
 
         if (preExistingActivePortRole != null)
         {
-            await _portRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            await _portModeRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -157,7 +157,7 @@ internal class UserAuthWorkflow : IWorkflow
 
         // ToDo: add Welcome / checkOut BotCommands message HERE!!? The same one as with /start
 
-        await _portRoleRepo.AddAsync(newPortRole);
+        await _portModeRoleRepo.AddAsync(newPortRole);
         
         return outputs;
     }

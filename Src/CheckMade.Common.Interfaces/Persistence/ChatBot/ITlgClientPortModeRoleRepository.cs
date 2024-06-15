@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
-public interface ITlgClientPortRoleRepository
+public interface ITlgClientPortModeRoleRepository
 {
     Task AddAsync(TlgClientPortModeRole portModeRole);
     Task<IEnumerable<TlgClientPortModeRole>> GetAllAsync();
