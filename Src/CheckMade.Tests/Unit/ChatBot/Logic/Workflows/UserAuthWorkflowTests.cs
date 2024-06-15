@@ -245,6 +245,9 @@ public class UserAuthWorkflowTests
         }
     }
     
+    // ToDo: Add test covering the case that only 1 instead of both other modes are automatically set,
+    // because the other one already has a mapping. 
+    
     [Theory]
     [InlineData("5JFUX")]
     [InlineData(" ")]

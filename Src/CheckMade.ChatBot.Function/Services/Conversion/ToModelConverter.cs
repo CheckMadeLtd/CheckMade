@@ -136,6 +136,8 @@ internal class ToModelConverter(
             _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
 
+        // ToDo: fix this so that e.g. `status@devNotificationsCheckMadeBot` will be recognised as status command
+        // Use Split on @ and then the first item. And give this a good name, making clear it's to do with groupChats.
         var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
             .SelectMany(kvp => kvp.Values)
             .FirstOrDefault(mbc => mbc.Command == update.Message.Text);
