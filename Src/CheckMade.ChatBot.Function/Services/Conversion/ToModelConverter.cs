@@ -8,6 +8,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.ChatBot.Function.Services.Conversion;
@@ -20,7 +21,8 @@ public interface IToModelConverter
 internal class ToModelConverter(
         ITelegramFilePathResolver filePathResolver,
         IBlobLoader blobLoader,
-        IHttpDownloader downloader) 
+        IHttpDownloader downloader,
+        ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
     public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
@@ -45,10 +47,21 @@ internal class ToModelConverter(
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
-                error => UiConcatenate(
-                    Ui("Failed to convert your Telegram Message: "),
-                    error)
-            );
+                error =>
+                {
+                    logger.LogWarning($"""
+                                       The following error occured during an update's conversion to model in method 
+                                       '{nameof(ConvertToModelAsync)}': '{error}'.
+                                       Next, more update details for debugging. InteractionMode: '{interactionMode}'; 
+                                       {update.Update.Type}; {update.Message.From?.Id}; {update.Message.Chat.Id}; 
+                                       {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text};  
+                                       {update.Message.Date};
+                                       """);
+                    
+                    return UiConcatenate(
+                        Ui("Failed to convert your Telegram Message: "),
+                        error);
+                });
     }
 
     private static Result<TlgInputType> GetTlgInputType(UpdateWrapper update) =>

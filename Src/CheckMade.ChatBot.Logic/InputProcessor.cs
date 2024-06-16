@@ -2,6 +2,7 @@
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
 
@@ -14,11 +15,10 @@ public interface IInputProcessor
 }
 
 internal class InputProcessor(
-#pragma warning disable CS9113 // Parameter is unread.
-    InteractionMode interactionMode,
-#pragma warning restore CS9113 // Parameter is unread.
-    IWorkflowIdentifier workflowIdentifier,
-        ITlgInputRepository inputRepo) 
+        InteractionMode interactionMode,
+        IWorkflowIdentifier workflowIdentifier,
+        ITlgInputRepository inputRepo,
+        ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
     public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
@@ -43,11 +43,23 @@ internal class InputProcessor(
 
                 return nextWorkflowStepResult.Match(
                     outputs => outputs,
-                    error => [new OutputDto { Text = error }] // ToDo: this should also log a warning!
+                    error =>
+                    {
+                        logger.LogWarning($"""
+                                           The workflow '{currentWorkflow.GetValueOrDefault().GetType()}' has returned
+                                           this Error Result: '{error}'. Next, the corresponding input parameters.
+                                           UserId: {input.UserId}; ChatId: {input.ChatId}; 
+                                           InputType: {input.TlgInputType}; InteractionMode: {input.InteractionMode};
+                                           Date: {input.Details.TlgDate}; 
+                                           For more details of input, check database!
+                                           """);
+                        
+                        return [ new OutputDto { Text = error } ];
+                    }
                 );
             },
-            // ToDo: this should also log a warning!
-            error => Task.FromResult<IReadOnlyList<OutputDto>>([ new OutputDto { Text = error } ])
-        );
+            // This error was already logged at its source, in ToModelConverter
+            error => Task.FromResult<IReadOnlyList<OutputDto>>(
+                [ new OutputDto { Text = error } ]));
     }
 }
