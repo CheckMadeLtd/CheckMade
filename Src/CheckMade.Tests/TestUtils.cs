@@ -52,7 +52,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgCallbackQueryForDomainCategory(
-        DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01);
+        DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
@@ -107,10 +107,20 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    public TlgInput GetValidTlgCallbackQueryForDomainCategory(DomainCategory category, long userId, long chatId)
-    {
-        throw new NotImplementedException();
-    }
+    public TlgInput GetValidTlgCallbackQueryForDomainCategory(
+        DomainCategory category,
+        long userId,
+        long chatId,
+        DateTime? dateTime) =>
+        new(userId,
+            chatId,
+            InteractionMode.Operations,
+            TlgInputType.CallbackQuery,
+            CreateFromRelevantDetails(
+                dateTime ?? DateTime.UtcNow,
+                1,
+                controlPromptEnumCode: (long)category));
+
 
     public TlgInput GetValidTlgCallbackQueryForControlPrompts(
         ControlPrompts prompts,
