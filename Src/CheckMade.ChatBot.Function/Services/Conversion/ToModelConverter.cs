@@ -53,8 +53,8 @@ internal class ToModelConverter(
                                        The following error occured during an update's conversion to model in method 
                                        '{nameof(ConvertToModelAsync)}': '{error}'.
                                        Next, more update details for debugging. InteractionMode: '{interactionMode}'; 
-                                       {update.Update.Type}; {update.Message.From?.Id}; {update.Message.Chat.Id}; 
-                                       {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text};  
+                                       {update.Update.Type}; {update.Message.From?.Id ?? 0}; {update.Message.Chat.Id}; 
+                                       {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text ?? ""};  
                                        {update.Message.Date};
                                        """);
                     

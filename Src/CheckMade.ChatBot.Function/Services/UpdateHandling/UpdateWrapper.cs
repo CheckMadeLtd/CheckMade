@@ -5,8 +5,8 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public record UpdateWrapper
 {
-    internal Update Update { get; init; }
-    internal Message Message { get; init; }
+    internal Update Update { get; }
+    internal Message Message { get; }
 
     // ReSharper disable once ConvertToPrimaryConstructor
     internal UpdateWrapper(Update update)

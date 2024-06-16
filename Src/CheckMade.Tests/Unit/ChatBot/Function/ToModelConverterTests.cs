@@ -260,8 +260,17 @@ public class ToModelConverterTests
          _services = new UnitTestStartup().Services.BuildServiceProvider();
          var basics = GetBasicTestingServices(_services);
          
-        var update = new UpdateWrapper(new Message { From = null, Text = "not empty" });
+        var update = new UpdateWrapper(new Message
+        {
+            From = null,
+            Text = "not empty",
+            Chat = new Chat{ Id = 1 },
+            MessageId = 2,
+            Date = DateTime.UtcNow
+        });
+        
         var conversionResult = await basics.converter.ConvertToModelAsync(update, Operations);
+        
         Assert.True(conversionResult.IsError);
     }
     
@@ -270,7 +279,13 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = new UpdateWrapper(new Message { From = new User { Id = 123L } });
+        var update = new UpdateWrapper(new Message
+        {
+            From = new User { Id = 123L },
+            Chat = new Chat{ Id = 1 },
+            MessageId = 2,
+            Date = DateTime.UtcNow
+        });
         
         var conversionResult = await basics.converter.ConvertToModelAsync(update, Operations);
         
