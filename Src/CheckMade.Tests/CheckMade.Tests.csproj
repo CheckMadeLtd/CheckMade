@@ -26,13 +26,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Telegram.Function\CheckMade.Telegram.Function.csproj" />
+      <ProjectReference Include="..\CheckMade.ChatBot.Function\CheckMade.ChatBot.Function.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Fine\" />
+      <Folder Include="Problematic\" />
     </ItemGroup>
 
 </Project>

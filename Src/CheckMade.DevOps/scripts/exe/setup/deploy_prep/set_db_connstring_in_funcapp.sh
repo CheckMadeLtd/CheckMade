@@ -29,7 +29,7 @@ echo "$cosmosdb_connstring"
 
 echo "Enter the key for the Connection String (e.g. PRD-DB, no use of '_') and make sure it's the same as the one used \
 in the code but without the 'POSTGRESQLCONNSTR_' prefix, which is added automatically by Azure \
-(see e.g. 'const string keyToProductionDbConnString'):"
+(see e.g. 'const string KeyToPrdDbConnStringInKeyvault'):"
 read -r connstring_key
 connstring_settings="$connstring_key='$cosmosdb_connstring'"
 

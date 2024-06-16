@@ -1,8 +1,8 @@
 using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Interfaces.Persistence.Tlg;
+using CheckMade.Common.Persistence.Repositories.ChatBot;
 using CheckMade.Common.Persistence.Repositories.Core;
-using CheckMade.Common.Persistence.Repositories.Tlg;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +20,6 @@ public static class ServiceRegistration
         
         services.AddScoped<ITlgInputRepository, TlgInputRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ITlgClientPortToRoleMapRepository, TlgClientPortToRoleMapRepository>();
+        services.AddScoped<ITlgClientPortRoleRepository, TlgClientPortRoleRepository>();
     }
 }

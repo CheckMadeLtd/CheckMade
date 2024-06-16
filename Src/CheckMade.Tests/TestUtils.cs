@@ -1,9 +1,10 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Telegram;
-using CheckMade.Common.Model.Telegram.Input;
-using CheckMade.Common.Model.Telegram.UserInteraction;
 using CheckMade.Common.Utils.Generic;
-using CheckMade.Telegram.Function.Services.UpdateHandling;
+using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -31,12 +32,29 @@ internal interface ITestUtils
     internal const long TestChatId_08 = 100008L;
     internal const long TestChatId_09 = 100009L;
     
+    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", RoleType.SanitaryOps_Admin);
+    
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", RoleType.SanitaryOps_Observer);
+
+    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", RoleType.SanitaryOps_Inspector);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", RoleType.SanitaryOps_Engineer);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", RoleType.SanitaryOps_CleanLead);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", RoleType.SanitaryOps_Observer);
+    
     Randomizer Randomizer { get; }
     
-    TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
+        string text = "Hello World", DateTime? dateTime = null);
     TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type);
     TlgInput GetValidTlgCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+    TlgInput GetValidTlgCallbackQueryForDomainCategory(
+        DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+    TlgInput GetValidTlgCallbackQueryForControlPrompts(
+        ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -46,33 +64,24 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
+    
+    internal static string GetFirstRawEnglish(Result<IReadOnlyList<OutputDto>> actualOutput) =>
+        actualOutput.GetValueOrThrow()[0].Text.GetValueOrThrow().RawEnglishText;
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
-    internal static readonly Role SanitaryOpsAdmin1 = new("VB70T", RoleType.SanitaryOps_Admin);
-    
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXW", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNM", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATF", RoleType.SanitaryOps_Observer);
-
-    internal static readonly Role SanitaryOpsInspector2 = new("MAM8S", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPK", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMC", RoleType.SanitaryOps_Observer);
-    
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgTextMessage(long userId, long chatId) =>
+    public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
         new(userId,
             chatId,
             InteractionMode.Operations,
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
-                1,
-                $"Hello World, without attachment: {Randomizer.GenerateRandomLong()}"));
+                dateTime ?? DateTime.UtcNow, 
+                1, 
+                text));
     
     public TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
@@ -80,7 +89,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             InteractionMode.Operations,
             TlgInputType.AttachmentMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
+                DateTime.UtcNow,
                 1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 new Uri("fakeTelegramUri"),
@@ -94,13 +103,42 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             interactionMode,
             TlgInputType.CommandMessage,
             CreateFromRelevantDetails(
-                DateTime.Now,
+                DateTime.UtcNow,
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
+    public TlgInput GetValidTlgCallbackQueryForDomainCategory(
+        DomainCategory category,
+        long userId,
+        long chatId,
+        DateTime? dateTime) =>
+        new(userId,
+            chatId,
+            InteractionMode.Operations,
+            TlgInputType.CallbackQuery,
+            CreateFromRelevantDetails(
+                dateTime ?? DateTime.UtcNow,
+                1,
+                controlPromptEnumCode: (long)category));
+
+
+    public TlgInput GetValidTlgCallbackQueryForControlPrompts(
+        ControlPrompts prompts,
+        long userId,
+        long chatId,
+        DateTime? dateTime) =>
+        new(userId,
+            chatId,
+            InteractionMode.Operations,
+            TlgInputType.CallbackQuery,
+            CreateFromRelevantDetails(
+                dateTime ?? DateTime.UtcNow,
+                1,
+                controlPromptEnumCode: (long)prompts));
+
     internal static TlgInputDetails CreateFromRelevantDetails(
-        DateTime telegramDate,
-        int telegramMessageId,
+        DateTime tlgDate,
+        int tlgMessageId,
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
@@ -111,8 +149,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
-            telegramDate, 
-            telegramMessageId,
+            tlgDate, 
+            tlgMessageId,
             text ?? Option<string>.None(),
             attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
@@ -128,7 +166,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             {
                 From = new User { Id = Randomizer.GenerateRandomLong() },
                 Chat = new Chat { Id = chatId },
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
                 MessageId = 123,
                 Text = inputText
             });
@@ -138,7 +176,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Text = botCommand,
             Entities = [
@@ -162,7 +200,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 {
                     From = new User { Id = Randomizer.GenerateRandomLong() },
                     Text = "The bot's original prompt",
-                    Date = DateTime.Now,
+                    Date = DateTime.UtcNow,
                     Chat = new Chat { Id = chatId },
                     MessageId = 123,
                 }
@@ -174,7 +212,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
@@ -185,7 +223,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = fileId }
@@ -197,7 +235,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Location = new Location
             {
@@ -214,7 +252,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
@@ -225,7 +263,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         {
             From = new User { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }

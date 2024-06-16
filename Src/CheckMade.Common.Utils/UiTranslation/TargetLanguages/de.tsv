@@ -5,7 +5,6 @@ CheckMade.Telegram.Function	Attachment type {0} is not yet supported!	Noch keine
 CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
 CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
 CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
-CheckMade.Telegram.Logic	Welcome to the CheckMade {0} Bot! 	Willkommen zum CheckMade {0} Bot! 
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
 CheckMade.Telegram.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
@@ -42,4 +41,8 @@ CheckMade.Common.Model	🙋 Staff	🙋 Personal
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.Telegram.Function	Please choose:	Bitte wählen:
-CheckMade.Telegram.Logic	🌀 Please enter your 'role token' to authenticate: 	🌀 Bitte gebe dein 'Rollen-Token' ein, um dich zu authentifizieren: 
+CheckMade.Telegram.Logic	🌀 Please enter your role token (format '{0}'): 	🌀 Bitte geben Sie Ihren Rollentoken ein (Format '{0}'): 
+CheckMade.Telegram.Logic	{0}, welcome to the CheckMade ChatBot!\nYou have successfully authenticated as a {1} at live-event {2}.	{0}, Willkommen zum CheckMade ChatBot!\nSie haben sich erfolgreich als {1} beim Live-Event {2} authentifiziert.
+CheckMade.Telegram.Logic	This is an unknown token. Try again...	Dieser Token ist unbekannt. Erneut versuchen...
+CheckMade.Telegram.Logic	Bad token format! Try again...	Falsches Tokenformat! Erneut versuchen...
+CheckMade.Telegram.Logic	Warning: you were already authenticated with this token in another {0} chat.\nThis will be the new {0} chat where you receive messages in your role {1} at {2}.	Warnung: Sie wurden bereits mit diesem Token in einem anderen {0}-Chat authentifiziert.\nDies wird der neue {0}-Chat sein, in dem Sie Nachrichten in Ihrer Rolle {1} bei {2} erhalten.

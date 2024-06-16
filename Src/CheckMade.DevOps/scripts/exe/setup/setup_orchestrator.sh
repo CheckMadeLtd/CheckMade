@@ -10,7 +10,7 @@ source "$script_dir_orchestrator/../script_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 # #######################################################################################################
-# This meta-script serves as executable documentation for the setup of Azure/Telegram/DB from scratch. 
+# This meta-script serves as executable documentation for the setup of Azure/ChatBot/DB from scratch. 
 # It also represents an overview / menu of config options outside of 'full setup from scratch'.
 # #######################################################################################################
 
@@ -26,7 +26,7 @@ echo "- Azure Portal account and 'CheckMade' subscription have been set up"
 echo "- Logged in to Azure CLI and default account and location have been set (use 'az_init/az_cli_init.sh')"
 echo "- All needed bots have been created with the Telegram BotFather and their credentials/tokens saved in the \
 ENVIRONMENT for access by subsequent scripts; the dev-related tokens have been saved in secrets.json of the \
-Telegram StartUp project."
+ChatBot StartUp project."
 echo "- 'GITHUB_TOKEN' in ENVIRONMENT has been set to a GitHub PAT that gives gh comprehensive admin access"
 
 echo "--------------------"
@@ -88,13 +88,6 @@ done
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/telegram_tokens_to_keyvault.sh"
 
 echo "--------------------"
-echo "INSTRUCTION: In preparation for Continuous Deployment, now go to the Azure Web Portal | \
-Choose the relevant FunctionApp | Settings | Configuration | General Settings (tab) | Stack settings (section) | \
-.NET Version (dropdown) and set to '.NET 8 Isolated' and click 'Save'!!!"
-echo "Do this for both, the production AND the staging slot!"
-echo "Continue here with 'Enter' when done."
-read -r
-
 confirm_script_launch "$script_dir_orchestrator/deploy_prep/publishing_profile_to_github.sh"
 
 echo "--------------------"
