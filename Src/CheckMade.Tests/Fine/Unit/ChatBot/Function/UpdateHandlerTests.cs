@@ -20,7 +20,7 @@ using Xunit.Abstractions;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 
 public class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {

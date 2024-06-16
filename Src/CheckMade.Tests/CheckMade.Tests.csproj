@@ -35,4 +35,9 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Fine\" />
+      <Folder Include="Problematic\" />
+    </ItemGroup>
+
 </Project>

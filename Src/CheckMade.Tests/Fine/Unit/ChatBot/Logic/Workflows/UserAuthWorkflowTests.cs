@@ -4,16 +4,16 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Tests.ITestUtils;
 using static CheckMade.ChatBot.Logic.Workflows.UserAuthWorkflow.States;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
+namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
 
 public class UserAuthWorkflowTests
 {

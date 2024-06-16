@@ -3,7 +3,7 @@ using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Integration.ExternalServices;
+namespace CheckMade.Tests.Problematic.ExternalServices;
 
 public class GoogleApiTests
 {

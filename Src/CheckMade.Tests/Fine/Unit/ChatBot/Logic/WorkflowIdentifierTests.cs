@@ -5,7 +5,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic;
+namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic;
 
 public class WorkflowIdentifierTests
 {

@@ -8,7 +8,7 @@ using CheckMade.Tests.Startup.ConfigProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
-namespace CheckMade.Tests.Integration.Persistence;
+namespace CheckMade.Tests.Fine.Integration.Persistence;
 
 public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
 {

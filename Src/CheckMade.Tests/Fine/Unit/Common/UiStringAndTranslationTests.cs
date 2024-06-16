@@ -3,9 +3,10 @@ using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+
 // ReSharper disable FormatStringProblem
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Fine.Unit.Common;
 
 public class UiStringAndTranslationTests
 {

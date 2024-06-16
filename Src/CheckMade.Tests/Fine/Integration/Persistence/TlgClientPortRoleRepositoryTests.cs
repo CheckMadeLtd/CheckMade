@@ -6,7 +6,7 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Integration.Persistence;
+namespace CheckMade.Tests.Fine.Integration.Persistence;
 
 public class TlgClientPortRoleRepositoryTests
 {

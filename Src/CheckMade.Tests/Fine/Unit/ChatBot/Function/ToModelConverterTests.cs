@@ -14,7 +14,7 @@ using Moq;
 using Telegram.Bot.Types;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 
 public class ToModelConverterTests
 {

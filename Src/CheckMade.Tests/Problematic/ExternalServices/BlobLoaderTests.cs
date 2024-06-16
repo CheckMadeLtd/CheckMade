@@ -3,7 +3,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Integration.ExternalServices;
+namespace CheckMade.Tests.Problematic.ExternalServices;
 
 public class BlobLoaderTests
 {

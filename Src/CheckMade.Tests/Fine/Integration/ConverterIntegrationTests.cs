@@ -1,12 +1,12 @@
 using System.Text;
-using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Integration;
+namespace CheckMade.Tests.Fine.Integration;
 
 public class ConverterIntegrationTests
 {

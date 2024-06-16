@@ -3,9 +3,10 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
+
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Fine.Unit.Common;
 
 public class EnumCheckerTests(ITestOutputHelper outputHelper)
 {

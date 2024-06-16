@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using static CheckMade.Common.Model.Core.DomainCategory;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 
 public class OutputToReplyMarkupConverterTests
 {

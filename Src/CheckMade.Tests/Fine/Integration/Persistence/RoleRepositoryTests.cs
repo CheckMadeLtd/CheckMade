@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Integration.Persistence;
+namespace CheckMade.Tests.Fine.Integration.Persistence;
 
 public class RoleRepositoryTests
 {
