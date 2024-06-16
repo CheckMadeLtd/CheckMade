@@ -123,7 +123,10 @@ internal class ToModelConverter(
         if (botCommandEntity == null)
             return Option<int>.None();
 
-        if (update.Message.Text == TlgStart.Command)
+        // In Telegram Group Chats, any botCommand is appended with @[botName]
+        var isolatedBotCommand = update.Message.Text!.Split('@')[0];
+        
+        if (isolatedBotCommand == TlgStart.Command)
             return Option<int>.Some(TlgStart.CommandCode);
         
         var allBotCommandMenus = new BotCommandMenus();
@@ -135,12 +138,10 @@ internal class ToModelConverter(
             InteractionMode.Notifications => allBotCommandMenus.NotificationsBotCommandMenu.Values,
             _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
-
-        // ToDo: fix this so that e.g. `status@devNotificationsCheckMadeBot` will be recognised as status command
-        // Use Split on @ and then the first item. And give this a good name, making clear it's to do with groupChats.
+        
         var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
             .SelectMany(kvp => kvp.Values)
-            .FirstOrDefault(mbc => mbc.Command == update.Message.Text);
+            .FirstOrDefault(mbc => mbc.Command == isolatedBotCommand);
         
         if (tlgBotCommandFromTelegramUpdate == null)
             return UiConcatenate(
