@@ -139,9 +139,10 @@ public class UnitTestStartup : TestStartupBase
         
         // #2
         
+        // Used in Unit Test 'GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer2, 
-            new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Operations),
+            new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortRole(

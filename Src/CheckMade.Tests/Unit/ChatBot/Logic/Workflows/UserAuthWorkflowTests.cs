@@ -205,7 +205,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_03))
+            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
@@ -241,8 +241,59 @@ public class UserAuthWorkflowTests
         }
     }
     
-    // ToDo: Add test covering the case that only 1 instead of both other modes are automatically set,
-    // because the other one already has a mapping. 
+    [Fact]
+    public async Task GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        const long privateChatUserAndChatId = TestUserId_03; 
+
+        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+            userId: privateChatUserAndChatId,
+            chatId: privateChatUserAndChatId,
+            // Already has a mapped PortRole for 'Communications' (see UnitTestStartup)
+            text: SanitaryOpsEngineer2.Token);
+
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
+            .ReturnsAsync(new List<TlgInput> { inputValidToken });
+        
+        var expectedClientPortRolesAdded = new List<TlgClientPortRole>
+        {
+            new(SanitaryOpsEngineer2,
+                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations),
+                DateTime.UtcNow,
+                Option<DateTime>.None()),
+            
+            new(SanitaryOpsEngineer2,
+                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Notifications),
+                DateTime.UtcNow,
+                Option<DateTime>.None()),
+        };
+
+        var actualPortRoles = new List<TlgClientPortRole>();
+        basics.mockPortRolesRepo
+            .Setup(x =>
+                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
+            .Callback<IEnumerable<TlgClientPortRole>>(
+                portRoles => actualPortRoles = portRoles.ToList());
+        
+        var workflow = await UserAuthWorkflow.CreateAsync(
+            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+
+        await workflow.GetNextOutputAsync(inputValidToken);
+        
+        basics.mockPortRolesRepo.Verify(x => x.AddAsync(
+            It.IsAny<IEnumerable<TlgClientPortRole>>()));
+
+        for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
+        {
+            Assert.Equivalent(expectedClientPortRolesAdded[i].ClientPort, actualPortRoles[i].ClientPort);
+            Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
+            Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
+        }
+    }
     
     [Theory]
     [InlineData("5JFUX")]
