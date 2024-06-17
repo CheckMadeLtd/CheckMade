@@ -22,9 +22,9 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgTextMessage(),
-            utils.GetValidTlgTextMessage(),
-            utils.GetValidTlgTextMessage()
+            utils.GetValidTlgInputTextMessage(),
+            utils.GetValidTlgInputTextMessage(),
+            utils.GetValidTlgInputTextMessage()
         };
         
         var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
@@ -56,9 +56,9 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgTextMessage(userId),
-            utils.GetValidTlgTextMessage(userId),
-            utils.GetValidTlgTextMessage(userId)
+            utils.GetValidTlgInputTextMessage(userId),
+            utils.GetValidTlgInputTextMessage(userId),
+            utils.GetValidTlgInputTextMessage(userId)
         };
         
         var inputRepo = _services.GetRequiredService<ITlgInputRepository>();

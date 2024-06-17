@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,10 +19,8 @@ public class TlgClientPortRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
-        
         var inputPortRole = new TlgClientPortRole(
-            existingTestRole,
+            ITestUtils.IntegrationTestsRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
@@ -47,10 +44,8 @@ public class TlgClientPortRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
-        
         var preExistingActivePortRole = new TlgClientPortRole(
-            existingTestRole,
+            ITestUtils.IntegrationTestsRole,
             new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),

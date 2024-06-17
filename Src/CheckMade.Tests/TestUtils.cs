@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Core;
+using static CheckMade.Common.Model.Core.RoleType;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot;
@@ -7,7 +8,8 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using User = Telegram.Bot.Types.User;
+using TelegramUser = Telegram.Bot.Types.User;
+using User = CheckMade.Common.Model.Core.User;
 
 namespace CheckMade.Tests;
 
@@ -33,28 +35,45 @@ internal interface ITestUtils
     internal const long TestChatId_08 = 100008L;
     internal const long TestChatId_09 = 100009L;
     
-    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", RoleType.SanitaryOps_Admin);
-    
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", RoleType.SanitaryOps_Observer);
+    internal static readonly User IntegrationTestsUser = new(
+        new MobileNumber("+447538521999"),
+        "_Daniel",
+        "IntegrationTest",
+        "_Gorin",
+        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"));
 
-    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", RoleType.SanitaryOps_Inspector);
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", RoleType.SanitaryOps_Engineer);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", RoleType.SanitaryOps_CleanLead);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", RoleType.SanitaryOps_Observer);
+    internal static readonly Role IntegrationTestsRole = new(
+        "AAA111",
+        SanitaryOps_Inspector,
+        IntegrationTestsUser);
+    
+    internal static readonly User UnitTestsUser = new(
+        new MobileNumber("+447538521999"),
+        "_Daniel",
+        "UnitTest",
+        "_Gorin",
+        Option<EmailAddress>.None());
+    
+    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", SanitaryOps_Admin, UnitTestsUser);
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, UnitTestsUser);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, UnitTestsUser);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", SanitaryOps_CleanLead, UnitTestsUser);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, UnitTestsUser);
+    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", SanitaryOps_Inspector, UnitTestsUser);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, UnitTestsUser);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", SanitaryOps_CleanLead, UnitTestsUser);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, UnitTestsUser);
     
     Randomizer Randomizer { get; }
     
-    TlgInput GetValidTlgTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
+    TlgInput GetValidTlgInputTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
         string text = "Hello World", DateTime? dateTime = null);
-    TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type);
-    TlgInput GetValidTlgCommandMessage(
+    TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type);
+    TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
-    TlgInput GetValidTlgCallbackQueryForDomainCategory(
+    TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
         DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
-    TlgInput GetValidTlgCallbackQueryForControlPrompts(
+    TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
@@ -74,7 +93,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
+    public TlgInput GetValidTlgInputTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
         new(userId,
             chatId,
             InteractionMode.Operations,
@@ -84,7 +103,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1, 
                 text));
     
-    public TlgInput GetValidTlgTextMessageWithAttachment(TlgAttachmentType type) =>
+    public TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type) =>
         new(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
             InteractionMode.Operations,
@@ -97,7 +116,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 new Uri("fakeInternalUri"),
                 type));
 
-    public TlgInput GetValidTlgCommandMessage(
+    public TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
         new(userId,
             chatId,
@@ -108,7 +127,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    public TlgInput GetValidTlgCallbackQueryForDomainCategory(
+    public TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
         DomainCategory category,
         long userId,
         long chatId,
@@ -123,7 +142,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 controlPromptEnumCode: (long)category));
 
 
-    public TlgInput GetValidTlgCallbackQueryForControlPrompts(
+    public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts,
         long userId,
         long chatId,
@@ -165,7 +184,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId) => 
         new(new Message 
             {
-                From = new User { Id = Randomizer.GenerateRandomLong() },
+                From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
                 Chat = new Chat { Id = chatId },
                 Date = DateTime.UtcNow,
                 MessageId = 123,
@@ -175,7 +194,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId) =>
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -199,7 +218,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 Data = callbackQueryData,
                 Message = new Message
                 {
-                    From = new User { Id = Randomizer.GenerateRandomLong() },
+                    From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
                     Text = "The bot's original prompt",
                     Date = DateTime.UtcNow,
                     Chat = new Chat { Id = chatId },
@@ -211,7 +230,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramAudioMessage(long chatId) => 
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -222,7 +241,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramDocumentMessage(long chatId, string fileId) => 
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -234,7 +253,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         Option<float> horizontalAccuracy, long chatId) =>
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -251,7 +270,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramPhotoMessage(long chatId) => 
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -262,7 +281,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public UpdateWrapper GetValidTelegramVoiceMessage(long chatId) =>
         new(new Message
         {
-            From = new User { Id = Randomizer.GenerateRandomLong() },
+            From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,

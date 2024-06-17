@@ -28,7 +28,7 @@ public class UserAuthWorkflowTests
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage() });
+            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage() });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
@@ -47,7 +47,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
         // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
-        var tlgPastInputToBeIgnored = basics.utils.GetValidTlgTextMessage(
+        var tlgPastInputToBeIgnored = basics.utils.GetValidTlgInputTextMessage(
             TestUserId_02,
             TestChatId_03,
             SanitaryOpsAdmin1.Token,
@@ -76,7 +76,7 @@ public class UserAuthWorkflowTests
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage(text: "InvalidToken") });
+            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
             mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
@@ -94,7 +94,7 @@ public class UserAuthWorkflowTests
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
-        var nonExistingTokenInput = basics.utils.GetValidTlgTextMessage(
+        var nonExistingTokenInput = basics.utils.GetValidTlgInputTextMessage(
             text: InputValidator.GetTokenFormatExample());
         
         mockTlgInputsRepo
@@ -117,7 +117,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputTokenWithPreExistingActivePortRole = 
-            basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
+            basics.utils.GetValidTlgInputTextMessage(text: SanitaryOpsAdmin1.Token);
         
         var preExistingActivePortRole = (await basics.mockPortRolesRepo.Object.GetAllAsync())
             .First(cpmr => 
@@ -152,7 +152,7 @@ public class UserAuthWorkflowTests
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+        var inputValidToken = basics.utils.GetValidTlgInputTextMessage(
             // Diverging userId and chatId = sent from a Tlgr Chat-Group (rather than a private chat with the bot)
             userId: TestUserId_03,
             chatId: TestChatId_08,
@@ -199,7 +199,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         const long privateChatUserAndChatId = TestUserId_03; 
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+        var inputValidToken = basics.utils.GetValidTlgInputTextMessage(
             userId: privateChatUserAndChatId,
             chatId: privateChatUserAndChatId,
             text: SanitaryOpsInspector2.Token);
@@ -249,7 +249,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         const long privateChatUserAndChatId = TestUserId_03; 
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+        var inputValidToken = basics.utils.GetValidTlgInputTextMessage(
             userId: privateChatUserAndChatId,
             chatId: privateChatUserAndChatId,
             // Already has a mapped PortRole for 'Communications' (see UnitTestStartup)
@@ -306,7 +306,7 @@ public class UserAuthWorkflowTests
         var basics = GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
-        var badTokenInput = basics.utils.GetValidTlgTextMessage(text: badToken);
+        var badTokenInput = basics.utils.GetValidTlgInputTextMessage(text: badToken);
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01))

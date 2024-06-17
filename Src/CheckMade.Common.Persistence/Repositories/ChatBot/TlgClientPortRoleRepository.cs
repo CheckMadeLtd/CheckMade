@@ -46,32 +46,58 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
     public async Task<IEnumerable<TlgClientPortRole>> GetAllAsync()
     {
-        const string rawQuery = "SELECT r.token, r.role_type, r.status, tcpmr.tlg_user_id, tcpmr.tlg_chat_id, " +
-                                "tcpmr.interaction_mode, tcpmr.activation_date, tcpmr.deactivation_date, tcpmr.status " +
-                                "FROM tlg_client_port_mode_roles tcpmr " +
-                                "JOIN roles r on tcpmr.role_id = r.id";
+        const string rawQuery = "SELECT " +
+                                "usr.mobile AS user_mobile, " +
+                                "usr.first_name AS user_first_name, " +
+                                "usr.middle_name AS user_middle_name, " +
+                                "usr.last_name AS user_last_name, " +
+                                "usr.email AS user_email, " +
+                                "usr.status AS user_status, " +
+                                "r.token AS role_token, " +
+                                "r.role_type AS role_type, " +
+                                "r.status AS role_status, " +
+                                "tcpr.tlg_user_id AS tcpr_tlg_user_id, " +
+                                "tcpr.tlg_chat_id AS tcpr_tlg_chat_id, " +
+                                "tcpr.interaction_mode AS tcpr_interaction_mode, " +
+                                "tcpr.activation_date AS tcpr_activation_date, " +
+                                "tcpr.deactivation_date AS tcpr_deactivation_date, " +
+                                "tcpr.status AS tcpr_status " +
+                                "FROM tlg_client_port_mode_roles tcpr " +
+                                "INNER JOIN roles r on tcpr.role_id = r.id " +
+                                "INNER JOIN users usr on r.user_id = usr.id";
 
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
         return await ExecuteReaderAsync(command, reader =>
         {
+            var user = new User(
+                new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
+                reader.GetString(reader.GetOrdinal("user_first_name")),
+                reader.GetString(reader.GetOrdinal("user_middle_name")),
+                reader.GetString(reader.GetOrdinal("user_last_name")),
+                new EmailAddress(reader.GetString(reader.GetOrdinal("user_email"))),
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
+
             var role = new Role(
-                reader.GetString(0),
-                (RoleType)reader.GetInt16(1),
-                (DbRecordStatus)reader.GetInt16(2));
+                reader.GetString(reader.GetOrdinal("role_token")),
+                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
+                user,
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
                     
             var clientPort = new TlgClientPort(
-                reader.GetInt64(3),
-                reader.GetInt64(4),
-                (InteractionMode)reader.GetInt16(5));
+                reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),
+                reader.GetInt64(reader.GetOrdinal("tcpr_tlg_chat_id")),
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode")));
 
-            var activationDate = reader.GetDateTime(6);
-                    
-            var deactivationDate = !reader.IsDBNull(7) 
-                ? Option<DateTime>.Some(reader.GetDateTime(7)) 
+            var activationDate = reader.GetDateTime(reader.GetOrdinal("tcpr_activation_date"));
+
+            var deactivationDateOrdinal = reader.GetOrdinal("tcpr_deactivation_date");
+            
+            var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal) 
+                ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal)) 
                 : Option<DateTime>.None();
                     
-            var status = (DbRecordStatus)reader.GetInt16(8);
+            var status = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status"));
 
             return new TlgClientPortRole(role, clientPort, activationDate, deactivationDate, status);
         });
@@ -80,7 +106,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
     public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_client_port_mode_roles " +
-                                "SET status = @status, deactivation_date = @date " +
+                                "SET status = @status, deactivation_date = @deactivationDate " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
                                 "AND tlg_chat_id = @tlgChatId " + 
@@ -96,9 +122,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         };
 
         if (newStatus != DbRecordStatus.Active)
-            normalParameters.Add("@date", DateTime.UtcNow);
+            normalParameters.Add("@deactivationDate", DateTime.UtcNow);
         else
-            normalParameters.Add("@date", DBNull.Value);
+            normalParameters.Add("@deactivationDate", DBNull.Value);
         
         var command = GenerateCommand(rawQuery, normalParameters);
 

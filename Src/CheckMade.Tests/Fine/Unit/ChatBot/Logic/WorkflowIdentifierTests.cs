@@ -19,7 +19,7 @@ public class WorkflowIdentifierTests
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var portWithoutRole = new TlgClientPort(2468L, 13563897L, InteractionMode.Operations);
-        var inputFromUnauthenticatedUser = utils.GetValidTlgTextMessage(
+        var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
             portWithoutRole.UserId, portWithoutRole.ChatId);
     
         var workflow = await workflowIdentifier.IdentifyAsync(inputFromUnauthenticatedUser);
