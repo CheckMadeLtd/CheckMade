@@ -20,8 +20,10 @@ public static partial class InputValidator
                                                             && MobileNoRegex.IsMatch(mobileNumber);
     [GeneratedRegex(@"^\+\d+$")]
     private static partial Regex MyMobileNoRegex();
-    [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+    
+    [GeneratedRegex(@"^(?!.*\.\.)(?!\.)[^\s@]+(?<!\.)@[^\s@]+\.[^\s@]+$")]
     private static partial Regex MyEmailRegex();
+    
     [GeneratedRegex("^[a-zA-Z0-9]{6}$")]
     private static partial Regex MyTokenRegex();
 }
