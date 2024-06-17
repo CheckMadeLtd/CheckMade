@@ -6,7 +6,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Utils.Generic.InputValidator;
+using static CheckMade.Common.LangExt.InputValidator;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
