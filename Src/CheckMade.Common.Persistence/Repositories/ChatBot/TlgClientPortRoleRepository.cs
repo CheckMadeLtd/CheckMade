@@ -16,9 +16,15 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
     public async Task AddAsync(IEnumerable<TlgClientPortRole> portRole)
     {
         const string rawQuery = "INSERT INTO tlg_client_port_mode_roles (" +
-                                "role_id, tlg_user_id, tlg_chat_id, activation_date, " +
-                                "deactivation_date, status, interaction_mode) " +
-                                "VALUES ((SELECT id FROM roles WHERE token = @token), @tlgUserId, @tlgChatId, " +
+                                "role_id, " +
+                                "tlg_user_id, " +
+                                "tlg_chat_id, " +
+                                "activation_date, " +
+                                "deactivation_date, " +
+                                "status, " +
+                                "interaction_mode) " +
+                                "VALUES ((SELECT id FROM roles WHERE token = @token), " +
+                                "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
         var commands = portRole.Select(cpmr =>
