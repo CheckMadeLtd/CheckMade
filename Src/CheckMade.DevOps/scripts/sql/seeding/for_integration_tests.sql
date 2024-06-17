@@ -1,4 +1,4 @@
--- This script is executed in CI environment by the apply_migration.sh script 
+-- This script is executed in CI environment by the apply_migration.sh script and manually in DEV env. when needed.
 
 INSERT INTO users (mobile, first_name, last_name, email, status) 
 VALUES ('+447538521741', 'Daniel', 'Gorin', 'dan-cm-testing@neocortek.net', 0); 
