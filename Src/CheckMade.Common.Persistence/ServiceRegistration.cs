@@ -5,6 +5,7 @@ using CheckMade.Common.Persistence.Repositories.ChatBot;
 using CheckMade.Common.Persistence.Repositories.Core;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Persistence;
 
@@ -16,7 +17,8 @@ public static class ServiceRegistration
         services.AddScoped<IDbExecutionHelper>(sp =>
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
-                sp.GetRequiredService<IDbCommandRetryPolicy>()));
+                sp.GetRequiredService<IDbCommandRetryPolicy>(),
+                sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
         
         services.AddScoped<ITlgInputRepository, TlgInputRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
