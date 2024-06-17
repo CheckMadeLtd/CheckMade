@@ -5,6 +5,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -16,7 +17,7 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode interactionMode);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode);
 }
 
 public class UpdateHandler(
@@ -31,8 +32,11 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(
+        UpdateWrapper update,
+        InteractionMode currentlyReceivingInteractionMode)
     {
+        var currentlyReceivingUserId = update.Message.From?.Id;
         ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
@@ -67,9 +71,18 @@ public class UpdateHandler(
         
         var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
-        var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
+        
+        var tlgClientPortRoles = 
+            (await tlgClientPortRoleRepo.GetAllAsync())
+            .ToList().AsReadOnly();
+        
+        var uiTranslator = translatorFactory.Create(GetUiLanguage(
+            tlgClientPortRoles,
+            currentlyReceivingUserId,
+            currentlyReceivingChatId,
+            currentlyReceivingInteractionMode));
+        
         var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        var tlgClientPortRoles = await tlgClientPortRoleRepo.GetAllAsync();
 
         var sendOutputsAttempt = await
             (from tlgInput
@@ -106,16 +119,20 @@ public class UpdateHandler(
             });
     }
 
-    private LanguageCode GetUiLanguage(Message telegramInputMessage)
+    private LanguageCode GetUiLanguage(
+        IReadOnlyList<TlgClientPortRole> tlgClientPortRoles,
+        long? currentUserId,
+        ChatId currentChatId,
+        InteractionMode currentMode)
     {
-        var userLanguagePreferenceIsRecognized = Enum.TryParse(
-            typeof(LanguageCode),
-            telegramInputMessage.From?.LanguageCode,
-            true,
-            out var userLanguagePreference);
-        
-        return userLanguagePreferenceIsRecognized
-            ? (LanguageCode) userLanguagePreference!
+        var clientPortRole = tlgClientPortRoles
+            .FirstOrDefault(cpr =>
+                cpr.ClientPort.UserId.Id == currentUserId &&
+                cpr.ClientPort.ChatId.Id == currentChatId &&
+                cpr.ClientPort.Mode == currentMode);
+
+        return clientPortRole != null 
+            ? clientPortRole.Role.User.Language 
             : defaultUiLanguage.Code;
     }
 }
