@@ -77,10 +77,16 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
         return await ExecuteReaderAsync(command, reader =>
         {
+            var middleNameOrdinal = reader.GetOrdinal("user_middle_name");
+            var middleNameRaw = reader.GetValue(middleNameOrdinal);
+            var middleName = middleNameRaw != DBNull.Value
+                ? reader.GetString(middleNameOrdinal)
+                : Option<string>.None();
+            
             var user = new User(
                 new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
                 reader.GetString(reader.GetOrdinal("user_first_name")),
-                reader.GetString(reader.GetOrdinal("user_middle_name")),
+                middleName,
                 reader.GetString(reader.GetOrdinal("user_last_name")),
                 new EmailAddress(reader.GetString(reader.GetOrdinal("user_email"))),
                 (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
