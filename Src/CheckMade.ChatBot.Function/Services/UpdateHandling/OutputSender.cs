@@ -32,20 +32,23 @@ internal static class OutputSender
                  * LogicalPort will typically not be set explicitly in these cases:
                  * a) For an update from a User who hasn't done the UserAuth workflow yet i.e. is unknown
                  * b) For outputs aimed at the originator of the last input i.e. the default case
-                 * => LogicalPorts therefore mostly used to send e.g. notifications to other users
+                 * => LogicalPorts therefore mostly only used to send e.g. notifications to other users
                  */
                 
-                var relevantMode = output.LogicalPort.Match(
+                var outputMode = output.LogicalPort.Match(
                     logicalPort => logicalPort.InteractionMode,
                     () => currentlyReceivingInteractionMode);
 
-                var portBotClient = botClientByMode[relevantMode];
+                var portBotClient = botClientByMode[outputMode];
 
+                /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
+                 broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
+                 mapped to a TlgClientPort !! */
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => tlgClientPortRoles
                         .First(cpr => 
                             cpr.Role == logicalPort.Role &&
-                            cpr.ClientPort.Mode == relevantMode &&
+                            cpr.ClientPort.Mode == outputMode &&
                             cpr.Status == DbRecordStatus.Active)
                         .ClientPort.ChatId.Id,
                     () => currentlyReceivingChatId);
