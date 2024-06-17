@@ -156,7 +156,7 @@ internal class UserAuthWorkflow : IWorkflow
                       {0}, welcome to the CheckMade ChatBot!
                       You have successfully authenticated as a {1} at live-event {2}.
                       """, 
-                "Placeholder Name",
+                newPortRoleForOriginatingMode.Role.User.FirstName,
                 newPortRoleForOriginatingMode.Role.RoleType,
                 "Placeholder LiveEvent")
         });
