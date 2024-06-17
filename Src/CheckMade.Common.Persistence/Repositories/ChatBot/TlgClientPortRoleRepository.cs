@@ -27,20 +27,20 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = portRole.Select(cpmr =>
+        var commands = portRole.Select(cpr =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@token", cpmr.Role.Token },
-                { "@tlgUserId", (long)cpmr.ClientPort.UserId },
-                { "@tlgChatId", (long)cpmr.ClientPort.ChatId },
-                { "@activationDate", cpmr.ActivationDate },
-                { "@status", (int)cpmr.Status },
-                { "@mode", (int)cpmr.ClientPort.Mode }
+                { "@token", cpr.Role.Token },
+                { "@tlgUserId", (long)cpr.ClientPort.UserId },
+                { "@tlgChatId", (long)cpr.ClientPort.ChatId },
+                { "@activationDate", cpr.ActivationDate },
+                { "@status", (int)cpr.Status },
+                { "@mode", (int)cpr.ClientPort.Mode }
             };
 
-            if (cpmr.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", cpmr.DeactivationDate.GetValueOrThrow());
+            if (cpr.DeactivationDate.IsSome)
+                normalParameters.Add("@deactivationDate", cpr.DeactivationDate.GetValueOrThrow());
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
 

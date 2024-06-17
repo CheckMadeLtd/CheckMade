@@ -74,7 +74,7 @@ public class UnitTestStartup : TestStartupBase
         var mockTlgClientPortRoleRepo = new Mock<ITlgClientPortRoleRepository>();
 
         mockTlgClientPortRoleRepo
-            .Setup(cpmr => cpmr.GetAllAsync())
+            .Setup(cpr => cpr.GetAllAsync())
             .ReturnsAsync(GetTestingPortRoles());
 
         Services.AddScoped<ITlgClientPortRoleRepository>(_ => mockTlgClientPortRoleRepo.Object);

@@ -43,10 +43,10 @@ internal static class OutputSender
 
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => tlgClientPortRoles
-                        .First(cpmr => 
-                            cpmr.Role == logicalPort.Role &&
-                            cpmr.ClientPort.Mode == relevantMode &&
-                            cpmr.Status == DbRecordStatus.Active)
+                        .First(cpr => 
+                            cpr.Role == logicalPort.Role &&
+                            cpr.ClientPort.Mode == relevantMode &&
+                            cpr.Status == DbRecordStatus.Active)
                         .ClientPort.ChatId.Id,
                     () => currentlyReceivingChatId);
                     

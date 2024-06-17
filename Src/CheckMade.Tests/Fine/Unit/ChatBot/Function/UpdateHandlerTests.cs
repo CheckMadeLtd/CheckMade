@@ -324,10 +324,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 TelegramPortChatId = portRoles
-                    .First(cpmr => 
-                        cpmr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpmr.ClientPort.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
-                        cpmr.Status == DbRecordStatus.Active)
+                    .First(cpr => 
+                        cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        cpr.ClientPort.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
+                        cpr.Status == DbRecordStatus.Active)
                     .ClientPort.ChatId.Id
             });
 

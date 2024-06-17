@@ -29,7 +29,7 @@ public class TlgClientPortRoleRepositoryTests
 
         await repo.AddAsync(inputPortRole);
         var retrieved = (await repo.GetAllAsync())
-            .MaxBy(cpmr => cpmr.ActivationDate);
+            .MaxBy(cpr => cpr.ActivationDate);
         await repo.HardDeleteAsync(inputPortRole);
         
         Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
@@ -57,7 +57,7 @@ public class TlgClientPortRoleRepositoryTests
         await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
         
         var retrievedUpdated = (await repo.GetAllAsync())
-            .MaxBy(cpmr => cpmr.ActivationDate);
+            .MaxBy(cpr => cpr.ActivationDate);
         
         await repo.HardDeleteAsync(preExistingActivePortRole);
         

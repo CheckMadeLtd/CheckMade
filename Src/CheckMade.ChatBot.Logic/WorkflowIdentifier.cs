@@ -38,10 +38,10 @@ internal class WorkflowIdentifier(
             (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
 
         return tlgClientPortRoles
-                   .FirstOrDefault(cpmr => 
-                       cpmr.ClientPort.ChatId == inputPort.ChatId &&
-                       cpmr.ClientPort.Mode == mode &&
-                       cpmr.Status == DbRecordStatus.Active) 
+                   .FirstOrDefault(cpr => 
+                       cpr.ClientPort.ChatId == inputPort.ChatId &&
+                       cpr.ClientPort.Mode == mode &&
+                       cpr.Status == DbRecordStatus.Active) 
                != null;
     }
 }
