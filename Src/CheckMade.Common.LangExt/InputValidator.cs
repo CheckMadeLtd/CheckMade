@@ -13,7 +13,7 @@ public static partial class InputValidator
     public static bool IsValidToken(string token) => !string.IsNullOrEmpty(token) 
                                               && TokenRegex.IsMatch(token);
     
-    public static bool IsValidEmail(string emailAddress) => !string.IsNullOrEmpty(emailAddress) 
+    public static bool IsValidEmailAddress(string emailAddress) => !string.IsNullOrEmpty(emailAddress) 
                                                      && EmailRegex.IsMatch(emailAddress);
     
     public static bool IsValidMobileNumber(string mobileNumber) => !string.IsNullOrEmpty(mobileNumber) 

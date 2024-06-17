@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
+using User = Telegram.Bot.Types.User;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 

@@ -7,6 +7,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using User = Telegram.Bot.Types.User;
 
 namespace CheckMade.Tests;
 
