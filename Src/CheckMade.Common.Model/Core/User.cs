@@ -8,4 +8,5 @@ public record User(
     Option<string> MiddleName,
     string LastName,
     Option<EmailAddress> Email,
+    LanguageCode Language,
     DbRecordStatus Status = DbRecordStatus.Active);

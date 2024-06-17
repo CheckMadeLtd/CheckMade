@@ -58,6 +58,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                                 "usr.middle_name AS user_middle_name, " +
                                 "usr.last_name AS user_last_name, " +
                                 "usr.email AS user_email, " +
+                                "usr.language_setting AS user_language, " +
                                 "usr.status AS user_status, " +
                                 "r.token AS role_token, " +
                                 "r.role_type AS role_type, " +
@@ -82,6 +83,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                 reader.GetString(reader.GetOrdinal("user_middle_name")),
                 reader.GetString(reader.GetOrdinal("user_last_name")),
                 new EmailAddress(reader.GetString(reader.GetOrdinal("user_email"))),
+                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
 
             var role = new Role(

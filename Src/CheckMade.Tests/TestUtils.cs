@@ -40,7 +40,8 @@ internal interface ITestUtils
         "_Daniel",
         "IntegrationTest",
         "_Gorin",
-        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"));
+        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
+        LanguageCode.en);
 
     internal static readonly Role IntegrationTestsRole = new(
         "AAA111",
@@ -52,7 +53,8 @@ internal interface ITestUtils
         "_Daniel",
         "UnitTest",
         "_Gorin",
-        Option<EmailAddress>.None());
+        Option<EmailAddress>.None(),
+        LanguageCode.en);
     
     internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", SanitaryOps_Admin, UnitTestsUser);
     internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, UnitTestsUser);
