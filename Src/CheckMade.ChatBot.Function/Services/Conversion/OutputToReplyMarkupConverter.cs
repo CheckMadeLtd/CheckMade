@@ -21,7 +21,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             throw new InvalidEnumArgumentException("Some enums are undefined!");
         
         var textCallbackIdPairs = GetTextIdPairsForInlineKeyboardButtons(
-            output.DomainCategorySelection,
+            output.DomainTermSelection,
             output.ControlPromptsSelection,
             translator);
         

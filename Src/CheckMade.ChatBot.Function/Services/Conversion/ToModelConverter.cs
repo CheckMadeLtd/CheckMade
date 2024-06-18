@@ -36,14 +36,14 @@ internal class ToModelConverter(
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(update, interactionMode)
-                    from domainCategory 
-                        in GetDomainCategory(update)
+                    from domainTerm 
+                        in GetDomainTerm(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from tlgInput 
                         in GetTlgInputAsync(
                             update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
-                            botCommandEnumCode, domainCategory, controlPromptEnumCode) 
+                            botCommandEnumCode, domainTerm, controlPromptEnumCode) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
@@ -185,7 +185,7 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<OneOf<int, Type>>> GetDomainCategory(UpdateWrapper update)
+    private static Result<Option<OneOf<int, Type>>> GetDomainTerm(UpdateWrapper update)
     {
         var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
@@ -212,7 +212,7 @@ internal class ToModelConverter(
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
-        Option<OneOf<int, Type>> domainCategory,
+        Option<OneOf<int, Type>> domainTerm,
         Option<long> controlPromptEnumCode)
     {
         if (update.Message.From?.Id == null || 
@@ -260,7 +260,7 @@ internal class ToModelConverter(
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
-                domainCategory,
+                domainTerm,
                 controlPromptEnumCode));
     }
 

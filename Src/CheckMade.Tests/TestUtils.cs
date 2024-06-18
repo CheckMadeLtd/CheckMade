@@ -73,7 +73,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type);
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
-    TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
+    TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         OneOf<int, Type> category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
@@ -129,7 +129,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 1,
                 botCommandEnumCode: botCommandEnumCode));
 
-    public TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
+    public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         OneOf<int, Type> category,
         long userId,
         long chatId,
@@ -141,7 +141,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,
-                domainCategory: category));
+                domainTerm: category));
 
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
@@ -167,7 +167,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         TlgAttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
-        OneOf<int, Type>? domainCategory = null,
+        OneOf<int, Type>? domainTerm = null,
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
@@ -179,7 +179,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
-            domainCategory ?? Option<OneOf<int, Type>>.None(),
+            domainTerm ?? Option<OneOf<int, Type>>.None(),
             controlPromptEnumCode ?? Option<long>.None());
     }
     

@@ -12,7 +12,8 @@ public record OutputDto
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
     
-    public Option<IDictionary<CallbackId, UiString>> DomainCategorySelection { get; init; } 
+    // ToDo: Rename it and here only the collection of OneOf<> !!!  Then the OutputToReplyMarkupConverter shall handle the resolution into CallbackId, UiString!
+    public Option<IDictionary<CallbackId, UiString>> DomainTermSelection { get; init; } 
         = Option<IDictionary<CallbackId, UiString>>.None();
     
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 

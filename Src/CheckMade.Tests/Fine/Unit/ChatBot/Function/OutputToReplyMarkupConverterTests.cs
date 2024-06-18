@@ -35,7 +35,7 @@ public class OutputToReplyMarkupConverterTests
         
         var outputWithDomainCategories = new OutputDto
         {
-            DomainCategorySelection = categoryUiStringByCallbackId
+            DomainTermSelection = categoryUiStringByCallbackId
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -145,7 +145,7 @@ public class OutputToReplyMarkupConverterTests
         
         var outputWithBoth = new OutputDto
         {
-            DomainCategorySelection = categoryUiStringByCallbackId,
+            DomainTermSelection = categoryUiStringByCallbackId,
             ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
                 .Aggregate((current, next) => current | next)
         };
