@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using static CheckMade.Common.Model.Core.DomainGlossary;
+using CheckMade.Common.Model.Core.SanitaryOps.Issues;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 
@@ -10,9 +10,9 @@ namespace CheckMade.Tests.Fine.Unit.Common;
 public class EnumCheckerTests(ITestOutputHelper outputHelper)
 {
     [Fact]
-    public void IsDefined_ShouldBeTrue_ForDefinedEnum_InDomainCategory()
+    public void IsDefined_ShouldBeTrue_ForDefinedEnum_InNormalEnum()
     {
-        Assert.True(EnumChecker.IsDefined(SanitaryOpsFacility.Other));
+        Assert.True(EnumChecker.IsDefined(ConsumablesIssue.Item.ToiletPaper));
     }
     
     [Fact]

@@ -194,7 +194,7 @@ internal class ToModelConverter(
 
         return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
             ? Option<OneOf<int, Type>>.None() // This means, it's a ControlPrompt, see below
-            : Option<OneOf<int, Type>>.Some(DomainCategoryMap.DomainCategoryByCallbackId[callBackDataRaw]);
+            : Option<OneOf<int, Type>>.Some(DomainGlossary.DomainCategoryByCallbackId[callBackDataRaw]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
