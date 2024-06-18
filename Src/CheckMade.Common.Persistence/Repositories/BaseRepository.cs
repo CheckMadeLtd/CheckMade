@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model.Core;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
@@ -54,5 +55,20 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         });
 
         return builder.ToImmutable();
+    }
+
+    protected static Option<T> GetOption<T>(DbDataReader reader, int ordinal)
+    {
+        var valueRaw = reader.GetValue(ordinal);
+
+        if (typeof(T) == typeof(EmailAddress) && valueRaw != DBNull.Value)
+        {
+            return (Option<T>) (object) Option<EmailAddress>.Some(
+                new EmailAddress(reader.GetFieldValue<string>(ordinal)));
+        }
+        
+        return valueRaw != DBNull.Value
+            ? Option<T>.Some(reader.GetFieldValue<T>(ordinal))
+            : Option<T>.None();
     }
 }
