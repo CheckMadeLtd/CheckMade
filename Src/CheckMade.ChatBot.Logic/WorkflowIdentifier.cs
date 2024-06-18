@@ -5,11 +5,12 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
 
-public interface IWorkflowIdentifier
+internal interface IWorkflowIdentifier
 {
     Task<Option<IWorkflow>> IdentifyAsync(TlgInput input);
 }
@@ -27,6 +28,13 @@ internal class WorkflowIdentifier(
         if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portRoleRepo))
         {
             return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portRoleRepo);
+        }
+
+        // the settings BotCommand code is the same across all InteractionModes
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (input.Details.BotCommandEnumCode == (int)OperationsBotCommands.Settings)
+        {
+            return new LanguageSettingWorkflow();
         }
         
         return Option<IWorkflow>.None();
