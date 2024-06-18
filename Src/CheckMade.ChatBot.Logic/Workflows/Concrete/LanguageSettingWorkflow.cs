@@ -2,6 +2,8 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
+#pragma warning disable CS9113 // Parameter is unread.
+
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal class LanguageSettingWorkflow(
