@@ -22,20 +22,16 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var categorySelection = new[] 
+        var domainTermSelection = new List<OneOf<int, Type>>
         {
             typeof(CleanlinessIssue),
             typeof(TechnicalIssue),
             typeof(ConsumablesIssue)
         };
 
-        var categoryUiStringByCallbackId = categorySelection.ToDictionary(
-            cat => basics.domainGlossary.IdAndUiByTerm[cat].callbackId,
-            cat => basics.domainGlossary.IdAndUiByTerm[cat].uiString);
-        
-        var outputWithDomainCategories = new OutputDto
+        var outputWithDomainTerms = new OutputDto
         {
-            DomainTermSelection = categoryUiStringByCallbackId
+            DomainTermSelection = domainTermSelection
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -65,7 +61,7 @@ public class OutputToReplyMarkupConverterTests
                 ]
             }));
 
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithDomainCategories);
+        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithDomainTerms);
         
         Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
     }
@@ -129,14 +125,10 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var categorySelection = new[]
+        var domainTermSelection = new List<OneOf<int, Type>>
         {
             (int)ConsumablesIssue.Item.PaperTowels
         };
-        
-        var categoryUiStringByCallbackId = categorySelection.ToDictionary(
-            cat => basics.domainGlossary.IdAndUiByTerm[cat].callbackId,
-            cat => basics.domainGlossary.IdAndUiByTerm[cat].uiString);
         
         var promptSelection = new[] 
         {
@@ -145,7 +137,7 @@ public class OutputToReplyMarkupConverterTests
         
         var outputWithBoth = new OutputDto
         {
-            DomainTermSelection = categoryUiStringByCallbackId,
+            DomainTermSelection = domainTermSelection,
             ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
                 .Aggregate((current, next) => current | next)
         };

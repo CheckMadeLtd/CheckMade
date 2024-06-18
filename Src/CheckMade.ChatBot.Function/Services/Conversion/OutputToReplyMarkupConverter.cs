@@ -52,20 +52,21 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
     
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
-        Option<IDictionary<CallbackId, UiString>> categorySelection,
+        Option<IEnumerable<OneOf<int, Type>>> domainTermSelection,
         Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {
-        var promptsUiProvider = new ControlPromptsGlossary();
+        var promptsGlossary = new ControlPromptsGlossary();
+        var domainGlossary = new DomainGlossary();
 
         var allTextIdPairs = new List<(string text, string id)>();
 
-        allTextIdPairs.AddRange(categorySelection.Match(
-            categories =>
+        allTextIdPairs.AddRange(domainTermSelection.Match(
+            terms =>
             {
-                return categories.Select(catKvp => (
-                    text: translator.Translate(catKvp.Value),
-                    id: catKvp.Key.Id
+                return terms.Select(term => (
+                    text: translator.Translate(domainGlossary.IdAndUiByTerm[term].uiString),
+                    id: domainGlossary.IdAndUiByTerm[term].callbackId.Id
                 )).ToList();
             },
             () => []
@@ -78,7 +79,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             .ToArray();
         
         allTextIdPairs.AddRange(promptSelectionAsArray.Select(prompt =>
-            (text: translator.Translate(promptsUiProvider.UiByCallbackId[
+            (text: translator.Translate(promptsGlossary.UiByCallbackId[
                 new CallbackId((long)prompt)]),
                 id: new CallbackId((long)prompt).Id)));
 

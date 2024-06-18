@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot.Output;
 
@@ -12,9 +11,8 @@ public record OutputDto
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
     
-    // ToDo: Rename it and here only the collection of OneOf<> !!!  Then the OutputToReplyMarkupConverter shall handle the resolution into CallbackId, UiString!
-    public Option<IDictionary<CallbackId, UiString>> DomainTermSelection { get; init; } 
-        = Option<IDictionary<CallbackId, UiString>>.None();
+    public Option<IEnumerable<OneOf<int, Type>>> DomainTermSelection { get; init; } 
+        = Option<IEnumerable<OneOf<int, Type>>>.None();
     
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();

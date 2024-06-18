@@ -74,7 +74,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
-        OneOf<int, Type> category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        OneOf<int, Type> domainTerm, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
@@ -130,7 +130,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 botCommandEnumCode: botCommandEnumCode));
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
-        OneOf<int, Type> category,
+        OneOf<int, Type> domainTerm,
         long userId,
         long chatId,
         DateTime? dateTime) =>
@@ -141,7 +141,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,
-                domainTerm: category));
+                domainTerm: domainTerm));
 
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
