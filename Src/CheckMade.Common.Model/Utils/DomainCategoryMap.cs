@@ -4,19 +4,20 @@ namespace CheckMade.Common.Model.Utils;
 
 public static class DomainCategoryMap
 {
-    public static IDictionary<uint, (string callbackId, UiString uiString)> CallbackIdAndUiStringByDomainCategory { get; }
-        = new Dictionary<uint, (string callbackId, UiString uiString)>
+    public static IDictionary<OneOf<int, Type>, (string callbackId, UiString uiString)> 
+        CallbackIdAndUiStringByDomainCategory { get; }
+        = new Dictionary<OneOf<int, Type>, (string callbackId, UiString uiString)>
         {
-            { (uint)SanitaryOpsIssue.Cleanliness, ("AWYZP", Ui("🪣 Cleanliness"))},
-            { (uint)SanitaryOpsIssue.Technical, ("M46NG", Ui("🔧 Technical"))},
-            { (uint)SanitaryOpsIssue.Consumable, ("582QJ", Ui("🗄 Consumables"))},
+            { (int)SanitaryOpsIssue.Cleanliness, ("AWYZP", Ui("🪣 Cleanliness"))},
+            { (int)SanitaryOpsIssue.Technical, ("M46NG", Ui("🔧 Technical"))},
+            { (int)SanitaryOpsIssue.Consumable, ("582QJ", Ui("🗄 Consumables"))},
         };
 
-    public static IDictionary<string, uint> DomainCategoryByCallbackId { get; }
+    public static IDictionary<string, OneOf<int, Type>> DomainCategoryByCallbackId { get; }
         = CallbackIdAndUiStringByDomainCategory.ToDictionary(
             kvp => kvp.Value.callbackId,
             kvp => kvp.Key);
-};
+}
 
 
 

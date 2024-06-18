@@ -24,9 +24,9 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[] 
         {
-            (uint)SanitaryOpsIssue.Cleanliness,
-            (uint)SanitaryOpsIssue.Technical,
-            (uint)SanitaryOpsIssue.Consumable
+            (int)SanitaryOpsIssue.Cleanliness,
+            (int)SanitaryOpsIssue.Technical,
+            (int)SanitaryOpsIssue.Consumable
         };
 
         var categoryUiStringByCallbackId = categorySelection.ToDictionary(
@@ -46,22 +46,22 @@ public class OutputToReplyMarkupConverterTests
                 {
                     InlineKeyboardButton.WithCallbackData(
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                                (uint)SanitaryOpsIssue.Cleanliness].uiString.GetFormattedEnglish(),
+                                (int)SanitaryOpsIssue.Cleanliness].uiString.GetFormattedEnglish(),
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                            (uint)SanitaryOpsIssue.Cleanliness].callbackId), 
+                            (int)SanitaryOpsIssue.Cleanliness].callbackId), 
                         
                     InlineKeyboardButton.WithCallbackData(
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                                (uint)SanitaryOpsIssue.Technical].uiString.GetFormattedEnglish(),
+                                (int)SanitaryOpsIssue.Technical].uiString.GetFormattedEnglish(),
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                            (uint)SanitaryOpsIssue.Technical].callbackId), 
+                            (int)SanitaryOpsIssue.Technical].callbackId), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                                (uint)SanitaryOpsIssue.Consumable].uiString.GetFormattedEnglish(),
+                                (int)SanitaryOpsIssue.Consumable].uiString.GetFormattedEnglish(),
                         DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                            (uint)SanitaryOpsIssue.Consumable].callbackId), 
+                            (int)SanitaryOpsIssue.Consumable].callbackId), 
                 ]
             }));
 
@@ -131,7 +131,7 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[]
         {
-            (uint)SanitaryOpsIssue.Cleanliness
+            (int)SanitaryOpsIssue.Cleanliness
         };
         
         var categoryUiStringByCallbackId = categorySelection.ToDictionary(
@@ -156,9 +156,9 @@ public class OutputToReplyMarkupConverterTests
             {
                 InlineKeyboardButton.WithCallbackData(
                     DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                            (uint)SanitaryOpsIssue.Cleanliness].uiString.GetFormattedEnglish(),
+                            (int)SanitaryOpsIssue.Cleanliness].uiString.GetFormattedEnglish(),
                     DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[
-                        (uint)SanitaryOpsIssue.Cleanliness].callbackId), 
+                        (int)SanitaryOpsIssue.Cleanliness].callbackId), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
