@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.DomainCategories;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
@@ -74,7 +75,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
-        DomainCategory category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        SanitaryOpsFacility category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
@@ -130,7 +131,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 botCommandEnumCode: botCommandEnumCode));
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
-        DomainCategory category,
+        SanitaryOpsFacility category,
         long userId,
         long chatId,
         DateTime? dateTime) =>

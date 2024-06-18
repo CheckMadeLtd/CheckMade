@@ -7,7 +7,7 @@ using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Common.Model.Core.DomainCategory;
+using static CheckMade.Common.Model.Core.DomainCategories.SanitaryOpsFacility;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;

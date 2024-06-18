@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.DomainCategories;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;
@@ -41,7 +41,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
 
     private static bool AllEnumsAreDefined(
-        Option<IEnumerable<DomainCategory>> categorySelection,
+        Option<IEnumerable<SanitaryOpsFacility>> categorySelection,
         Option<ControlPrompts> promptsSelection)
     {
         var allTrue = true;
@@ -58,15 +58,15 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
     
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
-        Option<IEnumerable<DomainCategory>> categorySelection,
+        Option<IEnumerable<SanitaryOpsFacility>> categorySelection,
         Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {
         var uiStringProvider = new EnumUiStringProvider();
 
-        Func<DomainCategory, string> categoryTranslationGetter =
+        Func<SanitaryOpsFacility, string> categoryTranslationGetter =
             category => translator.Translate(uiStringProvider.ByDomainCategoryId[new EnumCallbackId((int)category)]);
-        Func<DomainCategory, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
+        Func<SanitaryOpsFacility, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
         
         Func<ControlPrompts, string> promptTranslationGetter =
             prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((long)prompt)]);
