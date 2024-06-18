@@ -65,11 +65,11 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var uiStringProvider = new EnumUiStringProvider();
 
         Func<SanitaryOpsFacility, string> categoryTranslationGetter =
-            category => translator.Translate(uiStringProvider.ByDomainCategoryId[new EnumCallbackId((int)category)]);
+            category => translator.Translate(uiStringProvider.ByDomainCategoryCallbackId[new EnumCallbackId((int)category)]);
         Func<SanitaryOpsFacility, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
         
         Func<ControlPrompts, string> promptTranslationGetter =
-            prompt => translator.Translate(uiStringProvider.ByControlPromptId[new EnumCallbackId((long)prompt)]);
+            prompt => translator.Translate(uiStringProvider.ByControlPromptCallbackId[new EnumCallbackId((long)prompt)]);
         Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((long)prompt).Id;
 
         // For uniformity, convert the combined flagged enum into an array.

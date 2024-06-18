@@ -12,8 +12,8 @@ namespace CheckMade.Common.Model.Utils;
         private readonly ImmutableDictionary<EnumCallbackId, UiString>.Builder _categoryBuilder = 
             ImmutableDictionary.CreateBuilder<EnumCallbackId, UiString>();
 
-        public IReadOnlyDictionary<EnumCallbackId, UiString> ByControlPromptId { get; }
-        public IReadOnlyDictionary<EnumCallbackId, UiString> ByDomainCategoryId { get; }
+        public IReadOnlyDictionary<EnumCallbackId, UiString> ByControlPromptCallbackId { get; }
+        public IReadOnlyDictionary<EnumCallbackId, UiString> ByDomainCategoryCallbackId { get; }
 
         public EnumUiStringProvider()
         {
@@ -34,7 +34,7 @@ namespace CheckMade.Common.Model.Utils;
             AddPrompt(ControlPrompts.Ok, Ui("😐 Ok"));
             AddPrompt(ControlPrompts.Good, Ui("👍 Good"));
 
-            ByControlPromptId = _promptsBuilder.ToImmutable();
+            ByControlPromptCallbackId = _promptsBuilder.ToImmutable();
             
             AddCategory(SanitaryOpsIssue.Cleanliness, Ui("🪣 Cleanliness"));
             AddCategory(SanitaryOpsIssue.Technical, Ui("🔧 Technical"));
@@ -49,7 +49,7 @@ namespace CheckMade.Common.Model.Utils;
             AddCategory(SanitaryOpsFacility.Staff, Ui("🙋 Staff"));
             AddCategory(SanitaryOpsFacility.Other, Ui("Other Facility"));
 
-            ByDomainCategoryId = _categoryBuilder.ToImmutable();
+            ByDomainCategoryCallbackId = _categoryBuilder.ToImmutable();
         }
         
         private void AddPrompt(ControlPrompts prompt, UiString uiString) =>

@@ -222,8 +222,8 @@ public class OutputToReplyMarkupConverterTests
             sp.GetRequiredService<ILogger<UiTranslator>>()));
 
         var enumUiStringProvider = new EnumUiStringProvider();
-        var uiByCategoryId = enumUiStringProvider.ByDomainCategoryId;
-        var uiByPromptId = enumUiStringProvider.ByControlPromptId;
+        var uiByCategoryId = enumUiStringProvider.ByDomainCategoryCallbackId;
+        var uiByPromptId = enumUiStringProvider.ByControlPromptCallbackId;
         
         return (converter, uiByCategoryId, uiByPromptId);
     }
