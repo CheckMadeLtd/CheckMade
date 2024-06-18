@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using static CheckMade.Common.Model.Core.RoleType;
+using static CheckMade.Common.Model.Core.DomainCategories.RoleType;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot;

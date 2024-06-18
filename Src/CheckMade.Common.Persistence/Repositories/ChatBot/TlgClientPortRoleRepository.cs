@@ -88,7 +88,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
             var role = new Role(
                 reader.GetString(reader.GetOrdinal("role_token")),
-                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
+                (DomainCategories.RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
                 user,
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
                     
