@@ -36,14 +36,14 @@ internal class ToModelConverter(
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(update, interactionMode)
-                    from domainCategoryEnumCode 
-                        in GetDomainCategoryEnumCode(update)
+                    from domainCategory 
+                        in GetDomainCategory(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from tlgInput 
                         in GetTlgInputAsync(
                             update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
-                            botCommandEnumCode, domainCategoryEnumCode, controlPromptEnumCode) 
+                            botCommandEnumCode, domainCategory, controlPromptEnumCode) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
@@ -185,21 +185,22 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper update)
+    private static Result<Option<object>> GetDomainCategory(UpdateWrapper update)
     {
-        return int.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData <= ControlPromptsCallbackId.DomainCategoryMaxThreshold
-                ? callBackData
-                : Option<int>.None()
-            : Option<int>.None();
+        var callBackDataRaw = update.Update.CallbackQuery?.Data;
+
+        if (string.IsNullOrWhiteSpace(callBackDataRaw))
+            return Option<object>.None();
+
+        return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
+            ? Option<object>.None() 
+            : Option<object>.Some(DomainCategoryMap.DomainCategoryByCallbackId[callBackDataRaw]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
         return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData > ControlPromptsCallbackId.DomainCategoryMaxThreshold
-                ? callBackData
-                : Option<long>.None()
+            ? callBackData
             : Option<long>.None();
     }
     
@@ -210,7 +211,7 @@ internal class ToModelConverter(
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
-        Option<int> domainCategoryEnumCode,
+        Option<object> domainCategory,
         Option<long> controlPromptEnumCode)
     {
         if (update.Message.From?.Id == null || 
@@ -258,7 +259,7 @@ internal class ToModelConverter(
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
-                domainCategoryEnumCode,
+                domainCategory,
                 controlPromptEnumCode));
     }
 

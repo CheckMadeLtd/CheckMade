@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using static CheckMade.Common.Model.Core.DomainCategories;
-using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 
@@ -29,13 +28,6 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
         outputHelper.WriteLine(((long)combinedEnum).ToString());
         
         Assert.True(EnumChecker.IsDefined(combinedEnum));
-    }
-
-    [Fact]
-    public void IsDefined_ShouldBeFalse_ForUndefinedEnum_InDomainCategory()
-    {
-        Assert.False(EnumChecker.IsDefined(
-            (SanitaryOpsFacility)(ControlPromptsCallbackId.DomainCategoryMaxThreshold + 1)));
     }
     
     [Fact]

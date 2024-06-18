@@ -218,7 +218,6 @@ public class ToModelConverterTests
     }
 
     [Theory]
-    [InlineData((long)DomainCategories.SanitaryOpsFacility.Showers)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_InAnyMode(
         long enumSourceOfCallbackQuery)
@@ -226,16 +225,8 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var callbackQueryData = new ControlPromptsCallbackId(enumSourceOfCallbackQuery).Id;
-        
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
-
-        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= ControlPromptsCallbackId.DomainCategoryMaxThreshold
-            ? (int?) int.Parse(callbackQuery.Update.CallbackQuery!.Data!)
-            : null;
-
-        var controlPromptEnumCode = enumSourceOfCallbackQuery > ControlPromptsCallbackId.DomainCategoryMaxThreshold
-            ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
-            : null;
+        var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
 
         var expectedTlgInput = new TlgInput(
             callbackQuery.Message.From!.Id,
@@ -246,7 +237,6 @@ public class ToModelConverterTests
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",
-                domainCategoryEnumCode: domainCategoryEnumCode,
                 controlPromptEnumCode: controlPromptEnumCode));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(

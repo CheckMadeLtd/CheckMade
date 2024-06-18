@@ -1,13 +1,13 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Model.ChatBot.Output;
+using static CheckMade.Common.Model.Core.DomainCategories;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Common.Model.Core.DomainCategories.SanitaryOpsFacility;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
@@ -24,13 +24,18 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[] 
         {
-            (category: Toilets, categoryId: new ControlPromptsCallbackId((int)Toilets)),
-            (category: Showers, categoryId: new ControlPromptsCallbackId((int)Showers)),
-            (category: Staff, categoryId: new ControlPromptsCallbackId((int)Staff)) 
+            SanitaryOpsIssue.Cleanliness,
+            SanitaryOpsIssue.Technical,
+            SanitaryOpsIssue.Consumable
         };
+
+        var categoryUiStringByCallbackId = categorySelection.ToDictionary(
+            cat => DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[cat].callbackId,
+            cat => DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[cat].uiString);
+        
         var outputWithDomainCategories = new OutputDto
         {
-            DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray()
+            DomainCategorySelection = categoryUiStringByCallbackId
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -40,16 +45,20 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[0].categoryId].GetFormattedEnglish(),
-                        categorySelection[0].categoryId.Id),
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Cleanliness]
+                            .uiString.GetFormattedEnglish(),
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Cleanliness].callbackId), 
+                        
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[1].categoryId].GetFormattedEnglish(),
-                        categorySelection[1].categoryId.Id)
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Technical]
+                            .uiString.GetFormattedEnglish(),
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Technical].callbackId), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.uiByCategoryId[categorySelection[2].categoryId].GetFormattedEnglish(),
-                        categorySelection[2].categoryId.Id)
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Consumable]
+                            .uiString.GetFormattedEnglish(),
+                        DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Consumable].callbackId), 
                 ]
             }));
 
@@ -119,16 +128,21 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[]
         {
-            (category: Showers,
-                categoryId: new ControlPromptsCallbackId((int)Showers))
+            SanitaryOpsIssue.Cleanliness
         };
+        
+        var categoryUiStringByCallbackId = categorySelection.ToDictionary(
+            cat => DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[cat].callbackId,
+            cat => DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[cat].uiString);
+        
         var promptSelection = new[] 
         {
             (prompt: Good, promptId: new ControlPromptsCallbackId((long)Good))
         };
+        
         var outputWithBoth = new OutputDto
         {
-            DomainCategorySelection = categorySelection.Select(pair => pair.category).ToArray(),
+            DomainCategorySelection = categoryUiStringByCallbackId,
             ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
                 .Aggregate((current, next) => current | next)
         };
@@ -138,8 +152,10 @@ public class OutputToReplyMarkupConverterTests
             new InlineKeyboardMarkup(new[]
             {
                 InlineKeyboardButton.WithCallbackData(
-                    basics.uiByCategoryId[categorySelection[0].categoryId].GetFormattedEnglish(),
-                    categorySelection[0].categoryId.Id),
+                    DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Cleanliness]
+                        .uiString.GetFormattedEnglish(),
+                    DomainCategoryMap.CallbackIdAndUiStringByDomainCategory[SanitaryOpsIssue.Cleanliness].callbackId), 
+                
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
                     promptSelection[0].promptId.Id)
@@ -212,7 +228,6 @@ public class OutputToReplyMarkupConverterTests
     }
     
     private static (IOutputToReplyMarkupConverter converter, 
-        IReadOnlyDictionary<ControlPromptsCallbackId, UiString> uiByCategoryId,
         IReadOnlyDictionary<ControlPromptsCallbackId, UiString> uiByPromptId) 
         GetBasicTestingServices(IServiceProvider sp)
     {
@@ -222,9 +237,8 @@ public class OutputToReplyMarkupConverterTests
             sp.GetRequiredService<ILogger<UiTranslator>>()));
 
         var enumUiStringProvider = new ControlPromptsUiStringProvider();
-        var uiByCategoryId = enumUiStringProvider.ByDomainCategoryCallbackId;
         var uiByPromptId = enumUiStringProvider.ByControlPromptCallbackId;
         
-        return (converter, uiByCategoryId, uiByPromptId);
+        return (converter, uiByPromptId);
     }
 }

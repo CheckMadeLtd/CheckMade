@@ -11,7 +11,7 @@ public static class DomainCategories
         SanitaryOps_Observer = 10005,
     }
     
-    public enum SanitaryOpsIssue1001
+    public enum SanitaryOpsIssue
     {
         Cleanliness = 100100,
         Technical = 100110,

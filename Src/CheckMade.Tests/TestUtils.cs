@@ -6,7 +6,6 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using static CheckMade.Common.Model.Core.DomainCategories;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
@@ -75,7 +74,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
-        SanitaryOpsFacility category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        object category, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
@@ -131,7 +130,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 botCommandEnumCode: botCommandEnumCode));
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainCategory(
-        SanitaryOpsFacility category,
+        object category,
         long userId,
         long chatId,
         DateTime? dateTime) =>
@@ -142,7 +141,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,
-                controlPromptEnumCode: (long)category));
+                domainCategory: category));
 
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
@@ -168,7 +167,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         TlgAttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
-        int? domainCategoryEnumCode = null,
+        object? domainCategory = null,
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
@@ -180,7 +179,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
-            domainCategoryEnumCode ?? Option<int>.None(),
+            domainCategory ?? Option<object>.None(),
             controlPromptEnumCode ?? Option<long>.None());
     }
     
