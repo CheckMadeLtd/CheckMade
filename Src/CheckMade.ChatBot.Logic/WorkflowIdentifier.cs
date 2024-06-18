@@ -34,7 +34,7 @@ internal class WorkflowIdentifier(
         // ReSharper disable once ConvertIfStatementToReturnStatement
         if (input.Details.BotCommandEnumCode == (int)OperationsBotCommands.Settings)
         {
-            return new LanguageSettingWorkflow();
+            return new LanguageSettingWorkflow(inputRepo, portRoleRepo);
         }
         
         return Option<IWorkflow>.None();

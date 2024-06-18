@@ -1,12 +1,27 @@
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
-public class LanguageSettingWorkflow : IWorkflow
+internal class LanguageSettingWorkflow(
+        ITlgInputRepository inputRepo,
+        ITlgClientPortRoleRepository portRoleRepo) 
+    : IWorkflow
 {
     public Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         throw new NotImplementedException();
+    }
+
+    internal Task<States> DetermineCurrentStateAsync()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Flags]
+    internal enum States
+    {
+        
     }
 }
