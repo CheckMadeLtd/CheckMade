@@ -22,23 +22,23 @@ public static class DomainCategories
     
     public enum SanitaryOpsIssue
     {
-        SanitaryOps_IssueCleanliness = 10100,
-        SanitaryOps_IssueTechnical = 10110,
-        SanitaryOps_IssueConsumable = 10120,
+        Cleanliness = 10100,
+        Technical = 10110,
+        Consumable = 10120,
     }
 
     public enum SanitaryOpsConsumable
     {
-        SanitaryOps_ConsumableToiletPaper = 10121,
-        SanitaryOps_ConsumablePaperTowels = 10122,
-        SanitaryOps_ConsumableSoap = 10123,
+        ToiletPaper = 10121,
+        PaperTowels = 10122,
+        Soap = 10123,
     }
     
     public enum SanitaryOpsFacility
     {
-        SanitaryOps_FacilityToilets = 10200,
-        SanitaryOps_FacilityShowers = 10210,
-        SanitaryOps_FacilityStaff = 10220,
-        SanitaryOps_FacilityOther = 10290
+        Toilets = 10200,
+        Showers = 10210,
+        Staff = 10220,
+        Other = 10290
     }
 }

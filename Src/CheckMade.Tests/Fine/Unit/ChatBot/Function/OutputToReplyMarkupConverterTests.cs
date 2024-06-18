@@ -24,9 +24,9 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[] 
         {
-            (category: SanitaryOps_FacilityToilets, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityToilets)),
-            (category: SanitaryOps_FacilityShowers, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityShowers)),
-            (category: SanitaryOps_FacilityStaff, categoryId: new EnumCallbackId((int)SanitaryOps_FacilityStaff)) 
+            (category: Toilets, categoryId: new EnumCallbackId((int)Toilets)),
+            (category: Showers, categoryId: new EnumCallbackId((int)Showers)),
+            (category: Staff, categoryId: new EnumCallbackId((int)Staff)) 
         };
         var outputWithDomainCategories = new OutputDto
         {
@@ -119,8 +119,8 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[]
         {
-            (category: SanitaryOps_FacilityShowers,
-                categoryId: new EnumCallbackId((int)SanitaryOps_FacilityShowers))
+            (category: Showers,
+                categoryId: new EnumCallbackId((int)Showers))
         };
         var promptSelection = new[] 
         {

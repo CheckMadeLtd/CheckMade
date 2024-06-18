@@ -218,7 +218,7 @@ public class ToModelConverterTests
     }
 
     [Theory]
-    [InlineData((long)DomainCategories.SanitaryOpsFacility.SanitaryOps_FacilityShowers)]
+    [InlineData((long)DomainCategories.SanitaryOpsFacility.Showers)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_InAnyMode(
         long enumSourceOfCallbackQuery)

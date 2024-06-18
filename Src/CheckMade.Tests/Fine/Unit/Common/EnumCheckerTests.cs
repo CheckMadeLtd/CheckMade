@@ -13,7 +13,7 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
     [Fact]
     public void IsDefined_ShouldBeTrue_ForDefinedEnum_InDomainCategory()
     {
-        Assert.True(EnumChecker.IsDefined(SanitaryOpsFacility.SanitaryOps_FacilityOther));
+        Assert.True(EnumChecker.IsDefined(SanitaryOpsFacility.Other));
     }
     
     [Fact]
