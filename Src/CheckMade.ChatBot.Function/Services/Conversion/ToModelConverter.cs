@@ -185,16 +185,16 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<object>> GetDomainCategory(UpdateWrapper update)
+    private static Result<Option<uint>> GetDomainCategory(UpdateWrapper update)
     {
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
 
         if (string.IsNullOrWhiteSpace(callBackDataRaw))
-            return Option<object>.None();
+            return Option<uint>.None();
 
         return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
-            ? Option<object>.None() 
-            : Option<object>.Some(DomainCategoryMap.DomainCategoryByCallbackId[callBackDataRaw]);
+            ? Option<uint>.None() 
+            : Option<uint>.Some(DomainCategoryMap.DomainCategoryByCallbackId[callBackDataRaw]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
@@ -211,7 +211,7 @@ internal class ToModelConverter(
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
-        Option<object> domainCategory,
+        Option<uint> domainCategory,
         Option<long> controlPromptEnumCode)
     {
         if (update.Message.From?.Id == null || 
