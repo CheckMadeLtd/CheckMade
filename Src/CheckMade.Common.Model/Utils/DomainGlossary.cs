@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.SanitaryOps.Facilities;
 using CheckMade.Common.Model.Core.SanitaryOps.Issues;
 
@@ -27,6 +28,9 @@ public class DomainGlossary
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(Staff), "D9MRJ9", Ui("🙋 Staff"));
+        
+        AddTerm((int)LanguageCode.en, "DFVN7W", Ui("🇩🇪 German"));
+        AddTerm((int) LanguageCode.en, "DCQ4ME", Ui("🇬🇧 English"));
 
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
