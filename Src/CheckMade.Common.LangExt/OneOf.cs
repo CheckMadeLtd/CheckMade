@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace CheckMade.Common.LangExt.MonadicWrappers
+namespace CheckMade.Common.LangExt
 {
     public class OneOf<T1>
     {
