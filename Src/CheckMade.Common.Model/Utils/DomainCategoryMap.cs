@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.SanitaryOps;
 using static CheckMade.Common.Model.Core.DomainGlossary;
 
 namespace CheckMade.Common.Model.Utils;
@@ -11,6 +12,7 @@ public static class DomainCategoryMap
             { (int)SanitaryOpsIssue.Cleanliness, ("AWYZP", Ui("🪣 Cleanliness"))},
             { (int)SanitaryOpsIssue.Technical, ("M46NG", Ui("🔧 Technical"))},
             { (int)SanitaryOpsIssue.Consumable, ("582QJ", Ui("🗄 Consumables"))},
+            { typeof(Shower), ("4W2GW", Ui("🚿 Shower"))}
         };
 
     public static IDictionary<string, OneOf<int, Type>> DomainCategoryByCallbackId { get; }
