@@ -30,8 +30,8 @@ public class OutputToReplyMarkupConverterTests
         };
 
         var categoryUiStringByCallbackId = categorySelection.ToDictionary(
-            cat => DomainGlossary.CallbackIdAndUiStringByDomainCategory[cat].callbackId,
-            cat => DomainGlossary.CallbackIdAndUiStringByDomainCategory[cat].uiString);
+            cat => basics.domainGlossary.IdAndUiByTerm[cat].callbackId,
+            cat => basics.domainGlossary.IdAndUiByTerm[cat].uiString);
         
         var outputWithDomainCategories = new OutputDto
         {
@@ -45,22 +45,22 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                                 typeof(CleanlinessIssue)].uiString.GetFormattedEnglish(),
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                             typeof(CleanlinessIssue)].callbackId), 
                         
                     InlineKeyboardButton.WithCallbackData(
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                             typeof(TechnicalIssue)].uiString.GetFormattedEnglish(),
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                             typeof(TechnicalIssue)].callbackId), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                             typeof(ConsumablesIssue)].uiString.GetFormattedEnglish(),
-                        DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                        basics.domainGlossary.IdAndUiByTerm[
                             typeof(ConsumablesIssue)].callbackId), 
                 ]
             }));
@@ -78,11 +78,11 @@ public class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[]
         {
-            (prompt: No, promptId: new ControlPromptsCallbackId((long)No)),
-            (prompt: Yes, promptId: new ControlPromptsCallbackId((long)Yes)),
-            (prompt: Bad, promptId: new ControlPromptsCallbackId((long)Bad)),
-            (prompt: Ok, promptId: new ControlPromptsCallbackId((long)Ok)),
-            (prompt: Good, promptId: new ControlPromptsCallbackId((long)Good))
+            (prompt: No, promptId: new CallbackId((long)No)),
+            (prompt: Yes, promptId: new CallbackId((long)Yes)),
+            (prompt: Bad, promptId: new CallbackId((long)Bad)),
+            (prompt: Ok, promptId: new CallbackId((long)Ok)),
+            (prompt: Good, promptId: new CallbackId((long)Good))
         };
         var outputWithPrompts = new OutputDto
         {
@@ -98,23 +98,23 @@ public class OutputToReplyMarkupConverterTests
                 { 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(), 
-                        promptSelection[0].promptId.Id), 
+                        promptSelection[0].promptId), 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[1].promptId].GetFormattedEnglish(), 
-                        promptSelection[1].promptId.Id) 
+                        promptSelection[1].promptId) 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[2].promptId].GetFormattedEnglish(), 
-                        promptSelection[2].promptId.Id), 
+                        promptSelection[2].promptId), 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[3].promptId].GetFormattedEnglish(), 
-                        promptSelection[3].promptId.Id) 
+                        promptSelection[3].promptId) 
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[4].promptId].GetFormattedEnglish(), 
-                        promptSelection[4].promptId.Id) 
+                        promptSelection[4].promptId) 
                 ]
             }));
         
@@ -135,12 +135,12 @@ public class OutputToReplyMarkupConverterTests
         };
         
         var categoryUiStringByCallbackId = categorySelection.ToDictionary(
-            cat => DomainGlossary.CallbackIdAndUiStringByDomainCategory[cat].callbackId,
-            cat => DomainGlossary.CallbackIdAndUiStringByDomainCategory[cat].uiString);
+            cat => basics.domainGlossary.IdAndUiByTerm[cat].callbackId,
+            cat => basics.domainGlossary.IdAndUiByTerm[cat].uiString);
         
         var promptSelection = new[] 
         {
-            (prompt: Good, promptId: new ControlPromptsCallbackId((long)Good))
+            (prompt: Good, promptId: new CallbackId((long)Good))
         };
         
         var outputWithBoth = new OutputDto
@@ -155,14 +155,14 @@ public class OutputToReplyMarkupConverterTests
             new InlineKeyboardMarkup(new[]
             {
                 InlineKeyboardButton.WithCallbackData(
-                    DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                    basics.domainGlossary.IdAndUiByTerm[
                         (int)ConsumablesIssue.Item.PaperTowels].uiString.GetFormattedEnglish(),
-                    DomainGlossary.CallbackIdAndUiStringByDomainCategory[
+                    basics.domainGlossary.IdAndUiByTerm[
                         (int)ConsumablesIssue.Item.PaperTowels].callbackId), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
-                    promptSelection[0].promptId.Id)
+                    promptSelection[0].promptId)
             }));
 
         var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithBoth);
@@ -232,7 +232,8 @@ public class OutputToReplyMarkupConverterTests
     }
     
     private static (IOutputToReplyMarkupConverter converter, 
-        IReadOnlyDictionary<ControlPromptsCallbackId, UiString> uiByPromptId) 
+        IReadOnlyDictionary<CallbackId, UiString> uiByPromptId,
+        DomainGlossary domainGlossary) 
         GetBasicTestingServices(IServiceProvider sp)
     {
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
@@ -240,9 +241,9 @@ public class OutputToReplyMarkupConverterTests
             Option<IReadOnlyDictionary<string, string>>.None(),
             sp.GetRequiredService<ILogger<UiTranslator>>()));
 
-        var enumUiStringProvider = new ControlPromptsUiStringProvider();
-        var uiByPromptId = enumUiStringProvider.ByControlPromptCallbackId;
+        var controlPromptsGlossary = new ControlPromptsGlossary();
+        var uiByPromptId = controlPromptsGlossary.UiByCallbackId;
         
-        return (converter, uiByPromptId);
+        return (converter, uiByPromptId, new DomainGlossary());
     }
 }

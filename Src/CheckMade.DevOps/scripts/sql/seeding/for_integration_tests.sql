@@ -8,7 +8,7 @@ WITH new_user1 AS (
 ) 
 
 INSERT INTO roles (token, role_type, status, user_id) 
-VALUES ('AAA111', 1002, 0, (SELECT id FROM new_user1));
+VALUES ('RAAAA1', 1002, 0, (SELECT id FROM new_user1));
 
 -- To test correct handling of absence of optional value
 WITH new_user_without_email AS (
@@ -18,4 +18,4 @@ WITH new_user_without_email AS (
 )
 
 INSERT INTO roles (token, role_type, status, user_id)
-VALUES ('AAA112', 1003, 0, (SELECT id FROM new_user_without_email));
+VALUES ('RAAAA2', 1003, 0, (SELECT id FROM new_user_without_email));

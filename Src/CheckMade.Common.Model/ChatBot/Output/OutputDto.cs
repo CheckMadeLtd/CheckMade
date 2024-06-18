@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot.Output;
 
@@ -11,8 +12,8 @@ public record OutputDto
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
     
-    public Option<IDictionary<string, UiString>> DomainCategorySelection { get; init; } 
-        = Option<IDictionary<string, UiString>>.None();
+    public Option<IDictionary<CallbackId, UiString>> DomainCategorySelection { get; init; } 
+        = Option<IDictionary<CallbackId, UiString>>.None();
     
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();

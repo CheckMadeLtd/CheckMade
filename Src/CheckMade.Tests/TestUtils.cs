@@ -44,7 +44,7 @@ internal interface ITestUtils
         LanguageCode.en);
 
     internal static readonly Role IntegrationTestsRole = new(
-        "AAA111",
+        "RAAAA1",
         SanitaryOps_Inspector,
         IntegrationTestsUser);
     

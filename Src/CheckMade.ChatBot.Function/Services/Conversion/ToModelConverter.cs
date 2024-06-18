@@ -187,6 +187,7 @@ internal class ToModelConverter(
 
     private static Result<Option<OneOf<int, Type>>> GetDomainCategory(UpdateWrapper update)
     {
+        var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
 
         if (string.IsNullOrWhiteSpace(callBackDataRaw))
@@ -194,7 +195,7 @@ internal class ToModelConverter(
 
         return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
             ? Option<OneOf<int, Type>>.None() // This means, it's a ControlPrompt, see below
-            : Option<OneOf<int, Type>>.Some(DomainGlossary.DomainCategoryByCallbackId[callBackDataRaw]);
+            : Option<OneOf<int, Type>>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)

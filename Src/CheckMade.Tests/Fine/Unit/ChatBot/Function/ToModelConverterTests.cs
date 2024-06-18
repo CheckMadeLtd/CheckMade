@@ -224,7 +224,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var callbackQueryData = new ControlPromptsCallbackId(enumSourceOfCallbackQuery).Id;
+        var callbackQueryData = new CallbackId(enumSourceOfCallbackQuery);
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
 

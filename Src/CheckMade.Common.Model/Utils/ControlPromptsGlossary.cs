@@ -3,14 +3,14 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.Common.Model.Utils;
 
-    public record ControlPromptsUiStringProvider
+    public record ControlPromptsGlossary
     {
-        private readonly ImmutableDictionary<ControlPromptsCallbackId, UiString>.Builder _promptsBuilder = 
-            ImmutableDictionary.CreateBuilder<ControlPromptsCallbackId, UiString>();
+        private readonly ImmutableDictionary<CallbackId, UiString>.Builder _promptsBuilder = 
+            ImmutableDictionary.CreateBuilder<CallbackId, UiString>();
         
-        public IReadOnlyDictionary<ControlPromptsCallbackId, UiString> ByControlPromptCallbackId { get; }
+        public IReadOnlyDictionary<CallbackId, UiString> UiByCallbackId { get; }
 
-        public ControlPromptsUiStringProvider()
+        public ControlPromptsGlossary()
         {
             AddPrompt(ControlPrompts.Back, Ui("🔙 Back"));
             AddPrompt(ControlPrompts.Cancel, Ui("❌ Cancel"));
@@ -29,9 +29,9 @@ namespace CheckMade.Common.Model.Utils;
             AddPrompt(ControlPrompts.Ok, Ui("😐 Ok"));
             AddPrompt(ControlPrompts.Good, Ui("👍 Good"));
 
-            ByControlPromptCallbackId = _promptsBuilder.ToImmutable();
+            UiByCallbackId = _promptsBuilder.ToImmutable();
         }
         
         private void AddPrompt(ControlPrompts prompt, UiString uiString) =>
-            _promptsBuilder.Add(new ControlPromptsCallbackId((long)prompt), uiString);
+            _promptsBuilder.Add(new CallbackId((long)prompt), uiString);
     }
