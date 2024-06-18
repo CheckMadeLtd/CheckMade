@@ -9,3 +9,13 @@ WITH new_user1 AS (
 
 INSERT INTO roles (token, role_type, status, user_id) 
 VALUES ('AAA111', 1002, 0, (SELECT id FROM new_user1));
+
+-- To test correct handling of absence of optional value
+WITH new_user_without_email AS (
+    INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
+        VALUES ('+4999999999', '_Patrick','IntegrationTest', '_Bauer', 0, 0)
+        RETURNING id
+)
+
+INSERT INTO roles (token, role_type, status, user_id)
+VALUES ('AAA112', 1003, 0, (SELECT id FROM new_user_without_email));
