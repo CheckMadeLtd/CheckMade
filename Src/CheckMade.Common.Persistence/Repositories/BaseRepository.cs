@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Structs;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;

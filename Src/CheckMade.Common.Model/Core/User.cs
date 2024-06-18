@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core;

@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core;
+namespace CheckMade.Common.Model.Core.Structs;
 
 public readonly struct EmailAddress
 {
