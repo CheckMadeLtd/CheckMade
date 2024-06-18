@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core;
 
-public static class DomainCategories
+public static class DomainGlossary
 {
     public enum RoleType
     {

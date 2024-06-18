@@ -37,7 +37,7 @@ public class RoleRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelp
 
             return new Role(
                 reader.GetString(reader.GetOrdinal("role_token")),
-                (DomainCategories.RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
+                (DomainGlossary.RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
                 user,
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
         });

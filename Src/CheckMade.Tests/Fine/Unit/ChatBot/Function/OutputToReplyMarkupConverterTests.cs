@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Model.ChatBot.Output;
-using static CheckMade.Common.Model.Core.DomainCategories;
+using static CheckMade.Common.Model.Core.DomainGlossary;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;

@@ -193,7 +193,7 @@ internal class ToModelConverter(
             return Option<OneOf<int, Type>>.None();
 
         return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
-            ? Option<OneOf<int, Type>>.None() 
+            ? Option<OneOf<int, Type>>.None() // This means, it's a ControlPrompt, see below
             : Option<OneOf<int, Type>>.Some(DomainCategoryMap.DomainCategoryByCallbackId[callBackDataRaw]);
     }
     

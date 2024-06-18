@@ -1,4 +1,4 @@
-using static CheckMade.Common.Model.Core.DomainCategories;
+using static CheckMade.Common.Model.Core.DomainGlossary;
 
 namespace CheckMade.Common.Model.Utils;
 

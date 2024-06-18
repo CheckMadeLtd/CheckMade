@@ -4,6 +4,6 @@ namespace CheckMade.Common.Model.Core;
 
 public record Role(
     string Token,
-    DomainCategories.RoleType RoleType,
+    DomainGlossary.RoleType RoleType,
     User User,
     DbRecordStatus Status = DbRecordStatus.Active);
