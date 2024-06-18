@@ -225,15 +225,15 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var callbackQueryData = new EnumCallbackId(enumSourceOfCallbackQuery).Id;
+        var callbackQueryData = new ControlPromptsCallbackId(enumSourceOfCallbackQuery).Id;
         
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
 
-        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= EnumCallbackId.DomainCategoryMaxThreshold
+        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= ControlPromptsCallbackId.DomainCategoryMaxThreshold
             ? (int?) int.Parse(callbackQuery.Update.CallbackQuery!.Data!)
             : null;
 
-        var controlPromptEnumCode = enumSourceOfCallbackQuery > EnumCallbackId.DomainCategoryMaxThreshold
+        var controlPromptEnumCode = enumSourceOfCallbackQuery > ControlPromptsCallbackId.DomainCategoryMaxThreshold
             ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
             : null;
 

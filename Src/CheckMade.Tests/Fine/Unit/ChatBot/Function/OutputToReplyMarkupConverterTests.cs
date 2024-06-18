@@ -24,9 +24,9 @@ public class OutputToReplyMarkupConverterTests
         
         var categorySelection = new[] 
         {
-            (category: Toilets, categoryId: new EnumCallbackId((int)Toilets)),
-            (category: Showers, categoryId: new EnumCallbackId((int)Showers)),
-            (category: Staff, categoryId: new EnumCallbackId((int)Staff)) 
+            (category: Toilets, categoryId: new ControlPromptsCallbackId((int)Toilets)),
+            (category: Showers, categoryId: new ControlPromptsCallbackId((int)Showers)),
+            (category: Staff, categoryId: new ControlPromptsCallbackId((int)Staff)) 
         };
         var outputWithDomainCategories = new OutputDto
         {
@@ -66,11 +66,11 @@ public class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[]
         {
-            (prompt: No, promptId: new EnumCallbackId((long)No)),
-            (prompt: Yes, promptId: new EnumCallbackId((long)Yes)),
-            (prompt: Bad, promptId: new EnumCallbackId((long)Bad)),
-            (prompt: Ok, promptId: new EnumCallbackId((long)Ok)),
-            (prompt: Good, promptId: new EnumCallbackId((long)Good))
+            (prompt: No, promptId: new ControlPromptsCallbackId((long)No)),
+            (prompt: Yes, promptId: new ControlPromptsCallbackId((long)Yes)),
+            (prompt: Bad, promptId: new ControlPromptsCallbackId((long)Bad)),
+            (prompt: Ok, promptId: new ControlPromptsCallbackId((long)Ok)),
+            (prompt: Good, promptId: new ControlPromptsCallbackId((long)Good))
         };
         var outputWithPrompts = new OutputDto
         {
@@ -120,11 +120,11 @@ public class OutputToReplyMarkupConverterTests
         var categorySelection = new[]
         {
             (category: Showers,
-                categoryId: new EnumCallbackId((int)Showers))
+                categoryId: new ControlPromptsCallbackId((int)Showers))
         };
         var promptSelection = new[] 
         {
-            (prompt: Good, promptId: new EnumCallbackId((long)Good))
+            (prompt: Good, promptId: new ControlPromptsCallbackId((long)Good))
         };
         var outputWithBoth = new OutputDto
         {
@@ -212,8 +212,8 @@ public class OutputToReplyMarkupConverterTests
     }
     
     private static (IOutputToReplyMarkupConverter converter, 
-        IReadOnlyDictionary<EnumCallbackId, UiString> uiByCategoryId,
-        IReadOnlyDictionary<EnumCallbackId, UiString> uiByPromptId) 
+        IReadOnlyDictionary<ControlPromptsCallbackId, UiString> uiByCategoryId,
+        IReadOnlyDictionary<ControlPromptsCallbackId, UiString> uiByPromptId) 
         GetBasicTestingServices(IServiceProvider sp)
     {
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
@@ -221,7 +221,7 @@ public class OutputToReplyMarkupConverterTests
             Option<IReadOnlyDictionary<string, string>>.None(),
             sp.GetRequiredService<ILogger<UiTranslator>>()));
 
-        var enumUiStringProvider = new EnumUiStringProvider();
+        var enumUiStringProvider = new ControlPromptsUiStringProvider();
         var uiByCategoryId = enumUiStringProvider.ByDomainCategoryCallbackId;
         var uiByPromptId = enumUiStringProvider.ByControlPromptCallbackId;
         

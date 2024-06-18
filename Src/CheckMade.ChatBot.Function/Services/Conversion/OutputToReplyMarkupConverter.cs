@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using static CheckMade.Common.Model.Core.DomainCategories;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Common.Utils.UiTranslation;
@@ -18,7 +17,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
-        if (!AllEnumsAreDefined(output.DomainCategorySelection, output.ControlPromptsSelection))
+        if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");
         
         var textCallbackIdPairs = GetTextIdPairsForInlineKeyboardButtons(
@@ -41,14 +40,9 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
 
     private static bool AllEnumsAreDefined(
-        Option<IEnumerable<SanitaryOpsFacility>> categorySelection,
         Option<ControlPrompts> promptsSelection)
     {
         var allTrue = true;
-        
-        allTrue &= categorySelection.Match(
-            items => items.All(EnumChecker.IsDefined),
-            () => true);
         
         allTrue &= promptsSelection.Match(
             EnumChecker.IsDefined,
@@ -58,40 +52,37 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
     
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
-        Option<IEnumerable<SanitaryOpsFacility>> categorySelection,
+        Option<IDictionary<string, UiString>> categorySelection,
         Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {
-        var uiStringProvider = new EnumUiStringProvider();
+        var promptsUiProvider = new ControlPromptsUiStringProvider();
 
-        Func<SanitaryOpsFacility, string> categoryTranslationGetter =
-            category => translator.Translate(uiStringProvider.ByDomainCategoryCallbackId[new EnumCallbackId((int)category)]);
-        Func<SanitaryOpsFacility, string> categoryIdGetter = category => new EnumCallbackId((int)category).Id;
+        var allTextIdPairs = new List<(string text, string id)>();
+
+        allTextIdPairs.AddRange(categorySelection.Match(
+            categories =>
+            {
+                return categories.Select(catKvp => (
+                    text: translator.Translate(catKvp.Value),
+                    id: catKvp.Key
+                )).ToList();
+            },
+            () => []
+        ));
         
-        Func<ControlPrompts, string> promptTranslationGetter =
-            prompt => translator.Translate(uiStringProvider.ByControlPromptCallbackId[new EnumCallbackId((long)prompt)]);
-        Func<ControlPrompts, string> promptIdGetter = prompt => new EnumCallbackId((long)prompt).Id;
-
         // For uniformity, convert the combined flagged enum into an array.
         var allControlPrompts = Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
         var promptSelectionAsArray = allControlPrompts
-            .Where(prompts => promptSelection.GetValueOrDefault().HasFlag(prompts));
+            .Where(prompts => promptSelection.GetValueOrDefault().HasFlag(prompts))
+            .ToArray();
         
-        return CollectTextIdPairs(categorySelection, categoryTranslationGetter, categoryIdGetter)
-            .Concat(CollectTextIdPairs(Option<IEnumerable<ControlPrompts>>.Some(promptSelectionAsArray), 
-                promptTranslationGetter, promptIdGetter));
-    }
-    
-    private static IEnumerable<(string text, string id)> CollectTextIdPairs<TEnum>(
-        Option<IEnumerable<TEnum>> selections,
-        Func<TEnum, string> translationGetter,
-        Func<TEnum, string> idGetter) where TEnum : Enum
-    {
-        return selections.Match(
-            items => items.Select(item =>
-                (text: translationGetter(item),
-                    id: idGetter(item))),
-            Array.Empty<(string text, string id)>);
+        allTextIdPairs.AddRange(promptSelectionAsArray.Select(prompt =>
+            (text: translator.Translate(promptsUiProvider.ByControlPromptCallbackId[
+                new ControlPromptsCallbackId((long)prompt)]),
+                id: new ControlPromptsCallbackId((long)prompt).Id)));
+
+        return allTextIdPairs;
     }
     
     private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(

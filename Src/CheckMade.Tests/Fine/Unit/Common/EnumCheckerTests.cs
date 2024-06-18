@@ -35,7 +35,7 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
     public void IsDefined_ShouldBeFalse_ForUndefinedEnum_InDomainCategory()
     {
         Assert.False(EnumChecker.IsDefined(
-            (SanitaryOpsFacility)(EnumCallbackId.DomainCategoryMaxThreshold + 1)));
+            (SanitaryOpsFacility)(ControlPromptsCallbackId.DomainCategoryMaxThreshold + 1)));
     }
     
     [Fact]

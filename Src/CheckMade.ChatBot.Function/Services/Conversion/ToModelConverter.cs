@@ -188,7 +188,7 @@ internal class ToModelConverter(
     private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper update)
     {
         return int.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData <= EnumCallbackId.DomainCategoryMaxThreshold
+            ? callBackData <= ControlPromptsCallbackId.DomainCategoryMaxThreshold
                 ? callBackData
                 : Option<int>.None()
             : Option<int>.None();
@@ -197,7 +197,7 @@ internal class ToModelConverter(
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
         return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData > EnumCallbackId.DomainCategoryMaxThreshold
+            ? callBackData > ControlPromptsCallbackId.DomainCategoryMaxThreshold
                 ? callBackData
                 : Option<long>.None()
             : Option<long>.None();
