@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.DomainCategories;
+using static CheckMade.Common.Model.Core.DomainCategories;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.DomainCategories;
+using static CheckMade.Common.Model.Core.DomainCategories;
 
 namespace CheckMade.Common.Model.Utils;
 

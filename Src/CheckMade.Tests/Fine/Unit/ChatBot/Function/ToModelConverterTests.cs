@@ -7,7 +7,6 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.DomainCategories;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -219,7 +218,7 @@ public class ToModelConverterTests
     }
 
     [Theory]
-    [InlineData((long)SanitaryOpsFacility.SanitaryOps_FacilityShowers)]
+    [InlineData((long)DomainCategories.SanitaryOpsFacility.SanitaryOps_FacilityShowers)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_InAnyMode(
         long enumSourceOfCallbackQuery)
