@@ -8,7 +8,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.LangExt.InputValidator;
 
-namespace CheckMade.ChatBot.Logic.Workflows;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 using static UserAuthWorkflow.States;
 

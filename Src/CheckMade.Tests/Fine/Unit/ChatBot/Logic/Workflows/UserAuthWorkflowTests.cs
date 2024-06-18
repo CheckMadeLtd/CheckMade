@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Tests.ITestUtils;
-using static CheckMade.ChatBot.Logic.Workflows.UserAuthWorkflow.States;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;
 using InputValidator = CheckMade.Common.LangExt.InputValidator;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
