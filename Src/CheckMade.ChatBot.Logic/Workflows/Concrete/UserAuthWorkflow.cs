@@ -12,7 +12,12 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 using static UserAuthWorkflow.States;
 
-internal class UserAuthWorkflow : IWorkflow
+internal interface IUserAuthWorkflow : IWorkflow
+{
+    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode);
+}
+
+internal class UserAuthWorkflow : IUserAuthWorkflow
 {
     private static readonly OutputDto EnterTokenPrompt = new()
     {
@@ -89,7 +94,7 @@ internal class UserAuthWorkflow : IWorkflow
         };
     }
     
-    internal async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
+    public async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
     {
         var allRelevantInputs = await _workflowUtils.GetAllCurrentInputs(userId, chatId, mode);
         

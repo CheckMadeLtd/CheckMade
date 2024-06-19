@@ -33,10 +33,8 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_01, TestChatId_01, Operations);
@@ -66,10 +64,8 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_02, TestChatId_03, Operations);
@@ -93,10 +89,8 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
 
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_01, TestChatId_01, Operations);
@@ -122,10 +116,8 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
-
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -150,9 +142,9 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
 
-        var preExistingActivePortRole = (await basics.mockPortRolesRepo.Object.GetAllAsync())
+        var preExistingActivePortRole = (await mockPortRolesRepo.Object.GetAllAsync())
             .First(cpr => 
                 cpr.Role.Token == SanitaryOpsAdmin1.Token &&
                 cpr.ClientPort.Mode == Operations);
@@ -162,15 +154,14 @@ public class UserAuthWorkflowTests
                                        This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                                        """;
 
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualOutputs = 
             await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortRole);
         
         Assert.Equal(expectedWarning, GetFirstRawEnglish(actualOutputs));
         
-        basics.mockPortRolesRepo.Verify(x => 
+        mockPortRolesRepo.Verify(x => 
             x.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic));
     }
 
@@ -195,7 +186,7 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
 
         const string expectedConfirmation = """
                                             {0}, welcome to the CheckMade ChatBot!
@@ -209,14 +200,13 @@ public class UserAuthWorkflowTests
             Option<DateTime>.None());
         
         var actualClientPortRoleAdded = new List<TlgClientPortRole>(); 
-        basics.mockPortRolesRepo
+        mockPortRolesRepo
             .Setup(x => 
                 x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
             .Callback<IEnumerable<TlgClientPortRole>>(portRole => 
                 actualClientPortRoleAdded = portRole.ToList());
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
@@ -248,7 +238,7 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         
@@ -261,18 +251,17 @@ public class UserAuthWorkflowTests
             .ToList();
 
         var actualPortRoles = new List<TlgClientPortRole>();
-        basics.mockPortRolesRepo
+        mockPortRolesRepo
             .Setup(x =>
                 x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
             .Callback<IEnumerable<TlgClientPortRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
-        
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
-        basics.mockPortRolesRepo.Verify(x => x.AddAsync(
+        mockPortRolesRepo.Verify(x => x.AddAsync(
             It.IsAny<IEnumerable<TlgClientPortRole>>()));
 
         for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
@@ -306,7 +295,7 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
 
         var expectedClientPortRolesAdded = new List<TlgClientPortRole>
         {
@@ -322,18 +311,17 @@ public class UserAuthWorkflowTests
         };
 
         var actualPortRoles = new List<TlgClientPortRole>();
-        basics.mockPortRolesRepo
+        mockPortRolesRepo
             .Setup(x =>
                 x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
             .Callback<IEnumerable<TlgClientPortRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
-        basics.mockPortRolesRepo.Verify(x => x.AddAsync(
+        mockPortRolesRepo.Verify(x => x.AddAsync(
             It.IsAny<IEnumerable<TlgClientPortRole>>()));
 
         for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
@@ -368,10 +356,7 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
-
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         

@@ -19,20 +19,25 @@ public class LanguageSettingWorkflowTests
     public async Task DetermineCurrentStateAsync_ReturnsInitial_WhenLastInputWasBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput>
             {
-                basics.utils.GetValidTlgInputTextMessage(),
-                basics.utils.GetValidTlgInputCommandMessage(
+                utils.GetValidTlgInputTextMessage(),
+                utils.GetValidTlgInputCommandMessage(
                     InteractionMode.Operations,
                     (int)OperationsBotCommands.Settings)
             });
 
-        var workflow = new LanguageSettingWorkflow(basics.mockPortRolesRepo.Object);
+        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+
+        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = await workflow.DetermineCurrentStateAsync();
         

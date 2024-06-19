@@ -22,7 +22,8 @@ internal class WorkflowIdentifier(
         ITlgInputRepository inputRepo,
         IRoleRepository roleRepo,
         ITlgClientPortRoleRepository portRoleRepo,
-        IWorkflowUtils workflowUtils) 
+        IWorkflowUtils workflowUtils,
+        IUserAuthWorkflow userAuthWorkflow) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
@@ -31,7 +32,7 @@ internal class WorkflowIdentifier(
 
         if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portRoleRepo))
         {
-            return await UserAuthWorkflow.CreateAsync(roleRepo, portRoleRepo, workflowUtils);
+            return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
         // the settings BotCommand code is the same across all InteractionModes

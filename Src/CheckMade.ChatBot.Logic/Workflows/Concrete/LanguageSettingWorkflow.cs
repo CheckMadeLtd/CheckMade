@@ -4,16 +4,21 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
+internal interface ILanguageSettingWorkflow : IWorkflow
+{
+    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync();
+}
+
 internal class LanguageSettingWorkflow(
         ITlgClientPortRoleRepository portRoleRepo) 
-    : IWorkflow
+    : ILanguageSettingWorkflow
 {
     public Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         throw new NotImplementedException();
     }
 
-    internal Task<States> DetermineCurrentStateAsync()
+    public Task<States> DetermineCurrentStateAsync()
     {
         throw new NotImplementedException();
     }
