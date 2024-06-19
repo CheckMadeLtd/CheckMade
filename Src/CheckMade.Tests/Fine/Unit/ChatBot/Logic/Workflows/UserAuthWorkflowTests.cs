@@ -25,10 +25,11 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage() });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -36,8 +37,7 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_01, TestChatId_01, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
@@ -49,17 +49,18 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_02, TestChatId_03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
         // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
-            TestUserId_02,
-            TestChatId_03,
+            clientPort.UserId,
+            clientPort.ChatId,
             SanitaryOpsAdmin1.Token,
             new DateTime(1999, 01, 05));
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_02, TestChatId_03))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -67,8 +68,7 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_02, TestChatId_03, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
         
         Assert.Equal(Initial, actualState);
     }
@@ -79,12 +79,13 @@ public class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
-        
+        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
         var utils = _services.GetRequiredService<ITestUtils>();
+        
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -92,8 +93,7 @@ public class UserAuthWorkflowTests
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_01, TestChatId_01, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
@@ -105,13 +105,16 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var nonExistingTokenInput = utils.GetValidTlgInputTextMessage(
-            text: InputValidator.GetTokenFormatExample());
+            text: InputValidator.GetTokenFormatExample(),
+            userId: clientPort.UserId,
+            chatId: clientPort.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -131,13 +134,16 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        var inputTokenWithPreExistingActivePortRole = 
-            utils.GetValidTlgInputTextMessage(text: SanitaryOpsAdmin1.Token);
+        var inputTokenWithPreExistingActivePortRole = utils.GetValidTlgInputTextMessage(
+            text: SanitaryOpsAdmin1.Token,
+            userId: clientPort.UserId,
+            chatId: clientPort.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortRole });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -147,7 +153,7 @@ public class UserAuthWorkflowTests
         var preExistingActivePortRole = (await mockPortRolesRepo.Object.GetAllAsync())
             .First(cpr => 
                 cpr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpr.ClientPort.Mode == Operations);
+                cpr.ClientPort.Mode == clientPort.Mode);
         
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat. 
@@ -172,16 +178,17 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_03, TestChatId_08, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
             // Diverging userId and chatId = sent from a Tlgr Chat-Group (rather than a private chat with the bot)
-            userId: TestUserId_03,
-            chatId: TestChatId_08,
+            userId: clientPort.UserId,
+            chatId: clientPort.ChatId,
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_03, TestChatId_08))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -195,7 +202,7 @@ public class UserAuthWorkflowTests
         
         var expectedClientPortRoleAdded = new TlgClientPortRole(
             SanitaryOpsInspector2,
-            new TlgClientPort(TestUserId_03, TestChatId_08, Operations),
+            clientPort,
             DateTime.UtcNow,
             Option<DateTime>.None());
         
@@ -223,17 +230,17 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        const long privateChatUserAndChatId = TestUserId_03;
+        var clientPort = new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        const long privateChatUserAndChatId = TestUserId_03; 
-
         var inputValidToken = utils.GetValidTlgInputTextMessage(
-            userId: privateChatUserAndChatId,
-            chatId: privateChatUserAndChatId,
+            userId: clientPort.UserId,
+            chatId: clientPort.ChatId,
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId, privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -245,7 +252,7 @@ public class UserAuthWorkflowTests
         var expectedClientPortRolesAdded = allModes.Select(im => 
             new TlgClientPortRole(
                 SanitaryOpsInspector2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, im),
+                clientPort with { Mode = im },
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
             .ToList();
@@ -279,18 +286,18 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        const long privateChatUserAndChatId = TestUserId_03;
+        var clientPort = new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        const long privateChatUserAndChatId = TestUserId_03; 
-
         var inputValidToken = utils.GetValidTlgInputTextMessage(
-            userId: privateChatUserAndChatId,
-            chatId: privateChatUserAndChatId,
+            userId: clientPort.UserId,
+            chatId: clientPort.ChatId,
             // Already has a mapped PortRole for 'Communications' (see UnitTestStartup)
             text: SanitaryOpsEngineer2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId, privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -300,12 +307,12 @@ public class UserAuthWorkflowTests
         var expectedClientPortRolesAdded = new List<TlgClientPortRole>
         {
             new(SanitaryOpsEngineer2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations),
+                clientPort,
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
             
             new(SanitaryOpsEngineer2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Notifications),
+                clientPort with { Mode = Notifications },
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
         };
@@ -343,12 +350,13 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 badTokenInput

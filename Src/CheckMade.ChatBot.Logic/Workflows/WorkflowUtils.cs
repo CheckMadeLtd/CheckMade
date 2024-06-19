@@ -1,14 +1,13 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal interface IWorkflowUtils
 {
-    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputs(
-        TlgUserId userId, TlgChatId chatId, InteractionMode mode);
+    Task<IReadOnlyList<TlgClientPortRole>> GetAllClientPortRolesAsync();
+    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
@@ -46,13 +45,16 @@ internal class WorkflowUtils : IWorkflowUtils
         
         _preExistingPortRoles = getPortRolesTask.Result.ToList().AsReadOnly();
     }
-    
-    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputs(
-        TlgUserId userId, TlgChatId chatId, InteractionMode mode)
+
+    public async Task<IReadOnlyList<TlgClientPortRole>> GetAllClientPortRolesAsync() =>
+        (await _portRoleRepo.GetAllAsync())
+        .ToList().AsReadOnly();
+
+    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort)
     {
         var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpr =>
-                cpr.ClientPort == new TlgClientPort(userId, chatId, mode) &&
+                cpr.ClientPort == clientPort &&
                 cpr.DeactivationDate.IsSome)
             .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
@@ -60,7 +62,7 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        return (await _inputRepo.GetAllAsync(userId, chatId))
+        return (await _inputRepo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())

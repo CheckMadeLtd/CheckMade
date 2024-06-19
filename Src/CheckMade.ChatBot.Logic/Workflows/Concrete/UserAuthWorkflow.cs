@@ -13,7 +13,7 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode);
+    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgClientPort clientPort);
 }
 
 internal class UserAuthWorkflow(
@@ -31,7 +31,7 @@ internal class UserAuthWorkflow(
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId, tlgInput.InteractionMode) switch
+        return await DetermineCurrentStateAsync(tlgInput.ClientPort) switch
         {
             Initial => new List<OutputDto> { EnterTokenPrompt },
             
@@ -59,12 +59,12 @@ internal class UserAuthWorkflow(
         };
     }
     
-    public async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
+    public async Task<States> DetermineCurrentStateAsync(TlgClientPort clientPort)
     {
-        var allRelevantInputs = await workflowUtils.GetAllCurrentInputs(userId, chatId, mode);
+        var allRelevantInputs = await workflowUtils.GetAllCurrentInputsAsync(clientPort);
         
         var lastTextSubmitted = allRelevantInputs
-            .LastOrDefault(i => i.TlgInputType == TlgInputType.TextMessage);
+            .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
 
         return lastTextSubmitted switch
         {
@@ -80,7 +80,7 @@ internal class UserAuthWorkflow(
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
-        var originatingMode = tokenInputAttempt.InteractionMode;
+        var originatingMode = tokenInputAttempt.ClientPort.Mode;
         var preExistingPortRoles = 
             (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
         
@@ -88,7 +88,7 @@ internal class UserAuthWorkflow(
         
         var newPortRoleForOriginatingMode = new TlgClientPortRole(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
-            new TlgClientPort(tokenInputAttempt.UserId, tokenInputAttempt.ChatId, originatingMode),
+            tokenInputAttempt.ClientPort with { Mode = originatingMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
         
@@ -128,7 +128,8 @@ internal class UserAuthWorkflow(
 
         var portRolesToAdd = new List<TlgClientPortRole> { newPortRoleForOriginatingMode };
         
-        var isInputTlgClientPortPrivateChat = tokenInputAttempt.ChatId == tokenInputAttempt.UserId;
+        var isInputTlgClientPortPrivateChat = 
+            tokenInputAttempt.ClientPort.ChatId == tokenInputAttempt.ClientPort.UserId;
 
         if (isInputTlgClientPortPrivateChat)
         {

@@ -97,9 +97,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public Randomizer Randomizer { get; } = randomizer;
     
     public TlgInput GetValidTlgInputTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
-        new(userId,
-            chatId,
-            InteractionMode.Operations,
+        new(new TlgClientPort(userId, chatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
@@ -107,9 +105,9 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 text));
     
     public TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type) =>
-        new(Randomizer.GenerateRandomLong(),
+        new(new TlgClientPort(Randomizer.GenerateRandomLong(),
             Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations,
+            InteractionMode.Operations),
             TlgInputType.AttachmentMessage,
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
@@ -121,9 +119,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 
     public TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
-        new(userId,
-            chatId,
-            interactionMode,
+        new(new TlgClientPort(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
@@ -135,9 +131,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId,
         long chatId,
         DateTime? dateTime) =>
-        new(userId,
-            chatId,
-            InteractionMode.Operations,
+        new(new TlgClientPort(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
@@ -150,9 +144,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId,
         long chatId,
         DateTime? dateTime) =>
-        new(userId,
-            chatId,
-            InteractionMode.Operations,
+        new(new TlgClientPort(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,

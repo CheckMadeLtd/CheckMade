@@ -33,15 +33,15 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<TlgInput>
             {
-                new (input.UserId, input.ChatId, input.InteractionMode, input.TlgInputType, input.Details)
+                new (input.ClientPort, input.InputType, input.Details)
             };
         
             await inputRepo.AddAsync(input);
             var retrievedInputs = 
-                (await inputRepo.GetAllAsync(input.UserId, input.ChatId))
+                (await inputRepo.GetAllAsync(input.ClientPort.UserId, input.ClientPort.ChatId))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToList().AsReadOnly();
-            await inputRepo.HardDeleteAllAsync(input.UserId);
+            await inputRepo.HardDeleteAllAsync(input.ClientPort.UserId);
         
             Assert.Equivalent(expectedRetrieval[0], retrievedInputs[0]);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Persistence.JsonHelpers;
@@ -29,11 +30,11 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@tlgUserId", (long)tlgInput.UserId },
-                { "@tlgChatId", (long)tlgInput.ChatId },
+                { "@tlgUserId", (long)tlgInput.ClientPort.UserId },
+                { "@tlgChatId", (long)tlgInput.ClientPort.ChatId },
                 { "@lastDataMig", 0 },
-                { "@interactionMode", (int)tlgInput.InteractionMode },
-                { "@tlgInputType", (int) tlgInput.TlgInputType }
+                { "@interactionMode", (int)tlgInput.ClientPort.Mode },
+                { "@tlgInputType", (int) tlgInput.InputType }
             };
             
             var command = GenerateCommand(rawQuery, normalParameters);
@@ -81,9 +82,7 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
             var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
             var message = new TlgInput(
-                tlgUserId,
-                tlgChatId,
-                (InteractionMode) interactionMode,
+                new TlgClientPort(tlgUserId, tlgChatId, (InteractionMode) interactionMode),
                 (TlgInputType) tlgInputType,
                 JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
                 ?? throw new InvalidOperationException("Failed to deserialize"));

@@ -33,9 +33,10 @@ public class ToModelConverterTests
         var update = basics.utils.GetValidTelegramTextMessage(textInput);
 
         var expectedTlgInput = new TlgInput(
-            update.Message.From!.Id,
-            update.Message.Chat.Id,
-            Operations,
+            new TlgClientPort(
+                update.Message.From!.Id,
+                update.Message.Chat.Id,
+                Operations),
             TlgInputType.TextMessage,
             TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
@@ -70,9 +71,10 @@ public class ToModelConverterTests
             $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
 
         var expectedTlgInput = new TlgInput(
-            attachmentUpdate.Message.From!.Id,
-            attachmentUpdate.Message.Chat.Id,
-            Operations,
+            new TlgClientPort(
+                attachmentUpdate.Message.From!.Id,
+                attachmentUpdate.Message.Chat.Id,
+                Operations),
             TlgInputType.AttachmentMessage,
             TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
@@ -108,9 +110,10 @@ public class ToModelConverterTests
             horizontalAccuracy ?? Option<float>.None());
         
         var expectedTlgInput = new TlgInput(
-                locationUpdate.Message.From!.Id,
-                locationUpdate.Message.Chat.Id,
-                Operations,
+            new TlgClientPort(
+                locationUpdate.Message.From!.Id, 
+                locationUpdate.Message.Chat.Id, 
+                Operations),
                 TlgInputType.Location,
                 TestUtils.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
@@ -139,9 +142,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Operations,
+            new TlgClientPort(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Operations),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -170,9 +174,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Communications,
+            new TlgClientPort(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Communications),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -201,9 +206,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Notifications,
+            new TlgClientPort(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Notifications),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -229,9 +235,10 @@ public class ToModelConverterTests
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
 
         var expectedTlgInput = new TlgInput(
-            callbackQuery.Message.From!.Id,
-            callbackQuery.Message.Chat.Id,
-            Operations,
+            new TlgClientPort(
+                callbackQuery.Message.From!.Id,
+                callbackQuery.Message.Chat.Id,
+                Operations),
             TlgInputType.CallbackQuery,
             TestUtils.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,

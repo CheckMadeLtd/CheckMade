@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.LanguageSettingWorkflow;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -30,23 +31,22 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        const long userAndChatId = TestUserId_01;
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(userAndChatId, userAndChatId))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(userId: userAndChatId, chatId: userAndChatId),
-                utils.GetValidTlgInputCommandMessage(Operations, botCommand)
+                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
+                utils.GetValidTlgInputCommandMessage(clientPort.Mode, botCommand)
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            userAndChatId, userAndChatId, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
         
         Assert.Equal(States.Initial, actualState);
     }
@@ -58,16 +58,16 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        const long userAndChatId = TestUserId_01;
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(userAndChatId, userAndChatId))
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(),
                 utils.GetValidTlgInputCommandMessage(
-                    Operations, (int)OperationsBotCommands.Settings),
+                    clientPort.Mode, (int)OperationsBotCommands.Settings),
                 utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de))
             });
 
@@ -75,8 +75,7 @@ public class LanguageSettingWorkflowTests
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            userAndChatId, userAndChatId, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
         
         Assert.Equal(States.ReceivedLanguageSetting, actualState);
     }

@@ -45,9 +45,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
         var messageWithFakeEmptyDetails = new TlgInput(
-            tlgUserId,
-            tlgChatId,
-            InteractionMode.Operations,
+            new TlgClientPort(tlgUserId, tlgChatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
             new TlgInputDetails(DateTime.MinValue,
                 0,
