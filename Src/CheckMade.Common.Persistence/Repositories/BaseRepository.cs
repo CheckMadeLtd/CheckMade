@@ -63,7 +63,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
         if (typeof(T) == typeof(EmailAddress) && valueRaw != DBNull.Value)
         {
-            // ToDo: try removing the (object) cast in the middle. Should work??
             return (Option<T>) (object) Option<EmailAddress>.Some(
                 new EmailAddress(reader.GetFieldValue<string>(ordinal)));
         }
