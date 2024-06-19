@@ -55,7 +55,7 @@ internal class UserAuthWorkflow(
             },
             
             _ => Result<IReadOnlyList<OutputDto>>.FromError(
-                UiNoTranslate("Can't determine State in UserAuthWorkflow"))
+                UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }
     
