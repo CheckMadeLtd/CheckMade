@@ -11,5 +11,5 @@ public record TlgInputDetails(
     Option<TlgAttachmentType> AttachmentType,
     Option<Geo> GeoCoordinates,
     Option<int> BotCommandEnumCode,
-    Option<OneOf<int, Type>> DomainTerm,
+    Option<OneOf<EnumWithType, Type>> DomainTerm,
     Option<long> ControlPromptEnumCode);

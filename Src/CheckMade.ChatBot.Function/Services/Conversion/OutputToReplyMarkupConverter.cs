@@ -52,7 +52,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     }
     
     private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
-        Option<IEnumerable<OneOf<int, Type>>> domainTermSelection,
+        Option<IEnumerable<OneOf<EnumWithType, Type>>> domainTermSelection,
         Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {

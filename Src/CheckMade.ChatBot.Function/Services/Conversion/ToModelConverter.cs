@@ -185,17 +185,17 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<OneOf<int, Type>>> GetDomainTerm(UpdateWrapper update)
+    private static Result<Option<OneOf<EnumWithType, Type>>> GetDomainTerm(UpdateWrapper update)
     {
         var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
 
         if (string.IsNullOrWhiteSpace(callBackDataRaw))
-            return Option<OneOf<int, Type>>.None();
+            return Option<OneOf<EnumWithType, Type>>.None();
 
         return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
-            ? Option<OneOf<int, Type>>.None() // This means, it's a ControlPrompt, see below
-            : Option<OneOf<int, Type>>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
+            ? Option<OneOf<EnumWithType, Type>>.None() // This means, it's a ControlPrompt, see below
+            : Option<OneOf<EnumWithType, Type>>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
@@ -212,7 +212,7 @@ internal class ToModelConverter(
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
-        Option<OneOf<int, Type>> domainTerm,
+        Option<OneOf<EnumWithType, Type>> domainTerm,
         Option<long> controlPromptEnumCode)
     {
         if (update.Message.From?.Id == null || 

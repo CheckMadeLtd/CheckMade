@@ -57,7 +57,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<TlgAttachmentType>.None(),
                 Option<Geo>.None(), 
                 Option<int>.None(),
-                Option<OneOf<int, Type>>.None(), 
+                Option<OneOf<EnumWithType, Type>>.None(), 
                 Option<long>.None()));
 
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);

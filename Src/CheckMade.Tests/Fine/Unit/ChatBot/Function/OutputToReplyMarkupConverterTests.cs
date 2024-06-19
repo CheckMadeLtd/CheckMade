@@ -22,7 +22,7 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<OneOf<int, Type>>
+        var domainTermSelection = new List<OneOf<EnumWithType, Type>>
         {
             typeof(CleanlinessIssue),
             typeof(TechnicalIssue),
@@ -125,9 +125,9 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<OneOf<int, Type>>
+        var domainTermSelection = new List<OneOf<EnumWithType, Type>>
         {
-            (int)ConsumablesIssue.Item.PaperTowels
+            Et(ConsumablesIssue.Item.PaperTowels)
         };
         
         var promptSelection = new[] 
@@ -148,9 +148,9 @@ public class OutputToReplyMarkupConverterTests
             {
                 InlineKeyboardButton.WithCallbackData(
                     basics.domainGlossary.IdAndUiByTerm[
-                        (int)ConsumablesIssue.Item.PaperTowels].uiString.GetFormattedEnglish(),
+                        Et(ConsumablesIssue.Item.PaperTowels)].uiString.GetFormattedEnglish(),
                     basics.domainGlossary.IdAndUiByTerm[
-                        (int)ConsumablesIssue.Item.PaperTowels].callbackId), 
+                        Et(ConsumablesIssue.Item.PaperTowels)].callbackId), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
