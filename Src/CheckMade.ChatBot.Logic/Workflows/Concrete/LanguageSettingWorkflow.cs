@@ -3,6 +3,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
@@ -31,6 +32,8 @@ internal class LanguageSettingWorkflow(
                 }
             },
             
+            States.ReceivedLanguageSetting => await SetNewLanguageAsync(tlgInput),
+            
             _ => Result<IReadOnlyList<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
@@ -47,6 +50,19 @@ internal class LanguageSettingWorkflow(
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
             _ => States.Initial
         };
+    }
+
+    private static async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)
+    {
+        var domainGlossary = new DomainGlossary();
+        var newLanguage = newLanguageInput.Details.DomainTerm.GetValueOrThrow();
+        
+        return [new OutputDto
+        {
+            Text = UiConcatenate(
+                Ui("New language: "), 
+                domainGlossary.IdAndUiByTerm[newLanguage].uiString)
+        }];
     }
     
     [Flags]

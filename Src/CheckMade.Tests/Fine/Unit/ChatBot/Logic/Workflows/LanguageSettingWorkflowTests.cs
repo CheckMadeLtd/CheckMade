@@ -90,17 +90,16 @@ public class LanguageSettingWorkflowTests
         var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
-        var inputSettingsCommand =
-            utils.GetValidTlgInputCommandMessage(
-                Operations, 
-                (int)OperationsBotCommands.Settings,
-                clientPort.UserId, clientPort.ChatId); 
+        var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
+            Operations, (int)OperationsBotCommands.Settings, 
+            clientPort.UserId, clientPort.ChatId); 
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
+                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
+                    userId: clientPort.UserId, chatId: clientPort.ChatId),
                 inputSettingsCommand
             });
 
@@ -113,9 +112,44 @@ public class LanguageSettingWorkflowTests
         Assert.Equal("🌎 Please select your preferred language:", GetFirstRawEnglish(actualOutput));
     }
     
-    [Fact]
-    public async Task GetNextOutputAsync_ReturnsSuccessMessage_AndSavesNewLanguageSetting_WhenLanguageChosen()
+    [Theory]
+    [InlineData(LanguageCode.en)]
+    [InlineData(LanguageCode.de)]
+    public async Task GetNextOutputAsync_ReturnsSuccessMessage_AndSavesNewLanguageSetting_WhenLanguageChosen(
+        LanguageCode languageCode)
     {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
         
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
+            Operations, (int)OperationsBotCommands.Settings, 
+            clientPort.UserId, clientPort.ChatId); 
+        var languageSettingInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
+            Dt(languageCode), 
+            clientPort.UserId, clientPort.ChatId);
+        
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
+                    userId: clientPort.UserId, chatId: clientPort.ChatId),
+                inputSettingsCommand,
+                // utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
+                //     userId: clientPort.UserId, chatId: clientPort.ChatId),
+                languageSettingInput
+            });
+
+        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+
+        var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);
+        
+        Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
     }
 }
