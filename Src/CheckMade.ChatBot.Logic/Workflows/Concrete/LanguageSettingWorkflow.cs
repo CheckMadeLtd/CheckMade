@@ -1,12 +1,15 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync();
+    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync(
+        TlgUserId userId, TlgChatId chatId, InteractionMode mode);
 }
 
 internal class LanguageSettingWorkflow(
@@ -19,9 +22,17 @@ internal class LanguageSettingWorkflow(
         throw new NotImplementedException();
     }
 
-    public Task<States> DetermineCurrentStateAsync()
+    public async Task<States> DetermineCurrentStateAsync(TlgUserId userId, TlgChatId chatId, InteractionMode mode)
     {
-        throw new NotImplementedException();
+        var allCurrentInputs = await workflowUtils.GetAllCurrentInputs(userId, chatId, mode);
+        var lastInput = allCurrentInputs[^1];
+
+        return lastInput.TlgInputType switch
+        {
+            TlgInputType.CommandMessage => States.Initial,
+            TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
+            _ => States.Initial
+        };
     }
     
     [Flags]
