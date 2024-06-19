@@ -1,3 +1,5 @@
+using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.ChatBot.Logic;
@@ -8,5 +10,8 @@ public static class ServiceRegistration
     {
         services.AddScoped<IInputProcessorFactory, InputProcessorFactory>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
+        services.AddScoped<IWorkflowUtils>(sp =>
+            WorkflowUtils.CreateAsync(sp.GetRequiredService<ITlgInputRepository>(),
+                sp.GetRequiredService<ITlgClientPortRoleRepository>()).Result);
     }
 }

@@ -28,9 +28,13 @@ public class UserAuthWorkflowTests
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage() });
+
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_01, TestChatId_01, Operations);
@@ -57,7 +61,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_02, TestChatId_03, Operations);
@@ -78,7 +82,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
         
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_01, TestChatId_01, Operations);
@@ -101,7 +105,7 @@ public class UserAuthWorkflowTests
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -133,7 +137,7 @@ public class UserAuthWorkflowTests
                                        """;
 
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
         
         var actualOutputs = 
             await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortRole);
@@ -180,7 +184,7 @@ public class UserAuthWorkflowTests
                 actualClientPortRoleAdded = portRole.ToList());
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
 
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
@@ -225,7 +229,7 @@ public class UserAuthWorkflowTests
                 portRoles => actualPortRoles = portRoles.ToList());
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
@@ -279,7 +283,7 @@ public class UserAuthWorkflowTests
                 portRoles => actualPortRoles = portRoles.ToList());
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
@@ -315,7 +319,7 @@ public class UserAuthWorkflowTests
             });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+            basics.mockRoleRepo, basics.mockPortRolesRepo.Object, basics.workflowUtils);
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         

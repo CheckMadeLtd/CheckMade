@@ -32,7 +32,7 @@ public class LanguageSettingWorkflowTests
                     (int)OperationsBotCommands.Settings)
             });
 
-        var workflow = new LanguageSettingWorkflow(mockTlgInputsRepo.Object, basics.mockPortRolesRepo.Object);
+        var workflow = new LanguageSettingWorkflow(basics.mockPortRolesRepo.Object);
         
         var actualState = await workflow.DetermineCurrentStateAsync();
         
