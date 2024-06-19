@@ -120,28 +120,3 @@ public class OneOf<T1, T2, T3> : OneOf<T1, T2>
             : 0);
     }
 }
-
-// Example code
-
-// //1. Define different values of different types
-// int intValue = 100;
-// string stringValue = "Hello world";
-// double doubleValue = 0.99;
-//
-// //2. Instantiate OneOf with different types
-// var oneOfIntString = new Automn.OneOf<int, string>(intValue);
-// var oneOfStringDouble = new Automn.OneOf<string, double>(stringValue);
-// var oneOfIntStringDouble = new Automn.OneOf<int, string, double>(doubleValue);
-//
-// //3. Use the Is<T> method to check and get the value
-// if(oneOfIntString.Is(out int myIntValue)){
-//     Console.WriteLine("The value is of type int: " + myIntValue);
-// }
-//
-// if(oneOfStringDouble.Is(out string myStringValue)) {
-//     Console.WriteLine("The value is of type string: " + myStringValue);
-// }
-//
-// if(oneOfIntStringDouble.Is(out double myDoubleValue)){
-//     Console.WriteLine("The value is of type double: " + myDoubleValue);
-// }
