@@ -5,8 +5,6 @@ public readonly struct Longitude
     private const double MaxLongitude = 180;
     private const double MinLongitude = -180;
     
-    private readonly double _value;
-
     public Longitude(double coordinate)
     {
         if (coordinate is > MaxLongitude or < MinLongitude)
@@ -15,11 +13,11 @@ public readonly struct Longitude
                                         $"{MinLongitude} and {MaxLongitude}.");
         }
 
-        _value = coordinate;
+        Value = coordinate;
     }
-
-    public Longitude Value => _value;
-
+    
+    public double Value { get; }
+    
     public static implicit operator Longitude(double coordinate) => new(coordinate);
-    public static implicit operator double(Longitude longitude) => longitude._value;
+    public static implicit operator double(Longitude longitude) => longitude.Value;
 }

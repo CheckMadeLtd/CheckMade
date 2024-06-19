@@ -4,8 +4,6 @@ public readonly struct Latitude
 {
     private const double MaxLatitude = 90;
     private const double MinLatitude = -90;
-    
-    private readonly double _value;
 
     public Latitude(double coordinate)
     {
@@ -15,11 +13,11 @@ public readonly struct Latitude
                                         $"{MinLatitude} and {MaxLatitude}.");
         }
 
-        _value = coordinate;
+        Value = coordinate;
     }
 
-    public Latitude Value => _value;
+    public double Value { get; }
 
     public static implicit operator Latitude(double coordinate) => new(coordinate);
-    public static implicit operator double(Latitude latitude) => latitude._value;
+    public static implicit operator double(Latitude latitude) => latitude.Value;
 }
