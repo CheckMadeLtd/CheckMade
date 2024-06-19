@@ -46,11 +46,23 @@ internal class LanguageSettingWorkflow(
         var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(clientPort);
         var lastInput = allCurrentInputs[^1];
 
+        var secondToLastInput = allCurrentInputs.Count > 1
+            ? allCurrentInputs[^2]
+            : Option<TlgInput>.None();
+
         return lastInput.InputType switch
         {
             TlgInputType.CommandMessage => States.Initial,
+            
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
-            _ => States.Completed
+            
+            _ => secondToLastInput.Match(
+                stl => stl.InputType switch
+                {
+                    TlgInputType.CallbackQuery => States.Completed,
+                    _ => States.Initial
+                },
+                () => States.Initial)
         };
     }
 

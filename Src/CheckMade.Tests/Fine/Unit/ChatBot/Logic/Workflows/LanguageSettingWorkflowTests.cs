@@ -58,17 +58,19 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(),
+                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
                 utils.GetValidTlgInputCommandMessage(
-                    clientPort.Mode, (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de))
+                    clientPort.Mode, (int)OperationsBotCommands.Settings,
+                clientPort.UserId, clientPort.ChatId),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
+                    clientPort.UserId, clientPort.ChatId)
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -79,7 +81,38 @@ public class LanguageSettingWorkflowTests
         
         Assert.Equal(States.ReceivedLanguageSetting, actualState);
     }
+    
+    [Fact]
+    public async Task DetermineCurrentStateAsync_ReturnsCompleted_WhenLastInputIsAfterCallbackQueryInput()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgInputCommandMessage(
+                    clientPort.Mode, (int)OperationsBotCommands.Settings,
+                    clientPort.UserId, clientPort.ChatId),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
+                    clientPort.UserId, clientPort.ChatId),
+                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId)
+            });
 
+        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        
+        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
+        
+        Assert.Equal(States.Completed, actualState);
+    }
+    
     [Fact]
     public async Task GetNextOutputAsync_ShowsLanguageSelectionMenu_InInitialState()
     {
@@ -151,5 +184,7 @@ public class LanguageSettingWorkflowTests
         var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);
         
         Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
+        
+        // ToDo: Add verification of updating language in userRepo
     }
 }
