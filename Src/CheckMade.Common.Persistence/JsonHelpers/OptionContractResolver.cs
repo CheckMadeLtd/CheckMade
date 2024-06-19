@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -16,7 +17,7 @@ internal class OptionContractResolver : DefaultContractResolver
             // Becomes e.g. typeof(OptionJsonConverter<string>) when underlyingType = 'string' 
             var converterType = typeof(OptionJsonConverter<>).MakeGenericType(underlyingType);
             
-            contract.Converter = (JsonConverter)Activator.CreateInstance(converterType)!;
+            contract.Converter = (JsonConverter)Activator.CreateInstance(converterType, new DomainGlossary())!;
 
             return contract;
         }
