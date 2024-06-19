@@ -25,14 +25,17 @@ internal class WorkflowIdentifier(
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        // the settings BotCommand code is the same across all InteractionModes
-        // ReSharper disable once ConvertIfStatementToReturnStatement
-        if (input.Details.BotCommandEnumCode == (int)OperationsBotCommands.Settings)
-        {
-            return Option<IWorkflow>.Some(languageSettingWorkflow);
-        }
-        
-        return Option<IWorkflow>.None();
+        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(input.ClientPort);
+        var lastBotCommand = GetLastBotCommand(allCurrentInputs);
+
+        return lastBotCommand.Match(
+            cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
+            {
+                // the settings BotCommand code is the same across all InteractionModes
+                (int)OperationsBotCommands.Settings => Option<IWorkflow>.Some(languageSettingWorkflow),
+                _ => throw new ArgumentOutOfRangeException(nameof(lastBotCommand))
+            },
+            Option<IWorkflow>.None);
     }
     
     private async Task<bool> IsUserAuthenticated(TlgClientPort inputPort) => 
@@ -42,4 +45,8 @@ internal class WorkflowIdentifier(
             cpr.ClientPort.Mode == inputPort.Mode && 
             cpr.Status == DbRecordStatus.Active) 
         != null;
+
+    private static Option<TlgInput> GetLastBotCommand(IReadOnlyList<TlgInput> inputs) =>
+        inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
+        ?? Option<TlgInput>.None();
 }
