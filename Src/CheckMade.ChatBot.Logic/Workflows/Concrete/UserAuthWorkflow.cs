@@ -17,9 +17,9 @@ internal interface IUserAuthWorkflow : IWorkflow
 }
 
 internal class UserAuthWorkflow(
-    IRoleRepository roleRepo,
-    ITlgClientPortRoleRepository portRoleRepo,
-    IWorkflowUtils workflowUtils)
+        IRoleRepository roleRepo,
+        ITlgClientPortRoleRepository portRoleRepo,
+        IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
 {
     private static readonly OutputDto EnterTokenPrompt = new()

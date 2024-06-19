@@ -79,4 +79,43 @@ public class LanguageSettingWorkflowTests
         
         Assert.Equal(States.ReceivedLanguageSetting, actualState);
     }
+
+    [Fact]
+    public async Task GetNextOutputAsync_ShowsLanguageSelectionMenu_InInitialState()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+
+        var inputSettingsCommand =
+            utils.GetValidTlgInputCommandMessage(
+                Operations, 
+                (int)OperationsBotCommands.Settings,
+                clientPort.UserId, clientPort.ChatId); 
+        
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
+                inputSettingsCommand
+            });
+
+        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+
+        var actualOutput = await workflow.GetNextOutputAsync(inputSettingsCommand);
+        
+        Assert.Equal("🌎 Please select your preferred language:", GetFirstRawEnglish(actualOutput));
+    }
+    
+    [Fact]
+    public async Task GetNextOutputAsync_ReturnsSuccessMessage_AndSavesNewLanguageSetting_WhenLanguageChosen()
+    {
+        
+    }
 }

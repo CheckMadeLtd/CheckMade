@@ -2,8 +2,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
@@ -17,9 +16,24 @@ internal class LanguageSettingWorkflow(
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
-    public Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
-        throw new NotImplementedException();
+        return await DetermineCurrentStateAsync(tlgInput.ClientPort) switch
+        {
+            States.Initial => new List<OutputDto>
+            {
+                new()
+                {
+                    Text = Ui("🌎 Please select your preferred language:"),
+                    DomainTermSelection = new List<DomainTerm>(
+                        Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
+                            .Select(lc => Dt(lc)))
+                }
+            },
+            
+            _ => Result<IReadOnlyList<OutputDto>>.FromError(
+                UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
+        };
     }
 
     public async Task<States> DetermineCurrentStateAsync(TlgClientPort clientPort)

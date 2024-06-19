@@ -357,10 +357,7 @@ public class UserAuthWorkflowTests
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                badTokenInput
-            });
+            .ReturnsAsync(new List<TlgInput> { badTokenInput });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
