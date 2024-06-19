@@ -24,6 +24,7 @@ internal class LanguageSettingWorkflow(
     [Flags]
     internal enum States
     {
-        
+        Initial = 1,
+        ReceivedLanguageSetting = 1<<1
     }
 }

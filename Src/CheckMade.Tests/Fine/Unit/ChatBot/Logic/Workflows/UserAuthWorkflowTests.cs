@@ -1,6 +1,5 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -23,7 +22,7 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
@@ -43,7 +42,7 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
         // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
@@ -71,7 +70,7 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
@@ -91,7 +90,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var nonExistingTokenInput = basics.utils.GetValidTlgInputTextMessage(
@@ -113,7 +112,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActivePortRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputTokenWithPreExistingActivePortRole = 
@@ -149,7 +148,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesPortRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputValidToken = basics.utils.GetValidTlgInputTextMessage(
@@ -195,7 +194,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesPortRolesForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         const long privateChatUserAndChatId = TestUserId_03; 
 
@@ -245,7 +244,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         const long privateChatUserAndChatId = TestUserId_03; 
 
@@ -303,7 +302,7 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
+        var basics = WorkflowTestsUtils.GetBasicTestingServices(_services);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var badTokenInput = basics.utils.GetValidTlgInputTextMessage(text: badToken);
@@ -322,14 +321,4 @@ public class UserAuthWorkflowTests
         
         Assert.Equal("Bad token format! Try again...", GetFirstRawEnglish(actualOutputs));
     }
-
-    private static (ITestUtils utils, 
-        Mock<ITlgClientPortRoleRepository> mockPortRolesRepo, 
-        IRoleRepository mockRoleRepo, 
-        DateTime baseDateTime) 
-        GetBasicTestingServices(IServiceProvider sp) =>
-            (sp.GetRequiredService<ITestUtils>(),
-            sp.GetRequiredService<Mock<ITlgClientPortRoleRepository>>(),
-            sp.GetRequiredService<IRoleRepository>(),
-            DateTime.UtcNow);
 }
