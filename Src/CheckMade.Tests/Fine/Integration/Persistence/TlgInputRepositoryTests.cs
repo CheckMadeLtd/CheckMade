@@ -38,7 +38,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         
             await inputRepo.AddAsync(input);
             var retrievedInputs = 
-                (await inputRepo.GetAllAsync(input.UserId))
+                (await inputRepo.GetAllAsync(input.UserId, input.ChatId))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToList().AsReadOnly();
             await inputRepo.HardDeleteAllAsync(input.UserId);
@@ -53,18 +53,19 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         TlgUserId userId = utils.Randomizer.GenerateRandomLong();
+        TlgChatId chatId = utils.Randomizer.GenerateRandomLong();
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgInputTextMessage(userId),
-            utils.GetValidTlgInputTextMessage(userId),
-            utils.GetValidTlgInputTextMessage(userId)
+            utils.GetValidTlgInputTextMessage(userId, chatId),
+            utils.GetValidTlgInputTextMessage(userId, chatId),
+            utils.GetValidTlgInputTextMessage(userId,chatId)
         };
         
         var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         
         await inputRepo.AddAsync(tlgInputs);
-        var retrievedInputs = await inputRepo.GetAllAsync(userId);
+        var retrievedInputs = await inputRepo.GetAllAsync(userId, chatId);
         await inputRepo.HardDeleteAllAsync(userId);
 
         Assert.Equivalent(tlgInputs, retrievedInputs);
@@ -77,8 +78,9 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         var randomizer = _services.GetRequiredService<Randomizer>();
         var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         TlgUserId userId = randomizer.GenerateRandomLong();
+        TlgChatId chatId = randomizer.GenerateRandomLong();
     
-        var retrievedInputs = await inputRepo.GetAllAsync(userId);
+        var retrievedInputs = await inputRepo.GetAllAsync(userId, chatId);
     
         Assert.Empty(retrievedInputs);
     }
@@ -107,6 +109,6 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await inputRepo.GetAllAsync(devDbUserId);
+        await inputRepo.GetAllAsync(devDbUserId, devDbUserId.Id);
     }
 }

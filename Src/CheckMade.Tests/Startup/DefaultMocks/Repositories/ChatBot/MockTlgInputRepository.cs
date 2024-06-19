@@ -21,9 +21,9 @@ internal class MockTlgInputRepository(IMock<ITlgInputRepository> mockInputRepo) 
         return await mockInputRepo.Object.GetAllAsync();
     }
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId)
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId, TlgChatId chatId)
     {
-        return await mockInputRepo.Object.GetAllAsync(userId);
+        return await mockInputRepo.Object.GetAllAsync(userId, chatId);
     }
 
     public async Task HardDeleteAllAsync(TlgUserId userId)

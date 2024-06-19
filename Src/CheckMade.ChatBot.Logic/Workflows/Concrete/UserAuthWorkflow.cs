@@ -100,7 +100,7 @@ internal class UserAuthWorkflow : IWorkflow
             ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        var allRelevantInputs = (await _inputRepo.GetAllAsync(userId))
+        var allRelevantInputs = (await _inputRepo.GetAllAsync(userId, chatId))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())

@@ -23,7 +23,7 @@ public class LanguageSettingWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput>
             {
                 basics.utils.GetValidTlgInputTextMessage(),

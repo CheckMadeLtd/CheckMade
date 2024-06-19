@@ -26,7 +26,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage() });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
@@ -53,7 +53,7 @@ public class UserAuthWorkflowTests
             new DateTime(1999, 01, 05));
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_02))
+            .Setup(repo => repo.GetAllAsync(TestUserId_02, TestChatId_03))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
@@ -74,7 +74,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
@@ -97,7 +97,7 @@ public class UserAuthWorkflowTests
             text: InputValidator.GetTokenFormatExample());
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         var workflow = await UserAuthWorkflow.CreateAsync(
@@ -124,7 +124,7 @@ public class UserAuthWorkflowTests
                 cpr.ClientPort.Mode == Operations);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortRole });
 
         const string expectedWarning = """
@@ -158,7 +158,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_03))
+            .Setup(repo => repo.GetAllAsync(TestUserId_03, TestChatId_08))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         const string expectedConfirmation = """
@@ -204,7 +204,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId, privateChatUserAndChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
@@ -255,7 +255,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsEngineer2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId, privateChatUserAndChatId))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
         
         var expectedClientPortRolesAdded = new List<TlgClientPortRole>
@@ -308,7 +308,7 @@ public class UserAuthWorkflowTests
         var badTokenInput = basics.utils.GetValidTlgInputTextMessage(text: badToken);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(TestUserId_01, TestChatId_01))
             .ReturnsAsync(new List<TlgInput>
             {
                 badTokenInput

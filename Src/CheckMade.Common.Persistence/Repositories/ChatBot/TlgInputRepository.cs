@@ -52,20 +52,23 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
     public async Task<IEnumerable<TlgInput>> GetAllAsync() =>
         await GetAllExecuteAsync(
             "SELECT * FROM tlg_inputs",
-            Option<TlgUserId>.None());
+            Option<TlgUserId>.None(), Option<TlgChatId>.None());
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId, TlgChatId chatId) =>
         await GetAllExecuteAsync(
-            "SELECT * FROM tlg_inputs WHERE user_id = @tlgUserId",
-            userId);
+            "SELECT * FROM tlg_inputs WHERE user_id = @tlgUserId AND chat_id = @tlgChatId",
+            userId, chatId);
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
-        string rawQuery, Option<TlgUserId> userId)
+        string rawQuery, Option<TlgUserId> userId, Option<TlgChatId> chatId)
     {
         var normalParameters = new Dictionary<string, object>();
         
         if (userId.IsSome)
             normalParameters.Add("@tlgUserId", (long) userId.GetValueOrThrow());
+
+        if (chatId.IsSome)
+            normalParameters.Add("@tlgChatId", (long) chatId.GetValueOrThrow());
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
