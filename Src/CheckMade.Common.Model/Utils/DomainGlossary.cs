@@ -17,20 +17,20 @@ public class DomainGlossary
     
     public DomainGlossary()
     {
-        AddTerm(Dt(typeof(CleanlinessIssue)), "DAWYZP", Ui("🪣 Cleanliness"));
-        AddTerm(Dt(typeof(TechnicalIssue)), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(Dt(typeof(ConsumablesIssue)), "D582QJ", Ui("🗄 Consumables"));
+        AddTerm(typeof(CleanlinessIssue), "DAWYZP", "🪣 Cleanliness");
+        AddTerm(typeof(TechnicalIssue), "DM46NG", "🔧 Technical");
+        AddTerm(typeof(ConsumablesIssue), "D582QJ", "🗄 Consumables");
 
-        AddTerm(Dt(ConsumablesIssue.Item.ToiletPaper), "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(Dt(ConsumablesIssue.Item.PaperTowels), "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(Dt(ConsumablesIssue.Item.Soap), "D79AMO", Ui("🧴 Soap"));
+        AddTerm(ConsumablesIssue.Item.ToiletPaper, "DSTP1N", "🧻 Toilet Paper");
+        AddTerm(ConsumablesIssue.Item.PaperTowels, "DOJH85", "🌫️ Paper Towels");
+        AddTerm(ConsumablesIssue.Item.Soap, "D79AMO", "🧴 Soap");
 
-        AddTerm(Dt(typeof(Toilet)), "D1540N", Ui("🚽 Toilet"));
-        AddTerm(Dt(typeof(Shower)), "D4W2GW", Ui("🚿 Shower"));
-        AddTerm(Dt(typeof(Staff)), "D9MRJ9", Ui("🙋 Staff"));
+        AddTerm(typeof(Toilet), "D1540N", "🚽 Toilet");
+        AddTerm(typeof(Shower), "D4W2GW", "🚿 Shower");
+        AddTerm(typeof(Staff), "D9MRJ9", "🙋 Staff");
         
-        // AddTerm(Dt(LanguageCode.en), "DFVN7W", Ui("🇩🇪 German"));
-        // AddTerm(Dt(LanguageCode.en), "DCQ4ME", Ui("🇬🇧 English"));
+        AddTerm(LanguageCode.de, "DFVN7W", "🇩🇪 German");
+        AddTerm(LanguageCode.en, "DCQ4ME", "🇬🇧 English");
 
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
@@ -39,7 +39,22 @@ public class DomainGlossary
             kvp => kvp.Key);
     }
 
-    // ToDo: if this all works now then improve AddTerm so up there I don't need Dt() and Ui() 
-    private void AddTerm(DomainTerm term, string idRaw, UiString uiString) =>
-        _domainGlossaryBuilder.Add(term, (new CallbackId(idRaw), uiString));
+    private void AddTerm(object term, string idRaw, string uiString)
+    {
+        var callBackIdAndUi = (new CallbackId(idRaw), Ui(uiString));
+
+        switch (term)
+        {
+            case Type termType:
+                _domainGlossaryBuilder.Add(Dt(termType), callBackIdAndUi);
+                break;
+            
+            case Enum termEnum:
+                _domainGlossaryBuilder.Add(Dt(termEnum), callBackIdAndUi);
+                break;
+            
+            default:
+                throw new ArgumentException("Term needs to be either of type Type or of type Enum!");
+        }
+    }
 }

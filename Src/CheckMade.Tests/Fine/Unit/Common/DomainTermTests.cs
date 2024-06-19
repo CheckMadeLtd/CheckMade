@@ -10,8 +10,8 @@ public class DomainTermTests
     {
         var enum1 = Dt(LanguageCode.en);
         var enum2 = Dt(ConsumablesIssue.Item.ToiletPaper);
-        
-        //Assert.Equal(enum1.Value, enum2.Value);
+
+        Assert.Equal((int)LanguageCode.en, (int)ConsumablesIssue.Item.ToiletPaper);
         Assert.False(enum1.Equals(enum2));
     }
 }
