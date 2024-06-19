@@ -81,8 +81,7 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.ClientPort.Mode;
-        var preExistingPortRoles = 
-            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
+        var preExistingPortRoles = await workflowUtils.GetAllClientPortRolesAsync();
         
         var outputs = new List<OutputDto>();
         
