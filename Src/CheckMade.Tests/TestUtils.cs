@@ -75,7 +75,7 @@ internal interface ITestUtils
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
-        OneOf<EnumWithType, Type> domainTerm, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        DomainTerm domainTerm, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
@@ -131,7 +131,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 botCommandEnumCode: botCommandEnumCode));
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
-        OneOf<EnumWithType, Type> domainTerm,
+        DomainTerm domainTerm,
         long userId,
         long chatId,
         DateTime? dateTime) =>
@@ -168,7 +168,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         TlgAttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
-        OneOf<EnumWithType, Type>? domainTerm = null,
+        DomainTerm? domainTerm = null,
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
@@ -180,7 +180,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
-            domainTerm ?? Option<OneOf<EnumWithType, Type>>.None(),
+            domainTerm ?? Option<DomainTerm>.None(),
             controlPromptEnumCode ?? Option<long>.None());
     }
     

@@ -22,11 +22,11 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<OneOf<EnumWithType, Type>>
+        var domainTermSelection = new List<DomainTerm>
         {
-            typeof(CleanlinessIssue),
-            typeof(TechnicalIssue),
-            typeof(ConsumablesIssue)
+            Dt(typeof(CleanlinessIssue)),
+            Dt(typeof(TechnicalIssue)),
+            Dt(typeof(ConsumablesIssue))
         };
 
         var outputWithDomainTerms = new OutputDto
@@ -42,22 +42,22 @@ public class OutputToReplyMarkupConverterTests
                 {
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.IdAndUiByTerm[
-                                typeof(CleanlinessIssue)].uiString.GetFormattedEnglish(),
+                                Dt(typeof(CleanlinessIssue))].uiString.GetFormattedEnglish(),
                         basics.domainGlossary.IdAndUiByTerm[
-                            typeof(CleanlinessIssue)].callbackId), 
+                            Dt(typeof(CleanlinessIssue))].callbackId), 
                         
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.IdAndUiByTerm[
-                            typeof(TechnicalIssue)].uiString.GetFormattedEnglish(),
+                            Dt(typeof(TechnicalIssue))].uiString.GetFormattedEnglish(),
                         basics.domainGlossary.IdAndUiByTerm[
-                            typeof(TechnicalIssue)].callbackId), 
+                            Dt(typeof(TechnicalIssue))].callbackId), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.IdAndUiByTerm[
-                            typeof(ConsumablesIssue)].uiString.GetFormattedEnglish(),
+                            Dt(typeof(ConsumablesIssue))].uiString.GetFormattedEnglish(),
                         basics.domainGlossary.IdAndUiByTerm[
-                            typeof(ConsumablesIssue)].callbackId), 
+                            Dt(typeof(ConsumablesIssue))].callbackId), 
                 ]
             }));
 
@@ -125,9 +125,9 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<OneOf<EnumWithType, Type>>
+        var domainTermSelection = new List<DomainTerm>
         {
-            Et(ConsumablesIssue.Item.PaperTowels)
+            Dt(ConsumablesIssue.Item.PaperTowels)
         };
         
         var promptSelection = new[] 
@@ -148,9 +148,9 @@ public class OutputToReplyMarkupConverterTests
             {
                 InlineKeyboardButton.WithCallbackData(
                     basics.domainGlossary.IdAndUiByTerm[
-                        Et(ConsumablesIssue.Item.PaperTowels)].uiString.GetFormattedEnglish(),
+                        Dt(ConsumablesIssue.Item.PaperTowels)].uiString.GetFormattedEnglish(),
                     basics.domainGlossary.IdAndUiByTerm[
-                        Et(ConsumablesIssue.Item.PaperTowels)].callbackId), 
+                        Dt(ConsumablesIssue.Item.PaperTowels)].callbackId), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),

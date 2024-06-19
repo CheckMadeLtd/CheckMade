@@ -7,30 +7,30 @@ namespace CheckMade.Common.Model.Utils;
 
 public class DomainGlossary
 {
-    private readonly ImmutableDictionary<OneOf<EnumWithType, Type>, (CallbackId callbackId, UiString uiString)>.Builder
+    private readonly ImmutableDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)>.Builder
         _domainGlossaryBuilder =
-            ImmutableDictionary.CreateBuilder<OneOf<EnumWithType, Type>, (CallbackId callbackId, UiString uiString)>();
+            ImmutableDictionary.CreateBuilder<DomainTerm, (CallbackId callbackId, UiString uiString)>();
     
-    public IReadOnlyDictionary<OneOf<EnumWithType, Type>, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
+    public IReadOnlyDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
 
-    public IDictionary<CallbackId, OneOf<EnumWithType, Type>> TermById { get; }
+    public IDictionary<CallbackId, DomainTerm> TermById { get; }
     
     public DomainGlossary()
     {
-        AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
-        AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
+        AddTerm(Dt(typeof(CleanlinessIssue)), "DAWYZP", Ui("🪣 Cleanliness"));
+        AddTerm(Dt(typeof(TechnicalIssue)), "DM46NG", Ui("🔧 Technical"));
+        AddTerm(Dt(typeof(ConsumablesIssue)), "D582QJ", Ui("🗄 Consumables"));
 
-        AddTerm(Et(ConsumablesIssue.Item.ToiletPaper), "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(Et(ConsumablesIssue.Item.PaperTowels), "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(Et(ConsumablesIssue.Item.Soap), "D79AMO", Ui("🧴 Soap"));
+        AddTerm(Dt(ConsumablesIssue.Item.ToiletPaper), "DSTP1N", Ui("🧻 Toilet Paper"));
+        AddTerm(Dt(ConsumablesIssue.Item.PaperTowels), "DOJH85", Ui("🌫️ Paper Towels"));
+        AddTerm(Dt(ConsumablesIssue.Item.Soap), "D79AMO", Ui("🧴 Soap"));
 
-        AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
-        AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
-        AddTerm(typeof(Staff), "D9MRJ9", Ui("🙋 Staff"));
+        AddTerm(Dt(typeof(Toilet)), "D1540N", Ui("🚽 Toilet"));
+        AddTerm(Dt(typeof(Shower)), "D4W2GW", Ui("🚿 Shower"));
+        AddTerm(Dt(typeof(Staff)), "D9MRJ9", Ui("🙋 Staff"));
         
-        AddTerm(Et(LanguageCode.en), "DFVN7W", Ui("🇩🇪 German"));
-        AddTerm(Et(LanguageCode.en), "DCQ4ME", Ui("🇬🇧 English"));
+        // AddTerm(Dt(LanguageCode.en), "DFVN7W", Ui("🇩🇪 German"));
+        // AddTerm(Dt(LanguageCode.en), "DCQ4ME", Ui("🇬🇧 English"));
 
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
@@ -39,6 +39,7 @@ public class DomainGlossary
             kvp => kvp.Key);
     }
 
-    private void AddTerm(OneOf<EnumWithType, Type> term, string idRaw, UiString uiString) =>
+    // ToDo: if this all works now then improve AddTerm so up there I don't need Dt() and Ui() 
+    private void AddTerm(DomainTerm term, string idRaw, UiString uiString) =>
         _domainGlossaryBuilder.Add(term, (new CallbackId(idRaw), uiString));
 }
