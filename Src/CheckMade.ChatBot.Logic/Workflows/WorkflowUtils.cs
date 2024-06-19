@@ -66,6 +66,8 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
+        // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire ClientPort !!!
+        // Otherwise interference in workflow recognition across InteractionModes as already happened. 
         return (await _inputRepo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
