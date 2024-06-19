@@ -62,7 +62,7 @@ internal class UserAuthWorkflow : IWorkflow
         
         return await DetermineCurrentStateAsync(tlgInput.UserId, tlgInput.ChatId, tlgInput.InteractionMode) switch
         {
-            ReadyToReceiveToken => new List<OutputDto> { EnterTokenPrompt },
+            Initial => new List<OutputDto> { EnterTokenPrompt },
             
             ReceivedTokenSubmissionAttempt => IsValidToken(inputText) switch
             {
@@ -111,7 +111,7 @@ internal class UserAuthWorkflow : IWorkflow
 
         return lastTextSubmitted switch
         {
-            null => ReadyToReceiveToken,
+            null => Initial,
             _ => ReceivedTokenSubmissionAttempt,
         };
     }
@@ -204,7 +204,7 @@ internal class UserAuthWorkflow : IWorkflow
     [Flags]
     internal enum States
     {
-        ReadyToReceiveToken = 1,
+        Initial = 1,
         ReceivedTokenSubmissionAttempt = 1<<1,
     }
 }

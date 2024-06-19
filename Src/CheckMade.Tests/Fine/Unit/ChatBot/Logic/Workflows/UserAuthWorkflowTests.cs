@@ -63,7 +63,7 @@ public class UserAuthWorkflowTests
         var actualState = await workflow.DetermineCurrentStateAsync(
             TestUserId_02, TestChatId_03, Operations);
         
-        Assert.Equal(ReadyToReceiveToken, actualState);
+        Assert.Equal(Initial, actualState);
     }
 
     [Fact]
