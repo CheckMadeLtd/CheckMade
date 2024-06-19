@@ -29,8 +29,8 @@ public class DomainGlossary
         AddTerm(typeof(Shower), "D4W2GW", "🚿 Shower");
         AddTerm(typeof(Staff), "D9MRJ9", "🙋 Staff");
         
-        AddTerm(LanguageCode.de, "DFVN7W", "🇩🇪 German");
         AddTerm(LanguageCode.en, "DCQ4ME", "🇬🇧 English");
+        AddTerm(LanguageCode.de, "DFVN7W", "🇩🇪 German");
 
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
