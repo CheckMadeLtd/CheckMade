@@ -81,6 +81,9 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.InteractionMode;
+        var preExistingPortRoles = 
+            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
+        
         var outputs = new List<OutputDto>();
         
         var newPortRoleForOriginatingMode = new TlgClientPortRole(
@@ -89,7 +92,7 @@ internal class UserAuthWorkflow(
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var preExistingActivePortRole = await FirstOrDefaultPreExistingActivePortRoleModeAsync(originatingMode);
+        var preExistingActivePortRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
 
         if (preExistingActivePortRole != null)
         {
@@ -136,8 +139,8 @@ internal class UserAuthWorkflow(
         
         return outputs;
         
-        async Task<TlgClientPortRole?> FirstOrDefaultPreExistingActivePortRoleModeAsync(InteractionMode mode) =>
-        (await portRoleRepo.GetAllAsync()).FirstOrDefault(cpr => 
+        TlgClientPortRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
             cpr.ClientPort.Mode == mode && 
             cpr.Status == DbRecordStatus.Active);
@@ -149,7 +152,7 @@ internal class UserAuthWorkflow(
 
             portRolesToAdd.AddRange(
                 from mode in nonOriginatingModes 
-                where FirstOrDefaultPreExistingActivePortRoleModeAsync(mode) == null
+                where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
                 select newPortRoleForOriginatingMode with
                 {
                     ClientPort = newPortRoleForOriginatingMode.ClientPort with { Mode = mode },
