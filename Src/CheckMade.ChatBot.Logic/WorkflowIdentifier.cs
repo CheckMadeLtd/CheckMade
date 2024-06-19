@@ -23,7 +23,8 @@ internal class WorkflowIdentifier(
         IRoleRepository roleRepo,
         ITlgClientPortRoleRepository portRoleRepo,
         IWorkflowUtils workflowUtils,
-        IUserAuthWorkflow userAuthWorkflow) 
+        IUserAuthWorkflow userAuthWorkflow,
+        ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
@@ -39,7 +40,7 @@ internal class WorkflowIdentifier(
         // ReSharper disable once ConvertIfStatementToReturnStatement
         if (input.Details.BotCommandEnumCode == (int)OperationsBotCommands.Settings)
         {
-            return new LanguageSettingWorkflow(portRoleRepo);
+            return Option<IWorkflow>.Some(languageSettingWorkflow);
         }
         
         return Option<IWorkflow>.None();

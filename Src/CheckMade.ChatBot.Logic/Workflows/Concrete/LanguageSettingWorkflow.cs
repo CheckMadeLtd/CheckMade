@@ -10,7 +10,8 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 }
 
 internal class LanguageSettingWorkflow(
-        ITlgClientPortRoleRepository portRoleRepo) 
+        ITlgClientPortRoleRepository portRoleRepo,
+        IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
     public Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
