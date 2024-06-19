@@ -39,7 +39,7 @@ internal class WorkflowUtils : IWorkflowUtils
     {
         var getPortRolesTask = _portRoleRepo.GetAllAsync();
 
-        // In preperation for other async tasks that can then run in parallel
+        // In preparation for other async tasks that can then run in parallel
 #pragma warning disable CA1842
         await Task.WhenAll(getPortRolesTask);
 #pragma warning restore CA1842
