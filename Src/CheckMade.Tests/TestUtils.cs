@@ -87,9 +87,15 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
-    
-    internal static string GetFirstRawEnglish(Result<IReadOnlyList<OutputDto>> actualOutput) =>
-        actualOutput.GetValueOrThrow()[0].Text.GetValueOrThrow().RawEnglishText;
+
+    internal static string GetFirstRawEnglish(Result<IReadOnlyList<OutputDto>> actualOutput)
+    {
+        var text = actualOutput.GetValueOrThrow()[0].Text.GetValueOrThrow();
+
+        return text.Concatenations.Count > 0
+            ? text.Concatenations.First()!.RawEnglishText
+            : text.RawEnglishText;
+    }
 }
 
 internal class TestUtils(Randomizer randomizer) : ITestUtils
