@@ -6,6 +6,10 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal interface IWorkflowUtils
 {
+    public static readonly UiString WorkflowWasCompleted = UiConcatenate(
+        Ui("Previous workflow was completed. You can continue with a new one: "),
+        IInputProcessor.SeeValidBotCommandsInstruction);
+    
     Task<IReadOnlyList<TlgClientPortRole>> GetAllClientPortRolesAsync();
     Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort);
 }

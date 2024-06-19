@@ -13,7 +13,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 }
 
 internal class LanguageSettingWorkflow(
-        ITlgClientPortRoleRepository portRoleRepo,
+        ITlgClientPortRoleRepository portRoleRepo,    
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
@@ -34,6 +34,8 @@ internal class LanguageSettingWorkflow(
             
             States.ReceivedLanguageSetting => await SetNewLanguageAsync(tlgInput),
             
+            States.Completed => new List<OutputDto>{ new() { Text = IWorkflowUtils.WorkflowWasCompleted }},
+            
             _ => Result<IReadOnlyList<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
@@ -48,7 +50,7 @@ internal class LanguageSettingWorkflow(
         {
             TlgInputType.CommandMessage => States.Initial,
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
-            _ => States.Initial
+            _ => States.Completed
         };
     }
 
@@ -69,6 +71,7 @@ internal class LanguageSettingWorkflow(
     internal enum States
     {
         Initial = 1,
-        ReceivedLanguageSetting = 1<<1
+        ReceivedLanguageSetting = 1<<1,
+        Completed = 1<<2
     }
 }
