@@ -56,7 +56,7 @@ internal class WorkflowUtils : IWorkflowUtils
     {
         var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpr =>
-                cpr.ClientPort == tlgAgent &&
+                cpr.TlgAgent == tlgAgent &&
                 cpr.DeactivationDate.IsSome)
             .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
@@ -64,7 +64,7 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastUsedTlgClientPortRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire ClientPort !!!
+        // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire TlgAgent !!!
         // Otherwise interference in workflow recognition across InteractionModes as already happened. 
         return (await _inputRepo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .Where(i => 

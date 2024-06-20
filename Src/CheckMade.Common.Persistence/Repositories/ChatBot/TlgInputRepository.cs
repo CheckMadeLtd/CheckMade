@@ -30,10 +30,10 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@tlgUserId", (long)tlgInput.ClientPort.UserId },
-                { "@tlgChatId", (long)tlgInput.ClientPort.ChatId },
+                { "@tlgUserId", (long)tlgInput.TlgAgent.UserId },
+                { "@tlgChatId", (long)tlgInput.TlgAgent.ChatId },
                 { "@lastDataMig", 0 },
-                { "@interactionMode", (int)tlgInput.ClientPort.Mode },
+                { "@interactionMode", (int)tlgInput.TlgAgent.Mode },
                 { "@tlgInputType", (int) tlgInput.InputType }
             };
             

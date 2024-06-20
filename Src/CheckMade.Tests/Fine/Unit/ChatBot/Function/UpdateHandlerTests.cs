@@ -326,9 +326,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 TelegramPortChatId = portRoles
                     .First(cpr => 
                         cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpr.ClientPort.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
+                        cpr.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
                         cpr.Status == DbRecordStatus.Active)
-                    .ClientPort.ChatId.Id
+                    .TlgAgent.ChatId.Id
             });
 
         await basics.handler.HandleUpdateAsync(update, mode);

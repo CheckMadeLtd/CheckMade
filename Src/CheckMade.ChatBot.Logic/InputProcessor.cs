@@ -48,7 +48,7 @@ internal class InputProcessor(
                         logger.LogWarning($"""
                                            The workflow '{currentWorkflow.GetValueOrDefault().GetType()}' has returned
                                            this Error Result: '{error}'. Next, the corresponding input parameters.
-                                           UserId: {input.ClientPort.UserId}; ChatId: {input.ClientPort.ChatId}; 
+                                           UserId: {input.TlgAgent.UserId}; ChatId: {input.TlgAgent.ChatId}; 
                                            InputType: {input.InputType}; InteractionMode: {interactionMode};
                                            Date: {input.Details.TlgDate}; 
                                            For more details of input, check database!

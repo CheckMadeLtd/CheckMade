@@ -153,7 +153,7 @@ public class UserAuthWorkflowTests
         var preExistingActivePortRole = (await mockPortRolesRepo.Object.GetAllAsync())
             .First(cpr => 
                 cpr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpr.ClientPort.Mode == tlgAgent.Mode);
+                cpr.TlgAgent.Mode == tlgAgent.Mode);
         
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat. 
@@ -219,7 +219,7 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
         Assert.Equivalent(expectedClientPortRoleAdded.Role, actualClientPortRoleAdded[0].Role);
-        Assert.Equivalent(expectedClientPortRoleAdded.ClientPort, actualClientPortRoleAdded[0].ClientPort);
+        Assert.Equivalent(expectedClientPortRoleAdded.TlgAgent, actualClientPortRoleAdded[0].TlgAgent);
         Assert.Equivalent(expectedClientPortRoleAdded.Status, actualClientPortRoleAdded[0].Status);
     }
 
@@ -273,7 +273,7 @@ public class UserAuthWorkflowTests
 
         for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].ClientPort, actualPortRoles[i].ClientPort);
+            Assert.Equivalent(expectedClientPortRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
             Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
             Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
         }
@@ -333,7 +333,7 @@ public class UserAuthWorkflowTests
 
         for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].ClientPort, actualPortRoles[i].ClientPort);
+            Assert.Equivalent(expectedClientPortRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
             Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
             Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
         }

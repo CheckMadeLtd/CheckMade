@@ -20,12 +20,12 @@ internal class WorkflowIdentifier(
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
-        if (!IsUserAuthenticated(input.ClientPort))
+        if (!IsUserAuthenticated(input.TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(input.ClientPort);
+        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(input.TlgAgent);
         var lastBotCommand = GetLastBotCommand(allCurrentInputs);
 
         return lastBotCommand.Match(
@@ -41,8 +41,8 @@ internal class WorkflowIdentifier(
     private bool IsUserAuthenticated(TlgAgent inputPort) => 
         workflowUtils.GetAllClientPortRoles()
         .FirstOrDefault(cpr => 
-            cpr.ClientPort.ChatId == inputPort.ChatId && 
-            cpr.ClientPort.Mode == inputPort.Mode && 
+            cpr.TlgAgent.ChatId == inputPort.ChatId && 
+            cpr.TlgAgent.Mode == inputPort.Mode && 
             cpr.Status == DbRecordStatus.Active) 
         != null;
 

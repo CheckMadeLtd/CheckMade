@@ -48,9 +48,9 @@ internal static class OutputSender
                     logicalPort => tlgClientPortRoles
                         .First(cpr => 
                             cpr.Role == logicalPort.Role &&
-                            cpr.ClientPort.Mode == outputMode &&
+                            cpr.TlgAgent.Mode == outputMode &&
                             cpr.Status == DbRecordStatus.Active)
-                        .ClientPort.ChatId.Id,
+                        .TlgAgent.ChatId.Id,
                     () => currentlyReceivingChatId);
                     
                 switch (output)

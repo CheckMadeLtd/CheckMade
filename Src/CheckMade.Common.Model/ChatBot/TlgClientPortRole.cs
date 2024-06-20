@@ -5,7 +5,7 @@ namespace CheckMade.Common.Model.ChatBot;
 
 public record TlgClientPortRole(
     Role Role,
-    TlgAgent ClientPort,
+    TlgAgent TlgAgent,
     DateTime ActivationDate,
     Option<DateTime> DeactivationDate,
     DbRecordStatus Status = DbRecordStatus.Active);

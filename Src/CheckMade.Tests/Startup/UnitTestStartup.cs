@@ -98,7 +98,7 @@ public class UnitTestStartup : TestStartupBase
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        // Group: same Role & ClientPort - all three InteractionModes
+        // Group: same Role & TlgAgent - all three InteractionModes
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Operations),

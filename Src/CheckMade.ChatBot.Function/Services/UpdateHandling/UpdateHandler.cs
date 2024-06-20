@@ -129,9 +129,9 @@ public class UpdateHandler(
     {
         var clientPortRole = tlgClientPortRoles
             .FirstOrDefault(cpr =>
-                cpr.ClientPort.UserId.Id == currentUserId &&
-                cpr.ClientPort.ChatId.Id == currentChatId &&
-                cpr.ClientPort.Mode == currentMode);
+                cpr.TlgAgent.UserId.Id == currentUserId &&
+                cpr.TlgAgent.ChatId.Id == currentChatId &&
+                cpr.TlgAgent.Mode == currentMode);
 
         if (clientPortRole != null)
         {

@@ -33,11 +33,11 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
             var normalParameters = new Dictionary<string, object>
             {
                 { "@token", cpr.Role.Token },
-                { "@tlgUserId", (long)cpr.ClientPort.UserId },
-                { "@tlgChatId", (long)cpr.ClientPort.ChatId },
+                { "@tlgUserId", (long)cpr.TlgAgent.UserId },
+                { "@tlgChatId", (long)cpr.TlgAgent.ChatId },
                 { "@activationDate", cpr.ActivationDate },
                 { "@status", (int)cpr.Status },
-                { "@mode", (int)cpr.ClientPort.Mode }
+                { "@mode", (int)cpr.TlgAgent.Mode }
             };
 
             if (cpr.DeactivationDate.IsSome)
@@ -125,9 +125,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         {
             { "@status", (int)newStatus },
             { "@token", portRole.Role.Token },
-            { "@tlgUserId", (long)portRole.ClientPort.UserId },
-            { "@tlgChatId", (long)portRole.ClientPort.ChatId },
-            { "@mode", (int)portRole.ClientPort.Mode }
+            { "@tlgUserId", (long)portRole.TlgAgent.UserId },
+            { "@tlgChatId", (long)portRole.TlgAgent.ChatId },
+            { "@mode", (int)portRole.TlgAgent.Mode }
         };
 
         if (newStatus != DbRecordStatus.Active)
@@ -151,9 +151,9 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         var normalParameters = new Dictionary<string, object>
         {
             { "@token", portRole.Role.Token },
-            { "tlgUserId", (long)portRole.ClientPort.UserId },
-            { "tlgChatId", (long)portRole.ClientPort.ChatId },
-            { "@mode", (int)portRole.ClientPort.Mode }
+            { "tlgUserId", (long)portRole.TlgAgent.UserId },
+            { "tlgChatId", (long)portRole.TlgAgent.ChatId },
+            { "@mode", (int)portRole.TlgAgent.Mode }
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

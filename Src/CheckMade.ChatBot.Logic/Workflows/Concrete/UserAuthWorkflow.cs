@@ -31,7 +31,7 @@ internal class UserAuthWorkflow(
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        return await DetermineCurrentStateAsync(tlgInput.ClientPort) switch
+        return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
         {
             Initial => new List<OutputDto> { EnterTokenPrompt },
             
@@ -80,14 +80,14 @@ internal class UserAuthWorkflow(
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
-        var originatingMode = tokenInputAttempt.ClientPort.Mode;
+        var originatingMode = tokenInputAttempt.TlgAgent.Mode;
         var preExistingPortRoles = workflowUtils.GetAllClientPortRoles();
         
         var outputs = new List<OutputDto>();
         
         var newPortRoleForOriginatingMode = new TlgClientPortRole(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
-            tokenInputAttempt.ClientPort with { Mode = originatingMode },
+            tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
         
@@ -128,7 +128,7 @@ internal class UserAuthWorkflow(
         var portRolesToAdd = new List<TlgClientPortRole> { newPortRoleForOriginatingMode };
         
         var isInputTlgClientPortPrivateChat = 
-            tokenInputAttempt.ClientPort.ChatId == tokenInputAttempt.ClientPort.UserId;
+            tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
 
         if (isInputTlgClientPortPrivateChat)
         {
@@ -142,7 +142,7 @@ internal class UserAuthWorkflow(
         TlgClientPortRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
         preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
-            cpr.ClientPort.Mode == mode && 
+            cpr.TlgAgent.Mode == mode && 
             cpr.Status == DbRecordStatus.Active);
 
         void AddPortRolesForOtherNonOriginatingAndVirginModes()
@@ -155,7 +155,7 @@ internal class UserAuthWorkflow(
                 where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
                 select newPortRoleForOriginatingMode with
                 {
-                    ClientPort = newPortRoleForOriginatingMode.ClientPort with { Mode = mode },
+                    TlgAgent = newPortRoleForOriginatingMode.TlgAgent with { Mode = mode },
                     ActivationDate = DateTime.UtcNow
                 });
         }

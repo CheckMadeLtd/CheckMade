@@ -19,7 +19,7 @@ internal class LanguageSettingWorkflow(
 {
     public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
-        return await DetermineCurrentStateAsync(tlgInput.ClientPort) switch
+        return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
         {
             States.Initial => new List<OutputDto>
             {

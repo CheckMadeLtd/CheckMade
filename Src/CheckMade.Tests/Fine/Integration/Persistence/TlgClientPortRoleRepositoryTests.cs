@@ -33,7 +33,7 @@ public class TlgClientPortRoleRepositoryTests
         await repo.HardDeleteAsync(inputPortRole);
         
         Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
-        Assert.Equivalent(inputPortRole.ClientPort, retrieved.ClientPort);
+        Assert.Equivalent(inputPortRole.TlgAgent, retrieved.TlgAgent);
     }
 
     [Theory]
@@ -61,7 +61,7 @@ public class TlgClientPortRoleRepositoryTests
         
         await repo.HardDeleteAsync(preExistingActivePortRole);
         
-        Assert.Equivalent(preExistingActivePortRole.ClientPort, retrievedUpdated!.ClientPort);
+        Assert.Equivalent(preExistingActivePortRole.TlgAgent, retrievedUpdated!.TlgAgent);
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }
