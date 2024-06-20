@@ -217,9 +217,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             CallbackQuery = new CallbackQuery
             {
                 Data = callbackQueryData,
+                From = new TelegramUser { Id = Randomizer.GenerateRandomLong() }, // The User
                 Message = new Message
                 {
-                    From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
+                    From = new TelegramUser { Id = Randomizer.GenerateRandomLong() }, // The Bot
                     Text = "The bot's original prompt",
                     Date = DateTime.UtcNow,
                     Chat = new Chat { Id = chatId },
