@@ -11,10 +11,10 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper) 
     : BaseRepository(dbHelper), ITlgAgentRoleBindingsRepository
 {
-    public async Task AddAsync(TlgAgentRoleBind portRoleBind) =>
-        await AddAsync(new List<TlgAgentRoleBind> { portRoleBind });
+    public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
+        await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
 
-    public async Task AddAsync(IEnumerable<TlgAgentRoleBind> portRole)
+    public async Task AddAsync(IEnumerable<TlgAgentRoleBind> tlgAgentRole)
     {
         const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
@@ -28,7 +28,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = portRole.Select(cpr =>
+        var commands = tlgAgentRole.Select(cpr =>
         {
             var normalParameters = new Dictionary<string, object>
             {
@@ -112,7 +112,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         });
     }
 
-    public async Task UpdateStatusAsync(TlgAgentRoleBind portRoleBind, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +
@@ -124,10 +124,10 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         var normalParameters = new Dictionary<string, object>
         {
             { "@status", (int)newStatus },
-            { "@token", portRoleBind.Role.Token },
-            { "@tlgUserId", (long)portRoleBind.TlgAgent.UserId },
-            { "@tlgChatId", (long)portRoleBind.TlgAgent.ChatId },
-            { "@mode", (int)portRoleBind.TlgAgent.Mode }
+            { "@token", tlgAgentRoleBind.Role.Token },
+            { "@tlgUserId", (long)tlgAgentRoleBind.TlgAgent.UserId },
+            { "@tlgChatId", (long)tlgAgentRoleBind.TlgAgent.ChatId },
+            { "@mode", (int)tlgAgentRoleBind.TlgAgent.Mode }
         };
 
         if (newStatus != DbRecordStatus.Active)
@@ -140,7 +140,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
     
-    public async Task HardDeleteAsync(TlgAgentRoleBind portRoleBind)
+    public async Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind)
     {
         const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
@@ -150,10 +150,10 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         
         var normalParameters = new Dictionary<string, object>
         {
-            { "@token", portRoleBind.Role.Token },
-            { "tlgUserId", (long)portRoleBind.TlgAgent.UserId },
-            { "tlgChatId", (long)portRoleBind.TlgAgent.ChatId },
-            { "@mode", (int)portRoleBind.TlgAgent.Mode }
+            { "@token", tlgAgentRoleBind.Role.Token },
+            { "tlgUserId", (long)tlgAgentRoleBind.TlgAgent.UserId },
+            { "tlgChatId", (long)tlgAgentRoleBind.TlgAgent.ChatId },
+            { "@mode", (int)tlgAgentRoleBind.TlgAgent.Mode }
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

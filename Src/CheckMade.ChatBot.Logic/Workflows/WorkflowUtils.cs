@@ -17,30 +17,30 @@ internal interface IWorkflowUtils
 internal class WorkflowUtils : IWorkflowUtils
 {
     private readonly ITlgInputRepository _inputRepo;
-    private readonly ITlgAgentRoleBindingsRepository _portRoleBindingsRepo;
+    private readonly ITlgAgentRoleBindingsRepository _tlgAgentRoleBindingsRepo;
     
     private IReadOnlyList<TlgAgentRoleBind> _preExistingPortRoles = new List<TlgAgentRoleBind>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
-        ITlgAgentRoleBindingsRepository portRoleBindingsRepo)
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     {
         _inputRepo = inputRepo;
-        _portRoleBindingsRepo = portRoleBindingsRepo;
+        _tlgAgentRoleBindingsRepo = tlgAgentRoleBindingsRepo;
     }
 
     public static async Task<WorkflowUtils> CreateAsync(
         ITlgInputRepository inputRepo,
-        ITlgAgentRoleBindingsRepository portRoleBindingsRepo)
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     {
-        var workflowUtils = new WorkflowUtils(inputRepo, portRoleBindingsRepo);
+        var workflowUtils = new WorkflowUtils(inputRepo, tlgAgentRoleBindingsRepo);
         await workflowUtils.InitAsync();
         return workflowUtils;
     }
     
     private async Task InitAsync()
     {
-        var getPortRolesTask = _portRoleBindingsRepo.GetAllAsync();
+        var getPortRolesTask = _tlgAgentRoleBindingsRepo.GetAllAsync();
 
         // In preparation for other async tasks that can then run in parallel
 #pragma warning disable CA1842

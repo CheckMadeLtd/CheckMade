@@ -5,9 +5,9 @@ namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
 public interface ITlgAgentRoleBindingsRepository
 {
-    Task AddAsync(TlgAgentRoleBind portRoleBind);
-    Task AddAsync(IEnumerable<TlgAgentRoleBind> portRole);
+    Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind);
+    Task AddAsync(IEnumerable<TlgAgentRoleBind> tlgAgentRole);
     Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync();
-    Task UpdateStatusAsync(TlgAgentRoleBind portRoleBind, DbRecordStatus newStatus);
-    Task HardDeleteAsync(TlgAgentRoleBind portRoleBind);
+    Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus);
+    Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind);
 }

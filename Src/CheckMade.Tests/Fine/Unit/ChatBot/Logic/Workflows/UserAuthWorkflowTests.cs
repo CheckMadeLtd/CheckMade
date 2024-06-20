@@ -210,8 +210,8 @@ public class UserAuthWorkflowTests
         mockPortRolesRepo
             .Setup(x => 
                 x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
-            .Callback<IEnumerable<TlgAgentRoleBind>>(portRole => 
-                actualTlgAgentRoleAdded = portRole.ToList());
+            .Callback<IEnumerable<TlgAgentRoleBind>>(tlgAgentRole => 
+                actualTlgAgentRoleAdded = tlgAgentRole.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
@@ -262,7 +262,7 @@ public class UserAuthWorkflowTests
             .Setup(x =>
                 x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
             .Callback<IEnumerable<TlgAgentRoleBind>>(
-                portRoles => actualPortRoles = portRoles.ToList());
+                tlgAgentRoles => actualPortRoles = tlgAgentRoles.ToList());
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
@@ -322,7 +322,7 @@ public class UserAuthWorkflowTests
             .Setup(x =>
                 x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
             .Callback<IEnumerable<TlgAgentRoleBind>>(
-                portRoles => actualPortRoles = portRoles.ToList());
+                tlgAgentRoles => actualPortRoles = tlgAgentRoles.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 

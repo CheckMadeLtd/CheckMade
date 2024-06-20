@@ -18,7 +18,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 
 internal class UserAuthWorkflow(
         IRoleRepository roleRepo,
-        ITlgAgentRoleBindingsRepository portRoleBindingsRepo,
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
         IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
 {
@@ -95,7 +95,7 @@ internal class UserAuthWorkflow(
 
         if (preExistingActivePortRole != null)
         {
-            await portRoleBindingsRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            await tlgAgentRoleBindingsRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -125,7 +125,7 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var portRolesToAdd = new List<TlgAgentRoleBind> { newPortRoleForOriginatingMode };
+        var tlgAgentRolesToAdd = new List<TlgAgentRoleBind> { newPortRoleForOriginatingMode };
         
         var isInputTlgAgentPrivateChat = 
             tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
@@ -135,7 +135,7 @@ internal class UserAuthWorkflow(
             AddPortRolesForOtherNonOriginatingAndVirginModes();
         }
         
-        await portRoleBindingsRepo.AddAsync(portRolesToAdd);
+        await tlgAgentRoleBindingsRepo.AddAsync(tlgAgentRolesToAdd);
         
         return outputs;
         
@@ -150,7 +150,7 @@ internal class UserAuthWorkflow(
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
             var nonOriginatingModes = allModes.Except(new [] { originatingMode });
 
-            portRolesToAdd.AddRange(
+            tlgAgentRolesToAdd.AddRange(
                 from mode in nonOriginatingModes 
                 where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
                 select newPortRoleForOriginatingMode with

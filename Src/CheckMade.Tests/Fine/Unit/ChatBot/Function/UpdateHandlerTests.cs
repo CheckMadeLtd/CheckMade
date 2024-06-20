@@ -316,14 +316,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
-        var portRoles = await basics.portRoleTask;
+        var tlgAgentRoles = await basics.tlgAgentRoleTask;
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TelegramPortChatId = portRoles
+                TelegramPortChatId = tlgAgentRoles
                     .First(cpr => 
                         cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
                         cpr.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
@@ -520,7 +520,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        Task<IEnumerable<TlgAgentRoleBind>> portRoleTask)
+        Task<IEnumerable<TlgAgentRoleBind>> tlgAgentRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
