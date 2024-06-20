@@ -29,7 +29,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage() });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -60,7 +60,7 @@ public class UserAuthWorkflowTests
             new DateTime(1999, 01, 05));
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -85,7 +85,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -114,7 +114,7 @@ public class UserAuthWorkflowTests
             chatId: tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -143,7 +143,7 @@ public class UserAuthWorkflowTests
             chatId: tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRole });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -188,7 +188,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -240,7 +240,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsInspector2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -297,7 +297,7 @@ public class UserAuthWorkflowTests
             text: SanitaryOpsEngineer2.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
@@ -356,7 +356,7 @@ public class UserAuthWorkflowTests
         var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { badTokenInput });
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);

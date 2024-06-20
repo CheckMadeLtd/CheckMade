@@ -46,7 +46,7 @@ public class WorkflowIdentifierTests
             tlgAgent.UserId, tlgAgent.ChatId);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 inputWithSettingsBotCommand

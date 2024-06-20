@@ -35,10 +35,10 @@ public class LanguageSettingWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
                 utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
             });
 
@@ -62,7 +62,7 @@ public class LanguageSettingWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
@@ -93,7 +93,7 @@ public class LanguageSettingWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputCommandMessage(
@@ -128,7 +128,7 @@ public class LanguageSettingWorkflowTests
             tlgAgent.UserId, tlgAgent.ChatId); 
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
@@ -166,7 +166,7 @@ public class LanguageSettingWorkflowTests
             tlgAgent.UserId, tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 

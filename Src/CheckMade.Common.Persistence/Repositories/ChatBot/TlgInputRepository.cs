@@ -50,21 +50,31 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         await ExecuteTransactionAsync(commands);
     }
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId, TlgChatId chatId) =>
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
         await GetAllExecuteAsync(
-            "SELECT * FROM tlg_inputs WHERE user_id = @tlgUserId AND chat_id = @tlgChatId",
-            userId, chatId);
+            "SELECT * FROM tlg_inputs " +
+            "WHERE user_id = @tlgUserId",
+            userId, Option<TlgChatId>.None(), Option<InteractionMode>.None());
+
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent) =>
+        await GetAllExecuteAsync(
+            "SELECT * FROM tlg_inputs " +
+            "WHERE user_id = @tlgUserId " +
+            "AND chat_id = @tlgChatId " +
+            "AND interaction_mode = @mode",
+            tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode);
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
-        string rawQuery, Option<TlgUserId> userId, Option<TlgChatId> chatId)
+        string rawQuery, Option<TlgUserId> userId, Option<TlgChatId> chatId, Option<InteractionMode> mode)
     {
         var normalParameters = new Dictionary<string, object>();
         
         if (userId.IsSome)
             normalParameters.Add("@tlgUserId", (long) userId.GetValueOrThrow());
-
         if (chatId.IsSome)
             normalParameters.Add("@tlgChatId", (long) chatId.GetValueOrThrow());
+        if (mode.IsSome)
+            normalParameters.Add("@mode", (int) mode.GetValueOrThrow());
 
         var command = GenerateCommand(rawQuery, normalParameters);
 

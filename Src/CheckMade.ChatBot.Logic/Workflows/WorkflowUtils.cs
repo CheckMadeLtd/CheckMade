@@ -64,9 +64,7 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastUsedTlgAgentRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire TlgAgent !!!
-        // Otherwise interference in workflow recognition across InteractionModes as already happened. 
-        return (await _inputRepo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+        return (await _inputRepo.GetAllAsync(tlgAgent))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())

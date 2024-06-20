@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using Moq;
 
@@ -16,9 +17,14 @@ internal class MockTlgInputRepository(IMock<ITlgInputRepository> mockInputRepo) 
         await mockInputRepo.Object.AddAsync(tlgInputs);
     }
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId, TlgChatId chatId)
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId)
     {
-        return await mockInputRepo.Object.GetAllAsync(userId, chatId);
+        return await mockInputRepo.Object.GetAllAsync(userId);
+    }
+
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
+    {
+        return await mockInputRepo.Object.GetAllAsync(tlgAgent);
     }
 
     public async Task HardDeleteAllAsync(TlgUserId userId)
