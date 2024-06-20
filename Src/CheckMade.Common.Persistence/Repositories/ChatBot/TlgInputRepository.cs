@@ -53,7 +53,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
         await GetAllExecuteAsync(
             "SELECT * FROM tlg_inputs " +
-            "WHERE user_id = @tlgUserId",
+            "WHERE user_id = @tlgUserId " +
+            "ORDER BY id",
             userId, Option<TlgChatId>.None(), Option<InteractionMode>.None());
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent) =>
@@ -61,7 +62,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
             "SELECT * FROM tlg_inputs " +
             "WHERE user_id = @tlgUserId " +
             "AND chat_id = @tlgChatId " +
-            "AND interaction_mode = @mode",
+            "AND interaction_mode = @mode " +
+            "ORDER BY id",
             tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode);
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
