@@ -50,11 +50,6 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         await ExecuteTransactionAsync(commands);
     }
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync() =>
-        await GetAllExecuteAsync(
-            "SELECT * FROM tlg_inputs",
-            Option<TlgUserId>.None(), Option<TlgChatId>.None());
-
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId, TlgChatId chatId) =>
         await GetAllExecuteAsync(
             "SELECT * FROM tlg_inputs WHERE user_id = @tlgUserId AND chat_id = @tlgChatId",
