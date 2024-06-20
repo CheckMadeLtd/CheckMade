@@ -67,6 +67,10 @@ public class UnitTestStartup : TestStartupBase
     private void RegisterPersistenceMocks()
     {
         Services.AddScoped<IRoleRepository, MockRoleRepository>();
+
+        var mockUserRepo = new Mock<IUserRepository>();
+        Services.AddScoped<IUserRepository>(_ => mockUserRepo.Object);
+        Services.AddScoped<Mock<IUserRepository>>(_ => mockUserRepo);
         
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
