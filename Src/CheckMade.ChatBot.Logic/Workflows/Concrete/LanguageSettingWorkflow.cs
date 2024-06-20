@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync(TlgAgent clientPort);
+    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync(TlgAgent tlgAgent);
 }
 
 internal class LanguageSettingWorkflow(
@@ -41,9 +41,9 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    public async Task<States> DetermineCurrentStateAsync(TlgAgent clientPort)
+    public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(clientPort);
+        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(tlgAgent);
         var lastInput = allCurrentInputs[^1];
 
         var secondToLastInput = allCurrentInputs.Count > 1

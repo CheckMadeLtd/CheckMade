@@ -11,7 +11,7 @@ internal interface IWorkflowUtils
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles();
-    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent clientPort);
+    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
@@ -52,11 +52,11 @@ internal class WorkflowUtils : IWorkflowUtils
 
     public IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles() => _preExistingPortRoles;
 
-    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent clientPort)
+    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
         var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpr =>
-                cpr.ClientPort == clientPort &&
+                cpr.ClientPort == tlgAgent &&
                 cpr.DeactivationDate.IsSome)
             .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
@@ -66,7 +66,7 @@ internal class WorkflowUtils : IWorkflowUtils
         
         // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire ClientPort !!!
         // Otherwise interference in workflow recognition across InteractionModes as already happened. 
-        return (await _inputRepo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+        return (await _inputRepo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())

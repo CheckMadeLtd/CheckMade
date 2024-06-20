@@ -31,22 +31,22 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
-                utils.GetValidTlgInputCommandMessage(clientPort.Mode, botCommand)
+                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
         
         Assert.Equal(States.Initial, actualState);
     }
@@ -58,26 +58,26 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId),
+                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 utils.GetValidTlgInputCommandMessage(
-                    clientPort.Mode, (int)OperationsBotCommands.Settings,
-                clientPort.UserId, clientPort.ChatId),
+                    tlgAgent.Mode, (int)OperationsBotCommands.Settings,
+                tlgAgent.UserId, tlgAgent.ChatId),
                 utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
-                    clientPort.UserId, clientPort.ChatId)
+                    tlgAgent.UserId, tlgAgent.ChatId)
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
         
         Assert.Equal(States.ReceivedLanguageSetting, actualState);
     }
@@ -89,26 +89,26 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputCommandMessage(
-                    clientPort.Mode, (int)OperationsBotCommands.Settings,
-                    clientPort.UserId, clientPort.ChatId),
+                    tlgAgent.Mode, (int)OperationsBotCommands.Settings,
+                    tlgAgent.UserId, tlgAgent.ChatId),
                 utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
-                    clientPort.UserId, clientPort.ChatId),
-                utils.GetValidTlgInputTextMessage(userId: clientPort.UserId, chatId: clientPort.ChatId)
+                    tlgAgent.UserId, tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId)
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(clientPort);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
         
         Assert.Equal(States.Completed, actualState);
     }
@@ -120,19 +120,19 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
             Operations, (int)OperationsBotCommands.Settings, 
-            clientPort.UserId, clientPort.ChatId); 
+            tlgAgent.UserId, tlgAgent.ChatId); 
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                    userId: clientPort.UserId, chatId: clientPort.ChatId),
+                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 inputSettingsCommand
             });
 
@@ -155,25 +155,25 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
             Operations, (int)OperationsBotCommands.Settings, 
-            clientPort.UserId, clientPort.ChatId); 
+            tlgAgent.UserId, tlgAgent.ChatId); 
         var languageSettingInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
             Dt(languageCode), 
-            clientPort.UserId, clientPort.ChatId);
+            tlgAgent.UserId, tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                    userId: clientPort.UserId, chatId: clientPort.ChatId),
+                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 inputSettingsCommand,
                 // utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                //     userId: clientPort.UserId, chatId: clientPort.ChatId),
+                //     userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 languageSettingInput
             });
 

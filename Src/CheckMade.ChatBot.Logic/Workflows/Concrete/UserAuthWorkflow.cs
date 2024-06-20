@@ -13,7 +13,7 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgAgent clientPort);
+    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgAgent tlgAgent);
 }
 
 internal class UserAuthWorkflow(
@@ -59,9 +59,9 @@ internal class UserAuthWorkflow(
         };
     }
     
-    public async Task<States> DetermineCurrentStateAsync(TlgAgent clientPort)
+    public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allRelevantInputs = await workflowUtils.GetAllCurrentInputsAsync(clientPort);
+        var allRelevantInputs = await workflowUtils.GetAllCurrentInputsAsync(tlgAgent);
         
         var lastTextSubmitted = allRelevantInputs
             .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);

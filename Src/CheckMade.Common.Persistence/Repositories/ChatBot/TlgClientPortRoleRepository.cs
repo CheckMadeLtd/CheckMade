@@ -93,7 +93,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                 user,
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
                     
-            var clientPort = new TlgAgent(
+            var tlgAgent = new TlgAgent(
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_chat_id")),
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode")));
@@ -108,7 +108,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                     
             var status = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status"));
 
-            return new TlgClientPortRole(role, clientPort, activationDate, deactivationDate, status);
+            return new TlgClientPortRole(role, tlgAgent, activationDate, deactivationDate, status);
         });
     }
 

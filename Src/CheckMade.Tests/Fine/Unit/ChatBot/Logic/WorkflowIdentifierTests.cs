@@ -39,14 +39,14 @@ public class WorkflowIdentifierTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.Settings,
-            clientPort.UserId, clientPort.ChatId);
+            tlgAgent.UserId, tlgAgent.ChatId);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(clientPort.UserId, clientPort.ChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
             .ReturnsAsync(new List<TlgInput>
             {
                 inputWithSettingsBotCommand
