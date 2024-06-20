@@ -75,7 +75,7 @@ public class UnitTestStartup : TestStartupBase
 
         mockTlgAgentRoleRepo
             .Setup(cpr => cpr.GetAllAsync())
-            .ReturnsAsync(GetTestingPortRoles());
+            .ReturnsAsync(GetTestingTlgAgentRoles());
 
         Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
         Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
@@ -87,7 +87,7 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
     
-    private static ImmutableArray<TlgAgentRoleBind> GetTestingPortRoles()
+    private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoles()
     {
         var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
 
@@ -139,7 +139,7 @@ public class UnitTestStartup : TestStartupBase
         
         // #2
         
-        // Used in Unit Test 'GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
+        // Used in Unit Test 'GetNextOutputAsync_CreatesTlgAgentRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
         builder.Add(new TlgAgentRoleBind(
             ITestUtils.SanitaryOpsEngineer2, 
             new TlgAgent(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Communications),
@@ -151,7 +151,7 @@ public class UnitTestStartup : TestStartupBase
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // No TlgAgentRoleBind for role 'Inspector2' on purpose for Unit Test, e.g.
-        // GetNextOutputAsync_CreatesPortRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
+        // GetNextOutputAsync_CreatesTlgAgentRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
 
         return builder.ToImmutable();
     }

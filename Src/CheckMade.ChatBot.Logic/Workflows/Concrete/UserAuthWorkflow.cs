@@ -81,21 +81,21 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingPortRoles = workflowUtils.GetAllTlgAgentRoles();
+        var preExistingTlgAgentRoles = workflowUtils.GetAllTlgAgentRoles();
         
         var outputs = new List<OutputDto>();
         
-        var newPortRoleForOriginatingMode = new TlgAgentRoleBind(
+        var newTlgAgentRoleForOriginatingMode = new TlgAgentRoleBind(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var preExistingActivePortRole = FirstOrDefaultPreExistingActivePortRoleMode(originatingMode);
+        var preExistingActiveTlgAgentRole = FirstOrDefaultPreExistingActiveTlgAgentRoleMode(originatingMode);
 
-        if (preExistingActivePortRole != null)
+        if (preExistingActiveTlgAgentRole != null)
         {
-            await tlgAgentRoleBindingsRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            await tlgAgentRoleBindingsRepo.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -104,7 +104,7 @@ internal class UserAuthWorkflow(
                           This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                           """, 
                     originatingMode,
-                    newPortRoleForOriginatingMode.Role.RoleType,
+                    newTlgAgentRoleForOriginatingMode.Role.RoleType,
                     "Placeholder LiveEvent")
             });
         }
@@ -115,8 +115,8 @@ internal class UserAuthWorkflow(
                       {0}, welcome to the CheckMade ChatBot!
                       You have successfully authenticated as a {1} at live-event {2}.
                       """, 
-                newPortRoleForOriginatingMode.Role.User.FirstName,
-                newPortRoleForOriginatingMode.Role.RoleType,
+                newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
+                newTlgAgentRoleForOriginatingMode.Role.RoleType,
                 "Placeholder LiveEvent")
         });
 
@@ -125,37 +125,37 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var tlgAgentRolesToAdd = new List<TlgAgentRoleBind> { newPortRoleForOriginatingMode };
+        var tlgAgentRolesToAdd = new List<TlgAgentRoleBind> { newTlgAgentRoleForOriginatingMode };
         
         var isInputTlgAgentPrivateChat = 
             tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
 
         if (isInputTlgAgentPrivateChat)
         {
-            AddPortRolesForOtherNonOriginatingAndVirginModes();
+            AddTlgAgentRolesForOtherNonOriginatingAndVirginModes();
         }
         
         await tlgAgentRoleBindingsRepo.AddAsync(tlgAgentRolesToAdd);
         
         return outputs;
         
-        TlgAgentRoleBind? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
-        preExistingPortRoles.FirstOrDefault(cpr => 
+        TlgAgentRoleBind? FirstOrDefaultPreExistingActiveTlgAgentRoleMode(InteractionMode mode) =>
+        preExistingTlgAgentRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
             cpr.TlgAgent.Mode == mode && 
             cpr.Status == DbRecordStatus.Active);
 
-        void AddPortRolesForOtherNonOriginatingAndVirginModes()
+        void AddTlgAgentRolesForOtherNonOriginatingAndVirginModes()
         {
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
             var nonOriginatingModes = allModes.Except(new [] { originatingMode });
 
             tlgAgentRolesToAdd.AddRange(
                 from mode in nonOriginatingModes 
-                where FirstOrDefaultPreExistingActivePortRoleMode(mode) == null
-                select newPortRoleForOriginatingMode with
+                where FirstOrDefaultPreExistingActiveTlgAgentRoleMode(mode) == null
+                select newTlgAgentRoleForOriginatingMode with
                 {
-                    TlgAgent = newPortRoleForOriginatingMode.TlgAgent with { Mode = mode },
+                    TlgAgent = newTlgAgentRoleForOriginatingMode.TlgAgent with { Mode = mode },
                     ActivationDate = DateTime.UtcNow
                 });
         }

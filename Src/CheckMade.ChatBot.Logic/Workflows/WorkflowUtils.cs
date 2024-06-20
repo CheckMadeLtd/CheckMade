@@ -19,7 +19,7 @@ internal class WorkflowUtils : IWorkflowUtils
     private readonly ITlgInputRepository _inputRepo;
     private readonly ITlgAgentRoleBindingsRepository _tlgAgentRoleBindingsRepo;
     
-    private IReadOnlyList<TlgAgentRoleBind> _preExistingPortRoles = new List<TlgAgentRoleBind>();
+    private IReadOnlyList<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
@@ -40,21 +40,21 @@ internal class WorkflowUtils : IWorkflowUtils
     
     private async Task InitAsync()
     {
-        var getPortRolesTask = _tlgAgentRoleBindingsRepo.GetAllAsync();
+        var getTlgAgentRolesTask = _tlgAgentRoleBindingsRepo.GetAllAsync();
 
         // In preparation for other async tasks that can then run in parallel
 #pragma warning disable CA1842
-        await Task.WhenAll(getPortRolesTask);
+        await Task.WhenAll(getTlgAgentRolesTask);
 #pragma warning restore CA1842
         
-        _preExistingPortRoles = getPortRolesTask.Result.ToList().AsReadOnly();
+        _preExistingTlgAgentRoles = getTlgAgentRolesTask.Result.ToList().AsReadOnly();
     }
 
-    public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingPortRoles;
+    public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingTlgAgentRoles;
 
     public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
-        var lastUsedTlgAgentRole = _preExistingPortRoles
+        var lastUsedTlgAgentRole = _preExistingTlgAgentRoles
             .Where(cpr =>
                 cpr.TlgAgent == tlgAgent &&
                 cpr.DeactivationDate.IsSome)
