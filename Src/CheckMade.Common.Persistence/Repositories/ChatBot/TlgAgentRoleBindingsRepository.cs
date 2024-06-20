@@ -64,14 +64,14 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "r.token AS role_token, " +
                                 "r.role_type AS role_type, " +
                                 "r.status AS role_status, " +
-                                "tcpr.tlg_user_id AS tcpr_tlg_user_id, " +
-                                "tcpr.tlg_chat_id AS tcpr_tlg_chat_id, " +
-                                "tcpr.interaction_mode AS tcpr_interaction_mode, " +
-                                "tcpr.activation_date AS tcpr_activation_date, " +
-                                "tcpr.deactivation_date AS tcpr_deactivation_date, " +
-                                "tcpr.status AS tcpr_status " +
-                                "FROM tlg_agent_role_bindings tcpr " +
-                                "INNER JOIN roles r on tcpr.role_id = r.id " +
+                                "tarb.tlg_user_id AS tcpr_tlg_user_id, " +
+                                "tarb.tlg_chat_id AS tcpr_tlg_chat_id, " +
+                                "tarb.interaction_mode AS tcpr_interaction_mode, " +
+                                "tarb.activation_date AS tcpr_activation_date, " +
+                                "tarb.deactivation_date AS tcpr_deactivation_date, " +
+                                "tarb.status AS tcpr_status " +
+                                "FROM tlg_agent_role_bindings tarb " +
+                                "INNER JOIN roles r on tarb.role_id = r.id " +
                                 "INNER JOIN users usr on r.user_id = usr.id";
 
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
