@@ -20,7 +20,7 @@ internal class WorkflowIdentifier(
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
-        if (!await IsUserAuthenticated(input.ClientPort))
+        if (!IsUserAuthenticated(input.ClientPort))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
@@ -38,8 +38,8 @@ internal class WorkflowIdentifier(
             Option<IWorkflow>.None);
     }
     
-    private async Task<bool> IsUserAuthenticated(TlgClientPort inputPort) => 
-        (await workflowUtils.GetAllClientPortRolesAsync())
+    private bool IsUserAuthenticated(TlgClientPort inputPort) => 
+        workflowUtils.GetAllClientPortRoles()
         .FirstOrDefault(cpr => 
             cpr.ClientPort.ChatId == inputPort.ChatId && 
             cpr.ClientPort.Mode == inputPort.Mode && 

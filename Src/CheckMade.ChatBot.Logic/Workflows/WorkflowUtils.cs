@@ -10,7 +10,7 @@ internal interface IWorkflowUtils
         Ui("Previous workflow was completed. You can continue with a new one: "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    Task<IReadOnlyList<TlgClientPortRole>> GetAllClientPortRolesAsync();
+    IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles();
     Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort);
 }
 
@@ -19,7 +19,7 @@ internal class WorkflowUtils : IWorkflowUtils
     private readonly ITlgInputRepository _inputRepo;
     private readonly ITlgClientPortRoleRepository _portRoleRepo;
     
-    private IEnumerable<TlgClientPortRole> _preExistingPortRoles = new List<TlgClientPortRole>();
+    private IReadOnlyList<TlgClientPortRole> _preExistingPortRoles = new List<TlgClientPortRole>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
@@ -50,9 +50,7 @@ internal class WorkflowUtils : IWorkflowUtils
         _preExistingPortRoles = getPortRolesTask.Result.ToList().AsReadOnly();
     }
 
-    public async Task<IReadOnlyList<TlgClientPortRole>> GetAllClientPortRolesAsync() =>
-        (await _portRoleRepo.GetAllAsync())
-        .ToList().AsReadOnly();
+    public IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles() => _preExistingPortRoles;
 
     public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort)
     {
