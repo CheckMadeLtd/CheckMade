@@ -127,15 +127,15 @@ public class UpdateHandler(
         ChatId currentChatId,
         InteractionMode currentMode)
     {
-        var clientPortRole = tlgTlgAgentRoles
+        var tlgAgentRole = tlgTlgAgentRoles
             .FirstOrDefault(cpr =>
                 cpr.TlgAgent.UserId.Id == currentUserId &&
                 cpr.TlgAgent.ChatId.Id == currentChatId &&
                 cpr.TlgAgent.Mode == currentMode);
 
-        if (clientPortRole != null)
+        if (tlgAgentRole != null)
         {
-            var userLanguageSetting = clientPortRole.Role.User.Language;
+            var userLanguageSetting = tlgAgentRole.Role.User.Language;
             
             if (EnumChecker.IsDefined(userLanguageSetting))
             {

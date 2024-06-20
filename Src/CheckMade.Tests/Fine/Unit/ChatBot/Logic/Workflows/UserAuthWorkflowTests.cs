@@ -52,7 +52,7 @@ public class UserAuthWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Depends on an 'expired' clientPortRole set up by default in the MockTlgTlgAgentRoleRepository 
+        // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgTlgAgentRoleRepository 
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
             tlgAgent.UserId,
             tlgAgent.ChatId,
