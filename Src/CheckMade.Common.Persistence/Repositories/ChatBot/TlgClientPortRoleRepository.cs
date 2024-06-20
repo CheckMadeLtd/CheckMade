@@ -16,7 +16,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
     public async Task AddAsync(IEnumerable<TlgClientPortRole> portRole)
     {
-        const string rawQuery = "INSERT INTO tlg_client_port_mode_roles (" +
+        const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
                                 "tlg_user_id, " +
                                 "tlg_chat_id, " +
@@ -70,7 +70,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                                 "tcpr.activation_date AS tcpr_activation_date, " +
                                 "tcpr.deactivation_date AS tcpr_deactivation_date, " +
                                 "tcpr.status AS tcpr_status " +
-                                "FROM tlg_client_port_mode_roles tcpr " +
+                                "FROM tlg_agent_role_bindings tcpr " +
                                 "INNER JOIN roles r on tcpr.role_id = r.id " +
                                 "INNER JOIN users usr on r.user_id = usr.id";
 
@@ -114,7 +114,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
 
     public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
     {
-        const string rawQuery = "UPDATE tlg_client_port_mode_roles " +
+        const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
@@ -142,7 +142,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
     
     public async Task HardDeleteAsync(TlgClientPortRole portRole)
     {
-        const string rawQuery = "DELETE FROM tlg_client_port_mode_roles " +
+        const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
                                 "AND tlg_chat_id = @tlgChatId " +
