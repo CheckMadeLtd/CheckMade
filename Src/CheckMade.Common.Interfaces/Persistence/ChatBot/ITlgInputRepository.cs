@@ -9,5 +9,5 @@ public interface ITlgInputRepository
     Task AddAsync(IEnumerable<TlgInput> tlgInputs);
     Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId);
     Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent);
-    Task HardDeleteAllAsync(TlgUserId userId);
+    Task HardDeleteAllAsync(TlgAgent tlgAgent);
 }

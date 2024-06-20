@@ -43,7 +43,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
                 (await inputRepo.GetAllAsync(input.TlgAgent))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToList().AsReadOnly();
-            await inputRepo.HardDeleteAllAsync(input.TlgAgent.UserId);
+            await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
             Assert.Equivalent(expectedRetrieval[0], retrievedInputs[0]);
         }
@@ -70,7 +70,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         var retrievedInput = 
             (await inputRepo.GetAllAsync(tlgAgent))
             .First();
-        await inputRepo.HardDeleteAllAsync(tlgAgent.UserId);
+        await inputRepo.HardDeleteAllAsync(tlgAgent);
         
         Assert.Equivalent(expectedDomainTerm, retrievedInput.Details.DomainTerm.GetValueOrThrow());
     }
@@ -99,7 +99,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         var retrievedInput = 
             (await inputRepo.GetAllAsync(tlgAgent))
             .First();
-        await inputRepo.HardDeleteAllAsync(tlgAgent.UserId);
+        await inputRepo.HardDeleteAllAsync(tlgAgent);
         
         Assert.Equivalent(new Geo(expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty), 
             retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
@@ -126,7 +126,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         
         await inputRepo.AddAsync(tlgInputs);
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
-        await inputRepo.HardDeleteAllAsync(tlgAgent.UserId);
+        await inputRepo.HardDeleteAllAsync(tlgAgent);
 
         Assert.Equivalent(tlgInputs, retrievedInputs);
     }

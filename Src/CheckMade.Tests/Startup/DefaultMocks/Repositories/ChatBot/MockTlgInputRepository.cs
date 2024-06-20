@@ -27,8 +27,8 @@ internal class MockTlgInputRepository(IMock<ITlgInputRepository> mockInputRepo) 
         return await mockInputRepo.Object.GetAllAsync(tlgAgent);
     }
 
-    public async Task HardDeleteAllAsync(TlgUserId userId)
+    public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
     {
-        await mockInputRepo.Object.HardDeleteAllAsync(userId);
+        await mockInputRepo.Object.HardDeleteAllAsync(tlgAgent);
     }
 }

@@ -30,8 +30,8 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@tlgUserId", (long)tlgInput.TlgAgent.UserId },
-                { "@tlgChatId", (long)tlgInput.TlgAgent.ChatId },
+                { "@tlgUserId", tlgInput.TlgAgent.UserId.Id },
+                { "@tlgChatId", tlgInput.TlgAgent.ChatId.Id },
                 { "@lastDataMig", 0 },
                 { "@interactionMode", (int)tlgInput.TlgAgent.Mode },
                 { "@tlgInputType", (int) tlgInput.InputType }
@@ -70,9 +70,9 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         var normalParameters = new Dictionary<string, object>();
         
         if (userId.IsSome)
-            normalParameters.Add("@tlgUserId", (long) userId.GetValueOrThrow());
+            normalParameters.Add("@tlgUserId", userId.GetValueOrThrow().Id);
         if (chatId.IsSome)
-            normalParameters.Add("@tlgChatId", (long) chatId.GetValueOrThrow());
+            normalParameters.Add("@tlgChatId", chatId.GetValueOrThrow().Id);
         if (mode.IsSome)
             normalParameters.Add("@mode", (int) mode.GetValueOrThrow());
 
@@ -96,10 +96,19 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
         });
     }
     
-    public async Task HardDeleteAllAsync(TlgUserId userId)
+    public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
     {
-        const string rawQuery = "DELETE FROM tlg_inputs WHERE user_id = @tlgUserId";
-        var normalParameters = new Dictionary<string, object> { { "@tlgUserId", (long)userId } };
+        const string rawQuery = "DELETE FROM tlg_inputs " +
+                                "WHERE user_id = @tlgUserId " +
+                                "AND chat_id = @tlgChatId " +
+                                "AND interaction_mode = @mode";
+        
+        var normalParameters = new Dictionary<string, object>
+        {
+            { "@tlgUserId", tlgAgent.UserId.Id },
+            { "@tlgChatId", tlgAgent.ChatId.Id },
+            { "@mode", (int) tlgAgent.Mode }
+        };
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
