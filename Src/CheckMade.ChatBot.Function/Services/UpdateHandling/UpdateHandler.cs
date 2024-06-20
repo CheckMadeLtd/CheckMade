@@ -128,10 +128,10 @@ public class UpdateHandler(
         InteractionMode currentMode)
     {
         var tlgAgentRole = tlgAgentRoles
-            .FirstOrDefault(cpr =>
-                cpr.TlgAgent.UserId.Id == currentUserId &&
-                cpr.TlgAgent.ChatId.Id == currentChatId &&
-                cpr.TlgAgent.Mode == currentMode);
+            .FirstOrDefault(arb =>
+                arb.TlgAgent.UserId.Id == currentUserId &&
+                arb.TlgAgent.ChatId.Id == currentChatId &&
+                arb.TlgAgent.Mode == currentMode);
 
         if (tlgAgentRole != null)
         {

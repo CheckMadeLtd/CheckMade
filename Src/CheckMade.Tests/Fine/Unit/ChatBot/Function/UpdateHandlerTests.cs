@@ -324,10 +324,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 TlgChatId = tlgAgentRoles
-                    .First(cpr => 
-                        cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpr.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
-                        cpr.Status == DbRecordStatus.Active)
+                    .First(arb => 
+                        arb.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        arb.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
+                        arb.Status == DbRecordStatus.Active)
                     .TlgAgent.ChatId.Id
             });
 

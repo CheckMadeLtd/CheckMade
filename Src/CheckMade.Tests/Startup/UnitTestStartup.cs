@@ -74,7 +74,7 @@ public class UnitTestStartup : TestStartupBase
         var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
 
         mockTlgAgentRoleRepo
-            .Setup(cpr => cpr.GetAllAsync())
+            .Setup(arb => arb.GetAllAsync())
             .ReturnsAsync(GetTestingTlgAgentRoles());
 
         Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);

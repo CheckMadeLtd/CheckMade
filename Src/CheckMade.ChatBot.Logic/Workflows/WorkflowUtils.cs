@@ -55,10 +55,10 @@ internal class WorkflowUtils : IWorkflowUtils
     public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
         var lastUsedTlgAgentRole = _preExistingTlgAgentRoles
-            .Where(cpr =>
-                cpr.TlgAgent == tlgAgent &&
-                cpr.DeactivationDate.IsSome)
-            .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
+            .Where(arb =>
+                arb.TlgAgent == tlgAgent &&
+                arb.DeactivationDate.IsSome)
+            .MaxBy(arb => arb.DeactivationDate.GetValueOrThrow());
 
         var dateOfLastDeactivationForCutOff = lastUsedTlgAgentRole != null
             ? lastUsedTlgAgentRole.DeactivationDate.GetValueOrThrow()

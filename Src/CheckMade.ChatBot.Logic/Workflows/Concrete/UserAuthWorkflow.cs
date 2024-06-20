@@ -140,10 +140,10 @@ internal class UserAuthWorkflow(
         return outputs;
         
         TlgAgentRoleBind? FirstOrDefaultPreExistingActiveTlgAgentRoleMode(InteractionMode mode) =>
-        preExistingTlgAgentRoles.FirstOrDefault(cpr => 
-            cpr.Role.Token == inputText &&
-            cpr.TlgAgent.Mode == mode && 
-            cpr.Status == DbRecordStatus.Active);
+        preExistingTlgAgentRoles.FirstOrDefault(arb => 
+            arb.Role.Token == inputText &&
+            arb.TlgAgent.Mode == mode && 
+            arb.Status == DbRecordStatus.Active);
 
         void AddTlgAgentRolesForOtherNonOriginatingAndVirginModes()
         {

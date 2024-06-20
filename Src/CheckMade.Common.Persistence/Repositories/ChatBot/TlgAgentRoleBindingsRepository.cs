@@ -28,20 +28,20 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = tlgAgentRole.Select(cpr =>
+        var commands = tlgAgentRole.Select(arb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@token", cpr.Role.Token },
-                { "@tlgUserId", (long)cpr.TlgAgent.UserId },
-                { "@tlgChatId", (long)cpr.TlgAgent.ChatId },
-                { "@activationDate", cpr.ActivationDate },
-                { "@status", (int)cpr.Status },
-                { "@mode", (int)cpr.TlgAgent.Mode }
+                { "@token", arb.Role.Token },
+                { "@tlgUserId", (long)arb.TlgAgent.UserId },
+                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
+                { "@activationDate", arb.ActivationDate },
+                { "@status", (int)arb.Status },
+                { "@mode", (int)arb.TlgAgent.Mode }
             };
 
-            if (cpr.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", cpr.DeactivationDate.GetValueOrThrow());
+            if (arb.DeactivationDate.IsSome)
+                normalParameters.Add("@deactivationDate", arb.DeactivationDate.GetValueOrThrow());
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
 

@@ -151,9 +151,9 @@ public class UserAuthWorkflowTests
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
         var preExistingActiveTlgAgentRole = (await mockTlgAgentRolesRepo.Object.GetAllAsync())
-            .First(cpr => 
-                cpr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpr.TlgAgent.Mode == tlgAgent.Mode);
+            .First(arb => 
+                arb.Role.Token == SanitaryOpsAdmin1.Token &&
+                arb.TlgAgent.Mode == tlgAgent.Mode);
         
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat. 

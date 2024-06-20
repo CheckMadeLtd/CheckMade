@@ -40,10 +40,10 @@ internal class WorkflowIdentifier(
     
     private bool IsUserAuthenticated(TlgAgent inputTlgAgent) => 
         workflowUtils.GetAllTlgAgentRoles()
-        .FirstOrDefault(cpr => 
-            cpr.TlgAgent.ChatId == inputTlgAgent.ChatId && 
-            cpr.TlgAgent.Mode == inputTlgAgent.Mode && 
-            cpr.Status == DbRecordStatus.Active) 
+        .FirstOrDefault(arb => 
+            arb.TlgAgent.ChatId == inputTlgAgent.ChatId && 
+            arb.TlgAgent.Mode == inputTlgAgent.Mode && 
+            arb.Status == DbRecordStatus.Active) 
         != null;
 
     private static Option<TlgInput> GetLastBotCommand(IReadOnlyList<TlgInput> inputs) =>

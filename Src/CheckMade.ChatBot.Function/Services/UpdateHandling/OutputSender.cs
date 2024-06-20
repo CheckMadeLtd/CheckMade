@@ -46,10 +46,10 @@ internal static class OutputSender
                  mapped to a TlgAgent !! */
                 var outputChatId = output.LogicalPort.Match(
                     logicalPort => tlgAgentRoles
-                        .First(cpr => 
-                            cpr.Role == logicalPort.Role &&
-                            cpr.TlgAgent.Mode == outputMode &&
-                            cpr.Status == DbRecordStatus.Active)
+                        .First(arb => 
+                            arb.Role == logicalPort.Role &&
+                            arb.TlgAgent.Mode == outputMode &&
+                            arb.Status == DbRecordStatus.Active)
                         .TlgAgent.ChatId.Id,
                     () => currentlyReceivingChatId);
                     
