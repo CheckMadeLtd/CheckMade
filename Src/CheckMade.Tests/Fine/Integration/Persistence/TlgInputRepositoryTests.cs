@@ -1,6 +1,9 @@
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
@@ -15,7 +18,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
     private ServiceProvider? _services;
     
     [Fact]
-    public async Task SavesAndRetrievesOneInput_WhenInputValid()
+    public async Task SavesAndRetrieves_IndividualInputs_WhenAllInputsValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
@@ -48,7 +51,63 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
-    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturn_MultipleValidInputs()
+    public async Task SavesAndRetrieves_DomainTerm_ViaCustomJsonSerialization_WhenInputHasValidDomainTerm()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(
+            utils.Randomizer.GenerateRandomLong(),
+            utils.Randomizer.GenerateRandomLong(),
+            InteractionMode.Operations);
+        
+        var expectedDomainTerm = Dt(LanguageCode.de);
+        
+        var tlgInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
+            expectedDomainTerm, tlgAgent.UserId, tlgAgent.ChatId);
+        
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        
+        await inputRepo.AddAsync(tlgInput);
+        var retrievedInput = 
+            (await inputRepo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .First();
+        await inputRepo.HardDeleteAllAsync(tlgAgent.UserId);
+        
+        Assert.Equivalent(expectedDomainTerm, retrievedInput.Details.DomainTerm.GetValueOrThrow());
+    }
+    
+    [Fact]
+    public async Task SavesAndRetrieves_GeoLocation_ViaCustomJsonSerialization_WhenInputHasValidGeo()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(
+            utils.Randomizer.GenerateRandomLong(),
+            utils.Randomizer.GenerateRandomLong(),
+            InteractionMode.Operations);
+        
+        const double expectedLatitudeRaw = 17.456;
+        const double expectedLongitudeRaw = -23.00987;
+        const float expectedUncertainty = 15.7f;
+        
+        var tlgInput = utils.GetValidTlgInputLocationMessage(
+            expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty, 
+            tlgAgent.UserId, tlgAgent.ChatId);
+        
+        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        
+        await inputRepo.AddAsync(tlgInput);
+        var retrievedInput = 
+            (await inputRepo.GetAllAsync(tlgAgent.UserId, tlgAgent.ChatId))
+            .First();
+        await inputRepo.HardDeleteAllAsync(tlgAgent.UserId);
+        
+        Assert.Equivalent(new Geo(expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty), 
+            retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
+    }
+
+    [Fact]
+    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturnsInBulk_MultipleValidInputs()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();

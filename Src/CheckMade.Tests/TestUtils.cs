@@ -69,15 +69,27 @@ internal interface ITestUtils
     
     Randomizer Randomizer { get; }
     
-    TlgInput GetValidTlgInputTextMessage(long userId = TestUserId_01, long chatId = TestChatId_01, 
+    TlgInput GetValidTlgInputTextMessage(
+        long userId = TestUserId_01, long chatId = TestChatId_01, 
         string text = "Hello World", DateTime? dateTime = null);
+    
     TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type);
+    
+    TlgInput GetValidTlgInputLocationMessage(
+        double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
+        long userId = TestUserId_01, long chatId = TestChatId_01);
+    
     TlgInput GetValidTlgInputCommandMessage(
-        InteractionMode interactionMode, int botCommandEnumCode, long userId = TestUserId_01, long chatId = TestChatId_01);
+        InteractionMode interactionMode, int botCommandEnumCode, 
+        long userId = TestUserId_01, long chatId = TestChatId_01);
+    
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
-        DomainTerm domainTerm, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        DomainTerm domainTerm, 
+        long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+    
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
-        ControlPrompts prompts, long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        ControlPrompts prompts, 
+        long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
     UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
@@ -122,6 +134,16 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 new Uri("fakeTelegramUri"),
                 new Uri("fakeInternalUri"),
                 type));
+
+    public TlgInput GetValidTlgInputLocationMessage(
+        double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius,
+        long userId, long chatId) =>
+        new(new TlgAgent(userId, chatId, InteractionMode.Operations),
+                TlgInputType.Location,
+                CreateFromRelevantDetails(
+                    DateTime.UtcNow, 
+                    1,
+                    geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
 
     public TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
