@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -77,22 +78,22 @@ internal class WorkflowUtils : IWorkflowUtils
         var allInputsOfTlgAgent = 
             (await _inputRepo.GetAllAsync(tlgAgent)).ToList().AsReadOnly();
 
-        return GetRecordsUntilConditionMet<TlgInput>(
+        return GetLatestRecordsUpTo(
             allInputsOfTlgAgent,
-            input => input.InputType == TlgInputType.CommandMessage,
-            true).ToList().AsReadOnly();
+            input => input.InputType == TlgInputType.CommandMessage)
+            .ToList().AsReadOnly();
     }
 
-    private static IEnumerable<T> GetRecordsUntilConditionMet<T>(
-        IReadOnlyCollection<T> collection, Func<T, bool> condition, bool inclusive = true)
+    private static IEnumerable<T> GetLatestRecordsUpTo<T>(
+        IReadOnlyCollection<T> collection, Func<T, bool> stopCondition, bool includeStopItem = true)
     {
         var result = collection.Reverse()
-            .TakeWhile(item => !condition(item))
+            .TakeWhile(item => !stopCondition(item))
             .ToList();
 
-        if (inclusive)
+        if (includeStopItem)
         {
-            var firstItemMeetingCondition = collection.FirstOrDefault(condition);
+            var firstItemMeetingCondition = collection.LastOrDefault(stopCondition);
 
             if (firstItemMeetingCondition != null)
                 result.Add(firstItemMeetingCondition);
@@ -100,6 +101,6 @@ internal class WorkflowUtils : IWorkflowUtils
 
         result.Reverse();
         
-        return result;
+        return result.ToImmutableList().AsReadOnly();
     }
 }
