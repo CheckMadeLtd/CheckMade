@@ -25,7 +25,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgAgentRoleRepository tlgTlgAgentRoleRepo,
+        ITlgAgentRoleRepository tlgAgentRoleRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -74,12 +74,12 @@ public class UpdateHandler(
         var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
-        var tlgTlgAgentRoles = 
-            (await tlgTlgAgentRoleRepo.GetAllAsync())
+        var tlgAgentRoles = 
+            (await tlgAgentRoleRepo.GetAllAsync())
             .ToList().AsReadOnly();
         
         var uiTranslator = translatorFactory.Create(GetUiLanguage(
-            tlgTlgAgentRoles,
+            tlgAgentRoles,
             currentlyReceivingUserId,
             currentlyReceivingChatId,
             currentlyReceivingInteractionMode));
@@ -98,7 +98,7 @@ public class UpdateHandler(
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          tlgTlgAgentRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          tlgAgentRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -122,12 +122,12 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyList<TlgAgentRole> tlgTlgAgentRoles,
+        IReadOnlyList<TlgAgentRole> tlgAgentRoles,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)
     {
-        var tlgAgentRole = tlgTlgAgentRoles
+        var tlgAgentRole = tlgAgentRoles
             .FirstOrDefault(cpr =>
                 cpr.TlgAgent.UserId.Id == currentUserId &&
                 cpr.TlgAgent.ChatId.Id == currentChatId &&

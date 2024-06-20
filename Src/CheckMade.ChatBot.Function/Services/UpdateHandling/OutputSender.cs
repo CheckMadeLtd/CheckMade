@@ -18,7 +18,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgAgentRole> tlgTlgAgentRoles,
+            IEnumerable<TlgAgentRole> tlgAgentRoles,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -45,7 +45,7 @@ internal static class OutputSender
                  broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
                  mapped to a TlgAgent !! */
                 var portChatId = output.LogicalPort.Match(
-                    logicalPort => tlgTlgAgentRoles
+                    logicalPort => tlgAgentRoles
                         .First(cpr => 
                             cpr.Role == logicalPort.Role &&
                             cpr.TlgAgent.Mode == outputMode &&
