@@ -25,7 +25,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgTlgAgentRoleRepository tlgTlgAgentRoleRepo,
+        ITlgAgentRoleRepository tlgTlgAgentRoleRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -122,7 +122,7 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyList<TlgTlgAgentRole> tlgTlgAgentRoles,
+        IReadOnlyList<TlgAgentRole> tlgTlgAgentRoles,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)

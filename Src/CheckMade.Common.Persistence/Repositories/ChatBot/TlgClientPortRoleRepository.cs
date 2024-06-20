@@ -8,13 +8,13 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgTlgAgentRoleRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgTlgAgentRoleRepository
+public class TlgAgentRoleRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgAgentRoleRepository
 {
-    public async Task AddAsync(TlgTlgAgentRole portRole) =>
-        await AddAsync(new List<TlgTlgAgentRole> { portRole });
+    public async Task AddAsync(TlgAgentRole portRole) =>
+        await AddAsync(new List<TlgAgentRole> { portRole });
 
-    public async Task AddAsync(IEnumerable<TlgTlgAgentRole> portRole)
+    public async Task AddAsync(IEnumerable<TlgAgentRole> portRole)
     {
         const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
@@ -51,7 +51,7 @@ public class TlgTlgAgentRoleRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(commands);
     }
 
-    public async Task<IEnumerable<TlgTlgAgentRole>> GetAllAsync()
+    public async Task<IEnumerable<TlgAgentRole>> GetAllAsync()
     {
         const string rawQuery = "SELECT " +
                                 "usr.mobile AS user_mobile, " +
@@ -108,11 +108,11 @@ public class TlgTlgAgentRoleRepository(IDbExecutionHelper dbHelper)
                     
             var status = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status"));
 
-            return new TlgTlgAgentRole(role, tlgAgent, activationDate, deactivationDate, status);
+            return new TlgAgentRole(role, tlgAgent, activationDate, deactivationDate, status);
         });
     }
 
-    public async Task UpdateStatusAsync(TlgTlgAgentRole portRole, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(TlgAgentRole portRole, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +
@@ -140,7 +140,7 @@ public class TlgTlgAgentRoleRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
     
-    public async Task HardDeleteAsync(TlgTlgAgentRole portRole)
+    public async Task HardDeleteAsync(TlgAgentRole portRole)
     {
         const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +

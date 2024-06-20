@@ -284,7 +284,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgTlgAgentRolesExist(
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgAgentRolesExist(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -520,7 +520,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        Task<IEnumerable<TlgTlgAgentRole>> portRoleTask)
+        Task<IEnumerable<TlgAgentRole>> portRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -528,7 +528,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgTlgAgentRoleRepository>().GetAllAsync());
+                sp.GetRequiredService<ITlgAgentRoleRepository>().GetAllAsync());
 
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 

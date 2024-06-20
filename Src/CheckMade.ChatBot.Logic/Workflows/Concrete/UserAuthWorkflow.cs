@@ -18,7 +18,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 
 internal class UserAuthWorkflow(
         IRoleRepository roleRepo,
-        ITlgTlgAgentRoleRepository portRoleRepo,
+        ITlgAgentRoleRepository portRoleRepo,
         IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
 {
@@ -85,7 +85,7 @@ internal class UserAuthWorkflow(
         
         var outputs = new List<OutputDto>();
         
-        var newPortRoleForOriginatingMode = new TlgTlgAgentRole(
+        var newPortRoleForOriginatingMode = new TlgAgentRole(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
@@ -125,12 +125,12 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var portRolesToAdd = new List<TlgTlgAgentRole> { newPortRoleForOriginatingMode };
+        var portRolesToAdd = new List<TlgAgentRole> { newPortRoleForOriginatingMode };
         
-        var isInputTlgTlgAgentPrivateChat = 
+        var isInputTlgAgentPrivateChat = 
             tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
 
-        if (isInputTlgTlgAgentPrivateChat)
+        if (isInputTlgAgentPrivateChat)
         {
             AddPortRolesForOtherNonOriginatingAndVirginModes();
         }
@@ -139,7 +139,7 @@ internal class UserAuthWorkflow(
         
         return outputs;
         
-        TlgTlgAgentRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        TlgAgentRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
         preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
             cpr.TlgAgent.Mode == mode && 

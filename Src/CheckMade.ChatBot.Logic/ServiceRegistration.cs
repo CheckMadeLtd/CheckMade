@@ -13,7 +13,7 @@ public static class ServiceRegistration
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<IWorkflowUtils>(sp => WorkflowUtils.CreateAsync(
             sp.GetRequiredService<ITlgInputRepository>(), 
-            sp.GetRequiredService<ITlgTlgAgentRoleRepository>())
+            sp.GetRequiredService<ITlgAgentRoleRepository>())
             .Result);
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();

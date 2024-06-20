@@ -71,14 +71,14 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
             new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
-        var mockTlgTlgAgentRoleRepo = new Mock<ITlgTlgAgentRoleRepository>();
+        var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleRepository>();
 
-        mockTlgTlgAgentRoleRepo
+        mockTlgAgentRoleRepo
             .Setup(cpr => cpr.GetAllAsync())
             .ReturnsAsync(GetTestingPortRoles());
 
-        Services.AddScoped<ITlgTlgAgentRoleRepository>(_ => mockTlgTlgAgentRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgTlgAgentRoleRepository>>(_ => mockTlgTlgAgentRoleRepo);
+        Services.AddScoped<ITlgAgentRoleRepository>(_ => mockTlgAgentRoleRepo.Object);
+        Services.AddScoped<Mock<ITlgAgentRoleRepository>>(_ => mockTlgAgentRoleRepo);
     }
 
     private void RegisterExternalServicesMocks()
@@ -87,52 +87,52 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
     
-    private static ImmutableArray<TlgTlgAgentRole> GetTestingPortRoles()
+    private static ImmutableArray<TlgAgentRole> GetTestingPortRoles()
     {
-        var builder = ImmutableArray.CreateBuilder<TlgTlgAgentRole>();
+        var builder = ImmutableArray.CreateBuilder<TlgAgentRole>();
 
         // #1
         
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsAdmin1, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Group: same Role & TlgAgent - all three InteractionModes
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsInspector1, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Notifications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
 
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Expired on purpose - for Unit Tests!
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsEngineer1, 
             new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
             DbRecordStatus.Historic));
 
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsCleanLead1, 
             new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsObserver1, 
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
@@ -140,17 +140,17 @@ public class UnitTestStartup : TestStartupBase
         // #2
         
         // Used in Unit Test 'GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsEngineer2, 
             new TlgAgent(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        builder.Add(new TlgTlgAgentRole(
+        builder.Add(new TlgAgentRole(
             ITestUtils.SanitaryOpsCleanLead2, 
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
-        // No TlgTlgAgentRole for role 'Inspector2' on purpose for Unit Test, e.g.
+        // No TlgAgentRole for role 'Inspector2' on purpose for Unit Test, e.g.
         // GetNextOutputAsync_CreatesPortRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
 
         return builder.ToImmutable();

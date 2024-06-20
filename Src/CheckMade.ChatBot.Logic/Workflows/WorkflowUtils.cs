@@ -10,20 +10,20 @@ internal interface IWorkflowUtils
         Ui("Previous workflow was completed. You can continue with a new one: "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    IReadOnlyList<TlgTlgAgentRole> GetAllTlgAgentRoles();
+    IReadOnlyList<TlgAgentRole> GetAllTlgAgentRoles();
     Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
 {
     private readonly ITlgInputRepository _inputRepo;
-    private readonly ITlgTlgAgentRoleRepository _portRoleRepo;
+    private readonly ITlgAgentRoleRepository _portRoleRepo;
     
-    private IReadOnlyList<TlgTlgAgentRole> _preExistingPortRoles = new List<TlgTlgAgentRole>();
+    private IReadOnlyList<TlgAgentRole> _preExistingPortRoles = new List<TlgAgentRole>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
-        ITlgTlgAgentRoleRepository portRoleRepo)
+        ITlgAgentRoleRepository portRoleRepo)
     {
         _inputRepo = inputRepo;
         _portRoleRepo = portRoleRepo;
@@ -31,7 +31,7 @@ internal class WorkflowUtils : IWorkflowUtils
 
     public static async Task<WorkflowUtils> CreateAsync(
         ITlgInputRepository inputRepo,
-        ITlgTlgAgentRoleRepository portRoleRepo)
+        ITlgAgentRoleRepository portRoleRepo)
     {
         var workflowUtils = new WorkflowUtils(inputRepo, portRoleRepo);
         await workflowUtils.InitAsync();
@@ -50,18 +50,18 @@ internal class WorkflowUtils : IWorkflowUtils
         _preExistingPortRoles = getPortRolesTask.Result.ToList().AsReadOnly();
     }
 
-    public IReadOnlyList<TlgTlgAgentRole> GetAllTlgAgentRoles() => _preExistingPortRoles;
+    public IReadOnlyList<TlgAgentRole> GetAllTlgAgentRoles() => _preExistingPortRoles;
 
     public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
-        var lastUsedTlgTlgAgentRole = _preExistingPortRoles
+        var lastUsedTlgAgentRole = _preExistingPortRoles
             .Where(cpr =>
                 cpr.TlgAgent == tlgAgent &&
                 cpr.DeactivationDate.IsSome)
             .MaxBy(cpr => cpr.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastDeactivationForCutOff = lastUsedTlgTlgAgentRole != null
-            ? lastUsedTlgTlgAgentRole.DeactivationDate.GetValueOrThrow()
+        var dateOfLastDeactivationForCutOff = lastUsedTlgAgentRole != null
+            ? lastUsedTlgAgentRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         // ToDo: modify GetAllAsync so that it also queries for mode i.e. the entire TlgAgent !!!

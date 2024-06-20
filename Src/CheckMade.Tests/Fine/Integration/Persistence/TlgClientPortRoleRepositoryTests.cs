@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
-public class TlgTlgAgentRoleRepositoryTests
+public class TlgAgentRoleRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -15,17 +15,17 @@ public class TlgTlgAgentRoleRepositoryTests
     [InlineData(InteractionMode.Operations)]
     [InlineData(InteractionMode.Communications)]
     [InlineData(InteractionMode.Notifications)]
-    public async Task SavesAndRetrieves_OneTlgTlgAgentRole_WhenInputValid(InteractionMode mode)
+    public async Task SavesAndRetrieves_OneTlgAgentRole_WhenInputValid(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var inputPortRole = new TlgTlgAgentRole(
+        var inputPortRole = new TlgAgentRole(
             ITestUtils.IntegrationTestsRole,
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
-        var repo = _services.GetRequiredService<ITlgTlgAgentRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleRepository>();
 
         await repo.AddAsync(inputPortRole);
         var retrieved = (await repo.GetAllAsync())
@@ -44,14 +44,14 @@ public class TlgTlgAgentRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var preExistingActivePortRole = new TlgTlgAgentRole(
+        var preExistingActivePortRole = new TlgAgentRole(
             ITestUtils.IntegrationTestsRole,
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
-        var repo = _services.GetRequiredService<ITlgTlgAgentRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleRepository>();
         
         await repo.AddAsync(preExistingActivePortRole);
         await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);

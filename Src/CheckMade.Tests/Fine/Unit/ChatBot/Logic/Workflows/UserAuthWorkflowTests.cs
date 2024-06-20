@@ -43,7 +43,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgTlgAgentRole()
+    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -52,7 +52,7 @@ public class UserAuthWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgTlgAgentRoleRepository 
+        // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgAgentRoleRepository 
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
             tlgAgent.UserId,
             tlgAgent.ChatId,
@@ -148,7 +148,7 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleRepository>>();
 
         var preExistingActivePortRole = (await mockPortRolesRepo.Object.GetAllAsync())
             .First(cpr => 
@@ -193,24 +193,24 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleRepository>>();
 
         const string expectedConfirmation = """
                                             {0}, welcome to the CheckMade ChatBot!
                                             You have successfully authenticated as a {1} at live-event {2}.
                                             """;
         
-        var expectedTlgAgentRoleAdded = new TlgTlgAgentRole(
+        var expectedTlgAgentRoleAdded = new TlgAgentRole(
             SanitaryOpsInspector2,
             tlgAgent,
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var actualTlgAgentRoleAdded = new List<TlgTlgAgentRole>(); 
+        var actualTlgAgentRoleAdded = new List<TlgAgentRole>(); 
         mockPortRolesRepo
             .Setup(x => 
-                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
-            .Callback<IEnumerable<TlgTlgAgentRole>>(portRole => 
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRole>>()))
+            .Callback<IEnumerable<TlgAgentRole>>(portRole => 
                 actualTlgAgentRoleAdded = portRole.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -245,23 +245,23 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleRepository>>();
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         
         var expectedTlgAgentRolesAdded = allModes.Select(im => 
-            new TlgTlgAgentRole(
+            new TlgAgentRole(
                 SanitaryOpsInspector2,
                 tlgAgent with { Mode = im },
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
             .ToList();
 
-        var actualPortRoles = new List<TlgTlgAgentRole>();
+        var actualPortRoles = new List<TlgAgentRole>();
         mockPortRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
-            .Callback<IEnumerable<TlgTlgAgentRole>>(
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRole>>()))
+            .Callback<IEnumerable<TlgAgentRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -269,7 +269,7 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgTlgAgentRole>>()));
+            It.IsAny<IEnumerable<TlgAgentRole>>()));
 
         for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
@@ -302,9 +302,9 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleRepository>>();
 
-        var expectedTlgAgentRolesAdded = new List<TlgTlgAgentRole>
+        var expectedTlgAgentRolesAdded = new List<TlgAgentRole>
         {
             new(SanitaryOpsEngineer2,
                 tlgAgent,
@@ -317,11 +317,11 @@ public class UserAuthWorkflowTests
                 Option<DateTime>.None()),
         };
 
-        var actualPortRoles = new List<TlgTlgAgentRole>();
+        var actualPortRoles = new List<TlgAgentRole>();
         mockPortRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
-            .Callback<IEnumerable<TlgTlgAgentRole>>(
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRole>>()))
+            .Callback<IEnumerable<TlgAgentRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -329,7 +329,7 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgTlgAgentRole>>()));
+            It.IsAny<IEnumerable<TlgAgentRole>>()));
 
         for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
