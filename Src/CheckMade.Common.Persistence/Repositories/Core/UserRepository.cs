@@ -15,7 +15,7 @@ public class UserRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelp
         var normalParameters = new Dictionary<string, object>
         {
             { "@newLanguage", (int)newLanguage },
-            { "@mobileNumber", user.Mobile }
+            { "@mobileNumber", user.Mobile.ToString() }
         };
 
         var command = GenerateCommand(rawQuery, normalParameters);

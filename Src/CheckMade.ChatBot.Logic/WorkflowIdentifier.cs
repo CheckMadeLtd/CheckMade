@@ -33,7 +33,7 @@ internal class WorkflowIdentifier(
             {
                 // the settings BotCommand code is the same across all InteractionModes
                 (int)OperationsBotCommands.Settings => Option<IWorkflow>.Some(languageSettingWorkflow),
-                _ => throw new ArgumentOutOfRangeException(nameof(lastBotCommand))
+                _ => Option<IWorkflow>.None()
             },
             Option<IWorkflow>.None);
     }

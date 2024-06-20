@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.LanguageSettingWorkflow;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
@@ -155,7 +156,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
@@ -172,19 +173,22 @@ public class LanguageSettingWorkflowTests
                 utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
                     userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 inputSettingsCommand,
-                // utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                //     userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
+                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
                 languageSettingInput
             });
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
+        var mockUserRepo = _services.GetRequiredService<Mock<IUserRepository>>();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
 
         var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);
         
         Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
         
-        // ToDo: Add verification of updating language in userRepo
+        mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
+            UnitTestsUser,
+            languageCode));
     }
 }

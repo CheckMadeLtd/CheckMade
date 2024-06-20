@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -13,7 +13,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 }
 
 internal class LanguageSettingWorkflow(
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,    
+        IUserRepository userRepo,
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
@@ -66,10 +66,20 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    private static async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)
+    private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)
     {
         var domainGlossary = new DomainGlossary();
         var newLanguage = newLanguageInput.Details.DomainTerm.GetValueOrThrow();
+
+        if (newLanguage.EnumType != typeof(LanguageCode))
+            throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
+                                        $"but got {nameof(newLanguage.EnumType)} instead!");
+
+        var currentUser = workflowUtils.GetAllTlgAgentRoles()
+            .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
+            .Role.User;
+
+        await userRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
         
         return [new OutputDto
         {
