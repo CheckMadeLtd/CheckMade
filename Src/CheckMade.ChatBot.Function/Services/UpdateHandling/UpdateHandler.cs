@@ -71,29 +71,31 @@ public class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
-        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
-        
-        var tlgAgentRoles = 
-            (await tlgAgentRoleBindingsRepo.GetAllAsync())
-            .ToList().AsReadOnly();
-        
-        var uiTranslator = translatorFactory.Create(GetUiLanguage(
-            tlgAgentRoles,
-            currentlyReceivingUserId,
-            currentlyReceivingChatId,
-            currentlyReceivingInteractionMode));
-        
-        var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-
         var sendOutputsAttempt = await
-            (from tlgInput
+            (from toModelConverter
+                    in Attempt<IToModelConverter>.Run(() => 
+                        toModelConverterFactory.Create(
+                            new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode])))
+                from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
                         toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
+                from tlgAgentRoles
+                    in Attempt<IReadOnlyList<TlgAgentRoleBind>>.RunAsync(async () => 
+                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToList().AsReadOnly())
+                from uiTranslator
+                    in Attempt<IUiTranslator>.Run(() => 
+                        translatorFactory.Create(GetUiLanguage(
+                            tlgAgentRoles,
+                            currentlyReceivingUserId,
+                            currentlyReceivingChatId,
+                            currentlyReceivingInteractionMode)))
+                from replyMarkupConverter
+                    in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
+                        replyMarkupConverterFactory.Create(uiTranslator))
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
