@@ -46,25 +46,26 @@ internal class LanguageSettingWorkflow(
         var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(tlgAgent);
         var lastInput = allCurrentInputs[^1];
 
-        var secondToLastInput = allCurrentInputs.Count > 1
-            ? allCurrentInputs[^2]
-            : Option<TlgInput>.None();
-
+        var previousInputCompletedThisWorkflow = 
+            allCurrentInputs.Count > 1 && 
+            AnyPreviousInputContainsCallbackQuery(allCurrentInputs.ToArray()[..^2]);
+        
         return lastInput.InputType switch
         {
             TlgInputType.CommandMessage => States.Initial,
             
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
             
-            _ => secondToLastInput.Match(
-                stl => stl.InputType switch
-                {
-                    TlgInputType.CallbackQuery => States.Completed,
-                    _ => States.Initial
-                },
-                () => States.Initial)
+            _ => previousInputCompletedThisWorkflow switch
+            {
+                true => States.Completed,
+                _ => States.Initial
+            }
         };
     }
+
+    private static bool AnyPreviousInputContainsCallbackQuery(IReadOnlyList<TlgInput> previousInputs) =>
+        previousInputs.Any(x => x.InputType == TlgInputType.CallbackQuery);
 
     private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)
     {
