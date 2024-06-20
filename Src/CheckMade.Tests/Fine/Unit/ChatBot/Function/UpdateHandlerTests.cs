@@ -323,7 +323,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TelegramPortChatId = tlgAgentRoles
+                TlgChatId = tlgAgentRoles
                     .First(cpr => 
                         cpr.Role == output.LogicalPort.GetValueOrThrow().Role &&
                         cpr.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
@@ -337,7 +337,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         {
             basics.mockBotClient.Verify(
                 x => x.SendTextMessageAsync(
-                    expectedParamSet.TelegramPortChatId,
+                    expectedParamSet.TlgChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
                     It.IsAny<Option<IReplyMarkup>>(),
@@ -354,7 +354,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string fakeOutputMessage = "Output without port";
+        const string fakeOutputMessage = "Output without logical port";
         
         List<OutputDto> outputWithoutPort = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>

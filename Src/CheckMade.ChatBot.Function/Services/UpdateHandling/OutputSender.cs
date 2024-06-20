@@ -39,12 +39,12 @@ internal static class OutputSender
                     logicalPort => logicalPort.InteractionMode,
                     () => currentlyReceivingInteractionMode);
 
-                var portBotClient = botClientByMode[outputMode];
+                var outputBotClient = botClientByMode[outputMode];
 
                 /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
                  broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
                  mapped to a TlgAgent !! */
-                var portChatId = output.LogicalPort.Match(
+                var outputChatId = output.LogicalPort.Match(
                     logicalPort => tlgAgentRoles
                         .First(cpr => 
                             cpr.Role == logicalPort.Role &&
@@ -75,9 +75,9 @@ internal static class OutputSender
 
                 async Task InvokeSendTextMessageAsync(UiString outputText)
                 {
-                    await portBotClient
+                    await outputBotClient
                         .SendTextMessageAsync(
-                            portChatId,
+                            outputChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
                             uiTranslator.Translate(outputText),
                             converter.GetReplyMarkup(output));
@@ -94,7 +94,7 @@ internal static class OutputSender
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        portChatId,
+                        outputChatId,
                         fileStream,
                         caption,
                         converter.GetReplyMarkup(output)
@@ -103,15 +103,15 @@ internal static class OutputSender
                     switch (details.AttachmentType)
                     {
                         case TlgAttachmentType.Document:
-                            await portBotClient.SendDocumentAsync(attachmentSendOutParams);
+                            await outputBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
                         case TlgAttachmentType.Photo:
-                            await portBotClient.SendPhotoAsync(attachmentSendOutParams);
+                            await outputBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
                         case TlgAttachmentType.Voice:
-                            await portBotClient.SendVoiceAsync(attachmentSendOutParams);
+                            await outputBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 
                         default:
@@ -121,9 +121,9 @@ internal static class OutputSender
 
                 async Task InvokeSendLocationAsync(Geo location)
                 {
-                    await portBotClient
+                    await outputBotClient
                         .SendLocationAsync(
-                            portChatId,
+                            outputChatId,
                             location,
                             converter.GetReplyMarkup(output));
                 }

@@ -38,11 +38,11 @@ internal class WorkflowIdentifier(
             Option<IWorkflow>.None);
     }
     
-    private bool IsUserAuthenticated(TlgAgent inputPort) => 
+    private bool IsUserAuthenticated(TlgAgent inputTlgAgent) => 
         workflowUtils.GetAllTlgAgentRoles()
         .FirstOrDefault(cpr => 
-            cpr.TlgAgent.ChatId == inputPort.ChatId && 
-            cpr.TlgAgent.Mode == inputPort.Mode && 
+            cpr.TlgAgent.ChatId == inputTlgAgent.ChatId && 
+            cpr.TlgAgent.Mode == inputTlgAgent.Mode && 
             cpr.Status == DbRecordStatus.Active) 
         != null;
 
