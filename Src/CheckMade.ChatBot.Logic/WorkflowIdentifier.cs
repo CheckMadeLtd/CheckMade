@@ -25,8 +25,8 @@ internal class WorkflowIdentifier(
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(input.TlgAgent);
-        var lastBotCommand = GetLastBotCommand(allCurrentInputs);
+        var inputs = await workflowUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+        var lastBotCommand = GetLastBotCommand(inputs);
 
         return lastBotCommand.Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch

@@ -45,7 +45,7 @@ var host = new HostBuilder()
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
         // Part of 'StartUp' rather than in shared Services method below b/c different value for Tests starutp.
-        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.de));
+        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         services.RegisterChatBotFunctionBotClientServices(config, hostingEnvironment);
         services.RegisterChatBotFunctionUpdateHandlingServices();

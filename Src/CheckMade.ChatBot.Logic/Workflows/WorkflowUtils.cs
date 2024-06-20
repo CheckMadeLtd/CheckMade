@@ -11,7 +11,8 @@ internal interface IWorkflowUtils
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles();
-    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyList<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyList<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
@@ -52,16 +53,16 @@ internal class WorkflowUtils : IWorkflowUtils
 
     public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingTlgAgentRoles;
 
-    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyList<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent)
     {
-        var lastUsedTlgAgentRole = _preExistingTlgAgentRoles
+        var lastPreviousTlgAgentRole = _preExistingTlgAgentRoles
             .Where(arb =>
                 arb.TlgAgent == tlgAgent &&
                 arb.DeactivationDate.IsSome)
             .MaxBy(arb => arb.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastDeactivationForCutOff = lastUsedTlgAgentRole != null
-            ? lastUsedTlgAgentRole.DeactivationDate.GetValueOrThrow()
+        var dateOfLastDeactivationForCutOff = lastPreviousTlgAgentRole != null
+            ? lastPreviousTlgAgentRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         return (await _inputRepo.GetAllAsync(tlgAgent))
@@ -69,5 +70,36 @@ internal class WorkflowUtils : IWorkflowUtils
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())
             .ToList().AsReadOnly();
+    }
+
+    public async Task<IReadOnlyList<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
+    {
+        var allInputsOfTlgAgent = 
+            (await _inputRepo.GetAllAsync(tlgAgent)).ToList().AsReadOnly();
+
+        return GetRecordsUntilConditionMet<TlgInput>(
+            allInputsOfTlgAgent,
+            input => input.InputType == TlgInputType.CommandMessage,
+            true).ToList().AsReadOnly();
+    }
+
+    private static IEnumerable<T> GetRecordsUntilConditionMet<T>(
+        IReadOnlyCollection<T> collection, Func<T, bool> condition, bool inclusive = true)
+    {
+        var result = collection.Reverse()
+            .TakeWhile(item => !condition(item))
+            .ToList();
+
+        if (inclusive)
+        {
+            var firstItemMeetingCondition = collection.FirstOrDefault(condition);
+
+            if (firstItemMeetingCondition != null)
+                result.Add(firstItemMeetingCondition);
+        }
+
+        result.Reverse();
+        
+        return result;
     }
 }

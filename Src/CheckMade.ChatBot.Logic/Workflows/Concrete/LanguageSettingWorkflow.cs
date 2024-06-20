@@ -43,12 +43,12 @@ internal class LanguageSettingWorkflow(
 
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var allCurrentInputs = await workflowUtils.GetInputsForCurrentWorkflow(tlgAgent);
         var lastInput = allCurrentInputs[^1];
 
         var previousInputCompletedThisWorkflow = 
             allCurrentInputs.Count > 1 && 
-            AnyPreviousInputContainsCallbackQuery(allCurrentInputs.ToArray()[..^2]);
+            AnyPreviousInputContainsCallbackQuery(allCurrentInputs.ToArray()[..^1]);
         
         return lastInput.InputType switch
         {
