@@ -25,7 +25,7 @@ public interface IUpdateHandler
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgAgentRoleRepository tlgAgentRoleRepo,
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -75,7 +75,7 @@ public class UpdateHandler(
         var toModelConverter = toModelConverterFactory.Create(filePathResolver);
         
         var tlgAgentRoles = 
-            (await tlgAgentRoleRepo.GetAllAsync())
+            (await tlgAgentRoleBindingsRepo.GetAllAsync())
             .ToList().AsReadOnly();
         
         var uiTranslator = translatorFactory.Create(GetUiLanguage(
@@ -122,7 +122,7 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyList<TlgAgentRole> tlgAgentRoles,
+        IReadOnlyList<TlgAgentRoleBind> tlgAgentRoles,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)

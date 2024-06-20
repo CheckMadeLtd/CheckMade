@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
-public class TlgAgentRoleRepositoryTests
+public class TlgAgentRoleBindingsRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -19,13 +19,13 @@ public class TlgAgentRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var inputPortRole = new TlgAgentRole(
+        var inputPortRole = new TlgAgentRoleBind(
             ITestUtils.IntegrationTestsRole,
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
-        var repo = _services.GetRequiredService<ITlgAgentRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
 
         await repo.AddAsync(inputPortRole);
         var retrieved = (await repo.GetAllAsync())
@@ -44,14 +44,14 @@ public class TlgAgentRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var preExistingActivePortRole = new TlgAgentRole(
+        var preExistingActivePortRole = new TlgAgentRoleBind(
             ITestUtils.IntegrationTestsRole,
             new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
-        var repo = _services.GetRequiredService<ITlgAgentRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
         
         await repo.AddAsync(preExistingActivePortRole);
         await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);

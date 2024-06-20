@@ -18,7 +18,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 
 internal class UserAuthWorkflow(
         IRoleRepository roleRepo,
-        ITlgAgentRoleRepository portRoleRepo,
+        ITlgAgentRoleBindingsRepository portRoleBindingsRepo,
         IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
 {
@@ -85,7 +85,7 @@ internal class UserAuthWorkflow(
         
         var outputs = new List<OutputDto>();
         
-        var newPortRoleForOriginatingMode = new TlgAgentRole(
+        var newPortRoleForOriginatingMode = new TlgAgentRoleBind(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
@@ -95,7 +95,7 @@ internal class UserAuthWorkflow(
 
         if (preExistingActivePortRole != null)
         {
-            await portRoleRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+            await portRoleBindingsRepo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -125,7 +125,7 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var portRolesToAdd = new List<TlgAgentRole> { newPortRoleForOriginatingMode };
+        var portRolesToAdd = new List<TlgAgentRoleBind> { newPortRoleForOriginatingMode };
         
         var isInputTlgAgentPrivateChat = 
             tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
@@ -135,11 +135,11 @@ internal class UserAuthWorkflow(
             AddPortRolesForOtherNonOriginatingAndVirginModes();
         }
         
-        await portRoleRepo.AddAsync(portRolesToAdd);
+        await portRoleBindingsRepo.AddAsync(portRolesToAdd);
         
         return outputs;
         
-        TlgAgentRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        TlgAgentRoleBind? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
         preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
             cpr.TlgAgent.Mode == mode && 

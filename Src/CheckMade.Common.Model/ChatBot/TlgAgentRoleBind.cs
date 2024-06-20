@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot;
 
-public record TlgAgentRole(
+public record TlgAgentRoleBind(
     Role Role,
     TlgAgent TlgAgent,
     DateTime ActivationDate,

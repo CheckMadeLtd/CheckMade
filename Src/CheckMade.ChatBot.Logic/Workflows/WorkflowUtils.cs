@@ -10,37 +10,37 @@ internal interface IWorkflowUtils
         Ui("Previous workflow was completed. You can continue with a new one: "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    IReadOnlyList<TlgAgentRole> GetAllTlgAgentRoles();
+    IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles();
     Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
 {
     private readonly ITlgInputRepository _inputRepo;
-    private readonly ITlgAgentRoleRepository _portRoleRepo;
+    private readonly ITlgAgentRoleBindingsRepository _portRoleBindingsRepo;
     
-    private IReadOnlyList<TlgAgentRole> _preExistingPortRoles = new List<TlgAgentRole>();
+    private IReadOnlyList<TlgAgentRoleBind> _preExistingPortRoles = new List<TlgAgentRoleBind>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
-        ITlgAgentRoleRepository portRoleRepo)
+        ITlgAgentRoleBindingsRepository portRoleBindingsRepo)
     {
         _inputRepo = inputRepo;
-        _portRoleRepo = portRoleRepo;
+        _portRoleBindingsRepo = portRoleBindingsRepo;
     }
 
     public static async Task<WorkflowUtils> CreateAsync(
         ITlgInputRepository inputRepo,
-        ITlgAgentRoleRepository portRoleRepo)
+        ITlgAgentRoleBindingsRepository portRoleBindingsRepo)
     {
-        var workflowUtils = new WorkflowUtils(inputRepo, portRoleRepo);
+        var workflowUtils = new WorkflowUtils(inputRepo, portRoleBindingsRepo);
         await workflowUtils.InitAsync();
         return workflowUtils;
     }
     
     private async Task InitAsync()
     {
-        var getPortRolesTask = _portRoleRepo.GetAllAsync();
+        var getPortRolesTask = _portRoleBindingsRepo.GetAllAsync();
 
         // In preparation for other async tasks that can then run in parallel
 #pragma warning disable CA1842
@@ -50,7 +50,7 @@ internal class WorkflowUtils : IWorkflowUtils
         _preExistingPortRoles = getPortRolesTask.Result.ToList().AsReadOnly();
     }
 
-    public IReadOnlyList<TlgAgentRole> GetAllTlgAgentRoles() => _preExistingPortRoles;
+    public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingPortRoles;
 
     public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
