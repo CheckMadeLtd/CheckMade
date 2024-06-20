@@ -82,7 +82,7 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
             var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
             var message = new TlgInput(
-                new TlgClientPort(tlgUserId, tlgChatId, (InteractionMode) interactionMode),
+                new TlgAgent(tlgUserId, tlgChatId, (InteractionMode) interactionMode),
                 (TlgInputType) tlgInputType,
                 JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
                 ?? throw new InvalidOperationException("Failed to deserialize"));

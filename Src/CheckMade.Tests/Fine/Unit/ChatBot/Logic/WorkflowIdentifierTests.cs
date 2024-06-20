@@ -23,7 +23,7 @@ public class WorkflowIdentifierTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var portWithoutRole = new TlgClientPort(2468L, 13563897L, InteractionMode.Operations);
+        var portWithoutRole = new TlgAgent(2468L, 13563897L, InteractionMode.Operations);
         var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
             portWithoutRole.UserId, portWithoutRole.ChatId);
     
@@ -39,7 +39,7 @@ public class WorkflowIdentifierTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, InteractionMode.Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.Settings,

@@ -93,7 +93,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                 user,
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
                     
-            var clientPort = new TlgClientPort(
+            var clientPort = new TlgAgent(
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_chat_id")),
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode")));

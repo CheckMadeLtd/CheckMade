@@ -43,7 +43,7 @@ internal static class OutputSender
 
                 /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
                  broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
-                 mapped to a TlgClientPort !! */
+                 mapped to a TlgAgent !! */
                 var portChatId = output.LogicalPort.Match(
                     logicalPort => tlgClientPortRoles
                         .First(cpr => 

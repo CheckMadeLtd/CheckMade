@@ -95,46 +95,46 @@ public class UnitTestStartup : TestStartupBase
         
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsAdmin1, 
-            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
+            new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Group: same Role & ClientPort - all three InteractionModes
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
-            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Operations),
+            new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
-            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Communications),
+            new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsInspector1, 
-            new TlgClientPort(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Notifications),
+            new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_02, Notifications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
 
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer1, 
-            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
+            new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Expired on purpose - for Unit Tests!
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer1, 
-            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
+            new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_03, Operations),
             new DateTime(1999, 01, 01), new DateTime(1999, 02, 02), 
             DbRecordStatus.Historic));
 
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsCleanLead1, 
-            new TlgClientPort(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04, Operations),
+            new TlgAgent(ITestUtils.TestUserId_02, ITestUtils.TestChatId_04, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsObserver1, 
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05, Operations),
+            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_05, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // #2
@@ -142,12 +142,12 @@ public class UnitTestStartup : TestStartupBase
         // Used in Unit Test 'GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsEngineer2, 
-            new TlgClientPort(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Communications),
+            new TlgAgent(ITestUtils.TestUserId_03 , ITestUtils.TestChatId_06, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgClientPortRole(
             ITestUtils.SanitaryOpsCleanLead2, 
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07, Operations),
+            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_07, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // No TlgClientPortRole for role 'Inspector2' on purpose for Unit Test, e.g.

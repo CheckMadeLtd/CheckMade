@@ -21,7 +21,7 @@ public class TlgClientPortRoleRepositoryTests
 
         var inputPortRole = new TlgClientPortRole(
             ITestUtils.IntegrationTestsRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
@@ -46,7 +46,7 @@ public class TlgClientPortRoleRepositoryTests
 
         var preExistingActivePortRole = new TlgClientPortRole(
             ITestUtils.IntegrationTestsRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);

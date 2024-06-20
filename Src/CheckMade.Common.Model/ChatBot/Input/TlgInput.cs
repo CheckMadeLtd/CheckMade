@@ -1,7 +1,7 @@
 ﻿namespace CheckMade.Common.Model.ChatBot.Input;
 
 public record TlgInput(
-     TlgClientPort ClientPort,
+     TlgAgent ClientPort,
      TlgInputType InputType,
      TlgInputDetails Details);
      

@@ -3,7 +3,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.Common.Model.ChatBot;
 
-public record TlgClientPort(
+public record TlgAgent(
     TlgUserId UserId,
     TlgChatId ChatId,
     InteractionMode Mode);

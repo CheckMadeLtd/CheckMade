@@ -250,7 +250,9 @@ internal class ToModelConverter(
             ? update.Message.Text
             : update.Message.Caption;
         
-        return new TlgInput(new TlgClientPort(userId, chatId, interactionMode), tlgInputType,
+        return new TlgInput(
+            new TlgAgent(userId, chatId, interactionMode), 
+            tlgInputType,
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

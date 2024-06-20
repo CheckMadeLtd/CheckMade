@@ -33,7 +33,7 @@ public class ToModelConverterTests
         var update = basics.utils.GetValidTelegramTextMessage(textInput);
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 update.Message.From!.Id,
                 update.Message.Chat.Id,
                 Operations),
@@ -71,7 +71,7 @@ public class ToModelConverterTests
             $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 attachmentUpdate.Message.From!.Id,
                 attachmentUpdate.Message.Chat.Id,
                 Operations),
@@ -110,7 +110,7 @@ public class ToModelConverterTests
             horizontalAccuracy ?? Option<float>.None());
         
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 locationUpdate.Message.From!.Id, 
                 locationUpdate.Message.Chat.Id, 
                 Operations),
@@ -142,7 +142,7 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 commandUpdate.Message.From!.Id,
                 commandUpdate.Message.Chat.Id,
                 Operations),
@@ -174,7 +174,7 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 commandUpdate.Message.From!.Id,
                 commandUpdate.Message.Chat.Id,
                 Communications),
@@ -206,7 +206,7 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 commandUpdate.Message.From!.Id,
                 commandUpdate.Message.Chat.Id,
                 Notifications),
@@ -235,7 +235,7 @@ public class ToModelConverterTests
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
 
         var expectedTlgInput = new TlgInput(
-            new TlgClientPort(
+            new TlgAgent(
                 callbackQuery.Message.From!.Id,
                 callbackQuery.Message.Chat.Id,
                 Operations),

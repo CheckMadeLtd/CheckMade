@@ -31,7 +31,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
@@ -58,7 +58,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
@@ -89,7 +89,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         mockTlgInputsRepo
@@ -120,7 +120,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
@@ -155,7 +155,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(

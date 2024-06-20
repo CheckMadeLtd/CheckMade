@@ -11,7 +11,7 @@ internal interface IWorkflowUtils
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles();
-    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort);
+    Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent clientPort);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
@@ -52,7 +52,7 @@ internal class WorkflowUtils : IWorkflowUtils
 
     public IReadOnlyList<TlgClientPortRole> GetAllClientPortRoles() => _preExistingPortRoles;
 
-    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgClientPort clientPort)
+    public async Task<IReadOnlyList<TlgInput>> GetAllCurrentInputsAsync(TlgAgent clientPort)
     {
         var lastUsedTlgClientPortRole = _preExistingPortRoles
             .Where(cpr =>

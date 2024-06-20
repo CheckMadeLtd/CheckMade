@@ -25,7 +25,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestUserId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         mockTlgInputsRepo
@@ -49,7 +49,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_02, TestChatId_03, Operations);
+        var clientPort = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
         // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
@@ -79,7 +79,7 @@ public class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var utils = _services.GetRequiredService<ITestUtils>();
         
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
@@ -105,7 +105,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var nonExistingTokenInput = utils.GetValidTlgInputTextMessage(
@@ -134,7 +134,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputTokenWithPreExistingActivePortRole = utils.GetValidTlgInputTextMessage(
@@ -178,7 +178,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_03, TestChatId_08, Operations);
+        var clientPort = new TlgAgent(TestUserId_03, TestChatId_08, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -231,7 +231,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         const long privateChatUserAndChatId = TestUserId_03;
-        var clientPort = new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
+        var clientPort = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -287,7 +287,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         const long privateChatUserAndChatId = TestUserId_03;
-        var clientPort = new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
+        var clientPort = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -350,7 +350,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var clientPort = new TlgClientPort(TestUserId_01, TestChatId_01, Operations);
+        var clientPort = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
         
         var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
