@@ -39,7 +39,7 @@ internal class WorkflowIdentifier(
     }
     
     private bool IsUserAuthenticated(TlgAgent inputPort) => 
-        workflowUtils.GetAllClientPortRoles()
+        workflowUtils.GetAllTlgAgentRoles()
         .FirstOrDefault(cpr => 
             cpr.TlgAgent.ChatId == inputPort.ChatId && 
             cpr.TlgAgent.Mode == inputPort.Mode && 

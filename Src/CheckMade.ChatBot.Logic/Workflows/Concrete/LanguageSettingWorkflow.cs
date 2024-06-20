@@ -13,7 +13,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 }
 
 internal class LanguageSettingWorkflow(
-        ITlgClientPortRoleRepository portRoleRepo,    
+        ITlgTlgAgentRoleRepository portRoleRepo,    
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {

@@ -3,11 +3,11 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
-public interface ITlgClientPortRoleRepository
+public interface ITlgTlgAgentRoleRepository
 {
-    Task AddAsync(TlgClientPortRole portRole);
-    Task AddAsync(IEnumerable<TlgClientPortRole> portRole);
-    Task<IEnumerable<TlgClientPortRole>> GetAllAsync();
-    Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus);
-    Task HardDeleteAsync(TlgClientPortRole portRole);
+    Task AddAsync(TlgTlgAgentRole portRole);
+    Task AddAsync(IEnumerable<TlgTlgAgentRole> portRole);
+    Task<IEnumerable<TlgTlgAgentRole>> GetAllAsync();
+    Task UpdateStatusAsync(TlgTlgAgentRole portRole, DbRecordStatus newStatus);
+    Task HardDeleteAsync(TlgTlgAgentRole portRole);
 }

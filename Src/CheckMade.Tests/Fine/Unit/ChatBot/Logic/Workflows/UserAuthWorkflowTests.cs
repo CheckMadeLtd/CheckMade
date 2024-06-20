@@ -43,7 +43,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortRole()
+    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -52,7 +52,7 @@ public class UserAuthWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
     
-        // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
+        // Depends on an 'expired' clientPortRole set up by default in the MockTlgTlgAgentRoleRepository 
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
             tlgAgent.UserId,
             tlgAgent.ChatId,
@@ -148,7 +148,7 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
 
         var preExistingActivePortRole = (await mockPortRolesRepo.Object.GetAllAsync())
             .First(cpr => 
@@ -193,34 +193,34 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
 
         const string expectedConfirmation = """
                                             {0}, welcome to the CheckMade ChatBot!
                                             You have successfully authenticated as a {1} at live-event {2}.
                                             """;
         
-        var expectedClientPortRoleAdded = new TlgClientPortRole(
+        var expectedTlgAgentRoleAdded = new TlgTlgAgentRole(
             SanitaryOpsInspector2,
             tlgAgent,
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var actualClientPortRoleAdded = new List<TlgClientPortRole>(); 
+        var actualTlgAgentRoleAdded = new List<TlgTlgAgentRole>(); 
         mockPortRolesRepo
             .Setup(x => 
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(portRole => 
-                actualClientPortRoleAdded = portRole.ToList());
+                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
+            .Callback<IEnumerable<TlgTlgAgentRole>>(portRole => 
+                actualTlgAgentRoleAdded = portRole.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
-        Assert.Equivalent(expectedClientPortRoleAdded.Role, actualClientPortRoleAdded[0].Role);
-        Assert.Equivalent(expectedClientPortRoleAdded.TlgAgent, actualClientPortRoleAdded[0].TlgAgent);
-        Assert.Equivalent(expectedClientPortRoleAdded.Status, actualClientPortRoleAdded[0].Status);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.Role, actualTlgAgentRoleAdded[0].Role);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.TlgAgent, actualTlgAgentRoleAdded[0].TlgAgent);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.Status, actualTlgAgentRoleAdded[0].Status);
     }
 
     [Fact]
@@ -245,23 +245,23 @@ public class UserAuthWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         
-        var expectedClientPortRolesAdded = allModes.Select(im => 
-            new TlgClientPortRole(
+        var expectedTlgAgentRolesAdded = allModes.Select(im => 
+            new TlgTlgAgentRole(
                 SanitaryOpsInspector2,
                 tlgAgent with { Mode = im },
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
             .ToList();
 
-        var actualPortRoles = new List<TlgClientPortRole>();
+        var actualPortRoles = new List<TlgTlgAgentRole>();
         mockPortRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(
+                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
+            .Callback<IEnumerable<TlgTlgAgentRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -269,13 +269,13 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgClientPortRole>>()));
+            It.IsAny<IEnumerable<TlgTlgAgentRole>>()));
 
-        for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
+        for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Role, actualPortRoles[i].Role);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Status, actualPortRoles[i].Status);
         }
     }
     
@@ -302,9 +302,9 @@ public class UserAuthWorkflowTests
         
         serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgClientPortRoleRepository>>();
+        var mockPortRolesRepo = _services.GetRequiredService<Mock<ITlgTlgAgentRoleRepository>>();
 
-        var expectedClientPortRolesAdded = new List<TlgClientPortRole>
+        var expectedTlgAgentRolesAdded = new List<TlgTlgAgentRole>
         {
             new(SanitaryOpsEngineer2,
                 tlgAgent,
@@ -317,11 +317,11 @@ public class UserAuthWorkflowTests
                 Option<DateTime>.None()),
         };
 
-        var actualPortRoles = new List<TlgClientPortRole>();
+        var actualPortRoles = new List<TlgTlgAgentRole>();
         mockPortRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(
+                x.AddAsync(It.IsAny<IEnumerable<TlgTlgAgentRole>>()))
+            .Callback<IEnumerable<TlgTlgAgentRole>>(
                 portRoles => actualPortRoles = portRoles.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -329,13 +329,13 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgClientPortRole>>()));
+            It.IsAny<IEnumerable<TlgTlgAgentRole>>()));
 
-        for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
+        for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].TlgAgent, actualPortRoles[i].TlgAgent);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Role, actualPortRoles[i].Role);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Status, actualPortRoles[i].Status);
         }
     }
     

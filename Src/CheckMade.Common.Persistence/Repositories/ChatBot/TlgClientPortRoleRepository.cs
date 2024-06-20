@@ -8,13 +8,13 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgClientPortRoleRepository
+public class TlgTlgAgentRoleRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgTlgAgentRoleRepository
 {
-    public async Task AddAsync(TlgClientPortRole portRole) =>
-        await AddAsync(new List<TlgClientPortRole> { portRole });
+    public async Task AddAsync(TlgTlgAgentRole portRole) =>
+        await AddAsync(new List<TlgTlgAgentRole> { portRole });
 
-    public async Task AddAsync(IEnumerable<TlgClientPortRole> portRole)
+    public async Task AddAsync(IEnumerable<TlgTlgAgentRole> portRole)
     {
         const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
@@ -51,7 +51,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(commands);
     }
 
-    public async Task<IEnumerable<TlgClientPortRole>> GetAllAsync()
+    public async Task<IEnumerable<TlgTlgAgentRole>> GetAllAsync()
     {
         const string rawQuery = "SELECT " +
                                 "usr.mobile AS user_mobile, " +
@@ -108,11 +108,11 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
                     
             var status = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status"));
 
-            return new TlgClientPortRole(role, tlgAgent, activationDate, deactivationDate, status);
+            return new TlgTlgAgentRole(role, tlgAgent, activationDate, deactivationDate, status);
         });
     }
 
-    public async Task UpdateStatusAsync(TlgClientPortRole portRole, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(TlgTlgAgentRole portRole, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +
@@ -140,7 +140,7 @@ public class TlgClientPortRoleRepository(IDbExecutionHelper dbHelper)
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
     }
     
-    public async Task HardDeleteAsync(TlgClientPortRole portRole)
+    public async Task HardDeleteAsync(TlgTlgAgentRole portRole)
     {
         const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +

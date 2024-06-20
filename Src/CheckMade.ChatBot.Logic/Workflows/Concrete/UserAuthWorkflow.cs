@@ -18,7 +18,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 
 internal class UserAuthWorkflow(
         IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo,
+        ITlgTlgAgentRoleRepository portRoleRepo,
         IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
 {
@@ -81,11 +81,11 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingPortRoles = workflowUtils.GetAllClientPortRoles();
+        var preExistingPortRoles = workflowUtils.GetAllTlgAgentRoles();
         
         var outputs = new List<OutputDto>();
         
-        var newPortRoleForOriginatingMode = new TlgClientPortRole(
+        var newPortRoleForOriginatingMode = new TlgTlgAgentRole(
             (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
@@ -125,12 +125,12 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var portRolesToAdd = new List<TlgClientPortRole> { newPortRoleForOriginatingMode };
+        var portRolesToAdd = new List<TlgTlgAgentRole> { newPortRoleForOriginatingMode };
         
-        var isInputTlgClientPortPrivateChat = 
+        var isInputTlgTlgAgentPrivateChat = 
             tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
 
-        if (isInputTlgClientPortPrivateChat)
+        if (isInputTlgTlgAgentPrivateChat)
         {
             AddPortRolesForOtherNonOriginatingAndVirginModes();
         }
@@ -139,7 +139,7 @@ internal class UserAuthWorkflow(
         
         return outputs;
         
-        TlgClientPortRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
+        TlgTlgAgentRole? FirstOrDefaultPreExistingActivePortRoleMode(InteractionMode mode) =>
         preExistingPortRoles.FirstOrDefault(cpr => 
             cpr.Role.Token == inputText &&
             cpr.TlgAgent.Mode == mode && 
