@@ -25,9 +25,6 @@ internal class WorkflowIdentifier(
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        // ToDo: fix bug that when I use CallbackQuery, the userId is that of the bot, not mine. 
-        // this means, AllCurrentInputs only contains previous CallbackQueries! Hence workflow doesn't get identified!!
-        
         var allCurrentInputs = await workflowUtils.GetAllCurrentInputsAsync(input.ClientPort);
         var lastBotCommand = GetLastBotCommand(allCurrentInputs);
 
