@@ -23,24 +23,24 @@ internal interface IWorkflowUtils
 
 internal class WorkflowUtils : IWorkflowUtils
 {
-    private readonly ITlgInputRepository _inputRepo;
+    private readonly ITlgInputsRepository _inputsRepo;
     private readonly ITlgAgentRoleBindingsRepository _tlgAgentRoleBindingsRepo;
     
     private IReadOnlyCollection<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
 
     private WorkflowUtils(
-        ITlgInputRepository inputRepo,
+        ITlgInputsRepository inputsRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     {
-        _inputRepo = inputRepo;
+        _inputsRepo = inputsRepo;
         _tlgAgentRoleBindingsRepo = tlgAgentRoleBindingsRepo;
     }
 
     public static async Task<WorkflowUtils> CreateAsync(
-        ITlgInputRepository inputRepo,
+        ITlgInputsRepository inputsRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     {
-        var workflowUtils = new WorkflowUtils(inputRepo, tlgAgentRoleBindingsRepo);
+        var workflowUtils = new WorkflowUtils(inputsRepo, tlgAgentRoleBindingsRepo);
         await workflowUtils.InitAsync();
         return workflowUtils;
     }
@@ -71,7 +71,7 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastPreviousTlgAgentRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        return (await _inputRepo.GetAllAsync(tlgAgent))
+        return (await _inputsRepo.GetAllAsync(tlgAgent))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())
@@ -81,7 +81,7 @@ internal class WorkflowUtils : IWorkflowUtils
     public async Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
     {
         var allInputsOfTlgAgent = 
-            (await _inputRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
+            (await _inputsRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
 
         return allInputsOfTlgAgent
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)

@@ -12,7 +12,7 @@ public static class ServiceRegistration
         services.AddScoped<IInputProcessorFactory, InputProcessorFactory>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<IWorkflowUtils>(sp => WorkflowUtils.CreateAsync(
-            sp.GetRequiredService<ITlgInputRepository>(), 
+            sp.GetRequiredService<ITlgInputsRepository>(), 
             sp.GetRequiredService<ITlgAgentRoleBindingsRepository>())
             .Result);
 

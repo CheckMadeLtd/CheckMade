@@ -20,7 +20,7 @@ public static class ServiceRegistration
                 sp.GetRequiredService<IDbCommandRetryPolicy>(),
                 sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
         
-        services.AddScoped<ITlgInputRepository, TlgInputRepository>();
+        services.AddScoped<ITlgInputsRepository, TlgInputsRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITlgAgentRoleBindingsRepository, TlgAgentRoleBindingsRepository>();

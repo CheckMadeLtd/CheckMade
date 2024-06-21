@@ -27,13 +27,13 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage() });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -51,7 +51,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
     
         // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgAgentRoleRepository 
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
@@ -64,7 +64,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -83,13 +83,13 @@ public class UserAuthWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var utils = _services.GetRequiredService<ITestUtils>();
         
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -107,7 +107,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         var nonExistingTokenInput = utils.GetValidTlgInputTextMessage(
             text: InputValidator.GetTokenFormatExample(),
@@ -118,7 +118,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -136,7 +136,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputTokenWithPreExistingActiveTlgAgentRole = utils.GetValidTlgInputTextMessage(
             text: DanielIsSanitaryOpsAdminAtMockParooka2024.Token,
@@ -147,7 +147,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRole });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
@@ -181,7 +181,7 @@ public class UserAuthWorkflowTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_03, TestChatId_08, Operations);
         var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
             // Diverging userId and chatId = sent from a Tlgr Chat-Group (rather than a private chat with the bot)
@@ -193,7 +193,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
@@ -235,7 +235,7 @@ public class UserAuthWorkflowTests
         const long privateChatUserAndChatId = TestUserId_03;
         var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
@@ -246,7 +246,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
@@ -292,7 +292,7 @@ public class UserAuthWorkflowTests
         const long privateChatUserAndChatId = TestUserId_03;
         var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var roleForAuth = SanitaryOpsEngineer2;
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
@@ -304,7 +304,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
         
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
@@ -355,7 +355,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
         
@@ -363,7 +363,7 @@ public class UserAuthWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { badTokenInput });
         
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     

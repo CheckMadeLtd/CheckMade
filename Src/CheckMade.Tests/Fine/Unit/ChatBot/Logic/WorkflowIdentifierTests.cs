@@ -40,7 +40,7 @@ public class WorkflowIdentifierTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.Settings,
             tlgAgent.UserId, tlgAgent.ChatId);
@@ -52,7 +52,7 @@ public class WorkflowIdentifierTests
                 inputWithSettingsBotCommand
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         

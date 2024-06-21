@@ -5,7 +5,7 @@ using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
 
-internal class MockTlgInputRepository(IMock<ITlgInputRepository> mockInputRepo) : ITlgInputRepository
+internal class MockTlgInputsRepository(IMock<ITlgInputsRepository> mockInputRepo) : ITlgInputsRepository
 {
     public async Task AddAsync(TlgInput tlgInput)
     {

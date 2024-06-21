@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
-public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
+public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
 {
     private ServiceProvider? _services;
     
@@ -29,7 +29,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
             utils.GetValidTlgInputTextMessage()
         };
         
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
 
         foreach (var input in tlgInputs)
         {
@@ -64,7 +64,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
             expectedDomainTerm, tlgAgent.UserId, tlgAgent.ChatId);
         
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
@@ -93,7 +93,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
             expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty, 
             tlgAgent.UserId, tlgAgent.ChatId);
         
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
@@ -122,7 +122,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
             utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId)
         };
         
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInputs);
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
@@ -136,7 +136,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             utils.Randomizer.GenerateRandomLong(),
@@ -168,7 +168,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
             _services = serviceCollection.BuildServiceProvider();
         }
         
-        var inputRepo = _services.GetRequiredService<ITlgInputRepository>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         // No assert needed: test fails when exception thrown!
         await inputRepo.GetAllAsync(devDbUserId);

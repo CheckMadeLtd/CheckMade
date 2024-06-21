@@ -8,7 +8,7 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgInputRepository
+public class TlgInputsRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgInputsRepository
 {
     public async Task AddAsync(TlgInput tlgInput) =>
         await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());

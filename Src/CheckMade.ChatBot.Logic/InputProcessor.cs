@@ -17,7 +17,7 @@ public interface IInputProcessor
 internal class InputProcessor(
         InteractionMode interactionMode,
         IWorkflowIdentifier workflowIdentifier,
-        ITlgInputRepository inputRepo,
+        ITlgInputsRepository inputsRepo,
         ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
@@ -26,7 +26,7 @@ internal class InputProcessor(
         return await tlgInput.Match(
             async input =>
             {
-                await inputRepo.AddAsync(input);
+                await inputsRepo.AddAsync(input);
                 
                 var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
 

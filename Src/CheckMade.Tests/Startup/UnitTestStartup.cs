@@ -67,8 +67,8 @@ public class UnitTestStartup : TestStartupBase
 
     private void RegisterPersistenceMocks()
     {
-        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
-            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
+        Services.AddScoped<ITlgInputsRepository, MockTlgInputsRepository>(_ => 
+            new MockTlgInputsRepository(new Mock<ITlgInputsRepository>()));
 
         Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
         

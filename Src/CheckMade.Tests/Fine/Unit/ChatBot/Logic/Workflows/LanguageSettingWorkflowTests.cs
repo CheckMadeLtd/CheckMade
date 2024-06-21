@@ -34,7 +34,7 @@ public class LanguageSettingWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
@@ -44,7 +44,7 @@ public class LanguageSettingWorkflowTests
                 utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
@@ -61,7 +61,7 @@ public class LanguageSettingWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
@@ -75,7 +75,7 @@ public class LanguageSettingWorkflowTests
                     tlgAgent.UserId, tlgAgent.ChatId)
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
@@ -92,7 +92,7 @@ public class LanguageSettingWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
@@ -106,7 +106,7 @@ public class LanguageSettingWorkflowTests
                 utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId)
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
@@ -123,7 +123,7 @@ public class LanguageSettingWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
             Operations, (int)OperationsBotCommands.Settings, 
@@ -138,7 +138,7 @@ public class LanguageSettingWorkflowTests
                 inputSettingsCommand
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
 
@@ -158,7 +158,7 @@ public class LanguageSettingWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
             Operations, (int)OperationsBotCommands.Settings, 
@@ -179,7 +179,7 @@ public class LanguageSettingWorkflowTests
                 languageSettingInput
             });
 
-        serviceCollection.AddScoped<ITlgInputRepository>(_ => mockTlgInputsRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var mockUserRepo = _services.GetRequiredService<Mock<IUserRepository>>();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();

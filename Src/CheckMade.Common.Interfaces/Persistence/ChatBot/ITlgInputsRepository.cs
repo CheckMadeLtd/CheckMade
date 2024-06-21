@@ -3,7 +3,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 
 namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
-public interface ITlgInputRepository
+public interface ITlgInputsRepository
 {
     Task AddAsync(TlgInput tlgInput);
     Task AddAsync(IEnumerable<TlgInput> tlgInputs);
