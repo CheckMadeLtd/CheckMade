@@ -12,7 +12,7 @@ WITH new_user_daniel AS (
 -- To test correct handling of absence of optional value
 new_user_patrick_without_email AS (
      INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
-         VALUES ('+4999999999', '_Patrick','IntegrationTest', '_Bauer', 0, 0)
+         VALUES ('+4999999999', '_Patrick','IntegrationTest', '_Bauer', 0, 1)
          ON CONFLICT (mobile) WHERE status = 0 
              DO UPDATE SET status = users.status
          RETURNING id
@@ -20,7 +20,7 @@ new_user_patrick_without_email AS (
 
 new_live_event_venue AS (
     INSERT INTO live_event_venues (name, status) 
-        VALUES ('IntegrationTest Venue near Cologne', 0) 
+        VALUES ('Mock Venue near Cologne', 0) 
         ON CONFLICT (name)
             DO UPDATE SET status = live_event_venues.status
         RETURNING id
@@ -28,7 +28,7 @@ new_live_event_venue AS (
     
 new_live_event_series AS (
     INSERT INTO live_event_series (name, status) 
-       VALUES ('IntegrationTest Parookaville Series', 0)
+       VALUES ('Mock Parookaville Series', 0)
         ON CONFLICT (name)
             DO UPDATE SET status = live_event_series.status
         RETURNING id
@@ -36,7 +36,7 @@ new_live_event_series AS (
     
 new_live_event AS (
     INSERT INTO live_events (name, start_date, end_date, venue_id, live_event_series_id, status)
-        VALUES ('IntegrationTest Parooka 2024',
+        VALUES ('Mock Parookaville 2024',
                 '2024-07-19 10:00:00', '2024-07-22 18:00:00', 
                 (SELECT id FROM new_live_event_venue), 
                 (SELECT id FROM new_live_event_series), 

@@ -22,6 +22,14 @@ public static class TestData
         new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
         LanguageCode.en);
 
+    internal static readonly User IntegrationTestsUserPatrick = new(
+        new MobileNumber("+447538521999"),
+        "_Patrick",
+        "IntegrationTest",
+        "_Bauer",
+        Option<EmailAddress>.None(), 
+        LanguageCode.de);
+
     internal static readonly User TestUserDaniel = new(
         new MobileNumber("+447538521999"),
         "_Daniel",
