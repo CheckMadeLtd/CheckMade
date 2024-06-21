@@ -85,7 +85,7 @@ public class UpdateHandler(
                             .ProcessInputAsync(tlgInput))
                 from tlgAgentRoles
                     in Attempt<IReadOnlyList<TlgAgentRoleBind>>.RunAsync(async () => 
-                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToList().AsReadOnly())
+                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyList())
                 from uiTranslator
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(

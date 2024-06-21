@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -49,7 +48,7 @@ internal class WorkflowUtils : IWorkflowUtils
         await Task.WhenAll(getTlgAgentRolesTask);
 #pragma warning restore CA1842
         
-        _preExistingTlgAgentRoles = getTlgAgentRolesTask.Result.ToList().AsReadOnly();
+        _preExistingTlgAgentRoles = getTlgAgentRolesTask.Result.ToImmutableReadOnlyList();
     }
 
     public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingTlgAgentRoles;
@@ -70,21 +69,21 @@ internal class WorkflowUtils : IWorkflowUtils
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())
-            .ToList().AsReadOnly();
+            .ToImmutableReadOnlyList();
     }
 
     public async Task<IReadOnlyList<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
     {
         var allInputsOfTlgAgent = 
-            (await _inputRepo.GetAllAsync(tlgAgent)).ToList().AsReadOnly();
+            (await _inputRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyList();
 
         return GetLatestRecordsUpTo(
             allInputsOfTlgAgent,
             input => input.InputType == TlgInputType.CommandMessage)
-            .ToList().AsReadOnly();
+            .ToImmutableReadOnlyList();
     }
 
-    private static IEnumerable<T> GetLatestRecordsUpTo<T>(
+    private static IReadOnlyList<T> GetLatestRecordsUpTo<T>(
         IReadOnlyCollection<T> collection, Func<T, bool> stopCondition, bool includeStopItem = true)
     {
         var result = collection.Reverse()
@@ -101,6 +100,6 @@ internal class WorkflowUtils : IWorkflowUtils
 
         result.Reverse();
         
-        return result.ToImmutableList().AsReadOnly();
+        return result.ToImmutableReadOnlyList();
     }
 }

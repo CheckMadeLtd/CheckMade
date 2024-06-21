@@ -42,7 +42,7 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
             var retrievedInputs = 
                 (await inputRepo.GetAllAsync(input.TlgAgent))
                 .OrderByDescending(x => x.Details.TlgDate)
-                .ToList().AsReadOnly();
+                .ToImmutableReadOnlyList();
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
             Assert.Equivalent(expectedRetrieval[0], retrievedInputs[0]);

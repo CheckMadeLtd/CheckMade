@@ -80,7 +80,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             });
             
             return command;
-        }).ToImmutableArray();
+        }).ToImmutableReadOnlyCollection();
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {

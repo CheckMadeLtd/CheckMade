@@ -19,10 +19,11 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
     // Only use this for names/labels etc. but not for strings (like "n/a") which are similar between languages. 
     public static UiString UiNoTranslate(string uiString) => Ui("{0}", uiString);
     
-    public static UiString UiConcatenate(params UiString?[] uiStrings) => UiConcatenate(uiStrings.ToList());
+    public static UiString UiConcatenate(params UiString?[] uiStrings) => 
+        UiConcatenate(uiStrings.ToImmutableReadOnlyList());
     
     public static UiString UiConcatenate(IEnumerable<UiString?> uiStrings) => 
-        new(uiStrings.ToList(), string.Empty, []);
+        new(uiStrings.ToImmutableReadOnlyList(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)
     public string GetFormattedEnglish()

@@ -255,7 +255,7 @@ public class UserAuthWorkflowTests
                 tlgAgent with { Mode = im },
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
-            .ToList();
+            .ToImmutableReadOnlyList();
 
         var actualTlgAgentRoles = new List<TlgAgentRoleBind>();
         mockTlgAgentRolesRepo

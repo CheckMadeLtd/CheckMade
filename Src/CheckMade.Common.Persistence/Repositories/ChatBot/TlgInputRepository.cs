@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -12,7 +11,7 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgInputRepository
 {
     public async Task AddAsync(TlgInput tlgInput) =>
-        await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableArray());
+        await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());
 
     public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
     {
@@ -45,7 +44,7 @@ public class TlgInputRepository(IDbExecutionHelper dbHelper) : BaseRepository(db
             });
             
             return command;
-        }).ToImmutableArray();
+        }).ToImmutableReadOnlyCollection();
 
         await ExecuteTransactionAsync(commands);
     }

@@ -26,7 +26,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             translator);
         
         var inlineKeyboardMarkup = 
-            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToList().AsReadOnly());
+            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToImmutableReadOnlyList());
 
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,
@@ -74,16 +74,16 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         
         // For uniformity, convert the combined flagged enum into an array.
         var allControlPrompts = Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
-        var promptSelectionAsArray = allControlPrompts
+        var promptSelectionAsCollection = allControlPrompts
             .Where(prompts => promptSelection.GetValueOrDefault().HasFlag(prompts))
-            .ToArray();
+            .ToImmutableReadOnlyCollection();
         
-        allTextIdPairs.AddRange(promptSelectionAsArray.Select(prompt =>
+        allTextIdPairs.AddRange(promptSelectionAsCollection.Select(prompt =>
             (text: translator.Translate(promptsGlossary.UiByCallbackId[
                 new CallbackId((long)prompt)]),
                 id: new CallbackId((long)prompt).Id)));
 
-        return allTextIdPairs;
+        return allTextIdPairs.ToImmutableReadOnlyList();
     }
     
     private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(
