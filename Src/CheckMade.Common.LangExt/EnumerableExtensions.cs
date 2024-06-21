@@ -29,6 +29,9 @@ public static class EnumerableExtensions
     {
         var enumeratedDesc = enumerable.Reverse().ToList(); // .Reverse() required for usage of .TakeWhile()
         
+        if (enumeratedDesc.Count == 0)
+            return ImmutableList<T>.Empty;
+        
         var result = enumeratedDesc
             .TakeWhile(item => !stopCondition(item))
             .ToList();
