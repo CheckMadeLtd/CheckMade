@@ -33,6 +33,8 @@ public class RoleRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelp
         
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
+        // ToDo: extract Role From Reader Creation logic below into a method that can be shared with TlgAgentRoleBindingsRepo
+        
         return await ExecuteReaderAsync(command, reader =>
         {
             var user = new User(

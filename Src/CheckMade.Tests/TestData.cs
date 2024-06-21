@@ -32,46 +32,46 @@ public static class TestData
     
     internal static readonly LiveEventVenue MockParookaVenue = new("Mock Venue near Cologne");
 
-    internal static readonly LiveEvent MockParooka2024 = new("Mock Parookaville 2024",
+    internal static readonly LiveEvent MockParooka2024NoRoles = new("Mock Parookaville 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2024, 07, 22, 18, 00, 00, DateTimeKind.Utc),
-        new List<Role>(), // Only fill in the object graph going from LiveEvent to Role
+        new List<Role>(),
         MockParookaVenue);
 
-    internal static readonly LiveEvent MockParooka2025 = new("Mock Parookaville 2025",
+    internal static readonly LiveEvent MockParooka2025NoRoles = new("Mock Parookaville 2025",
         new DateTime(2025, 07, 18, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2025, 07, 21, 18, 00, 00, DateTimeKind.Utc),
-        new List<Role>(), // Only fill in the object graph going from LiveEvent to Role
+        new List<Role>(),
         MockParookaVenue);
 
     internal static readonly LiveEventSeries MockParookaSeries = 
         new("Mock Parookaville Series", 
             new List<LiveEvent> 
             {
-                MockParooka2024,
-                MockParooka2025
+                MockParooka2024NoRoles,
+                MockParooka2025NoRoles
             });
     
     internal static readonly LiveEventVenue MockHurricaneVenue = new("Mock Venue near Bremen");
     
-    internal static readonly LiveEvent MockHurricane2024 = new("Mock Hurricane 2024",
+    internal static readonly LiveEvent MockHurricane2024NoRoles = new("Mock Hurricane 2024",
         new DateTime(2024, 06, 21, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc),
-        new List<Role>(), // Only fill in the object graph going from LiveEvent to Role
+        new List<Role>(),
         MockHurricaneVenue);
 
-    internal static readonly LiveEvent MockHurricane2025 = new("Mock Hurricane 2025",
+    internal static readonly LiveEvent MockHurricane2025NoRoles = new("Mock Hurricane 2025",
         new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc),
-        new List<Role>(), // Only fill in the object graph going from LiveEvent to Role
+        new List<Role>(),
         MockHurricaneVenue);
 
     internal static readonly LiveEventSeries MockHurricaneSeries =
         new("Mock Hurricane Series",
             new List<LiveEvent>
             {
-                MockHurricane2024,
-                MockHurricane2025
+                MockHurricane2024NoRoles,
+                MockHurricane2025NoRoles
             });
     
     
@@ -81,28 +81,28 @@ public static class TestData
         "RAAAA1",
         SanitaryOps_Inspector,
         IntegrationTestsUserDaniel,
-        MockParooka2024);
+        MockParooka2024NoRoles);
     
     internal static readonly Role DanielIsSanitaryOpsAdminAtMockParooka2024 = 
         new("VB70TX",
             SanitaryOps_Admin, 
             TestUserDaniel,
-            MockParooka2024);
+            MockParooka2024NoRoles);
     
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, TestUserDaniel, MockParooka2024);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, TestUserDaniel, MockParooka2024);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", SanitaryOps_CleanLead, TestUserDaniel, MockParooka2024);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, TestUserDaniel, MockParooka2024);
+    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, TestUserDaniel, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, TestUserDaniel, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", SanitaryOps_CleanLead, TestUserDaniel, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, TestUserDaniel, MockParooka2024NoRoles);
     
     internal static readonly Role DanielIsSanitaryOpsInspectorAtMockHurricane2024 = 
         new("MAM8SX",
             SanitaryOps_Inspector,
             TestUserDaniel,
-            MockParooka2024);
+            MockParooka2024NoRoles);
     
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, TestUserDaniel, MockParooka2024);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", SanitaryOps_CleanLead, TestUserDaniel, MockParooka2024);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, TestUserDaniel, MockParooka2024);
+    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, TestUserDaniel, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", SanitaryOps_CleanLead, TestUserDaniel, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, TestUserDaniel, MockParooka2024NoRoles);
     
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
