@@ -25,7 +25,7 @@ public class EnumerableExtensionsTests
     [Fact]
     public void GetLatestRecordsUpTo_ReturnsAllElements_WhenStopConditionItemNotPresent()
     {
-        List<int> list = [1, 2, 3, 4, 5];;
+        List<int> list = [1, 2, 3, 4, 5];
         Func<int, bool> stopCondition = x => x == 7;
         var result = list.GetLatestRecordsUpTo(stopCondition, false);
     
@@ -47,7 +47,7 @@ public class EnumerableExtensionsTests
     {
         List<int> list = [1, 2, 3, 4, 5];
         Func<int, bool> stopCondition = x => x == 5;
-        var result = list.GetLatestRecordsUpTo(stopCondition, false);
+        var result = list.GetLatestRecordsUpTo(stopCondition, true);
     
         Assert.Equal([5], result);
     }
@@ -65,11 +65,12 @@ public class EnumerableExtensionsTests
     [Fact]
     public void GetLatestRecordsUpTo_ReturnsNoElements_WhenInputListIsEmpty()
     {
+        // ReSharper disable once CollectionNeverUpdated.Local
         List<int> list = [];
         Func<int, bool> stopCondition = x => x == 3;
         var result = list.GetLatestRecordsUpTo(stopCondition, true);
 
-        Assert.Equal([], result);
+        Assert.Equal(list, result);
     }
     
     [Fact]
