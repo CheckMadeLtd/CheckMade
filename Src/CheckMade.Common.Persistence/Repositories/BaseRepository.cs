@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Structs;
+using CheckMade.Common.Model.Utils;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
@@ -57,7 +59,40 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return builder.ToImmutable();
     }
 
-    protected static Option<T> GetOption<T>(DbDataReader reader, int ordinal)
+    protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
+    {
+        var user = new User(
+            new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
+            reader.GetString(reader.GetOrdinal("user_first_name")),
+            GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
+            reader.GetString(reader.GetOrdinal("user_last_name")),
+            GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
+            (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
+
+        var venue = new LiveEventVenue(
+            reader.GetString(reader.GetOrdinal("venue_name")),
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status")));
+
+        var liveEvent = new LiveEvent(
+            reader.GetString(reader.GetOrdinal("live_event_name")),
+            reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
+            reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
+            // We leave this list empty to avoid unnecessary circular references in our object graph
+            new List<Role>(),
+            venue,
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status")));
+
+        return new Role(
+            reader.GetString(reader.GetOrdinal("role_token")),
+            (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
+            user,
+            liveEvent,
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
+
+    };
+
+    private static Option<T> GetOption<T>(DbDataReader reader, int ordinal)
     {
         var valueRaw = reader.GetValue(ordinal);
 

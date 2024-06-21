@@ -86,33 +86,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
 
         return await ExecuteReaderAsync(command, reader =>
         {
-            var user = new User(
-                new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
-                reader.GetString(reader.GetOrdinal("user_first_name")),
-                GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
-                reader.GetString(reader.GetOrdinal("user_last_name")),
-                GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
-                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
-
-            var venue = new LiveEventVenue(
-                reader.GetString(reader.GetOrdinal("venue_name")),
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status")));
-            
-            var liveEvent = new LiveEvent(
-                reader.GetString(reader.GetOrdinal("live_event_name")),
-                reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
-                reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
-                new List<Role>(),
-                venue,
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status")));
-            
-            var role = new Role(
-                reader.GetString(reader.GetOrdinal("role_token")),
-                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
-                user,
-                liveEvent,
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
+            var role = ReadRole.Invoke(reader);
                     
             var tlgAgent = new TlgAgent(
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),

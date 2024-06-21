@@ -33,38 +33,6 @@ public class RoleRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelp
         
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
-        // ToDo: extract Role From Reader Creation logic below into a method that can be shared with TlgAgentRoleBindingsRepo
-        
-        return await ExecuteReaderAsync(command, reader =>
-        {
-            var user = new User(
-                new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
-                reader.GetString(reader.GetOrdinal("user_first_name")),
-                GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
-                reader.GetString(reader.GetOrdinal("user_last_name")),
-                GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
-                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
-
-            var venue = new LiveEventVenue(
-                reader.GetString(reader.GetOrdinal("venue_name")),
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status")));
-            
-            var liveEvent = new LiveEvent(
-                    reader.GetString(reader.GetOrdinal("live_event_name")),
-                    reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
-                    reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
-                    // We leave this list empty to avoid unnecessary circular references in our object graph
-                    new List<Role>(),
-                    venue,
-                    (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status")));
-            
-            return new Role(
-                reader.GetString(reader.GetOrdinal("role_token")),
-                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
-                user,
-                liveEvent,
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
-        });
+        return await ExecuteReaderAsync(command, ReadRole);
     }
 }
