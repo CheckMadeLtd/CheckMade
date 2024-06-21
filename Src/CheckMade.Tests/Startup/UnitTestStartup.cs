@@ -66,14 +66,16 @@ public class UnitTestStartup : TestStartupBase
 
     private void RegisterPersistenceMocks()
     {
+        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
+            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
+
+        Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
+        
         Services.AddScoped<IRoleRepository, MockRoleRepository>();
 
         var mockUserRepo = new Mock<IUserRepository>();
         Services.AddScoped<IUserRepository>(_ => mockUserRepo.Object);
         Services.AddScoped<Mock<IUserRepository>>(_ => mockUserRepo);
-        
-        Services.AddScoped<ITlgInputRepository, MockTlgInputRepository>(_ => 
-            new MockTlgInputRepository(new Mock<ITlgInputRepository>()));
         
         var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
 
@@ -98,7 +100,7 @@ public class UnitTestStartup : TestStartupBase
         // #1
         
         builder.Add(new TlgAgentRoleBind(
-            ITestUtils.SanitaryOpsAdmin1, 
+            ITestUtils.SanitaryOpsAdmin1AtMockParooka2024, 
             new TlgAgent(ITestUtils.TestUserId_01, ITestUtils.TestChatId_01, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         

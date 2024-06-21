@@ -57,12 +57,17 @@ internal interface ITestUtils
         Option<EmailAddress>.None(),
         LanguageCode.en);
     
-    internal static readonly Role SanitaryOpsAdmin1 = new("VB70TX", SanitaryOps_Admin, UnitTestsUser);
+    internal static readonly Role SanitaryOpsAdmin1AtMockParooka2024 = 
+        new("VB70TX", SanitaryOps_Admin, UnitTestsUser);
+    
     internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, UnitTestsUser);
     internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, UnitTestsUser);
     internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", SanitaryOps_CleanLead, UnitTestsUser);
     internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, UnitTestsUser);
-    internal static readonly Role SanitaryOpsInspector2 = new("MAM8SX", SanitaryOps_Inspector, UnitTestsUser);
+    
+    internal static readonly Role SanitaryOpsInspector2AtMockHurricane2024 = 
+        new("MAM8SX", SanitaryOps_Inspector, UnitTestsUser);
+    
     internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, UnitTestsUser);
     internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", SanitaryOps_CleanLead, UnitTestsUser);
     internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, UnitTestsUser);
