@@ -76,7 +76,6 @@ internal class UserAuthWorkflow(
     private async Task<bool> TokenExists(string tokenAttempt) =>
         (await roleRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
 
-    // ToDo: replace Placeholders with actual data from DB/Setup
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
@@ -105,7 +104,7 @@ internal class UserAuthWorkflow(
                           """, 
                     originatingMode,
                     newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                    "Placeholder LiveEvent")
+                    newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
             });
         }
         
@@ -117,7 +116,7 @@ internal class UserAuthWorkflow(
                       """, 
                 newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
                 newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                "Placeholder LiveEvent")
+                newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
         });
 
         outputs.Add(new OutputDto

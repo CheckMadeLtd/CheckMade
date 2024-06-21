@@ -1,8 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
 using Npgsql;
 
