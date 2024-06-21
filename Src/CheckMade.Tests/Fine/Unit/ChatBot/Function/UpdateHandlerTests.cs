@@ -123,88 +123,59 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    // ToDo: irrelevant or needs total change once switch to manual language control
-    #region Old LanguageCode Tests
+    // ToDo: Update next two tests to use a mockedUpRole/User with the corresp. language setting
+    // effectively testing the integration between user model and update handler / getUiLanguage and actual translation.
+    [Theory]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
+    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode(InteractionMode mode)
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
+            GetMockInputProcessorFactoryWithSetUpReturnValue(
+                new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
+        _services = serviceCollection.BuildServiceProvider();
+        
+        var basics = GetBasicTestingServices(_services);
+        var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
+        updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
+        
+        await basics.handler.HandleUpdateAsync(updateEn, mode);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageAsync(
+                updateEn.Message.Chat.Id,
+                It.IsAny<string>(),
+                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
     
-    // [Theory]
-    // [InlineData(InteractionMode.Operations)]
-    // [InlineData(InteractionMode.Communications)]
-    // [InlineData(InteractionMode.Notifications)]
-    // public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode(InteractionMode mode)
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //             new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateEn, mode);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateEn.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-    //
-    // [Fact]
-    // // Agnostic to InteractionMode, using Operations
-    // public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //            new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateDe, InteractionMode.Operations);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateDe.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.GermanStringForTests,
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-    //
-    // [Fact]
-    // // Agnostic to InteractionMode, using Operations
-    // public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //             new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateUnsupportedLanguage = 
-    //         basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateUnsupportedLanguage.Message.From!.LanguageCode = "xyz";
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateUnsupportedLanguage, InteractionMode.Operations);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateUnsupportedLanguage.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-
-    #endregion
+    [Fact]
+    // Agnostic to InteractionMode, using Operations
+    public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
+            GetMockInputProcessorFactoryWithSetUpReturnValue(
+               new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
+        _services = serviceCollection.BuildServiceProvider();
+        
+        var basics = GetBasicTestingServices(_services);
+        var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
+        updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
+        
+        await basics.handler.HandleUpdateAsync(updateDe, InteractionMode.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageAsync(
+                updateDe.Message.Chat.Id,
+                It.IsAny<string>(),
+                ITestUtils.GermanStringForTests,
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
     
     [Theory]
     [InlineData(Operations)]

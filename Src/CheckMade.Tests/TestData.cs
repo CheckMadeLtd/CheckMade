@@ -6,7 +6,7 @@ using User = CheckMade.Common.Model.Core.User;
 
 namespace CheckMade.Tests;
 
-// ToDo: create two different object graphs for testing:
+// Two different object graphs for testing:
 // 1 From the direction of TlgAgentRepository i.e. with Roles containing a LiveEvent: Object-Graph 1
 // 2 From the direction of LiveEventSeries i.e. with each LiveEvent containing Roles: Object-Graph 2
 // But leave as many entities as possible here able to stand on their own for isolated unit tests that don't need
