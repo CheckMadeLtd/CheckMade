@@ -77,29 +77,8 @@ internal class WorkflowUtils : IWorkflowUtils
         var allInputsOfTlgAgent = 
             (await _inputRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
 
-        return GetLatestRecordsUpTo(
-            allInputsOfTlgAgent,
-            input => input.InputType == TlgInputType.CommandMessage)
+        return allInputsOfTlgAgent
+            .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
             .ToImmutableReadOnlyCollection();
-    }
-
-    private static IReadOnlyCollection<T> GetLatestRecordsUpTo<T>(
-        IReadOnlyCollection<T> collection, Func<T, bool> stopCondition, bool includeStopItem = true)
-    {
-        var result = collection.Reverse()
-            .TakeWhile(item => !stopCondition(item))
-            .ToList();
-
-        if (includeStopItem)
-        {
-            var firstItemMeetingCondition = collection.LastOrDefault(stopCondition);
-
-            if (firstItemMeetingCondition != null)
-                result.Add(firstItemMeetingCondition);
-        }
-
-        result.Reverse();
-        
-        return result.ToImmutableReadOnlyCollection();
     }
 }
