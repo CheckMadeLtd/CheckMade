@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class RoleRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), IRoleRepository
+public class RolesRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), IRolesRepository
 {
     public async Task<IEnumerable<Role>> GetAllAsync()
     {

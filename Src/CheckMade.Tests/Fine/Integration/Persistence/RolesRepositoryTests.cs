@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
-public class RoleRepositoryTests
+public class RolesRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -12,7 +12,7 @@ public class RoleRepositoryTests
     public async Task GetAllAsync_OneRole_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var repo = _services.GetRequiredService<IRoleRepository>();
+        var repo = _services.GetRequiredService<IRolesRepository>();
         var roles = await repo.GetAllAsync();
 
         // This role should have been added via seeding/for_integration_tests.sql (or similar)

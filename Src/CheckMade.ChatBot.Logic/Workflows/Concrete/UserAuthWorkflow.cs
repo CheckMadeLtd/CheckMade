@@ -17,7 +17,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 }
 
 internal class UserAuthWorkflow(
-        IRoleRepository roleRepo,
+        IRolesRepository rolesRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
         IWorkflowUtils workflowUtils)
     : IUserAuthWorkflow
@@ -74,7 +74,7 @@ internal class UserAuthWorkflow(
     }
 
     private async Task<bool> TokenExists(string tokenAttempt) =>
-        (await roleRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
+        (await rolesRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
 
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
@@ -85,7 +85,7 @@ internal class UserAuthWorkflow(
         var outputs = new List<OutputDto>();
         
         var newTlgAgentRoleForOriginatingMode = new TlgAgentRoleBind(
-            (await roleRepo.GetAllAsync()).First(r => r.Token == inputText),
+            (await rolesRepo.GetAllAsync()).First(r => r.Token == inputText),
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
             Option<DateTime>.None());

@@ -72,7 +72,7 @@ public class UnitTestStartup : TestStartupBase
 
         Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
         
-        Services.AddScoped<IRoleRepository, MockRoleRepository>();
+        Services.AddScoped<IRolesRepository, MockRolesRepository>();
 
         var mockUserRepo = new Mock<IUserRepository>();
         Services.AddScoped<IUserRepository>(_ => mockUserRepo.Object);

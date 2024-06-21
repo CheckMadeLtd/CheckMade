@@ -5,7 +5,7 @@ using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
 
-internal class MockRoleRepository : IRoleRepository
+internal class MockRolesRepository : IRolesRepository
 {
     public Task<IEnumerable<Role>> GetAllAsync()
     {

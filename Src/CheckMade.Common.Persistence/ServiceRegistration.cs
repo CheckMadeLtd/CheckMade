@@ -21,7 +21,7 @@ public static class ServiceRegistration
                 sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
         
         services.AddScoped<ITlgInputRepository, TlgInputRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITlgAgentRoleBindingsRepository, TlgAgentRoleBindingsRepository>();
     }
