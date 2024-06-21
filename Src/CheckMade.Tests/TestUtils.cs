@@ -100,9 +100,9 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
 
-    internal static string GetFirstRawEnglish(Result<IReadOnlyList<OutputDto>> actualOutput)
+    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput)
     {
-        var text = actualOutput.GetValueOrThrow()[0].Text.GetValueOrThrow();
+        var text = actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow();
 
         return text.Concatenations.Count > 0
             ? text.Concatenations.First()!.RawEnglishText

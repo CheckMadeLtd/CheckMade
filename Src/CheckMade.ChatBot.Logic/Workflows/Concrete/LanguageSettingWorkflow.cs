@@ -17,7 +17,7 @@ internal class LanguageSettingWorkflow(
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
-    public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
         {
@@ -36,7 +36,7 @@ internal class LanguageSettingWorkflow(
             
             States.Completed => new List<OutputDto>{ new() { Text = IWorkflowUtils.WorkflowWasCompleted }},
             
-            _ => Result<IReadOnlyList<OutputDto>>.FromError(
+            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
     }

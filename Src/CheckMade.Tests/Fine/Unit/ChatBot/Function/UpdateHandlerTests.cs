@@ -533,12 +533,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 
         GetMockInputProcessorFactoryWithSetUpReturnValue(
-            IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = Operations)
+            IReadOnlyCollection<OutputDto> returnValue, InteractionMode interactionMode = Operations)
     {
         var mockInputProcessor = new Mock<IInputProcessor>();
         
         mockInputProcessor
-            .Setup<Task<IReadOnlyList<OutputDto>>>(rp => 
+            .Setup<Task<IReadOnlyCollection<OutputDto>>>(rp => 
                 rp.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Returns(Task.FromResult(returnValue));
 

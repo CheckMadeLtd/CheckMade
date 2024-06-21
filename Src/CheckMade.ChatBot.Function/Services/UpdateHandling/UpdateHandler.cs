@@ -80,7 +80,7 @@ public class UpdateHandler(
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
                         toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
-                    in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
+                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
                 from tlgAgentRoles

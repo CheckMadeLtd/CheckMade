@@ -27,7 +27,7 @@ internal class UserAuthWorkflow(
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
 
-    public async Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
@@ -54,7 +54,7 @@ internal class UserAuthWorkflow(
                     EnterTokenPrompt ]
             },
             
-            _ => Result<IReadOnlyList<OutputDto>>.FromError(
+            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }

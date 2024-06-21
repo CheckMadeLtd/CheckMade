@@ -14,7 +14,7 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
-            IReadOnlyList<OutputDto> outputs,
+            IReadOnlyCollection<OutputDto> outputs,
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
