@@ -4,7 +4,7 @@ using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class UserRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), IUserRepository
+public class UsersRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), IUsersRepository
 {
     public async Task UpdateLanguageSettingAsync(User user, LanguageCode newLanguage)
     {

@@ -22,7 +22,7 @@ public static class ServiceRegistration
         
         services.AddScoped<ITlgInputsRepository, TlgInputsRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<ITlgAgentRoleBindingsRepository, TlgAgentRoleBindingsRepository>();
     }
 }

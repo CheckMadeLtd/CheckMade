@@ -74,9 +74,9 @@ public class UnitTestStartup : TestStartupBase
         
         Services.AddScoped<IRolesRepository, MockRolesRepository>();
 
-        var mockUserRepo = new Mock<IUserRepository>();
-        Services.AddScoped<IUserRepository>(_ => mockUserRepo.Object);
-        Services.AddScoped<Mock<IUserRepository>>(_ => mockUserRepo);
+        var mockUserRepo = new Mock<IUsersRepository>();
+        Services.AddScoped<IUsersRepository>(_ => mockUserRepo.Object);
+        Services.AddScoped<Mock<IUsersRepository>>(_ => mockUserRepo);
         
         var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
 

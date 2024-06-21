@@ -181,7 +181,7 @@ public class LanguageSettingWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
-        var mockUserRepo = _services.GetRequiredService<Mock<IUserRepository>>();
+        var mockUserRepo = _services.GetRequiredService<Mock<IUsersRepository>>();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
 
         var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);

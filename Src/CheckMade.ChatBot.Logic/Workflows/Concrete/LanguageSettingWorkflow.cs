@@ -13,7 +13,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 }
 
 internal class LanguageSettingWorkflow(
-        IUserRepository userRepo,
+        IUsersRepository usersRepo,
         IWorkflowUtils workflowUtils) 
     : ILanguageSettingWorkflow
 {
@@ -80,7 +80,7 @@ internal class LanguageSettingWorkflow(
             .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
             .Role.User;
 
-        await userRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
+        await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
         
         return [new OutputDto
         {
