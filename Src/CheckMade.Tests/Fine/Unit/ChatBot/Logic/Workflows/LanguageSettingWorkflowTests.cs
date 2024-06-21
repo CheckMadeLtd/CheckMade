@@ -12,6 +12,7 @@ using CheckMade.Tests.Startup;
 using static CheckMade.Tests.ITestUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
 
@@ -188,7 +189,7 @@ public class LanguageSettingWorkflowTests
         Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
-            UnitTestsUser,
+            TestUserDaniel,
             languageCode));
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
 
@@ -11,17 +12,16 @@ internal class MockRoleRepository : IRoleRepository
         var builder = ImmutableArray.CreateBuilder<Role>();
         
         builder.AddRange(
-            ITestUtils.SanitaryOpsAdmin1AtMockParooka2024,
-            ITestUtils.SanitaryOpsInspector1,
-            ITestUtils.SanitaryOpsEngineer1,
-            ITestUtils.SanitaryOpsCleanLead1,
-            ITestUtils.SanitaryOpsObserver1,
+            DanielIsSanitaryOpsAdminAtMockParooka2024,
+            SanitaryOpsInspector1,
+            SanitaryOpsEngineer1,
+            SanitaryOpsCleanLead1,
+            SanitaryOpsObserver1,
             
-            ITestUtils.SanitaryOpsInspector2AtMockHurricane2024,
-            ITestUtils.SanitaryOpsEngineer2,
-            ITestUtils.SanitaryOpsCleanLead2,
-            ITestUtils.SanitaryOpsObserver2
-            );
+            DanielIsSanitaryOpsInspectorAtMockHurricane2024,
+            SanitaryOpsEngineer2,
+            SanitaryOpsCleanLead2,
+            SanitaryOpsObserver2);
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());
     }

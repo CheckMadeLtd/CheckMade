@@ -4,6 +4,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
@@ -20,8 +21,8 @@ public class TlgAgentRoleBindingsRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var inputTlgAgentRole = new TlgAgentRoleBind(
-            ITestUtils.IntegrationTestsRole,
-            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+            IntegrationTestsRole,
+            new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
@@ -45,8 +46,8 @@ public class TlgAgentRoleBindingsRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var preExistingActiveTlgAgentRole = new TlgAgentRoleBind(
-            ITestUtils.IntegrationTestsRole,
-            new TlgAgent(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+            IntegrationTestsRole,
+            new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);

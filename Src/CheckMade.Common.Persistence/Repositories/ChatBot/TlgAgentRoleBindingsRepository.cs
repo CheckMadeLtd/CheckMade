@@ -61,6 +61,12 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "usr.email AS user_email, " +
                                 "usr.language_setting AS user_language, " +
                                 "usr.status AS user_status, " +
+                                "ven.name AS venue_name, " +
+                                "ven.status AS venue_status, " +
+                                "lve.name AS live_event_name, " +
+                                "lve.start_date AS live_event_start_date, " +
+                                "lve.end_date AS live_event_end_date, " +
+                                "lve.status AS live_event_status, " +
                                 "r.token AS role_token, " +
                                 "r.role_type AS role_type, " +
                                 "r.status AS role_status, " +
@@ -72,7 +78,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "tarb.status AS tcpr_status " +
                                 "FROM tlg_agent_role_bindings tarb " +
                                 "INNER JOIN roles r on tarb.role_id = r.id " +
-                                "INNER JOIN users usr on r.user_id = usr.id";
+                                "INNER JOIN users usr on r.user_id = usr.id " +
+                                "INNER JOIN live_events lve on r.live_event_id = lve.id " +
+                                "INNER JOIN live_event_venues ven on lve.venue_id = ven.id";
 
         var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
@@ -87,10 +95,23 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                 (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
 
+            var venue = new LiveEventVenue(
+                reader.GetString(reader.GetOrdinal("venue_name")),
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status")));
+            
+            var liveEvent = new LiveEvent(
+                reader.GetString(reader.GetOrdinal("live_event_name")),
+                reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
+                reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
+                new List<Role>(),
+                venue,
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status")));
+            
             var role = new Role(
                 reader.GetString(reader.GetOrdinal("role_token")),
                 (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
                 user,
+                liveEvent,
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
                     
             var tlgAgent = new TlgAgent(

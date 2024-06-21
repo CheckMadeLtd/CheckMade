@@ -152,8 +152,8 @@ public class TlgInputRepositoryTests(ITestOutputHelper testOutputHelper)
     // [Theory(Skip = "Waiting to migrate the old DB data")]
     // [Theory(Skip = "Running tests from unknown IP / internet")]
     [Theory]
-    [InlineData(ITestUtils.TestUserDanielGorinTelegramId, false)]
-    [InlineData(ITestUtils.TestUserDanielGorinTelegramId, true)]
+    [InlineData(TestData.TestUserDanielGorinTelegramId, false)]
+    [InlineData(TestData.TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
         TlgUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {

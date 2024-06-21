@@ -1,16 +1,14 @@
 using CheckMade.Common.Model.Core;
-using static CheckMade.Common.Model.Core.RoleType;
 using CheckMade.Common.Utils.Generic;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Structs;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
-using User = CheckMade.Common.Model.Core.User;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests;
 
@@ -19,58 +17,6 @@ internal interface ITestUtils
     // These string values to be exactly the same as in the corresponding .tsv translation files! 
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
-
-    // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
-    internal const long TestUserDanielGorinTelegramId = 215737196L;
-    internal const long TestUserId_01 = 101L;
-    internal const long TestUserId_02 = 102L;
-    internal const long TestUserId_03 = 103L;
-    
-    internal const long TestChatId_01 = 100001L;
-    internal const long TestChatId_02 = 100002L;
-    internal const long TestChatId_03 = 100003L;
-    internal const long TestChatId_04 = 100004L;
-    internal const long TestChatId_05 = 100005L;
-    internal const long TestChatId_06 = 100006L;
-    internal const long TestChatId_07 = 100007L;
-    internal const long TestChatId_08 = 100008L;
-    internal const long TestChatId_09 = 100009L;
-    
-    internal static readonly User IntegrationTestsUser = new(
-        new MobileNumber("+447538521999"),
-        "_Daniel",
-        "IntegrationTest",
-        "_Gorin",
-        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
-        LanguageCode.en);
-
-    internal static readonly Role IntegrationTestsRole = new(
-        "RAAAA1",
-        SanitaryOps_Inspector,
-        IntegrationTestsUser);
-    
-    internal static readonly User UnitTestsUser = new(
-        new MobileNumber("+447538521999"),
-        "_Daniel",
-        "UnitTest",
-        "_Gorin",
-        Option<EmailAddress>.None(),
-        LanguageCode.en);
-    
-    internal static readonly Role SanitaryOpsAdmin1AtMockParooka2024 = 
-        new("VB70TX", SanitaryOps_Admin, UnitTestsUser);
-    
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, UnitTestsUser);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, UnitTestsUser);
-    internal static readonly Role SanitaryOpsCleanLead1 = new("2JXNMX", SanitaryOps_CleanLead, UnitTestsUser);
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, UnitTestsUser);
-    
-    internal static readonly Role SanitaryOpsInspector2AtMockHurricane2024 = 
-        new("MAM8SX", SanitaryOps_Inspector, UnitTestsUser);
-    
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, UnitTestsUser);
-    internal static readonly Role SanitaryOpsCleanLead2 = new("I8MJ1X", SanitaryOps_CleanLead, UnitTestsUser);
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, UnitTestsUser);
     
     Randomizer Randomizer { get; }
     
