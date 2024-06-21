@@ -17,7 +17,9 @@ internal interface IWorkflowUtils
 
 // ToDo: In line with today's decision: pre calculate all historic inputs and then use that in-memory for all subsequent filtering and processing!
 // I.e. no need for two calls to inputRepo.GetAll as below.
-// Implement GetAll(liveEvent) once I've added liveEvent into DB and also as a redundant field in inputs !!! 
+// Implement GetAllHumanInput(liveEvent) once I've added liveEvent into DB and also as a redundant field in inputs !!!
+// And separate GetAllLocationUpdates(???) to not always load thousands of locations when I just need to look at workflow
+// Offer GetAllLocationUpdates(tlgAgent) or even restrict to recent time, depending on what I need the location data for. 
 
 internal class WorkflowUtils : IWorkflowUtils
 {
