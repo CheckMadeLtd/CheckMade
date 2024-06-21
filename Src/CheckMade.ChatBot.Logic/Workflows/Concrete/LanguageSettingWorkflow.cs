@@ -44,7 +44,7 @@ internal class LanguageSettingWorkflow(
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
         var allCurrentInputs = await workflowUtils.GetInputsForCurrentWorkflow(tlgAgent);
-        var lastInput = allCurrentInputs[^1];
+        var lastInput = allCurrentInputs.Last();
 
         var previousInputCompletedThisWorkflow = 
             allCurrentInputs.Count > 1 && 
@@ -64,7 +64,7 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    private static bool AnyPreviousInputContainsCallbackQuery(IReadOnlyList<TlgInput> previousInputs) =>
+    private static bool AnyPreviousInputContainsCallbackQuery(IReadOnlyCollection<TlgInput> previousInputs) =>
         previousInputs.Any(x => x.InputType == TlgInputType.CallbackQuery);
 
     private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)

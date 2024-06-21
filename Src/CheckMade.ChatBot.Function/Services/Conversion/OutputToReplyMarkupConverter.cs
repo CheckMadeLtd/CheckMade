@@ -26,7 +26,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             translator);
         
         var inlineKeyboardMarkup = 
-            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToImmutableReadOnlyList());
+            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToImmutableReadOnlyCollection());
 
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,
@@ -83,7 +83,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                 new CallbackId((long)prompt)]),
                 id: new CallbackId((long)prompt).Id)));
 
-        return allTextIdPairs.ToImmutableReadOnlyList();
+        return allTextIdPairs.ToImmutableReadOnlyCollection();
     }
     
     private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(

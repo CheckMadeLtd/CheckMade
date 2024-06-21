@@ -46,7 +46,7 @@ internal class WorkflowIdentifier(
             arb.Status == DbRecordStatus.Active) 
         != null;
 
-    private static Option<TlgInput> GetLastBotCommand(IReadOnlyList<TlgInput> inputs) =>
+    private static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
         inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
         ?? Option<TlgInput>.None();
 }

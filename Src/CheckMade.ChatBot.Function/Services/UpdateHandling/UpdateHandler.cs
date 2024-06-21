@@ -84,8 +84,8 @@ public class UpdateHandler(
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
                 from tlgAgentRoles
-                    in Attempt<IReadOnlyList<TlgAgentRoleBind>>.RunAsync(async () => 
-                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyList())
+                    in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
+                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection())
                 from uiTranslator
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
@@ -124,7 +124,7 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyList<TlgAgentRoleBind> tlgAgentRoles,
+        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoles,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)

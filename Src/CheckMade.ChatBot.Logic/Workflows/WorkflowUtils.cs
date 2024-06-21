@@ -10,9 +10,9 @@ internal interface IWorkflowUtils
         Ui("Previous workflow was completed. You can continue with a new one: "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles();
-    Task<IReadOnlyList<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
-    Task<IReadOnlyList<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
+    IReadOnlyCollection<TlgAgentRoleBind> GetAllTlgAgentRoles();
+    Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
 }
 
 internal class WorkflowUtils : IWorkflowUtils
@@ -20,7 +20,7 @@ internal class WorkflowUtils : IWorkflowUtils
     private readonly ITlgInputRepository _inputRepo;
     private readonly ITlgAgentRoleBindingsRepository _tlgAgentRoleBindingsRepo;
     
-    private IReadOnlyList<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
+    private IReadOnlyCollection<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
 
     private WorkflowUtils(
         ITlgInputRepository inputRepo,
@@ -48,12 +48,12 @@ internal class WorkflowUtils : IWorkflowUtils
         await Task.WhenAll(getTlgAgentRolesTask);
 #pragma warning restore CA1842
         
-        _preExistingTlgAgentRoles = getTlgAgentRolesTask.Result.ToImmutableReadOnlyList();
+        _preExistingTlgAgentRoles = getTlgAgentRolesTask.Result.ToImmutableReadOnlyCollection();
     }
 
-    public IReadOnlyList<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingTlgAgentRoles;
+    public IReadOnlyCollection<TlgAgentRoleBind> GetAllTlgAgentRoles() => _preExistingTlgAgentRoles;
 
-    public async Task<IReadOnlyList<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent)
     {
         var lastPreviousTlgAgentRole = _preExistingTlgAgentRoles
             .Where(arb =>
@@ -69,21 +69,21 @@ internal class WorkflowUtils : IWorkflowUtils
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())
-            .ToImmutableReadOnlyList();
+            .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyList<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
     {
         var allInputsOfTlgAgent = 
-            (await _inputRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyList();
+            (await _inputRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
 
         return GetLatestRecordsUpTo(
             allInputsOfTlgAgent,
             input => input.InputType == TlgInputType.CommandMessage)
-            .ToImmutableReadOnlyList();
+            .ToImmutableReadOnlyCollection();
     }
 
-    private static IReadOnlyList<T> GetLatestRecordsUpTo<T>(
+    private static IReadOnlyCollection<T> GetLatestRecordsUpTo<T>(
         IReadOnlyCollection<T> collection, Func<T, bool> stopCondition, bool includeStopItem = true)
     {
         var result = collection.Reverse()
@@ -100,6 +100,6 @@ internal class WorkflowUtils : IWorkflowUtils
 
         result.Reverse();
         
-        return result.ToImmutableReadOnlyList();
+        return result.ToImmutableReadOnlyCollection();
     }
 }
