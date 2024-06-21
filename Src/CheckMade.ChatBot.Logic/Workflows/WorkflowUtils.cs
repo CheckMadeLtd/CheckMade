@@ -15,6 +15,10 @@ internal interface IWorkflowUtils
     Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
 }
 
+// ToDo: In line with today's decision: pre calculate all historic inputs and then use that in-memory for all subsequent filtering and processing!
+// I.e. no need for two calls to inputRepo.GetAll as below.
+// Implement GetAll(liveEvent) once I've added liveEvent into DB and also as a redundant field in inputs !!! 
+
 internal class WorkflowUtils : IWorkflowUtils
 {
     private readonly ITlgInputRepository _inputRepo;
