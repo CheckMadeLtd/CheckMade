@@ -9,6 +9,8 @@ internal interface IWorkflowUtils
     public static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("Previous workflow was completed. You can continue with a new one: "),
         IInputProcessor.SeeValidBotCommandsInstruction);
+
+    Task InitAsync();
     
     IReadOnlyCollection<TlgAgentRoleBind> GetAllTlgAgentRoles();
     Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
@@ -21,33 +23,16 @@ internal interface IWorkflowUtils
 // And separate GetAllLocationUpdates(???) to not always load thousands of locations when I just need to look at workflow
 // Offer GetAllLocationUpdates(tlgAgent) or even restrict to recent time, depending on what I need the location data for. 
 
-internal class WorkflowUtils : IWorkflowUtils
+internal class WorkflowUtils(
+        ITlgInputsRepository inputsRepo,
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
+    : IWorkflowUtils
 {
-    private readonly ITlgInputsRepository _inputsRepo;
-    private readonly ITlgAgentRoleBindingsRepository _tlgAgentRoleBindingsRepo;
-    
     private IReadOnlyCollection<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
 
-    private WorkflowUtils(
-        ITlgInputsRepository inputsRepo,
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
+    public async Task InitAsync()
     {
-        _inputsRepo = inputsRepo;
-        _tlgAgentRoleBindingsRepo = tlgAgentRoleBindingsRepo;
-    }
-
-    public static async Task<WorkflowUtils> CreateAsync(
-        ITlgInputsRepository inputsRepo,
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
-    {
-        var workflowUtils = new WorkflowUtils(inputsRepo, tlgAgentRoleBindingsRepo);
-        await workflowUtils.InitAsync();
-        return workflowUtils;
-    }
-    
-    private async Task InitAsync()
-    {
-        var getTlgAgentRolesTask = _tlgAgentRoleBindingsRepo.GetAllAsync();
+        var getTlgAgentRolesTask = tlgAgentRoleBindingsRepo.GetAllAsync();
 
         // In preparation for other async tasks that can then run in parallel
 #pragma warning disable CA1842
@@ -71,7 +56,7 @@ internal class WorkflowUtils : IWorkflowUtils
             ? lastPreviousTlgAgentRole.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        return (await _inputsRepo.GetAllAsync(tlgAgent))
+        return (await inputsRepo.GetAllAsync(tlgAgent))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 dateOfLastDeactivationForCutOff.ToUniversalTime())
@@ -81,7 +66,7 @@ internal class WorkflowUtils : IWorkflowUtils
     public async Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
     {
         var allInputsOfTlgAgent = 
-            (await _inputsRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
+            (await inputsRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
 
         return allInputsOfTlgAgent
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)

@@ -20,6 +20,8 @@ internal class WorkflowIdentifier(
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
+        await workflowUtils.InitAsync();
+        
         if (!IsUserAuthenticated(input.TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
