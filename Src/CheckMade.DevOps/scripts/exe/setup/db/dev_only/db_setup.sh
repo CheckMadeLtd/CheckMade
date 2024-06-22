@@ -9,10 +9,10 @@ source "$script_dir_db_setup/../../../script_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 echo "Checking necessary environment variables are set..."
-env_var_is_set "PG_SUPER_USER"
+env_var_is_set "PG_SUPER_USER" # when running this script in isolation need to first set this to echo $PG_SUPER_USER_DEV
 env_var_is_set "PG_APP_USER"
 env_var_is_set "PG_DB_NAME"
-env_var_is_set "PG_APP_USER_PSW"
+env_var_is_set "PG_APP_USER_PSW" "secret"
 
 echo "----------------------"
 echo "This is for DEV environment only!! \
