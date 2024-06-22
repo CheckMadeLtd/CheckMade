@@ -9,13 +9,13 @@ public class RolesRepositoryTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task GetAllAsync_OneRole_WhenInputValid()
+    public async Task GetAllAsync_ContainsSpecificRole_FromTestSeedingData()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var repo = _services.GetRequiredService<IRolesRepository>();
         var roles = await repo.GetAllAsync();
 
         // This role should have been added via seeding/for_integration_tests.sql (or similar)
-        Assert.Contains(TestData.IntegrationTestsRole.Token, roles.Select(r => r.Token));
+        Assert.Contains(TestData.IntegrationTestsRoleEnglish.Token, roles.Select(r => r.Token));
     }
 }

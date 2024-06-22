@@ -14,7 +14,7 @@ namespace CheckMade.Tests;
 
 public static class TestData
 {
-    internal static readonly User IntegrationTestsUserDaniel = new(
+    internal static readonly User IntegrationTestsUserDanielEnglish = new(
         new MobileNumber("+447538521999"),
         "_Daniel",
         "IntegrationTest",
@@ -93,10 +93,10 @@ public static class TestData
     
     // The below Roles all point to a real LiveEvent, thereby representing the Object-graph 1. 
     
-    internal static readonly Role IntegrationTestsRole = new(
+    internal static readonly Role IntegrationTestsRoleEnglish = new(
         "RAAAA1",
         SanitaryOps_Inspector,
-        IntegrationTestsUserDaniel,
+        IntegrationTestsUserDanielEnglish,
         MockParooka2024NoRoles);
     
     internal static readonly Role DanielIsSanitaryOpsAdminAtMockParooka2024 = 
