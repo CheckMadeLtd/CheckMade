@@ -10,7 +10,6 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Utils.Generic;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -135,16 +134,8 @@ public class UpdateHandler(
                 arb.TlgAgent.ChatId.Id == currentChatId &&
                 arb.TlgAgent.Mode == currentMode);
 
-        if (tlgAgentRole != null)
-        {
-            var userLanguageSetting = tlgAgentRole.Role.User.Language;
-            
-            if (EnumChecker.IsDefined(userLanguageSetting))
-            {
-                return userLanguageSetting;
-            }
-        }
-        
-        return defaultUiLanguage.Code;
+        return tlgAgentRole != null 
+            ? tlgAgentRole.Role.User.Language 
+            : defaultUiLanguage.Code;
     }
 }

@@ -3,6 +3,7 @@ using System.Data.Common;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Utils.Generic;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
@@ -67,7 +68,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
             reader.GetString(reader.GetOrdinal("user_last_name")),
             GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
-            (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
+            GetValidLanguageCode((LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language"))),
             (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
 
         var venue = new LiveEventVenue(
@@ -106,4 +107,9 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             ? Option<T>.Some(reader.GetFieldValue<T>(ordinal))
             : Option<T>.None();
     }
+
+    private static LanguageCode GetValidLanguageCode(LanguageCode code) =>
+        EnumChecker.IsDefined(code)
+            ? code
+            : LanguageCode.en;
 }
