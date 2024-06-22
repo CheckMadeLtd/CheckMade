@@ -1,9 +1,11 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
+using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class RolesRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), IRolesRepository
+public class RolesRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
+    : BaseRepository(dbHelper, logger), IRolesRepository
 {
     public async Task<IEnumerable<Role>> GetAllAsync()
     {

@@ -3,12 +3,14 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Persistence.JsonHelpers;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputsRepository(IDbExecutionHelper dbHelper) : BaseRepository(dbHelper), ITlgInputsRepository
+public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
+    : BaseRepository(dbHelper, logger), ITlgInputsRepository
 {
     public async Task AddAsync(TlgInput tlgInput) =>
         await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());
@@ -83,13 +85,15 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper) : BaseRepository(d
         {
             TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("user_id"));
             TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("chat_id"));
-            var interactionMode = reader.GetInt16(reader.GetOrdinal("interaction_mode"));
-            var tlgInputType = reader.GetInt16(reader.GetOrdinal("input_type"));
+            var interactionMode = EnsureEnumValidityOrThrow(
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("interaction_mode")));
+            var tlgInputType = EnsureEnumValidityOrThrow(
+                (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
             var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
             var message = new TlgInput(
-                new TlgAgent(tlgUserId, tlgChatId, (InteractionMode) interactionMode),
-                (TlgInputType) tlgInputType,
+                new TlgAgent(tlgUserId, tlgChatId, interactionMode),
+                tlgInputType,
                 JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
                 ?? throw new InvalidOperationException("Failed to deserialize"));
 

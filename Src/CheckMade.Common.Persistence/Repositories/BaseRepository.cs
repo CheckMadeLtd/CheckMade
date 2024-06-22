@@ -4,11 +4,12 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.Generic;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
-public abstract class BaseRepository(IDbExecutionHelper dbHelper)
+public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger)
 {
     protected static NpgsqlCommand GenerateCommand(string query, Option<Dictionary<string, object>> parameters)
     {
@@ -60,7 +61,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return builder.ToImmutable();
     }
 
-    protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
+    protected readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
         var user = new User(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
@@ -68,12 +69,16 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
             reader.GetString(reader.GetOrdinal("user_last_name")),
             GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
-            GetValidLanguageCode((LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language"))),
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
+            EnsureLanguageCodeValidityOrGetDefault(
+                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
+                logger),
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
 
         var venue = new LiveEventVenue(
             reader.GetString(reader.GetOrdinal("venue_name")),
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status")));
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
 
         var liveEvent = new LiveEvent(
             reader.GetString(reader.GetOrdinal("live_event_name")),
@@ -82,14 +87,17 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             // We leave this list empty to avoid unnecessary circular references in our object graph
             new List<Role>(),
             venue,
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status")));
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
 
         return new Role(
             reader.GetString(reader.GetOrdinal("role_token")),
-            (RoleType)reader.GetInt16(reader.GetOrdinal("role_type")),
+            EnsureEnumValidityOrThrow(
+                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type"))),
             user,
             liveEvent,
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")));
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
 
     };
 
@@ -108,8 +116,25 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             : Option<T>.None();
     }
 
-    private static LanguageCode GetValidLanguageCode(LanguageCode code) =>
-        EnumChecker.IsDefined(code)
-            ? code
-            : LanguageCode.en;
+    private static LanguageCode EnsureLanguageCodeValidityOrGetDefault(LanguageCode code, ILogger<BaseRepository> logger)
+    {
+        if (!EnumChecker.IsDefined(code))
+        {
+            logger.LogWarning($"The database contained an invalid {nameof(LanguageCode)}: {code}. " +
+                              $"--> Fallback to English.");
+            
+            return LanguageCode.en;
+        }
+
+        return code;
+    }
+    
+    protected static TEnum EnsureEnumValidityOrThrow<TEnum>(TEnum uncheckedEnum) where TEnum : Enum
+    {
+        if (!EnumChecker.IsDefined(uncheckedEnum))
+            throw new InvalidDataException($"The value {uncheckedEnum} for enum of type {typeof(TEnum)} is invalid. " + 
+                                           $"Forgot to migrate data in db?");
+        
+        return uncheckedEnum;
+    }
 }

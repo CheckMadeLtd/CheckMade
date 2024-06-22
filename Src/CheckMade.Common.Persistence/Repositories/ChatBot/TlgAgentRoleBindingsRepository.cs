@@ -2,12 +2,13 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgAgentRoleBindingsRepository
+public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
+    : BaseRepository(dbHelper, logger), ITlgAgentRoleBindingsRepository
 {
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
         await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
@@ -95,7 +96,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             var tlgAgent = new TlgAgent(
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),
                 reader.GetInt64(reader.GetOrdinal("tcpr_tlg_chat_id")),
-                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode")));
+                EnsureEnumValidityOrThrow(
+                    (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode"))));
 
             var activationDate = reader.GetDateTime(reader.GetOrdinal("tcpr_activation_date"));
 
@@ -105,7 +107,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                 ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal)) 
                 : Option<DateTime>.None();
                     
-            var status = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status"));
+            var status = EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status")));
 
             return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
         });
