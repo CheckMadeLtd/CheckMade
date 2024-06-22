@@ -15,12 +15,12 @@ internal class MockRolesRepository : IRolesRepository
             DanielIsSanitaryOpsAdminAtMockParooka2024,
             SanitaryOpsInspector1,
             SanitaryOpsEngineer1,
-            SanitaryOpsCleanLead1,
+            SanitaryOpsCleanLead1German,
             SanitaryOpsObserver1,
             
             DanielIsSanitaryOpsInspectorAtMockHurricane2024,
             SanitaryOpsEngineer2,
-            SanitaryOpsCleanLead2,
+            SanitaryOpsCleanLead2English,
             SanitaryOpsObserver2);
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());

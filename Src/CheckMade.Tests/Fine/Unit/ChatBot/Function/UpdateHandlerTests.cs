@@ -123,13 +123,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    // ToDo: Update next two tests to use a mockedUpRole/User with the corresp. language setting
-    // effectively testing the integration between user model and update handler / getUiLanguage and actual translation.
-    [Theory]
-    [InlineData(Operations)]
-    [InlineData(Communications)]
-    [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode(InteractionMode mode)
+    [Fact]
+    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishSpeakingUser()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
@@ -138,23 +133,24 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
-        updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
+        var updateFromEnglishUser = basics.utils.GetValidTelegramTextMessage(
+            "random valid text",
+            TestData.TestUserId_03,
+            TestData.TestChatId_07); // See mocked TlgAgentRolebindings for mapping to English-speaking user
         
-        await basics.handler.HandleUpdateAsync(updateEn, mode);
+        await basics.handler.HandleUpdateAsync(updateFromEnglishUser, Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
-                updateEn.Message.Chat.Id,
+                updateFromEnglishUser.Message.Chat.Id,
                 It.IsAny<string>(),
-                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
+                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(), // returns untranslated English message
                 Option<IReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
     }
     
     [Fact]
-    // Agnostic to InteractionMode, using Operations
-    public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
+    public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanSpeakingUser()
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
@@ -163,14 +159,16 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
-        updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
+        var updateFromGermanUser = basics.utils.GetValidTelegramTextMessage(
+            "random valid text",
+            TestData.TestUserId_02,
+            TestData.TestChatId_04); // See mocked TlgAgentRolebindings for mapping to German-speaking user
         
-        await basics.handler.HandleUpdateAsync(updateDe, InteractionMode.Operations);
+        await basics.handler.HandleUpdateAsync(updateFromGermanUser, InteractionMode.Operations);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
-                updateDe.Message.Chat.Id,
+                updateFromGermanUser.Message.Chat.Id,
                 It.IsAny<string>(),
                 ITestUtils.GermanStringForTests,
                 Option<IReplyMarkup>.None(),

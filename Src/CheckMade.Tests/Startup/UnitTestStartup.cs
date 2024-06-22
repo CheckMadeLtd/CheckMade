@@ -135,7 +135,7 @@ public class UnitTestStartup : TestStartupBase
             DbRecordStatus.Historic));
 
         builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsCleanLead1, 
+            SanitaryOpsCleanLead1German, 
             new TlgAgent(TestUserId_02, TestChatId_04, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
@@ -153,7 +153,7 @@ public class UnitTestStartup : TestStartupBase
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsCleanLead2, 
+            SanitaryOpsCleanLead2English, 
             new TlgAgent(TestUserId_03, TestChatId_07, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         

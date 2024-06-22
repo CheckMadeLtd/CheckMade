@@ -42,7 +42,7 @@ internal interface ITestUtils
         ControlPrompts prompts, 
         long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
     
-    UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramTextMessage(string inputText, long userId = TestUserId_01, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId_01);
@@ -155,10 +155,10 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             controlPromptEnumCode ?? Option<long>.None());
     }
     
-    public UpdateWrapper GetValidTelegramTextMessage(string inputText, long chatId) => 
+    public UpdateWrapper GetValidTelegramTextMessage(string inputText, long userId, long chatId) => 
         new(new Message 
             {
-                From = new TelegramUser { Id = Randomizer.GenerateRandomLong() },
+                From = new TelegramUser { Id = userId },
                 Chat = new Chat { Id = chatId },
                 Date = DateTime.UtcNow,
                 MessageId = 123,
