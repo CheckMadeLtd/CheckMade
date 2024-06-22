@@ -15,7 +15,7 @@ public class RolesRepositoryTests
         var repo = _services.GetRequiredService<IRolesRepository>();
         var roles = await repo.GetAllAsync();
 
-        // This role should have been added via seeding/for_integration_tests.sql (or similar)
+        // This role should have been added via seeding/for_ci_db.sql (or similar)
         Assert.Contains(TestData.IntegrationTestsRoleEnglish.Token, roles.Select(r => r.Token));
     }
 }
