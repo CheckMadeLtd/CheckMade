@@ -11,8 +11,8 @@ public record OutputDto
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
     
-    public Option<IEnumerable<DomainCategory>> DomainCategorySelection { get; init; } 
-        = Option<IEnumerable<DomainCategory>>.None();
+    public Option<IEnumerable<DomainTerm>> DomainTermSelection { get; init; } 
+        = Option<IEnumerable<DomainTerm>>.None();
     
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();

@@ -11,28 +11,28 @@ public interface IInputProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
 }
 
 internal class InputProcessor(
         InteractionMode interactionMode,
         IWorkflowIdentifier workflowIdentifier,
-        ITlgInputRepository inputRepo,
+        ITlgInputsRepository inputsRepo,
         ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
-    public async Task<IReadOnlyList<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
+    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
     {
         return await tlgInput.Match(
             async input =>
             {
-                await inputRepo.AddAsync(input);
+                await inputsRepo.AddAsync(input);
                 
                 var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
 
                 var nextWorkflowStepResult = await currentWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
-                    () => Task.FromResult(Result<IReadOnlyList<OutputDto>>.FromSuccess(
+                    () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
                         new List<OutputDto>
                         {
                             new()
@@ -48,8 +48,8 @@ internal class InputProcessor(
                         logger.LogWarning($"""
                                            The workflow '{currentWorkflow.GetValueOrDefault().GetType()}' has returned
                                            this Error Result: '{error}'. Next, the corresponding input parameters.
-                                           UserId: {input.UserId}; ChatId: {input.ChatId}; 
-                                           InputType: {input.TlgInputType}; InteractionMode: {interactionMode};
+                                           UserId: {input.TlgAgent.UserId}; ChatId: {input.TlgAgent.ChatId}; 
+                                           InputType: {input.InputType}; InteractionMode: {interactionMode};
                                            Date: {input.Details.TlgDate}; 
                                            For more details of input, check database!
                                            """);
@@ -59,7 +59,7 @@ internal class InputProcessor(
                 );
             },
             // This error was already logged at its source, in ToModelConverter
-            error => Task.FromResult<IReadOnlyList<OutputDto>>(
+            error => Task.FromResult<IReadOnlyCollection<OutputDto>>(
                 [ new OutputDto { Text = error } ]));
     }
 }

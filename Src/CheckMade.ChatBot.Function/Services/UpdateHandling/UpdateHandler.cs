@@ -5,9 +5,11 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,13 +18,13 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode interactionMode);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode);
 }
 
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessorFactory inputProcessorFactory,
-        ITlgClientPortRoleRepository tlgClientPortRoleRepo,
+        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
         IUiTranslatorFactory translatorFactory,
@@ -31,8 +33,11 @@ public class UpdateHandler(
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode)
+    public async Task<Attempt<Unit>> HandleUpdateAsync(
+        UpdateWrapper update,
+        InteractionMode currentlyReceivingInteractionMode)
     {
+        var currentlyReceivingUserId = update.Message.From?.Id;
         ChatId currentlyReceivingChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
@@ -65,25 +70,36 @@ public class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        var filePathResolver = new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode]);
-        var toModelConverter = toModelConverterFactory.Create(filePathResolver);
-        var uiTranslator = translatorFactory.Create(GetUiLanguage(update.Message));
-        var replyMarkupConverter = replyMarkupConverterFactory.Create(uiTranslator);
-        var tlgClientPortRoles = await tlgClientPortRoleRepo.GetAllAsync();
-
         var sendOutputsAttempt = await
-            (from tlgInput
+            (from toModelConverter
+                    in Attempt<IToModelConverter>.Run(() => 
+                        toModelConverterFactory.Create(
+                            new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode])))
+                from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
                         toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
-                    in Attempt<IReadOnlyList<OutputDto>>.RunAsync(() => 
+                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
+                from tlgAgentRoles
+                    in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
+                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection())
+                from uiTranslator
+                    in Attempt<IUiTranslator>.Run(() => 
+                        translatorFactory.Create(GetUiLanguage(
+                            tlgAgentRoles,
+                            currentlyReceivingUserId,
+                            currentlyReceivingChatId,
+                            currentlyReceivingInteractionMode)))
+                from replyMarkupConverter
+                    in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
+                        replyMarkupConverterFactory.Create(uiTranslator))
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          tlgClientPortRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          tlgAgentRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -106,16 +122,20 @@ public class UpdateHandler(
             });
     }
 
-    private LanguageCode GetUiLanguage(Message telegramInputMessage)
+    private LanguageCode GetUiLanguage(
+        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoles,
+        long? currentUserId,
+        ChatId currentChatId,
+        InteractionMode currentMode)
     {
-        var userLanguagePreferenceIsRecognized = Enum.TryParse(
-            typeof(LanguageCode),
-            telegramInputMessage.From?.LanguageCode,
-            true,
-            out var userLanguagePreference);
-        
-        return userLanguagePreferenceIsRecognized
-            ? (LanguageCode) userLanguagePreference!
+        var tlgAgentRole = tlgAgentRoles
+            .FirstOrDefault(arb =>
+                arb.TlgAgent.UserId.Id == currentUserId &&
+                arb.TlgAgent.ChatId.Id == currentChatId &&
+                arb.TlgAgent.Mode == currentMode);
+
+        return tlgAgentRole != null 
+            ? tlgAgentRole.Role.User.Language 
             : defaultUiLanguage.Code;
     }
 }

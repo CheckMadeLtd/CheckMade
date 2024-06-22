@@ -7,7 +7,7 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
 {
     [StringFormatMethod("uiString")]
     public static UiString Ui(string uiString, params object[] messageParams) 
-        => new UiString(new List<UiString>(), uiString, messageParams);
+        => new(new List<UiString>(), uiString, messageParams);
 
     public static UiString Ui() => Ui(string.Empty);
 
@@ -19,10 +19,11 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
     // Only use this for names/labels etc. but not for strings (like "n/a") which are similar between languages. 
     public static UiString UiNoTranslate(string uiString) => Ui("{0}", uiString);
     
-    public static UiString UiConcatenate(params UiString?[] uiStrings) => UiConcatenate(uiStrings.ToList());
+    public static UiString UiConcatenate(params UiString?[] uiStrings) => 
+        UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());
     
     public static UiString UiConcatenate(IEnumerable<UiString?> uiStrings) => 
-        new UiString(uiStrings.ToList(), string.Empty, []);
+        new(uiStrings.ToImmutableReadOnlyCollection(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)
     public string GetFormattedEnglish()

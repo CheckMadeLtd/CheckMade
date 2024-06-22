@@ -1,17 +1,17 @@
-using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
-using CheckMade.Common.Utils.Generic;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Tests.ITestUtils;
-using static CheckMade.ChatBot.Logic.Workflows.UserAuthWorkflow.States;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;
+using InputValidator = CheckMade.Common.LangExt.InputValidator;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
 
@@ -23,47 +23,55 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage() });
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage() });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_01, TestChatId_01, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgClientPortRole()
+    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
     
-        // Depends on an 'expired' clientPortRole set up by default in the MockTlgClientPortRoleRepository 
-        var tlgPastInputToBeIgnored = basics.utils.GetValidTlgTextMessage(
-            TestUserId_02,
-            TestChatId_03,
-            SanitaryOpsAdmin1.Token,
+        // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgAgentRoleRepository 
+        var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
+            tlgAgent.UserId,
+            tlgAgent.ChatId,
+            DanielIsSanitaryOpsAdminAtMockParooka2024.Token,
             new DateTime(1999, 01, 05));
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_02))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_02, TestChatId_03, Operations);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        Assert.Equal(ReadyToReceiveToken, actualState);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        
+        Assert.Equal(Initial, actualState);
     }
 
     [Fact]
@@ -71,18 +79,22 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var utils = _services.GetRequiredService<ITestUtils>();
+        
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { basics.utils.GetValidTlgTextMessage(text: "InvalidToken") });
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(
-            TestUserId_01, TestChatId_01, Operations);
+        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
@@ -91,18 +103,25 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
         
-        var nonExistingTokenInput = basics.utils.GetValidTlgTextMessage(
-            text: InputValidator.GetTokenFormatExample());
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        
+        var nonExistingTokenInput = utils.GetValidTlgInputTextMessage(
+            text: InputValidator.GetTokenFormatExample(),
+            userId: tlgAgent.UserId,
+            chatId: tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = await workflow.GetNextOutputAsync(nonExistingTokenInput);
         
@@ -110,188 +129,217 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActivePortRole()
+    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActiveTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
-
-        var inputTokenWithPreExistingActivePortRole = 
-            basics.utils.GetValidTlgTextMessage(text: SanitaryOpsAdmin1.Token);
+        var serviceCollection = new UnitTestStartup().Services;
         
-        var preExistingActivePortRole = (await basics.mockPortRolesRepo.Object.GetAllAsync())
-            .First(cpmr => 
-                cpmr.Role.Token == SanitaryOpsAdmin1.Token &&
-                cpmr.ClientPort.Mode == Operations);
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var inputTokenWithPreExistingActiveTlgAgentRole = utils.GetValidTlgInputTextMessage(
+            text: DanielIsSanitaryOpsAdminAtMockParooka2024.Token,
+            userId: tlgAgent.UserId,
+            chatId: tlgAgent.ChatId);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActivePortRole });
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRole });
 
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+
+        var preExistingActiveTlgAgentRole = (await mockTlgAgentRolesRepo.Object.GetAllAsync())
+            .First(arb => 
+                arb.Role.Token == DanielIsSanitaryOpsAdminAtMockParooka2024.Token &&
+                arb.TlgAgent.Mode == tlgAgent.Mode);
+        
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat. 
                                        This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                                        """;
 
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualOutputs = 
-            await workflow.GetNextOutputAsync(inputTokenWithPreExistingActivePortRole);
+            await workflow.GetNextOutputAsync(inputTokenWithPreExistingActiveTlgAgentRole);
         
         Assert.Equal(expectedWarning, GetFirstRawEnglish(actualOutputs));
         
-        basics.mockPortRolesRepo.Verify(x => 
-            x.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic));
+        mockTlgAgentRolesRepo.Verify(x => 
+            x.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic));
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesPortRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
+    public async Task GetNextOutputAsync_CreatesTlgAgentRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_03, TestChatId_08, Operations);
+        var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
+        var inputValidToken = utils.GetValidTlgInputTextMessage(
             // Diverging userId and chatId = sent from a Tlgr Chat-Group (rather than a private chat with the bot)
-            userId: TestUserId_03,
-            chatId: TestChatId_08,
-            text: SanitaryOpsInspector2.Token);
+            userId: tlgAgent.UserId,
+            chatId: tlgAgent.ChatId,
+            text: roleForAuth.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_03))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
         const string expectedConfirmation = """
                                             {0}, welcome to the CheckMade ChatBot!
                                             You have successfully authenticated as a {1} at live-event {2}.
                                             """;
         
-        var expectedClientPortRoleAdded = new TlgClientPortRole(
-            SanitaryOpsInspector2,
-            new TlgClientPort(TestUserId_03, TestChatId_08, Operations),
+        var expectedTlgAgentRoleAdded = new TlgAgentRoleBind(
+            roleForAuth,
+            tlgAgent,
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var actualClientPortRoleAdded = new List<TlgClientPortRole>(); 
-        basics.mockPortRolesRepo
+        var actualTlgAgentRoleAdded = new List<TlgAgentRoleBind>(); 
+        mockTlgAgentRolesRepo
             .Setup(x => 
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(portRole => 
-                actualClientPortRoleAdded = portRole.ToList());
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
+            .Callback<IEnumerable<TlgAgentRoleBind>>(tlgAgentRole => 
+                actualTlgAgentRoleAdded = tlgAgentRole.ToList());
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
         
         Assert.Equal(expectedConfirmation, GetFirstRawEnglish(actualOutputs));
-        Assert.Equivalent(expectedClientPortRoleAdded.Role, actualClientPortRoleAdded[0].Role);
-        Assert.Equivalent(expectedClientPortRoleAdded.ClientPort, actualClientPortRoleAdded[0].ClientPort);
-        Assert.Equivalent(expectedClientPortRoleAdded.Status, actualClientPortRoleAdded[0].Status);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.Role, actualTlgAgentRoleAdded[0].Role);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.TlgAgent, actualTlgAgentRoleAdded[0].TlgAgent);
+        Assert.Equivalent(expectedTlgAgentRoleAdded.Status, actualTlgAgentRoleAdded[0].Status);
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesPortRolesForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetNextOutputAsync_CreatesTlgAgentRolesForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
-        const long privateChatUserAndChatId = TestUserId_03; 
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        const long privateChatUserAndChatId = TestUserId_03;
+        var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
+        var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
-            userId: privateChatUserAndChatId,
-            chatId: privateChatUserAndChatId,
-            text: SanitaryOpsInspector2.Token);
+        var inputValidToken = utils.GetValidTlgInputTextMessage(
+            userId: tlgAgent.UserId,
+            chatId: tlgAgent.ChatId,
+            text: roleForAuth.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         
-        var expectedClientPortRolesAdded = allModes.Select(im => 
-            new TlgClientPortRole(
-                SanitaryOpsInspector2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, im),
+        var expectedTlgAgentRolesAdded = allModes.Select(im => 
+            new TlgAgentRoleBind(
+                roleForAuth,
+                tlgAgent with { Mode = im },
                 DateTime.UtcNow,
                 Option<DateTime>.None()))
-            .ToList();
+            .ToImmutableReadOnlyList();
 
-        var actualPortRoles = new List<TlgClientPortRole>();
-        basics.mockPortRolesRepo
+        var actualTlgAgentRoles = new List<TlgAgentRoleBind>();
+        mockTlgAgentRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(
-                portRoles => actualPortRoles = portRoles.ToList());
-        
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
+            .Callback<IEnumerable<TlgAgentRoleBind>>(
+                tlgAgentRoles => actualTlgAgentRoles = tlgAgentRoles.ToList());
+
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
-        basics.mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgClientPortRole>>()));
+        mockTlgAgentRolesRepo.Verify(x => x.AddAsync(
+            It.IsAny<IEnumerable<TlgAgentRoleBind>>()));
 
-        for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
+        for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].ClientPort, actualPortRoles[i].ClientPort);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].TlgAgent, actualTlgAgentRoles[i].TlgAgent);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Role, actualTlgAgentRoles[i].Role);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Status, actualTlgAgentRoles[i].Status);
         }
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_CreatesPortRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetNextOutputAsync_CreatesTlgAgentRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
-        const long privateChatUserAndChatId = TestUserId_03; 
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        const long privateChatUserAndChatId = TestUserId_03;
+        var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
+        var roleForAuth = SanitaryOpsEngineer2;
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var inputValidToken = basics.utils.GetValidTlgTextMessage(
-            userId: privateChatUserAndChatId,
-            chatId: privateChatUserAndChatId,
-            // Already has a mapped PortRole for 'Communications' (see UnitTestStartup)
-            text: SanitaryOpsEngineer2.Token);
+        var inputValidToken = utils.GetValidTlgInputTextMessage(
+            userId: tlgAgent.UserId,
+            chatId: tlgAgent.ChatId,
+            // Already has a mapped TlgAgentRole for 'Communications' (see UnitTestStartup)
+            text: roleForAuth.Token);
 
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(privateChatUserAndChatId))
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput> { inputValidToken });
         
-        var expectedClientPortRolesAdded = new List<TlgClientPortRole>
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+
+        var expectedTlgAgentRolesAdded = new List<TlgAgentRoleBind>
         {
-            new(SanitaryOpsEngineer2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Operations),
+            new(roleForAuth,
+                tlgAgent,
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
             
-            new(SanitaryOpsEngineer2,
-                new TlgClientPort(privateChatUserAndChatId, privateChatUserAndChatId, Notifications),
+            new(roleForAuth,
+                tlgAgent with { Mode = Notifications },
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
         };
 
-        var actualPortRoles = new List<TlgClientPortRole>();
-        basics.mockPortRolesRepo
+        var actualTlgAgentRoles = new List<TlgAgentRoleBind>();
+        mockTlgAgentRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgClientPortRole>>()))
-            .Callback<IEnumerable<TlgClientPortRole>>(
-                portRoles => actualPortRoles = portRoles.ToList());
+                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
+            .Callback<IEnumerable<TlgAgentRoleBind>>(
+                tlgAgentRoles => actualTlgAgentRoles = tlgAgentRoles.ToList());
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
         await workflow.GetNextOutputAsync(inputValidToken);
         
-        basics.mockPortRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgClientPortRole>>()));
+        mockTlgAgentRolesRepo.Verify(x => x.AddAsync(
+            It.IsAny<IEnumerable<TlgAgentRoleBind>>()));
 
-        for (var i = 0; i < expectedClientPortRolesAdded.Count; i++)
+        for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
-            Assert.Equivalent(expectedClientPortRolesAdded[i].ClientPort, actualPortRoles[i].ClientPort);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Role, actualPortRoles[i].Role);
-            Assert.Equivalent(expectedClientPortRolesAdded[i].Status, actualPortRoles[i].Status);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].TlgAgent, actualTlgAgentRoles[i].TlgAgent);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Role, actualTlgAgentRoles[i].Role);
+            Assert.Equivalent(expectedTlgAgentRolesAdded[i].Status, actualTlgAgentRoles[i].Status);
         }
     }
     
@@ -303,33 +351,24 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var mockTlgInputsRepo = new Mock<ITlgInputRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
         
-        var badTokenInput = basics.utils.GetValidTlgTextMessage(text: badToken);
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        
+        var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(TestUserId_01))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                badTokenInput
-            });
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput> { badTokenInput });
         
-        var workflow = await UserAuthWorkflow.CreateAsync(
-            mockTlgInputsRepo.Object, basics.mockRoleRepo, basics.mockPortRolesRepo.Object);
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
         
         Assert.Equal("Bad token format! Try again...", GetFirstRawEnglish(actualOutputs));
     }
-
-    private static (ITestUtils utils, 
-        Mock<ITlgClientPortRoleRepository> mockPortRolesRepo, 
-        IRoleRepository mockRoleRepo, 
-        DateTime baseDateTime) 
-        GetBasicTestingServices(IServiceProvider sp) =>
-            (sp.GetRequiredService<ITestUtils>(),
-            sp.GetRequiredService<Mock<ITlgClientPortRoleRepository>>(),
-            sp.GetRequiredService<IRoleRepository>(),
-            DateTime.UtcNow);
 }

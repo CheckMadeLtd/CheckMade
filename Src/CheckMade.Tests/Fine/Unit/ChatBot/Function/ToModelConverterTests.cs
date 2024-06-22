@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
+using User = Telegram.Bot.Types.User;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 
@@ -32,9 +33,10 @@ public class ToModelConverterTests
         var update = basics.utils.GetValidTelegramTextMessage(textInput);
 
         var expectedTlgInput = new TlgInput(
-            update.Message.From!.Id,
-            update.Message.Chat.Id,
-            Operations,
+            new TlgAgent(
+                update.Message.From!.Id,
+                update.Message.Chat.Id,
+                Operations),
             TlgInputType.TextMessage,
             TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
@@ -69,9 +71,10 @@ public class ToModelConverterTests
             $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
 
         var expectedTlgInput = new TlgInput(
-            attachmentUpdate.Message.From!.Id,
-            attachmentUpdate.Message.Chat.Id,
-            Operations,
+            new TlgAgent(
+                attachmentUpdate.Message.From!.Id,
+                attachmentUpdate.Message.Chat.Id,
+                Operations),
             TlgInputType.AttachmentMessage,
             TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
@@ -107,9 +110,10 @@ public class ToModelConverterTests
             horizontalAccuracy ?? Option<float>.None());
         
         var expectedTlgInput = new TlgInput(
-                locationUpdate.Message.From!.Id,
-                locationUpdate.Message.Chat.Id,
-                Operations,
+            new TlgAgent(
+                locationUpdate.Message.From!.Id, 
+                locationUpdate.Message.Chat.Id, 
+                Operations),
                 TlgInputType.Location,
                 TestUtils.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
@@ -138,9 +142,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Operations,
+            new TlgAgent(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Operations),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -169,9 +174,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Communications,
+            new TlgAgent(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Communications),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -200,9 +206,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
 
         var expectedTlgInput = new TlgInput(
-            commandUpdate.Message.From!.Id,
-            commandUpdate.Message.Chat.Id,
-            Notifications,
+            new TlgAgent(
+                commandUpdate.Message.From!.Id,
+                commandUpdate.Message.Chat.Id,
+                Notifications),
             TlgInputType.CommandMessage,
             TestUtils.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
@@ -217,35 +224,26 @@ public class ToModelConverterTests
     }
 
     [Theory]
-    [InlineData((long)DomainCategory.SanitaryOps_IssueCleanliness)]
     [InlineData((long)ControlPrompts.Good)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForMessageWithCallbackQuery_InAnyMode(
         long enumSourceOfCallbackQuery)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var callbackQueryData = new EnumCallbackId(enumSourceOfCallbackQuery).Id;
-        
+        var callbackQueryData = new CallbackId(enumSourceOfCallbackQuery);
         var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
-
-        var domainCategoryEnumCode = enumSourceOfCallbackQuery <= EnumCallbackId.DomainCategoryMaxThreshold
-            ? (int?) int.Parse(callbackQuery.Update.CallbackQuery!.Data!)
-            : null;
-
-        var controlPromptEnumCode = enumSourceOfCallbackQuery > EnumCallbackId.DomainCategoryMaxThreshold
-            ? (long?) long.Parse(callbackQuery.Update.CallbackQuery!.Data!)
-            : null;
+        var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
 
         var expectedTlgInput = new TlgInput(
-            callbackQuery.Message.From!.Id,
-            callbackQuery.Message.Chat.Id,
-            Operations,
+            new TlgAgent(
+                callbackQuery.Message.From!.Id,
+                callbackQuery.Message.Chat.Id,
+                Operations),
             TlgInputType.CallbackQuery,
             TestUtils.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",
-                domainCategoryEnumCode: domainCategoryEnumCode,
                 controlPromptEnumCode: controlPromptEnumCode));
 
         var actualTlgInput = await basics.converter.ConvertToModelAsync(

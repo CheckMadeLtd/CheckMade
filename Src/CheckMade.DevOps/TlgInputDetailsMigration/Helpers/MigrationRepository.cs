@@ -45,9 +45,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
         var messageWithFakeEmptyDetails = new TlgInput(
-            tlgUserId,
-            tlgChatId,
-            InteractionMode.Operations,
+            new TlgAgent(tlgUserId, tlgChatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
             new TlgInputDetails(DateTime.MinValue,
                 0,
@@ -57,7 +55,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
                 Option<TlgAttachmentType>.None(),
                 Option<Geo>.None(), 
                 Option<int>.None(),
-                Option<int>.None(), 
+                Option<DomainTerm>.None(), 
                 Option<long>.None()));
 
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
@@ -82,7 +80,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             });
             
             return command;
-        }).ToImmutableArray();
+        }).ToImmutableReadOnlyCollection();
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {

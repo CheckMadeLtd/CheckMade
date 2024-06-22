@@ -11,12 +11,12 @@ public interface IInputProcessorFactory
 
 internal class InputProcessorFactory(
         IWorkflowIdentifier workflowIdentifier,    
-        ITlgInputRepository inputRepo,
+        ITlgInputsRepository inputsRepo,
         ILogger<InputProcessor> logger) 
     : IInputProcessorFactory
 {
     public IInputProcessor GetInputProcessor(InteractionMode interactionMode)
     {
-        return new InputProcessor(interactionMode, workflowIdentifier, inputRepo, logger);
+        return new InputProcessor(interactionMode, workflowIdentifier, inputsRepo, logger);
     }
 }

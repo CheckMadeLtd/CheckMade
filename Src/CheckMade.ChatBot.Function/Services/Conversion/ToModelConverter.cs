@@ -36,14 +36,14 @@ internal class ToModelConverter(
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(update, interactionMode)
-                    from domainCategoryEnumCode 
-                        in GetDomainCategoryEnumCode(update)
+                    from domainTerm 
+                        in GetDomainTerm(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from tlgInput 
                         in GetTlgInputAsync(
                             update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
-                            botCommandEnumCode, domainCategoryEnumCode, controlPromptEnumCode) 
+                            botCommandEnumCode, domainTerm, controlPromptEnumCode) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
@@ -185,21 +185,23 @@ internal class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<int>> GetDomainCategoryEnumCode(UpdateWrapper update)
+    private static Result<Option<DomainTerm>> GetDomainTerm(UpdateWrapper update)
     {
-        return int.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData <= EnumCallbackId.DomainCategoryMaxThreshold
-                ? callBackData
-                : Option<int>.None()
-            : Option<int>.None();
+        var glossary = new DomainGlossary();
+        var callBackDataRaw = update.Update.CallbackQuery?.Data;
+
+        if (string.IsNullOrWhiteSpace(callBackDataRaw))
+            return Option<DomainTerm>.None();
+
+        return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
+            ? Option<DomainTerm>.None() // This means, it's a ControlPrompt, see below
+            : Option<DomainTerm>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
         return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
-            ? callBackData > EnumCallbackId.DomainCategoryMaxThreshold
-                ? callBackData
-                : Option<long>.None()
+            ? callBackData
             : Option<long>.None();
     }
     
@@ -210,7 +212,7 @@ internal class ToModelConverter(
         AttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
-        Option<int> domainCategoryEnumCode,
+        Option<DomainTerm> domainTerm,
         Option<long> controlPromptEnumCode)
     {
         if (update.Message.From?.Id == null || 
@@ -248,7 +250,9 @@ internal class ToModelConverter(
             ? update.Message.Text
             : update.Message.Caption;
         
-        return new TlgInput(userId, chatId, interactionMode, tlgInputType,
+        return new TlgInput(
+            new TlgAgent(userId, chatId, interactionMode), 
+            tlgInputType,
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -258,7 +262,7 @@ internal class ToModelConverter(
                 attachmentDetails.Type,
                 geoCoordinates,
                 botCommandEnumCode,
-                domainCategoryEnumCode,
+                domainTerm,
                 controlPromptEnumCode));
     }
 

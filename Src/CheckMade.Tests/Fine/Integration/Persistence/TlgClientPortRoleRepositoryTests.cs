@@ -1,14 +1,14 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
+using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 
-public class TlgClientPortRoleRepositoryTests
+public class TlgAgentRoleBindingsRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -16,27 +16,25 @@ public class TlgClientPortRoleRepositoryTests
     [InlineData(InteractionMode.Operations)]
     [InlineData(InteractionMode.Communications)]
     [InlineData(InteractionMode.Notifications)]
-    public async Task SavesAndRetrieves_OneTlgClientPortRole_WhenInputValid(InteractionMode mode)
+    public async Task SavesAndRetrieves_OneTlgAgentRole_WhenInputValid(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
-        
-        var inputPortRole = new TlgClientPortRole(
-            existingTestRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+        var inputTlgAgentRole = new TlgAgentRoleBind(
+            IntegrationTestsRoleEnglish,
+            new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
 
-        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
 
-        await repo.AddAsync(inputPortRole);
+        await repo.AddAsync(inputTlgAgentRole);
         var retrieved = (await repo.GetAllAsync())
-            .MaxBy(cpmr => cpmr.ActivationDate);
-        await repo.HardDeleteAsync(inputPortRole);
+            .MaxBy(arb => arb.ActivationDate);
+        await repo.HardDeleteAsync(inputTlgAgentRole);
         
-        Assert.Equivalent(inputPortRole.Role, retrieved!.Role);
-        Assert.Equivalent(inputPortRole.ClientPort, retrieved.ClientPort);
+        Assert.Equivalent(inputTlgAgentRole.Role, retrieved!.Role);
+        Assert.Equivalent(inputTlgAgentRole.TlgAgent, retrieved.TlgAgent);
     }
 
     [Theory]
@@ -47,26 +45,24 @@ public class TlgClientPortRoleRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
-        var existingTestRole = new Role("AAA111", RoleType.SanitaryOps_Inspector);
-        
-        var preExistingActivePortRole = new TlgClientPortRole(
-            existingTestRole,
-            new TlgClientPort(ITestUtils.TestUserId_03, ITestUtils.TestChatId_02, mode),
+        var preExistingActiveTlgAgentRole = new TlgAgentRoleBind(
+            IntegrationTestsRoleEnglish,
+            new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
             DbRecordStatus.Active);
 
-        var repo = _services.GetRequiredService<ITlgClientPortRoleRepository>();
+        var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
         
-        await repo.AddAsync(preExistingActivePortRole);
-        await repo.UpdateStatusAsync(preExistingActivePortRole, DbRecordStatus.Historic);
+        await repo.AddAsync(preExistingActiveTlgAgentRole);
+        await repo.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic);
         
         var retrievedUpdated = (await repo.GetAllAsync())
-            .MaxBy(cpmr => cpmr.ActivationDate);
+            .MaxBy(arb => arb.ActivationDate);
         
-        await repo.HardDeleteAsync(preExistingActivePortRole);
+        await repo.HardDeleteAsync(preExistingActiveTlgAgentRole);
         
-        Assert.Equivalent(preExistingActivePortRole.ClientPort, retrievedUpdated!.ClientPort);
+        Assert.Equivalent(preExistingActiveTlgAgentRole.TlgAgent, retrievedUpdated!.TlgAgent);
         Assert.Equal(DbRecordStatus.Historic, retrievedUpdated.Status);
         Assert.True(retrievedUpdated.DeactivationDate.IsSome);
     }

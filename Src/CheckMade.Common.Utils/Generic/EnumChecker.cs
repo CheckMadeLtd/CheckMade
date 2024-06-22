@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Utils.Generic;
 
-public class EnumChecker
+public static class EnumChecker
 {
     public static bool IsDefined<TEnum>(TEnum uncertainEnum) where TEnum : Enum
     {

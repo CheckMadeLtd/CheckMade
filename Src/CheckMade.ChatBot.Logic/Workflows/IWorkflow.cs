@@ -5,5 +5,5 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 
 public interface IWorkflow
 {
-    Task<Result<IReadOnlyList<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput);
+    Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput);
 }

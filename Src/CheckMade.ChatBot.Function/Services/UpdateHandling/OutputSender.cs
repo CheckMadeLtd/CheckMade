@@ -14,11 +14,11 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 internal static class OutputSender
 {
         internal static async Task<Unit> SendOutputsAsync(
-            IReadOnlyList<OutputDto> outputs,
+            IReadOnlyCollection<OutputDto> outputs,
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgClientPortRole> tlgClientPortRoles,
+            IEnumerable<TlgAgentRoleBind> tlgAgentRoles,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -32,22 +32,25 @@ internal static class OutputSender
                  * LogicalPort will typically not be set explicitly in these cases:
                  * a) For an update from a User who hasn't done the UserAuth workflow yet i.e. is unknown
                  * b) For outputs aimed at the originator of the last input i.e. the default case
-                 * => LogicalPorts therefore mostly used to send e.g. notifications to other users
+                 * => LogicalPorts therefore mostly only used to send e.g. notifications to other users
                  */
                 
-                var relevantMode = output.LogicalPort.Match(
+                var outputMode = output.LogicalPort.Match(
                     logicalPort => logicalPort.InteractionMode,
                     () => currentlyReceivingInteractionMode);
 
-                var portBotClient = botClientByMode[relevantMode];
+                var outputBotClient = botClientByMode[outputMode];
 
-                var portChatId = output.LogicalPort.Match(
-                    logicalPort => tlgClientPortRoles
-                        .First(cpmr => 
-                            cpmr.Role == logicalPort.Role &&
-                            cpmr.ClientPort.Mode == relevantMode &&
-                            cpmr.Status == DbRecordStatus.Active)
-                        .ClientPort.ChatId.Id,
+                /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
+                 broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
+                 mapped to a TlgAgent !! */
+                var outputChatId = output.LogicalPort.Match(
+                    logicalPort => tlgAgentRoles
+                        .First(arb => 
+                            arb.Role == logicalPort.Role &&
+                            arb.TlgAgent.Mode == outputMode &&
+                            arb.Status == DbRecordStatus.Active)
+                        .TlgAgent.ChatId.Id,
                     () => currentlyReceivingChatId);
                     
                 switch (output)
@@ -72,9 +75,9 @@ internal static class OutputSender
 
                 async Task InvokeSendTextMessageAsync(UiString outputText)
                 {
-                    await portBotClient
+                    await outputBotClient
                         .SendTextMessageAsync(
-                            portChatId,
+                            outputChatId,
                             uiTranslator.Translate(Ui("Please choose:")),
                             uiTranslator.Translate(outputText),
                             converter.GetReplyMarkup(output));
@@ -91,7 +94,7 @@ internal static class OutputSender
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        portChatId,
+                        outputChatId,
                         fileStream,
                         caption,
                         converter.GetReplyMarkup(output)
@@ -100,15 +103,15 @@ internal static class OutputSender
                     switch (details.AttachmentType)
                     {
                         case TlgAttachmentType.Document:
-                            await portBotClient.SendDocumentAsync(attachmentSendOutParams);
+                            await outputBotClient.SendDocumentAsync(attachmentSendOutParams);
                             break;
 
                         case TlgAttachmentType.Photo:
-                            await portBotClient.SendPhotoAsync(attachmentSendOutParams);
+                            await outputBotClient.SendPhotoAsync(attachmentSendOutParams);
                             break;
 
                         case TlgAttachmentType.Voice:
-                            await portBotClient.SendVoiceAsync(attachmentSendOutParams);
+                            await outputBotClient.SendVoiceAsync(attachmentSendOutParams);
                             break;
 
                         default:
@@ -118,9 +121,9 @@ internal static class OutputSender
 
                 async Task InvokeSendLocationAsync(Geo location)
                 {
-                    await portBotClient
+                    await outputBotClient
                         .SendLocationAsync(
-                            portChatId,
+                            outputChatId,
                             location,
                             converter.GetReplyMarkup(output));
                 }
@@ -131,7 +134,7 @@ internal static class OutputSender
 
         var parallelTasks = outputGroups
             .Select(outputsPerLogicalPortGroup => 
-                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerLogicalPortGroup.ToList().AsReadOnly()));
+                sendOutputsInSeriesAndOriginalOrder.Invoke(outputsPerLogicalPortGroup.ToImmutableReadOnlyCollection()));
         
         /* 1) Waits for all parallel executing tasks (generated by .Select()), to complete
          * 2) The 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */

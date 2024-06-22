@@ -1,47 +1,52 @@
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
 
-public interface IWorkflowIdentifier
+internal interface IWorkflowIdentifier
 {
     Task<Option<IWorkflow>> IdentifyAsync(TlgInput input);
 }
 
 internal class WorkflowIdentifier(
-        ITlgInputRepository inputRepo,
-        IRoleRepository roleRepo,
-        ITlgClientPortRoleRepository portRoleRepo) 
+        IWorkflowUtils workflowUtils,
+        IUserAuthWorkflow userAuthWorkflow,
+        ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
-        var inputPort = new TlgClientPort(input.UserId, input.ChatId, input.InteractionMode);
-
-        if (!await IsUserAuthenticated(inputPort, input.InteractionMode, portRoleRepo))
+        if (!IsUserAuthenticated(input.TlgAgent))
         {
-            return await UserAuthWorkflow.CreateAsync(inputRepo, roleRepo, portRoleRepo);
+            return Option<IWorkflow>.Some(userAuthWorkflow);
         }
-        
-        return Option<IWorkflow>.None();
+
+        var inputs = await workflowUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+        var lastBotCommand = GetLastBotCommand(inputs);
+
+        return lastBotCommand.Match(
+            cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
+            {
+                // the settings BotCommand code is the same across all InteractionModes
+                (int)OperationsBotCommands.Settings => Option<IWorkflow>.Some(languageSettingWorkflow),
+                _ => Option<IWorkflow>.None()
+            },
+            Option<IWorkflow>.None);
     }
     
-    private static async Task<bool> IsUserAuthenticated(
-        TlgClientPort inputPort, InteractionMode mode, ITlgClientPortRoleRepository portRoleRepo)
-    {
-        IReadOnlyList<TlgClientPortRole> tlgClientPortRoles =
-            (await portRoleRepo.GetAllAsync()).ToList().AsReadOnly();
+    private bool IsUserAuthenticated(TlgAgent inputTlgAgent) => 
+        workflowUtils.GetAllTlgAgentRoles()
+        .FirstOrDefault(arb => 
+            arb.TlgAgent.ChatId == inputTlgAgent.ChatId && 
+            arb.TlgAgent.Mode == inputTlgAgent.Mode && 
+            arb.Status == DbRecordStatus.Active) 
+        != null;
 
-        return tlgClientPortRoles
-                   .FirstOrDefault(cpmr => 
-                       cpmr.ClientPort.ChatId == inputPort.ChatId &&
-                       cpmr.ClientPort.Mode == mode &&
-                       cpmr.Status == DbRecordStatus.Active) 
-               != null;
-    }
+    private static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
+        inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
+        ?? Option<TlgInput>.None();
 }

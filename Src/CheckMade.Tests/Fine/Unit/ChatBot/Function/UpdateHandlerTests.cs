@@ -123,88 +123,57 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
 
-    // ToDo: irrelevant or needs total change once switch to manual language control
-    #region Old LanguageCode Tests
+    [Fact]
+    public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishSpeakingUser()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
+            GetMockInputProcessorFactoryWithSetUpReturnValue(
+                new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
+        _services = serviceCollection.BuildServiceProvider();
+        
+        var basics = GetBasicTestingServices(_services);
+        var updateFromEnglishUser = basics.utils.GetValidTelegramTextMessage(
+            "random valid text",
+            TestData.TestUserId_03,
+            TestData.TestChatId_07); // See mocked TlgAgentRolebindings for mapping to English-speaking user
+        
+        await basics.handler.HandleUpdateAsync(updateFromEnglishUser, Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageAsync(
+                updateFromEnglishUser.Message.Chat.Id,
+                It.IsAny<string>(),
+                ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(), // returns untranslated English message
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
     
-    // [Theory]
-    // [InlineData(InteractionMode.Operations)]
-    // [InlineData(InteractionMode.Communications)]
-    // [InlineData(InteractionMode.Notifications)]
-    // public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishLanguageCode(InteractionMode mode)
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //             new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateEn = basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateEn.Message.From!.LanguageCode = LanguageCode.en.ToString();
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateEn, mode);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateEn.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-    //
-    // [Fact]
-    // // Agnostic to InteractionMode, using Operations
-    // public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanLanguageCode()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //            new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateDe = basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateDe.Message.From!.LanguageCode = LanguageCode.de.ToString();
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateDe, InteractionMode.Operations);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateDe.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.GermanStringForTests,
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-    //
-    // [Fact]
-    // // Agnostic to InteractionMode, using Operations
-    // public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForUnsupportedLanguageCode()
-    // {
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-    //         GetMockInputProcessorFactoryWithSetUpReturnValue(
-    //             new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
-    //     _services = serviceCollection.BuildServiceProvider();
-    //     
-    //     var basics = GetBasicTestingServices(_services);
-    //     var updateUnsupportedLanguage = 
-    //         basics.utils.GetValidTelegramTextMessage("random valid text");
-    //     updateUnsupportedLanguage.Message.From!.LanguageCode = "xyz";
-    //     
-    //     await basics.handler.HandleUpdateAsync(updateUnsupportedLanguage, InteractionMode.Operations);
-    //     
-    //     basics.mockBotClient.Verify(
-    //         x => x.SendTextMessageAsync(
-    //             updateUnsupportedLanguage.Message.Chat.Id,
-    //             It.IsAny<string>(),
-    //             ITestUtils.EnglishUiStringForTests.GetFormattedEnglish(),
-    //             Option<IReplyMarkup>.None(),
-    //             It.IsAny<CancellationToken>()));
-    // }
-
-    #endregion
+    [Fact]
+    public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanSpeakingUser()
+    {
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
+            GetMockInputProcessorFactoryWithSetUpReturnValue(
+               new List<OutputDto>{ new() { Text = ITestUtils.EnglishUiStringForTests } }));
+        _services = serviceCollection.BuildServiceProvider();
+        
+        var basics = GetBasicTestingServices(_services);
+        var updateFromGermanUser = basics.utils.GetValidTelegramTextMessage(
+            "random valid text",
+            TestData.TestUserId_02,
+            TestData.TestChatId_04); // See mocked TlgAgentRolebindings for mapping to German-speaking user
+        
+        await basics.handler.HandleUpdateAsync(updateFromGermanUser, InteractionMode.Operations);
+        
+        basics.mockBotClient.Verify(
+            x => x.SendTextMessageAsync(
+                updateFromGermanUser.Message.Chat.Id,
+                It.IsAny<string>(),
+                ITestUtils.GermanStringForTests,
+                Option<IReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()));
+    }
     
     [Theory]
     [InlineData(Operations)]
@@ -284,7 +253,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgClientPortRolesExist(
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgAgentRolesExist(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -293,19 +262,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    ITestUtils.SanitaryOpsInspector1, Operations), 
+                    TestData.SanitaryOpsInspector1, Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    ITestUtils.SanitaryOpsInspector1, Communications),
+                    TestData.SanitaryOpsInspector1, Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    ITestUtils.SanitaryOpsInspector1, Notifications),
+                    TestData.SanitaryOpsInspector1, Notifications),
                 Text = UiNoTranslate("Output3: Send to Inspector1 on NotificationsBot)") 
             }
         ];
@@ -316,19 +285,19 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.utils.GetValidTelegramTextMessage("random valid text");
-        var portRoles = await basics.portRoleTask;
+        var tlgAgentRoles = await basics.tlgAgentRoleTask;
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TelegramPortChatId = portRoles
-                    .First(cpmr => 
-                        cpmr.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        cpmr.ClientPort.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
-                        cpmr.Status == DbRecordStatus.Active)
-                    .ClientPort.ChatId.Id
+                TlgChatId = tlgAgentRoles
+                    .First(arb => 
+                        arb.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        arb.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode &&
+                        arb.Status == DbRecordStatus.Active)
+                    .TlgAgent.ChatId.Id
             });
 
         await basics.handler.HandleUpdateAsync(update, mode);
@@ -337,7 +306,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         {
             basics.mockBotClient.Verify(
                 x => x.SendTextMessageAsync(
-                    expectedParamSet.TelegramPortChatId,
+                    expectedParamSet.TlgChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
                     It.IsAny<Option<IReplyMarkup>>(),
@@ -354,7 +323,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string fakeOutputMessage = "Output without port";
+        const string fakeOutputMessage = "Output without logical port";
         
         List<OutputDto> outputWithoutPort = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
@@ -520,7 +489,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
-        Task<IEnumerable<TlgClientPortRole>> portRoleTask)
+        Task<IEnumerable<TlgAgentRoleBind>> tlgAgentRoleTask)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITestUtils>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
@@ -528,17 +497,17 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgClientPortRoleRepository>().GetAllAsync());
+                sp.GetRequiredService<ITlgAgentRoleBindingsRepository>().GetAllAsync());
 
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 
         GetMockInputProcessorFactoryWithSetUpReturnValue(
-            IReadOnlyList<OutputDto> returnValue, InteractionMode interactionMode = Operations)
+            IReadOnlyCollection<OutputDto> returnValue, InteractionMode interactionMode = Operations)
     {
         var mockInputProcessor = new Mock<IInputProcessor>();
         
         mockInputProcessor
-            .Setup<Task<IReadOnlyList<OutputDto>>>(rp => 
+            .Setup<Task<IReadOnlyCollection<OutputDto>>>(rp => 
                 rp.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Returns(Task.FromResult(returnValue));
 
