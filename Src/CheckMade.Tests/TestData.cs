@@ -91,7 +91,7 @@ public static class TestData
             });
     
     
-    // The below Roles all point to a real LiveEvent, thereby representing the Object-graph 1. 
+    // The below Roles all point to a real (rather than Proxy) LiveEvent, thereby representing the Object-graph 1. 
     
     internal static readonly Role IntegrationTestsRoleEnglish = new(
         "RAAAA1",
@@ -100,37 +100,37 @@ public static class TestData
         MockParooka2024NoRoles);
     
     internal static readonly Role DanielIsSanitaryOpsAdminAtMockParooka2024 = 
-        new("VB70TX",
+        new("RVB70T",
             SanitaryOps_Admin, 
             TestUserDanielEn,
             MockParooka2024NoRoles);
     
-    internal static readonly Role SanitaryOpsInspector1 = new("3UDXWX", SanitaryOps_Inspector, TestUserDanielEn, MockParooka2024NoRoles);
-    internal static readonly Role SanitaryOpsEngineer1 = new("3UED8X", SanitaryOps_Engineer, TestUserDanielEn, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsInspector1 = new("R3UDXW", SanitaryOps_Inspector, TestUserDanielEn, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsEngineer1 = new("R3UED8", SanitaryOps_Engineer, TestUserDanielEn, MockParooka2024NoRoles);
     
     internal static readonly Role SanitaryOpsCleanLead1German = 
-        new("2JXNMX",
+        new("R2JXNM",
             SanitaryOps_CleanLead,
             TestUserDanielDe, // German! Relied on by unit tests!
             MockParooka2024NoRoles);
 
-    internal static readonly Role SanitaryOpsObserver1 = new("YEATFX", SanitaryOps_Observer, TestUserDanielEn, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsObserver1 = new("RYEATF", SanitaryOps_Observer, TestUserDanielEn, MockParooka2024NoRoles);
     
     internal static readonly Role DanielIsSanitaryOpsInspectorAtMockHurricane2024 = 
-        new("MAM8SX",
+        new("RMAM8S",
             SanitaryOps_Inspector,
             TestUserDanielDe,
             MockParooka2024NoRoles);
     
-    internal static readonly Role SanitaryOpsEngineer2 = new("P4XPKX", SanitaryOps_Engineer, TestUserDanielEn, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsEngineer2 = new("RP4XPK", SanitaryOps_Engineer, TestUserDanielEn, MockParooka2024NoRoles);
     
     internal static readonly Role SanitaryOpsCleanLead2English = 
-        new("I8MJ1X",
+        new("RI8MJ1",
             SanitaryOps_CleanLead,
             TestUserDanielEn, // English! Relied on by unit tests!
             MockParooka2024NoRoles);
     
-    internal static readonly Role SanitaryOpsObserver2 = new("67CMCX", SanitaryOps_Observer, TestUserDanielEn, MockParooka2024NoRoles);
+    internal static readonly Role SanitaryOpsObserver2 = new("R67CMC", SanitaryOps_Observer, TestUserDanielEn, MockParooka2024NoRoles);
     
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
@@ -147,5 +147,4 @@ public static class TestData
     internal const long TestChatId_07 = 100007L;
     internal const long TestChatId_08 = 100008L;
     internal const long TestChatId_09 = 100009L;
-    
 }
