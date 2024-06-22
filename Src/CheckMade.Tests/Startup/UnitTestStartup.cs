@@ -28,9 +28,9 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        RegisterPersistenceMocks();
         RegisterBotClientMocks();
-        RegisterExternalServicesMocks();        
+        RegisterExternalServicesMocks();
+        RegisterPersistenceMocks();
     }
 
     private void RegisterBotClientMocks()
@@ -65,6 +65,12 @@ public class UnitTestStartup : TestStartupBase
         });
     }
 
+    private void RegisterExternalServicesMocks()
+    {
+        Services.AddScoped<IBlobLoader, MockBlobLoader>();
+        Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
+    }
+
     private void RegisterPersistenceMocks()
     {
         Services.AddScoped<ITlgInputsRepository, MockTlgInputsRepository>(_ => 
@@ -88,12 +94,6 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
     }
 
-    private void RegisterExternalServicesMocks()
-    {
-        Services.AddScoped<IBlobLoader, MockBlobLoader>();
-        Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
-    }
-    
     private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoles()
     {
         var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
