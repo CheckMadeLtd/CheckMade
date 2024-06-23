@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core;
 
-public record LiveEvent
+public record LiveEvent : LiveEventStub
 {
     public LiveEvent(string Name,
         DateTime StartDate,
