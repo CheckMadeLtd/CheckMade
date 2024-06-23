@@ -20,6 +20,9 @@ internal class WorkflowIdentifier(
 {
     public Option<IWorkflow> Identify(TlgInput input, IReadOnlyCollection<TlgInput> recentHistory)
     {
+        // ToDo: remove this as soon as Repo handles caching
+        logicUtils.InitAsync();
+        
         if (!IsUserAuthenticated(input.TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);

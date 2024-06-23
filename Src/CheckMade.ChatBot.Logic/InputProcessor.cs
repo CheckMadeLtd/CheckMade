@@ -33,6 +33,7 @@ internal class InputProcessor(
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
 
+                // ToDo: remove this as soon as Repo handles caching
                 await logicUtils.InitAsync();
                 
                 var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);

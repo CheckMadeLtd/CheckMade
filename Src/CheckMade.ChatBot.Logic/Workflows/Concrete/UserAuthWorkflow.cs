@@ -61,6 +61,9 @@ internal class UserAuthWorkflow(
     
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
+        // ToDo: Remove when Repo handles caching
+        await logicUtils.InitAsync();
+        
         // ToDo: Test whether this workflow still works when I replace this with GetCurrentWorkflowInputs instead! 
         var allRelevantInputs = 
             await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);

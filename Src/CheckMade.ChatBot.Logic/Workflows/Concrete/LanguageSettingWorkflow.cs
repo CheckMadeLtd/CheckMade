@@ -43,6 +43,9 @@ internal class LanguageSettingWorkflow(
 
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
+        // ToDo: Remove when Repo handles caching
+        await logicUtils.InitAsync();
+        
         var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgAgent);
         var lastInput = recentHistory.Last();
 
