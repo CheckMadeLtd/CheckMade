@@ -32,6 +32,8 @@ internal class InputProcessor(
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
                 
+                
+                
                 var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
 
                 var nextWorkflowStepResult = await currentWorkflow.Match(

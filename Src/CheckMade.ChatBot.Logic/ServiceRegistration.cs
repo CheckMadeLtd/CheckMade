@@ -10,7 +10,7 @@ public static class ServiceRegistration
     {
         services.AddScoped<IInputProcessorFactory, InputProcessorFactory>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
-        services.AddScoped<IWorkflowUtils, WorkflowUtils>();
+        services.AddScoped<ILogicUtils, LogicUtils>();
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();

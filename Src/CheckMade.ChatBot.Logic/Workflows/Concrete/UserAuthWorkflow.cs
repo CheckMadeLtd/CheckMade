@@ -19,7 +19,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 internal class UserAuthWorkflow(
         IRolesRepository rolesRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
-        IWorkflowUtils workflowUtils)
+        ILogicUtils logicUtils)
     : IUserAuthWorkflow
 {
     private static readonly OutputDto EnterTokenPrompt = new()
@@ -61,7 +61,7 @@ internal class UserAuthWorkflow(
     
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allRelevantInputs = await workflowUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
+        var allRelevantInputs = await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
         
         var lastTextSubmitted = allRelevantInputs
             .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
@@ -80,7 +80,7 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingTlgAgentRoles = workflowUtils.GetAllTlgAgentRoles();
+        var preExistingTlgAgentRoles = logicUtils.GetAllTlgAgentRoles();
         
         var outputs = new List<OutputDto>();
         

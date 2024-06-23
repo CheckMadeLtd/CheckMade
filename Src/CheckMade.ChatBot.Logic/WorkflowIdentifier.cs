@@ -13,23 +13,24 @@ internal interface IWorkflowIdentifier
 }
 
 internal class WorkflowIdentifier(
-        IWorkflowUtils workflowUtils,
+        ILogicUtils logicUtils,
         IUserAuthWorkflow userAuthWorkflow,
         ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
     public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
     {
-        await workflowUtils.InitAsync();
+        await logicUtils.InitAsync();
         
         if (!IsUserAuthenticated(input.TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        var currentInputs = await workflowUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+        var currentWorkflowInputs = 
+            await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
 
-        return GetLastBotCommand(currentInputs).Match(
+        return GetLastBotCommand(currentWorkflowInputs).Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
             {
                 // the settings BotCommand code is the same across all InteractionModes
@@ -41,7 +42,7 @@ internal class WorkflowIdentifier(
     }
     
     private bool IsUserAuthenticated(TlgAgent inputTlgAgent) => 
-        workflowUtils.GetAllTlgAgentRoles()
+        logicUtils.GetAllTlgAgentRoles()
         .FirstOrDefault(arb => 
             arb.TlgAgent.ChatId == inputTlgAgent.ChatId && 
             arb.TlgAgent.Mode == inputTlgAgent.Mode && 

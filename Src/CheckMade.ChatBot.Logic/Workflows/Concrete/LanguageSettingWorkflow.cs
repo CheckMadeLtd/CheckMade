@@ -14,7 +14,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 
 internal class LanguageSettingWorkflow(
         IUsersRepository usersRepo,
-        IWorkflowUtils workflowUtils) 
+        ILogicUtils logicUtils) 
     : ILanguageSettingWorkflow
 {
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
@@ -34,7 +34,7 @@ internal class LanguageSettingWorkflow(
             
             States.ReceivedLanguageSetting => await SetNewLanguageAsync(tlgInput),
             
-            States.Completed => new List<OutputDto>{ new() { Text = IWorkflowUtils.WorkflowWasCompleted }},
+            States.Completed => new List<OutputDto>{ new() { Text = ILogicUtils.WorkflowWasCompleted }},
             
             _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
@@ -43,7 +43,7 @@ internal class LanguageSettingWorkflow(
 
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allCurrentInputs = await workflowUtils.GetInputsForCurrentWorkflow(tlgAgent);
+        var allCurrentInputs = await logicUtils.GetInputsForCurrentWorkflow(tlgAgent);
         var lastInput = allCurrentInputs.Last();
 
         var previousInputCompletedThisWorkflow = 
@@ -76,7 +76,7 @@ internal class LanguageSettingWorkflow(
             throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
-        var currentUser = workflowUtils.GetAllTlgAgentRoles()
+        var currentUser = logicUtils.GetAllTlgAgentRoles()
             .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
             .Role.User;
 

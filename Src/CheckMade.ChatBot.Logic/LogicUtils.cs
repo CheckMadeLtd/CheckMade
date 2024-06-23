@@ -2,9 +2,9 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 
-namespace CheckMade.ChatBot.Logic.Workflows;
+namespace CheckMade.ChatBot.Logic;
 
-internal interface IWorkflowUtils
+internal interface ILogicUtils
 {
     public static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("Previous workflow was completed. You can continue with a new one: "),
@@ -23,10 +23,10 @@ internal interface IWorkflowUtils
 // And separate GetAllLocationUpdates(???) to not always load thousands of locations when I just need to look at workflow
 // Offer GetAllLocationUpdates(tlgAgent) or even restrict to recent time, depending on what I need the location data for. 
 
-internal class WorkflowUtils(
+internal class LogicUtils(
         ITlgInputsRepository inputsRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
-    : IWorkflowUtils
+    : ILogicUtils
 {
     private IReadOnlyCollection<TlgAgentRoleBind> _preExistingTlgAgentRoles = new List<TlgAgentRoleBind>();
 
