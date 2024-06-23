@@ -16,6 +16,7 @@ public interface IInputProcessor
 
 internal class InputProcessor(
         InteractionMode interactionMode,
+        // ToDo: Canddiate for a Func<TlgInput, IWorkflow> delegate!!?? 
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
         ILogger<InputProcessor> logger) 
@@ -27,6 +28,9 @@ internal class InputProcessor(
             async input =>
             {
                 await inputsRepo.AddAsync(input);
+                
+                // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
+                // A Location update is not part of any workflow, it needs separate logic to handle location updates!
                 
                 var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
 
