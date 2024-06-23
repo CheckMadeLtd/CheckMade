@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Task<Option<IWorkflow>> IdentifyAsync(TlgInput input);
+    Task<Option<IWorkflow>> IdentifyAsync(TlgInput input, IReadOnlyCollection<TlgInput> recentHistory);
 }
 
 internal class WorkflowIdentifier(
@@ -18,7 +18,7 @@ internal class WorkflowIdentifier(
         ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
-    public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input)
+    public async Task<Option<IWorkflow>> IdentifyAsync(TlgInput input, IReadOnlyCollection<TlgInput> recentHistory)
     {
         await logicUtils.InitAsync();
         
@@ -27,10 +27,7 @@ internal class WorkflowIdentifier(
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        var currentWorkflowInputs = 
-            await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
-
-        return GetLastBotCommand(currentWorkflowInputs).Match(
+        return ILogicUtils.GetLastBotCommand(recentHistory).Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
             {
                 // the settings BotCommand code is the same across all InteractionModes
@@ -48,8 +45,4 @@ internal class WorkflowIdentifier(
             arb.TlgAgent.Mode == inputTlgAgent.Mode && 
             arb.Status == DbRecordStatus.Active) 
         != null;
-
-    private static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
-        inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
-        ?? Option<TlgInput>.None();
 }

@@ -19,6 +19,7 @@ internal class InputProcessor(
         // ToDo: Canddiate for a Func<TlgInput, IWorkflow> delegate!!?? 
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
+        ILogicUtils logicUtils,
         ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
@@ -31,21 +32,26 @@ internal class InputProcessor(
                 
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
+
+                var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+                    
+                if (IsCurrentInputInOutOfScopeWorkflow(input, recentHistory))
+                    return [ new OutputDto 
+                        {
+                            Text = Ui("The previous workflow was completed, so your last message will be ignored.") 
+                        }
+                    ];
                 
-                
-                
-                var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
+                var currentWorkflow = await workflowIdentifier.IdentifyAsync(input, recentHistory);
 
                 var nextWorkflowStepResult = await currentWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
                     () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
-                        new List<OutputDto>
+                    [ new OutputDto
                         {
-                            new()
-                            {
-                                Text = Ui("My placeholder answer for lack of a workflow handling your input."),
-                            }
-                        })));
+                            Text = Ui("My placeholder answer for lack of a workflow handling your input."),
+                        }
+                    ])));
 
                 return nextWorkflowStepResult.Match(
                     outputs => outputs,
@@ -68,4 +74,14 @@ internal class InputProcessor(
             error => Task.FromResult<IReadOnlyCollection<OutputDto>>(
                 [ new OutputDto { Text = error } ]));
     }
+
+    private static bool IsCurrentInputInOutOfScopeWorkflow(
+        TlgInput currentInput, IReadOnlyCollection<TlgInput> recentHistory) => 
+        ILogicUtils.GetLastBotCommand(recentHistory).Match(
+            lastBotCommand => 
+            {
+                var newWorkflowStartMessageId = lastBotCommand.Details.TlgMessageId;
+                return currentInput.Details.TlgMessageId < newWorkflowStartMessageId;
+            },
+            () => false);
 }

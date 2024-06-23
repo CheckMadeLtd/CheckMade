@@ -61,7 +61,9 @@ internal class UserAuthWorkflow(
     
     public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
     {
-        var allRelevantInputs = await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
+        // ToDo: Test whether this workflow still works when I replace this with GetCurrentWorkflowInputs instead! 
+        var allRelevantInputs = 
+            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
         
         var lastTextSubmitted = allRelevantInputs
             .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);

@@ -28,7 +28,9 @@ public class WorkflowIdentifierTests
         var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId);
     
-        var workflow = await workflowIdentifier.IdentifyAsync(inputFromUnauthenticatedUser);
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(inputFromUnauthenticatedUser, 
+                new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
@@ -57,7 +59,9 @@ public class WorkflowIdentifierTests
         _services = serviceCollection.BuildServiceProvider();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier.IdentifyAsync(inputWithSettingsBotCommand);
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(inputWithSettingsBotCommand, 
+                new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
@@ -88,7 +92,9 @@ public class WorkflowIdentifierTests
         _services = serviceCollection.BuildServiceProvider();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier.IdentifyAsync(utils.GetValidTlgInputTextMessage());
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(utils.GetValidTlgInputTextMessage(),
+                new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.IsNone);
     }

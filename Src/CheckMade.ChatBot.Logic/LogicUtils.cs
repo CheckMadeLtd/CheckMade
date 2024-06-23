@@ -15,6 +15,10 @@ internal interface ILogicUtils
     IReadOnlyCollection<TlgAgentRoleBind> GetAllTlgAgentRoles();
     Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
     Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
+    
+    public static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
+        inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
+        ?? Option<TlgInput>.None();
 }
 
 // ToDo: In line with today's decision: pre calculate all historic inputs and then use that in-memory for all subsequent filtering and processing!
