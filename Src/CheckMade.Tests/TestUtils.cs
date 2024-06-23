@@ -32,11 +32,13 @@ internal interface ITestUtils
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId = TestUserId_01, long chatId = TestChatId_01);
+        long userId = TestUserId_01, long chatId = TestChatId_01,
+        int messageId = 1);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
-        long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        long userId = TestUserId_01, long chatId = TestChatId_01, 
+        DateTime? dateTime = null, int messageId = 1);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
@@ -51,9 +53,12 @@ internal interface ITestUtils
     UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
     UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
 
-    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput)
+    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
+        GetFirstRawEnglish(actualOutput.GetValueOrThrow());
+
+    internal static string GetFirstRawEnglish(IReadOnlyCollection<OutputDto> actualOutput)
     {
-        var text = actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow();
+        var text = actualOutput.First().Text.GetValueOrThrow();
 
         return text.Concatenations.Count > 0
             ? text.Concatenations.First()!.RawEnglishText
@@ -82,8 +87,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 DateTime.UtcNow,
                 1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
-                new Uri("fakeTelegramUri"),
-                new Uri("fakeInternalUri"),
+                new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
+                new Uri("https://www.gorin.de/fakeInternalUri1.html"),
                 type));
 
     public TlgInput GetValidTlgInputLocationMessage(
@@ -97,24 +102,23 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                     geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
 
     public TlgInput GetValidTlgInputCommandMessage(
-        InteractionMode interactionMode, int botCommandEnumCode, long userId, long chatId) =>
+        InteractionMode interactionMode, int botCommandEnumCode, 
+        long userId, long chatId, int messageId) =>
         new(new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
-                1,
+                messageId,
                 botCommandEnumCode: botCommandEnumCode));
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm,
-        long userId,
-        long chatId,
-        DateTime? dateTime) =>
+        long userId, long chatId, DateTime? dateTime, int messageId) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
-                1,
+                messageId,
                 domainTerm: domainTerm));
 
 
