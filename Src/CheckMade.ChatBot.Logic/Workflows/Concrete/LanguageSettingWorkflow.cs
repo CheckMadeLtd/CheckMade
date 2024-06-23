@@ -17,6 +17,11 @@ internal class LanguageSettingWorkflow(
         ILogicUtils logicUtils) 
     : ILanguageSettingWorkflow
 {
+    public Task<bool> IsCompleted()
+    {
+        return Task.FromResult(false); // ToDo: Implement
+    }
+
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch

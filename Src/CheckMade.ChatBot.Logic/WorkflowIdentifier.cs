@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Option<IWorkflow> Identify(TlgInput input, IReadOnlyCollection<TlgInput> recentHistory);
+    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory);
 }
 
 internal class WorkflowIdentifier(
@@ -18,12 +18,12 @@ internal class WorkflowIdentifier(
         ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
-    public Option<IWorkflow> Identify(TlgInput input, IReadOnlyCollection<TlgInput> recentHistory)
+    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory)
     {
         // ToDo: remove this as soon as Repo handles caching
         logicUtils.InitAsync();
         
-        if (!IsUserAuthenticated(input.TlgAgent))
+        if (!IsUserAuthenticated(recentHistory.Last().TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }

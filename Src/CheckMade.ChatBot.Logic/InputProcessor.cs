@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Interfaces.Persistence.ChatBot;
+﻿using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -11,7 +12,7 @@ public interface IInputProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> currentInput);
 }
 
 internal class InputProcessor(
@@ -23,9 +24,9 @@ internal class InputProcessor(
         ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
-    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
+    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> currentInput)
     {
-        return await tlgInput.Match(
+        return await currentInput.Match(
             async input =>
             {
                 await inputsRepo.AddAsync(input);
@@ -36,18 +37,41 @@ internal class InputProcessor(
                 // ToDo: remove this as soon as Repo handles caching
                 await logicUtils.InitAsync();
                 
-                var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
-                    
+                var outputBuilder = new List<OutputDto>();
+                
+                var tlgAgentCompleteHistory = 
+                    await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(input.TlgAgent);
+
+                var previousWorkflow = workflowIdentifier.Identify(
+                    tlgAgentCompleteHistory
+                        .SkipLast(1)
+                        .ToImmutableReadOnlyCollection());
+                
+                if (previousWorkflow.IsSome &&
+                    await IsInputInterruptingCurrentWorkflowAsync(input, previousWorkflow.GetValueOrThrow()))
+                {
+                    outputBuilder.Add(new OutputDto
+                    {
+                        Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                  "successful submission.")
+                    });
+                }
+
+                var recentHistory = 
+                    await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+                
                 if (IsCurrentInputInOutOfScopeWorkflow(input, recentHistory))
+                {
                     return [ new OutputDto 
                         {
                             Text = Ui("The previous workflow was completed, so your last message will be ignored.") 
                         }
                     ];
-                
-                var currentWorkflow = workflowIdentifier.Identify(input, recentHistory);
+                }
 
-                var nextWorkflowStepResult = await currentWorkflow.Match(
+                var activeWorkflow = workflowIdentifier.Identify(recentHistory);
+                
+                var nextWorkflowStepResult = await activeWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
                     () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
                     [ new OutputDto
@@ -57,11 +81,15 @@ internal class InputProcessor(
                     ])));
 
                 return nextWorkflowStepResult.Match(
-                    outputs => outputs,
+                    outputs =>
+                    {
+                        outputBuilder.AddRange(outputs);
+                        return outputBuilder.ToImmutableReadOnlyCollection();
+                    },
                     error =>
                     {
                         logger.LogWarning($"""
-                                           The workflow '{currentWorkflow.GetValueOrDefault().GetType()}' has returned
+                                           The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
                                            this Error Result: '{error}'. Next, the corresponding input parameters.
                                            UserId: {input.TlgAgent.UserId}; ChatId: {input.TlgAgent.ChatId}; 
                                            InputType: {input.InputType}; InteractionMode: {interactionMode};
@@ -87,4 +115,8 @@ internal class InputProcessor(
                 return currentInput.Details.TlgMessageId < newWorkflowStartMessageId;
             },
             () => false);
+
+    private static async Task<bool> IsInputInterruptingCurrentWorkflowAsync(
+        TlgInput currentInput, IWorkflow previousWorkflow) => 
+        currentInput.InputType is TlgInputType.CommandMessage && !await previousWorkflow.IsCompleted();
 }

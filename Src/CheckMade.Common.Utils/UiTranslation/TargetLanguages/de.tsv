@@ -50,3 +50,4 @@ CheckMade.Telegram.Logic	My placeholder answer for lack of a workflow handling y
 CheckMade.Telegram.Logic	🌎 Please select your preferred language:	🌎 Bitte wählen Sie Ihre bevorzugte Sprache:
 CheckMade.Telegram.Logic	Previous workflow was completed. You can continue with a new one: 	Der vorherige Workflow wurde abgeschlossen. Sie können nun einen neuen anfangen: 
 CheckMade.Telegram.Logic	The previous workflow was completed, so your last message will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht wird deswegen ignoriert.
+	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.

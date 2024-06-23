@@ -27,8 +27,7 @@ public class WorkflowIdentifierTests
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId);
     
         var workflow = workflowIdentifier
-            .Identify(inputFromUnauthenticatedUser, 
-                new List<TlgInput>().ToImmutableReadOnlyCollection());
+            .Identify(new List<TlgInput>{ inputFromUnauthenticatedUser }.ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
@@ -46,8 +45,7 @@ public class WorkflowIdentifierTests
             tlgAgent.UserId, tlgAgent.ChatId);
         
         var workflow = workflowIdentifier
-            .Identify(inputWithSettingsBotCommand, 
-                new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
+            .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
@@ -61,8 +59,7 @@ public class WorkflowIdentifierTests
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var workflow = workflowIdentifier
-            .Identify(utils.GetValidTlgInputTextMessage(),
-                new List<TlgInput>
+            .Identify(new List<TlgInput>
                 {
                     utils.GetValidTlgInputTextMessage(),
                     utils.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),

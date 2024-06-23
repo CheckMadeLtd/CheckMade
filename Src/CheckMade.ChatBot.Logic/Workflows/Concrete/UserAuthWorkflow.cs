@@ -27,6 +27,11 @@ internal class UserAuthWorkflow(
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
 
+    public Task<bool> IsCompleted()
+    {
+        return Task.FromResult(false); // ToDo: Implement
+    }
+
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
