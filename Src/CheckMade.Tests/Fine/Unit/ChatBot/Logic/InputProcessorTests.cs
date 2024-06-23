@@ -44,7 +44,7 @@ public class InputProcessorTests
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         const string expectedWarningOutput = 
-            "The previous workflow was completed, so your last message will be ignored.";
+            "The previous workflow was completed, so your last message/action will be ignored.";
         var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
 
         var actualOutput = await inputProcessor.ProcessInputAsync(outOfScopeCallbackQuery);

@@ -7,7 +7,7 @@ namespace CheckMade.ChatBot.Logic;
 internal interface ILogicUtils
 {
     public static readonly UiString WorkflowWasCompleted = UiConcatenate(
-        Ui("Previous workflow was completed. You can continue with a new one: "),
+        Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
 
     Task InitAsync();

@@ -54,7 +54,8 @@ internal class InputProcessor(
                 {
                     return [ new OutputDto 
                         {
-                            Text = Ui("The previous workflow was completed, so your last message will be ignored.") 
+                            Text = Ui("The previous workflow was completed, " +
+                                      "so your last message/action will be ignored.") 
                         }
                     ];
                 }
