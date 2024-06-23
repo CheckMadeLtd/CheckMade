@@ -27,14 +27,14 @@ internal class WorkflowIdentifier(
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
 
-        var inputs = await workflowUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
-        var lastBotCommand = GetLastBotCommand(inputs);
+        var currentInputs = await workflowUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
 
-        return lastBotCommand.Match(
+        return GetLastBotCommand(currentInputs).Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
             {
                 // the settings BotCommand code is the same across all InteractionModes
                 (int)OperationsBotCommands.Settings => Option<IWorkflow>.Some(languageSettingWorkflow),
+                
                 _ => Option<IWorkflow>.None()
             },
             Option<IWorkflow>.None);

@@ -5,6 +5,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -59,5 +60,36 @@ public class WorkflowIdentifierTests
         var workflow = await workflowIdentifier.IdentifyAsync(inputWithSettingsBotCommand);
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
+    }
+
+    [Fact]
+    public async Task IdentifyAsync_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
+        var mockTlgInputsRepoRandomSelectionButNoBotCommand = new Mock<ITlgInputsRepository>();
+
+        mockTlgInputsRepoRandomSelectionButNoBotCommand
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgInputTextMessage(),
+                utils.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
+                // This could be in response to an out-of-scope message in the history e.g. in another Role!
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                utils.GetValidTlgInputTextMessage()
+            });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => 
+            mockTlgInputsRepoRandomSelectionButNoBotCommand.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
+        
+        var workflow = await workflowIdentifier.IdentifyAsync(utils.GetValidTlgInputTextMessage());
+        
+        Assert.True(workflow.IsNone);
     }
 }
