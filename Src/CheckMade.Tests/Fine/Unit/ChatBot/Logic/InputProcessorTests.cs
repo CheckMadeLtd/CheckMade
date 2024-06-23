@@ -70,6 +70,8 @@ public class InputProcessorTests
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
                 interruptingBotCommandInput
             });
 
