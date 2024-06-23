@@ -33,6 +33,8 @@ internal class InputProcessor(
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
 
+                await logicUtils.InitAsync();
+                
                 var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
                     
                 if (IsCurrentInputInOutOfScopeWorkflow(input, recentHistory))
@@ -42,7 +44,7 @@ internal class InputProcessor(
                         }
                     ];
                 
-                var currentWorkflow = await workflowIdentifier.IdentifyAsync(input, recentHistory);
+                var currentWorkflow = workflowIdentifier.Identify(input, recentHistory);
 
                 var nextWorkflowStepResult = await currentWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),

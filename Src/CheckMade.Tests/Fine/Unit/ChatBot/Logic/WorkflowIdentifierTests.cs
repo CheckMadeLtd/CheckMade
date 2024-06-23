@@ -18,7 +18,7 @@ public class WorkflowIdentifierTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
+    public void Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
@@ -28,15 +28,15 @@ public class WorkflowIdentifierTests
         var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId);
     
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(inputFromUnauthenticatedUser, 
+        var workflow = workflowIdentifier
+            .Identify(inputFromUnauthenticatedUser, 
                 new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
+    public void Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -59,15 +59,15 @@ public class WorkflowIdentifierTests
         _services = serviceCollection.BuildServiceProvider();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(inputWithSettingsBotCommand, 
+        var workflow = workflowIdentifier
+            .Identify(inputWithSettingsBotCommand, 
                 new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -92,8 +92,8 @@ public class WorkflowIdentifierTests
         _services = serviceCollection.BuildServiceProvider();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(utils.GetValidTlgInputTextMessage(),
+        var workflow = workflowIdentifier
+            .Identify(utils.GetValidTlgInputTextMessage(),
                 new List<TlgInput>().ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.IsNone);
