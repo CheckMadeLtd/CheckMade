@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -46,7 +47,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public void DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
+    public async Task DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -59,7 +60,7 @@ public class UserAuthWorkflowTests
         var tlgPastInputToBeIgnored = utils.GetValidTlgInputTextMessage(
             tlgAgent.UserId,
             tlgAgent.ChatId,
-            DanielIsSanitaryOpsAdminAtMockParooka2024.Token,
+            SanitaryOpsEngineer1.Token,
             new DateTime(1999, 01, 05));
 
         var inputHistory = new List<TlgInput> { tlgPastInputToBeIgnored };
@@ -72,8 +73,12 @@ public class UserAuthWorkflowTests
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
+        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        await logicUtils.InitAsync(); // ToDo: remove after Repo handles caching
+        var relevantHistory = 
+            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
         
-        var actualState = workflow.DetermineCurrentState(inputHistory);
+        var actualState = workflow.DetermineCurrentState(relevantHistory);
         
         Assert.Equal(Initial, actualState);
     }

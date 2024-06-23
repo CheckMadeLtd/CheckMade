@@ -110,15 +110,16 @@ internal class InputProcessor(
     {
         if (currentInput.InputType is not TlgInputType.CommandMessage)
             return false;
-        
-        var historyExcludingCurrentBotCommandInput = 
+
+        var historyRelatingToPreviousWorkflow = 
             (await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(currentInput.TlgAgent))
-            .SkipLast(1)
+            .SkipLast(1) // Excluding the current BotCommand input
+            .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
             .ToImmutableReadOnlyCollection();
 
-        var previousWorkflow = workflowIdentifier.Identify(historyExcludingCurrentBotCommandInput);
+        var previousWorkflow = workflowIdentifier.Identify(historyRelatingToPreviousWorkflow);
 
         return previousWorkflow.IsSome && 
-               !previousWorkflow.GetValueOrThrow().IsCompleted(historyExcludingCurrentBotCommandInput);
+               !previousWorkflow.GetValueOrThrow().IsCompleted(historyRelatingToPreviousWorkflow);
     }
 }

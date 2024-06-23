@@ -18,7 +18,10 @@ internal class LanguageSettingWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
     {
-        return DetermineCurrentState(history) == (States.ReceivedLanguageSetting | States.Completed);
+        var currentState = DetermineCurrentState(history);
+        
+        return (currentState & States.ReceivedLanguageSetting) != 0 || 
+               (currentState & States.Completed) != 0;
     }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
@@ -60,8 +63,6 @@ internal class LanguageSettingWorkflow(
         
         return lastInput.InputType switch
         {
-            TlgInputType.CommandMessage => States.Initial,
-            
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
             
             _ => previousInputCompletedThisWorkflow switch

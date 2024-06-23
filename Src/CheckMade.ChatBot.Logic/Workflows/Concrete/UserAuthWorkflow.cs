@@ -29,7 +29,7 @@ internal class UserAuthWorkflow(
 
     public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
     {
-        return DetermineCurrentState(history) == States.Completed;
+        return DetermineCurrentState(history) == ReceivedTokenSubmissionAttempt;
     }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
@@ -39,7 +39,6 @@ internal class UserAuthWorkflow(
         // ToDo: Remove when Repo handles caching
         await logicUtils.InitAsync();
         
-        // ToDo: Test whether this workflow still works when I replace this with GetCurrentWorkflowInputs instead! 
         var relevantHistory = 
             await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgInput.TlgAgent);
         
@@ -79,7 +78,7 @@ internal class UserAuthWorkflow(
         return lastTextSubmitted switch
         {
             null => Initial,
-            _ => ReceivedTokenSubmissionAttempt,
+            _ => ReceivedTokenSubmissionAttempt
         };
     }
 
@@ -174,7 +173,6 @@ internal class UserAuthWorkflow(
     internal enum States
     {
         Initial = 1,
-        ReceivedTokenSubmissionAttempt = 1<<1,
-        Completed = 1<<2
+        ReceivedTokenSubmissionAttempt = 1<<1
     }
 }
