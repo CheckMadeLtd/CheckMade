@@ -1,5 +1,4 @@
-﻿using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
+﻿using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -39,22 +38,13 @@ internal class InputProcessor(
                 
                 var outputBuilder = new List<OutputDto>();
                 
-                var tlgAgentCompleteHistory = 
-                    await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(input.TlgAgent);
-
-                var previousWorkflow = workflowIdentifier.Identify(
-                    tlgAgentCompleteHistory
-                        .SkipLast(1)
-                        .ToImmutableReadOnlyCollection());
-                
-                if (previousWorkflow.IsSome &&
-                    await IsInputInterruptingCurrentWorkflowAsync(input, previousWorkflow.GetValueOrThrow()))
+                if (await IsInputInterruptingPreviousWorkflowAsync(input))
                 {
                     outputBuilder.Add(new OutputDto
-                    {
-                        Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
-                                  "successful submission.")
-                    });
+                        {
+                            Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                      "successful submission.")
+                        });
                 }
 
                 var recentHistory = 
@@ -116,7 +106,19 @@ internal class InputProcessor(
             },
             () => false);
 
-    private static async Task<bool> IsInputInterruptingCurrentWorkflowAsync(
-        TlgInput currentInput, IWorkflow previousWorkflow) => 
-        currentInput.InputType is TlgInputType.CommandMessage && !await previousWorkflow.IsCompleted();
+    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
+    {
+        if (currentInput.InputType is not TlgInputType.CommandMessage)
+            return false;
+        
+        var historyExcludingCurrentBotCommandInput = 
+            (await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(currentInput.TlgAgent))
+            .SkipLast(1)
+            .ToImmutableReadOnlyCollection();
+
+        var previousWorkflow = workflowIdentifier.Identify(historyExcludingCurrentBotCommandInput);
+
+        return previousWorkflow.IsSome && 
+               !previousWorkflow.GetValueOrThrow().IsCompleted(historyExcludingCurrentBotCommandInput);
+    }
 }

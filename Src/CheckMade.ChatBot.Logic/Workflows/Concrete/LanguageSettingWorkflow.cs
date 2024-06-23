@@ -1,5 +1,4 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
@@ -9,7 +8,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    Task<LanguageSettingWorkflow.States> DetermineCurrentStateAsync(TlgAgent tlgAgent);
+    LanguageSettingWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
 }
 
 internal class LanguageSettingWorkflow(
@@ -17,14 +16,19 @@ internal class LanguageSettingWorkflow(
         ILogicUtils logicUtils) 
     : ILanguageSettingWorkflow
 {
-    public Task<bool> IsCompleted()
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
     {
-        return Task.FromResult(false); // ToDo: Implement
+        return DetermineCurrentState(history) == (States.ReceivedLanguageSetting | States.Completed);
     }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
-        return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
+        // ToDo: Remove when Repo handles caching
+        await logicUtils.InitAsync();
+
+        var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
+        
+        return DetermineCurrentState(recentHistory) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -46,17 +50,13 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
     {
-        // ToDo: Remove when Repo handles caching
-        await logicUtils.InitAsync();
-        
-        var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgAgent);
-        var lastInput = recentHistory.Last();
+        var lastInput = history.Last();
 
         var previousInputCompletedThisWorkflow = 
-            recentHistory.Count > 1 && 
-            AnyPreviousInputContainsCallbackQuery(recentHistory.ToArray()[..^1]);
+            history.Count > 1 && 
+            AnyPreviousInputContainsCallbackQuery(history.ToArray()[..^1]);
         
         return lastInput.InputType switch
         {

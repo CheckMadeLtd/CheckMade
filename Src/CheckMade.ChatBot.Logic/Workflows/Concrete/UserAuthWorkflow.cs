@@ -13,7 +13,7 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgAgent tlgAgent);
+    UserAuthWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
 }
 
 internal class UserAuthWorkflow(
@@ -27,16 +27,23 @@ internal class UserAuthWorkflow(
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
 
-    public Task<bool> IsCompleted()
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
     {
-        return Task.FromResult(false); // ToDo: Implement
+        return DetermineCurrentState(history) == States.Completed;
     }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
+        // ToDo: Remove when Repo handles caching
+        await logicUtils.InitAsync();
+        
+        // ToDo: Test whether this workflow still works when I replace this with GetCurrentWorkflowInputs instead! 
+        var relevantHistory = 
+            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgInput.TlgAgent);
+        
+        return DetermineCurrentState(relevantHistory) switch
         {
             Initial => new List<OutputDto> { EnterTokenPrompt },
             
@@ -64,16 +71,9 @@ internal class UserAuthWorkflow(
         };
     }
     
-    public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
     {
-        // ToDo: Remove when Repo handles caching
-        await logicUtils.InitAsync();
-        
-        // ToDo: Test whether this workflow still works when I replace this with GetCurrentWorkflowInputs instead! 
-        var allRelevantInputs = 
-            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
-        
-        var lastTextSubmitted = allRelevantInputs
+        var lastTextSubmitted = history
             .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
 
         return lastTextSubmitted switch
@@ -175,5 +175,6 @@ internal class UserAuthWorkflow(
     {
         Initial = 1,
         ReceivedTokenSubmissionAttempt = 1<<1,
+        Completed = 1<<2
     }
 }

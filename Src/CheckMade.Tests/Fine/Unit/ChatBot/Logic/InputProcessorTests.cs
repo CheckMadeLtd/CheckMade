@@ -53,7 +53,7 @@ public class InputProcessorTests
     }
 
     [Fact]
-    public async Task ProcessInputAsync_PrefixesWarning_WhenUserInterruptedCurrentWorkflow_WithNewBotCommand()
+    public async Task ProcessInputAsync_PrefixesWarning_WhenUserInterruptedPreviousWorkflow_WithNewBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
@@ -83,5 +83,39 @@ public class InputProcessorTests
             .ProcessInputAsync(interruptingBotCommandInput);
         
         Assert.Equal(expectedWarningOutput, GetFirstRawEnglish(actualOutput));
+    }
+    
+    [Fact]
+    public async Task? ProcessInputAsync_NoWarning_ForNewBotCommand_WhenUserCompletedPreviousWorkflow()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var notInterruptingBotCommandInput =
+            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue); 
+        
+        mockTlgInputsRepo
+            .Setup(x => x.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                notInterruptingBotCommandInput
+            });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        const string notExpectedWarningOutput = 
+            "FYI: you interrupted the previous workflow before its completion or successful submission.";
+        var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
+
+        var actualOutput = await inputProcessor
+            .ProcessInputAsync(notInterruptingBotCommandInput);
+        
+        Assert.NotEqual(notExpectedWarningOutput, GetFirstRawEnglish(actualOutput));
     }
 }

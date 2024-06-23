@@ -20,7 +20,7 @@ public class UserAuthWorkflowTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
+    public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -29,22 +29,24 @@ public class UserAuthWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
+        var inputHistory = new List<TlgInput> { utils.GetValidTlgInputTextMessage() }; 
+        
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage() });
+            .ReturnsAsync(inputHistory);
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
 
     [Fact]
-    public async Task DetermineCurrentStateAsync_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
+    public void DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -59,42 +61,46 @@ public class UserAuthWorkflowTests
             tlgAgent.ChatId,
             DanielIsSanitaryOpsAdminAtMockParooka2024.Token,
             new DateTime(1999, 01, 05));
+
+        var inputHistory = new List<TlgInput> { tlgPastInputToBeIgnored };
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { tlgPastInputToBeIgnored });
+            .ReturnsAsync(inputHistory);
         
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(Initial, actualState);
     }
 
     [Fact]
     // We know it's failed because a successful submission means no revisiting of the UserAuthWorkflow!
-    public async Task DetermineCurrentStateAsync_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
+    public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
+        
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var utils = _services.GetRequiredService<ITestUtils>();
-        
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
+        var inputHistory = new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") };
+        
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { utils.GetValidTlgInputTextMessage(text: "InvalidToken") });
+            .ReturnsAsync(inputHistory);
         
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(ReceivedTokenSubmissionAttempt, actualState);
     }
