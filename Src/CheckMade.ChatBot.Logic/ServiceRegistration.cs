@@ -13,5 +13,6 @@ public static class ServiceRegistration
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
+        services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
     }
 }
