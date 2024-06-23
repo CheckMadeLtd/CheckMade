@@ -33,9 +33,6 @@ internal class InputProcessor(
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
 
-                // ToDo: remove this as soon as Repo handles caching
-                await logicUtils.InitAsync();
-                
                 var outputBuilder = new List<OutputDto>();
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(input))
@@ -60,7 +57,7 @@ internal class InputProcessor(
                     ];
                 }
 
-                var activeWorkflow = workflowIdentifier.Identify(recentHistory);
+                var activeWorkflow = await workflowIdentifier.IdentifyAsync(recentHistory);
                 
                 var nextWorkflowStepResult = await activeWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
@@ -118,7 +115,7 @@ internal class InputProcessor(
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
             .ToImmutableReadOnlyCollection();
 
-        var previousWorkflow = workflowIdentifier.Identify(historyRelatingToPreviousWorkflow);
+        var previousWorkflow = await workflowIdentifier.IdentifyAsync(historyRelatingToPreviousWorkflow);
 
         return previousWorkflow.IsSome && 
                !previousWorkflow.GetValueOrThrow().IsCompleted(historyRelatingToPreviousWorkflow);

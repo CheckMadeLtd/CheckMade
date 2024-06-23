@@ -74,7 +74,6 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
-        await logicUtils.InitAsync(); // ToDo: remove after Repo handles caching
         var relevantHistory = 
             await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
         

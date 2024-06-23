@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -9,21 +10,18 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory);
+    Task<Option<IWorkflow>> IdentifyAsync(IReadOnlyCollection<TlgInput> recentHistory);
 }
 
 internal class WorkflowIdentifier(
-        ILogicUtils logicUtils,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
         IUserAuthWorkflow userAuthWorkflow,
         ILanguageSettingWorkflow languageSettingWorkflow) 
     : IWorkflowIdentifier
 {
-    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory)
+    public async Task<Option<IWorkflow>> IdentifyAsync(IReadOnlyCollection<TlgInput> recentHistory)
     {
-        // ToDo: remove this as soon as Repo handles caching
-        logicUtils.InitAsync();
-        
-        if (!IsUserAuthenticated(recentHistory.Last().TlgAgent))
+        if (!await IsUserAuthenticatedAsync(recentHistory.Last().TlgAgent))
         {
             return Option<IWorkflow>.Some(userAuthWorkflow);
         }
@@ -39,8 +37,8 @@ internal class WorkflowIdentifier(
             Option<IWorkflow>.None);
     }
     
-    private bool IsUserAuthenticated(TlgAgent inputTlgAgent) => 
-        logicUtils.GetAllTlgAgentRoles()
+    private async Task<bool> IsUserAuthenticatedAsync(TlgAgent inputTlgAgent) => 
+        (await roleBindingsRepo.GetAllAsync())
         .FirstOrDefault(arb => 
             arb.TlgAgent.ChatId == inputTlgAgent.ChatId && 
             arb.TlgAgent.Mode == inputTlgAgent.Mode && 

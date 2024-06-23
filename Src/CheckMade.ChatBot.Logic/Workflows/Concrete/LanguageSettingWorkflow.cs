@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -13,6 +14,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 
 internal class LanguageSettingWorkflow(
         IUsersRepository usersRepo,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
         ILogicUtils logicUtils) 
     : ILanguageSettingWorkflow
 {
@@ -26,9 +28,6 @@ internal class LanguageSettingWorkflow(
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
-        // ToDo: Remove when Repo handles caching
-        await logicUtils.InitAsync();
-
         var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
         
         return DetermineCurrentState(recentHistory) switch
@@ -85,7 +84,7 @@ internal class LanguageSettingWorkflow(
             throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
-        var currentUser = logicUtils.GetAllTlgAgentRoles()
+        var currentUser = (await roleBindingsRepo.GetAllAsync())
             .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
             .Role.User;
 

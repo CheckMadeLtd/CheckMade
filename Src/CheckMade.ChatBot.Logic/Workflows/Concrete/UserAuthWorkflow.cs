@@ -36,9 +36,6 @@ internal class UserAuthWorkflow(
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        // ToDo: Remove when Repo handles caching
-        await logicUtils.InitAsync();
-        
         var relevantHistory = 
             await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgInput.TlgAgent);
         
@@ -89,7 +86,8 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingTlgAgentRoles = logicUtils.GetAllTlgAgentRoles();
+        var preExistingTlgAgentRoles = 
+            (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();
         
         var outputs = new List<OutputDto>();
         
