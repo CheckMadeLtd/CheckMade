@@ -221,8 +221,8 @@ public class UserAuthWorkflowTests
         var actualTlgAgentRoleAdded = new List<TlgAgentRoleBind>(); 
         mockTlgAgentRolesRepo
             .Setup(x => 
-                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
-            .Callback<IEnumerable<TlgAgentRoleBind>>(tlgAgentRole => 
+                x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
+            .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
                 actualTlgAgentRoleAdded = tlgAgentRole.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -273,8 +273,8 @@ public class UserAuthWorkflowTests
         var actualTlgAgentRoles = new List<TlgAgentRoleBind>();
         mockTlgAgentRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
-            .Callback<IEnumerable<TlgAgentRoleBind>>(
+                x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
+            .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoles = tlgAgentRoles.ToList());
 
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -282,7 +282,7 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockTlgAgentRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgAgentRoleBind>>()));
+            It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
 
         for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {
@@ -334,8 +334,8 @@ public class UserAuthWorkflowTests
         var actualTlgAgentRoles = new List<TlgAgentRoleBind>();
         mockTlgAgentRolesRepo
             .Setup(x =>
-                x.AddAsync(It.IsAny<IEnumerable<TlgAgentRoleBind>>()))
-            .Callback<IEnumerable<TlgAgentRoleBind>>(
+                x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
+            .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoles = tlgAgentRoles.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -343,7 +343,7 @@ public class UserAuthWorkflowTests
         await workflow.GetNextOutputAsync(inputValidToken);
         
         mockTlgAgentRolesRepo.Verify(x => x.AddAsync(
-            It.IsAny<IEnumerable<TlgAgentRoleBind>>()));
+            It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
 
         for (var i = 0; i < expectedTlgAgentRolesAdded.Count; i++)
         {

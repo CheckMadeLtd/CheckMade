@@ -12,10 +12,14 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
     : BaseRepository(dbHelper, logger), ITlgInputsRepository
 {
+    private static readonly SemaphoreSlim Semaphore = new(1, 1);
+    
+    private IReadOnlyCollection<TlgInput> _cacheInputsByTlgAgent = new List<TlgInput>();
+    
     public async Task AddAsync(TlgInput tlgInput) =>
         await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());
 
-    public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
+    public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
         const string rawQuery = "INSERT INTO tlg_inputs " +
                                 "(user_id, " +
@@ -49,6 +53,8 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
         }).ToImmutableReadOnlyCollection();
 
         await ExecuteTransactionAsync(commands);
+        
+        _cacheInputsByTlgAgent = _cacheInputsByTlgAgent.Concat(tlgInputs).ToImmutableReadOnlyCollection();
     }
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
@@ -58,14 +64,33 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
             "ORDER BY id",
             userId, Option<TlgChatId>.None(), Option<InteractionMode>.None());
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent) =>
-        await GetAllExecuteAsync(
-            "SELECT * FROM tlg_inputs " +
-            "WHERE user_id = @tlgUserId " +
-            "AND chat_id = @tlgChatId " +
-            "AND interaction_mode = @mode " +
-            "ORDER BY id",
-            tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode);
+    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
+    {
+        if (_cacheInputsByTlgAgent.Count == 0)
+        {
+            await Semaphore.WaitAsync();
+
+            try
+            {
+                if (_cacheInputsByTlgAgent.Count == 0)
+                {
+                    _cacheInputsByTlgAgent = new List<TlgInput>(await GetAllExecuteAsync(
+                        "SELECT * FROM tlg_inputs " +
+                        "WHERE user_id = @tlgUserId " +
+                        "AND chat_id = @tlgChatId " +
+                        "AND interaction_mode = @mode " +
+                        "ORDER BY id",
+                        tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        return _cacheInputsByTlgAgent.ToImmutableReadOnlyCollection();
+    }
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
         string rawQuery, Option<TlgUserId> userId, Option<TlgChatId> chatId, Option<InteractionMode> mode)
@@ -117,5 +142,8 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        EmptyCash();
     }
+
+    private void EmptyCash() => _cacheInputsByTlgAgent = new List<TlgInput>();
 }

@@ -17,7 +17,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
         await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
 
-    public async Task AddAsync(IEnumerable<TlgAgentRoleBind> tlgAgentRole)
+    public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRole)
     {
         const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
@@ -52,7 +52,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
         });
 
         await ExecuteTransactionAsync(commands);
-        EmptyCache();
+        
+        _cache = _cache.Concat(tlgAgentRole).ToImmutableReadOnlyCollection();
     }
 
     public async Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync()

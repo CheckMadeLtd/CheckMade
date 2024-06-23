@@ -12,7 +12,7 @@ internal class MockTlgInputsRepository(IMock<ITlgInputsRepository> mockInputRepo
         await mockInputRepo.Object.AddAsync(tlgInput);
     }
 
-    public async Task AddAsync(IEnumerable<TlgInput> tlgInputs)
+    public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
         await mockInputRepo.Object.AddAsync(tlgInputs);
     }
