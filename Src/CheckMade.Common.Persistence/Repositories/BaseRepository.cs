@@ -183,16 +183,16 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
     private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
-        var activationDate = reader.GetDateTime(reader.GetOrdinal("tcpr_activation_date"));
+        var activationDate = reader.GetDateTime(reader.GetOrdinal("tarb_activation_date"));
 
-        var deactivationDateOrdinal = reader.GetOrdinal("tcpr_deactivation_date");
+        var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
             ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal))
             : Option<DateTime>.None();
 
         var status = EnsureEnumValidityOrThrow(
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status")));
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));
 
         return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
     }

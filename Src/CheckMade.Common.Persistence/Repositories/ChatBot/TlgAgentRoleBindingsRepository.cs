@@ -94,7 +94,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "tarb.interaction_mode AS tarb_interaction_mode, " +
                                             "tarb.activation_date AS tarb_activation_date, " +
                                             "tarb.deactivation_date AS tarb_deactivation_date, " +
-                                            "tarb.status AS tcpr_status " +
+                                            "tarb.status AS tarb_status " +
 
                                             "FROM tlg_agent_role_bindings tarb " +
                                             "INNER JOIN roles r on tarb.role_id = r.id " +
