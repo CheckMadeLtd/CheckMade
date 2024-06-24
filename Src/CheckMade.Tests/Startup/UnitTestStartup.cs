@@ -6,7 +6,6 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
@@ -14,7 +13,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using File = Telegram.Bot.Types.File;
-using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Startup;
 

@@ -7,7 +7,6 @@ using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBo
 using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
-using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic;
 

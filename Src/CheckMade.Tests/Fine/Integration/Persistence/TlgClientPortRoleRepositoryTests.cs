@@ -4,7 +4,6 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
-using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Integration.Persistence;
 

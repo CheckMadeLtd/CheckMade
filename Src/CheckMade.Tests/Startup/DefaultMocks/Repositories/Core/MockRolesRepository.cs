@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
-using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
 

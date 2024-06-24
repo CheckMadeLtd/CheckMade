@@ -1,6 +1,5 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -8,8 +7,6 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.Tests.TestData;
-using static CheckMade.Tests.ITestUtils;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic;
 
