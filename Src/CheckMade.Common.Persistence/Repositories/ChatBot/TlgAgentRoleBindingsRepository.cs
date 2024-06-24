@@ -146,7 +146,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
         await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
 
-    public async Task UpdateStatusAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(
+        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
+        DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +

@@ -27,7 +27,9 @@ internal class LogoutWorkflow(
         var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllAsync())
-            .First(arb => arb.TlgAgent == tlgInput.TlgAgent);
+            .First(arb => 
+                arb.TlgAgent == tlgInput.TlgAgent &&
+                arb.Status == DbRecordStatus.Active);
 
         return DetermineCurrentState(recentHistory) switch
         {
@@ -37,11 +39,13 @@ internal class LogoutWorkflow(
                 {
                     Text = Ui("""
                               {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
-                              FYI: You will also be logged out from other non-group bot chats in this role. 
+                              FYI: You will also be logged out from other non-group bot chats in this role.
                               """,
                         currentRoleBind.Role.User.FirstName,
                         currentRoleBind.Role.RoleType,
-                        currentRoleBind.Role.LiveEvent)
+                        currentRoleBind.Role.LiveEvent.Name),
+                    
+                    ControlPromptsSelection = ControlPrompts.YesNo
                 }
             },
             
@@ -72,7 +76,7 @@ internal class LogoutWorkflow(
             .Where(arb =>
                 arb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
                 arb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
-                arb.Role == currentRoleBind.Role &&
+                arb.Role.Token == currentRoleBind.Role.Token &&
                 arb.Status == DbRecordStatus.Active)
             .ToImmutableReadOnlyCollection();
         

@@ -21,6 +21,7 @@ public enum ControlPrompts : long
     No = 1L<<14,
     Yes = 1L<<15,
     Maybe = 1L<<16,
+    YesNo = Yes | No,
     // Placeholder <<17
     // Placeholder <<18
     
