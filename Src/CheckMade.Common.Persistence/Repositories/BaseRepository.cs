@@ -9,12 +9,11 @@ using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
-public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger)
+public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 {
     protected static NpgsqlCommand GenerateCommand(string query, Option<Dictionary<string, object>> parameters)
     {

@@ -1,13 +1,12 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
-    : BaseRepository(dbHelper, logger), ITlgAgentRoleBindingsRepository
+public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     

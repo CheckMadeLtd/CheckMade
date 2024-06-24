@@ -1,12 +1,11 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class UsersRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
-    : BaseRepository(dbHelper, logger), IUsersRepository
+public class UsersRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), IUsersRepository
 {
     public async Task UpdateLanguageSettingAsync(User user, LanguageCode newLanguage)
     {

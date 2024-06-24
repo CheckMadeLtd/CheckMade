@@ -3,14 +3,13 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Persistence.JsonHelpers;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository> logger) 
-    : BaseRepository(dbHelper, logger), ITlgInputsRepository
+public class TlgInputsRepository(IDbExecutionHelper dbHelper) 
+    : BaseRepository(dbHelper), ITlgInputsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
