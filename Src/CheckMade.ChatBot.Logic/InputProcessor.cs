@@ -30,6 +30,9 @@ internal class InputProcessor(
             {
                 await inputsRepo.AddAsync(input);
                 
+                // ToDo: handle special case of /start and no-auth combination once Input has its optional Role!
+                // -> friendly prompt to enter RoleToken instead of being greeted with an error message first thing!
+                
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
 
@@ -106,6 +109,10 @@ internal class InputProcessor(
 
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
     {
+        // ToDo: once TlgInput includes optional Role, return false if Role is None (= user not auth.).
+        // In that case we shouldn't not show this warning, it makes no sense and is irritating and confusing.
+        // The user instead should simply see the 'enter token' message. 
+        
         if (currentInput.InputType is not TlgInputType.CommandMessage)
             return false;
 
