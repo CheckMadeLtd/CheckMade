@@ -12,12 +12,12 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private IReadOnlyCollection<TlgAgentRoleBind> _cache = new List<TlgAgentRoleBind>();
+    private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
         await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
 
-    public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRole)
+    public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
         const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
                                 "role_id, " +
@@ -31,7 +31,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = tlgAgentRole.Select(arb =>
+        var commands = tlgAgentRoleBindings.Select(arb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
@@ -53,18 +53,21 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
 
         await ExecuteTransactionAsync(commands);
         
-        _cache = _cache.Concat(tlgAgentRole).ToImmutableReadOnlyCollection();
+        _cache = _cache.Match(
+            cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
+                cache.Concat(tlgAgentRoleBindings).ToImmutableReadOnlyCollection()),
+            Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
     }
 
     public async Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync()
     {
-        if (_cache.Count == 0)
+        if (_cache.IsNone)
         {
             await Semaphore.WaitAsync();
 
             try
             {
-                if (_cache.Count == 0)
+                if (_cache.IsNone)
                 {
                     const string rawQuery = "SELECT " +
 
@@ -103,7 +106,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
-                    _cache = new List<TlgAgentRoleBind>(await ExecuteReaderAsync(command, reader =>
+                    var fetchedBindings = new List<TlgAgentRoleBind>(await ExecuteReaderAsync(command, reader =>
                     {
                         var role = ReadRole.Invoke(reader);
 
@@ -126,6 +129,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
 
                         return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
                     }));
+                    
+                    _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
+                        fetchedBindings.ToImmutableReadOnlyCollection());
                 }
             }
             finally
@@ -134,7 +140,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
             }
         }
         
-        return _cache.ToImmutableReadOnlyCollection();
+        return _cache.GetValueOrThrow();
     }
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus)
@@ -188,5 +194,5 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
         EmptyCache();
     }
 
-    private void EmptyCache() => _cache = new List<TlgAgentRoleBind>();
+    private void EmptyCache() => _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
 }
