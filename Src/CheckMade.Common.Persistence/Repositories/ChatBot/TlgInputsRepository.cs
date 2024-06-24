@@ -14,7 +14,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private IReadOnlyCollection<TlgInput> _cacheInputsByTlgAgent = new List<TlgInput>();
+    private Option<IReadOnlyCollection<TlgInput>> _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.None();
     
     public async Task AddAsync(TlgInput tlgInput) =>
         await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());
@@ -53,8 +53,11 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
         }).ToImmutableReadOnlyCollection();
 
         await ExecuteTransactionAsync(commands);
-        
-        _cacheInputsByTlgAgent = _cacheInputsByTlgAgent.Concat(tlgInputs).ToImmutableReadOnlyCollection();
+
+        _cacheInputsByTlgAgent = _cacheInputsByTlgAgent.Match(
+            cache => Option<IReadOnlyCollection<TlgInput>>.Some(
+                cache.Concat(tlgInputs).ToImmutableReadOnlyCollection()),
+            Option<IReadOnlyCollection<TlgInput>>.None);
     }
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
@@ -66,21 +69,24 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
     {
-        if (_cacheInputsByTlgAgent.Count == 0)
+        if (_cacheInputsByTlgAgent.IsNone)
         {
             await Semaphore.WaitAsync();
 
             try
             {
-                if (_cacheInputsByTlgAgent.Count == 0)
+                if (_cacheInputsByTlgAgent.IsNone)
                 {
-                    _cacheInputsByTlgAgent = new List<TlgInput>(await GetAllExecuteAsync(
+                    var fetchedTlgInputs = new List<TlgInput>(await GetAllExecuteAsync(
                         "SELECT * FROM tlg_inputs " +
                         "WHERE user_id = @tlgUserId " +
                         "AND chat_id = @tlgChatId " +
                         "AND interaction_mode = @mode " +
                         "ORDER BY id",
                         tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
+
+                    _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.Some(
+                        fetchedTlgInputs.ToImmutableReadOnlyCollection());
                 }
             }
             finally
@@ -89,7 +95,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
             }
         }
 
-        return _cacheInputsByTlgAgent.ToImmutableReadOnlyCollection();
+        return _cacheInputsByTlgAgent.GetValueOrThrow();
     }
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
@@ -145,5 +151,5 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
         EmptyCash();
     }
 
-    private void EmptyCash() => _cacheInputsByTlgAgent = new List<TlgInput>();
+    private void EmptyCash() => _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.None();
 }
