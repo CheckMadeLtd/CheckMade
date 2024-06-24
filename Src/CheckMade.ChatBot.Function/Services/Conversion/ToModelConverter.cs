@@ -40,10 +40,14 @@ internal class ToModelConverter(
                         in GetDomainTerm(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
+                    from originatorRole
+                        in GetOriginatorRole(update)
+                    from liveEventContext
+                        in GetLiveEventContext(originatorRole)
                     from tlgInput 
                         in GetTlgInputAsync(
                             update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
-                            botCommandEnumCode, domainTerm, controlPromptEnumCode) 
+                            botCommandEnumCode, domainTerm, controlPromptEnumCode, originatorRole, liveEventContext) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
@@ -204,6 +208,16 @@ internal class ToModelConverter(
             ? callBackData
             : Option<long>.None();
     }
+
+    private static Result<Option<RoleStub>> GetOriginatorRole(UpdateWrapper update)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static Result<Option<LiveEventStub>> GetLiveEventContext(Option<RoleStub> originatorRole)
+    {
+        throw new NotImplementedException();
+    }
     
     private async Task<Result<TlgInput>> GetTlgInputAsync(
         UpdateWrapper update,
@@ -213,7 +227,9 @@ internal class ToModelConverter(
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,
-        Option<long> controlPromptEnumCode)
+        Option<long> controlPromptEnumCode,
+        Option<RoleStub> originatorRole,
+        Option<LiveEventStub> liveEventContext)
     {
         if (update.Message.From?.Id == null || 
             string.IsNullOrWhiteSpace(update.Message.Text) 
@@ -253,6 +269,8 @@ internal class ToModelConverter(
         return new TlgInput(
             new TlgAgent(userId, chatId, interactionMode), 
             tlgInputType,
+            originatorRole,
+            liveEventContext,
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

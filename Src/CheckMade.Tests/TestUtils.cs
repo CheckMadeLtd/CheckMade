@@ -72,6 +72,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgInputTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
+            Option<RoleStub>.None(), 
+            Option<LiveEventStub>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 
@@ -82,6 +84,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Randomizer.GenerateRandomLong(),
             InteractionMode.Operations),
             TlgInputType.AttachmentMessage,
+            Option<RoleStub>.None(), 
+            Option<LiveEventStub>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 1,
@@ -95,6 +99,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
                 TlgInputType.Location,
+                Option<RoleStub>.None(), 
+                Option<LiveEventStub>.None(), 
                 CreateFromRelevantDetails(
                     DateTime.UtcNow, 
                     1,
@@ -105,6 +111,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId, int messageId) =>
         new(new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
+            Option<RoleStub>.None(), 
+            Option<LiveEventStub>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 messageId,
@@ -115,6 +123,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId, DateTime? dateTime, int messageId) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
+            Option<RoleStub>.None(), 
+            Option<LiveEventStub>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 messageId,
@@ -128,6 +138,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         DateTime? dateTime) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
+            Option<RoleStub>.None(), 
+            Option<LiveEventStub>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,

@@ -35,7 +35,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             var expectedRetrieval = new List<TlgInput>
             {
-                new (input.TlgAgent, input.InputType, input.Details)
+                new (input.TlgAgent, input.InputType, input.OriginatorRole, input.LiveEventContext, input.Details)
             };
         
             await inputRepo.AddAsync(input);
