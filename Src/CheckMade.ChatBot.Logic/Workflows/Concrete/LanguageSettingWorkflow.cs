@@ -90,7 +90,7 @@ internal class LanguageSettingWorkflow(
 
         await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
         
-        return [new OutputDto
+        return [new OutputDto 
         {
             Text = UiConcatenate(
                 Ui("New language: "), 
