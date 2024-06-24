@@ -16,7 +16,6 @@ public interface IInputProcessor
 
 internal class InputProcessor(
         InteractionMode interactionMode,
-        // ToDo: Canddiate for a Func<TlgInput, IWorkflow> delegate!!?? 
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
         ILogicUtils logicUtils,
