@@ -2,7 +2,6 @@ using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Persistence;
 using CheckMade.Tests.Startup;
@@ -57,7 +56,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             utils.Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations);
+            Operations);
         
         var expectedDomainTerm = Dt(LanguageCode.de);
         
@@ -83,7 +82,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             utils.Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations);
+            Operations);
         
         const double expectedLatitudeRaw = 17.456;
         const double expectedLongitudeRaw = -23.00987;
@@ -113,7 +112,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             utils.Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations);
+            Operations);
         
         var tlgInputs = new[]
         {
@@ -140,7 +139,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             utils.Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations);
+            Operations);
     
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
     
@@ -152,8 +151,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     // [Theory(Skip = "Waiting to migrate the old DB data")]
     // [Theory(Skip = "Running tests from unknown IP / internet")]
     [Theory]
-    [InlineData(TestData.TestUserDanielGorinTelegramId, false)]
-    [InlineData(TestData.TestUserDanielGorinTelegramId, true)]
+    [InlineData(TestUserDanielGorinTelegramId, false)]
+    [InlineData(TestUserDanielGorinTelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
         TlgUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
@@ -171,6 +170,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await inputRepo.GetAllAsync(devDbUserId);
+        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Operations));
+        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Communications));
+        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Notifications));
     }
 }

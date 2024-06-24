@@ -59,13 +59,6 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             Option<IReadOnlyCollection<TlgInput>>.None);
     }
 
-    public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId) =>
-        await GetAllExecuteAsync(
-            "SELECT * FROM tlg_inputs " +
-            "WHERE user_id = @tlgUserId " +
-            "ORDER BY id",
-            userId, Option<TlgChatId>.None(), Option<InteractionMode>.None());
-
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
     {
         if (_cacheInputsByTlgAgent.IsNone)
