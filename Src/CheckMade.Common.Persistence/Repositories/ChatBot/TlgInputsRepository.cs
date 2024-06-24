@@ -26,9 +26,13 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                 "details, " +
                                 "last_data_migration, " +
                                 "interaction_mode, " +
-                                "input_type) " +
+                                "input_type, " +
+                                "role_id, " +
+                                "live_event_id) " +
                                 "VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, " +
-                                "@lastDataMig, @interactionMode, @tlgInputType)";
+                                "@lastDataMig, @interactionMode, @tlgInputType, " +
+                                "(SELECT id FROM roles WHERE token = @token), " +
+                                "(SELECT id FROM live_events WHERE name = @liveEventName))";
         
         var commands = tlgInputs.Select(tlgInput =>
         {
@@ -41,13 +45,23 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                 { "@tlgInputType", (int) tlgInput.InputType }
             };
             
+            if (tlgInput.OriginatorRole.IsSome)
+                normalParameters.Add("@token", tlgInput.OriginatorRole.GetValueOrThrow().Token);
+            else
+                normalParameters.Add("@token", DBNull.Value);    
+            
+            if (tlgInput.LiveEventContext.IsSome)
+                normalParameters.Add("@liveEventName", tlgInput.LiveEventContext.GetValueOrThrow().Name);
+            else
+                normalParameters.Add("@liveEventName", DBNull.Value);    
+            
             var command = GenerateCommand(rawQuery, normalParameters);
             
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(tlgInput.Details)
             });
-            
+
             return command;
         }).ToImmutableReadOnlyCollection();
 
