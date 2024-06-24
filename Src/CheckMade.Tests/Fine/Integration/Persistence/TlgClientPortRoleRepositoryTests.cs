@@ -12,10 +12,10 @@ public class TlgAgentRoleBindingsRepositoryTests
     private ServiceProvider? _services;
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
-    public async Task SavesAndRetrieves_OneTlgAgentRole_WhenInputValid(InteractionMode mode)
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
+    public async Task SavesAndRetrieves_OneTlgAgentRoleBind_WhenInputValid(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
@@ -37,9 +37,9 @@ public class TlgAgentRoleBindingsRepositoryTests
     }
 
     [Theory]
-    [InlineData(InteractionMode.Operations)]
-    [InlineData(InteractionMode.Communications)]
-    [InlineData(InteractionMode.Notifications)]
+    [InlineData(Operations)]
+    [InlineData(Communications)]
+    [InlineData(Notifications)]
     public async Task SuccessfullyUpdatesStatus_FromActiveToHistoric(InteractionMode mode)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();

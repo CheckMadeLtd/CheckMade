@@ -56,6 +56,8 @@ public class ToModelConverterTests
         Assert.Equivalent(expectedTlgInput, actualTlgInput.GetValueOrThrow());
     }
     
+    // ToDo: uncomment and fix remaining tests as per above
+    
     // [Theory]
     // [InlineData(TlgAttachmentType.Photo)]
     // [InlineData(TlgAttachmentType.Voice)]

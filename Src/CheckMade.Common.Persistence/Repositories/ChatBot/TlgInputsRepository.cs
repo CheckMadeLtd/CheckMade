@@ -101,7 +101,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                             "AND inp.chat_id = @tlgChatId " +
                                             "AND inp.interaction_mode = @mode " +
                                             
-                                            "ORDER BY id";
+                                            "ORDER BY inp.id";
                     
                     var fetchedTlgInputs = new List<TlgInput>(await GetAllExecuteAsync(
                         rawQuery, tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
