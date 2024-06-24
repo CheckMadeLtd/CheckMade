@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -26,7 +27,8 @@ public class LogoutWorkflowTests
         var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(ControlPrompts.Yes,
+        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+            ControlPrompts.Yes,
             tlgAgent.UserId, tlgAgent.ChatId);
 
         mockTlgInputsRepo
@@ -77,7 +79,8 @@ public class LogoutWorkflowTests
         var boundRole = SanitaryOpsEngineer1; 
         
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(ControlPrompts.Yes,
+        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+            ControlPrompts.Yes,
             tlgAgentOperations.UserId, tlgAgentOperations.ChatId);
 
         mockTlgInputsRepo
@@ -149,5 +152,46 @@ public class LogoutWorkflowTests
             Assert.Equivalent(expectedBindingsUpdated[i].Role, actualTlgAgentRoleBindingsUpdated[i].Role);
             Assert.True(actualTlgAgentRoleBindingsUpdated[i].Status == DbRecordStatus.Historic);
         }
+    }
+
+    [Fact]
+    public async Task GetNextOutputAsync_ConfirmsAbortion_AfterUserAbortsLogout()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var abortLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+            ControlPrompts.No,
+            tlgAgent.UserId, tlgAgent.ChatId);
+
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                // Decoys
+                utils.GetValidTlgInputCommandMessage(Operations, (int)OperationsBotCommands.Settings,
+                    tlgAgent.UserId, tlgAgent.ChatId),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                // Relevant
+                utils.GetValidTlgInputCommandMessage(Operations, (int)OperationsBotCommands.Logout,
+                    tlgAgent.UserId, tlgAgent.ChatId),
+                abortLogoutCommand
+            });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var workflow = _services.GetRequiredService<ILogoutWorkflow>();
+        var expectedMessage1 = "Logout aborted.\n"; 
+        
+        var actualOutput = await workflow.GetNextOutputAsync(abortLogoutCommand);
+        
+        Assert.Equal(expectedMessage1, GetFirstRawEnglish(actualOutput));
+        Assert.Equivalent(
+            IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
+            actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow().Concatenations.Last()!.RawEnglishText);
     }
 }

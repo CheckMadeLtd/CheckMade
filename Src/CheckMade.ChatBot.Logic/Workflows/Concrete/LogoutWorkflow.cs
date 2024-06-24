@@ -51,6 +51,16 @@ internal class LogoutWorkflow(
             
             States.LogoutConfirmed => await PerformLogoutAsync(currentRoleBind),
             
+            States.LogoutAborted => new List<OutputDto>
+            {
+                new()
+                {
+                    Text = UiConcatenate(
+                        Ui("Logout aborted.\n"),
+                        IInputProcessor.SeeValidBotCommandsInstruction)
+                }
+            },
+            
             _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
         };
@@ -60,10 +70,15 @@ internal class LogoutWorkflow(
     {
         var lastInput = history.Last();
 
-        if (lastInput.InputType == TlgInputType.CallbackQuery &&
-            lastInput.Details.ControlPromptEnumCode == (int)ControlPrompts.Yes)
+        if (lastInput.InputType == TlgInputType.CallbackQuery)
         {
-            return States.LogoutConfirmed;
+            return lastInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
+            {
+                (int)ControlPrompts.Yes => States.LogoutConfirmed,
+                (int)ControlPrompts.No => States.LogoutAborted,
+                _ => throw new ArgumentOutOfRangeException(nameof(lastInput), 
+                    "Unexpected value for ControlPromptEnumCode")
+            };
         }
 
         return States.Initial;
@@ -95,6 +110,7 @@ internal class LogoutWorkflow(
     internal enum States
     {
         Initial = 1,
-        LogoutConfirmed = 1<<1
+        LogoutConfirmed = 1<<1,
+        LogoutAborted = 1<<2
     }
 }
