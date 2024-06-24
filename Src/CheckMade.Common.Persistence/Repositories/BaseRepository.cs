@@ -80,12 +80,10 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
 
-        var liveEvent = new LiveEvent(
+        var liveEventInfo = new LiveEventInfo(
             reader.GetString(reader.GetOrdinal("live_event_name")),
             reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
             reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
-            // We leave this list empty to avoid unnecessary circular references in our object graph
-            new List<Role>(),
             venue,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
@@ -95,7 +93,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             EnsureEnumValidityOrThrow(
                 (RoleType)reader.GetInt16(reader.GetOrdinal("role_type"))),
             user,
-            liveEvent,
+            liveEventInfo,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
 

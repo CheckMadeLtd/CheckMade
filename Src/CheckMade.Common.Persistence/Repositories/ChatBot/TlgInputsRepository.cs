@@ -120,6 +120,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("interaction_mode")));
             var tlgInputType = EnsureEnumValidityOrThrow(
                 (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+            var originatorRoleInfo = 
             var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
 
             var message = new TlgInput(

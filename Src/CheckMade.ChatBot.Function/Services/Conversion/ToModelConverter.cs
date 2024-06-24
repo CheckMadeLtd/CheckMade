@@ -8,6 +8,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Model.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
@@ -209,12 +210,12 @@ internal class ToModelConverter(
             : Option<long>.None();
     }
 
-    private static Result<Option<RoleStub>> GetOriginatorRole(UpdateWrapper update)
+    private static Result<Option<IRoleInfo>> GetOriginatorRole(UpdateWrapper update)
     {
         throw new NotImplementedException();
     }
 
-    private static Result<Option<LiveEventStub>> GetLiveEventContext(Option<RoleStub> originatorRole)
+    private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<IRoleInfo> originatorRole)
     {
         throw new NotImplementedException();
     }
@@ -228,8 +229,8 @@ internal class ToModelConverter(
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,
         Option<long> controlPromptEnumCode,
-        Option<RoleStub> originatorRole,
-        Option<LiveEventStub> liveEventContext)
+        Option<IRoleInfo> originatorRole,
+        Option<ILiveEventInfo> liveEventContext)
     {
         if (update.Message.From?.Id == null || 
             string.IsNullOrWhiteSpace(update.Message.Text) 

@@ -5,6 +5,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
@@ -72,8 +73,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
     public TlgInput GetValidTlgInputTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
-            Option<RoleStub>.None(), 
-            Option<LiveEventStub>.None(), 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 
@@ -84,8 +85,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Randomizer.GenerateRandomLong(),
             InteractionMode.Operations),
             TlgInputType.AttachmentMessage,
-            Option<RoleStub>.None(), 
-            Option<LiveEventStub>.None(), 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 1,
@@ -99,8 +100,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
                 TlgInputType.Location,
-                Option<RoleStub>.None(), 
-                Option<LiveEventStub>.None(), 
+                Option<IRoleInfo>.None(), 
+                Option<ILiveEventInfo>.None(), 
                 CreateFromRelevantDetails(
                     DateTime.UtcNow, 
                     1,
@@ -111,8 +112,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId, int messageId) =>
         new(new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
-            Option<RoleStub>.None(), 
-            Option<LiveEventStub>.None(), 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 messageId,
@@ -123,8 +124,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         long userId, long chatId, DateTime? dateTime, int messageId) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
-            Option<RoleStub>.None(), 
-            Option<LiveEventStub>.None(), 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 messageId,
@@ -138,8 +139,8 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
         DateTime? dateTime) =>
         new(new TlgAgent(userId, chatId, InteractionMode.Operations),
             TlgInputType.CallbackQuery,
-            Option<RoleStub>.None(), 
-            Option<LiveEventStub>.None(), 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,

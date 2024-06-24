@@ -111,7 +111,7 @@ internal class UserAuthWorkflow(
                           """, 
                     originatingMode,
                     newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                    newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
+                    newTlgAgentRoleForOriginatingMode.Role.LiveEventInfo.Name)
             });
         }
         
@@ -123,7 +123,7 @@ internal class UserAuthWorkflow(
                       """, 
                 newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
                 newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
+                newTlgAgentRoleForOriginatingMode.Role.LiveEventInfo.Name)
         });
 
         outputs.Add(new OutputDto

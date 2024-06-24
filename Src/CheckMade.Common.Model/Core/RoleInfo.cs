@@ -3,10 +3,9 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core;
 
-public record Role(
+public record RoleInfo(
         string Token,
         RoleType RoleType,
         User User,
-        ILiveEventInfo LiveEventInfo,
-        DbRecordStatus Status = DbRecordStatus.Active)
+        DbRecordStatus Status) 
     : IRoleInfo;
