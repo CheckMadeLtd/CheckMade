@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,8 +41,10 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
-            new RoleInfo(),
-            new LiveEventInfo(), 
+            boundRole ?? Option<IRoleInfo>.None(),
+            boundRole != null 
+                ? Option<ILiveEventInfo>.Some(boundRole.LiveEventInfo) 
+                : Option<ILiveEventInfo>.None(), 
             TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
