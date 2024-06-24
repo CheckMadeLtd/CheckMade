@@ -143,7 +143,10 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
         return _cache.GetValueOrThrow();
     }
 
-    public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus)
+    public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
+        await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
+
+    public async Task UpdateStatusAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
                                 "SET status = @status, deactivation_date = @deactivationDate " +
@@ -151,27 +154,30 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
                                 "AND tlg_user_id = @tlgUserId " +
                                 "AND tlg_chat_id = @tlgChatId " + 
                                 "AND interaction_mode = @mode";
-    
-        var normalParameters = new Dictionary<string, object>
+
+        var commands = tlgAgentRoleBindings.Select(arb =>
         {
-            { "@status", (int)newStatus },
-            { "@token", tlgAgentRoleBind.Role.Token },
-            { "@tlgUserId", (long)tlgAgentRoleBind.TlgAgent.UserId },
-            { "@tlgChatId", (long)tlgAgentRoleBind.TlgAgent.ChatId },
-            { "@mode", (int)tlgAgentRoleBind.TlgAgent.Mode }
-        };
+            var normalParameters = new Dictionary<string, object>
+            {
+                { "@status", (int)newStatus },
+                { "@token", arb.Role.Token },
+                { "@tlgUserId", (long)arb.TlgAgent.UserId },
+                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
+                { "@mode", (int)arb.TlgAgent.Mode }
+            };
 
-        if (newStatus != DbRecordStatus.Active)
-            normalParameters.Add("@deactivationDate", DateTime.UtcNow);
-        else
-            normalParameters.Add("@deactivationDate", DBNull.Value);
+            if (newStatus != DbRecordStatus.Active)
+                normalParameters.Add("@deactivationDate", DateTime.UtcNow);
+            else
+                normalParameters.Add("@deactivationDate", DBNull.Value);
         
-        var command = GenerateCommand(rawQuery, normalParameters);
-
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+            return GenerateCommand(rawQuery, normalParameters);
+        });
+        
+        await ExecuteTransactionAsync(commands);
         EmptyCache();
     }
-    
+
     public async Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind)
     {
         const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +

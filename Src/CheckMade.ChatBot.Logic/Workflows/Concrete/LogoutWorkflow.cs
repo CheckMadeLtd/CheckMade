@@ -67,9 +67,19 @@ internal class LogoutWorkflow(
 
     private async Task<List<OutputDto>> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)
     {
-        // ToDo: also delete related roleBindings for same ChatId for the other modes!
-        // Do it in a single DB transaction, i.e. UpdateStatus needs to take a collection of bindings!
-        await roleBindingsRepo.UpdateStatusAsync(currentRoleBind, DbRecordStatus.Historic);
+        var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
+            (await roleBindingsRepo.GetAllAsync())
+            .Where(arb =>
+                arb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
+                arb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
+                arb.Role == currentRoleBind.Role &&
+                arb.Status == DbRecordStatus.Active)
+            .ToImmutableReadOnlyCollection();
+        
+        await roleBindingsRepo
+            .UpdateStatusAsync(
+                roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat, 
+                DbRecordStatus.Historic);
         
         return [new OutputDto 
         {

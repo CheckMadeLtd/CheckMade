@@ -9,5 +9,6 @@ public interface ITlgAgentRoleBindingsRepository
     Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings);
     Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync();
     Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus);
+    Task UpdateStatusAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, DbRecordStatus newStatus);
     Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind);
 }
