@@ -7,6 +7,5 @@ public record LiveEventInfo(
         string Name,
         DateTime StartDate,
         DateTime EndDate,
-        LiveEventVenue Venue,
         DbRecordStatus Status) 
     : ILiveEventInfo;

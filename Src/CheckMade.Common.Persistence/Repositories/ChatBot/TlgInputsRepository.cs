@@ -77,13 +77,35 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
             {
                 if (_cacheInputsByTlgAgent.IsNone)
                 {
+                    const string rawQuery = "SELECT " +
+                                            
+                                            "r.token AS role_token, " +
+                                            "r.role_type AS role_type, " +
+                                            "r.status AS role_status, " +
+                                            
+                                            "lve.name AS live_event_name, " +
+                                            "lve.start_date AS live_event_start_date, " +
+                                            "lve.end_date AS live_event_end_date, " +
+                                            "lve.status AS live_event_status, " +
+                                            
+                                            "inp.user_id AS input_user_id, " +
+                                            "inp.chat_id AS input_chat_id, " +
+                                            "inp.interaction_mode AS input_mode, " +
+                                            "inp.input_type AS input_type, " +
+                                            "inp.details AS input_details " +
+                                            
+                                            "FROM tlg_inputs inp " +
+                                            "LEFT JOIN roles r on inp.role_id = r.id " +
+                                            "LEFT JOIN live_events lve on inp.live_event_id = lve.id " +
+                                            
+                                            "WHERE inp.user_id = @tlgUserId " +
+                                            "AND inp.chat_id = @tlgChatId " +
+                                            "AND inp.interaction_mode = @mode " +
+                                            
+                                            "ORDER BY id";
+                    
                     var fetchedTlgInputs = new List<TlgInput>(await GetAllExecuteAsync(
-                        "SELECT * FROM tlg_inputs " +
-                        "WHERE user_id = @tlgUserId " +
-                        "AND chat_id = @tlgChatId " +
-                        "AND interaction_mode = @mode " +
-                        "ORDER BY id",
-                        tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
+                        rawQuery, tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
 
                     _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.Some(
                         fetchedTlgInputs.ToImmutableReadOnlyCollection());
@@ -112,25 +134,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, ILogger<BaseReposi
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteReaderAsync(command, reader =>
-        {
-            TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("user_id"));
-            TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("chat_id"));
-            var interactionMode = EnsureEnumValidityOrThrow(
-                (InteractionMode)reader.GetInt16(reader.GetOrdinal("interaction_mode")));
-            var tlgInputType = EnsureEnumValidityOrThrow(
-                (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
-            var originatorRoleInfo = 
-            var tlgDetails = reader.GetString(reader.GetOrdinal("details"));
-
-            var message = new TlgInput(
-                new TlgAgent(tlgUserId, tlgChatId, interactionMode),
-                tlgInputType,
-                JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails) 
-                ?? throw new InvalidOperationException("Failed to deserialize"));
-
-            return message;
-        });
+        return await ExecuteReaderAsync(command, ReadTlgInput);
     }
     
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)

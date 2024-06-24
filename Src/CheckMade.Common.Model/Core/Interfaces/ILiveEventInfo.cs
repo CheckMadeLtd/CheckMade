@@ -7,6 +7,5 @@ public interface ILiveEventInfo
     string Name { get; }
     DateTime StartDate { get; }
     DateTime EndDate { get; }
-    LiveEventVenue Venue { get; }
     DbRecordStatus Status { get; }
 }

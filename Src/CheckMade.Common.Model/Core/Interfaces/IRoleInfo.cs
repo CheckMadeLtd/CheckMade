@@ -6,6 +6,5 @@ public interface IRoleInfo
 {
     string Token { get; }
     RoleType RoleType { get; }
-    User User { get; }
     DbRecordStatus Status { get; }
 }

@@ -1,8 +1,13 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -63,7 +68,23 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
 
     protected readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
-        var user = new User(
+        var user = ConstituteUser(reader, logger);
+        var liveEventInfo = ConstituteLiveEventInfo(reader);
+
+        return ConstituteRole(reader, user, liveEventInfo.GetValueOrThrow());
+    };
+
+    protected readonly Func<DbDataReader, TlgInput> ReadTlgInput = reader =>
+    {
+        var originatorRoleInfo = ConstituteRoleInfo(reader);
+        var liveEventInfo = ConstituteLiveEventInfo(reader);
+        
+        return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo);
+    };
+
+    private static User ConstituteUser(DbDataReader reader, ILogger<BaseRepository> logger)
+    {
+        return new User(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
             reader.GetString(reader.GetOrdinal("user_first_name")),
             GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
@@ -74,20 +95,33 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
                 logger),
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
+    }
 
-        var venue = new LiveEventVenue(
+    // ReSharper disable once UnusedMember.Local
+    private static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
+    {
+        return new LiveEventVenue(
             reader.GetString(reader.GetOrdinal("venue_name")),
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
+    }
 
-        var liveEventInfo = new LiveEventInfo(
+    // ToDo: Can I remove duplication between this and a future ConstituteLiveEvent?
+    private static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
+    {
+        if (reader.IsDBNull(reader.GetOrdinal("live_event_name")))
+            return Option<ILiveEventInfo>.None();
+        
+        return new LiveEventInfo(
             reader.GetString(reader.GetOrdinal("live_event_name")),
             reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
             reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
-            venue,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
+    }
 
+    private static Role ConstituteRole(DbDataReader reader, User user, ILiveEventInfo liveEventInfo)
+    {
         return new Role(
             reader.GetString(reader.GetOrdinal("role_token")),
             EnsureEnumValidityOrThrow(
@@ -96,8 +130,41 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             liveEventInfo,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
+    }
 
-    };
+    // ToDo: Can I remove duplication between this and ConstituteRole? 
+    private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader)
+    {
+        if (reader.IsDBNull(reader.GetOrdinal("role_token")))
+            return Option<IRoleInfo>.None();
+        
+        return new RoleInfo(
+            reader.GetString(reader.GetOrdinal("role_token")),
+            EnsureEnumValidityOrThrow(
+                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type"))),
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
+    }
+
+    private static TlgInput ConstituteTlgInput(
+        DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
+    {
+        TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
+        TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
+        var interactionMode = EnsureEnumValidityOrThrow(
+            (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
+        var tlgInputType = EnsureEnumValidityOrThrow(
+            (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+        var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
+
+        return new TlgInput(
+            new TlgAgent(tlgUserId, tlgChatId, interactionMode),
+            tlgInputType,
+            roleInfo,
+            liveEventInfo,
+            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails)
+            ?? throw new InvalidOperationException("Failed to deserialize"));
+    }
 
     private static Option<T> GetOption<T>(DbDataReader reader, int ordinal)
     {
