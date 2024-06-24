@@ -66,15 +66,15 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
         return builder.ToImmutable();
     }
 
-    protected readonly Func<DbDataReader, Role> ReadRole = reader =>
+    protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
-        var user = ConstituteUser(reader, logger);
+        var user = ConstituteUser(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
 
         return ConstituteRole(reader, user, liveEventInfo.GetValueOrThrow());
     };
 
-    protected readonly Func<DbDataReader, TlgInput> ReadTlgInput = reader =>
+    protected static readonly Func<DbDataReader, TlgInput> ReadTlgInput = reader =>
     {
         var originatorRoleInfo = ConstituteRoleInfo(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
@@ -82,7 +82,15 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
         return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo);
     };
 
-    private static User ConstituteUser(DbDataReader reader, ILogger<BaseRepository> logger)
+    protected static readonly Func<DbDataReader, TlgAgentRoleBind> ReadTlgAgentRoleBind = reader =>
+    {
+        var role = ReadRole(reader);
+        var tlgAgent = ConstituteTlgAgent(reader);
+
+        return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+    };
+
+    private static User ConstituteUser(DbDataReader reader)
     {
         return new User(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
@@ -90,9 +98,8 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
             reader.GetString(reader.GetOrdinal("user_last_name")),
             GetOption<EmailAddress>(reader, reader.GetOrdinal("user_email")),
-            EnsureLanguageCodeValidityOrGetDefault(
-                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language")),
-                logger),
+            EnsureEnumValidityOrThrow(
+                (LanguageCode)reader.GetInt16(reader.GetOrdinal("user_language"))),
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
     }
@@ -166,6 +173,31 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             ?? throw new InvalidOperationException("Failed to deserialize"));
     }
 
+    private static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    {
+        return new TlgAgent(
+            reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
+            reader.GetInt64(reader.GetOrdinal("tarb_tlg_chat_id")),
+            EnsureEnumValidityOrThrow(
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
+    }
+
+    private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    {
+        var activationDate = reader.GetDateTime(reader.GetOrdinal("tcpr_activation_date"));
+
+        var deactivationDateOrdinal = reader.GetOrdinal("tcpr_deactivation_date");
+
+        var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
+            ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal))
+            : Option<DateTime>.None();
+
+        var status = EnsureEnumValidityOrThrow(
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status")));
+
+        return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+    }
+    
     private static Option<T> GetOption<T>(DbDataReader reader, int ordinal)
     {
         var valueRaw = reader.GetValue(ordinal);
@@ -181,19 +213,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, ILogger<BaseRe
             : Option<T>.None();
     }
 
-    private static LanguageCode EnsureLanguageCodeValidityOrGetDefault(LanguageCode code, ILogger<BaseRepository> logger)
-    {
-        if (!EnumChecker.IsDefined(code))
-        {
-            logger.LogWarning($"The database contained an invalid {nameof(LanguageCode)}: {code}. " +
-                              $"--> Fallback to English.");
-            
-            return LanguageCode.en;
-        }
-
-        return code;
-    }
-    
     protected static TEnum EnsureEnumValidityOrThrow<TEnum>(TEnum uncheckedEnum) where TEnum : Enum
     {
         if (!EnumChecker.IsDefined(uncheckedEnum))

@@ -1,6 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -91,11 +90,11 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
                                             "r.role_type AS role_type, " +
                                             "r.status AS role_status, " +
 
-                                            "tarb.tlg_user_id AS tcpr_tlg_user_id, " +
-                                            "tarb.tlg_chat_id AS tcpr_tlg_chat_id, " +
-                                            "tarb.interaction_mode AS tcpr_interaction_mode, " +
-                                            "tarb.activation_date AS tcpr_activation_date, " +
-                                            "tarb.deactivation_date AS tcpr_deactivation_date, " +
+                                            "tarb.tlg_user_id AS tarb_tlg_user_id, " +
+                                            "tarb.tlg_chat_id AS tarb_tlg_chat_id, " +
+                                            "tarb.interaction_mode AS tarb_interaction_mode, " +
+                                            "tarb.activation_date AS tarb_activation_date, " +
+                                            "tarb.deactivation_date AS tarb_deactivation_date, " +
                                             "tarb.status AS tcpr_status " +
 
                                             "FROM tlg_agent_role_bindings tarb " +
@@ -106,29 +105,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, ILogger
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
-                    var fetchedBindings = new List<TlgAgentRoleBind>(await ExecuteReaderAsync(command, reader =>
-                    {
-                        var role = ReadRole.Invoke(reader);
-
-                        var tlgAgent = new TlgAgent(
-                            reader.GetInt64(reader.GetOrdinal("tcpr_tlg_user_id")),
-                            reader.GetInt64(reader.GetOrdinal("tcpr_tlg_chat_id")),
-                            EnsureEnumValidityOrThrow(
-                                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tcpr_interaction_mode"))));
-
-                        var activationDate = reader.GetDateTime(reader.GetOrdinal("tcpr_activation_date"));
-
-                        var deactivationDateOrdinal = reader.GetOrdinal("tcpr_deactivation_date");
-
-                        var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
-                            ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal))
-                            : Option<DateTime>.None();
-
-                        var status = EnsureEnumValidityOrThrow(
-                            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tcpr_status")));
-
-                        return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
-                    }));
+                    var fetchedBindings = new List<TlgAgentRoleBind>(
+                        await ExecuteReaderAsync(command, ReadTlgAgentRoleBind));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
                         fetchedBindings.ToImmutableReadOnlyCollection());
