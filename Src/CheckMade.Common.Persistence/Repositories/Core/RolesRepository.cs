@@ -9,17 +9,17 @@ public class RolesRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private IReadOnlyCollection<Role> _cache = new List<Role>();
+    private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
     
     public async Task<IEnumerable<Role>> GetAllAsync()
     {
-        if (_cache.Count == 0)
+        if (_cache.IsNone)
         {
             await Semaphore.WaitAsync();
             
             try
             {
-                if (_cache.Count == 0)
+                if (_cache.IsNone)
                 {
                     const string rawQuery = "SELECT " +
 
@@ -50,7 +50,9 @@ public class RolesRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
-                    _cache = new List<Role>(await ExecuteReaderAsync(command, ReadRole));
+                    _cache = Option<IReadOnlyCollection<Role>>.Some(
+                        new List<Role>(await ExecuteReaderAsync(command, ReadRole))
+                            .ToImmutableReadOnlyCollection());
                 }
             }
             finally
@@ -59,6 +61,6 @@ public class RolesRepository(IDbExecutionHelper dbHelper, ILogger<BaseRepository
             }
         }
         
-        return _cache.ToImmutableReadOnlyCollection();
+        return _cache.GetValueOrThrow();
     }
 }
