@@ -95,9 +95,8 @@ public class UnitTestStartup : TestStartupBase
     private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoleBindings()
     {
         var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
-
-        // #1
         
+        // Default
         builder.Add(new TlgAgentRoleBind(
             DanielIsSanitaryOpsAdminAtMockParooka2024Default, 
             new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations),
@@ -108,21 +107,13 @@ public class UnitTestStartup : TestStartupBase
             SanitaryOpsInspector1, 
             new TlgAgent(TestUserId_01_Default, TestChatId_02, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
-        
         builder.Add(new TlgAgentRoleBind(
             SanitaryOpsInspector1, 
             new TlgAgent(TestUserId_01_Default, TestChatId_02, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
-
         builder.Add(new TlgAgentRoleBind(
             SanitaryOpsInspector1, 
             new TlgAgent(TestUserId_01_Default, TestChatId_02, Notifications),
-            DateTime.UtcNow, Option<DateTime>.None()));
-
-
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsEngineer1, 
-            new TlgAgent(TestUserId_02, TestChatId_03, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Expired on purpose - for Unit Tests!
@@ -142,8 +133,6 @@ public class UnitTestStartup : TestStartupBase
             SanitaryOpsObserver1, 
             new TlgAgent(TestUserId_03, TestChatId_05, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
-        
-        // #2
         
         // Used in Unit Test 'GetNextOutputAsync_CreatesTlgAgentRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
         builder.Add(new TlgAgentRoleBind(
