@@ -2,6 +2,7 @@
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
@@ -29,13 +30,17 @@ internal class InputProcessor(
             {
                 await inputsRepo.AddAsync(input);
                 
-                // ToDo: handle special case of /start and no-auth combination once Input has its optional Role!
-                // -> friendly prompt to enter RoleToken instead of being greeted with an error message first thing!
+                var outputBuilder = new List<OutputDto>();
+
+                if (input.InputType == TlgInputType.CommandMessage
+                    && input.Details.BotCommandEnumCode == TlgStart.CommandCode)
+                {
+                    outputBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
+                                                               "I shall follow your command!") });
+                }
                 
                 // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
                 // A Location update is not part of any workflow, it needs separate logic to handle location updates!
-
-                var outputBuilder = new List<OutputDto>();
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(input))
                 {
@@ -49,7 +54,7 @@ internal class InputProcessor(
                 var recentHistory = 
                     await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
                 
-                if (IsCurrentInputInOutOfScopeWorkflow(input, recentHistory))
+                if (IsCurrentInputFromOutOfScopeWorkflow(input, recentHistory))
                 {
                     return [ new OutputDto 
                         {
@@ -96,7 +101,7 @@ internal class InputProcessor(
                 [ new OutputDto { Text = error } ]));
     }
 
-    private static bool IsCurrentInputInOutOfScopeWorkflow(
+    private static bool IsCurrentInputFromOutOfScopeWorkflow(
         TlgInput currentInput, IReadOnlyCollection<TlgInput> recentHistory) => 
         ILogicUtils.GetLastBotCommand(recentHistory).Match(
             lastBotCommand => 
