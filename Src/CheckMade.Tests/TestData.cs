@@ -179,10 +179,24 @@ internal static class TestData
     internal const long TestChatId09 = 100009L;
 
     internal static readonly TlgAgent TlgAgent_PrivateChat_Default =
-        new TlgAgent(TestUserAndChatId01_Private_Default, TestUserAndChatId01_Private_Default, Operations);
+        new(TestUserAndChatId01_Private_Default,
+            TestUserAndChatId01_Private_Default,
+            Operations);
     
+    internal static readonly TlgAgent TlgAgent_PrivateChat_CommunicationsMode =
+        new(TestUserAndChatId01_Private_Default,
+            TestUserAndChatId01_Private_Default,
+            Communications);
+
+    internal static readonly TlgAgent TlgAgent_PrivateChat_NotificationsMode =
+        new(TestUserAndChatId01_Private_Default,
+            TestUserAndChatId01_Private_Default,
+            Notifications);
+
     internal static readonly TlgAgent TlgAgentWithHistoricRoleBindingOnly =
-        new(TestUserId02, TestChatId03, Operations);
+        new(TestUserId02,
+            TestChatId03,
+            Operations);
 
     // ToDo: create more TlgAgents with names and use them for rolebindings?!
     
@@ -196,24 +210,23 @@ internal static class TestData
             TlgAgent_PrivateChat_Default, 
             DateTime.UtcNow, Option<DateTime>.None());
 
-    // ToDo: after everything compiles and tests pass, change the TEstChatId_02 to be the same as the UserId.
-    // better yet, introduce a ChatId which by name indicates that it's the same as some other UserId!
-    // I.e. where the sameness becomes a feature transported in the name's semantics.
-    // And of course make it a named TlgAgent just like we did for the HistoricOnly one!
+    
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode =
         new(
             SanitaryOpsInspector1,
-            new TlgAgent(TestUserAndChatId01_Private_Default, TestChatId02, Operations),
+            TlgAgent_PrivateChat_Default,
             DateTime.UtcNow, Option<DateTime>.None());
+    
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode =
         new(
             SanitaryOpsInspector1,
-            new TlgAgent(TestUserAndChatId01_Private_Default, TestChatId02, Communications),
+            TlgAgent_PrivateChat_CommunicationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
+    
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode =
         new(
             SanitaryOpsInspector1,
-            new TlgAgent(TestUserAndChatId01_Private_Default, TestChatId02, Notifications),
+            TlgAgent_PrivateChat_NotificationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
 
     
