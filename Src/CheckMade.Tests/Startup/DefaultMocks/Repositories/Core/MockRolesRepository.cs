@@ -11,15 +11,15 @@ internal class MockRolesRepository : IRolesRepository
         var builder = ImmutableArray.CreateBuilder<Role>();
         
         builder.AddRange(
-            DanielIsSanitaryOpsAdminAtMockParooka2024Default,
+            SanitaryOpsAdmin_AtMockParooka2024_Default,
             SanitaryOpsInspector1,
             SanitaryOpsEngineer1,
-            SanitaryOpsCleanLead1German,
+            SanitaryOpsCleanLead1_German,
             SanitaryOpsObserver1,
             
-            DanielIsSanitaryOpsInspectorAtMockHurricane2024,
+            SanitaryOpsInspector_AtMockHurricane2024_German,
             SanitaryOpsEngineer2,
-            SanitaryOpsCleanLead2English,
+            SanitaryOpsCleanLead2,
             SanitaryOpsObserver2);
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());

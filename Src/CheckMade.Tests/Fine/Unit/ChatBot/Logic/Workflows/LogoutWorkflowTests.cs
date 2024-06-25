@@ -108,7 +108,7 @@ public class LogoutWorkflowTests
                 // Decoys
                 new TlgAgentRoleBind(boundRole, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None(), DbRecordStatus.SoftDeleted),
-                new TlgAgentRoleBind(SanitaryOpsCleanLead1German, tlgAgentOperations,
+                new TlgAgentRoleBind(SanitaryOpsCleanLead1_German, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None()),
                 new TlgAgentRoleBind(boundRole, new TlgAgent(TestUserId_02, TestChatId_04, Communications),
                     DateTime.UtcNow, Option<DateTime>.None())

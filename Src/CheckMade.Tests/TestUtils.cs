@@ -215,12 +215,12 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                     Option<ILiveEventInfo>.None()),
             
             UnitTestDefault =>
-                (DanielIsSanitaryOpsAdminAtMockParooka2024Default,
-                    Option<ILiveEventInfo>.Some(DanielIsSanitaryOpsAdminAtMockParooka2024Default.LiveEventInfo)),
+                (SanitaryOpsAdmin_AtMockParooka2024_Default,
+                    Option<ILiveEventInfo>.Some(SanitaryOpsAdmin_AtMockParooka2024_Default.LiveEventInfo)),
             
             IntegrationTestDefault =>
-                (IntegrationTestsRoleEnglish, 
-                    Option<ILiveEventInfo>.Some(IntegrationTestsRoleEnglish.LiveEventInfo)),
+                (IntegrationTests_Role_Default, 
+                    Option<ILiveEventInfo>.Some(IntegrationTests_Role_Default.LiveEventInfo)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };

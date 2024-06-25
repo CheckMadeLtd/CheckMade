@@ -13,7 +13,21 @@ namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic;
 public class InputProcessorTests
 {
     private ServiceProvider? _services;
-
+ 
+    // [Fact]
+    // public async Task ProcessInputAsync_WelcomesAndPromptsAuthentication_ForStartCommandOfUnauthenticatedUser()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     var utils = _services.GetRequiredService<ITestUtils>();
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     
+    //     // ToDo: replace this and in other unit tests with new tlgAgentWithoutBind
+    //     var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+    //     var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+    //     
+    //     // var startCommand = 
+    // }
+    
     [Fact]
     public async Task ProcessInputAsync_ReturnsWarning_ForCallbackQuery_ToOutOfScopeInlineKeyboardButtonClick()
     {

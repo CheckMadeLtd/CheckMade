@@ -117,10 +117,7 @@ internal class UserAuthWorkflow(
         
         outputs.Add(new OutputDto
         {
-            Text = Ui("""
-                      {0}, welcome to the CheckMade ChatBot!
-                      You have successfully authenticated as a {1} at live-event {2}.
-                      """, 
+            Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
                 newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
                 newTlgAgentRoleForOriginatingMode.Role.RoleType,
                 newTlgAgentRoleForOriginatingMode.Role.LiveEventInfo.Name)

@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -96,58 +95,19 @@ public class UnitTestStartup : TestStartupBase
     {
         var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
         
-        // Default
-        builder.Add(new TlgAgentRoleBind(
-            DanielIsSanitaryOpsAdminAtMockParooka2024Default, 
-            new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations),
-            DateTime.UtcNow, Option<DateTime>.None()));
+        builder.Add(RoleBindFor_SanitaryOpsAdmin_Default);
         
-        // Group: same Role & TlgAgent - all three InteractionModes
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01_Default, TestChatId_02, Operations),
-            DateTime.UtcNow, Option<DateTime>.None()));
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01_Default, TestChatId_02, Communications),
-            DateTime.UtcNow, Option<DateTime>.None()));
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01_Default, TestChatId_02, Notifications),
-            DateTime.UtcNow, Option<DateTime>.None()));
+        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode);
+        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode);
+        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode);
         
-        // Expired on purpose - for Unit Tests!
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsEngineer1, 
-            new TlgAgent(TestUserId_02, TestChatId_03, Operations),
-            new DateTime(1999, 01, 01), 
-            new DateTime(1999, 02, 02), 
-            DbRecordStatus.Historic));
-
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsCleanLead1German, 
-            new TlgAgent(TestUserId_02, TestChatId_04, Operations),
-            DateTime.UtcNow, Option<DateTime>.None()));
+        builder.Add(RoleBindFor_SanitaryOpsEngineer1_HistoricOnly);
+        builder.Add(RoleBindFor_SanitaryOpsCleanLead1_German);
+        builder.Add(RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode);
         
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsObserver1, 
-            new TlgAgent(TestUserId_03, TestChatId_05, Operations),
-            DateTime.UtcNow, Option<DateTime>.None()));
+        builder.Add(RoleBindFor_SanitaryOpsObserver1);
+        builder.Add(RoleBindFor_SanitaryOpsCleanLead2);
         
-        // Used in Unit Test 'GetNextOutputAsync_CreatesTlgAgentRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat'
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsEngineer2, 
-            new TlgAgent(TestUserId_03 , TestChatId_06, Communications),
-            DateTime.UtcNow, Option<DateTime>.None()));
-        
-        builder.Add(new TlgAgentRoleBind(
-            SanitaryOpsCleanLead2English, 
-            new TlgAgent(TestUserId_03, TestChatId_07, Operations),
-            DateTime.UtcNow, Option<DateTime>.None()));
-        
-        // No TlgAgentRoleBind for role 'Inspector2' on purpose for Unit Test, e.g.
-        // GetNextOutputAsync_CreatesTlgAgentRole_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup
-
         return builder.ToImmutable();
     }
 }

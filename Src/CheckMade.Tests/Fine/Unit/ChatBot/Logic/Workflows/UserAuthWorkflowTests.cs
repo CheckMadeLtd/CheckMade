@@ -146,7 +146,7 @@ public class UserAuthWorkflowTests
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputTokenWithPreExistingActiveTlgAgentRoleBind = utils.GetValidTlgInputTextMessage(
-            text: DanielIsSanitaryOpsAdminAtMockParooka2024Default.Token,
+            text: SanitaryOpsAdmin_AtMockParooka2024_Default.Token,
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId);
         
@@ -160,7 +160,7 @@ public class UserAuthWorkflowTests
 
         var preExistingActiveTlgAgentRoleBind = (await mockTlgAgentRoleBindingsRepo.Object.GetAllAsync())
             .First(arb => 
-                arb.Role.Token == DanielIsSanitaryOpsAdminAtMockParooka2024Default.Token &&
+                arb.Role.Token == SanitaryOpsAdmin_AtMockParooka2024_Default.Token &&
                 arb.TlgAgent.Mode == tlgAgent.Mode);
         
         const string expectedWarning = """
@@ -187,7 +187,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = new TlgAgent(TestUserId_03, TestChatId_08, Operations);
-        var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
+        var roleForAuth = SanitaryOpsInspector_AtMockHurricane2024_German;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -204,10 +204,7 @@ public class UserAuthWorkflowTests
         _services = serviceCollection.BuildServiceProvider();
         var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
 
-        const string expectedConfirmation = """
-                                            {0}, welcome to the CheckMade ChatBot!
-                                            You have successfully authenticated as a {1} at live-event {2}.
-                                            """;
+        const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
         
         var expectedTlgAgentRoleBindAdded = new TlgAgentRoleBind(
             roleForAuth,
@@ -241,7 +238,7 @@ public class UserAuthWorkflowTests
         var utils = _services.GetRequiredService<ITestUtils>();
         const long privateChatUserAndChatId = TestUserId_03;
         var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
-        var roleForAuth = DanielIsSanitaryOpsInspectorAtMockHurricane2024;
+        var roleForAuth = SanitaryOpsInspector_AtMockHurricane2024_German;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(

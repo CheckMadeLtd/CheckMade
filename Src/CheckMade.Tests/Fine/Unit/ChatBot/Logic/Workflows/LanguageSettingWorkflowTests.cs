@@ -192,7 +192,7 @@ public class LanguageSettingWorkflowTests
         Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
-            TestUserDanielEn,
+            TestUser_Daniel,
             languageCode));
     }
 }

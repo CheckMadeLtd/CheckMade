@@ -20,7 +20,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var inputTlgAgentRole = new TlgAgentRoleBind(
-            IntegrationTestsRoleEnglish,
+            IntegrationTests_Role_Default,
             new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None());
@@ -45,7 +45,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var preExistingActiveTlgAgentRole = new TlgAgentRoleBind(
-            IntegrationTestsRoleEnglish,
+            IntegrationTests_Role_Default,
             new TlgAgent(TestUserId_03, TestChatId_02, mode),
             DateTime.UtcNow,
             Option<DateTime>.None(),
