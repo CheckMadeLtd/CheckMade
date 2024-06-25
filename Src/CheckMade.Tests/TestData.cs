@@ -201,11 +201,11 @@ internal static class TestData
             TestChatId03,
             Operations);
 
-    internal static readonly TlgAgent TlgAgent_Of_SanitaryOpsCleanLead1_German =
+    internal static readonly TlgAgent TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German =
         new(TestUserId02,
             TestChatId04,
             Operations);
-
+    
     internal static readonly TlgAgent TlgAgent_of_SanitaryOpsEngineer2_HasBindOnlyTo_CommunicationsMode =
         new(
             TestUserId03,
@@ -259,7 +259,7 @@ internal static class TestData
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsCleanLead1_German =
         new(
             SanitaryOpsCleanLead1_German,
-            TlgAgent_Of_SanitaryOpsCleanLead1_German,
+            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German,
             DateTime.UtcNow, Option<DateTime>.None());
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode =

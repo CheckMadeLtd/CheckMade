@@ -159,12 +159,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var updateFromGermanUser = basics.utils.GetValidTelegramTextMessage(
             "random valid text",
-            TlgAgent_Of_SanitaryOpsCleanLead1_German.UserId,
-            TlgAgent_Of_SanitaryOpsCleanLead1_German.ChatId);
+            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.UserId,
+            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
-            TlgAgent_Of_SanitaryOpsCleanLead1_German.Mode);
+            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
