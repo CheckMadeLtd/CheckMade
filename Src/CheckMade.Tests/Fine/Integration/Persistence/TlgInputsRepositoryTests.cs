@@ -53,10 +53,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(
-            utils.Randomizer.GenerateRandomLong(),
-            utils.Randomizer.GenerateRandomLong(),
-            Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         
         var expectedDomainTerm = Dt(LanguageCode.de);
         
@@ -79,10 +76,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(
-            utils.Randomizer.GenerateRandomLong(),
-            utils.Randomizer.GenerateRandomLong(),
-            Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         
         const double expectedLatitudeRaw = 17.456;
         const double expectedLongitudeRaw = -23.00987;
@@ -135,7 +129,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
-            utils.Randomizer.GenerateRandomLong(),
+            TestUserAndChatId01_PrivateChat_Default,
             Operations);
     
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);

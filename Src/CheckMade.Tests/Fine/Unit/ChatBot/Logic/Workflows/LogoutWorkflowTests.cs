@@ -72,7 +72,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var utils = _services.GetRequiredService<ITestUtils>();
         
-        const long privateChatUserAndChatId = TestUserAndChatId01_Private_Default;
+        const long privateChatUserAndChatId = TestUserAndChatId01_PrivateChat_Default;
         var tlgAgentOperations = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var tlgAgentComms = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Communications);
         var tlgAgentNotif = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Notifications);

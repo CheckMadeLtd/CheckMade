@@ -24,7 +24,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserAndChatId01_Private_Default, TestUserAndChatId01_Private_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserAndChatId01_PrivateChat_Default, TestUserAndChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput> { utils.GetValidTlgInputTextMessage() }; 

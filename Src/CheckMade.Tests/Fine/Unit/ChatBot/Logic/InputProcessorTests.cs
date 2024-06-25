@@ -21,7 +21,7 @@ public class InputProcessorTests
     //     var serviceCollection = new UnitTestStartup().Services;
     //     
     //     // ToDo: replace this and in other unit tests with new tlgAgentWithoutBind
-    //     var tlgAgent = new TlgAgent(TestUserAndChatId01_Private_Default, TestChatId01_PrivateChat_Default, Operations);
+    //     var tlgAgent = new TlgAgent(TestUserAndChatId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
     //     var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
     //     
     //     // var startCommand = 

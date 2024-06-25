@@ -165,7 +165,7 @@ internal static class TestData
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUser_DanielGorin_TelegramId = 215737196L;
     
-    internal const long TestUserAndChatId01_Private_Default = 1001L;
+    internal const long TestUserAndChatId01_PrivateChat_Default = 1001L;
     internal const long TestUserId02 = 102L;
     internal const long TestUserId03 = 103L;
     
@@ -179,26 +179,35 @@ internal static class TestData
     internal const long TestChatId09 = 100009L;
 
     internal static readonly TlgAgent TlgAgent_PrivateChat_Default =
-        new(TestUserAndChatId01_Private_Default,
-            TestUserAndChatId01_Private_Default,
+        new(TestUserAndChatId01_PrivateChat_Default,
+            TestUserAndChatId01_PrivateChat_Default,
             Operations);
     
     internal static readonly TlgAgent TlgAgent_PrivateChat_CommunicationsMode =
-        new(TestUserAndChatId01_Private_Default,
-            TestUserAndChatId01_Private_Default,
+        new(TestUserAndChatId01_PrivateChat_Default,
+            TestUserAndChatId01_PrivateChat_Default,
             Communications);
 
     internal static readonly TlgAgent TlgAgent_PrivateChat_NotificationsMode =
-        new(TestUserAndChatId01_Private_Default,
-            TestUserAndChatId01_Private_Default,
+        new(TestUserAndChatId01_PrivateChat_Default,
+            TestUserAndChatId01_PrivateChat_Default,
             Notifications);
 
-    internal static readonly TlgAgent TlgAgentWithHistoricRoleBindingOnly =
+    internal static readonly TlgAgent TlgAgent_HasOnly_HistoricRoleBind =
         new(TestUserId02,
             TestChatId03,
             Operations);
 
-    // ToDo: create more TlgAgents with names and use them for rolebindings?!
+    internal static readonly TlgAgent TlgAgent_Of_SanitaryOpsCleanLead1_German =
+        new(TestUserId02,
+            TestChatId04,
+            Operations);
+
+    internal static readonly TlgAgent TlgAgent_of_SanitaryOpsEngineer2_HasBindOnlyTo_CommunicationsMode =
+        new(
+            TestUserId03,
+            TestChatId06,
+            Communications);
     
 #endregion
 
@@ -233,7 +242,7 @@ internal static class TestData
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer1_HistoricOnly =
         new(
             SanitaryOpsEngineer1,
-            TlgAgentWithHistoricRoleBindingOnly,
+            TlgAgent_HasOnly_HistoricRoleBind,
             new DateTime(1999, 01, 01),
             new DateTime(1999, 02, 02),
             DbRecordStatus.Historic);
@@ -241,19 +250,19 @@ internal static class TestData
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsCleanLead1_German =
         new(
             SanitaryOpsCleanLead1_German,
-            new TlgAgent(TestUserId02, TestChatId04, Operations),
+            TlgAgent_Of_SanitaryOpsCleanLead1_German,
+            DateTime.UtcNow, Option<DateTime>.None());
+
+    internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode =
+        new(
+            SanitaryOpsEngineer2,
+            TlgAgent_of_SanitaryOpsEngineer2_HasBindOnlyTo_CommunicationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsObserver1 =
         new(
             SanitaryOpsObserver1,
             new TlgAgent(TestUserId03, TestChatId05, Operations),
-            DateTime.UtcNow, Option<DateTime>.None());
-
-    internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode =
-        new(
-            SanitaryOpsEngineer2,
-            new TlgAgent(TestUserId03, TestChatId06, Communications),
             DateTime.UtcNow, Option<DateTime>.None());
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsCleanLead2 =
