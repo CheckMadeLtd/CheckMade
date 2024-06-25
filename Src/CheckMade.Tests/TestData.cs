@@ -113,7 +113,7 @@ internal static class TestData
             TestUser_Daniel,
             new LiveEventInfo(MockParooka2024));
     
-    internal static readonly Role SanitaryOpsInspector1 = 
+    internal static readonly Role SanitaryOpsInspector1_HasRoleBindings_ForAllModes = 
         new("R3UDXW",
             SanitaryOps_Inspector,
             TestUser_Daniel,
@@ -216,6 +216,12 @@ internal static class TestData
 
     #region TlgAgentRoleBindingsSetup ##################################################################################
 
+    internal static readonly TlgAgentRoleBind RoleBindFor_IntegrationTests_Role_Default =
+        new(
+            IntegrationTests_Role_Default,
+            TlgAgent_PrivateChat_Default,
+            DateTime.UtcNow, Option<DateTime>.None());
+    
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsAdmin_Default = 
         new(
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
@@ -225,19 +231,19 @@ internal static class TestData
     
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode =
         new(
-            SanitaryOpsInspector1,
+            SanitaryOpsInspector1_HasRoleBindings_ForAllModes,
             TlgAgent_PrivateChat_Default,
             DateTime.UtcNow, Option<DateTime>.None());
     
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode =
         new(
-            SanitaryOpsInspector1,
+            SanitaryOpsInspector1_HasRoleBindings_ForAllModes,
             TlgAgent_PrivateChat_CommunicationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
     
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode =
         new(
-            SanitaryOpsInspector1,
+            SanitaryOpsInspector1_HasRoleBindings_ForAllModes,
             TlgAgent_PrivateChat_NotificationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
 

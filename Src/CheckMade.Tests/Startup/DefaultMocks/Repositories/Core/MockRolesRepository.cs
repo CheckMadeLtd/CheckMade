@@ -12,7 +12,7 @@ internal class MockRolesRepository : IRolesRepository
         
         builder.AddRange(
             SanitaryOpsAdmin_AtMockParooka2024_Default,
-            SanitaryOpsInspector1,
+            SanitaryOpsInspector1_HasRoleBindings_ForAllModes,
             SanitaryOpsEngineer1,
             SanitaryOpsCleanLead1_German,
             SanitaryOpsObserver1,

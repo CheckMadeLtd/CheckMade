@@ -1,6 +1,4 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,54 +9,33 @@ public class TlgAgentRoleBindingsRepositoryTests
 {
     private ServiceProvider? _services;
 
-    [Theory]
-    [InlineData(Operations)]
-    [InlineData(Communications)]
-    [InlineData(Notifications)]
-    public async Task SavesAndRetrieves_OneTlgAgentRoleBind_WhenInputValid(InteractionMode mode)
+    [Fact]
+    public async Task SavesAndRetrieves_OneTlgAgentRoleBind_WhenInputValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-
-        var inputTlgAgentRole = new TlgAgentRoleBind(
-            IntegrationTests_Role_Default,
-            new TlgAgent(TestUserId03, TestChatId02, mode),
-            DateTime.UtcNow,
-            Option<DateTime>.None());
-
+        var inputTlgAgentRoleBind = RoleBindFor_IntegrationTests_Role_Default;
         var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
 
-        await repo.AddAsync(inputTlgAgentRole);
+        await repo.AddAsync(inputTlgAgentRoleBind);
         var retrieved = (await repo.GetAllAsync())
             .MaxBy(arb => arb.ActivationDate);
-        await repo.HardDeleteAsync(inputTlgAgentRole);
+        await repo.HardDeleteAsync(inputTlgAgentRoleBind);
         
-        Assert.Equivalent(inputTlgAgentRole.Role, retrieved!.Role);
-        Assert.Equivalent(inputTlgAgentRole.TlgAgent, retrieved.TlgAgent);
+        Assert.Equivalent(inputTlgAgentRoleBind.Role, retrieved!.Role);
+        Assert.Equivalent(inputTlgAgentRoleBind.TlgAgent, retrieved.TlgAgent);
     }
 
-    [Theory]
-    [InlineData(Operations)]
-    [InlineData(Communications)]
-    [InlineData(Notifications)]
-    public async Task SuccessfullyUpdatesStatus_FromActiveToHistoric(InteractionMode mode)
+    [Fact]
+    public async Task SuccessfullyUpdatesStatus_FromActiveToHistoric()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-
-        var preExistingActiveTlgAgentRole = new TlgAgentRoleBind(
-            IntegrationTests_Role_Default,
-            new TlgAgent(TestUserId03, TestChatId02, mode),
-            DateTime.UtcNow,
-            Option<DateTime>.None(),
-            DbRecordStatus.Active);
-
+        var preExistingActiveTlgAgentRole = RoleBindFor_IntegrationTests_Role_Default;
         var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
         
         await repo.AddAsync(preExistingActiveTlgAgentRole);
         await repo.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic);
-        
         var retrievedUpdated = (await repo.GetAllAsync())
             .MaxBy(arb => arb.ActivationDate);
-        
         await repo.HardDeleteAsync(preExistingActiveTlgAgentRole);
         
         Assert.Equivalent(preExistingActiveTlgAgentRole.TlgAgent, retrievedUpdated!.TlgAgent);

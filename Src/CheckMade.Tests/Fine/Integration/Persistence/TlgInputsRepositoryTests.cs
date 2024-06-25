@@ -20,6 +20,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgInputs = new[]
         {
@@ -28,20 +29,24 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
-
         foreach (var input in tlgInputs)
         {
             var expectedRetrieval = new List<TlgInput>
             {
-                new (input.TlgAgent, input.InputType, input.OriginatorRole, input.LiveEventContext, input.Details)
+                new (input.TlgAgent, 
+                    input.InputType, 
+                    input.OriginatorRole, 
+                    input.LiveEventContext, 
+                    input.Details)
             };
         
             await inputRepo.AddAsync(input);
+            
             var retrievedInputs = 
                 (await inputRepo.GetAllAsync(input.TlgAgent))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToImmutableReadOnlyCollection();
+            
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
             Assert.Equivalent(expectedRetrieval[0], retrievedInputs.First());
@@ -53,20 +58,16 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
         
         var expectedDomainTerm = Dt(LanguageCode.de);
-        
-        var tlgInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
-            expectedDomainTerm, tlgAgent.UserId, tlgAgent.ChatId);
-        
+        var tlgInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(expectedDomainTerm);
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(tlgAgent))
+            (await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default))
             .First();
-        await inputRepo.HardDeleteAllAsync(tlgAgent);
+        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
         
         Assert.Equivalent(expectedDomainTerm, retrievedInput.Details.DomainTerm.GetValueOrThrow());
     }
@@ -76,26 +77,22 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
-        const double expectedLatitudeRaw = 17.456;
-        const double expectedLongitudeRaw = -23.00987;
-        const float expectedUncertainty = 15.7f;
+        var expectedGeo = new Geo(17.456, -23.00987, 15.7f);
         
         var tlgInput = utils.GetValidTlgInputLocationMessage(
-            expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty, 
-            tlgAgent.UserId, tlgAgent.ChatId);
-        
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+            expectedGeo.Latitude, 
+            expectedGeo.Longitude,
+            expectedGeo.UncertaintyRadiusInMeters);
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(tlgAgent))
+            (await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default))
             .First();
-        await inputRepo.HardDeleteAllAsync(tlgAgent);
+        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
         
-        Assert.Equivalent(new Geo(expectedLatitudeRaw, expectedLongitudeRaw, expectedUncertainty), 
-            retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
+        Assert.Equivalent(expectedGeo, retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
     }
 
     [Fact]
@@ -103,6 +100,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgInputs = new[]
         {
@@ -111,12 +109,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
-        
         await inputRepo.AddAsync(tlgInputs);
-        var tlgAgent = tlgInputs.Last().TlgAgent;
-        var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
-        await inputRepo.HardDeleteAllAsync(tlgAgent);
+        var retrievedInputs = await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default);
+        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
 
         Assert.Equivalent(tlgInputs, retrievedInputs);
     }
@@ -127,6 +122,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        
         var tlgAgent = new TlgAgent(
             utils.Randomizer.GenerateRandomLong(),
             TestUserAndChatId01_PrivateChat_Default,
