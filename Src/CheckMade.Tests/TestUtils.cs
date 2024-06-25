@@ -338,7 +338,7 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
 
 internal enum TestOriginatorRoleSetting
 {
-    UnitTestDefault = 0,
+    UnitTestDefault,
     IntegrationTestDefault,
     None
 }
