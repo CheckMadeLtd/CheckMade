@@ -96,14 +96,18 @@ public static class TestData
         IntegrationTestsUserDanielEnglish,
         new LiveEventInfo(MockParooka2024NoRoles));
     
-    internal static readonly Role DanielIsSanitaryOpsAdminAtMockParooka2024 = 
+    internal static readonly Role DanielIsSanitaryOpsAdminAtMockParooka2024Default = 
         new("RVB70T",
             SanitaryOps_Admin, 
             TestUserDanielEn,
             new LiveEventInfo(MockParooka2024NoRoles));
     
     internal static readonly Role SanitaryOpsInspector1 = 
-        new("R3UDXW", SanitaryOps_Inspector, TestUserDanielEn, new LiveEventInfo(MockParooka2024NoRoles));
+        new("R3UDXW",
+            SanitaryOps_Inspector,
+            TestUserDanielEn,
+            new LiveEventInfo(MockParooka2024NoRoles));
+    
     internal static readonly Role SanitaryOpsEngineer1 = 
         new("R3UED8", SanitaryOps_Engineer, TestUserDanielEn, new LiveEventInfo(MockParooka2024NoRoles));
     
@@ -136,11 +140,11 @@ public static class TestData
     
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUserDanielGorinTelegramId = 215737196L;
-    internal const long TestUserId_01 = 101L;
+    internal const long TestUserId_01_Default = 101L;
     internal const long TestUserId_02 = 102L;
     internal const long TestUserId_03 = 103L;
     
-    internal const long TestChatId_01 = 100001L;
+    internal const long TestChatId_01_Default = 100001L;
     internal const long TestChatId_02 = 100002L;
     internal const long TestChatId_03 = 100003L;
     internal const long TestChatId_04 = 100004L;

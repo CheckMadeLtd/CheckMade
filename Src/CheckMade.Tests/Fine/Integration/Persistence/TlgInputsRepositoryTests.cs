@@ -23,9 +23,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgInputTextMessage(),
-            utils.GetValidTlgInputTextMessage(),
-            utils.GetValidTlgInputTextMessage()
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
@@ -109,21 +109,18 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(
-            utils.Randomizer.GenerateRandomLong(),
-            utils.Randomizer.GenerateRandomLong(),
-            Operations);
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-            utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-            utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId)
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInputs);
+        var tlgAgent = tlgInputs.Last().TlgAgent;
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
         await inputRepo.HardDeleteAllAsync(tlgAgent);
 

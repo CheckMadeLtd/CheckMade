@@ -9,6 +9,7 @@ using CheckMade.Common.Model.Core.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
+using static CheckMade.Tests.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests;
 
@@ -21,37 +22,53 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     TlgInput GetValidTlgInputTextMessage(
-        long userId = TestUserId_01, long chatId = TestChatId_01, 
-        string text = "Hello World", DateTime? dateTime = null);
+        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default, 
+        string text = "Hello World", DateTime? dateTime = null,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
-    TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type);
+    TlgInput GetValidTlgInputTextMessageWithAttachment(
+        TlgAttachmentType type,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
-        long userId = TestUserId_01, long chatId = TestChatId_01);
+        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId = TestUserId_01, long chatId = TestChatId_01,
-        int messageId = 1);
+        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        int messageId = 1,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
-        long userId = TestUserId_01, long chatId = TestChatId_01, 
-        DateTime? dateTime = null, int messageId = 1);
+        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default, 
+        DateTime? dateTime = null, int messageId = 1,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
-        long userId = TestUserId_01, long chatId = TestChatId_01, DateTime? dateTime = null);
+        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        DateTime? dateTime = null,
+        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
-    UpdateWrapper GetValidTelegramTextMessage(string inputText, long userId = TestUserId_01, long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(string callbackQueryData, long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramAudioMessage(long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramDocumentMessage(long chatId = TestChatId_01, string fileId = "fakeOtherDocumentFileId");
-    UpdateWrapper GetValidTelegramLocationMessage(Option<float> horizontalAccuracy, long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramPhotoMessage(long chatId = TestChatId_01);
-    UpdateWrapper GetValidTelegramVoiceMessage(long chatId = TestChatId_01);
+    UpdateWrapper GetValidTelegramTextMessage(
+        string inputText, long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramBotCommandMessage(
+        string botCommand, long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(
+        string callbackQueryData, long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramAudioMessage(
+        long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramDocumentMessage(
+        long chatId = TestChatId_01_Default, string fileId = "fakeOtherDocumentFileId");
+    UpdateWrapper GetValidTelegramLocationMessage(
+        Option<float> horizontalAccuracy, long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramPhotoMessage(
+        long chatId = TestChatId_01_Default);
+    UpdateWrapper GetValidTelegramVoiceMessage(
+        long chatId = TestChatId_01_Default);
 
     internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
         GetFirstRawEnglish(actualOutput.GetValueOrThrow());
@@ -69,24 +86,31 @@ internal interface ITestUtils
 internal class TestUtils(Randomizer randomizer) : ITestUtils
 {
     public Randomizer Randomizer { get; } = randomizer;
-    
-    public TlgInput GetValidTlgInputTextMessage(long userId, long chatId, string text, DateTime? dateTime) =>
-        new(new TlgAgent(userId, chatId, InteractionMode.Operations),
+
+    public TlgInput GetValidTlgInputTextMessage(
+        long userId, long chatId, string text, DateTime? dateTime,
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(userId, chatId, Operations),
             TlgInputType.TextMessage,
-            Option<IRoleInfo>.None(), 
-            Option<ILiveEventInfo>.None(), 
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 
                 text));
-    
-    public TlgInput GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType type) =>
-        new(new TlgAgent(Randomizer.GenerateRandomLong(),
-            Randomizer.GenerateRandomLong(),
-            InteractionMode.Operations),
+    }
+
+    public TlgInput GetValidTlgInputTextMessageWithAttachment(
+        TlgAttachmentType type, 
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(Randomizer.GenerateRandomLong(),
+                Randomizer.GenerateRandomLong(),
+                Operations),
             TlgInputType.AttachmentMessage,
-            Option<IRoleInfo>.None(), 
-            Option<ILiveEventInfo>.None(), 
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 1,
@@ -94,57 +118,67 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
                 new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
                 new Uri("https://www.gorin.de/fakeInternalUri1.html"),
                 type));
+    }
 
     public TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius,
-        long userId, long chatId) =>
-        new(new TlgAgent(userId, chatId, InteractionMode.Operations),
-                TlgInputType.Location,
-                Option<IRoleInfo>.None(), 
-                Option<ILiveEventInfo>.None(), 
-                CreateFromRelevantDetails(
-                    DateTime.UtcNow, 
-                    1,
-                    geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
+        long userId, long chatId,
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(userId, chatId, Operations),
+            TlgInputType.Location,
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
+            CreateFromRelevantDetails(
+                DateTime.UtcNow, 
+                1,
+                geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
+    }
 
     public TlgInput GetValidTlgInputCommandMessage(
-        InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId, long chatId, int messageId) =>
-        new(new TlgAgent(userId, chatId, interactionMode),
+        InteractionMode interactionMode, int botCommandEnumCode,
+        long userId, long chatId, int messageId,
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
-            Option<IRoleInfo>.None(), 
-            Option<ILiveEventInfo>.None(), 
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 messageId,
                 botCommandEnumCode: botCommandEnumCode));
+    }
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm,
-        long userId, long chatId, DateTime? dateTime, int messageId) =>
-        new(new TlgAgent(userId, chatId, InteractionMode.Operations),
+        long userId, long chatId, DateTime? dateTime, int messageId,
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,
-            Option<IRoleInfo>.None(), 
-            Option<ILiveEventInfo>.None(), 
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 messageId,
                 domainTerm: domainTerm));
-
+    }
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts,
-        long userId,
-        long chatId,
-        DateTime? dateTime) =>
-        new(new TlgAgent(userId, chatId, InteractionMode.Operations),
+        long userId, long chatId, DateTime? dateTime,
+        TestOriginatorRoleSetting roleSetting)
+    {
+        return new TlgInput(new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,
-            Option<IRoleInfo>.None(), 
-            Option<ILiveEventInfo>.None(), 
+            GetInputContextInfo(roleSetting).originatorRole, 
+            GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,
                 controlPromptEnumCode: (long)prompts));
+    }
 
     internal static TlgInputDetails CreateFromRelevantDetails(
         DateTime tlgDate,
@@ -169,6 +203,27 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             botCommandEnumCode ?? Option<int>.None(),
             domainTerm ?? Option<DomainTerm>.None(),
             controlPromptEnumCode ?? Option<long>.None());
+    }
+
+    private static (Option<IRoleInfo> originatorRole, Option<ILiveEventInfo> liveEvent)
+        GetInputContextInfo(TestOriginatorRoleSetting roleSetting)
+    {
+        return roleSetting switch
+        {
+            None => 
+                (Option<IRoleInfo>.None(),
+                    Option<ILiveEventInfo>.None()),
+            
+            UnitTestDefault =>
+                (DanielIsSanitaryOpsAdminAtMockParooka2024Default,
+                    Option<ILiveEventInfo>.Some(DanielIsSanitaryOpsAdminAtMockParooka2024Default.LiveEventInfo)),
+            
+            IntegrationTestDefault =>
+                (IntegrationTestsRoleEnglish, 
+                    Option<ILiveEventInfo>.Some(IntegrationTestsRoleEnglish.LiveEventInfo)),
+            
+            _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
+        };
     }
     
     public UpdateWrapper GetValidTelegramTextMessage(string inputText, long userId, long chatId) => 
@@ -279,4 +334,11 @@ internal class TestUtils(Randomizer randomizer) : ITestUtils
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }
         });
+}
+
+internal enum TestOriginatorRoleSetting
+{
+    UnitTestDefault = 0,
+    IntegrationTestDefault,
+    None
 }

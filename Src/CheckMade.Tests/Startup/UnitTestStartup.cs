@@ -86,37 +86,37 @@ public class UnitTestStartup : TestStartupBase
 
         mockTlgAgentRoleRepo
             .Setup(arb => arb.GetAllAsync())
-            .ReturnsAsync(GetTestingTlgAgentRoles());
+            .ReturnsAsync(GetTestingTlgAgentRoleBindings());
 
         Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
         Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
     }
 
-    private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoles()
+    private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoleBindings()
     {
         var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
 
         // #1
         
         builder.Add(new TlgAgentRoleBind(
-            DanielIsSanitaryOpsAdminAtMockParooka2024, 
-            new TlgAgent(TestUserId_01, TestChatId_01, Operations),
+            DanielIsSanitaryOpsAdminAtMockParooka2024Default, 
+            new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         // Group: same Role & TlgAgent - all three InteractionModes
         builder.Add(new TlgAgentRoleBind(
             SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01, TestChatId_02, Operations),
+            new TlgAgent(TestUserId_01_Default, TestChatId_02, Operations),
             DateTime.UtcNow, Option<DateTime>.None()));
         
         builder.Add(new TlgAgentRoleBind(
             SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01, TestChatId_02, Communications),
+            new TlgAgent(TestUserId_01_Default, TestChatId_02, Communications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
         builder.Add(new TlgAgentRoleBind(
             SanitaryOpsInspector1, 
-            new TlgAgent(TestUserId_01, TestChatId_02, Notifications),
+            new TlgAgent(TestUserId_01_Default, TestChatId_02, Notifications),
             DateTime.UtcNow, Option<DateTime>.None()));
 
 

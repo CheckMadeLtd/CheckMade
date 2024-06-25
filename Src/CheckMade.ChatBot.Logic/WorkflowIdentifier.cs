@@ -1,30 +1,25 @@
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Task<Option<IWorkflow>> IdentifyAsync(IReadOnlyCollection<TlgInput> recentHistory);
+    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory);
 }
 
 internal class WorkflowIdentifier(
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
         IUserAuthWorkflow userAuthWorkflow,
         ILanguageSettingWorkflow languageSettingWorkflow,
         ILogoutWorkflow logoutWorkflow) 
     : IWorkflowIdentifier
 {
-    public async Task<Option<IWorkflow>> IdentifyAsync(IReadOnlyCollection<TlgInput> recentHistory)
+    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory)
     {
-        if (!await IsUserAuthenticatedAsync(recentHistory))
-        {
+        if (!IsUserAuthenticated(recentHistory))
             return Option<IWorkflow>.Some(userAuthWorkflow);
-        }
 
         return ILogicUtils.GetLastBotCommand(recentHistory).Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
@@ -38,16 +33,7 @@ internal class WorkflowIdentifier(
             Option<IWorkflow>.None);
     }
 
-    private async Task<bool> IsUserAuthenticatedAsync(IReadOnlyCollection<TlgInput> recentHistory)
-    {
-        if (recentHistory.Count == 0)
-            return false;
-        
-        return (await roleBindingsRepo.GetAllAsync())
-               .FirstOrDefault(arb => 
-                   arb.TlgAgent.ChatId == recentHistory.Last().TlgAgent.ChatId && 
-                   arb.TlgAgent.Mode == recentHistory.Last().TlgAgent.Mode && 
-                   arb.Status == DbRecordStatus.Active) 
-               != null; 
-    } 
+    private static bool IsUserAuthenticated(IReadOnlyCollection<TlgInput> recentHistory) => 
+        recentHistory.Count != 0 && 
+        recentHistory.Last().OriginatorRole.IsSome;
 }

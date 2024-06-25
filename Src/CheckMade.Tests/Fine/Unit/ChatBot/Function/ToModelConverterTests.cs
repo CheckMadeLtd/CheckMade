@@ -27,7 +27,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var update = basics.utils.GetValidTelegramTextMessage(textInput, tlgAgent.UserId, tlgAgent.ChatId);
         var agentRoleBindings = 
             (await basics.agentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();

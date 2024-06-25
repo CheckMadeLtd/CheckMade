@@ -11,7 +11,7 @@ internal class MockRolesRepository : IRolesRepository
         var builder = ImmutableArray.CreateBuilder<Role>();
         
         builder.AddRange(
-            DanielIsSanitaryOpsAdminAtMockParooka2024,
+            DanielIsSanitaryOpsAdminAtMockParooka2024Default,
             SanitaryOpsInspector1,
             SanitaryOpsEngineer1,
             SanitaryOpsCleanLead1German,

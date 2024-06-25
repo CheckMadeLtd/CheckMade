@@ -24,7 +24,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
@@ -72,7 +72,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var utils = _services.GetRequiredService<ITestUtils>();
         
-        const long privateChatUserAndChatId = TestUserId_01;
+        const long privateChatUserAndChatId = TestUserId_01_Default;
         var tlgAgentOperations = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var tlgAgentComms = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Communications);
         var tlgAgentNotif = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Notifications);
@@ -161,7 +161,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var abortLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(

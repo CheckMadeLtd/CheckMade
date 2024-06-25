@@ -21,20 +21,24 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
         var outOfScopeCallbackQuery =
-            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), messageId: 4);
+            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), 
+                messageId: 4);
         
         mockTlgInputsRepo
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings, messageId: 2),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de), messageId: 4),
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue, messageId: 6),
+                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings, 
+                    messageId: 2),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de), 
+                    messageId: 4),
+                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue, 
+                    messageId: 6),
                 outOfScopeCallbackQuery
             });
 
@@ -56,7 +60,7 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var interruptingBotCommandInput =
@@ -91,7 +95,7 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var notInterruptingBotCommandInput =
@@ -101,7 +105,8 @@ public class InputProcessorTests
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+                utils.GetValidTlgInputCommandMessage(
+                    tlgAgent.Mode, (int)OperationsBotCommands.Settings),
                 utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
                 notInterruptingBotCommandInput
             });

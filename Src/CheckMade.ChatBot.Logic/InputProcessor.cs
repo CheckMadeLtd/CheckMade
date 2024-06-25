@@ -59,7 +59,7 @@ internal class InputProcessor(
                     ];
                 }
 
-                var activeWorkflow = await workflowIdentifier.IdentifyAsync(recentHistory);
+                var activeWorkflow = workflowIdentifier.Identify(recentHistory);
                 
                 var nextWorkflowStepResult = await activeWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
@@ -121,7 +121,7 @@ internal class InputProcessor(
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
             .ToImmutableReadOnlyCollection();
 
-        var previousWorkflow = await workflowIdentifier.IdentifyAsync(historyRelatingToPreviousWorkflow);
+        var previousWorkflow = workflowIdentifier.Identify(historyRelatingToPreviousWorkflow);
 
         return previousWorkflow.IsSome && 
                !previousWorkflow.GetValueOrThrow().IsCompleted(historyRelatingToPreviousWorkflow);

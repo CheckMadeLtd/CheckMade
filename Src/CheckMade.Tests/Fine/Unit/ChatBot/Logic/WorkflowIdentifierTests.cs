@@ -15,7 +15,7 @@ public class WorkflowIdentifierTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
+    public void Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
@@ -23,42 +23,43 @@ public class WorkflowIdentifierTests
         
         var tlgAgentWithoutRole = new TlgAgent(2468L, 13563897L, InteractionMode.Operations);
         var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
-            tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId);
+            tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
+            roleSetting: TestOriginatorRoleSetting.None);
     
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(new List<TlgInput>{ inputFromUnauthenticatedUser }.ToImmutableReadOnlyCollection());
+        var workflow = workflowIdentifier
+            .Identify(new List<TlgInput>{ inputFromUnauthenticatedUser }.ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
+    public void Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, InteractionMode.Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, InteractionMode.Operations);
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.Settings,
             tlgAgent.UserId, tlgAgent.ChatId);
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
+        var workflow = workflowIdentifier
+            .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
 
     [Fact]
-    public async Task IdentifyAsync_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
         
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync(new List<TlgInput>
+        var workflow = workflowIdentifier
+            .Identify(new List<TlgInput>
                 {
                     utils.GetValidTlgInputTextMessage(),
                     utils.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),

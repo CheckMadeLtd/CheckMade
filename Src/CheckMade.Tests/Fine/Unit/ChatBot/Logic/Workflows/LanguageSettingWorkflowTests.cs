@@ -30,7 +30,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestUserId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -59,7 +59,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -92,7 +92,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestUserId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -125,7 +125,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestUserId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
@@ -160,7 +160,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
