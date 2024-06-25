@@ -137,13 +137,13 @@ internal static class TestData
             TestUser_Daniel,
             new LiveEventInfo(MockParooka2024));
     
-    internal static readonly Role SanitaryOpsInspector_AtMockHurricane2024_German = 
+    internal static readonly Role SanitaryOpsInspector2_HasNoBindings_German = 
         new("RMAM8S",
             SanitaryOps_Inspector,
             TestUser_Daniel_German,
-            new LiveEventInfo(MockHurricane2024));
+            new LiveEventInfo(MockParooka2024));
     
-    internal static readonly Role SanitaryOpsEngineer2 = 
+    internal static readonly Role SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode = 
         new("RP4XPK",
             SanitaryOps_Engineer,
             TestUser_Daniel,
@@ -206,7 +206,13 @@ internal static class TestData
             TestChatId04,
             Operations);
     
-    internal static readonly TlgAgent TlgAgent_of_SanitaryOpsEngineer2_HasBindOnlyTo_CommunicationsMode =
+    internal static readonly TlgAgent TlgAgent_of_SanitaryOpsEngineer2_OperationsMode =
+        new(
+            TestUserId03,
+            TestChatId06,
+            Operations);
+    
+    internal static readonly TlgAgent TlgAgent_of_SanitaryOpsEngineer2_CommunicationsMode =
         new(
             TestUserId03,
             TestChatId06,
@@ -264,8 +270,8 @@ internal static class TestData
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode =
         new(
-            SanitaryOpsEngineer2,
-            TlgAgent_of_SanitaryOpsEngineer2_HasBindOnlyTo_CommunicationsMode,
+            SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode,
+            TlgAgent_of_SanitaryOpsEngineer2_CommunicationsMode,
             DateTime.UtcNow, Option<DateTime>.None());
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsObserver1 =
@@ -279,8 +285,6 @@ internal static class TestData
             SanitaryOpsCleanLead2,
             new TlgAgent(TestUserId03, TestChatId07, Operations),
             DateTime.UtcNow, Option<DateTime>.None());
-    
-    // No TlgAgentRoleBind for role 'Inspector2' available on purpose for Unit Tests!
 
     #endregion
 }

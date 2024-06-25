@@ -36,7 +36,8 @@ public class InputValidatorTests
     [InlineData("+491724218925 ", false)]
     [InlineData("+44 7469631749", false)]
     [InlineData("+44(0)7469631749", false)]
-    // [InlineData("+4407469631749", false)] // skipping this, too hard: 0 right after country-code
+    // 0 right after country-code - skipping for now, hard to regex variety of countrycodes
+    // [InlineData("+4407469631749", false)]
     [InlineData("+44-7469-631749", false)]
     [InlineData(" ", false)]
     [InlineData("", false)]

@@ -190,9 +190,8 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        // ToDo: fix test, problem here is probably that this tlgAgentRole combi already has a Binding in the mock setup!
-        var tlgAgent = TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German;
-        var roleForAuth = SanitaryOpsCleanLead1_German;
+        var tlgAgent = TlgAgent_of_SanitaryOpsEngineer2_OperationsMode;
+        var roleForAuth = SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -247,7 +246,7 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
-        var roleForAuth = SanitaryOpsInspector_AtMockHurricane2024_German;
+        var roleForAuth = SanitaryOpsInspector2_HasNoBindings_German;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
@@ -308,14 +307,12 @@ public class UserAuthWorkflowTests
         
         var utils = _services.GetRequiredService<ITestUtils>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
-        var roleForAuth = SanitaryOpsEngineer2;
+        var roleForAuth = SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = utils.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
-            // ToDo: I can probably remove this comment if I use my named  TestData here.
-            // Already has a mapped TlgAgentRole for 'Communications' (see UnitTestStartup)
             text: roleForAuth.Token);
 
         mockTlgInputsRepo
@@ -328,11 +325,13 @@ public class UserAuthWorkflowTests
 
         var expectedTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>
         {
+            // Adds missing bind for Operations Mode
             new(roleForAuth,
                 tlgAgent,
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
-            
+
+            // Adds missing bind for Notifications Mode
             new(roleForAuth,
                 tlgAgent with { Mode = Notifications },
                 DateTime.UtcNow,
@@ -355,9 +354,15 @@ public class UserAuthWorkflowTests
 
         for (var i = 0; i < expectedTlgAgentRoleBindingsAdded.Count; i++)
         {
-            Assert.Equivalent(expectedTlgAgentRoleBindingsAdded[i].TlgAgent, actualTlgAgentRoleBindings[i].TlgAgent);
-            Assert.Equivalent(expectedTlgAgentRoleBindingsAdded[i].Role, actualTlgAgentRoleBindings[i].Role);
-            Assert.Equivalent(expectedTlgAgentRoleBindingsAdded[i].Status, actualTlgAgentRoleBindings[i].Status);
+            Assert.Equivalent(
+                expectedTlgAgentRoleBindingsAdded[i].TlgAgent,
+                actualTlgAgentRoleBindings[i].TlgAgent);
+            Assert.Equivalent(
+                expectedTlgAgentRoleBindingsAdded[i].Role, 
+                actualTlgAgentRoleBindings[i].Role);
+            Assert.Equivalent(
+                expectedTlgAgentRoleBindingsAdded[i].Status,
+                actualTlgAgentRoleBindings[i].Status);
         }
     }
     

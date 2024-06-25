@@ -17,8 +17,8 @@ internal class MockRolesRepository : IRolesRepository
             SanitaryOpsCleanLead1_German,
             SanitaryOpsObserver1,
             
-            SanitaryOpsInspector_AtMockHurricane2024_German,
-            SanitaryOpsEngineer2,
+            SanitaryOpsInspector2_HasNoBindings_German,
+            SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode,
             SanitaryOpsCleanLead2,
             SanitaryOpsObserver2);
         

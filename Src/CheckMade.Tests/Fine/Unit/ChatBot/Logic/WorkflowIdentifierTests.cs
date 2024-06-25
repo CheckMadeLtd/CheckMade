@@ -21,7 +21,7 @@ public class WorkflowIdentifierTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgentWithoutRole = new TlgAgent(2468L, 13563897L, InteractionMode.Operations);
+        var tlgAgentWithoutRole = TlgAgent_HasOnly_HistoricRoleBind;
         var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
@@ -39,10 +39,9 @@ public class WorkflowIdentifierTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgent = TlgAgent_PrivateChat_Default;
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
-            InteractionMode.Operations, (int)OperationsBotCommands.Settings,
-            tlgAgent.UserId, tlgAgent.ChatId);
+            Operations, 
+            (int)OperationsBotCommands.Settings);
         
         var workflow = workflowIdentifier
             .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
@@ -55,7 +54,6 @@ public class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var utils = _services.GetRequiredService<ITestUtils>();
-        
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var workflow = workflowIdentifier

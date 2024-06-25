@@ -46,11 +46,16 @@ public class InputProcessorTests
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings, 
+                utils.GetValidTlgInputCommandMessage(
+                    tlgAgent.Mode, 
+                    (int)OperationsBotCommands.Settings, 
                     messageId: 2),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de), 
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                    Dt(LanguageCode.de), 
                     messageId: 4),
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue, 
+                utils.GetValidTlgInputCommandMessage(
+                    tlgAgent.Mode,
+                    (int)OperationsBotCommands.NewIssue, 
                     messageId: 6),
                 outOfScopeCallbackQuery
             });
@@ -61,9 +66,13 @@ public class InputProcessorTests
             "The previous workflow was completed, so your last message/action will be ignored.";
         var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
 
-        var actualOutput = await inputProcessor.ProcessInputAsync(outOfScopeCallbackQuery);
+        var actualOutput = 
+            await inputProcessor
+                .ProcessInputAsync(outOfScopeCallbackQuery);
         
-        Assert.Equal(expectedWarningOutput, GetFirstRawEnglish(actualOutput));
+        Assert.Equal(
+            expectedWarningOutput,
+            GetFirstRawEnglish(actualOutput));
     }
 
     [Fact]
@@ -77,15 +86,24 @@ public class InputProcessorTests
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var interruptingBotCommandInput =
-            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue); 
+            utils.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                (int)OperationsBotCommands.NewIssue); 
         
         mockTlgInputsRepo
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+                // Decoys
+                utils.GetValidTlgInputCommandMessage(
+                    tlgAgent.Mode,
+                    (int)OperationsBotCommands.Settings),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                    Dt(LanguageCode.de)),
+                // Relevant
+                utils.GetValidTlgInputCommandMessage(
+                    tlgAgent.Mode,
+                    (int)OperationsBotCommands.Settings),
                 interruptingBotCommandInput
             });
 
@@ -95,10 +113,13 @@ public class InputProcessorTests
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
 
-        var actualOutput = await inputProcessor
-            .ProcessInputAsync(interruptingBotCommandInput);
+        var actualOutput =
+            await inputProcessor
+                .ProcessInputAsync(interruptingBotCommandInput);
         
-        Assert.Equal(expectedWarningOutput, GetFirstRawEnglish(actualOutput));
+        Assert.Equal(
+            expectedWarningOutput,
+            GetFirstRawEnglish(actualOutput));
     }
     
     [Fact]
@@ -112,15 +133,19 @@ public class InputProcessorTests
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var notInterruptingBotCommandInput =
-            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.NewIssue); 
+            utils.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                (int)OperationsBotCommands.NewIssue); 
         
         mockTlgInputsRepo
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
                 utils.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode, (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                    tlgAgent.Mode, 
+                    (int)OperationsBotCommands.Settings),
+                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                    Dt(LanguageCode.de)),
                 notInterruptingBotCommandInput
             });
 
@@ -130,9 +155,12 @@ public class InputProcessorTests
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
 
-        var actualOutput = await inputProcessor
-            .ProcessInputAsync(notInterruptingBotCommandInput);
+        var actualOutput = 
+            await inputProcessor
+                .ProcessInputAsync(notInterruptingBotCommandInput);
         
-        Assert.NotEqual(notExpectedWarningOutput, GetFirstRawEnglish(actualOutput));
+        Assert.NotEqual(
+            notExpectedWarningOutput,
+            GetFirstRawEnglish(actualOutput));
     }
 }
