@@ -12,8 +12,9 @@ namespace CheckMade.Tests;
 
 internal static class TestData
 {
-#region UsersSetup
+    #region UsersSetup #################################################################################################
 
+    // Needs to be in-sync with seeding script
     internal static readonly User IntegrationTests_User_Daniel = new(
         new MobileNumber("+447538521999"),
         "_Daniel",
@@ -22,6 +23,7 @@ internal static class TestData
         new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
         LanguageCode.en);
 
+    // Needs to be in-sync with seeding script
     internal static readonly User IntegrationTests_User_Patrick = new(
         new MobileNumber("+447538521999"),
         "_Patrick",
@@ -46,9 +48,9 @@ internal static class TestData
         Option<EmailAddress>.None(),
         LanguageCode.de);
 
-#endregion
+    #endregion
     
-#region LiveEventSetup
+    #region LiveEventSetup #############################################################################################
     
     internal static readonly LiveEventVenue MockParookaVenue = new("Mock Venue near Cologne");
 
@@ -94,10 +96,11 @@ internal static class TestData
                 MockHurricane2025
             });
     
-#endregion
+    #endregion
     
-#region RoleSetup
+    #region RoleSetup ##################################################################################################
     
+    // Needs to be in-sync with seeding script    
     internal static readonly Role IntegrationTests_Role_Default = new(
         "RAAAA1",
         SanitaryOps_Inspector,
@@ -158,9 +161,9 @@ internal static class TestData
             TestUser_Daniel,
             new LiveEventInfo(MockParooka2024));
     
-#endregion
+    #endregion
 
-#region TlgAgentElementsSetup
+    #region TlgAgentElementsSetup ######################################################################################
 
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
     internal const long TestUser_DanielGorin_TelegramId = 215737196L;
@@ -209,9 +212,9 @@ internal static class TestData
             TestChatId06,
             Communications);
     
-#endregion
+    #endregion
 
-#region TlgAgentRoleBindingsSetup
+    #region TlgAgentRoleBindingsSetup ##################################################################################
 
     internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsAdmin_Default = 
         new(
@@ -275,31 +278,4 @@ internal static class TestData
 
     #endregion
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
