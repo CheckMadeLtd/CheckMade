@@ -39,7 +39,7 @@ public class WorkflowIdentifierTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, InteractionMode.Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
             InteractionMode.Operations, (int)OperationsBotCommands.Settings,
             tlgAgent.UserId, tlgAgent.ChatId);

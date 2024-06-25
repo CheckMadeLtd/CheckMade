@@ -22,7 +22,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     TlgInput GetValidTlgInputTextMessage(
-        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default, 
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default, 
         string text = "Hello World", DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
@@ -32,43 +32,44 @@ internal interface ITestUtils
     
     TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
-        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default,
         int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
-        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default, 
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default, 
         DateTime? dateTime = null, int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
-        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default,
         DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     UpdateWrapper GetValidTelegramTextMessage(
-        string inputText, long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default);
+        string inputText, 
+        long userId = TestUserAndChatId01_Private_Default, long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramBotCommandMessage(
-        string botCommand, long chatId = TestChatId01_PrivateChat_Default);
+        string botCommand, long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(
-        string callbackQueryData, long chatId = TestChatId01_PrivateChat_Default);
+        string callbackQueryData, long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramAudioMessage(
-        long chatId = TestChatId01_PrivateChat_Default);
+        long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramDocumentMessage(
-        long chatId = TestChatId01_PrivateChat_Default, string fileId = "fakeOtherDocumentFileId");
+        long chatId = TestUserAndChatId01_Private_Default, string fileId = "fakeOtherDocumentFileId");
     UpdateWrapper GetValidTelegramLocationMessage(
-        Option<float> horizontalAccuracy, long chatId = TestChatId01_PrivateChat_Default);
+        Option<float> horizontalAccuracy, long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramPhotoMessage(
-        long chatId = TestChatId01_PrivateChat_Default);
+        long chatId = TestUserAndChatId01_Private_Default);
     UpdateWrapper GetValidTelegramVoiceMessage(
-        long chatId = TestChatId01_PrivateChat_Default);
+        long chatId = TestUserAndChatId01_Private_Default);
 
     internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
         GetFirstRawEnglish(actualOutput.GetValueOrThrow());
