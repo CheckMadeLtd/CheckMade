@@ -22,7 +22,7 @@ internal interface ITestUtils
     Randomizer Randomizer { get; }
     
     TlgInput GetValidTlgInputTextMessage(
-        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default, 
+        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default, 
         string text = "Hello World", DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
@@ -32,43 +32,43 @@ internal interface ITestUtils
     
     TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
-        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
         int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
-        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default, 
+        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default, 
         DateTime? dateTime = null, int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
-        long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default,
+        long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default,
         DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     UpdateWrapper GetValidTelegramTextMessage(
-        string inputText, long userId = TestUserId_01_Default, long chatId = TestChatId_01_Default);
+        string inputText, long userId = TestUserId01_PrivateChat_Default, long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramBotCommandMessage(
-        string botCommand, long chatId = TestChatId_01_Default);
+        string botCommand, long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(
-        string callbackQueryData, long chatId = TestChatId_01_Default);
+        string callbackQueryData, long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramAudioMessage(
-        long chatId = TestChatId_01_Default);
+        long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramDocumentMessage(
-        long chatId = TestChatId_01_Default, string fileId = "fakeOtherDocumentFileId");
+        long chatId = TestChatId01_PrivateChat_Default, string fileId = "fakeOtherDocumentFileId");
     UpdateWrapper GetValidTelegramLocationMessage(
-        Option<float> horizontalAccuracy, long chatId = TestChatId_01_Default);
+        Option<float> horizontalAccuracy, long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramPhotoMessage(
-        long chatId = TestChatId_01_Default);
+        long chatId = TestChatId01_PrivateChat_Default);
     UpdateWrapper GetValidTelegramVoiceMessage(
-        long chatId = TestChatId_01_Default);
+        long chatId = TestChatId01_PrivateChat_Default);
 
     internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
         GetFirstRawEnglish(actualOutput.GetValueOrThrow());

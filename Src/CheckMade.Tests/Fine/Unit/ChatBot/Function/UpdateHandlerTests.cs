@@ -134,8 +134,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var updateFromEnglishUser = basics.utils.GetValidTelegramTextMessage(
             "random valid text",
-            TestData.TestUserId_03,
-            TestData.TestChatId_07); // See mocked TlgAgentRolebindings for mapping to English-speaking user
+            TestData.TestUserId03,
+            TestData.TestChatId07); // See mocked TlgAgentRolebindings for mapping to English-speaking user
         
         await basics.handler.HandleUpdateAsync(updateFromEnglishUser, Operations);
         
@@ -160,8 +160,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var updateFromGermanUser = basics.utils.GetValidTelegramTextMessage(
             "random valid text",
-            TestData.TestUserId_02,
-            TestData.TestChatId_04); // See mocked TlgAgentRolebindings for mapping to German-speaking user
+            TestData.TestUserId02,
+            TestData.TestChatId04); // See mocked TlgAgentRolebindings for mapping to German-speaking user
         
         await basics.handler.HandleUpdateAsync(updateFromGermanUser, InteractionMode.Operations);
         

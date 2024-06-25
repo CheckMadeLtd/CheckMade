@@ -31,7 +31,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var update = basics.utils.GetValidTelegramTextMessage(textInput, tlgAgent.UserId, tlgAgent.ChatId);
         var agentRoleBindings = 
             (await basics.agentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();
@@ -67,7 +67,7 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         
         // According to mocked TlgAgentRoleBindingsRepository, this maps to an expired SanitaryOpsEngineer1
-        var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
+        var tlgAgent = new TlgAgent(TestUserId02, TestChatId03, Operations);
         
         var update = basics.utils.GetValidTelegramTextMessage("valid text", tlgAgent.UserId, tlgAgent.ChatId);
         var agentRoleBindings = 

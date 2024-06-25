@@ -22,7 +22,7 @@ public class InputProcessorTests
     //     var serviceCollection = new UnitTestStartup().Services;
     //     
     //     // ToDo: replace this and in other unit tests with new tlgAgentWithoutBind
-    //     var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+    //     var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
     //     var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
     //     
     //     // var startCommand = 
@@ -35,7 +35,7 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
@@ -74,7 +74,7 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var interruptingBotCommandInput =
@@ -109,7 +109,7 @@ public class InputProcessorTests
         var utils = _services.GetRequiredService<ITestUtils>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var notInterruptingBotCommandInput =

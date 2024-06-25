@@ -24,7 +24,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestUserId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestUserId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput> { utils.GetValidTlgInputTextMessage() }; 
@@ -50,7 +50,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_02, TestChatId_03, Operations);
+        var tlgAgent = new TlgAgent(TestUserId02, TestChatId03, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
     
         // Depends on an 'expired' tlgAgentRole set up by default in the MockTlgAgentRoleRepository 
@@ -86,7 +86,7 @@ public class UserAuthWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var utils = _services.GetRequiredService<ITestUtils>();
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
@@ -113,7 +113,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         var nonExistingTokenInput = utils.GetValidTlgInputTextMessage(
@@ -142,7 +142,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputTokenWithPreExistingActiveTlgAgentRoleBind = utils.GetValidTlgInputTextMessage(
@@ -186,7 +186,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_03, TestChatId_08, Operations);
+        var tlgAgent = new TlgAgent(TestUserId03, TestChatId08, Operations);
         var roleForAuth = SanitaryOpsInspector_AtMockHurricane2024_German;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
@@ -236,7 +236,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        const long privateChatUserAndChatId = TestUserId_03;
+        const long privateChatUserAndChatId = TestUserId03;
         var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var roleForAuth = SanitaryOpsInspector_AtMockHurricane2024_German;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
@@ -293,7 +293,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        const long privateChatUserAndChatId = TestUserId_03;
+        const long privateChatUserAndChatId = TestUserId03;
         var tlgAgent = new TlgAgent(privateChatUserAndChatId, privateChatUserAndChatId, Operations);
         var roleForAuth = SanitaryOpsEngineer2;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
@@ -358,7 +358,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01_Default, TestChatId_01_Default, Operations);
+        var tlgAgent = new TlgAgent(TestUserId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         var badTokenInput = utils.GetValidTlgInputTextMessage(text: badToken);
