@@ -113,13 +113,12 @@ internal class InputProcessor(
 
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
     {
-        // ToDo: once TlgInput includes optional Role, return false if Role is None (= user not auth.).
-        // In that case we shouldn't not show this warning, it makes no sense and is irritating and confusing.
-        // The user instead should simply see the 'enter token' message. 
+        if (currentInput.OriginatorRole.IsNone)
+            return false;
         
         if (currentInput.InputType is not TlgInputType.CommandMessage)
             return false;
-
+        
         var historyRelatingToPreviousWorkflow = 
             (await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(currentInput.TlgAgent))
             .SkipLast(1) // Excluding the current BotCommand input
@@ -128,7 +127,8 @@ internal class InputProcessor(
 
         var previousWorkflow = workflowIdentifier.Identify(historyRelatingToPreviousWorkflow);
 
-        return previousWorkflow.IsSome && 
+        return historyRelatingToPreviousWorkflow.Count > 0 && 
+               previousWorkflow.IsSome && 
                !previousWorkflow.GetValueOrThrow().IsCompleted(historyRelatingToPreviousWorkflow);
     }
 }
