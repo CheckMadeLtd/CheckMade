@@ -111,7 +111,7 @@ internal class UserAuthWorkflow(
                           """, 
                     originatingMode,
                     newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                    newTlgAgentRoleForOriginatingMode.Role.LiveEventInfo.Name)
+                    newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
             });
         }
         
@@ -120,7 +120,7 @@ internal class UserAuthWorkflow(
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
                 newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
                 newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                newTlgAgentRoleForOriginatingMode.Role.LiveEventInfo.Name)
+                newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
         });
 
         outputs.Add(new OutputDto

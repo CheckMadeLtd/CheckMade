@@ -5,10 +5,11 @@ namespace CheckMade.Common.Model.Core;
 
 public record LiveEvent : ILiveEventInfo
 {
-    public LiveEvent(string Name,
+    public LiveEvent(
+        string Name,
         DateTime StartDate,
         DateTime EndDate,
-        IEnumerable<IRoleInfo> RolesInfo,
+        IEnumerable<IRoleInfo> Roles,
         LiveEventVenue Venue,
         DbRecordStatus Status = DbRecordStatus.Active)
     {
@@ -18,15 +19,25 @@ public record LiveEvent : ILiveEventInfo
         this.Name = Name;
         this.StartDate = StartDate;
         this.EndDate = EndDate;
-        this.RolesInfo = RolesInfo;
+        this.Roles = Roles;
         this.Venue = Venue;
         this.Status = Status;
     }
+    
+    public LiveEvent(ILiveEventInfo liveEventInfo,IEnumerable<IRoleInfo> roles, LiveEventVenue venue)
+    : this(
+        liveEventInfo.Name,
+        liveEventInfo.StartDate,
+        liveEventInfo.EndDate,
+        roles,
+        venue,
+        liveEventInfo.Status)
+    {}
 
     public string Name { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
-    public IEnumerable<IRoleInfo> RolesInfo { get; init; }
+    public IEnumerable<IRoleInfo> Roles { get; init; }
     public LiveEventVenue Venue { get; init; }
     public DbRecordStatus Status { get; init; }
 }

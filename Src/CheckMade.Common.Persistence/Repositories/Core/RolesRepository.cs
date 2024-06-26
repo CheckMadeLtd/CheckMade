@@ -30,9 +30,6 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
                                             "usr.language_setting AS user_language, " +
                                             "usr.status AS user_status, " +
 
-                                            "ven.name AS venue_name, " +
-                                            "ven.status AS venue_status, " +
-
                                             "lve.name AS live_event_name, " +
                                             "lve.start_date AS live_event_start_date, " +
                                             "lve.end_date AS live_event_end_date, " +
@@ -44,8 +41,7 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
 
                                             "FROM roles r " +
                                             "INNER JOIN users usr on r.user_id = usr.id " +
-                                            "INNER JOIN live_events lve on r.live_event_id = lve.id " +
-                                            "INNER JOIN live_event_venues ven on lve.venue_id = ven.id";
+                                            "INNER JOIN live_events lve on r.live_event_id = lve.id ";
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 

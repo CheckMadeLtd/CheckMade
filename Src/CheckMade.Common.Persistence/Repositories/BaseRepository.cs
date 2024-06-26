@@ -67,10 +67,10 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
     protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
-        var user = ConstituteUser(reader);
+        var userInfo = ConstituteUserInfo(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
 
-        return ConstituteRole(reader, user, liveEventInfo.GetValueOrThrow());
+        return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow());
     };
 
     protected static readonly Func<DbDataReader, TlgInput> ReadTlgInput = reader =>
@@ -89,9 +89,14 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    private static User ConstituteUser(DbDataReader reader)
+    private static User ConstituteUser(DbDataReader reader, IEnumerable<IRoleInfo> roles) =>
+        new(
+            ConstituteUserInfo(reader),
+            roles);
+    
+    private static IUserInfo ConstituteUserInfo(DbDataReader reader)
     {
-        return new User(
+        return new UserInfo(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
             reader.GetString(reader.GetOrdinal("user_first_name")),
             GetOption<string>(reader, reader.GetOrdinal("user_middle_name")),
@@ -103,7 +108,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
     }
 
-    // ReSharper disable once UnusedMember.Local
     private static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
     {
         return new LiveEventVenue(
@@ -112,7 +116,15 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
     }
 
-    // ToDo: Can I remove duplication between this and a future ConstituteLiveEvent?
+    private static LiveEvent ConstituteLiveEvent(
+        DbDataReader reader,
+        IEnumerable<IRoleInfo> roles,
+        LiveEventVenue venue) =>
+        new(
+            ConstituteLiveEventInfo(reader).GetValueOrThrow(),
+            roles,
+            venue);
+    
     private static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("live_event_name")))
@@ -126,19 +138,11 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    private static Role ConstituteRole(DbDataReader reader, User user, ILiveEventInfo liveEventInfo)
-    {
-        return new Role(
-            reader.GetString(reader.GetOrdinal("role_token")),
-            EnsureEnumValidityOrThrow(
-                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type"))),
-            user,
-            liveEventInfo,
-            EnsureEnumValidityOrThrow(
-                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
-    }
+    private static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
+        new(ConstituteRoleInfo(reader).GetValueOrThrow(),
+            userInfo,
+            liveEventInfo);
 
-    // ToDo: Can I remove duplication between this and ConstituteRole? 
     private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))

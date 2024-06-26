@@ -43,7 +43,7 @@ internal class LogoutWorkflow(
                               """,
                         currentRoleBind.Role.User.FirstName,
                         currentRoleBind.Role.RoleType,
-                        currentRoleBind.Role.LiveEventInfo.Name),
+                        currentRoleBind.Role.LiveEvent.Name),
                     
                     ControlPromptsSelection = ControlPrompts.YesNo
                 }

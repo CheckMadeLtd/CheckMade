@@ -21,7 +21,8 @@ internal static class TestData
         "IntegrationTest",
         "_Gorin",
         new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
-        LanguageCode.en);
+        LanguageCode.en,
+        new List<IRoleInfo>());
 
     // Needs to be in-sync with seeding script
     internal static readonly User IntegrationTests_User_Patrick = new(
@@ -30,7 +31,8 @@ internal static class TestData
         "IntegrationTest",
         "_Bauer",
         Option<EmailAddress>.None(), 
-        LanguageCode.de);
+        LanguageCode.de,
+        new List<IRoleInfo>());
 
     internal static readonly User TestUser_Daniel = new(
         new MobileNumber("+447538521999"),
@@ -38,7 +40,8 @@ internal static class TestData
         "UnitTest English",
         "_Gorin",
         Option<EmailAddress>.None(),
-        LanguageCode.en);
+        LanguageCode.en,
+        new List<IRoleInfo>());
     
     internal static readonly User TestUser_Daniel_German = new(
         new MobileNumber("+447538521999"),
@@ -46,7 +49,8 @@ internal static class TestData
         "UnitTest German",
         "_Gorin",
         Option<EmailAddress>.None(),
-        LanguageCode.de);
+        LanguageCode.de,
+        new List<IRoleInfo>());
 
     #endregion
     
