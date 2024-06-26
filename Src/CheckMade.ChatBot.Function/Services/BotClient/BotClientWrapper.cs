@@ -124,14 +124,16 @@ public class BotClientWrapper(
         await retryPolicy.ExecuteAsync(async () =>
         {
             // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
-            if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
-            {
-                await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: pleaseChooseText,
-                    replyMarkup: new ReplyKeyboardRemove(),
-                    cancellationToken: cancellationToken);
-            }
+            // Temporarily commented out to avoid redundant 'Please choose...', future review whether really needed or not... 
+            
+            // if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
+            // {
+            //     await botClient.SendTextMessageAsync(
+            //         chatId: chatId,
+            //         text: pleaseChooseText,
+            //         replyMarkup: new ReplyKeyboardRemove(),
+            //         cancellationToken: cancellationToken);
+            // }
             
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
