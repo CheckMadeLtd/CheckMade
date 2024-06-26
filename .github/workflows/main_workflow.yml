@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - tmp/m4d3d
 
 jobs:  
   tag_version:
