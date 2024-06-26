@@ -1,6 +1,9 @@
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
@@ -13,19 +16,48 @@ public class InputProcessorTests
 {
     private ServiceProvider? _services;
  
-    // [Fact]
-    // public async Task ProcessInputAsync_WelcomesAndPromptsAuthentication_ForStartCommandOfUnauthenticatedUser()
-    // {
-    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
-    //     var utils = _services.GetRequiredService<ITestUtils>();
-    //     var serviceCollection = new UnitTestStartup().Services;
-    //     
-    //     // ToDo: replace this and in other unit tests with new tlgAgentWithoutBind
-    //     var tlgAgent = new TlgAgent(TestUserAndChatId01_PrivateChat_Default, TestChatId01_PrivateChat_Default, Operations);
-    //     var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-    //     
-    //     // var startCommand = 
-    // }
+    [Fact]
+    public async Task ProcessInputAsync_WelcomesAndPromptsAuthentication_ForStartCommandOfUnauthenticatedUser()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var utils = _services.GetRequiredService<ITestUtils>();
+        var serviceCollection = new UnitTestStartup().Services;
+        
+        var tlgAgent = TlgAgent_HasOnly_HistoricRoleBind;
+        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var startCommand = utils.GetValidTlgInputCommandMessage(
+            TlgAgent_HasOnly_HistoricRoleBind.Mode,
+            TlgStart.CommandCode,
+            TlgAgent_HasOnly_HistoricRoleBind.UserId,
+            TlgAgent_HasOnly_HistoricRoleBind.ChatId,
+            roleSetting: TestOriginatorRoleSetting.None);
+
+        mockTlgInputsRepo
+            .Setup(x => x.GetAllAsync(tlgAgent))
+            .ReturnsAsync(new List<TlgInput>
+            {
+                startCommand
+            });
+
+        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        _services = serviceCollection.BuildServiceProvider();
+        var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
+        
+        var expectedOutputs = new List<OutputDto>
+        {
+            new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
+            new(){ Text = UserAuthWorkflow.EnterTokenPrompt.Text.GetValueOrThrow() }
+        };
+        
+        var actualOutput = 
+            await inputProcessor
+                .ProcessInputAsync(startCommand);
+
+        Assert.Equivalent(
+            expectedOutputs,
+            actualOutput);
+    }
     
     [Fact]
     public async Task ProcessInputAsync_ReturnsWarning_ForCallbackQuery_ToOutOfScopeInlineKeyboardButtonClick()

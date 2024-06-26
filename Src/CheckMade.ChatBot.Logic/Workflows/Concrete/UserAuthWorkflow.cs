@@ -22,7 +22,7 @@ internal class UserAuthWorkflow(
         ILogicUtils logicUtils)
     : IUserAuthWorkflow
 {
-    private static readonly OutputDto EnterTokenPrompt = new()
+    internal static readonly OutputDto EnterTokenPrompt = new()
     {
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
