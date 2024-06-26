@@ -25,6 +25,8 @@ internal class LogicUtils(
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent)
     {
+        // We take this roundabout way to include inputs from currently unauthenticated users
+        
         var lastPreviousTlgAgentRole = (await tlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(arb =>
                 arb.TlgAgent == tlgAgent &&

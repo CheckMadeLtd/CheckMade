@@ -42,11 +42,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.en,
-                        new TlgBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change language setting")
                     },
                     {
                         LanguageCode.de,
-                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Spracheinstellung ändern")
                     }
                 } 
             },
@@ -87,11 +87,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.en,
-                        new TlgBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change language setting")
                     },
                     {
                         LanguageCode.de,
-                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Spracheinstellung ändern")
                     }
                 }},
             { CommunicationsBotCommands.Logout, 
@@ -130,11 +130,11 @@ public record BotCommandMenus
                 {
                     {
                         LanguageCode.en,
-                        new TlgBotCommand("/settings", "⚙️ Change settings")
+                        new TlgBotCommand("/settings", "⚙️ Change language setting")
                     },
                     {
                         LanguageCode.de,
-                        new TlgBotCommand("/einstellungen", "⚙️ Einstellungen ändern")
+                        new TlgBotCommand("/einstellungen", "⚙️ Spracheinstellung ändern")
                     }
                 }},
             { NotificationsBotCommands.Logout, 

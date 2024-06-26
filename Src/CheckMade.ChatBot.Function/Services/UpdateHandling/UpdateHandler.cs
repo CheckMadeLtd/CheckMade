@@ -10,6 +10,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -123,16 +124,17 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoles,
+        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)
     {
-        var tlgAgentRole = tlgAgentRoles
+        var tlgAgentRole = tlgAgentRoleBindings
             .FirstOrDefault(arb =>
                 arb.TlgAgent.UserId.Id == currentUserId &&
                 arb.TlgAgent.ChatId.Id == currentChatId &&
-                arb.TlgAgent.Mode == currentMode);
+                arb.TlgAgent.Mode == currentMode &&
+                arb.Status == DbRecordStatus.Active);
 
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.User.Language 
