@@ -108,61 +108,61 @@ internal static class TestData
     internal static readonly Role IntegrationTests_Role_Default = new(
         "RAAAA1",
         SanitaryOps_Inspector,
-        IntegrationTests_User_Daniel,
+        new UserInfo(IntegrationTests_User_Daniel),
         new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsAdmin_AtMockParooka2024_Default = 
         new("RVB70T",
             SanitaryOps_Admin, 
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsInspector1_HasRoleBindings_ForAllModes = 
         new("R3UDXW",
             SanitaryOps_Inspector,
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsEngineer1 = 
         new("R3UED8", 
             SanitaryOps_Engineer,
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsCleanLead1_German = 
         new("R2JXNM",
             SanitaryOps_CleanLead,
-            TestUser_Daniel_German, // German! Relied on by unit tests!
+            new UserInfo(TestUser_Daniel_German), // German! Relied on by unit tests!
             new LiveEventInfo(MockParooka2024));
 
     internal static readonly Role SanitaryOpsObserver1 = 
         new("RYEATF",
             SanitaryOps_Observer,
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsInspector2_HasNoBindings_German = 
         new("RMAM8S",
             SanitaryOps_Inspector,
-            TestUser_Daniel_German,
+            new UserInfo(TestUser_Daniel_German),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode = 
         new("RP4XPK",
             SanitaryOps_Engineer,
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsCleanLead2 = 
         new("RI8MJ1",
             SanitaryOps_CleanLead,
-            TestUser_Daniel, // English! Relied on by unit tests!
+            new UserInfo(TestUser_Daniel), // English! Relied on by unit tests!
             new LiveEventInfo(MockParooka2024));
     
     internal static readonly Role SanitaryOpsObserver2 = 
         new("R67CMC",
             SanitaryOps_Observer,
-            TestUser_Daniel,
+            new UserInfo(TestUser_Daniel),
             new LiveEventInfo(MockParooka2024));
     
     #endregion

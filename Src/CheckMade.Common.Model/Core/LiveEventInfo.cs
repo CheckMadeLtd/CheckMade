@@ -11,7 +11,11 @@ public record LiveEventInfo(
     : ILiveEventInfo
 {
     public LiveEventInfo(LiveEvent liveEvent) 
-        : this(liveEvent.Name, liveEvent.StartDate, liveEvent.EndDate, liveEvent.Status)
+        : this(
+            liveEvent.Name,
+            liveEvent.StartDate,
+            liveEvent.EndDate,
+            liveEvent.Status)
     {
     }
 }
