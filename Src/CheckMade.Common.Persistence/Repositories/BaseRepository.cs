@@ -10,6 +10,8 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
 using Npgsql;
+// ToDo: remove again once these methods are used. 
+// ReSharper disable UnusedMember.Local
 
 namespace CheckMade.Common.Persistence.Repositories;
 
