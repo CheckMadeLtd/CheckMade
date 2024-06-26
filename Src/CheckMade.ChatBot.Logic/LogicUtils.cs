@@ -45,7 +45,7 @@ internal class LogicUtils(
     public async Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
     {
         var allInputsOfTlgAgent = 
-            (await inputsRepo.GetAllAsync(tlgAgent)).ToImmutableReadOnlyCollection();
+            await GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
 
         return allInputsOfTlgAgent
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
