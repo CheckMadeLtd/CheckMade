@@ -59,7 +59,7 @@ internal static class RegisterServicesExtensions
 
     internal static void RegisterChatBotFunctionConversionServices(this IServiceCollection services)
     {
-        services.AddSingleton<IToModelConverterFactory, ToModelConverterFactory>();
+        services.AddScoped<IToModelConverterFactory, ToModelConverterFactory>();
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
     }
 

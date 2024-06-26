@@ -13,25 +13,33 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    Task<UserAuthWorkflow.States> DetermineCurrentStateAsync(TlgAgent tlgAgent);
+    UserAuthWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
 }
 
 internal class UserAuthWorkflow(
         IRolesRepository rolesRepo,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
-        IWorkflowUtils workflowUtils)
+        ILogicUtils logicUtils)
     : IUserAuthWorkflow
 {
-    private static readonly OutputDto EnterTokenPrompt = new()
+    internal static readonly OutputDto EnterTokenPrompt = new()
     {
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
+
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
+    {
+        return DetermineCurrentState(history) == ReceivedTokenSubmissionAttempt;
+    }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
     {
         var inputText = tlgInput.Details.Text.GetValueOrDefault();
         
-        return await DetermineCurrentStateAsync(tlgInput.TlgAgent) switch
+        var relevantHistory = 
+            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgInput.TlgAgent);
+        
+        return DetermineCurrentState(relevantHistory) switch
         {
             Initial => new List<OutputDto> { EnterTokenPrompt },
             
@@ -59,17 +67,15 @@ internal class UserAuthWorkflow(
         };
     }
     
-    public async Task<States> DetermineCurrentStateAsync(TlgAgent tlgAgent)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
     {
-        var allRelevantInputs = await workflowUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
-        
-        var lastTextSubmitted = allRelevantInputs
+        var lastTextSubmitted = history
             .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
 
         return lastTextSubmitted switch
         {
             null => Initial,
-            _ => ReceivedTokenSubmissionAttempt,
+            _ => ReceivedTokenSubmissionAttempt
         };
     }
 
@@ -80,7 +86,8 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingTlgAgentRoles = workflowUtils.GetAllTlgAgentRoles();
+        var preExistingTlgAgentRoles = 
+            (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();
         
         var outputs = new List<OutputDto>();
         
@@ -110,10 +117,7 @@ internal class UserAuthWorkflow(
         
         outputs.Add(new OutputDto
         {
-            Text = Ui("""
-                      {0}, welcome to the CheckMade ChatBot!
-                      You have successfully authenticated as a {1} at live-event {2}.
-                      """, 
+            Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
                 newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
                 newTlgAgentRoleForOriginatingMode.Role.RoleType,
                 newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
@@ -164,6 +168,6 @@ internal class UserAuthWorkflow(
     internal enum States
     {
         Initial = 1,
-        ReceivedTokenSubmissionAttempt = 1<<1,
+        ReceivedTokenSubmissionAttempt = 1<<1
     }
 }

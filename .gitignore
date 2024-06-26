@@ -12,7 +12,7 @@ puml-diagrams/
 LocalSecrets/
 logs/
 AllUiTextsFromSourceCode.txt
-real_setup.sql
+real_setup_data/
 
 # IDE solution settings
 **.sln.DotSettings.user

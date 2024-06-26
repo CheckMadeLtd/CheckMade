@@ -2,7 +2,7 @@ namespace CheckMade.Common.Model.ChatBot;
 
 public enum TlgAttachmentType
 {
-    Document,
+    Document = 1,
     Photo,
     Voice
 }

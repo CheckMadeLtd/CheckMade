@@ -2,6 +2,7 @@
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
@@ -11,42 +12,79 @@ public interface IInputProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput);
+    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> currentInput);
 }
 
 internal class InputProcessor(
         InteractionMode interactionMode,
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
+        ILogicUtils logicUtils,
         ILogger<InputProcessor> logger) 
     : IInputProcessor
 {
-    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> tlgInput)
+    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> currentInput)
     {
-        return await tlgInput.Match(
+        return await currentInput.Match(
             async input =>
             {
                 await inputsRepo.AddAsync(input);
                 
-                var currentWorkflow = await workflowIdentifier.IdentifyAsync(input);
+                var outputBuilder = new List<OutputDto>();
 
-                var nextWorkflowStepResult = await currentWorkflow.Match(
+                if (input.InputType == TlgInputType.CommandMessage
+                    && input.Details.BotCommandEnumCode == TlgStart.CommandCode)
+                {
+                    outputBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
+                                                               "I shall follow your command!") });
+                }
+                
+                // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
+                // A Location update is not part of any workflow, it needs separate logic to handle location updates!
+                
+                if (await IsInputInterruptingPreviousWorkflowAsync(input))
+                {
+                    outputBuilder.Add(new OutputDto
+                        {
+                            Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                      "successful submission.")
+                        });
+                }
+
+                var recentHistory = 
+                    await logicUtils.GetInputsForCurrentWorkflow(input.TlgAgent);
+                
+                if (IsCurrentInputFromOutOfScopeWorkflow(input, recentHistory))
+                {
+                    return [ new OutputDto 
+                        {
+                            Text = Ui("The previous workflow was completed, " +
+                                      "so your last message/action will be ignored.") 
+                        }
+                    ];
+                }
+
+                var activeWorkflow = workflowIdentifier.Identify(recentHistory);
+                
+                var nextWorkflowStepResult = await activeWorkflow.Match(
                     wf => wf.GetNextOutputAsync(input),
                     () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
-                        new List<OutputDto>
+                    [ new OutputDto
                         {
-                            new()
-                            {
-                                Text = Ui("My placeholder answer for lack of a workflow handling your input."),
-                            }
-                        })));
+                            Text = Ui("My placeholder answer for lack of a workflow handling your input."),
+                        }
+                    ])));
 
                 return nextWorkflowStepResult.Match(
-                    outputs => outputs,
+                    outputs =>
+                    {
+                        outputBuilder.AddRange(outputs);
+                        return outputBuilder.ToImmutableReadOnlyCollection();
+                    },
                     error =>
                     {
                         logger.LogWarning($"""
-                                           The workflow '{currentWorkflow.GetValueOrDefault().GetType()}' has returned
+                                           The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
                                            this Error Result: '{error}'. Next, the corresponding input parameters.
                                            UserId: {input.TlgAgent.UserId}; ChatId: {input.TlgAgent.ChatId}; 
                                            InputType: {input.InputType}; InteractionMode: {interactionMode};
@@ -61,5 +99,36 @@ internal class InputProcessor(
             // This error was already logged at its source, in ToModelConverter
             error => Task.FromResult<IReadOnlyCollection<OutputDto>>(
                 [ new OutputDto { Text = error } ]));
+    }
+
+    private static bool IsCurrentInputFromOutOfScopeWorkflow(
+        TlgInput currentInput, IReadOnlyCollection<TlgInput> recentHistory) => 
+        ILogicUtils.GetLastBotCommand(recentHistory).Match(
+            lastBotCommand => 
+            {
+                var newWorkflowStartMessageId = lastBotCommand.Details.TlgMessageId;
+                return currentInput.Details.TlgMessageId < newWorkflowStartMessageId;
+            },
+            () => false);
+
+    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
+    {
+        if (currentInput.OriginatorRole.IsNone)
+            return false;
+        
+        if (currentInput.InputType is not TlgInputType.CommandMessage)
+            return false;
+        
+        var historyRelatingToPreviousWorkflow = 
+            (await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(currentInput.TlgAgent))
+            .SkipLast(1) // Excluding the current BotCommand input
+            .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
+            .ToImmutableReadOnlyCollection();
+
+        var previousWorkflow = workflowIdentifier.Identify(historyRelatingToPreviousWorkflow);
+
+        return historyRelatingToPreviousWorkflow.Count > 0 && 
+               previousWorkflow.IsSome && 
+               !previousWorkflow.GetValueOrThrow().IsCompleted(historyRelatingToPreviousWorkflow);
     }
 }

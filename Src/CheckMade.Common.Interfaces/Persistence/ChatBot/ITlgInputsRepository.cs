@@ -6,8 +6,7 @@ namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 public interface ITlgInputsRepository
 {
     Task AddAsync(TlgInput tlgInput);
-    Task AddAsync(IEnumerable<TlgInput> tlgInputs);
-    Task<IEnumerable<TlgInput>> GetAllAsync(TlgUserId userId);
+    Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs);
     Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent);
     Task HardDeleteAllAsync(TlgAgent tlgAgent);
 }

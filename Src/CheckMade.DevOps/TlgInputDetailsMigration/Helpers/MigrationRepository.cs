@@ -4,6 +4,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;
@@ -47,6 +48,8 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         var messageWithFakeEmptyDetails = new TlgInput(
             new TlgAgent(tlgUserId, tlgChatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             new TlgInputDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),

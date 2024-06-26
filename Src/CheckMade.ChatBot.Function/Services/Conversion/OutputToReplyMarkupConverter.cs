@@ -75,7 +75,9 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         // For uniformity, convert the combined flagged enum into an array.
         var allControlPrompts = Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
         var promptSelectionAsCollection = allControlPrompts
-            .Where(prompts => promptSelection.GetValueOrDefault().HasFlag(prompts))
+            .Where(prompts => 
+                promptSelection.GetValueOrDefault().HasFlag(prompts) &&
+                 IsSingleFlag(prompts))
             .ToImmutableReadOnlyCollection();
         
         allTextIdPairs.AddRange(promptSelectionAsCollection.Select(prompt =>
@@ -84,6 +86,13 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
                 id: new CallbackId((long)prompt).Id)));
 
         return allTextIdPairs.ToImmutableReadOnlyCollection();
+        
+        static bool IsSingleFlag(Enum value)
+        {
+            var buffer = Convert.ToUInt64(value);
+            
+            return buffer != 0 && (buffer & (buffer - 1)) == 0;
+        }
     }
     
     private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(

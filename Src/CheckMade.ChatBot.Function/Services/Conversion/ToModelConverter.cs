@@ -4,10 +4,12 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Model.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
@@ -22,6 +24,7 @@ internal class ToModelConverter(
         ITelegramFilePathResolver filePathResolver,
         IBlobLoader blobLoader,
         IHttpDownloader downloader,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
         ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
@@ -40,10 +43,14 @@ internal class ToModelConverter(
                         in GetDomainTerm(update)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
+                    from originatorRole
+                        in GetOriginatorRole(update, interactionMode)
+                    from liveEventContext
+                        in GetLiveEventContext(originatorRole)
                     from tlgInput 
                         in GetTlgInputAsync(
                             update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
-                            botCommandEnumCode, domainTerm, controlPromptEnumCode) 
+                            botCommandEnumCode, domainTerm, controlPromptEnumCode, originatorRole, liveEventContext) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.FromSuccess,
@@ -204,6 +211,26 @@ internal class ToModelConverter(
             ? callBackData
             : Option<long>.None();
     }
+
+    private async Task<Result<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
+    {
+        var originatorRole = (await roleBindingsRepo.GetAllAsync())
+            .FirstOrDefault(arb =>
+                arb.TlgAgent.UserId == update.Message.From?.Id &&
+                arb.TlgAgent.ChatId == update.Message.Chat.Id &&
+                arb.TlgAgent.Mode == mode &&
+                arb.Status == DbRecordStatus.Active)?
+            .Role;
+
+        return Result<Option<Role>>.FromSuccess(originatorRole ?? Option<Role>.None());
+    }
+
+    private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
+    {
+        return originatorRole.IsSome 
+            ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().LiveEvent) 
+            : Result<Option<ILiveEventInfo>>.FromSuccess(Option<ILiveEventInfo>.None());
+    }
     
     private async Task<Result<TlgInput>> GetTlgInputAsync(
         UpdateWrapper update,
@@ -213,7 +240,9 @@ internal class ToModelConverter(
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,
-        Option<long> controlPromptEnumCode)
+        Option<long> controlPromptEnumCode,
+        Option<Role> originatorRole,
+        Option<ILiveEventInfo> liveEventContext)
     {
         if (update.Message.From?.Id == null || 
             string.IsNullOrWhiteSpace(update.Message.Text) 
@@ -253,6 +282,10 @@ internal class ToModelConverter(
         return new TlgInput(
             new TlgAgent(userId, chatId, interactionMode), 
             tlgInputType,
+            originatorRole.IsSome 
+                ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
+                : Option<IRoleInfo>.None(),
+            liveEventContext,
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

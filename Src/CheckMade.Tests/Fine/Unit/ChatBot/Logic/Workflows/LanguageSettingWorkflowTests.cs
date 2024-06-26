@@ -3,20 +3,14 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.LanguageSettingWorkflow;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
-using static CheckMade.Tests.ITestUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.Tests.TestData;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
-
-[SuppressMessage("Usage", "xUnit1025:InlineData should be unique within the Theory it belongs to")]
 
 public class LanguageSettingWorkflowTests
 {
@@ -27,92 +21,98 @@ public class LanguageSettingWorkflowTests
     [InlineData((int)OperationsBotCommands.Settings)]
     [InlineData((int)CommunicationsBotCommands.Settings)]
     [InlineData((int)NotificationsBotCommands.Settings)]
-    public async Task DetermineCurrentStateAsync_ReturnsInitial_WhenLastInputWasBotCommand(int botCommand)
+    [SuppressMessage("Usage", "xUnit1025:InlineData should be unique within the Theory it belongs to")]
+    public void DetermineCurrentState_ReturnsInitial_WhenLastInputWasBotCommand(int botCommand)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var inputHistory = new List<TlgInput>
+        {
+            utils.GetValidTlgInputTextMessage(),
+            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
+        };
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                utils.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-                utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
-            });
-
+            .ReturnsAsync(inputHistory);
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
-        Assert.Equal(States.Initial, actualState);
+        Assert.Equal(
+            States.Initial, 
+            actualState);
     }
     
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsReceived_WhenLastInputWasCallbackQuery()
+    public void DetermineCurrentState_ReturnsReceived_WhenLastInputWasCallbackQuery()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var inputHistory = new List<TlgInput>
+        {
+            utils.GetValidTlgInputTextMessage(),
+            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de))
+        };
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
-                utils.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode, (int)OperationsBotCommands.Settings,
-                tlgAgent.UserId, tlgAgent.ChatId),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
-                    tlgAgent.UserId, tlgAgent.ChatId)
-            });
+            .ReturnsAsync(inputHistory);
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
-        Assert.Equal(States.ReceivedLanguageSetting, actualState);
+        Assert.Equal(
+            States.ReceivedLanguageSetting,
+            actualState);
     }
     
     [Fact]
-    public async Task DetermineCurrentStateAsync_ReturnsCompleted_WhenLastInputIsAfterCallbackQueryInput()
+    public void DetermineCurrentState_ReturnsCompleted_WhenLastInputIsAfterCallbackQueryInput()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+        var inputHistory = new List<TlgInput>
+        {
+            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+            utils.GetValidTlgInputTextMessage()
+        }; 
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput>
-            {
-                utils.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode, (int)OperationsBotCommands.Settings,
-                    tlgAgent.UserId, tlgAgent.ChatId),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de),
-                    tlgAgent.UserId, tlgAgent.ChatId),
-                utils.GetValidTlgInputTextMessage(userId: tlgAgent.UserId, chatId: tlgAgent.ChatId)
-            });
+            .ReturnsAsync(inputHistory);
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
         
-        var actualState = await workflow.DetermineCurrentStateAsync(tlgAgent);
+        var actualState = workflow.DetermineCurrentState(inputHistory);
         
-        Assert.Equal(States.Completed, actualState);
+        Assert.Equal(
+            States.Completed,
+            actualState);
     }
     
     [Fact]
@@ -122,19 +122,18 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestUserId_01, Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
-            Operations, (int)OperationsBotCommands.Settings, 
-            tlgAgent.UserId, tlgAgent.ChatId); 
+            Operations,
+            (int)OperationsBotCommands.Settings); 
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow"),
                 inputSettingsCommand
             });
 
@@ -144,7 +143,9 @@ public class LanguageSettingWorkflowTests
 
         var actualOutput = await workflow.GetNextOutputAsync(inputSettingsCommand);
         
-        Assert.Equal("🌎 Please select your preferred language:", GetFirstRawEnglish(actualOutput));
+        Assert.Equal(
+            "🌎 Please select your preferred language:", 
+            GetFirstRawEnglish(actualOutput));
     }
     
     [Theory]
@@ -157,25 +158,22 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var utils = _services.GetRequiredService<ITestUtils>();
-        var tlgAgent = new TlgAgent(TestUserId_01, TestChatId_01, Operations);
+        var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
-            Operations, (int)OperationsBotCommands.Settings, 
-            tlgAgent.UserId, tlgAgent.ChatId); 
+            Operations, 
+            (int)OperationsBotCommands.Settings); 
         var languageSettingInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
-            Dt(languageCode), 
-            tlgAgent.UserId, tlgAgent.ChatId);
+            Dt(languageCode));
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
                 inputSettingsCommand,
-                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow", 
-                    userId: tlgAgent.UserId, chatId: tlgAgent.ChatId),
+                utils.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
                 languageSettingInput
             });
 
@@ -186,10 +184,12 @@ public class LanguageSettingWorkflowTests
 
         var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);
         
-        Assert.StartsWith("New language: ", GetFirstRawEnglish(actualOutput));
+        Assert.StartsWith(
+            "New language: ",
+            GetFirstRawEnglish(actualOutput));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
-            TestUserDanielEn,
+            RoleBindFor_SanitaryOpsAdmin_Default.Role.User,
             languageCode));
     }
 }
