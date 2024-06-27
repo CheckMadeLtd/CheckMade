@@ -300,9 +300,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 TlgChatId = activeRoleBindings
-                    .First(arb => 
-                        arb.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        arb.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode)
+                    .First(tarb => 
+                        tarb.Role == output.LogicalPort.GetValueOrThrow().Role &&
+                        tarb.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode)
                     .TlgAgent.ChatId.Id
             }).ToList();
 

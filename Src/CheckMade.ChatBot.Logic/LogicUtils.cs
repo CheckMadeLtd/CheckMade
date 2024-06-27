@@ -28,10 +28,10 @@ internal class LogicUtils(
         // We take this roundabout way to include inputs from currently unauthenticated users
         
         var lastPreviousTlgAgentRole = (await tlgAgentRoleBindingsRepo.GetAllAsync())
-            .Where(arb =>
-                arb.TlgAgent == tlgAgent &&
-                arb.DeactivationDate.IsSome)
-            .MaxBy(arb => arb.DeactivationDate.GetValueOrThrow());
+            .Where(tarb =>
+                tarb.TlgAgent == tlgAgent &&
+                tarb.DeactivationDate.IsSome)
+            .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
 
         var dateOfLastDeactivationForCutOff = lastPreviousTlgAgentRole != null
             ? lastPreviousTlgAgentRole.DeactivationDate.GetValueOrThrow()

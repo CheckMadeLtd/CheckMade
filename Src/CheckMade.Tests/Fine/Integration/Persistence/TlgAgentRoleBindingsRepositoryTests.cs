@@ -18,7 +18,7 @@ public class TlgAgentRoleBindingsRepositoryTests
 
         await repo.AddAsync(inputTlgAgentRoleBind);
         var retrieved = (await repo.GetAllAsync())
-            .MaxBy(arb => arb.ActivationDate);
+            .MaxBy(tarb => tarb.ActivationDate);
         await repo.HardDeleteAsync(inputTlgAgentRoleBind);
         
         Assert.Equivalent(inputTlgAgentRoleBind.Role, retrieved!.Role);
@@ -35,7 +35,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         await repo.AddAsync(preExistingActiveTlgAgentRole);
         await repo.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic);
         var retrievedUpdated = (await repo.GetAllAsync())
-            .MaxBy(arb => arb.ActivationDate);
+            .MaxBy(tarb => tarb.ActivationDate);
         await repo.HardDeleteAsync(preExistingActiveTlgAgentRole);
         
         Assert.Equivalent(preExistingActiveTlgAgentRole.TlgAgent, retrievedUpdated!.TlgAgent);

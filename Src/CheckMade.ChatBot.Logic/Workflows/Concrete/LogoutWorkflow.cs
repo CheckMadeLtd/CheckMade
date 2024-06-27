@@ -27,7 +27,7 @@ internal class LogoutWorkflow(
         var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(arb => arb.TlgAgent == tlgInput.TlgAgent);
+            .First(tarb => tarb.TlgAgent == tlgInput.TlgAgent);
 
         return DetermineCurrentState(recentHistory) switch
         {
@@ -86,10 +86,10 @@ internal class LogoutWorkflow(
     {
         var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
             (await roleBindingsRepo.GetAllActiveAsync())
-            .Where(arb =>
-                arb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
-                arb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
-                arb.Role.Token == currentRoleBind.Role.Token)
+            .Where(tarb =>
+                tarb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
+                tarb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
+                tarb.Role.Token == currentRoleBind.Role.Token)
             .ToImmutableReadOnlyCollection();
         
         await roleBindingsRepo

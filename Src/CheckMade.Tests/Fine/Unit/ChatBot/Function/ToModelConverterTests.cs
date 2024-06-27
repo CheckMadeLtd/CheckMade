@@ -38,7 +38,7 @@ public class ToModelConverterTests
             .ToImmutableReadOnlyCollection();
         
         var boundRole = roleBindings
-            .FirstOrDefault(arb => arb.TlgAgent == tlgAgent)?
+            .FirstOrDefault(tarb => tarb.TlgAgent == tlgAgent)?
             .Role;
         
         // just confirming consistency of my internal TestData / TestUtils setup
@@ -81,7 +81,7 @@ public class ToModelConverterTests
             .ToImmutableReadOnlyCollection();
         
         var boundRole = agentRoleBindings
-            .FirstOrDefault(arb => arb.TlgAgent == tlgAgent)?
+            .FirstOrDefault(tarb => tarb.TlgAgent == tlgAgent)?
             .Role;
 
         // just confirming consistency of my internal TestData / TestUtils setup

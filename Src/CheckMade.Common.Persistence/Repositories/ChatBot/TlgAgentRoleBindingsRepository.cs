@@ -29,20 +29,20 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = tlgAgentRoleBindings.Select(arb =>
+        var commands = tlgAgentRoleBindings.Select(tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@token", arb.Role.Token },
-                { "@tlgUserId", (long)arb.TlgAgent.UserId },
-                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
-                { "@activationDate", arb.ActivationDate },
-                { "@status", (int)arb.Status },
-                { "@mode", (int)arb.TlgAgent.Mode }
+                { "@token", tarb.Role.Token },
+                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
+                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
+                { "@activationDate", tarb.ActivationDate },
+                { "@status", (int)tarb.Status },
+                { "@mode", (int)tarb.TlgAgent.Mode }
             };
 
-            if (arb.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", arb.DeactivationDate.GetValueOrThrow());
+            if (tarb.DeactivationDate.IsSome)
+                normalParameters.Add("@deactivationDate", tarb.DeactivationDate.GetValueOrThrow());
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
 
@@ -122,7 +122,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
 
     public async Task<IEnumerable<TlgAgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
-        .Where(arb => arb.Status == DbRecordStatus.Active);
+        .Where(tarb => tarb.Status == DbRecordStatus.Active);
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
         await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
@@ -138,15 +138,15 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "AND tlg_chat_id = @tlgChatId " + 
                                 "AND interaction_mode = @mode";
 
-        var commands = tlgAgentRoleBindings.Select(arb =>
+        var commands = tlgAgentRoleBindings.Select(tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
                 { "@status", (int)newStatus },
-                { "@token", arb.Role.Token },
-                { "@tlgUserId", (long)arb.TlgAgent.UserId },
-                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
-                { "@mode", (int)arb.TlgAgent.Mode }
+                { "@token", tarb.Role.Token },
+                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
+                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
+                { "@mode", (int)tarb.TlgAgent.Mode }
             };
 
             if (newStatus != DbRecordStatus.Active)

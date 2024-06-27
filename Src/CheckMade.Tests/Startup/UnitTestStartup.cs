@@ -85,11 +85,11 @@ public class UnitTestStartup : TestStartupBase
         var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
 
         mockTlgAgentRoleRepo
-            .Setup(arb => arb.GetAllAsync())
+            .Setup(tarb => tarb.GetAllAsync())
             .ReturnsAsync(GetTestingTlgAgentRoleBindings());
 
         mockTlgAgentRoleRepo
-            .Setup(arb => arb.GetAllActiveAsync())
+            .Setup(tarb => tarb.GetAllActiveAsync())
             .ReturnsAsync(GetTestingTlgAgentRoleBindings().Where(tarb => tarb.Status == DbRecordStatus.Active));
 
         Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);

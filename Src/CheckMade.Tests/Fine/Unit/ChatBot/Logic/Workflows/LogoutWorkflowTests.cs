@@ -55,7 +55,7 @@ public class LogoutWorkflowTests
         const string expectedMessage = "💨 Logged out.";
         var expectedBindUpdated = 
             (await mockRoleBindingsRepo.Object.GetAllActiveAsync())
-            .First(arb => arb.TlgAgent == tlgAgent);
+            .First(tarb => tarb.TlgAgent == tlgAgent);
         
         // Just confirming consistency of internal TestData / TestUtils
         Assert.Equivalent(
@@ -131,10 +131,10 @@ public class LogoutWorkflowTests
         
         var expectedBindingsUpdated = 
             (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
-            .Where(arb => 
-                arb.TlgAgent.UserId == tlgAgentOperations.UserId &&
-                arb.TlgAgent.ChatId == tlgAgentOperations.ChatId &&
-                arb.Role == boundRole)
+            .Where(tarb => 
+                tarb.TlgAgent.UserId == tlgAgentOperations.UserId &&
+                tarb.TlgAgent.ChatId == tlgAgentOperations.ChatId &&
+                tarb.Role == boundRole)
             .ToImmutableReadOnlyList();
         
         var actualTlgAgentRoleBindingsUpdated = new List<TlgAgentRoleBind>();
@@ -145,7 +145,7 @@ public class LogoutWorkflowTests
                 (tlgAgentRoleBinds, newStatus) => 
                 {
                     actualTlgAgentRoleBindingsUpdated = tlgAgentRoleBinds
-                        .Select(arb => arb with
+                        .Select(tarb => tarb with
                         {
                             DeactivationDate = DateTime.UtcNow,
                             Status = newStatus

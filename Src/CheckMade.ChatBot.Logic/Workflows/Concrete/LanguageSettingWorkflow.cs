@@ -85,7 +85,7 @@ internal class LanguageSettingWorkflow(
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
         var currentUser = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
+            .First(tarb => tarb.TlgAgent == newLanguageInput.TlgAgent)
             .Role.User;
 
         await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);

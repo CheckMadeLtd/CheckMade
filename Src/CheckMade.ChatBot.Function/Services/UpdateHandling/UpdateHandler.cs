@@ -130,10 +130,10 @@ public class UpdateHandler(
         InteractionMode currentMode)
     {
         var tlgAgentRole = activeRoleBindings
-            .FirstOrDefault(arb =>
-                arb.TlgAgent.UserId.Id == currentUserId &&
-                arb.TlgAgent.ChatId.Id == currentChatId &&
-                arb.TlgAgent.Mode == currentMode);
+            .FirstOrDefault(tarb =>
+                tarb.TlgAgent.UserId.Id == currentUserId &&
+                tarb.TlgAgent.ChatId.Id == currentChatId &&
+                tarb.TlgAgent.Mode == currentMode);
 
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.User.Language 

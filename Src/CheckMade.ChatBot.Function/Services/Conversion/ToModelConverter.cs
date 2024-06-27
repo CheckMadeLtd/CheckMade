@@ -215,10 +215,10 @@ internal class ToModelConverter(
     private async Task<Result<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
     {
         var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
-            .FirstOrDefault(arb =>
-                arb.TlgAgent.UserId == update.Message.From?.Id &&
-                arb.TlgAgent.ChatId == update.Message.Chat.Id &&
-                arb.TlgAgent.Mode == mode)?
+            .FirstOrDefault(tarb =>
+                tarb.TlgAgent.UserId == update.Message.From?.Id &&
+                tarb.TlgAgent.ChatId == update.Message.Chat.Id &&
+                tarb.TlgAgent.Mode == mode)?
             .Role;
 
         return Result<Option<Role>>.FromSuccess(originatorRole ?? Option<Role>.None());
