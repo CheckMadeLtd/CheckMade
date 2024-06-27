@@ -120,6 +120,10 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         return _cache.GetValueOrThrow();
     }
 
+    public async Task<IEnumerable<TlgAgentRoleBind>> GetAllActiveAsync() =>
+        (await GetAllAsync())
+        .Where(arb => arb.Status == DbRecordStatus.Active);
+
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
         await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
 

@@ -239,7 +239,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesTlgAgentRolesForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetNextOutputAsync_CreatesRoleBindingsForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -300,7 +300,7 @@ public class UserAuthWorkflowTests
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_CreatesTlgAgentRolesForMissingMode_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetNextOutputAsync_CreatesRoleBindingsForMissingModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
@@ -338,12 +338,12 @@ public class UserAuthWorkflowTests
                 Option<DateTime>.None()),
         };
 
-        var actualTlgAgentRoleBindings = new List<TlgAgentRoleBind>();
+        var actualTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>();
         mockTlgAgentRoleBindingsRepo
             .Setup(x =>
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
-                tlgAgentRoles => actualTlgAgentRoleBindings = tlgAgentRoles.ToList());
+                tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
@@ -356,13 +356,13 @@ public class UserAuthWorkflowTests
         {
             Assert.Equivalent(
                 expectedTlgAgentRoleBindingsAdded[i].TlgAgent,
-                actualTlgAgentRoleBindings[i].TlgAgent);
+                actualTlgAgentRoleBindingsAdded[i].TlgAgent);
             Assert.Equivalent(
                 expectedTlgAgentRoleBindingsAdded[i].Role, 
-                actualTlgAgentRoleBindings[i].Role);
+                actualTlgAgentRoleBindingsAdded[i].Role);
             Assert.Equivalent(
                 expectedTlgAgentRoleBindingsAdded[i].Status,
-                actualTlgAgentRoleBindings[i].Status);
+                actualTlgAgentRoleBindingsAdded[i].Status);
         }
     }
     

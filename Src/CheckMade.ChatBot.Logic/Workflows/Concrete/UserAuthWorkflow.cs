@@ -86,8 +86,6 @@ internal class UserAuthWorkflow(
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
         var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingTlgAgentRoles = 
-            (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();
         
         var outputs = new List<OutputDto>();
         
@@ -96,6 +94,10 @@ internal class UserAuthWorkflow(
             tokenInputAttempt.TlgAgent with { Mode = originatingMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
+        
+        var preExistingTlgAgentRoles = 
+            (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())
+            .ToImmutableReadOnlyCollection();
         
         var preExistingActiveTlgAgentRole = FirstOrDefaultPreExistingActiveTlgAgentRoleMode(originatingMode);
 
@@ -145,8 +147,7 @@ internal class UserAuthWorkflow(
         TlgAgentRoleBind? FirstOrDefaultPreExistingActiveTlgAgentRoleMode(InteractionMode mode) =>
         preExistingTlgAgentRoles.FirstOrDefault(arb => 
             arb.Role.Token == inputText &&
-            arb.TlgAgent.Mode == mode && 
-            arb.Status == DbRecordStatus.Active);
+            arb.TlgAgent.Mode == mode);
 
         void AddTlgAgentRolesForOtherNonOriginatingAndVirginModes()
         {

@@ -5,6 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup.DefaultMocks;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
 using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
@@ -86,6 +87,10 @@ public class UnitTestStartup : TestStartupBase
         mockTlgAgentRoleRepo
             .Setup(arb => arb.GetAllAsync())
             .ReturnsAsync(GetTestingTlgAgentRoleBindings());
+
+        mockTlgAgentRoleRepo
+            .Setup(arb => arb.GetAllActiveAsync())
+            .ReturnsAsync(GetTestingTlgAgentRoleBindings().Where(tarb => tarb.Status == DbRecordStatus.Active));
 
         Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
         Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);

@@ -5,7 +5,6 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types;
 
@@ -18,7 +17,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgAgentRoleBind> tlgAgentRoles,
+            IEnumerable<TlgAgentRoleBind> activeRoleBindings,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
@@ -45,11 +44,10 @@ internal static class OutputSender
                  broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
                  mapped to a TlgAgent !! */
                 var outputChatId = output.LogicalPort.Match(
-                    logicalPort => tlgAgentRoles
+                    logicalPort => activeRoleBindings
                         .First(arb => 
                             arb.Role == logicalPort.Role &&
-                            arb.TlgAgent.Mode == outputMode &&
-                            arb.Status == DbRecordStatus.Active)
+                            arb.TlgAgent.Mode == outputMode)
                         .TlgAgent.ChatId.Id,
                     () => currentlyReceivingChatId);
                     

@@ -54,10 +54,8 @@ public class LogoutWorkflowTests
         
         const string expectedMessage = "💨 Logged out.";
         var expectedBindUpdated = 
-            (await mockRoleBindingsRepo.Object.GetAllAsync())
-            .First(arb => 
-                arb.TlgAgent == tlgAgent && 
-                arb.Status == DbRecordStatus.Active);
+            (await mockRoleBindingsRepo.Object.GetAllActiveAsync())
+            .First(arb => arb.TlgAgent == tlgAgent);
         
         // Just confirming consistency of internal TestData / TestUtils
         Assert.Equivalent(
@@ -107,7 +105,7 @@ public class LogoutWorkflowTests
         var mockTlgAgentRoleBindingsForAllModes = new Mock<ITlgAgentRoleBindingsRepository>();
         
         mockTlgAgentRoleBindingsForAllModes
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(repo => repo.GetAllActiveAsync())
             .ReturnsAsync(new List<TlgAgentRoleBind>
             {
                 // Relevant
@@ -132,12 +130,11 @@ public class LogoutWorkflowTests
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         
         var expectedBindingsUpdated = 
-            (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllAsync())
+            (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
             .Where(arb => 
                 arb.TlgAgent.UserId == tlgAgentOperations.UserId &&
                 arb.TlgAgent.ChatId == tlgAgentOperations.ChatId &&
-                arb.Role == boundRole && 
-                arb.Status == DbRecordStatus.Active)
+                arb.Role == boundRole)
             .ToImmutableReadOnlyList();
         
         var actualTlgAgentRoleBindingsUpdated = new List<TlgAgentRoleBind>();

@@ -34,12 +34,11 @@ public class ToModelConverterTests
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var update = basics.utils.GetValidTelegramTextMessage(textInput);
         var roleBindings = 
-            (await basics.agentRoleBindingsRepo.GetAllAsync())
+            (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
             .ToImmutableReadOnlyCollection();
         
-        var boundRole = roleBindings.FirstOrDefault(arb => 
-                arb.TlgAgent == tlgAgent && 
-                arb.Status == DbRecordStatus.Active)?
+        var boundRole = roleBindings
+            .FirstOrDefault(arb => arb.TlgAgent == tlgAgent)?
             .Role;
         
         // just confirming consistency of my internal TestData / TestUtils setup
@@ -78,12 +77,11 @@ public class ToModelConverterTests
             tlgAgent.UserId,
             tlgAgent.ChatId);
         var agentRoleBindings = 
-            (await basics.agentRoleBindingsRepo.GetAllAsync())
+            (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
             .ToImmutableReadOnlyCollection();
         
-        var boundRole = agentRoleBindings.FirstOrDefault(arb => 
-                arb.TlgAgent == tlgAgent && 
-                arb.Status == DbRecordStatus.Active)?
+        var boundRole = agentRoleBindings
+            .FirstOrDefault(arb => arb.TlgAgent == tlgAgent)?
             .Role;
 
         // just confirming consistency of my internal TestData / TestUtils setup

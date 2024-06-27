@@ -84,10 +84,8 @@ internal class LanguageSettingWorkflow(
             throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
-        var currentUser = (await roleBindingsRepo.GetAllAsync())
-            .First(arb => 
-                arb.TlgAgent == newLanguageInput.TlgAgent &&
-                arb.Status == DbRecordStatus.Active)
+        var currentUser = (await roleBindingsRepo.GetAllActiveAsync())
+            .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
             .Role.User;
 
         await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
