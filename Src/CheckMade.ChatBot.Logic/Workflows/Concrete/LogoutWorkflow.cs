@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILogoutWorkflow : IWorkflow
 {
-    LogoutWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
+    LogoutWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LogoutWorkflow(
@@ -17,19 +17,20 @@ internal class LogoutWorkflow(
         ILogicUtils logicUtils) 
     : ILogoutWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(history) == States.LogoutConfirmed;
+        return DetermineCurrentState(inputHistory) == States.LogoutConfirmed;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput currentInput)
     {
-        var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
+        var workflowInputHistory = 
+            await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent == tlgInput.TlgAgent);
+            .First(tarb => tarb.TlgAgent == currentInput.TlgAgent);
 
-        return DetermineCurrentState(recentHistory) switch
+        return DetermineCurrentState(workflowInputHistory) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -64,9 +65,9 @@ internal class LogoutWorkflow(
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
     {
-        var lastInput = history.Last();
+        var lastInput = workflowInputHistory.Last();
 
         if (lastInput.InputType == TlgInputType.CallbackQuery)
         {

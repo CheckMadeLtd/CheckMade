@@ -74,7 +74,7 @@ public class UserAuthWorkflowTests
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
         var relevantHistory = 
-            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
         
         var actualState = workflow.DetermineCurrentState(relevantHistory);
         

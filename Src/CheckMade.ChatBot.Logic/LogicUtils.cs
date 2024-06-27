@@ -10,11 +10,12 @@ internal interface ILogicUtils
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
 
-    Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent);
-    Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetInputsSinceLastBotCommand(TlgAgent tlgAgent);
     
     public static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
-        inputs.LastOrDefault(i => i.Details.BotCommandEnumCode.IsSome)
+        inputs.LastOrDefault(i => 
+            i.Details.BotCommandEnumCode.IsSome) 
         ?? Option<TlgInput>.None();
 }
 
@@ -23,33 +24,32 @@ internal class LogicUtils(
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     : ILogicUtils
 {
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllInputsOfTlgAgentInCurrentRoleAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
     {
-        // We take this roundabout way to include inputs from currently unauthenticated users
+        // This is designed to ensure that inputs from new, currently unauthenticated users are included
         
-        var lastPreviousTlgAgentRole = (await tlgAgentRoleBindingsRepo.GetAllAsync())
+        var lastExpiredRoleBind = (await tlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(tarb =>
                 tarb.TlgAgent == tlgAgent &&
                 tarb.DeactivationDate.IsSome)
             .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
 
-        var dateOfLastDeactivationForCutOff = lastPreviousTlgAgentRole != null
-            ? lastPreviousTlgAgentRole.DeactivationDate.GetValueOrThrow()
+        var cutOffDate = lastExpiredRoleBind != null
+            ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
         return (await inputsRepo.GetAllAsync(tlgAgent))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
-                dateOfLastDeactivationForCutOff.ToUniversalTime())
+                cutOffDate.ToUniversalTime())
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInputsForCurrentWorkflow(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInputsSinceLastBotCommand(TlgAgent tlgAgent)
     {
-        var allInputsOfTlgAgent = 
-            await GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgAgent);
+        var currentRoleInputs = await GetAllCurrentInputsAsync(tlgAgent);
 
-        return allInputsOfTlgAgent
+        return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
             .ToImmutableReadOnlyCollection();
     }

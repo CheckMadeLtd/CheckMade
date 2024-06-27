@@ -7,7 +7,7 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory);
+    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
 internal class WorkflowIdentifier(
@@ -16,15 +16,15 @@ internal class WorkflowIdentifier(
         ILogoutWorkflow logoutWorkflow) 
     : IWorkflowIdentifier
 {
-    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> recentHistory)
+    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        if (!IsUserAuthenticated(recentHistory))
+        if (!IsUserAuthenticated(inputHistory))
             return Option<IWorkflow>.Some(userAuthWorkflow);
 
-        return ILogicUtils.GetLastBotCommand(recentHistory).Match(
+        return ILogicUtils.GetLastBotCommand(inputHistory).Match(
             cmd => cmd.Details.BotCommandEnumCode.GetValueOrThrow() switch
             {
-                // the settings & logout  BotCommand codes are the same across all InteractionModes
+                // the settings & logout  BotCommand codes mirror Operations Mode in all InteractionModes
                 (int)OperationsBotCommands.Settings => Option<IWorkflow>.Some(languageSettingWorkflow),
                 (int)OperationsBotCommands.Logout => Option<IWorkflow>.Some(logoutWorkflow),
                 
@@ -33,7 +33,7 @@ internal class WorkflowIdentifier(
             Option<IWorkflow>.None);
     }
 
-    private static bool IsUserAuthenticated(IReadOnlyCollection<TlgInput> recentHistory) => 
-        recentHistory.Count != 0 && 
-        recentHistory.Last().OriginatorRole.IsSome;
+    private static bool IsUserAuthenticated(IReadOnlyCollection<TlgInput> inputHistory) => 
+        inputHistory.Count != 0 && 
+        inputHistory.Last().OriginatorRole.IsSome;
 }
