@@ -4,9 +4,9 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Utils.Generic;
-using static CheckMade.Tests.TestOriginatorRoleSetting;
+using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
-namespace CheckMade.Tests;
+namespace CheckMade.Tests.Utils;
 
 internal interface ITlgInputGenerator
 {

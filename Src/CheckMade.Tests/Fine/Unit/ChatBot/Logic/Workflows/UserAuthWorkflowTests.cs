@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
+using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;

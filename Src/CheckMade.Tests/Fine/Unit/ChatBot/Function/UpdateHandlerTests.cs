@@ -10,6 +10,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
+using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -17,7 +18,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
-using static CheckMade.Tests.TestUtils;
+using static CheckMade.Tests.Utils.TestUtils;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 

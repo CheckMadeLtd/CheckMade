@@ -1,10 +1,10 @@
-using CheckMade.Common.Utils.Generic;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.Common.Utils.Generic;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;
 
-namespace CheckMade.Tests;
+namespace CheckMade.Tests.Utils;
 
 internal interface ITelegramUpdateGenerator
 {

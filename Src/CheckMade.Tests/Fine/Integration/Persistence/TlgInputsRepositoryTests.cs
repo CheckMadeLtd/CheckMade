@@ -6,6 +6,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Persistence;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
+using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 

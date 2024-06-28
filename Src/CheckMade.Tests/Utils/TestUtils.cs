@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.ChatBot.Output;
 
-namespace CheckMade.Tests;
+namespace CheckMade.Tests.Utils;
 
 internal static class TestUtils
 {

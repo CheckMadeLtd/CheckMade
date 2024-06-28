@@ -11,6 +11,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
+using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;

@@ -8,7 +8,7 @@ using User = CheckMade.Common.Model.Core.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 
-namespace CheckMade.Tests;
+namespace CheckMade.Tests.Utils;
 
 internal static class TestData
 {
