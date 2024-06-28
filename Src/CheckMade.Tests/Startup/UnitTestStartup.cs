@@ -1,14 +1,7 @@
-using System.Collections.Immutable;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.ChatBot.Function.Services.BotClient;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup.DefaultMocks;
-using CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
-using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -28,7 +21,7 @@ public class UnitTestStartup : TestStartupBase
     {
         RegisterBotClientMocks();
         RegisterExternalServicesMocks();
-        RegisterPersistenceMocks();
+        // RegisterPersistenceMocks();
     }
 
     private void RegisterBotClientMocks()
@@ -69,50 +62,50 @@ public class UnitTestStartup : TestStartupBase
         Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
     }
 
-    private void RegisterPersistenceMocks()
-    {
-        Services.AddScoped<ITlgInputsRepository, MockTlgInputsRepository>(_ => 
-            new MockTlgInputsRepository(new Mock<ITlgInputsRepository>()));
+    // private void RegisterPersistenceMocks()
+    // {
+    //     Services.AddScoped<ITlgInputsRepository, MockTlgInputsRepository>(_ => 
+    //         new MockTlgInputsRepository(new Mock<ITlgInputsRepository>()));
+    //     
+    //     Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
+    //     
+    //     Services.AddScoped<IRolesRepository, MockRolesRepository>();
+    //     
+    //     var mockUserRepo = new Mock<IUsersRepository>();
+    //     Services.AddScoped<IUsersRepository>(_ => mockUserRepo.Object);
+    //     Services.AddScoped<Mock<IUsersRepository>>(_ => mockUserRepo);
+    //     
+    //     var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+    //     
+    //     mockTlgAgentRoleRepo
+    //         .Setup(tarb => tarb.GetAllAsync())
+    //         .ReturnsAsync(GetTestingTlgAgentRoleBindings());
+    //     
+    //     mockTlgAgentRoleRepo
+    //         .Setup(tarb => tarb.GetAllActiveAsync())
+    //         .ReturnsAsync(GetTestingTlgAgentRoleBindings().Where(tarb => tarb.Status == DbRecordStatus.Active));
+    //
+    //     Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
+    //     Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
+    // }
 
-        Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
-        
-        Services.AddScoped<IRolesRepository, MockRolesRepository>();
-
-        var mockUserRepo = new Mock<IUsersRepository>();
-        Services.AddScoped<IUsersRepository>(_ => mockUserRepo.Object);
-        Services.AddScoped<Mock<IUsersRepository>>(_ => mockUserRepo);
-        
-        var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
-
-        mockTlgAgentRoleRepo
-            .Setup(tarb => tarb.GetAllAsync())
-            .ReturnsAsync(GetTestingTlgAgentRoleBindings());
-
-        mockTlgAgentRoleRepo
-            .Setup(tarb => tarb.GetAllActiveAsync())
-            .ReturnsAsync(GetTestingTlgAgentRoleBindings().Where(tarb => tarb.Status == DbRecordStatus.Active));
-
-        Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
-    }
-
-    private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoleBindings()
-    {
-        var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
-        
-        builder.Add(RoleBindFor_SanitaryOpsAdmin_Default);
-        
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode);
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode);
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode);
-        
-        builder.Add(RoleBindFor_SanitaryOpsEngineer1_HistoricOnly);
-        builder.Add(RoleBindFor_SanitaryOpsCleanLead1_German);
-        builder.Add(RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode);
-        
-        builder.Add(RoleBindFor_SanitaryOpsObserver1);
-        builder.Add(RoleBindFor_SanitaryOpsCleanLead2);
-        
-        return builder.ToImmutable();
-    }
+    // private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoleBindings()
+    // {
+    //     var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
+    //     
+    //     builder.Add(RoleBindFor_SanitaryOpsAdmin_Default);
+    //     
+    //     builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode);
+    //     builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode);
+    //     builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode);
+    //     
+    //     builder.Add(RoleBindFor_SanitaryOpsEngineer1_HistoricOnly);
+    //     builder.Add(RoleBindFor_SanitaryOpsCleanLead1_German);
+    //     builder.Add(RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode);
+    //     
+    //     builder.Add(RoleBindFor_SanitaryOpsObserver1);
+    //     builder.Add(RoleBindFor_SanitaryOpsCleanLead2);
+    //     
+    //     return builder.ToImmutable();
+    // }
 }

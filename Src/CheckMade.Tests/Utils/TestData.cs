@@ -2,7 +2,6 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Core.RoleType;
 using User = CheckMade.Common.Model.Core.User;
 // ReSharper disable MemberCanBePrivate.Global
@@ -221,7 +220,7 @@ internal static class TestData
     
     #endregion
 
-    #region TlgAgentRoleBindingsSetup ##################################################################################
+    // #region TlgAgentRoleBindingsSetup ##################################################################################
 
     // internal static readonly TlgAgentRoleBind RoleBindFor_IntegrationTests_Role_Default =
     //     new(
@@ -286,7 +285,7 @@ internal static class TestData
     //         SOpsCleanLead_DanielEn_X2024,
     //         new TlgAgent(UserId03, ChatId07, Operations),
     //         DateTime.UtcNow, Option<DateTime>.None());
-
-    #endregion
+    //
+    // #endregion
 }
 

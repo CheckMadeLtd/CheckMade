@@ -186,11 +186,11 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
                     Option<ILiveEventInfo>.None()),
             
             UnitTestDefault =>
-                (SanitaryOpsAdmin_AtMockParooka2024_Default: SOpsAdmin_DanielEn_X2024,
+                (SOpsAdmin_DanielEn_X2024,
                     Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent)),
             
             IntegrationTestDefault =>
-                (IntegrationTests_Role_Default: IntegrationTests_SOpsInspector_DanielEn_X2024, 
+                (IntegrationTests_SOpsInspector_DanielEn_X2024, 
                     Option<ILiveEventInfo>.Some(IntegrationTests_SOpsInspector_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
