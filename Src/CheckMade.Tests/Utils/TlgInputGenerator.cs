@@ -10,8 +10,6 @@ namespace CheckMade.Tests.Utils;
 
 internal interface ITlgInputGenerator
 {
-    Randomizer Randomizer { get; }
-    
     TlgInput GetValidTlgInputTextMessage(
         long userId = TestUserAndChatId01_PrivateChat_Default, 
         long chatId = TestUserAndChatId01_PrivateChat_Default, 
