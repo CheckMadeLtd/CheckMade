@@ -20,13 +20,13 @@ public class InputProcessorTests
     public async Task ProcessInputAsync_WelcomesAndPromptsAuthentication_ForStartCommandOfUnauthenticatedUser()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
         var tlgAgent = TlgAgent_HasOnly_HistoricRoleBind;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var startCommand = utils.GetValidTlgInputCommandMessage(
+        var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
             TlgAgent_HasOnly_HistoricRoleBind.Mode,
             TlgStart.CommandCode,
             TlgAgent_HasOnly_HistoricRoleBind.UserId,
@@ -63,7 +63,7 @@ public class InputProcessorTests
     public async Task ProcessInputAsync_ReturnsWarning_ForCallbackQuery_ToOutOfScopeInlineKeyboardButtonClick()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
         var tlgAgent = TlgAgent_PrivateChat_Default;
@@ -71,21 +71,21 @@ public class InputProcessorTests
 
         // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
         var outOfScopeCallbackQuery =
-            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), 
+            inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), 
                 messageId: 4);
         
         mockTlgInputsRepo
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode, 
                     (int)OperationsBotCommands.Settings, 
                     messageId: 2),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de), 
                     messageId: 4),
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.NewIssue, 
                     messageId: 6),
@@ -111,14 +111,14 @@ public class InputProcessorTests
     public async Task ProcessInputAsync_PrefixesWarning_WhenUserInterruptedPreviousWorkflow_WithNewBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var interruptingBotCommandInput =
-            utils.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
                 (int)OperationsBotCommands.NewIssue); 
         
@@ -127,13 +127,13 @@ public class InputProcessorTests
             .ReturnsAsync(new List<TlgInput>
             {
                 // Decoys
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
                 interruptingBotCommandInput
@@ -158,14 +158,14 @@ public class InputProcessorTests
     public async Task? ProcessInputAsync_NoWarning_ForNewBotCommand_WhenUserCompletedPreviousWorkflow()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var notInterruptingBotCommandInput =
-            utils.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
                 (int)OperationsBotCommands.NewIssue); 
         
@@ -173,10 +173,10 @@ public class InputProcessorTests
             .Setup(x => x.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode, 
                     (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 notInterruptingBotCommandInput
             });

@@ -27,14 +27,14 @@ public class LanguageSettingWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
         {
-            utils.GetValidTlgInputTextMessage(),
-            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
+            inputGenerator.GetValidTlgInputTextMessage(),
+            inputGenerator.GetValidTlgInputCommandMessage(tlgAgent.Mode, botCommand)
         };
         
         mockTlgInputsRepo
@@ -57,15 +57,15 @@ public class LanguageSettingWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
         {
-            utils.GetValidTlgInputTextMessage(),
-            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
-            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de))
+            inputGenerator.GetValidTlgInputTextMessage(),
+            inputGenerator.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+            inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de))
         };
         
         mockTlgInputsRepo
@@ -89,15 +89,15 @@ public class LanguageSettingWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
         {
-            utils.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
-            utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-            utils.GetValidTlgInputTextMessage()
+            inputGenerator.GetValidTlgInputCommandMessage(tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+            inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+            inputGenerator.GetValidTlgInputTextMessage()
         }; 
         
         mockTlgInputsRepo
@@ -121,11 +121,11 @@ public class LanguageSettingWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
+        var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(
             Operations,
             (int)OperationsBotCommands.Settings); 
         
@@ -133,7 +133,7 @@ public class LanguageSettingWorkflowTests
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow"),
+                inputGenerator.GetValidTlgInputTextMessage(text: "random other irrelevant to workflow"),
                 inputSettingsCommand
             });
 
@@ -157,23 +157,23 @@ public class LanguageSettingWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var inputSettingsCommand = utils.GetValidTlgInputCommandMessage(
+        var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.Settings); 
-        var languageSettingInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(
+        var languageSettingInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
             Dt(languageCode));
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgent))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
+                inputGenerator.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
                 inputSettingsCommand,
-                utils.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
+                inputGenerator.GetValidTlgInputTextMessage(text: "random decoy irrelevant to workflow"),
                 languageSettingInput
             });
 

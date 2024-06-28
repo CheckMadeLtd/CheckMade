@@ -23,11 +23,11 @@ public class LogoutWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+        var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
         mockTlgInputsRepo
@@ -35,13 +35,13 @@ public class LogoutWorkflowTests
             .ReturnsAsync(new List<TlgInput>
             {
                 // Decoys
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     Operations, 
                     (int)OperationsBotCommands.Logout),
                 confirmLogoutCommand
@@ -81,7 +81,7 @@ public class LogoutWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         
         var tlgAgentOperations = TlgAgent_PrivateChat_Default;
         var tlgAgentComms = TlgAgent_PrivateChat_CommunicationsMode;
@@ -89,14 +89,14 @@ public class LogoutWorkflowTests
         var boundRole = SanitaryOpsEngineer1; 
         
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-        var confirmLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+        var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(tlgAgentOperations))
             .ReturnsAsync(new List<TlgInput>
             {
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     Operations, 
                     (int)OperationsBotCommands.Logout),
                 confirmLogoutCommand
@@ -173,11 +173,11 @@ public class LogoutWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = TlgAgent_PrivateChat_Default;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
-        var abortLogoutCommand = utils.GetValidTlgInputCallbackQueryForControlPrompts(
+        var abortLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.No);
 
         mockTlgInputsRepo
@@ -185,13 +185,13 @@ public class LogoutWorkflowTests
             .ReturnsAsync(new List<TlgInput>
             {
                 // Decoys
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Settings),
-                utils.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                utils.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Logout),
                 abortLogoutCommand

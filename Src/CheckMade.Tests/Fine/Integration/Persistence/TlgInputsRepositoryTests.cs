@@ -19,14 +19,14 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_IndividualInputs_WhenAllInputsValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
         foreach (var input in tlgInputs)
@@ -57,10 +57,10 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_DomainTerm_ViaCustomJsonSerialization_WhenInputHasValidDomainTerm()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         
         var expectedDomainTerm = Dt(LanguageCode.de);
-        var tlgInput = utils.GetValidTlgInputCallbackQueryForDomainTerm(expectedDomainTerm);
+        var tlgInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(expectedDomainTerm);
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
@@ -76,12 +76,12 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_GeoLocation_ViaCustomJsonSerialization_WhenInputHasValidGeo()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var expectedGeo = new Geo(17.456, -23.00987, 15.7f);
         
-        var tlgInput = utils.GetValidTlgInputLocationMessage(
+        var tlgInput = inputGenerator.GetValidTlgInputLocationMessage(
             expectedGeo.Latitude, 
             expectedGeo.Longitude,
             expectedGeo.UncertaintyRadiusInMeters);
@@ -99,14 +99,14 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturnsInBulk_MultipleValidInputs()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgInputs = new[]
         {
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            utils.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
         };
         
         await inputRepo.AddAsync(tlgInputs);
@@ -120,11 +120,11 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITestUtils>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgAgent = new TlgAgent(
-            utils.Randomizer.GenerateRandomLong(),
+            inputGenerator.Randomizer.GenerateRandomLong(),
             TestUserAndChatId01_PrivateChat_Default,
             Operations);
     

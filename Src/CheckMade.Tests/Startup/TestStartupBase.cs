@@ -49,6 +49,9 @@ public abstract class TestStartupBase
         });
         
         Services.AddSingleton<ITestUtils, TestUtils>();
+        Services.AddSingleton<ITlgInputGenerator, TlgInputGenerator>();
+        
+        
         Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         Services.RegisterChatBotFunctionUpdateHandlingServices();

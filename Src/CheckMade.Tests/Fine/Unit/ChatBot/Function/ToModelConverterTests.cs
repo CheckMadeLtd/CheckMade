@@ -50,7 +50,7 @@ public class ToModelConverterTests
             SanitaryOpsAdmin_AtMockParooka2024_Default,
             Option<ILiveEventInfo>.Some(
                 SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent),
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
                 update.Message.Text));
@@ -92,7 +92,7 @@ public class ToModelConverterTests
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
                 update.Message.Text));
@@ -136,7 +136,7 @@ public class ToModelConverterTests
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             Option<ILiveEventInfo>.Some(
                 SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent), 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
                 attachmentUpdate.Message.Caption,
@@ -177,7 +177,7 @@ public class ToModelConverterTests
                 TlgInputType.Location,
                 SanitaryOpsAdmin_AtMockParooka2024_Default, 
                 MockParooka2024, 
-                TestUtils.CreateFromRelevantDetails(
+                TlgInputGenerator.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
                     geoCoordinates: expectedGeoCoordinates));
@@ -212,7 +212,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             MockParooka2024, 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
@@ -247,7 +247,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             MockParooka2024, 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
@@ -282,7 +282,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             MockParooka2024, 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
                 commandText,
@@ -315,7 +315,7 @@ public class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             MockParooka2024, 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",
@@ -346,7 +346,7 @@ public class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             MockParooka2024, 
-            TestUtils.CreateFromRelevantDetails(
+            TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
                 "The bot's original prompt",

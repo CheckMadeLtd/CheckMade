@@ -17,11 +17,11 @@ public class WorkflowIdentifierTests
     public void Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var tlgAgentWithoutRole = TlgAgent_HasOnly_HistoricRoleBind;
-        var inputFromUnauthenticatedUser = utils.GetValidTlgInputTextMessage(
+        var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
     
@@ -36,10 +36,10 @@ public class WorkflowIdentifierTests
     public void Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithSettingsBotCommand = utils.GetValidTlgInputCommandMessage(
+        var inputWithSettingsBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.Settings);
         
@@ -54,17 +54,17 @@ public class WorkflowIdentifierTests
     public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var workflow = workflowIdentifier
             .Identify(new List<TlgInput>
                 {
-                    utils.GetValidTlgInputTextMessage(),
-                    utils.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
+                    inputGenerator.GetValidTlgInputTextMessage(),
+                    inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
                     // This could be in response to an out-of-scope message in the history e.g. in another Role!
-                    utils.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-                    utils.GetValidTlgInputTextMessage()
+                    inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                    inputGenerator.GetValidTlgInputTextMessage()
                 });
         
         Assert.True(workflow.IsNone);
