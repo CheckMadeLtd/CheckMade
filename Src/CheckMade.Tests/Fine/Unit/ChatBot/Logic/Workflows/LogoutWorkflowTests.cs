@@ -25,7 +25,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
@@ -84,10 +84,10 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         
-        var tlgAgentOperations = TlgAgent_PrivateChat_Default;
-        var tlgAgentComms = TlgAgent_PrivateChat_CommunicationsMode;
-        var tlgAgentNotif = TlgAgent_PrivateChat_NotificationsMode;
-        var boundRole = SanitaryOpsEngineer1; 
+        var tlgAgentOperations = PrivateBotChat_Operations;
+        var tlgAgentComms = PrivateBotChat_Communications;
+        var tlgAgentNotif = PrivateBotChat_Notifications;
+        var boundRole = SOpsEngineer_DanielEn_X2024; 
         
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
@@ -119,9 +119,9 @@ public class LogoutWorkflowTests
                 // Decoys
                 new(boundRole, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None(), DbRecordStatus.SoftDeleted),
-                new(SanitaryOpsCleanLead1_German, tlgAgentOperations,
+                new(SOpsCleanLead_DanielDe_X2024, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None()),
-                new(boundRole, new TlgAgent(TestUserId02, TestChatId04, Communications),
+                new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTime.UtcNow, Option<DateTime>.None())
             });
         
@@ -175,7 +175,7 @@ public class LogoutWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var abortLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(

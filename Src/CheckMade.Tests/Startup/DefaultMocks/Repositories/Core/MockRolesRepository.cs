@@ -11,15 +11,15 @@ internal class MockRolesRepository : IRolesRepository
         var builder = ImmutableArray.CreateBuilder<Role>();
         
         builder.AddRange(
-            SanitaryOpsAdmin_AtMockParooka2024_Default,
-            SanitaryOpsInspector1_HasRoleBindings_ForAllModes,
-            SanitaryOpsEngineer1,
-            SanitaryOpsCleanLead1_German,
-            SanitaryOpsObserver1,
+            SOpsAdmin_DanielEn_X2024,
+            SOpsInspector_DanielEn_X2024,
+            SOpsEngineer_DanielEn_X2024,
+            SOpsCleanLead_DanielDe_X2024,
+            SOpsObserver_DanielEn_X2024,
             
-            SanitaryOpsInspector2_HasNoBindings_German,
-            SanitaryOpsEngineer2_HasBindOnlyIn_CommunicationsMode,
-            SanitaryOpsCleanLead2,
+            SOpsInspector_DanielDe_X2024,
+            SOpsEngineer_DanielEn_X2024,
+            SOpsCleanLead_DanielEn_X2024,
             SanitaryOpsObserver2);
         
         return Task.FromResult<IEnumerable<Role>>(builder.ToImmutable());

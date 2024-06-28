@@ -66,9 +66,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default))
+            (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
             .First();
-        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
+        await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
         Assert.Equivalent(expectedDomainTerm, retrievedInput.Details.DomainTerm.GetValueOrThrow());
     }
@@ -89,9 +89,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         await inputRepo.AddAsync(tlgInput);
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default))
+            (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
             .First();
-        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
+        await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
         Assert.Equivalent(expectedGeo, retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
     }
@@ -111,8 +111,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         };
         
         await inputRepo.AddAsync(tlgInputs);
-        var retrievedInputs = await inputRepo.GetAllAsync(TlgAgent_PrivateChat_Default);
-        await inputRepo.HardDeleteAllAsync(TlgAgent_PrivateChat_Default);
+        var retrievedInputs = await inputRepo.GetAllAsync(PrivateBotChat_Operations);
+        await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
 
         Assert.Equivalent(tlgInputs, retrievedInputs);
     }
@@ -126,7 +126,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgAgent = new TlgAgent(
             inputGenerator.Randomizer.GenerateRandomLong(),
-            TestUserAndChatId01_PrivateChat_Default,
+            Default_UserAndChatId_PrivateBotChat,
             Operations);
     
         var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
@@ -139,8 +139,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     // [Theory(Skip = "Waiting to migrate the old DB data")]
     // [Theory(Skip = "Running tests from unknown IP / internet")]
     [Theory]
-    [InlineData(TestUser_DanielGorin_TelegramId, false)]
-    [InlineData(TestUser_DanielGorin_TelegramId, true)]
+    [InlineData(RealTestUser_DanielGorin_TelegramId, false)]
+    [InlineData(RealTestUser_DanielGorin_TelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
         TlgUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {

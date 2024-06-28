@@ -32,7 +32,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         var roleBindings = 
             (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
@@ -43,14 +43,14 @@ public class ToModelConverterTests
             .Role;
         
         // just confirming consistency of my internal TestData / TestUtils setup
-        Assert.Equivalent(boundRole, SanitaryOpsAdmin_AtMockParooka2024_Default);
+        Assert.Equivalent(boundRole, SOpsAdmin_DanielEn_X2024);
 
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
-            SanitaryOpsAdmin_AtMockParooka2024_Default,
+            SOpsAdmin_DanielEn_X2024,
             Option<ILiveEventInfo>.Some(
-                SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent),
+                SOpsAdmin_DanielEn_X2024.AtLiveEvent),
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -72,7 +72,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var tlgAgent = TlgAgent_HasOnly_HistoricRoleBind;
+        var tlgAgent = UserId02_ChatId03_Operations;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(
             "valid text",
             tlgAgent.UserId,
@@ -132,11 +132,11 @@ public class ToModelConverterTests
             $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_Default,
+            PrivateBotChat_Operations,
             TlgInputType.AttachmentMessage,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
+            SOpsAdmin_DanielEn_X2024, 
             Option<ILiveEventInfo>.Some(
-                SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent), 
+                SOpsAdmin_DanielEn_X2024.AtLiveEvent), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
@@ -148,7 +148,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 attachmentUpdate, 
-                TlgAgent_PrivateChat_Default.Mode);
+                PrivateBotChat_Operations.Mode);
         
         // Can't do a deep comparison with Equivalent on the entire input here due to the complex Uri() type.
         Assert.Equal(
@@ -174,10 +174,10 @@ public class ToModelConverterTests
             horizontalAccuracy ?? Option<float>.None());
         
         var expectedTlgInput = new TlgInput(
-                TlgAgent_PrivateChat_Default,
+                PrivateBotChat_Operations,
                 TlgInputType.Location,
-                SanitaryOpsAdmin_AtMockParooka2024_Default, 
-                MockParooka2024, 
+                SOpsAdmin_DanielEn_X2024, 
+                X2024, 
                 TlgInputGenerator.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
@@ -186,7 +186,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 locationUpdate, 
-                TlgAgent_PrivateChat_Default.Mode);
+                PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
             expectedTlgInput, 
@@ -209,10 +209,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_Default,
+            PrivateBotChat_Operations,
             TlgInputType.CommandMessage,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
-            MockParooka2024, 
+            SOpsAdmin_DanielEn_X2024, 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -222,7 +222,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
-                TlgAgent_PrivateChat_Default.Mode);
+                PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
             expectedTlgInput,
@@ -244,10 +244,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_CommunicationsMode,
+            PrivateBotChat_Communications,
             TlgInputType.CommandMessage,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
-            MockParooka2024, 
+            SOpsAdmin_DanielEn_X2024, 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -257,7 +257,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
-                TlgAgent_PrivateChat_CommunicationsMode.Mode);
+                PrivateBotChat_Communications.Mode);
         
         Assert.Equivalent(
             expectedTlgInput,
@@ -279,10 +279,10 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_NotificationsMode,
+            PrivateBotChat_Notifications,
             TlgInputType.CommandMessage,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
-            MockParooka2024, 
+            SOpsAdmin_DanielEn_X2024, 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -292,7 +292,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
-                TlgAgent_PrivateChat_NotificationsMode.Mode);
+                PrivateBotChat_Notifications.Mode);
         
         Assert.Equivalent(
             expectedTlgInput,
@@ -312,10 +312,10 @@ public class ToModelConverterTests
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_Default,
+            PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
-            MockParooka2024, 
+            SOpsAdmin_DanielEn_X2024, 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -325,7 +325,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 callbackQuery,
-                TlgAgent_PrivateChat_Default.Mode);
+                PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
             expectedTlgInput,
@@ -343,10 +343,10 @@ public class ToModelConverterTests
         var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedTlgInput = new TlgInput(
-            TlgAgent_PrivateChat_Default,
+            PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SanitaryOpsAdmin_AtMockParooka2024_Default, 
-            MockParooka2024, 
+            SOpsAdmin_DanielEn_X2024, 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -356,7 +356,7 @@ public class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 callbackQuery,
-                TlgAgent_PrivateChat_Default.Mode);
+                PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
             expectedTlgInput,

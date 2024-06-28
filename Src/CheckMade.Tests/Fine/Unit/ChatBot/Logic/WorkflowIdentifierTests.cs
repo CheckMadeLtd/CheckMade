@@ -21,7 +21,7 @@ public class WorkflowIdentifierTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgentWithoutRole = TlgAgent_HasOnly_HistoricRoleBind;
+        var tlgAgentWithoutRole = UserId02_ChatId03_Operations;
         var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);

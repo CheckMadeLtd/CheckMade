@@ -16,6 +16,6 @@ public class RolesRepositoryTests
         var roles = await repo.GetAllAsync();
 
         // This role should have been added via seeding/for_ci_db.sql (or similar)
-        Assert.Contains(IntegrationTests_Role_Default.Token, roles.Select(r => r.Token));
+        Assert.Contains(IntegrationTests_SOpsInspector_DanielEn_X2024.Token, roles.Select(r => r.Token));
     }
 }

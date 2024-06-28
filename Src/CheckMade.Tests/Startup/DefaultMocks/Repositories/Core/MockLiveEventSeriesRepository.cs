@@ -11,8 +11,8 @@ public class MockLiveEventSeriesRepository : ILiveEventSeriesRepository
         [
             ..new List<LiveEventSeries>
             {
-                TestData.MockParookaSeries,
-                TestData.MockHurricaneSeries
+                TestData.SeriesX,
+                TestData.SeriesY
             }
         ];
     

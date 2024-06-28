@@ -137,7 +137,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         await basics.handler.HandleUpdateAsync(
             updateFromEnglishUser,
-            TlgAgent_PrivateChat_Default.Mode);
+            PrivateBotChat_Operations.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -160,12 +160,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         var updateFromGermanUser = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
-            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.UserId,
-            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.ChatId);
+            UserId02_ChatId04_Operations.UserId,
+            UserId02_ChatId04_Operations.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
-            TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.Mode);
+            UserId02_ChatId04_Operations.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -268,21 +268,21 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    SanitaryOpsInspector1_HasRoleBindings_ForAllModes, 
+                    SOpsInspector_DanielEn_X2024, 
                     Operations), 
                 Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SanitaryOpsInspector1_HasRoleBindings_ForAllModes, 
+                    SOpsInspector_DanielEn_X2024, 
                     Communications),
                 Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SanitaryOpsInspector1_HasRoleBindings_ForAllModes, 
+                    SOpsInspector_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output3: Send to Inspector1 on NotificationsBot)") 
             }
@@ -349,10 +349,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        const long expectedChatId = TestChatId04;
+        const long expectedChatId = ChatId04;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
-            TestUserId02,
+            UserId02,
             expectedChatId);
     
         await basics.handler.HandleUpdateAsync(update, mode);

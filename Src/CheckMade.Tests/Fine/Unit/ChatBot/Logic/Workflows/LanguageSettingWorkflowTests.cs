@@ -29,7 +29,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -59,7 +59,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -91,7 +91,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputHistory = new List<TlgInput>
@@ -123,7 +123,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(
@@ -159,7 +159,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(

@@ -12,33 +12,33 @@ internal interface ITelegramUpdateGenerator
     
     UpdateWrapper GetValidTelegramTextMessage(
         string inputText, 
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramBotCommandMessage(
         string botCommand, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramUpdateWithCallbackQuery(
         string callbackQueryData,
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramAudioMessage(
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramDocumentMessage(
-        long chatId = TestUserAndChatId01_PrivateChat_Default, 
+        long chatId = Default_UserAndChatId_PrivateBotChat, 
         string fileId = "fakeOtherDocumentFileId");
     
     UpdateWrapper GetValidTelegramLocationMessage(
         Option<float> horizontalAccuracy,
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramPhotoMessage(
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramVoiceMessage(
-        long chatId = TestUserAndChatId01_PrivateChat_Default);
+        long chatId = Default_UserAndChatId_PrivateBotChat);
 }
 
 internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateGenerator
@@ -58,7 +58,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
     public UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId) =>
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -80,7 +80,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
             CallbackQuery = new CallbackQuery
             {
                 Data = callbackQueryData,
-                From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default }, // The User
+                From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat }, // The User
                 Message = new Message
                 {
                     From = new TelegramUser { Id = Randomizer.GenerateRandomLong() }, // The Bot
@@ -95,7 +95,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
     public UpdateWrapper GetValidTelegramAudioMessage(long chatId) => 
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -106,7 +106,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
     public UpdateWrapper GetValidTelegramDocumentMessage(long chatId, string fileId) => 
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -118,7 +118,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
         Option<float> horizontalAccuracy, long chatId) =>
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -135,7 +135,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
     public UpdateWrapper GetValidTelegramPhotoMessage(long chatId) => 
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,
@@ -146,7 +146,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
     public UpdateWrapper GetValidTelegramVoiceMessage(long chatId) =>
         new(new Message
         {
-            From = new TelegramUser { Id = TestUserAndChatId01_PrivateChat_Default },
+            From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
             MessageId = 123,

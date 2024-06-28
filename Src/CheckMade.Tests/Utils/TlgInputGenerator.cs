@@ -11,8 +11,8 @@ namespace CheckMade.Tests.Utils;
 internal interface ITlgInputGenerator
 {
     TlgInput GetValidTlgInputTextMessage(
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default, 
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
@@ -22,28 +22,28 @@ internal interface ITlgInputGenerator
     
     TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default,
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default,
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat,
         int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default, 
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat, 
         DateTime? dateTime = null, int messageId = 1,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
-        long userId = TestUserAndChatId01_PrivateChat_Default, 
-        long chatId = TestUserAndChatId01_PrivateChat_Default,
+        long userId = Default_UserAndChatId_PrivateBotChat, 
+        long chatId = Default_UserAndChatId_PrivateBotChat,
         DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = UnitTestDefault);
 }
@@ -72,8 +72,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
-            new TlgAgent(TestUserAndChatId01_PrivateChat_Default,
-                TestUserAndChatId01_PrivateChat_Default,
+            new TlgAgent(Default_UserAndChatId_PrivateBotChat,
+                Default_UserAndChatId_PrivateBotChat,
                 Operations),
             TlgInputType.AttachmentMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
@@ -186,12 +186,12 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
                     Option<ILiveEventInfo>.None()),
             
             UnitTestDefault =>
-                (SanitaryOpsAdmin_AtMockParooka2024_Default,
-                    Option<ILiveEventInfo>.Some(SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent)),
+                (SanitaryOpsAdmin_AtMockParooka2024_Default: SOpsAdmin_DanielEn_X2024,
+                    Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent)),
             
             IntegrationTestDefault =>
-                (IntegrationTests_Role_Default, 
-                    Option<ILiveEventInfo>.Some(IntegrationTests_Role_Default.AtLiveEvent)),
+                (IntegrationTests_Role_Default: IntegrationTests_SOpsInspector_DanielEn_X2024, 
+                    Option<ILiveEventInfo>.Some(IntegrationTests_SOpsInspector_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };

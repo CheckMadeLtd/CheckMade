@@ -24,14 +24,14 @@ public class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = TlgAgent_HasOnly_HistoricRoleBind;
+        var tlgAgent = UserId02_ChatId03_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
-            TlgAgent_HasOnly_HistoricRoleBind.Mode,
+            UserId02_ChatId03_Operations.Mode,
             TlgStart.CommandCode,
-            TlgAgent_HasOnly_HistoricRoleBind.UserId,
-            TlgAgent_HasOnly_HistoricRoleBind.ChatId,
+            UserId02_ChatId03_Operations.UserId,
+            UserId02_ChatId03_Operations.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
 
         mockTlgInputsRepo
@@ -67,7 +67,7 @@ public class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
@@ -115,7 +115,7 @@ public class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var interruptingBotCommandInput =
@@ -162,7 +162,7 @@ public class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var serviceCollection = new UnitTestStartup().Services;
         
-        var tlgAgent = TlgAgent_PrivateChat_Default;
+        var tlgAgent = PrivateBotChat_Operations;
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var notInterruptingBotCommandInput =
