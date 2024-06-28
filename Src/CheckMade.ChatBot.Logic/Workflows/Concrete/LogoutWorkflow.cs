@@ -40,9 +40,9 @@ internal class LogoutWorkflow(
                               {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
                               FYI: You will also be logged out from other non-group bot chats in this role.
                               """,
-                        currentRoleBind.Role.User.FirstName,
+                        currentRoleBind.Role.ByUser.FirstName,
                         currentRoleBind.Role.RoleType,
-                        currentRoleBind.Role.LiveEvent.Name),
+                        currentRoleBind.Role.AtLiveEvent.Name),
                     
                     ControlPromptsSelection = ControlPrompts.YesNo
                 }

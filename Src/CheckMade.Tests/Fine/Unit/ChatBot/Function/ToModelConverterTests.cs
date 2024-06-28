@@ -49,7 +49,7 @@ public class ToModelConverterTests
             TlgInputType.TextMessage,
             SanitaryOpsAdmin_AtMockParooka2024_Default,
             Option<ILiveEventInfo>.Some(
-                SanitaryOpsAdmin_AtMockParooka2024_Default.LiveEvent),
+                SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent),
             TestUtils.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -135,7 +135,7 @@ public class ToModelConverterTests
             TlgInputType.AttachmentMessage,
             SanitaryOpsAdmin_AtMockParooka2024_Default, 
             Option<ILiveEventInfo>.Some(
-                SanitaryOpsAdmin_AtMockParooka2024_Default.LiveEvent), 
+                SanitaryOpsAdmin_AtMockParooka2024_Default.AtLiveEvent), 
             TestUtils.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,

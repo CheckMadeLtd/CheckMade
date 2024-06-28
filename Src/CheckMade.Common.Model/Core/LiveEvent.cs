@@ -9,8 +9,8 @@ public record LiveEvent : ILiveEventInfo
         string Name,
         DateTime StartDate,
         DateTime EndDate,
-        IEnumerable<IRoleInfo> Roles,
-        LiveEventVenue Venue,
+        IEnumerable<IRoleInfo> WithRoles,
+        LiveEventVenue AtVenue,
         DbRecordStatus Status = DbRecordStatus.Active)
     {
         if (EndDate < StartDate)
@@ -19,8 +19,8 @@ public record LiveEvent : ILiveEventInfo
         this.Name = Name;
         this.StartDate = StartDate;
         this.EndDate = EndDate;
-        this.Roles = Roles;
-        this.Venue = Venue;
+        this.WithRoles = WithRoles;
+        this.AtVenue = AtVenue;
         this.Status = Status;
     }
     
@@ -37,7 +37,7 @@ public record LiveEvent : ILiveEventInfo
     public string Name { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
-    public IEnumerable<IRoleInfo> Roles { get; init; }
-    public LiveEventVenue Venue { get; init; }
+    public IEnumerable<IRoleInfo> WithRoles { get; init; }
+    public LiveEventVenue AtVenue { get; init; }
     public DbRecordStatus Status { get; init; }
 }

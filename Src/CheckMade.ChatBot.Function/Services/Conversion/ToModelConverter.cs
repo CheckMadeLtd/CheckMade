@@ -227,7 +227,7 @@ internal class ToModelConverter(
     private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
     {
         return originatorRole.IsSome 
-            ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().LiveEvent) 
+            ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().AtLiveEvent) 
             : Result<Option<ILiveEventInfo>>.FromSuccess(Option<ILiveEventInfo>.None());
     }
     

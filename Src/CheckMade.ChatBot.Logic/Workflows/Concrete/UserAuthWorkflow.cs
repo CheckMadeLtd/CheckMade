@@ -115,16 +115,16 @@ internal class UserAuthWorkflow(
                           """, 
                     currentMode,
                     newTlgAgentRoleBindForCurrentMode.Role.RoleType,
-                    newTlgAgentRoleBindForCurrentMode.Role.LiveEvent.Name)
+                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
             });
         }
         
         outputs.Add(new OutputDto
         {
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
-                newTlgAgentRoleBindForCurrentMode.Role.User.FirstName,
+                newTlgAgentRoleBindForCurrentMode.Role.ByUser.FirstName,
                 newTlgAgentRoleBindForCurrentMode.Role.RoleType,
-                newTlgAgentRoleBindForCurrentMode.Role.LiveEvent.Name)
+                newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
         });
 
         outputs.Add(new OutputDto

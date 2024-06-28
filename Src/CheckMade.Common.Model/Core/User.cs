@@ -11,7 +11,8 @@ public record User(
     string LastName,
     Option<EmailAddress> Email,
     LanguageCode Language,
-    IEnumerable<IRoleInfo> Roles,
+    IEnumerable<IRoleInfo> HasRoles,
+    // Option<Vendor> CurrentlyWorksFor,
     DbRecordStatus Status = DbRecordStatus.Active)
     : IUserInfo
 {

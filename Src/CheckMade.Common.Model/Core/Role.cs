@@ -6,8 +6,8 @@ namespace CheckMade.Common.Model.Core;
 public record Role(
         string Token,
         RoleType RoleType,
-        IUserInfo User,
-        ILiveEventInfo LiveEvent,
+        IUserInfo ByUser,
+        ILiveEventInfo AtLiveEvent,
         DbRecordStatus Status = DbRecordStatus.Active)
     : IRoleInfo
 {

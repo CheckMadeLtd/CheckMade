@@ -136,7 +136,7 @@ public class UpdateHandler(
                 tarb.TlgAgent.Mode == currentMode);
 
         return tlgAgentRole != null 
-            ? tlgAgentRole.Role.User.Language 
+            ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;
     }
 }

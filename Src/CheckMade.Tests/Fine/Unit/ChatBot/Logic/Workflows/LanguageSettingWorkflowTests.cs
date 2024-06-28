@@ -189,7 +189,7 @@ public class LanguageSettingWorkflowTests
             GetFirstRawEnglish(actualOutput));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
-            RoleBindFor_SanitaryOpsAdmin_Default.Role.User,
+            RoleBindFor_SanitaryOpsAdmin_Default.Role.ByUser,
             languageCode));
     }
 }
