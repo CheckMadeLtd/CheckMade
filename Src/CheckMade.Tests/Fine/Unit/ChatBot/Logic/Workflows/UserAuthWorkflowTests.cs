@@ -134,7 +134,7 @@ public class UserAuthWorkflowTests
     
         var actualOutputs = 
             await workflow
-                .GetNextOutputAsync(nonExistingTokenInput);
+                .GetResponseAsync(nonExistingTokenInput);
         
         Assert.Equal(
             "This is an unknown token. Try again...",
@@ -171,7 +171,7 @@ public class UserAuthWorkflowTests
         
         var actualOutputs = 
             await workflow
-                .GetNextOutputAsync(inputTokenWithPreExistingActiveTlgAgentRoleBind);
+                .GetResponseAsync(inputTokenWithPreExistingActiveTlgAgentRoleBind);
         
         Assert.Equal(
             expectedWarning,
@@ -222,7 +222,7 @@ public class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
                 actualTlgAgentRoleBindAdded = tlgAgentRole.ToList());
         
-        var actualOutputs = await workflow.GetNextOutputAsync(inputValidToken);
+        var actualOutputs = await workflow.GetResponseAsync(inputValidToken);
         
         Assert.Equal(
             expectedConfirmation,
@@ -280,7 +280,7 @@ public class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
 
-        await workflow.GetNextOutputAsync(inputValidToken);
+        await workflow.GetResponseAsync(inputValidToken);
         
         mockTlgAgentRoleBindingsRepo.Verify(x => x.AddAsync(
             It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
@@ -347,7 +347,7 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
 
-        await workflow.GetNextOutputAsync(inputValidToken);
+        await workflow.GetResponseAsync(inputValidToken);
         
         mockTlgAgentRoleBindingsRepo.Verify(x => x.AddAsync(
             It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
@@ -390,7 +390,7 @@ public class UserAuthWorkflowTests
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
-        var actualOutputs = await workflow.GetNextOutputAsync(badTokenInput);
+        var actualOutputs = await workflow.GetResponseAsync(badTokenInput);
         
         Assert.Equal("Bad token format! Try again...", GetFirstRawEnglish(actualOutputs));
     }

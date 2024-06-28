@@ -67,7 +67,7 @@ internal class InputProcessor(
                 var activeWorkflow = workflowIdentifier.Identify(activeWorkflowInputHistory);
                 
                 var response = await activeWorkflow.Match(
-                    wf => wf.GetNextOutputAsync(currentInput),
+                    wf => wf.GetResponseAsync(currentInput),
                     () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
                     [ new OutputDto
                         {

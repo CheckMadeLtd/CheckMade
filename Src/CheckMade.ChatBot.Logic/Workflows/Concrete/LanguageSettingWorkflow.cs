@@ -26,7 +26,7 @@ internal class LanguageSettingWorkflow(
                (currentState & States.Completed) != 0;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput currentInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
             await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);

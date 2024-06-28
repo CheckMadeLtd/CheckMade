@@ -141,7 +141,7 @@ public class LanguageSettingWorkflowTests
         _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
 
-        var actualOutput = await workflow.GetNextOutputAsync(inputSettingsCommand);
+        var actualOutput = await workflow.GetResponseAsync(inputSettingsCommand);
         
         Assert.Equal(
             "🌎 Please select your preferred language:", 
@@ -182,7 +182,7 @@ public class LanguageSettingWorkflowTests
         var mockUserRepo = _services.GetRequiredService<Mock<IUsersRepository>>();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
 
-        var actualOutput = await workflow.GetNextOutputAsync(languageSettingInput);
+        var actualOutput = await workflow.GetResponseAsync(languageSettingInput);
         
         Assert.StartsWith(
             "New language: ",

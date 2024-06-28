@@ -6,5 +6,5 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 public interface IWorkflow
 {
     bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory);
-    Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput currentInput);
+    Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput);
 }

@@ -62,7 +62,7 @@ public class LogoutWorkflowTests
             expectedBindUpdated, 
             RoleBindFor_SanitaryOpsAdmin_Default);
         
-        var actualOutput = await workflow.GetNextOutputAsync(confirmLogoutCommand);
+        var actualOutput = await workflow.GetResponseAsync(confirmLogoutCommand);
         
         Assert.Equal(
             expectedMessage, 
@@ -153,7 +153,7 @@ public class LogoutWorkflowTests
                         .ToList();
                 });
         
-        await workflow.GetNextOutputAsync(confirmLogoutCommand);
+        await workflow.GetResponseAsync(confirmLogoutCommand);
 
         for (var i = 0; i < expectedBindingsUpdated.Count; i++)
         {
@@ -202,7 +202,7 @@ public class LogoutWorkflowTests
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
         
-        var actualOutput = await workflow.GetNextOutputAsync(abortLogoutCommand);
+        var actualOutput = await workflow.GetResponseAsync(abortLogoutCommand);
         
         Assert.Equal(
             expectedMessage1,

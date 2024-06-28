@@ -22,7 +22,7 @@ internal class LogoutWorkflow(
         return DetermineCurrentState(inputHistory) == States.LogoutConfirmed;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput currentInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
             await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);

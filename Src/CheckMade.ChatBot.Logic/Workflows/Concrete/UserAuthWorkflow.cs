@@ -32,7 +32,7 @@ internal class UserAuthWorkflow(
         return DetermineCurrentState(inputHistory) == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput currentInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
