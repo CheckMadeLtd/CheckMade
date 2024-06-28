@@ -26,7 +26,8 @@ public class WorkflowIdentifierTests
             roleSetting: TestOriginatorRoleSetting.None);
     
         var workflow = workflowIdentifier
-            .Identify(new List<TlgInput>{ inputFromUnauthenticatedUser }.ToImmutableReadOnlyCollection());
+            .Identify(new List<TlgInput>{ inputFromUnauthenticatedUser }
+                .ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
@@ -43,7 +44,8 @@ public class WorkflowIdentifierTests
             (int)OperationsBotCommands.Settings);
         
         var workflow = workflowIdentifier
-            .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }.ToImmutableReadOnlyCollection());
+            .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }
+                .ToImmutableReadOnlyCollection());
         
         Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }

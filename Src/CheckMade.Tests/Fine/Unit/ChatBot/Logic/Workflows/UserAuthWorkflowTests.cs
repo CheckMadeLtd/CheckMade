@@ -73,10 +73,10 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
-        var relevantHistory = 
+        var tlgAgentInputHistory = 
             await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
         
-        var actualState = workflow.DetermineCurrentState(relevantHistory);
+        var actualState = workflow.DetermineCurrentState(tlgAgentInputHistory);
         
         Assert.Equal(
             Initial, // Instead of 'ReceivedTokenSubmissionAttempt'
