@@ -138,7 +138,7 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(
             "This is an unknown token. Try again...",
-            GetFirstRawEnglish(actualOutputs));
+            TestUtils.GetFirstRawEnglish(actualOutputs));
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(
             expectedWarning,
-            GetFirstRawEnglish(actualOutputs));
+            TestUtils.GetFirstRawEnglish(actualOutputs));
         
         mockTlgAgentRoleBindingsRepo.Verify(x => 
             x.UpdateStatusAsync(
@@ -226,7 +226,7 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(
             expectedConfirmation,
-            GetFirstRawEnglish(actualOutputs));
+            TestUtils.GetFirstRawEnglish(actualOutputs));
         Assert.Equivalent(
             expectedTlgAgentRoleBindAdded.Role,
             actualTlgAgentRoleBindAdded[0].Role);
@@ -392,6 +392,6 @@ public class UserAuthWorkflowTests
     
         var actualOutputs = await workflow.GetResponseAsync(badTokenInput);
         
-        Assert.Equal("Bad token format! Try again...", GetFirstRawEnglish(actualOutputs));
+        Assert.Equal("Bad token format! Try again...", TestUtils.GetFirstRawEnglish(actualOutputs));
     }
 }

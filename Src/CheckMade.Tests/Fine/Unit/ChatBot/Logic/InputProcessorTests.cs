@@ -104,7 +104,7 @@ public class InputProcessorTests
         
         Assert.Equal(
             expectedWarningOutput,
-            GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput));
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class InputProcessorTests
         
         Assert.Equal(
             expectedWarningOutput,
-            GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput));
     }
     
     [Fact]
@@ -193,6 +193,6 @@ public class InputProcessorTests
         
         Assert.NotEqual(
             notExpectedWarningOutput,
-            GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput));
     }
 }

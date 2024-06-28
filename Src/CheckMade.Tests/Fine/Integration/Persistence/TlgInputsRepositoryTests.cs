@@ -120,7 +120,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITestUtils>();
+        var inputGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         var tlgAgent = new TlgAgent(

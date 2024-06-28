@@ -66,7 +66,7 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage, 
-            GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 It.Is<IReadOnlyCollection<TlgAgentRoleBind>>(collection => 
@@ -206,7 +206,7 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage1,
-            GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput));
         Assert.Equivalent(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
             actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow().Concatenations.Last()!.RawEnglishText);

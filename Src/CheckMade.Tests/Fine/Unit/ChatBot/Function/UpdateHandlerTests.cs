@@ -17,6 +17,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
+using static CheckMade.Tests.TestUtils;
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Function;
 
@@ -75,7 +76,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
         await basics.handler.HandleUpdateAsync(textUpdate, mode);
         
@@ -94,7 +95,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         const string invalidBotCommand = "/invalid";
-        var invalidBotCommandUpdate = basics.utils.GetValidTelegramBotCommandMessage(invalidBotCommand);
+        var invalidBotCommandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(invalidBotCommand);
         const string expectedErrorCode = "W3DL9";
     
         // Writing out to OutputHelper to see the entire error message, as an additional manual verification
@@ -131,7 +132,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var updateFromEnglishUser = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var updateFromEnglishUser = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
         await basics.handler.HandleUpdateAsync(
             updateFromEnglishUser,
@@ -156,7 +157,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var updateFromGermanUser = basics.utils.GetValidTelegramTextMessage(
+        var updateFromGermanUser = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
             TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.UserId,
             TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German.ChatId);
@@ -196,7 +197,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var textUpdate = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
@@ -239,7 +240,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
         await basics.handler.HandleUpdateAsync(update, mode);
         
@@ -291,7 +292,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         var activeRoleBindings = await basics.tlgAgentRoleBindingsTask;
         
         var expectedSendParamSets = outputsWithLogicalPort
@@ -348,7 +349,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var basics = GetBasicTestingServices(_services);
         
         const long expectedChatId = TestChatId04;
-        var update = basics.utils.GetValidTelegramTextMessage(
+        var update = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
             TestUserId02,
             expectedChatId);
@@ -397,7 +398,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithMultipleAttachmentTypes, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
 
         await basics.handler.HandleUpdateAsync(update, mode);
 
@@ -449,7 +450,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithTextAndCaptions, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
         await basics.handler.HandleUpdateAsync(update, mode);
         
@@ -489,7 +490,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithLocation, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.utils.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
 
         await basics.handler.HandleUpdateAsync(update, mode);
         
@@ -502,14 +503,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
     }
     
-    private static (ITestUtils utils, 
+    private static (ITelegramUpdateGenerator updateGenerator,
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator,
         Task<IEnumerable<TlgAgentRoleBind>> tlgAgentRoleBindingsTask)
         GetBasicTestingServices(IServiceProvider sp) => 
-            (sp.GetRequiredService<ITestUtils>(), 
+            (sp.GetRequiredService<ITelegramUpdateGenerator>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
                 sp.GetRequiredService<IUpdateHandler>(),
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),

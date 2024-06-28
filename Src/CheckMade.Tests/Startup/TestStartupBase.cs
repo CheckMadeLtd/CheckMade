@@ -48,7 +48,7 @@ public abstract class TestStartupBase
             loggingConfig.AddDebug(); 
         });
         
-        Services.AddSingleton<ITestUtils, TestUtils>();
+        Services.AddSingleton<ITelegramUpdateGenerator, TelegramUpdateGenerator>();
         Services.AddSingleton<ITlgInputGenerator, TlgInputGenerator>();
         
         

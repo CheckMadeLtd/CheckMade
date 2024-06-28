@@ -19,11 +19,11 @@ public class ConverterIntegrationTests
             return;
         
         _services = startup.Services.BuildServiceProvider();
-        var utils = _services.GetRequiredService<ITestUtils>();
+        var updateGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         const string realFileIdOnDevOperationsBot = // uploaded on 04/06/2024
             "BQACAgQAAxkBAAMvZl9iHPHKeRre-ldIyMhLcEvi6a8AAi0gAALxa_lS9Z28FPz-17Q1BA";
         const string realFileUtf8Content = "Text for an integration test.";
-        var updateWithAttachment = utils.GetValidTelegramDocumentMessage(
+        var updateWithAttachment = updateGenerator.GetValidTelegramDocumentMessage(
             fileId: realFileIdOnDevOperationsBot);
         
         var blobLoader = _services.GetRequiredService<IBlobLoader>();

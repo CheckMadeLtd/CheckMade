@@ -32,7 +32,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var tlgAgent = TlgAgent_PrivateChat_Default;
-        var update = basics.utils.GetValidTelegramTextMessage(textInput);
+        var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         var roleBindings = 
             (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
             .ToImmutableReadOnlyCollection();
@@ -72,7 +72,7 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         
         var tlgAgent = TlgAgent_HasOnly_HistoricRoleBind;
-        var update = basics.utils.GetValidTelegramTextMessage(
+        var update = basics.updateGenerator.GetValidTelegramTextMessage(
             "valid text",
             tlgAgent.UserId,
             tlgAgent.ChatId);
@@ -119,9 +119,9 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var attachmentUpdate = attachmentType switch
         {
-            TlgAttachmentType.Document => basics.utils.GetValidTelegramDocumentMessage(),
-            TlgAttachmentType.Photo => basics.utils.GetValidTelegramPhotoMessage(),
-            TlgAttachmentType.Voice => basics.utils.GetValidTelegramVoiceMessage(),
+            TlgAttachmentType.Document => basics.updateGenerator.GetValidTelegramDocumentMessage(),
+            TlgAttachmentType.Photo => basics.updateGenerator.GetValidTelegramPhotoMessage(),
+            TlgAttachmentType.Voice => basics.updateGenerator.GetValidTelegramVoiceMessage(),
             _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
         };
         
@@ -163,7 +163,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var locationUpdate = basics.utils.GetValidTelegramLocationMessage(
+        var locationUpdate = basics.updateGenerator.GetValidTelegramLocationMessage(
             horizontalAccuracy ?? Option<float>.None());
     
         var location = locationUpdate.Message.Location;
@@ -205,7 +205,7 @@ public class ToModelConverterTests
         var operationsCommandMenu = 
             new BotCommandMenus().OperationsBotCommandMenu;
         var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
+        var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
             TlgAgent_PrivateChat_Default,
@@ -240,7 +240,7 @@ public class ToModelConverterTests
         var communicationsCommandMenu = 
             new BotCommandMenus().CommunicationsBotCommandMenu;
         var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
+        var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
             TlgAgent_PrivateChat_CommunicationsMode,
@@ -275,7 +275,7 @@ public class ToModelConverterTests
         var notificationsCommandMenu = 
             new BotCommandMenus().NotificationsBotCommandMenu;
         var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
-        var commandUpdate = basics.utils.GetValidTelegramBotCommandMessage(commandText);
+        var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
             TlgAgent_PrivateChat_NotificationsMode,
@@ -307,7 +307,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var callbackQueryData = new CallbackId(enumSourceOfCallbackQuery);
-        var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+        var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
         var expectedTlgInput = new TlgInput(
@@ -339,7 +339,7 @@ public class ToModelConverterTests
         var domainGlossary = new DomainGlossary();
         var domainTerm = Dt(LanguageCode.de);
         var callbackQueryData = new CallbackId(domainGlossary.IdAndUiByTerm[domainTerm].callbackId);
-        var callbackQuery = basics.utils.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+        var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedTlgInput = new TlgInput(
             TlgAgent_PrivateChat_Default,
@@ -411,7 +411,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var audioMessage = basics.utils.GetValidTelegramAudioMessage();
+        var audioMessage = basics.updateGenerator.GetValidTelegramAudioMessage();
         var conversionResult = 
             await basics.converter.ConvertToModelAsync(
                 audioMessage, 
@@ -423,18 +423,15 @@ public class ToModelConverterTests
             conversionResult.Error!.GetFormattedEnglish());
     }
 
-    private static (ITestUtils utils, 
-        Mock<IBotClientWrapper> mockBotClient,
-        IToModelConverter converter,
-        ITlgAgentRoleBindingsRepository agentRoleBindingsRepo)
+    private static (ITelegramUpdateGenerator updateGenerator, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter, ITlgAgentRoleBindingsRepository agentRoleBindingsRepo)
         GetBasicTestingServices(IServiceProvider sp)
     {
-        var utils = sp.GetRequiredService<ITestUtils>();
+        var updateGenerator = sp.GetRequiredService<ITelegramUpdateGenerator>();
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = sp.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
         var agentRoleBindingsRepo = sp.GetRequiredService<ITlgAgentRoleBindingsRepository>();
 
-        return (utils, mockBotClient, converter, agentRoleBindingsRepo);
+        return (updateGenerator, mockBotClient, converter, agentRoleBindingsRepo);
     }
 }
