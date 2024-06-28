@@ -50,6 +50,8 @@ public class LogoutWorkflowTests
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
         _services = serviceCollection.BuildServiceProvider();
+        
+        // ToDo: replace this with newly mocked up Repo right here...
         var mockRoleBindingsRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         
@@ -57,11 +59,6 @@ public class LogoutWorkflowTests
         var expectedBindUpdated = 
             (await mockRoleBindingsRepo.Object.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent == tlgAgent);
-        
-        // Just confirming consistency of internal TestData / TestUtils
-        Assert.Equivalent(
-            expectedBindUpdated, 
-            RoleBindFor_SanitaryOpsAdmin_Default);
         
         var actualOutput = await workflow.GetResponseAsync(confirmLogoutCommand);
         

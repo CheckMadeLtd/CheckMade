@@ -19,7 +19,7 @@ ci_user_patrick_without_email AS (
 
 ci_live_event_venue AS (
     INSERT INTO live_event_venues (name, status) 
-        VALUES ('Mock Venue near Cologne', 1) 
+        VALUES ('Venue1 near Cologne', 1) 
         ON CONFLICT (name)
             DO UPDATE SET status = live_event_venues.status
         RETURNING id
@@ -27,7 +27,7 @@ ci_live_event_venue AS (
     
 ci_live_event_series AS (
     INSERT INTO live_event_series (name, status) 
-       VALUES ('Mock Parookaville Series', 1)
+       VALUES ('LiveEvent Series X', 1)
         ON CONFLICT (name)
             DO UPDATE SET status = live_event_series.status
         RETURNING id
@@ -35,7 +35,7 @@ ci_live_event_series AS (
     
 ci_live_event AS (
     INSERT INTO live_events (name, start_date, end_date, venue_id, live_event_series_id, status)
-        VALUES ('Mock Parookaville 2024',
+        VALUES ('LiveEvent X 2024',
                 '2024-07-19 10:00:00', '2024-07-22 18:00:00', 
                 (SELECT id FROM ci_live_event_venue), 
                 (SELECT id FROM ci_live_event_series), 
@@ -53,6 +53,7 @@ ci_role_for_user_without_email AS (
         ON CONFLICT (token) DO NOTHING
 )
 
+-- Role: IntegrationTests_SOpsInspector_DanielEn_X2024
 INSERT INTO roles (token, role_type, status, user_id, live_event_id) 
     VALUES ('RAAAA1', 1002, 1, (SELECT id FROM ci_user_daniel), (SELECT id FROM ci_live_event))
     ON CONFLICT (token) DO NOTHING;

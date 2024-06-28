@@ -25,7 +25,7 @@ internal static class TestData
 
     // Needs to be in-sync with seeding script
     internal static readonly User IntegrationTests_PatrickDe = new(
-        new MobileNumber("+447538521999"),
+        new MobileNumber("+4999999999"),
         "_Patrick",
         "IntegrationTest",
         "_Bauer",
@@ -69,7 +69,7 @@ internal static class TestData
         new List<IRoleInfo>(),
         Venue1);
 
-    internal static readonly LiveEventSeries SeriesX = new("X LiveEvent Series", 
+    internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
         new List<LiveEvent> 
         {
             X2024,
@@ -90,7 +90,7 @@ internal static class TestData
         new List<IRoleInfo>(),
         Venue2);
 
-    internal static readonly LiveEventSeries SeriesY = new("Y LiveEvent Series",
+    internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
         new List<LiveEvent>
         {
             Y2024,
@@ -106,6 +106,13 @@ internal static class TestData
         "RAAAA1",
         SanitaryOps_Inspector,
         new UserInfo(IntegrationTests_DanielEn),
+        new LiveEventInfo(X2024));
+    
+    // Needs to be in-sync with seeding script    
+    internal static readonly Role IntegrationTests_SOpsEngineer_PatrickDe_X2024 = new(
+        "RAAAA2",
+        SanitaryOps_Engineer,
+        new UserInfo(IntegrationTests_PatrickDe),
         new LiveEventInfo(X2024));
     
     // Default

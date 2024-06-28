@@ -2,7 +2,6 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -270,21 +269,21 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 LogicalPort = new LogicalPort(
                     SOpsInspector_DanielEn_X2024, 
                     Operations), 
-                Text = UiNoTranslate("Output1: Send to Inspector1 on OperationsBot")   
+                Text = UiNoTranslate("Output1")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SOpsInspector_DanielEn_X2024, 
-                    Communications),
-                Text = UiNoTranslate("Output2: Send to Inspector1 on CommunicationsBot") 
-            },
-            new OutputDto
-            {
-                LogicalPort = new LogicalPort(
-                    SOpsInspector_DanielEn_X2024, 
+                    SOpsCleanLead_DanielEn_X2024, 
                     Notifications),
-                Text = UiNoTranslate("Output3: Send to Inspector1 on NotificationsBot)") 
+                Text = UiNoTranslate("Output2") 
+            },
+            new OutputDto
+            {
+                LogicalPort = new LogicalPort(
+                    SOpsEngineer_DanielEn_X2024, 
+                    Communications),
+                Text = UiNoTranslate("Output3)") 
             }
         ];
         
@@ -294,7 +293,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
-        var activeRoleBindings = await basics.tlgAgentRoleBindingsTask;
+
+        var activeRoleBindings = new List<TlgAgentRoleBind>
+        {
+            MockRepositoryUtils.GetNewRoleBind(SOpsInspector_DanielEn_X2024, PrivateBotChat_Operations),
+            MockRepositoryUtils.GetNewRoleBind(SOpsCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
+            MockRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)
+        };
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
@@ -308,17 +313,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     .TlgAgent.ChatId.Id
             }).ToList();
 
-        // Just asserting the internal consistency of our TestData / TestUtils setup
-        Assert.Equal(
-            expectedSendParamSets[0].TlgChatId,
-            RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode.TlgAgent.ChatId.Id);
-        Assert.Equal(
-            expectedSendParamSets[0].TlgChatId,
-            RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode.TlgAgent.ChatId.Id);
-        Assert.Equal(
-            expectedSendParamSets[0].TlgChatId,
-            RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode.TlgAgent.ChatId.Id);
-        
         await basics.handler.HandleUpdateAsync(update, mode);
 
         foreach (var expectedParamSet in expectedSendParamSets)
@@ -508,16 +502,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator,
-        Task<IEnumerable<TlgAgentRoleBind>> tlgAgentRoleBindingsTask)
+        IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 
             (sp.GetRequiredService<ITelegramUpdateGenerator>(), 
                 sp.GetRequiredService<Mock<IBotClientWrapper>>(),
                 sp.GetRequiredService<IUpdateHandler>(),
                 sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
-                    sp.GetRequiredService<ILogger<UiTranslator>>()),
-                sp.GetRequiredService<ITlgAgentRoleBindingsRepository>().GetAllActiveAsync());
+                    sp.GetRequiredService<ILogger<UiTranslator>>()));
 
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 

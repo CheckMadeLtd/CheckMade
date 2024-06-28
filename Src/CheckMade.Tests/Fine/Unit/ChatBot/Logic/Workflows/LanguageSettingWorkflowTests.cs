@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.LanguageSettingWorkflow;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
@@ -179,6 +180,18 @@ public class LanguageSettingWorkflowTests
             });
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        
+        var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+        var roleBind = MockRepositoryUtils.GetNewRoleBind(
+            SOpsAdmin_DanielEn_X2024,
+            PrivateBotChat_Operations);
+        
+        mockRoleBindingsRepo
+            .Setup(x => x.GetAllActiveAsync())
+            .ReturnsAsync(new List<TlgAgentRoleBind> { roleBind });
+
+        serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockRoleBindingsRepo.Object);
+        
         _services = serviceCollection.BuildServiceProvider();
         var mockUserRepo = _services.GetRequiredService<Mock<IUsersRepository>>();
         var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
@@ -190,7 +203,7 @@ public class LanguageSettingWorkflowTests
             TestUtils.GetFirstRawEnglish(actualOutput));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
-            RoleBindFor_SanitaryOpsAdmin_Default.Role.ByUser,
+            roleBind.Role.ByUser,
             languageCode));
     }
 }
