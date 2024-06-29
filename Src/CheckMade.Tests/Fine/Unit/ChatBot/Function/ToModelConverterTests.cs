@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
+
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -31,26 +31,21 @@ public class ToModelConverterTests
         string textInput)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var tlgAgent = PrivateBotChat_Operations;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
-        var roleBindings = 
-            (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
-            .ToImmutableReadOnlyCollection();
         
-        var boundRole = roleBindings
-            .FirstOrDefault(tarb => tarb.TlgAgent == tlgAgent)?
-            .Role;
+        // based on defaultRoleBindings in MockRepositoryUtils
+        var expectedOriginatorRole = SOpsAdmin_DanielEn_X2024;
+        var expectedLiveEventContext = 
+            Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent); 
         
-        // just confirming consistency of my internal TestData / TestUtils setup
-        Assert.Equivalent(boundRole, SOpsAdmin_DanielEn_X2024);
-
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
-            SOpsAdmin_DanielEn_X2024,
-            Option<ILiveEventInfo>.Some(
-                SOpsAdmin_DanielEn_X2024.AtLiveEvent),
+            expectedOriginatorRole,
+            expectedLiveEventContext,
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -70,24 +65,30 @@ public class ToModelConverterTests
     public async Task ConvertToModelAsync_ConvertsWithNoOriginatorRoleInfo_ForInputFromExpiredRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
         
+        var updateGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         var tlgAgent = UserId02_ChatId03_Operations;
-        var update = basics.updateGenerator.GetValidTelegramTextMessage(
+        
+        var update = updateGenerator.GetValidTelegramTextMessage(
             "valid text",
             tlgAgent.UserId,
             tlgAgent.ChatId);
-        var agentRoleBindings = 
-            (await basics.agentRoleBindingsRepo.GetAllActiveAsync())
-            .ToImmutableReadOnlyCollection();
+
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            roleBindings: new[]
+            {
+                new TlgAgentRoleBind(
+                    SOpsInspector_DanielEn_X2024,
+                    tlgAgent,
+                    new DateTime(2021, 01, 01),
+                    new DateTime(2021, 01, 05),
+                    DbRecordStatus.Historic)
+            });
+        _services = services;
         
-        var boundRole = agentRoleBindings
-            .FirstOrDefault(tarb => tarb.TlgAgent == tlgAgent)?
-            .Role;
-
-        // just confirming consistency of my internal TestData / TestUtils setup
-        Assert.Null(boundRole);
-
+        var basics = GetBasicTestingServices(_services);
+        
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
@@ -97,16 +98,17 @@ public class ToModelConverterTests
                 update.Message.Date,
                 update.Message.MessageId,
                 update.Message.Text));
-
+    
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 update, 
                 tlgAgent.Mode);
-
+    
         Assert.Equivalent(
             expectedTlgInput, 
             actualTlgInput.GetValueOrThrow());
-        Assert.True(actualTlgInput.GetValueOrThrow().OriginatorRole.IsNone);
+        Assert.True(
+            actualTlgInput.GetValueOrThrow().OriginatorRole.IsNone);
     }
     
     [Theory]
@@ -117,6 +119,7 @@ public class ToModelConverterTests
         TlgAttachmentType attachmentType)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var attachmentUpdate = attachmentType switch
         {
@@ -135,14 +138,13 @@ public class ToModelConverterTests
             PrivateBotChat_Operations,
             TlgInputType.AttachmentMessage,
             SOpsAdmin_DanielEn_X2024, 
-            Option<ILiveEventInfo>.Some(
-                SOpsAdmin_DanielEn_X2024.AtLiveEvent), 
+            X2024, 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
                 attachmentUpdate.Message.Caption,
                 expectedAttachmentTlgUri,
-                new Uri("https://gorin.de/Can_test_for_this_only_in_integration_tests"),
+                new Uri("https://www.gorin.de/fakeUri1.html"),
                 attachmentType));
         
         var actualTlgInput = 
@@ -163,11 +165,12 @@ public class ToModelConverterTests
         float? horizontalAccuracy)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var locationUpdate = basics.updateGenerator.GetValidTelegramLocationMessage(
             horizontalAccuracy ?? Option<float>.None());
-    
         var location = locationUpdate.Message.Location;
+        
         var expectedGeoCoordinates = new Geo(
             location!.Latitude,
             location.Longitude,
@@ -202,6 +205,7 @@ public class ToModelConverterTests
         OperationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var operationsCommandMenu = 
             new BotCommandMenus().OperationsBotCommandMenu;
@@ -237,6 +241,7 @@ public class ToModelConverterTests
         CommunicationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var communicationsCommandMenu = 
             new BotCommandMenus().CommunicationsBotCommandMenu;
@@ -246,8 +251,8 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Communications,
             TlgInputType.CommandMessage,
-            SOpsAdmin_DanielEn_X2024, 
-            X2024, 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -272,6 +277,7 @@ public class ToModelConverterTests
         NotificationsBotCommands command)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var notificationsCommandMenu = 
             new BotCommandMenus().NotificationsBotCommandMenu;
@@ -281,8 +287,8 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Notifications,
             TlgInputType.CommandMessage,
-            SOpsAdmin_DanielEn_X2024, 
-            X2024, 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -306,9 +312,11 @@ public class ToModelConverterTests
         long enumSourceOfCallbackQuery)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var callbackQueryData = new CallbackId(enumSourceOfCallbackQuery);
-        var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+        var callbackQuery = 
+            basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
         var expectedTlgInput = new TlgInput(
@@ -336,6 +344,7 @@ public class ToModelConverterTests
     public async Task ConvertToModelAsync_ConvertsCorrectly_ForMessageWithCallbackQueryDomainTerm_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var domainGlossary = new DomainGlossary();
         var domainTerm = Dt(LanguageCode.de);
@@ -391,6 +400,7 @@ public class ToModelConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
+        
         var update = new UpdateWrapper(new Message
         {
             From = new User { Id = 123L },
@@ -411,28 +421,32 @@ public class ToModelConverterTests
     public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var basics = GetBasicTestingServices(_services);
         var audioMessage = basics.updateGenerator.GetValidTelegramAudioMessage();
+        
         var conversionResult = 
             await basics.converter.ConvertToModelAsync(
                 audioMessage, 
                 Operations);
 
-        Assert.True(conversionResult.IsError);
+        Assert.True(
+            conversionResult.IsError);
         Assert.Equal(
             "Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
             conversionResult.Error!.GetFormattedEnglish());
     }
 
-    private static (ITelegramUpdateGenerator updateGenerator, Mock<IBotClientWrapper> mockBotClient, IToModelConverter converter, ITlgAgentRoleBindingsRepository agentRoleBindingsRepo)
+    private static (ITelegramUpdateGenerator updateGenerator, 
+        Mock<IBotClientWrapper> mockBotClient,
+        IToModelConverter converter)
         GetBasicTestingServices(IServiceProvider sp)
     {
         var updateGenerator = sp.GetRequiredService<ITelegramUpdateGenerator>();
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = sp.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
-        var agentRoleBindingsRepo = sp.GetRequiredService<ITlgAgentRoleBindingsRepository>();
 
-        return (updateGenerator, mockBotClient, converter, agentRoleBindingsRepo);
+        return (updateGenerator, mockBotClient, converter);
     }
 }

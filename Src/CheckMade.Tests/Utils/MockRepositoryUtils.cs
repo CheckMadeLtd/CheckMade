@@ -34,7 +34,8 @@ internal static class MockRepositoryUtils
         List<LiveEventSeries> defaultSeries = [SeriesX, SeriesY];
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SOpsAdmin_DanielEn_X2024];
-        List<TlgAgentRoleBind> defaultRoleBindings = [];
+        List<TlgAgentRoleBind> defaultRoleBindings = 
+            [GetNewRoleBind(SOpsAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
         List<TlgInput> defaultInputs = [];
 
         var mockContainer = new MockContainer();
