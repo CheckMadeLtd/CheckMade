@@ -115,21 +115,19 @@ internal static class TestData
         new UserInfo(IntegrationTests_PatrickDe),
         new LiveEventInfo(X2024));
     
-    // Default
+    // Default for testing
     internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
         new("RVB70T",
             SanitaryOps_Admin, 
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
-    // HasRoleBindings_ForAllModes
     internal static readonly Role SOpsInspector_DanielEn_X2024 = 
         new("R3UDXW",
             SanitaryOps_Inspector,
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
-    // German! Relied on by unit tests!
     internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
             SanitaryOps_CleanLead,
@@ -142,21 +140,18 @@ internal static class TestData
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
-    // HasNoBindings_German
     internal static readonly Role SOpsInspector_DanielDe_X2024 = 
         new("RMAM8S",
             SanitaryOps_Inspector,
             new UserInfo(DanielDe),
             new LiveEventInfo(X2024));
     
-    // HasBindOnlyIn_CommunicationsMode
     internal static readonly Role SOpsEngineer_DanielEn_X2024 = 
         new("RP4XPK",
             SanitaryOps_Engineer,
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
-    // English! Relied on by unit tests!
     internal static readonly Role SOpsCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
             SanitaryOps_CleanLead,
@@ -183,7 +178,7 @@ internal static class TestData
     internal const long ChatId06 = 100006L;
     internal const long ChatId07 = 100007L;
     
-    // Default
+    // Default for tests
     internal static readonly TlgAgent PrivateBotChat_Operations =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
@@ -199,26 +194,22 @@ internal static class TestData
             Default_UserAndChatId_PrivateBotChat,
             Notifications);
 
-    // TlgAgent_HasOnly_HistoricRoleBind
     internal static readonly TlgAgent UserId02_ChatId03_Operations =
         new(UserId02,
             ChatId03,
             Operations);
 
-    // TlgAgent_Of_SanitaryOpsCleanLead1_ChatGroup_German
     internal static readonly TlgAgent UserId02_ChatId04_Operations =
         new(UserId02,
             ChatId04,
             Operations);
     
-    // TlgAgent_of_SanitaryOpsEngineer2_OperationsMode
     internal static readonly TlgAgent UserId03_ChatId06_Operations =
         new(
             UserId03,
             ChatId06,
             Operations);
     
-    // TlgAgent_of_SanitaryOpsEngineer2_CommunicationsMode
     internal static readonly TlgAgent UserId03_ChatId06_Communications =
         new(
             UserId03,
@@ -226,73 +217,5 @@ internal static class TestData
             Communications);
     
     #endregion
-
-    // #region TlgAgentRoleBindingsSetup ##################################################################################
-
-    // internal static readonly TlgAgentRoleBind RoleBindFor_IntegrationTests_Role_Default =
-    //     new(
-    //         IntegrationTests_SOpsInspector_DanielEn_X2024,
-    //         PrivateBotChat_Operations,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsAdmin_Default = 
-    //     new(
-    //         SOpsAdmin_DanielEn_X2024, 
-    //         PrivateBotChat_Operations, 
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode =
-    //     new(
-    //         SOpsInspector_DanielEn_X2024,
-    //         PrivateBotChat_Operations,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode =
-    //     new(
-    //         SOpsInspector_DanielEn_X2024,
-    //         PrivateBotChat_Communications,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode =
-    //     new(
-    //         SOpsInspector_DanielEn_X2024,
-    //         PrivateBotChat_Notifications,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer1_HistoricOnly =
-    //     new(
-    //         SOpsEngineer_DanielEn_X2024,
-    //         UserId02_ChatId03_Operations,
-    //         new DateTime(1999, 01, 01),
-    //         new DateTime(1999, 02, 02),
-    //         DbRecordStatus.Historic);
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsCleanLead1_German =
-    //     new(
-    //         SOpsCleanLead_DanielDe_X2024,
-    //         UserId02_ChatId04_Operations,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode =
-    //     new(
-    //         SOpsEngineer_DanielEn_X2024,
-    //         UserId03_ChatId06_Communications,
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsObserver1 =
-    //     new(
-    //         SOpsObserver_DanielEn_X2024,
-    //         new TlgAgent(UserId03, ChatId05, Operations),
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // internal static readonly TlgAgentRoleBind RoleBindFor_SanitaryOpsCleanLead2 =
-    //     new(
-    //         SOpsCleanLead_DanielEn_X2024,
-    //         new TlgAgent(UserId03, ChatId07, Operations),
-    //         DateTime.UtcNow, Option<DateTime>.None());
-    //
-    // #endregion
 }
 
