@@ -112,7 +112,7 @@ public class UserAuthWorkflowTests
                 text: SOpsAdmin_DanielEn_X2024.Token);
         
         var preExistingActiveTlgAgentRoleBind = 
-            MockRepositoryUtils.GetNewRoleBind(
+            TestRepositoryUtils.GetNewRoleBind(
                 SOpsAdmin_DanielEn_X2024,
                 PrivateBotChat_Operations);
 
@@ -275,7 +275,7 @@ public class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             roles: new[] { SOpsEngineer_DanielEn_X2024 },
-            roleBindings: new []{ MockRepositoryUtils.GetNewRoleBind(
+            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
                 SOpsEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) },
             inputs: new[] { inputValidToken });
         _services = services;

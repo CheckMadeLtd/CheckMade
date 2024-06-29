@@ -10,7 +10,7 @@ using User = CheckMade.Common.Model.Core.User;
 
 namespace CheckMade.Tests.Utils;
 
-internal static class MockRepositoryUtils
+internal static class TestRepositoryUtils
 {
     internal static TlgAgentRoleBind GetNewRoleBind(
         Role role, 

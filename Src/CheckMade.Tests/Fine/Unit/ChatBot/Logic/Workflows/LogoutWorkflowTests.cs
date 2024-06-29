@@ -27,7 +27,7 @@ public class LogoutWorkflowTests
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
-        var boundRole = MockRepositoryUtils.GetNewRoleBind(
+        var boundRole = TestRepositoryUtils.GetNewRoleBind(
             SOpsEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         

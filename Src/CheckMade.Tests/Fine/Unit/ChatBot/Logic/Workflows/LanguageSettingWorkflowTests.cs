@@ -161,7 +161,7 @@ public class LanguageSettingWorkflowTests
         var languageSettingInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
             Dt(languageCode));
 
-        var roleBind = MockRepositoryUtils.GetNewRoleBind(
+        var roleBind = TestRepositoryUtils.GetNewRoleBind(
             SOpsEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         

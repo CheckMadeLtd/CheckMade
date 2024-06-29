@@ -36,7 +36,7 @@ public class ToModelConverterTests
         var tlgAgent = PrivateBotChat_Operations;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         
-        // based on defaultRoleBindings in MockRepositoryUtils
+        // based on defaultRoleBindings in TestRepositoryUtils
         var expectedOriginatorRole = SOpsAdmin_DanielEn_X2024;
         var expectedLiveEventContext = 
             Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent); 
