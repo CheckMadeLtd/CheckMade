@@ -23,7 +23,7 @@ internal static class MockRepositoryUtils
             Option<DateTime>.None());
     }
 
-    internal static (ServiceProvider sp, MockContainer container) SetupMockRepositories(
+    internal static (ServiceProvider sp, MockContainer container) ConfigureTestRepositories(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<LiveEventSeries>? liveEventSeries = null,
         IReadOnlyCollection<LiveEventVenue>? venues = null,
@@ -62,7 +62,9 @@ internal static class MockRepositoryUtils
             .ReturnsAsync(roles);
 
         container.Mocks[typeof(IRolesRepository)] = mockRolesRepo;
-        return serviceCollection.AddScoped<IRolesRepository>(_ => mockRolesRepo.Object);
+        var stubRolesRepo = mockRolesRepo.Object;
+        
+        return serviceCollection.AddScoped<IRolesRepository>(_ => stubRolesRepo);
     }
     
     private static IServiceCollection ArrangeMockRoleBindingsRepo(
@@ -81,7 +83,9 @@ internal static class MockRepositoryUtils
             .ReturnsAsync(roleBindings.Where(tarb => tarb.Status == DbRecordStatus.Active));
 
         container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
-        return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockRoleBindingsRepo.Object);
+        var stubRoleBindingsRepo = mockRoleBindingsRepo.Object;
+        
+        return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
     }
 
     
@@ -96,7 +100,9 @@ internal static class MockRepositoryUtils
             .ReturnsAsync(inputs);
 
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
-        return serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        var stubTlgInputsRepo = mockTlgInputsRepo.Object;
+        
+        return serviceCollection.AddScoped<ITlgInputsRepository>(_ => stubTlgInputsRepo);
     }
 
     internal record MockContainer

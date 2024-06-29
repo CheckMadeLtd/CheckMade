@@ -2,6 +2,7 @@ using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Tests.Startup.DefaultMocks;
+using CheckMade.Tests.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -21,7 +22,9 @@ public class UnitTestStartup : TestStartupBase
     {
         RegisterBotClientMocks();
         RegisterExternalServicesMocks();
-        // RegisterPersistenceMocks();
+        
+        // adds stubRepos with default values b/c of lack of optional arguments given
+        Services.ConfigureTestRepositories();
     }
 
     private void RegisterBotClientMocks()

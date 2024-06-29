@@ -23,20 +23,9 @@ public class UserAuthWorkflowTests
     public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-
-        var inputHistory = new List<TlgInput> { inputGenerator.GetValidTlgInputTextMessage() }; 
-        
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(inputHistory);
-
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
+        var inputHistory = new List<TlgInput> { inputGenerator.GetValidTlgInputTextMessage() };
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualState = workflow.DetermineCurrentState(inputHistory);
@@ -47,7 +36,7 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
+    public async Task DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastRoleBind()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -70,14 +59,10 @@ public class UserAuthWorkflowTests
                     .DeactivationDate.GetValueOrThrow()
                     .AddDays(-1));
 
-        var inputHistory = 
-            new List<TlgInput> { tlgPastInputToBeIgnored }
-                .ToImmutableReadOnlyCollection();
-
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.SetupMockRepositories(
-            roleBindings: new []{ historicRoleBind }.ToImmutableReadOnlyCollection(),
-            inputs: inputHistory);
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            roleBindings: new []{ historicRoleBind },
+            inputs: new []{ tlgPastInputToBeIgnored });
         _services = services;
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -93,52 +78,19 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    // We know it's failed because a successful submission means no revisiting of the UserAuthWorkflow!
-    public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterFailedAttempt()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
-        
-        var tlgAgent = PrivateBotChat_Operations;
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-
-        var inputHistory = new List<TlgInput> { inputGenerator.GetValidTlgInputTextMessage(text: "InvalidToken") };
-        
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(inputHistory);
-        
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
-        
-        var actualState = workflow.DetermineCurrentState(inputHistory);
-        
-        Assert.Equal(
-            ReceivedTokenSubmissionAttempt,
-            actualState);
-    }
-    
-    [Fact]
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-        
         var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
             text: InputValidator.GetTokenFormatExample());
         
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { nonExistingTokenInput });
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[] { nonExistingTokenInput });
+        _services = services;
         
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = 
@@ -155,7 +107,6 @@ public class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
         
         var inputTokenWithPreExistingActiveTlgAgentRoleBind = 
             inputGenerator.GetValidTlgInputTextMessage(
@@ -163,10 +114,11 @@ public class UserAuthWorkflowTests
         
         var preExistingActiveTlgAgentRoleBind = 
             MockRepositoryUtils.GetNewRoleBind(
-                SOpsAdmin_DanielEn_X2024, tlgAgent);
+                SOpsAdmin_DanielEn_X2024,
+                PrivateBotChat_Operations);
 
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.SetupMockRepositories(
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { preExistingActiveTlgAgentRoleBind },
             inputs: new[] { inputTokenWithPreExistingActiveTlgAgentRoleBind });
         _services = services;
@@ -198,25 +150,24 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesRoleBind_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = UserId03_ChatId06_Operations;
         var roleForAuth = SOpsEngineer_DanielEn_X2024;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { inputValidToken });
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            roles: new []{ SOpsEngineer_DanielEn_X2024 },
+            inputs: new[] { inputValidToken });
+        _services = services;
 
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        var mockTlgAgentRolesRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+        var mockRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
         
@@ -227,7 +178,7 @@ public class UserAuthWorkflowTests
             Option<DateTime>.None());
         
         var actualTlgAgentRoleBindAdded = new List<TlgAgentRoleBind>(); 
-        mockTlgAgentRolesRepo
+        mockRoleBindingsRepo
             .Setup(x => 
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
@@ -253,27 +204,25 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesRoleBindingsForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
         var roleForAuth = SOpsInspector_DanielDe_X2024;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-
+        
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { inputValidToken });
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            roles: new []{ SOpsInspector_DanielDe_X2024 },
+            inputs: new[] { inputValidToken });
+        _services = services;
 
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        var mockTlgAgentRoleBindingsRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+        var mockTlgAgentRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
-        
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         
         var expectedTlgAgentRoleBindingsAdded = allModes.Select(im => 
@@ -314,25 +263,26 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_CreatesRoleBindingsForMissingModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
         var roleForAuth = SOpsEngineer_DanielEn_X2024;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { inputValidToken });
-        
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        var mockTlgAgentRoleBindingsRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            roles: new[] { SOpsEngineer_DanielEn_X2024 },
+            roleBindings: new []{ MockRepositoryUtils.GetNewRoleBind(
+                SOpsEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) },
+            inputs: new[] { inputValidToken });
+        _services = services;
+
+        var mockTlgAgentRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
 
         var expectedTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>
         {
@@ -385,20 +335,15 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-        
         var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);
         
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { badTokenInput });
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[] { badTokenInput });
+        _services = services;
         
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
         var actualOutputs = await workflow.GetResponseAsync(badTokenInput);
