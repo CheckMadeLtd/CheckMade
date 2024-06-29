@@ -2,7 +2,6 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
@@ -22,18 +21,19 @@ public class LogoutWorkflowTests
     public async Task GetNextOutputAsync_LogsOutAndReturnsConfirmation_AfterUserConfirmsLogoutIntention()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
 
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput>
+        var boundRole = MockRepositoryUtils.GetNewRoleBind(
+            SOpsEngineer_DanielEn_X2024,
+            PrivateBotChat_Operations);
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[]
             {
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
@@ -43,31 +43,18 @@ public class LogoutWorkflowTests
                     Dt(LanguageCode.de)),
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
-                    Operations, 
+                    Operations,
                     (int)OperationsBotCommands.Logout),
                 confirmLogoutCommand
-            });
+            },
+            roleBindings: new []{ boundRole } );
+        _services = services;
 
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        
-        var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
-
-        mockRoleBindingsRepo
-            .Setup(tarb => tarb.GetAllActiveAsync())
-            .ReturnsAsync(new List<TlgAgentRoleBind>
-            {
-                MockRepositoryUtils.GetNewRoleBind(SOpsAdmin_DanielEn_X2024, tlgAgent)
-            });
-
-        serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockRoleBindingsRepo.Object);
-        
-        _services = serviceCollection.BuildServiceProvider();
+        var mockRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         
         const string expectedMessage = "💨 Logged out.";
-        var expectedBindUpdated = 
-            (await mockRoleBindingsRepo.Object.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent == tlgAgent);
         
         var actualOutput = await workflow.GetResponseAsync(confirmLogoutCommand);
         
@@ -76,9 +63,8 @@ public class LogoutWorkflowTests
             TestUtils.GetFirstRawEnglish(actualOutput));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
-                It.Is<IReadOnlyCollection<TlgAgentRoleBind>>(collection => 
-                    collection
-                        .Any(bind => bind.Equals(expectedBindUpdated))),
+                new List<TlgAgentRoleBind>{ boundRole }
+                    .ToImmutableReadOnlyCollection(),
                 DbRecordStatus.Historic),
             Times.Once());
     }
@@ -87,7 +73,6 @@ public class LogoutWorkflowTests
     public async Task GetNextOutputAsync_LogsOutFromAllModes_WhenLoggingOutInPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         
         var tlgAgentOperations = PrivateBotChat_Operations;
@@ -95,25 +80,19 @@ public class LogoutWorkflowTests
         var tlgAgentNotif = PrivateBotChat_Notifications;
         var boundRole = SOpsEngineer_DanielEn_X2024; 
         
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgentOperations))
-            .ReturnsAsync(new List<TlgInput>
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[]
             {
                 inputGenerator.GetValidTlgInputCommandMessage(
-                    Operations, 
+                    Operations,
                     (int)OperationsBotCommands.Logout),
                 confirmLogoutCommand
-            });
-
-        var mockTlgAgentRoleBindingsForAllModes = new Mock<ITlgAgentRoleBindingsRepository>();
-        
-        mockTlgAgentRoleBindingsForAllModes
-            .Setup(repo => repo.GetAllActiveAsync())
-            .ReturnsAsync(new List<TlgAgentRoleBind>
+            },
+            roleBindings: new List<TlgAgentRoleBind>
             {
                 // Relevant
                 new(boundRole, tlgAgentOperations,
@@ -130,10 +109,10 @@ public class LogoutWorkflowTests
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTime.UtcNow, Option<DateTime>.None())
             });
-        
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleBindingsForAllModes.Object);
-        _services = serviceCollection.BuildServiceProvider();
+        _services = services;
+
+        var mockTlgAgentRoleBindingsForAllModes =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         
         var expectedBindingsUpdated = 
@@ -170,7 +149,8 @@ public class LogoutWorkflowTests
             Assert.Equivalent(
                 expectedBindingsUpdated[i].Role,
                 actualTlgAgentRoleBindingsUpdated[i].Role);
-            Assert.True(actualTlgAgentRoleBindingsUpdated[i].Status == DbRecordStatus.Historic);
+            Assert.True(
+                actualTlgAgentRoleBindingsUpdated[i].Status == DbRecordStatus.Historic);
         }
     }
 
@@ -178,18 +158,14 @@ public class LogoutWorkflowTests
     public async Task GetNextOutputAsync_ConfirmsAbortion_AfterUserAbortsLogout()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-
         var abortLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.No);
 
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput>
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[]
             {
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
@@ -203,13 +179,13 @@ public class LogoutWorkflowTests
                     (int)OperationsBotCommands.Logout),
                 abortLogoutCommand
             });
-
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
+        _services = services;
+        
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
         
-        var actualOutput = await workflow.GetResponseAsync(abortLogoutCommand);
+        var actualOutput = 
+            await workflow.GetResponseAsync(abortLogoutCommand);
         
         Assert.Equal(
             expectedMessage1,
