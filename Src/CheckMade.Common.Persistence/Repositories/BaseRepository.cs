@@ -10,8 +10,6 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
 using Npgsql;
-// ToDo: remove again once these methods are used. 
-// ReSharper disable UnusedMember.Local
 
 namespace CheckMade.Common.Persistence.Repositories;
 
@@ -66,6 +64,9 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
         return builder.ToImmutable();
     }
+
+    protected static readonly Func<DbDataReader, User> ReadUser = reader => 
+        ConstituteUser(reader, ConstituteRolesInfo(reader));
 
     protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
@@ -158,6 +159,35 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
     }
 
+    // ToDo: Check if this code actually works once I read in Users including their Roles
+    private static IEnumerable<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
+    {
+        var currentUserMobile = reader.GetString(reader.GetOrdinal("user_mobile"));
+        var currentUserStatus = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"));
+
+        var roles = new List<IRoleInfo>();
+
+        do
+        {
+            var roleInfo = ConstituteRoleInfo(reader);
+            
+            if (roleInfo.IsSome)
+                roles.Add(roleInfo.GetValueOrThrow());
+
+            if (!reader.Read() || 
+                !IsSameUser(reader.GetString(reader.GetOrdinal("user_mobile")),
+                    (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))))
+            {
+                break;
+            }
+        } while (true);
+
+        return roles;
+
+        bool IsSameUser(string mobile, DbRecordStatus status) =>
+            mobile == currentUserMobile && status == currentUserStatus;
+    }
+    
     private static TlgInput ConstituteTlgInput(
         DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
     {

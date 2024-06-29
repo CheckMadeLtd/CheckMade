@@ -41,7 +41,9 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
 
                                             "FROM roles r " +
                                             "INNER JOIN users usr on r.user_id = usr.id " +
-                                            "INNER JOIN live_events lve on r.live_event_id = lve.id ";
+                                            "INNER JOIN live_events lve on r.live_event_id = lve.id " +
+                                            
+                                            "ORDER BY r.id";
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 

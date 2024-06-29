@@ -26,29 +26,59 @@ internal static class MockRepositoryUtils
     internal static (ServiceProvider sp, MockContainer container) ConfigureTestRepositories(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<LiveEventSeries>? liveEventSeries = null,
-        IReadOnlyCollection<LiveEventVenue>? venues = null,
-        IReadOnlyCollection<LiveEvent>? liveEvents = null,
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
         IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
         IReadOnlyCollection<TlgInput>? inputs = null)
     {
+        List<LiveEventSeries> defaultSeries = [SeriesX, SeriesY];
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SOpsAdmin_DanielEn_X2024];
         List<TlgAgentRoleBind> defaultRoleBindings = [];
         List<TlgInput> defaultInputs = [];
-        List<LiveEventSeries> defaultSeries = [SeriesX, SeriesY];
-        List<LiveEventVenue> defaultVenues = [Venue1, Venue2];
-        List<LiveEvent> defaultLiveEvents = [X2024, X2025, Y2024, Y2025];
 
         var mockContainer = new MockContainer();
         
         serviceCollection = serviceCollection
+            .ArrangeMockLiveEventSeriesRepo(liveEventSeries ?? defaultSeries, mockContainer)
+            .ArrangeUsersRepo(users ?? defaultUsers, mockContainer)
             .ArrangeMockRolesRepo(roles ?? defaultRoles, mockContainer)
             .ArrangeMockRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
             .ArrangeMockTlgInputsRepo(inputs ?? defaultInputs, mockContainer);
 
         return (serviceCollection.BuildServiceProvider(), mockContainer);
+    }
+
+    private static IServiceCollection ArrangeMockLiveEventSeriesRepo(
+        this IServiceCollection serviceCollection,
+        IReadOnlyCollection<LiveEventSeries> liveEventSeries,
+        MockContainer container)
+    {
+        var mockLiveEventSeriesRepo = new Mock<ILiveEventSeriesRepository>();
+        mockLiveEventSeriesRepo
+            .Setup(repo => repo.GetAllAsync())
+            .ReturnsAsync(liveEventSeries);
+
+        container.Mocks[typeof(ILiveEventSeriesRepository)] = mockLiveEventSeriesRepo;
+        var stubLiveEventSeriesRepo = mockLiveEventSeriesRepo.Object;
+        
+        return serviceCollection.AddScoped<ILiveEventSeriesRepository>(_ => stubLiveEventSeriesRepo);
+    }
+    
+    private static IServiceCollection ArrangeUsersRepo(
+        this IServiceCollection serviceCollection, 
+        IReadOnlyCollection<User> users,
+        MockContainer container)
+    {
+        var mockUsersRepo = new Mock<IUsersRepository>();
+        mockUsersRepo
+            .Setup(repo => repo.GetAllAsync())
+            .ReturnsAsync(users);
+
+        container.Mocks[typeof(IUsersRepository)] = mockUsersRepo;
+        var stubUsersRepo = mockUsersRepo.Object;
+        
+        return serviceCollection.AddScoped<IUsersRepository>(_ => stubUsersRepo);
     }
 
     private static IServiceCollection ArrangeMockRolesRepo(
@@ -66,7 +96,7 @@ internal static class MockRepositoryUtils
         
         return serviceCollection.AddScoped<IRolesRepository>(_ => stubRolesRepo);
     }
-    
+
     private static IServiceCollection ArrangeMockRoleBindingsRepo(
         this IServiceCollection serviceCollection, 
         IReadOnlyCollection<TlgAgentRoleBind> roleBindings,
@@ -88,7 +118,7 @@ internal static class MockRepositoryUtils
         return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
     }
 
-    
+
     private static IServiceCollection ArrangeMockTlgInputsRepo(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<TlgInput> inputs,
