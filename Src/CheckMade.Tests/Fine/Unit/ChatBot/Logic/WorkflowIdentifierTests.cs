@@ -30,7 +30,8 @@ public class WorkflowIdentifierTests
             .Identify(new List<TlgInput>{ inputFromUnauthenticatedUser }
                 .ToImmutableReadOnlyCollection());
         
-        Assert.True(workflow.GetValueOrThrow() is UserAuthWorkflow);
+        Assert.True(
+            workflow.GetValueOrThrow() is UserAuthWorkflow);
     }
 
     [Fact]
@@ -48,7 +49,8 @@ public class WorkflowIdentifierTests
             .Identify(new List<TlgInput>{ inputWithSettingsBotCommand }
                 .ToImmutableReadOnlyCollection());
         
-        Assert.True(workflow.GetValueOrThrow() is LanguageSettingWorkflow);
+        Assert.True(
+            workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
 
     [Fact]
@@ -68,6 +70,7 @@ public class WorkflowIdentifierTests
                     inputGenerator.GetValidTlgInputTextMessage()
                 });
         
-        Assert.True(workflow.IsNone);
+        Assert.True(
+            workflow.IsNone);
     }
 }
