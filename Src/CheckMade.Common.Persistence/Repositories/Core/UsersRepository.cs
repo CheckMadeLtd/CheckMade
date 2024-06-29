@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Interfaces;
-using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -71,6 +70,6 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        await ExecuteTransactionAsync(new [] { command });
     }
 }

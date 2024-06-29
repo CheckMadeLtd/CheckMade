@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
-using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
@@ -13,7 +12,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
+        await AddAsync(new [] { tlgAgentRoleBind });
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
@@ -125,7 +124,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         .Where(tarb => tarb.Status == DbRecordStatus.Active);
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
-        await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
+        await UpdateStatusAsync(new [] { tlgAgentRoleBind }, newStatus);
 
     public async Task UpdateStatusAsync(
         IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
@@ -179,7 +178,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        await ExecuteTransactionAsync(new [] { command });
         EmptyCache();
     }
 

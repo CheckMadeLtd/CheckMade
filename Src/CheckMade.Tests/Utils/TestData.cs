@@ -70,7 +70,7 @@ internal static class TestData
         Venue1);
 
     internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
-        new List<LiveEvent> 
+        new [] 
         {
             X2024,
             X2025
@@ -91,7 +91,7 @@ internal static class TestData
         Venue2);
 
     internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
-        new List<LiveEvent>
+        new []
         {
             Y2024,
             Y2025

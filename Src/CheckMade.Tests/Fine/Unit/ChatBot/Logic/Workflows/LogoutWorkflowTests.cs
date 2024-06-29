@@ -63,7 +63,7 @@ public class LogoutWorkflowTests
             TestUtils.GetFirstRawEnglish(actualOutput));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
-                new List<TlgAgentRoleBind>{ boundRole }
+                new [] { boundRole }
                     .ToImmutableReadOnlyCollection(),
                 DbRecordStatus.Historic),
             Times.Once());

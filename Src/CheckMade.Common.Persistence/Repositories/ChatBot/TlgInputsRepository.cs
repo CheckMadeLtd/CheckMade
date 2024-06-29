@@ -16,7 +16,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
     private Option<IReadOnlyCollection<TlgInput>> _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.None();
     
     public async Task AddAsync(TlgInput tlgInput) =>
-        await AddAsync(new List<TlgInput> { tlgInput }.ToImmutableReadOnlyCollection());
+        await AddAsync(new [] { tlgInput }.ToImmutableReadOnlyCollection());
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
@@ -158,7 +158,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         };
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        await ExecuteTransactionAsync(new [] { command });
         EmptyCash();
     }
 
