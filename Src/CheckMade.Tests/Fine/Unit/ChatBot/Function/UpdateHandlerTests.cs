@@ -127,7 +127,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetMockInputProcessorFactoryWithSetUpReturnValue(
+            GetStubInputProcessorFactoryWithSetUpReturnValue(
                 new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -152,7 +152,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetMockInputProcessorFactoryWithSetUpReturnValue(
+            GetStubInputProcessorFactoryWithSetUpReturnValue(
                new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
         _services = serviceCollection.BuildServiceProvider();
         
@@ -193,7 +193,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         };
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithPrompts, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithPrompts, mode));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -236,7 +236,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputsMultiple, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputsMultiple, mode));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -288,7 +288,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputsWithLogicalPort, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputsWithLogicalPort, mode));
         _services = serviceCollection.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
@@ -339,7 +339,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         const string fakeOutputMessage = "Output without logical port";
         List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) }];
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithoutPort, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithoutPort, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
@@ -390,7 +390,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithMultipleAttachmentTypes, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithMultipleAttachmentTypes, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -442,7 +442,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
     
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithTextAndCaptions, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithTextAndCaptions, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -482,7 +482,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         ];
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithLocation, mode));
+            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithLocation, mode));
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -513,7 +513,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
 
     // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
     private static IInputProcessorFactory 
-        GetMockInputProcessorFactoryWithSetUpReturnValue(
+        GetStubInputProcessorFactoryWithSetUpReturnValue(
             IReadOnlyCollection<OutputDto> returnValue, InteractionMode interactionMode = Operations)
     {
         var mockInputProcessor = new Mock<IInputProcessor>();

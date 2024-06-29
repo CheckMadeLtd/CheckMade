@@ -41,16 +41,16 @@ internal static class TestRepositoryUtils
         var mockContainer = new MockContainer();
         
         serviceCollection = serviceCollection
-            .ArrangeMockLiveEventSeriesRepo(liveEventSeries ?? defaultSeries, mockContainer)
-            .ArrangeUsersRepo(users ?? defaultUsers, mockContainer)
-            .ArrangeMockRolesRepo(roles ?? defaultRoles, mockContainer)
-            .ArrangeMockRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
-            .ArrangeMockTlgInputsRepo(inputs ?? defaultInputs, mockContainer);
+            .ArrangeTestLiveEventSeriesRepo(liveEventSeries ?? defaultSeries, mockContainer)
+            .ArrangeTestUsersRepo(users ?? defaultUsers, mockContainer)
+            .ArrangeTestRolesRepo(roles ?? defaultRoles, mockContainer)
+            .ArrangeTestRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
+            .ArrangeTestTlgInputsRepo(inputs ?? defaultInputs, mockContainer);
 
         return (serviceCollection.BuildServiceProvider(), mockContainer);
     }
 
-    private static IServiceCollection ArrangeMockLiveEventSeriesRepo(
+    private static IServiceCollection ArrangeTestLiveEventSeriesRepo(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<LiveEventSeries> liveEventSeries,
         MockContainer container)
@@ -66,7 +66,7 @@ internal static class TestRepositoryUtils
         return serviceCollection.AddScoped<ILiveEventSeriesRepository>(_ => stubLiveEventSeriesRepo);
     }
     
-    private static IServiceCollection ArrangeUsersRepo(
+    private static IServiceCollection ArrangeTestUsersRepo(
         this IServiceCollection serviceCollection, 
         IReadOnlyCollection<User> users,
         MockContainer container)
@@ -82,7 +82,7 @@ internal static class TestRepositoryUtils
         return serviceCollection.AddScoped<IUsersRepository>(_ => stubUsersRepo);
     }
 
-    private static IServiceCollection ArrangeMockRolesRepo(
+    private static IServiceCollection ArrangeTestRolesRepo(
         this IServiceCollection serviceCollection, 
         IReadOnlyCollection<Role> roles,
         MockContainer container)
@@ -98,7 +98,7 @@ internal static class TestRepositoryUtils
         return serviceCollection.AddScoped<IRolesRepository>(_ => stubRolesRepo);
     }
 
-    private static IServiceCollection ArrangeMockRoleBindingsRepo(
+    private static IServiceCollection ArrangeTestRoleBindingsRepo(
         this IServiceCollection serviceCollection, 
         IReadOnlyCollection<TlgAgentRoleBind> roleBindings,
         MockContainer container)
@@ -120,7 +120,7 @@ internal static class TestRepositoryUtils
     }
 
 
-    private static IServiceCollection ArrangeMockTlgInputsRepo(
+    private static IServiceCollection ArrangeTestTlgInputsRepo(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<TlgInput> inputs,
         MockContainer container)
