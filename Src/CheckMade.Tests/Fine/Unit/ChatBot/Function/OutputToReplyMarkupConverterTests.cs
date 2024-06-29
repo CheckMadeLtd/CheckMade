@@ -61,9 +61,12 @@ public class OutputToReplyMarkupConverterTests
                 ]
             }));
 
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithDomainTerms);
+        var actualReplyMarkup = 
+            basics.converter.GetReplyMarkup(outputWithDomainTerms);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedReplyMarkup.GetValueOrThrow(),
+            actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -82,8 +85,10 @@ public class OutputToReplyMarkupConverterTests
         };
         var outputWithPrompts = new OutputDto
         {
-            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
-                .Aggregate((current, next) => current | next)
+            ControlPromptsSelection = 
+                promptSelection
+                    .Select(pair => pair.prompt)
+                    .Aggregate((current, next) => current | next)
         };
 
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -114,9 +119,12 @@ public class OutputToReplyMarkupConverterTests
                 ]
             }));
         
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithPrompts);
+        var actualReplyMarkup = 
+            basics.converter.GetReplyMarkup(outputWithPrompts);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedReplyMarkup.GetValueOrThrow(),
+            actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -138,8 +146,11 @@ public class OutputToReplyMarkupConverterTests
         var outputWithBoth = new OutputDto
         {
             DomainTermSelection = domainTermSelection,
-            ControlPromptsSelection = promptSelection.Select(pair => pair.prompt)
-                .Aggregate((current, next) => current | next)
+            
+            ControlPromptsSelection = 
+                promptSelection
+                    .Select(pair => pair.prompt)
+                    .Aggregate((current, next) => current | next)
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
@@ -157,9 +168,12 @@ public class OutputToReplyMarkupConverterTests
                     promptSelection[0].promptId)
             }));
 
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithBoth);
+        var actualReplyMarkup = 
+            basics.converter.GetReplyMarkup(outputWithBoth);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedReplyMarkup.GetValueOrThrow(),
+            actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -183,7 +197,7 @@ public class OutputToReplyMarkupConverterTests
         {
             new[] 
                 { new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3) },
-                [ new KeyboardButton(choice4), new KeyboardButton(choice5) ]
+                [new KeyboardButton(choice4), new KeyboardButton(choice5)]
         })
         {
             IsPersistent = false,
@@ -193,7 +207,9 @@ public class OutputToReplyMarkupConverterTests
         
         var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithChoices);
         
-        Assert.Equivalent(expectedReplyMarkup.GetValueOrThrow(), actualReplyMarkup.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedReplyMarkup.GetValueOrThrow(),
+            actualReplyMarkup.GetValueOrThrow());
     }
 
     [Fact]
@@ -203,9 +219,12 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         var outputWithout = new OutputDto();
         
-        var actualReplyMarkup = basics.converter.GetReplyMarkup(outputWithout);
+        var actualReplyMarkup = 
+            basics.converter.GetReplyMarkup(outputWithout);
         
-        Assert.Equivalent(Option<IReplyMarkup>.None(), actualReplyMarkup);
+        Assert.Equivalent(
+            Option<IReplyMarkup>.None(),
+            actualReplyMarkup);
     }
 
     [Fact]
@@ -218,7 +237,8 @@ public class OutputToReplyMarkupConverterTests
             ControlPromptsSelection = Back + 1
         };
 
-        var act = () => basics.converter.GetReplyMarkup(outputWithInvalid);
+        var act = () => 
+            basics.converter.GetReplyMarkup(outputWithInvalid);
         
         Assert.Throws<InvalidEnumArgumentException>(act);
     }
