@@ -1,8 +1,8 @@
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 
-namespace CheckMade.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultStubs;
 
-public class MockBlobLoader : IBlobLoader
+public class StubBlobLoader : IBlobLoader
 {
     public Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName)
     {

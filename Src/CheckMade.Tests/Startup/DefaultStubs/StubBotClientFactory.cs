@@ -2,9 +2,9 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Moq;
 
-namespace CheckMade.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultStubs;
 
-internal class MockBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
+internal class StubBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClient(InteractionMode interactionMode)
     {
@@ -12,7 +12,7 @@ internal class MockBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper
         // Explanation:
         
         /* While production code uses a dictionary of botClientsByInteractionMode, test code currently only uses a single
-        mockBotClient, without distinction by type - its interactionMode-independent behaviour is specified in
+        mockBotClient/stubBotClient, without distinction by type - its interactionMode-independent behavior is specified in
         UnitTestStartup. If we wanted to be able to test for interactionMode-dependent properties of botClient in test-code,
         a major refactoring would be necessary, e.g. not mocking a single, scoped botClient but rather the entire
         botClientByInteractionMode dictionary. See also explanation about Mock<IBotClientWrapper> in UnitTestStartup! */ 
