@@ -49,10 +49,19 @@ public class LogoutWorkflowTests
             });
 
         serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
         
-        // ToDo: replace this with newly mocked up Repo right here...
-        var mockRoleBindingsRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
+        var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+
+        mockRoleBindingsRepo
+            .Setup(tarb => tarb.GetAllActiveAsync())
+            .ReturnsAsync(new List<TlgAgentRoleBind>
+            {
+                MockRepositoryUtils.GetNewRoleBind(SOpsAdmin_DanielEn_X2024, tlgAgent)
+            });
+
+        serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockRoleBindingsRepo.Object);
+        
+        _services = serviceCollection.BuildServiceProvider();
         var workflow = _services.GetRequiredService<ILogoutWorkflow>();
         
         const string expectedMessage = "💨 Logged out.";

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;
 using InputValidator = CheckMade.Common.LangExt.InputValidator;
+// ReSharper disable MoveLocalFunctionAfterJumpStatement
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
 
@@ -49,27 +50,34 @@ public class UserAuthWorkflowTests
     public async Task DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = UserId02_ChatId03_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-    
-        var tlgPastInputToBeIgnored = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId,
-            tlgAgent.ChatId,
-            RoleBindFor_SanitaryOpsEngineer1_HistoricOnly.Role.Token,
-            RoleBindFor_SanitaryOpsEngineer1_HistoricOnly
-                .DeactivationDate.GetValueOrThrow()
-                .AddDays(-1));
+        
+        var historicRoleBind = new TlgAgentRoleBind(
+            SOpsAdmin_DanielEn_X2024,
+            tlgAgent,
+            new DateTime(2001, 09, 27),
+            new DateTime(2001, 09, 30),
+            DbRecordStatus.Historic);
 
-        var inputHistory = new List<TlgInput> { tlgPastInputToBeIgnored };
-        
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(inputHistory);
-        
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+        var tlgPastInputToBeIgnored = 
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                historicRoleBind.Role.Token,
+                historicRoleBind
+                    .DeactivationDate.GetValueOrThrow()
+                    .AddDays(-1));
+
+        var inputHistory = 
+            new List<TlgInput> { tlgPastInputToBeIgnored }
+                .ToImmutableReadOnlyCollection();
+
+        var serviceCollection = new UnitTestStartup().Services;
+        serviceCollection.SetupMockRepositories(
+            roleBindings: new []{ historicRoleBind }.ToImmutableReadOnlyCollection(),
+            inputs: inputHistory);
         _services = serviceCollection.BuildServiceProvider();
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
@@ -146,23 +154,49 @@ public class UserAuthWorkflowTests
     public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActiveTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var serviceCollection = new UnitTestStartup().Services;
-        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
-
+        
         var inputTokenWithPreExistingActiveTlgAgentRoleBind = inputGenerator.GetValidTlgInputTextMessage(
             text: SOpsAdmin_DanielEn_X2024.Token);
         
-        mockTlgInputsRepo
-            .Setup(repo => repo.GetAllAsync(tlgAgent))
-            .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRoleBind });
+        var preExistingActiveTlgAgentRoleBind = MockRepositoryUtils.GetNewRoleBind(
+            SOpsAdmin_DanielEn_X2024, tlgAgent);
+        
+        var mockTlgAgentRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
 
-        serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        var mockTlgAgentRoleBindingsRepo = _services.GetRequiredService<Mock<ITlgAgentRoleBindingsRepository>>();
-        var preExistingActiveTlgAgentRoleBind = RoleBindFor_SanitaryOpsAdmin_Default;
+        ServiceProvider SetupServices()
+        {
+            var serviceCollection = new UnitTestStartup().Services;
+        
+            ArrangeMockTlgInputsRepo();
+            ArrangeMockRoleBindingsRepo();
+        
+            return serviceCollection.BuildServiceProvider();
+            
+            void ArrangeMockTlgInputsRepo()
+            {
+                var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+
+                mockTlgInputsRepo
+                    .Setup(repo => repo.GetAllAsync(tlgAgent))
+                    .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRoleBind });
+
+                serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+            }
+
+            void ArrangeMockRoleBindingsRepo()
+            {
+                mockTlgAgentRoleBindingsRepo
+                    .Setup(tarb => tarb.GetAllActiveAsync())
+                    .ReturnsAsync(new List<TlgAgentRoleBind> { preExistingActiveTlgAgentRoleBind });
+
+                serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleBindingsRepo.Object);
+            }
+        }
+
+        _services = SetupServices();
+        
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         const string expectedWarning = """
