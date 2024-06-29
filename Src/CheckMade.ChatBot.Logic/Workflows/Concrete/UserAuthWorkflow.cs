@@ -49,17 +49,17 @@ internal class UserAuthWorkflow(
                 {
                     true => await AuthenticateUserAsync(currentInput),
                     
-                    false => [ new OutputDto
+                    false => [new OutputDto
                         {
                             Text = Ui("This is an unknown token. Try again...")
                         },
-                        EnterTokenPrompt ]
+                        EnterTokenPrompt]
                 },
-                false => [ new OutputDto
+                false => [new OutputDto
                     {
                         Text = Ui("Bad token format! Try again...")
                     },
-                    EnterTokenPrompt ]
+                    EnterTokenPrompt]
             },
             
             _ => Result<IReadOnlyCollection<OutputDto>>.FromError(

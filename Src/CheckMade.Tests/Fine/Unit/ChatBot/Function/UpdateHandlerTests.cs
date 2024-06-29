@@ -230,7 +230,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsMultiple = [ 
+        List<OutputDto> outputsMultiple = [
             new OutputDto { Text = UiNoTranslate("Output1") },
             new OutputDto { Text = UiNoTranslate("Output2") }
         ];
@@ -337,7 +337,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         const string fakeOutputMessage = "Output without logical port";
-        List<OutputDto> outputWithoutPort = [ new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) } ];
+        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) }];
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
             GetMockInputProcessorFactoryWithSetUpReturnValue(outputWithoutPort, mode));
         _services = serviceCollection.BuildServiceProvider();
