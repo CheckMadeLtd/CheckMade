@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;
 using InputValidator = CheckMade.Common.LangExt.InputValidator;
-// ReSharper disable MoveLocalFunctionAfterJumpStatement
 
 namespace CheckMade.Tests.Fine.Unit.ChatBot.Logic.Workflows;
 

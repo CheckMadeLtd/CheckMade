@@ -7,6 +7,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using CheckMade.Tests.Utils;
+using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
@@ -25,9 +26,12 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault)
         };
         
         foreach (var input in tlgInputs)
@@ -50,7 +54,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
-            Assert.Equivalent(expectedRetrieval[0], retrievedInputs.First());
+            Assert.Equivalent(
+                expectedRetrieval[0],
+                retrievedInputs.First());
         }
     }
 
@@ -65,12 +71,16 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
+        
         var retrievedInput = 
             (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
             .First();
+        
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
-        Assert.Equivalent(expectedDomainTerm, retrievedInput.Details.DomainTerm.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedDomainTerm,
+            retrievedInput.Details.DomainTerm.GetValueOrThrow());
     }
     
     [Fact]
@@ -80,7 +90,10 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
-        var expectedGeo = new Geo(17.456, -23.00987, 15.7f);
+        var expectedGeo = new Geo(
+            17.456,
+            -23.00987,
+            15.7f);
         
         var tlgInput = inputGenerator.GetValidTlgInputLocationMessage(
             expectedGeo.Latitude, 
@@ -88,12 +101,16 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             expectedGeo.UncertaintyRadiusInMeters);
         
         await inputRepo.AddAsync(tlgInput);
+        
         var retrievedInput = 
             (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
             .First();
+        
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
-        Assert.Equivalent(expectedGeo, retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
+        Assert.Equivalent(
+            expectedGeo,
+            retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
     }
 
     [Fact]
@@ -105,16 +122,22 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var tlgInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault),
-            inputGenerator.GetValidTlgInputTextMessage(roleSetting: TestOriginatorRoleSetting.IntegrationTestDefault)
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault),
+            inputGenerator.GetValidTlgInputTextMessage(
+                roleSetting: IntegrationTestDefault)
         };
         
         await inputRepo.AddAsync(tlgInputs);
-        var retrievedInputs = await inputRepo.GetAllAsync(PrivateBotChat_Operations);
+        var retrievedInputs = 
+            await inputRepo.GetAllAsync(PrivateBotChat_Operations);
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
 
-        Assert.Equivalent(tlgInputs, retrievedInputs);
+        Assert.Equivalent(
+            tlgInputs,
+            retrievedInputs);
     }
     
     [Fact]
@@ -129,9 +152,11 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     
-        var retrievedInputs = await inputRepo.GetAllAsync(tlgAgent);
+        var retrievedInputs = 
+            await inputRepo.GetAllAsync(tlgAgent);
     
-        Assert.Empty(retrievedInputs);
+        Assert.Empty(
+            retrievedInputs);
     }
 
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
@@ -151,7 +176,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             var prdDbConnString = _services.GetRequiredService<PrdDbConnStringProvider>().Get;
             testOutputHelper.WriteLine(prdDbConnString);
             var serviceCollection = new IntegrationTestStartup().Services;
-            serviceCollection.AddScoped<IDbConnectionProvider>(_ => new DbConnectionProvider(prdDbConnString));
+            serviceCollection.AddScoped<IDbConnectionProvider>(_ => 
+                new DbConnectionProvider(prdDbConnString));
             _services = serviceCollection.BuildServiceProvider();
         }
         
