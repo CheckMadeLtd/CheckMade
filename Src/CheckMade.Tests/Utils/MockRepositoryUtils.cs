@@ -23,7 +23,7 @@ internal static class MockRepositoryUtils
             Option<DateTime>.None());
     }
 
-    internal static ServiceProvider SetupMockRepositories(
+    internal static (ServiceProvider sp, MockContainer container) SetupMockRepositories(
         this IServiceCollection serviceCollection,
         IReadOnlyCollection<LiveEventSeries>? liveEventSeries = null,
         IReadOnlyCollection<LiveEventVenue>? venues = null,
@@ -31,8 +31,7 @@ internal static class MockRepositoryUtils
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
         IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
-        IReadOnlyCollection<TlgInput>? inputs = null,
-        Action<IServiceCollection>? additionalSetup = null)
+        IReadOnlyCollection<TlgInput>? inputs = null)
     {
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SOpsAdmin_DanielEn_X2024];
@@ -41,30 +40,35 @@ internal static class MockRepositoryUtils
         List<LiveEventSeries> defaultSeries = [SeriesX, SeriesY];
         List<LiveEventVenue> defaultVenues = [Venue1, Venue2];
         List<LiveEvent> defaultLiveEvents = [X2024, X2025, Y2024, Y2025];
+
+        var mockContainer = new MockContainer();
         
         serviceCollection = serviceCollection
-            .ArrangeMockRolesRepo(roles ?? defaultRoles)
-            .ArrangeMockRoleBindingsRepo(roleBindings ?? defaultRoleBindings)
-            .ArrangeMockTlgInputsRepo(inputs ?? defaultInputs);
+            .ArrangeMockRolesRepo(roles ?? defaultRoles, mockContainer)
+            .ArrangeMockRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
+            .ArrangeMockTlgInputsRepo(inputs ?? defaultInputs, mockContainer);
 
-        additionalSetup?.Invoke(serviceCollection);
-        
-        return serviceCollection.BuildServiceProvider();
+        return (serviceCollection.BuildServiceProvider(), mockContainer);
     }
 
     private static IServiceCollection ArrangeMockRolesRepo(
-        this IServiceCollection serviceCollection, IReadOnlyCollection<Role> roles)
+        this IServiceCollection serviceCollection, 
+        IReadOnlyCollection<Role> roles,
+        MockContainer container)
     {
         var mockRolesRepo = new Mock<IRolesRepository>();
         mockRolesRepo
             .Setup(repo => repo.GetAllAsync())
             .ReturnsAsync(roles);
 
+        container.Mocks[typeof(IRolesRepository)] = mockRolesRepo;
         return serviceCollection.AddScoped<IRolesRepository>(_ => mockRolesRepo.Object);
     }
     
     private static IServiceCollection ArrangeMockRoleBindingsRepo(
-        this IServiceCollection serviceCollection, IReadOnlyCollection<TlgAgentRoleBind> roleBindings)
+        this IServiceCollection serviceCollection, 
+        IReadOnlyCollection<TlgAgentRoleBind> roleBindings,
+        MockContainer container)
     {
         var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
         
@@ -76,18 +80,27 @@ internal static class MockRepositoryUtils
             .Setup(repo => repo.GetAllActiveAsync())
             .ReturnsAsync(roleBindings.Where(tarb => tarb.Status == DbRecordStatus.Active));
 
+        container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
         return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockRoleBindingsRepo.Object);
     }
 
     
     private static IServiceCollection ArrangeMockTlgInputsRepo(
-        this IServiceCollection serviceCollection, IReadOnlyCollection<TlgInput> inputs)
+        this IServiceCollection serviceCollection,
+        IReadOnlyCollection<TlgInput> inputs,
+        MockContainer container)
     {
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(It.IsAny<TlgAgent>()))
             .ReturnsAsync(inputs);
 
+        container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         return serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
+    }
+
+    internal record MockContainer
+    {
+        internal Dictionary<Type, object> Mocks { get; } = new();
     }
 }

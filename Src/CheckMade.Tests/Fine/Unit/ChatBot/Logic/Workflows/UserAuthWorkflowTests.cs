@@ -75,10 +75,10 @@ public class UserAuthWorkflowTests
                 .ToImmutableReadOnlyCollection();
 
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.SetupMockRepositories(
+        var (services, _) = serviceCollection.SetupMockRepositories(
             roleBindings: new []{ historicRoleBind }.ToImmutableReadOnlyCollection(),
             inputs: inputHistory);
-        _services = serviceCollection.BuildServiceProvider();
+        _services = services;
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
@@ -157,46 +157,22 @@ public class UserAuthWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
         
-        var inputTokenWithPreExistingActiveTlgAgentRoleBind = inputGenerator.GetValidTlgInputTextMessage(
-            text: SOpsAdmin_DanielEn_X2024.Token);
+        var inputTokenWithPreExistingActiveTlgAgentRoleBind = 
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: SOpsAdmin_DanielEn_X2024.Token);
         
-        var preExistingActiveTlgAgentRoleBind = MockRepositoryUtils.GetNewRoleBind(
-            SOpsAdmin_DanielEn_X2024, tlgAgent);
-        
-        var mockTlgAgentRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+        var preExistingActiveTlgAgentRoleBind = 
+            MockRepositoryUtils.GetNewRoleBind(
+                SOpsAdmin_DanielEn_X2024, tlgAgent);
 
-        ServiceProvider SetupServices()
-        {
-            var serviceCollection = new UnitTestStartup().Services;
-        
-            ArrangeMockTlgInputsRepo();
-            ArrangeMockRoleBindingsRepo();
-        
-            return serviceCollection.BuildServiceProvider();
-            
-            void ArrangeMockTlgInputsRepo()
-            {
-                var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.SetupMockRepositories(
+            roleBindings: new[] { preExistingActiveTlgAgentRoleBind },
+            inputs: new[] { inputTokenWithPreExistingActiveTlgAgentRoleBind });
+        _services = services;
 
-                mockTlgInputsRepo
-                    .Setup(repo => repo.GetAllAsync(tlgAgent))
-                    .ReturnsAsync(new List<TlgInput> { inputTokenWithPreExistingActiveTlgAgentRoleBind });
-
-                serviceCollection.AddScoped<ITlgInputsRepository>(_ => mockTlgInputsRepo.Object);
-            }
-
-            void ArrangeMockRoleBindingsRepo()
-            {
-                mockTlgAgentRoleBindingsRepo
-                    .Setup(tarb => tarb.GetAllActiveAsync())
-                    .ReturnsAsync(new List<TlgAgentRoleBind> { preExistingActiveTlgAgentRoleBind });
-
-                serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleBindingsRepo.Object);
-            }
-        }
-
-        _services = SetupServices();
-        
+        var mockTlgAgentRoleBindingsRepo = 
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         const string expectedWarning = """
