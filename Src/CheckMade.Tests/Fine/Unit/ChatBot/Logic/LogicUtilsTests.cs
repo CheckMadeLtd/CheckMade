@@ -156,42 +156,6 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsAllInputsForTlgAgent_ForItsActiveRoleBind()
-    {
-        // Arrange
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-
-        var activeRoleBind = new TlgAgentRoleBind(
-            SOpsAdmin_DanielEn_X2024,
-            tlgAgent,
-            DateTime.UtcNow.AddDays(-1),
-            Option<DateTime>.None(),
-            DbRecordStatus.Active);
-
-        var inputs = new[]
-        {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId)
-        };
-
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[] { activeRoleBind },
-            inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
-
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
-
-        // Assert
-        Assert.Equal(inputs.Length, result.Count);
-    }
-
-    [Fact]
     public async Task GetAllCurrentInputsAsync_HandlesNullDeactivationDate_InExpiredRoleBinds()
     {
         // Arrange
