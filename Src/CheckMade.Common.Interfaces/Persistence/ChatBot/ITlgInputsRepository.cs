@@ -8,7 +8,7 @@ public interface ITlgInputsRepository
 {
     Task AddAsync(TlgInput tlgInput);
     Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs);
-    Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent);
-    Task<IEnumerable<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent);
     Task HardDeleteAllAsync(TlgAgent tlgAgent);
 }

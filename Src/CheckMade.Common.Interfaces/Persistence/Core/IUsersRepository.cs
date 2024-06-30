@@ -5,6 +5,6 @@ namespace CheckMade.Common.Interfaces.Persistence.Core;
 
 public interface IUsersRepository
 {
-    Task<IEnumerable<User>> GetAllAsync();
+    Task<IReadOnlyCollection<User>> GetAllAsync();
     Task UpdateLanguageSettingAsync(IUserInfo user, LanguageCode newLanguage);
 }

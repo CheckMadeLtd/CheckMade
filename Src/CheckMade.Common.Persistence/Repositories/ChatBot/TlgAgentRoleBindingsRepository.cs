@@ -56,7 +56,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
     }
 
-    public async Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync()
+    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllAsync()
     {
         if (_cache.IsNone)
         {
@@ -117,9 +117,10 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         return _cache.GetValueOrThrow();
     }
 
-    public async Task<IEnumerable<TlgAgentRoleBind>> GetAllActiveAsync() =>
+    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
-        .Where(tarb => tarb.Status == DbRecordStatus.Active);
+        .Where(tarb => tarb.Status == DbRecordStatus.Active)
+        .ToImmutableReadOnlyCollection();
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
         await UpdateStatusAsync(new [] { tlgAgentRoleBind }, newStatus);

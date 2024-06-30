@@ -10,7 +10,7 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
     
-    public async Task<IEnumerable<Role>> GetAllAsync()
+    public async Task<IReadOnlyCollection<Role>> GetAllAsync()
     {
         if (_cache.IsNone)
         {

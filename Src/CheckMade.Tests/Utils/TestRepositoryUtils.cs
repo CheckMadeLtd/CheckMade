@@ -111,7 +111,9 @@ internal static class TestRepositoryUtils
         
         mockRoleBindingsRepo
             .Setup(repo => repo.GetAllActiveAsync())
-            .ReturnsAsync(roleBindings.Where(tarb => tarb.Status == DbRecordStatus.Active));
+            .ReturnsAsync(roleBindings
+                .Where(tarb => tarb.Status == DbRecordStatus.Active)
+                .ToImmutableReadOnlyCollection);
 
         container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
         var stubRoleBindingsRepo = mockRoleBindingsRepo.Object;
@@ -129,8 +131,9 @@ internal static class TestRepositoryUtils
         
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync((TlgAgent tlgAgent) => 
-                inputs.Where(i => i.TlgAgent == tlgAgent));
+            .ReturnsAsync((TlgAgent tlgAgent) => inputs
+                .Where(i => i.TlgAgent == tlgAgent)
+                .ToImmutableReadOnlyCollection());
         
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
