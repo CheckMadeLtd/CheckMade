@@ -1,4 +1,5 @@
--- This script is executed in CI environment by the apply_migration.sh script 
+-- This script is executed in CI environment by the apply_migration.sh script, to enable db integration tests.
+-- It is also used in DEV environment to help run integration tests.
 
 WITH ci_user_daniel AS (
     INSERT INTO users (mobile, first_name, middle_name, last_name, email, status, language_setting)

@@ -18,7 +18,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         
         var newInputTlgAgentRoleBind = 
             TestRepositoryUtils.GetNewRoleBind(
-                SOpsAdmin_DanielEn_X2024, 
+                IntegrationTests_SOpsInspector_DanielEn_X2024, 
                 PrivateBotChat_Operations);
         
         await repo.AddAsync(newInputTlgAgentRoleBind);

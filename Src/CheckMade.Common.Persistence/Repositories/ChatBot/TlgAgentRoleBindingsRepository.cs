@@ -76,6 +76,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "usr.language_setting AS user_language, " +
                                             "usr.status AS user_status, " +
 
+                                            // ToDo: I think I can delete ven from this query?!
                                             "ven.name AS venue_name, " +
                                             "ven.status AS venue_status, " +
 
