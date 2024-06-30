@@ -126,10 +126,12 @@ internal static class TestRepositoryUtils
         MockContainer container)
     {
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync(inputs);
-
+            .ReturnsAsync((TlgAgent tlgAgent) => 
+                inputs.Where(i => i.TlgAgent == tlgAgent));
+        
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
         

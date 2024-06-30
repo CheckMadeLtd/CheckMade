@@ -78,7 +78,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         if (_cacheInputsByTlgAgent.IsNone)
         {
             await Semaphore.WaitAsync();
-
+        
             try
             {
                 if (_cacheInputsByTlgAgent.IsNone)
