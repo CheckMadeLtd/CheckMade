@@ -13,6 +13,8 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
+    // WARNING: Current caching strategy assumes GetAllAsync is not called with different LiveEvent in the same scope.
+    // This assumption may need to be revisited if usage patterns change or when implementing cross-event queries.
     private Option<IReadOnlyCollection<TlgInput>> _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.None();
     
     public async Task AddAsync(TlgInput tlgInput) =>
