@@ -151,20 +151,32 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_ReturnsGermanTestString_ForGermanSpeakingUser()
     {
         var serviceCollection = new UnitTestStartup().Services;
+        
         serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
             GetStubInputProcessorFactoryWithSetUpReturnValue(
-               new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
-        _services = serviceCollection.BuildServiceProvider();
+                new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
+
+        var tlgAgent = UserId02_ChatId04_Operations;
+        
+        var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
+            roleBindings: new []
+            {
+                TestRepositoryUtils.GetNewRoleBind(
+                    SOpsInspector_DanielDe_X2024,
+                    tlgAgent)
+            }); 
+        
+        _services = repoServices;
         
         var basics = GetBasicTestingServices(_services);
         var updateFromGermanUser = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
-            UserId02_ChatId04_Operations.UserId,
-            UserId02_ChatId04_Operations.ChatId);
+            tlgAgent.UserId,
+            tlgAgent.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
-            UserId02_ChatId04_Operations.Mode);
+            tlgAgent.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -289,10 +301,6 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
             GetStubInputProcessorFactoryWithSetUpReturnValue(outputsWithLogicalPort, mode));
-        _services = serviceCollection.BuildServiceProvider();
-        
-        var basics = GetBasicTestingServices(_services);
-        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
 
         var activeRoleBindings = new List<TlgAgentRoleBind>
         {
@@ -300,6 +308,14 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             TestRepositoryUtils.GetNewRoleBind(SOpsCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
             TestRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)
         };
+        
+        var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
+            roleBindings: activeRoleBindings);
+        
+        _services = repoServices;
+        
+        var basics = GetBasicTestingServices(_services);
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
