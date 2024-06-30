@@ -14,7 +14,7 @@ namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 public class MigrationRepository(IDbExecutionHelper dbHelper)
 {
-    internal async Task<IEnumerable<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsAsync()
+    internal async Task<IReadOnlyCollection<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsAsync()
     {
         var pairBuilder = ImmutableArray.CreateBuilder<OldFormatDetailsPair>();
         var command = new NpgsqlCommand("SELECT * FROM tlg_inputs");
@@ -64,7 +64,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
         return new OldFormatDetailsPair(messageWithFakeEmptyDetails, actualOldFormatDetails);
     }
 
-    internal async Task UpdateAsync(IEnumerable<DetailsUpdate> detailsUpdates)
+    internal async Task UpdateAsync(IReadOnlyCollection<DetailsUpdate> detailsUpdates)
     {
         var commands = detailsUpdates.Select(detailUpdate =>
         {

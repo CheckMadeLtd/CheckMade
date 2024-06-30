@@ -9,7 +9,7 @@ public record LiveEvent : ILiveEventInfo
         string Name,
         DateTime StartDate,
         DateTime EndDate,
-        IEnumerable<IRoleInfo> WithRoles,
+        IReadOnlyCollection<IRoleInfo> WithRoles,
         LiveEventVenue AtVenue,
         DbRecordStatus Status = DbRecordStatus.Active)
     {
@@ -24,7 +24,7 @@ public record LiveEvent : ILiveEventInfo
         this.Status = Status;
     }
     
-    public LiveEvent(ILiveEventInfo liveEventInfo,IEnumerable<IRoleInfo> roles, LiveEventVenue venue)
+    public LiveEvent(ILiveEventInfo liveEventInfo,IReadOnlyCollection<IRoleInfo> roles, LiveEventVenue venue)
     : this(
         liveEventInfo.Name,
         liveEventInfo.StartDate,
@@ -37,7 +37,7 @@ public record LiveEvent : ILiveEventInfo
     public string Name { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
-    public IEnumerable<IRoleInfo> WithRoles { get; init; }
+    public IReadOnlyCollection<IRoleInfo> WithRoles { get; init; }
     public LiveEventVenue AtVenue { get; init; }
     public DbRecordStatus Status { get; init; }
 }

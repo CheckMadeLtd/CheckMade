@@ -4,5 +4,5 @@ namespace CheckMade.Common.Model.Core;
 
 public record LiveEventSeries(
     string Name,
-    IEnumerable<LiveEvent> LiveEvents,
+    IReadOnlyCollection<LiveEvent> LiveEvents,
     DbRecordStatus Status = DbRecordStatus.Active);

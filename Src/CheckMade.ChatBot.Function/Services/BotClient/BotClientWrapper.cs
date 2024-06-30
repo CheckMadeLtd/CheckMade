@@ -204,7 +204,7 @@ public class BotClientWrapper(
         return Unit.Value;
     }
 
-    private static IEnumerable<BotCommand> GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
+    private static IReadOnlyCollection<BotCommand> GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
         IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu

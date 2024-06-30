@@ -178,7 +178,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             .ToImmutableReadOnlyCollection();
     }
 
-    private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
+    private async Task<IReadOnlyCollection<TlgInput>> GetAllExecuteAsync(
         string rawQuery,
         TlgUserId? userId = null,
         TlgChatId? chatId = null,

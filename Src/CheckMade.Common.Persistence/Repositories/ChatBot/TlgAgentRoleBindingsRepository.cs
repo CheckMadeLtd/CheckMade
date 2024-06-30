@@ -48,7 +48,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             return GenerateCommand(rawQuery, normalParameters);
         });
 
-        await ExecuteTransactionAsync(commands);
+        await ExecuteTransactionAsync(
+            commands
+            .ToImmutableReadOnlyCollection());
         
         _cache = _cache.Match(
             cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
@@ -155,7 +157,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             return GenerateCommand(rawQuery, normalParameters);
         });
         
-        await ExecuteTransactionAsync(commands);
+        await ExecuteTransactionAsync(
+            commands
+                .ToImmutableReadOnlyCollection());
         EmptyCache();
     }
 

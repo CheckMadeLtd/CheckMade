@@ -11,12 +11,12 @@ public record User(
     string LastName,
     Option<EmailAddress> Email,
     LanguageCode Language,
-    IEnumerable<IRoleInfo> HasRoles,
+    IReadOnlyCollection<IRoleInfo> HasRoles,
     // Option<Vendor> CurrentlyWorksFor,
     DbRecordStatus Status = DbRecordStatus.Active)
     : IUserInfo
 {
-    public User(IUserInfo userInfo, IEnumerable<IRoleInfo> roles) 
+    public User(IUserInfo userInfo, IReadOnlyCollection<IRoleInfo> roles) 
         : this(
             userInfo.Mobile,
             userInfo.FirstName,

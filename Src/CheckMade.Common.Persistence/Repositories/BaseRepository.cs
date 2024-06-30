@@ -30,7 +30,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return command;
     }
 
-    protected async Task ExecuteTransactionAsync(IEnumerable<NpgsqlCommand> commands)
+    protected async Task ExecuteTransactionAsync(IReadOnlyCollection<NpgsqlCommand> commands)
     {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
@@ -43,7 +43,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         });
     }
 
-    protected async Task<IEnumerable<TModel>> ExecuteReaderAsync<TModel>(
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderAsync<TModel>(
         NpgsqlCommand command, Func<DbDataReader, TModel> readData)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
@@ -92,7 +92,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    private static User ConstituteUser(DbDataReader reader, IEnumerable<IRoleInfo> roles) =>
+    private static User ConstituteUser(DbDataReader reader, IReadOnlyCollection<IRoleInfo> roles) =>
         new(
             ConstituteUserInfo(reader),
             roles);
@@ -121,7 +121,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
     private static LiveEvent ConstituteLiveEvent(
         DbDataReader reader,
-        IEnumerable<IRoleInfo> roles,
+        IReadOnlyCollection<IRoleInfo> roles,
         LiveEventVenue venue) =>
         new(
             ConstituteLiveEventInfo(reader).GetValueOrThrow(),
@@ -160,7 +160,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     }
 
     // ToDo: Check with IntegrationTest for UsersRepo !!
-    private static IEnumerable<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
+    private static IReadOnlyCollection<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
     {
         var currentUserMobile = reader.GetString(reader.GetOrdinal("user_mobile"));
         var currentUserStatus = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"));

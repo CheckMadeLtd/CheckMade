@@ -17,7 +17,7 @@ internal static class OutputSender
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
             InteractionMode currentlyReceivingInteractionMode,
             ChatId currentlyReceivingChatId,
-            IEnumerable<TlgAgentRoleBind> activeRoleBindings,
+            IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
             IBlobLoader blobLoader)
