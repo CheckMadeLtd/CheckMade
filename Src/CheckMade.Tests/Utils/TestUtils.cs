@@ -8,7 +8,8 @@ internal static class TestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
 
-    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => GetFirstRawEnglish(actualOutput.GetValueOrThrow());
+    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
+        GetFirstRawEnglish(actualOutput.GetValueOrThrow());
 
     internal static string GetFirstRawEnglish(IReadOnlyCollection<OutputDto> actualOutput)
     {

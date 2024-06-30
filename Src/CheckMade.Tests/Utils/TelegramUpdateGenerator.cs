@@ -31,7 +31,7 @@ internal interface ITelegramUpdateGenerator
         string fileId = "fakeOtherDocumentFileId");
     
     UpdateWrapper GetValidTelegramLocationMessage(
-        Option<float> horizontalAccuracy,
+        float? horizontalAccuracy = null,
         long chatId = Default_UserAndChatId_PrivateBotChat);
     
     UpdateWrapper GetValidTelegramPhotoMessage(
@@ -115,7 +115,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
         });
 
     public UpdateWrapper GetValidTelegramLocationMessage(
-        Option<float> horizontalAccuracy, long chatId) =>
+        float? horizontalAccuracy, long chatId) =>
         new(new Message
         {
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
@@ -126,9 +126,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
             {
                 Latitude = 20.0123,
                 Longitude = -17.4509,
-                HorizontalAccuracy = horizontalAccuracy.IsSome 
-                    ? horizontalAccuracy.GetValueOrThrow() 
-                    : null
+                HorizontalAccuracy = horizontalAccuracy
             }
         });
 

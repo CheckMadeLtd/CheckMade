@@ -167,8 +167,7 @@ public class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var locationUpdate = basics.updateGenerator.GetValidTelegramLocationMessage(
-            horizontalAccuracy ?? Option<float>.None());
+        var locationUpdate = basics.updateGenerator.GetValidTelegramLocationMessage(horizontalAccuracy);
         var location = locationUpdate.Message.Location;
         
         var expectedGeoCoordinates = new Geo(
