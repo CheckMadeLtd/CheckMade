@@ -176,6 +176,7 @@ public class LanguageSettingWorkflowTests
                     text: "random decoy irrelevant to workflow"),
                 languageSettingInput
             },
+            roles: new []{ roleBind.Role },
             roleBindings: new []{ roleBind });
         _services = services;
         
