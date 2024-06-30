@@ -159,7 +159,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
     }
 
-    // ToDo: Check if this code actually works once I read in Users including their Roles
+    // ToDo: Check with IntegrationTest for UsersRepo !!
     private static IEnumerable<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
     {
         var currentUserMobile = reader.GetString(reader.GetOrdinal("user_mobile"));

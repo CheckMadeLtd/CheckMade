@@ -76,10 +76,6 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "usr.language_setting AS user_language, " +
                                             "usr.status AS user_status, " +
 
-                                            // ToDo: I think I can delete ven from this query?!
-                                            "ven.name AS venue_name, " +
-                                            "ven.status AS venue_status, " +
-
                                             "lve.name AS live_event_name, " +
                                             "lve.start_date AS live_event_start_date, " +
                                             "lve.end_date AS live_event_end_date, " +
@@ -100,7 +96,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "INNER JOIN roles r on tarb.role_id = r.id " +
                                             "INNER JOIN users usr on r.user_id = usr.id " +
                                             "INNER JOIN live_events lve on r.live_event_id = lve.id " +
-                                            "INNER JOIN live_event_venues ven on lve.venue_id = ven.id";
+                                            
+                                            "ORDER BY tarb.id";
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
