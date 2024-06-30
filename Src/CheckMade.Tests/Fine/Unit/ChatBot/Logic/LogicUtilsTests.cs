@@ -156,7 +156,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_IgnoresActiveRoleBinds_WhenFetchingInputs()
+    public async Task GetAllCurrentInputsAsync_ReturnsAllInputsForTlgAgent_ForItsActiveRoleBind()
     {
         // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
