@@ -39,13 +39,6 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
     
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    // ToDo: Remove this warning after key-based cache implementation, also from pitfalls
-    // WARNING:
-    /*
-     * Current caching strategy assumes each GetAllAsync is not called with a different parameter in the same scope.
-     * This assumption may need to be revisited when implementing cross-event queries (see also pitfalls documentation).
-     */
-
     private Dictionary<TlgAgent, List<TlgInput>> _cacheInputsByTlgAgent = new();
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
     
