@@ -71,7 +71,6 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             originatorRole = GetInputContextInfo(roleSetting).originatorRole;
             liveEvent = GetInputContextInfo(roleSetting).liveEvent;
         }
-            
         
         return new TlgInput(
             new TlgAgent(userId, chatId, Operations),
