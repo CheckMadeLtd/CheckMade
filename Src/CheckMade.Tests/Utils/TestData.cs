@@ -115,6 +115,12 @@ internal static class TestData
         new UserInfo(IntegrationTests_PatrickDe),
         new LiveEventInfo(X2024));
     
+    internal static readonly Role IntegrationTests_SOpsInspector_DanielEn_X2025 = new(
+        "RX2025",
+        SanitaryOps_Inspector,
+        new UserInfo(IntegrationTests_DanielEn),
+        new LiveEventInfo(X2025));
+    
     // Default for testing
     internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
         new("RVB70T",

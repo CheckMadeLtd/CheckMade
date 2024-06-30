@@ -188,4 +188,60 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Communications));
         await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Notifications));
     }
+    
+    [Fact]
+    public async Task GetAllAsync_ReturnsCorrectInputsForGivenLiveEvent()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+
+        var inputsX2024 = new[]
+        {
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: "Input for X 2024 1",
+                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2024),
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: "Input for X 2024 2", 
+                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2024)
+        };
+
+        var inputsX2025 = new[]
+        {
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: "Input for X 2025 1",
+                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2025),
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: "Input for X 2025 2",
+                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2025)
+        };
+
+        await inputRepo.AddAsync(
+            inputsX2024
+                .Concat(inputsX2025)
+                .ToArray());
+
+        var retrievedInputsX2024 = 
+            (await inputRepo.GetAllAsync(X2024))
+            .ToImmutableReadOnlyCollection();
+        var retrievedInputsX2025 = 
+            (await inputRepo.GetAllAsync(X2025))
+            .ToImmutableReadOnlyCollection();
+
+        await inputRepo.HardDeleteAllAsync(inputsX2024[0].TlgAgent);
+        await inputRepo.HardDeleteAllAsync(inputsX2025[0].TlgAgent);
+        
+        Assert.Equal(
+            2,
+            retrievedInputsX2024.Count);
+        Assert.Equal(
+            2,
+            retrievedInputsX2025.Count);
+        Assert.All(
+            retrievedInputsX2024,
+            input => Assert.Equal("LiveEvent X 2024", input.LiveEventContext.GetValueOrThrow().Name));
+        Assert.All(
+            retrievedInputsX2025,
+            input => Assert.Equal("LiveEvent X 2025", input.LiveEventContext.GetValueOrThrow().Name));
+    }
 }
