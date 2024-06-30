@@ -39,21 +39,18 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
     
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    // ToDo: Remove this warning after key-based cache implementation
+    // ToDo: Remove this warning after key-based cache implementation, also from pitfalls
     // WARNING:
     /*
      * Current caching strategy assumes each GetAllAsync is not called with a different parameter in the same scope.
      * This assumption may need to be revisited when implementing cross-event queries (see also pitfalls documentation).
      */
-    
-    private Option<IReadOnlyCollection<TlgInput>> _cacheInputsByTlgAgent = 
-        Option<IReadOnlyCollection<TlgInput>>.None();
-    
-    private Option<IReadOnlyCollection<TlgInput>> _cacheInputsByLiveEvent = 
-        Option<IReadOnlyCollection<TlgInput>>.None();
+
+    private Dictionary<TlgAgent, List<TlgInput>> _cacheInputsByTlgAgent = new();
+    private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
     
     public async Task AddAsync(TlgInput tlgInput) =>
-        await AddAsync(new [] { tlgInput }.ToImmutableReadOnlyCollection());
+        await AddAsync(new [] { tlgInput });
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
@@ -104,29 +101,30 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 
         await ExecuteTransactionAsync(commands);
 
-        _cacheInputsByTlgAgent = _cacheInputsByTlgAgent.Match(
-            cache => Option<IReadOnlyCollection<TlgInput>>.Some(
-                cache.Concat(tlgInputs)
-                    .ToImmutableReadOnlyCollection()),
-            Option<IReadOnlyCollection<TlgInput>>.None);
-        
-        // ToDo: only add to this cache if the input has a ILiveEventInfo ?! 
-        _cacheInputsByLiveEvent = _cacheInputsByLiveEvent.Match(
-            cache => Option<IReadOnlyCollection<TlgInput>>.Some(
-                cache.Concat(tlgInputs)
-                    .ToImmutableReadOnlyCollection()),
-            Option<IReadOnlyCollection<TlgInput>>.None);
+        foreach (var input in tlgInputs)
+        {
+            if (_cacheInputsByTlgAgent.TryGetValue(input.TlgAgent, out var cacheForTlgInput))
+            {
+                cacheForTlgInput.Add(input);
+            }
+
+            if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
+                    out var cacheForLiveEvent))
+            {
+                cacheForLiveEvent.Add(input);
+            }
+        }
     }
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
     {
-        if (_cacheInputsByTlgAgent.IsNone)
+        if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
         {
             await Semaphore.WaitAsync();
         
             try
             {
-                if (_cacheInputsByTlgAgent.IsNone)
+                if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
                 {
                     const string whereClause = """
                                                WHERE inp.user_id = @tlgUserId 
@@ -141,9 +139,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                             rawQuery,
                             tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
 
-                    _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.Some(
-                        fetchedTlgInputs
-                            .ToImmutableReadOnlyCollection());
+                    _cacheInputsByTlgAgent[tlgAgent] = fetchedTlgInputs;
                 }
             }
             finally
@@ -152,18 +148,19 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             }
         }
 
-        return _cacheInputsByTlgAgent.GetValueOrThrow();
+        return _cacheInputsByTlgAgent[tlgAgent]
+            .ToImmutableReadOnlyCollection();
     }
 
     public async Task<IEnumerable<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
     {
-        if (_cacheInputsByLiveEvent.IsNone)
+        if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
         {
             await Semaphore.WaitAsync();
         
             try
             {
-                if (_cacheInputsByLiveEvent.IsNone)
+                if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
                 {
                     const string whereClause = 
                         "WHERE inp.live_event_id = (SELECT id FROM live_events WHERE name = @liveEventName)";
@@ -175,9 +172,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                             rawQuery,
                             liveEventName: liveEvent.Name));
 
-                    _cacheInputsByLiveEvent = Option<IReadOnlyCollection<TlgInput>>.Some(
-                        fetchedTlgInputs
-                            .ToImmutableReadOnlyCollection());
+                    _cacheInputsByLiveEvent[liveEvent] = fetchedTlgInputs;
                 }
             }
             finally
@@ -186,7 +181,8 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             }
         }
 
-        return _cacheInputsByLiveEvent.GetValueOrThrow();
+        return _cacheInputsByLiveEvent[liveEvent]
+            .ToImmutableReadOnlyCollection();
     }
 
     private async Task<IEnumerable<TlgInput>> GetAllExecuteAsync(
@@ -228,12 +224,12 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync(new [] { command });
-        EmptyCash();
+        EmptyCache();
     }
 
-    private void EmptyCash()
+    private void EmptyCache()
     {
-        _cacheInputsByTlgAgent = Option<IReadOnlyCollection<TlgInput>>.None();
-        _cacheInputsByLiveEvent = Option<IReadOnlyCollection<TlgInput>>.None();
+        _cacheInputsByTlgAgent = new Dictionary<TlgAgent, List<TlgInput>>();
+        _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<TlgInput>>();
     }
 }
