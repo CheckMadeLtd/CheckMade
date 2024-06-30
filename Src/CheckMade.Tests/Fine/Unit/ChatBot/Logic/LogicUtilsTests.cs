@@ -15,34 +15,36 @@ public class LogicUtilsTests
     [Fact]
     public async Task GetAllCurrentInputsAsync_ReturnsAllInputs_WhenNoExpiredRoleBinds()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId)
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(inputs: inputs);
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: inputs);
         _services = services;
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
-
-        // Assert
-        Assert.Equal(inputs.Length, result.Count);
+        Assert.Equal(
+            inputs.Length,
+            result.Count);
     }
 
     [Fact]
     public async Task GetAllCurrentInputsAsync_ReturnsInputsAfterCutoffDate_WhenExpiredRoleBindExists()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
@@ -57,9 +59,12 @@ public class LogicUtilsTests
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(-1)),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(1)),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(2))
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(-1)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(1)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(2))
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -70,18 +75,21 @@ public class LogicUtilsTests
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Assert
-        Assert.Equal(2, result.Count);
-        Assert.All(result, input => Assert.True(input.Details.TlgDate > cutoffDate));
+        Assert.Equal(
+            2,
+            result.Count);
+        Assert.All(
+            result,
+            input => Assert.True(
+                input.Details.TlgDate > cutoffDate));
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsInputsAfterLatestExpiredRoleBind_WhenMultipleExpiredRoleBindsExist()
+    public async Task GetAllCurrentInputsAsync_ReturnsInputsAfterLatestExpiredRoleBind_WhenMultipleExpiredExist()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
@@ -91,15 +99,35 @@ public class LogicUtilsTests
 
         var expiredRoleBinds = new[]
         {
-            new TlgAgentRoleBind(SOpsAdmin_DanielEn_X2024, tlgAgent, oldestCutoffDate.AddDays(-1), oldestCutoffDate, DbRecordStatus.Historic),
-            new TlgAgentRoleBind(SOpsInspector_DanielEn_X2024, tlgAgent, latestCutoffDate.AddDays(-1), latestCutoffDate, DbRecordStatus.Historic)
+            new TlgAgentRoleBind(
+                SOpsAdmin_DanielEn_X2024,
+                tlgAgent,
+                oldestCutoffDate.AddDays(-1),
+                oldestCutoffDate,
+                DbRecordStatus.Historic),
+            
+            new TlgAgentRoleBind(
+                SOpsInspector_DanielEn_X2024,
+                tlgAgent,
+                latestCutoffDate.AddDays(-1),
+                latestCutoffDate,
+                DbRecordStatus.Historic)
         };
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: oldestCutoffDate.AddHours(1)),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: latestCutoffDate.AddHours(-1)),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: latestCutoffDate.AddHours(1))
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: oldestCutoffDate.AddHours(-1)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: oldestCutoffDate.AddHours(1)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: latestCutoffDate.AddHours(-1)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: latestCutoffDate.AddHours(1))
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -110,18 +138,17 @@ public class LogicUtilsTests
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Assert
         Assert.Single(result);
-        Assert.True(result.Single().Details.TlgDate > latestCutoffDate);
+        Assert.True(
+            result.Single().Details.TlgDate > latestCutoffDate);
     }
 
     [Fact]
     public async Task GetAllCurrentInputsAsync_ReturnsEmptyCollection_WhenNoInputsAfterLatestExpiredRoleBind()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
@@ -136,8 +163,12 @@ public class LogicUtilsTests
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(-2)),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(-1))
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: cutoffDate.AddHours(-2)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId,
+                dateTime: cutoffDate.AddHours(-1))
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -148,17 +179,15 @@ public class LogicUtilsTests
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Assert
         Assert.Empty(result);
     }
 
     [Fact]
     public async Task GetAllCurrentInputsAsync_HandlesNullDeactivationDate_InExpiredRoleBinds()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
@@ -172,8 +201,10 @@ public class LogicUtilsTests
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent.UserId, tlgAgent.ChatId)
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent.UserId, tlgAgent.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -184,17 +215,17 @@ public class LogicUtilsTests
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Assert
-        Assert.Equal(inputs.Length, result.Count);
+        Assert.Equal(
+            inputs.Length,
+            result.Count);
     }
 
     [Fact]
     public async Task GetAllCurrentInputsAsync_FiltersInputsBySpecificTlgAgent()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent1 = PrivateBotChat_Operations;
@@ -202,9 +233,12 @@ public class LogicUtilsTests
 
         var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent1.UserId, tlgAgent1.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent2.UserId, tlgAgent2.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(tlgAgent1.UserId, tlgAgent1.ChatId)
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent1.UserId, tlgAgent1.ChatId),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent2.UserId, tlgAgent2.ChatId),
+            inputGenerator.GetValidTlgInputTextMessage(
+                tlgAgent1.UserId, tlgAgent1.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -213,32 +247,35 @@ public class LogicUtilsTests
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent1);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent1);
         
-        // Assert
-        Assert.Equal(2, result.Count);
-        Assert.All(result, input => Assert.Equal(tlgAgent1.UserId, input.TlgAgent.UserId));
-        Assert.All(result, input => Assert.Equal(tlgAgent1.ChatId, input.TlgAgent.ChatId));
+        Assert.Equal(
+            2, result.Count);
+        Assert.All(
+            result,
+            input => Assert.Equal(tlgAgent1.UserId, input.TlgAgent.UserId));
+        Assert.All(
+            result,
+            input => Assert.Equal(tlgAgent1.ChatId, input.TlgAgent.ChatId));
     }
     
     [Fact]
     public async Task GetAllCurrentInputsAsync_HandlesNoInputs()
     {
-        // Arrange
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var tlgAgent = PrivateBotChat_Operations;
 
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(inputs: Array.Empty<TlgInput>());
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: Array.Empty<TlgInput>());
         _services = services;
 
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
-        // Act
-        var result = await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+        var result = 
+            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
 
-        // Assert
         Assert.Empty(result);
     }
 }
