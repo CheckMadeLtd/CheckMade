@@ -82,13 +82,14 @@ public class UpdateHandler(
                     in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
                             .ProcessInputAsync(tlgInput))
-                from tlgAgentRoles
+                from activeRoleBindings
                     in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
-                        (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection())
+                        (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())
+                        .ToImmutableReadOnlyCollection())
                 from uiTranslator
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
-                            tlgAgentRoles,
+                            activeRoleBindings,
                             currentlyReceivingUserId,
                             currentlyReceivingChatId,
                             currentlyReceivingInteractionMode)))
@@ -99,7 +100,7 @@ public class UpdateHandler(
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
                           outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          tlgAgentRoles, uiTranslator, replyMarkupConverter, blobLoader)) 
+                          activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
         return sendOutputsAttempt.Match(
@@ -123,19 +124,19 @@ public class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoles,
+        IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
         long? currentUserId,
         ChatId currentChatId,
         InteractionMode currentMode)
     {
-        var tlgAgentRole = tlgAgentRoles
-            .FirstOrDefault(arb =>
-                arb.TlgAgent.UserId.Id == currentUserId &&
-                arb.TlgAgent.ChatId.Id == currentChatId &&
-                arb.TlgAgent.Mode == currentMode);
+        var tlgAgentRole = activeRoleBindings
+            .FirstOrDefault(tarb =>
+                tarb.TlgAgent.UserId.Id == currentUserId &&
+                tarb.TlgAgent.ChatId.Id == currentChatId &&
+                tarb.TlgAgent.Mode == currentMode);
 
         return tlgAgentRole != null 
-            ? tlgAgentRole.Role.User.Language 
+            ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;
     }
 }

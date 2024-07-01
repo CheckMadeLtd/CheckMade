@@ -1,6 +1,7 @@
 using System.Configuration;
 using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Model.Core;
+using CheckMade.Tests.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,7 +49,10 @@ public abstract class TestStartupBase
             loggingConfig.AddDebug(); 
         });
         
-        Services.AddSingleton<ITestUtils, TestUtils>();
+        Services.AddSingleton<ITelegramUpdateGenerator, TelegramUpdateGenerator>();
+        Services.AddSingleton<ITlgInputGenerator, TlgInputGenerator>();
+        
+        
         Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         Services.RegisterChatBotFunctionUpdateHandlingServices();

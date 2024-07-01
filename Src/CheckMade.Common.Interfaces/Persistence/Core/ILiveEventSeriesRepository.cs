@@ -4,6 +4,6 @@ namespace CheckMade.Common.Interfaces.Persistence.Core;
 
 public interface ILiveEventSeriesRepository
 {
-    Task<IEnumerable<LiveEventSeries>> GetAsync(string name);
-    Task<IEnumerable<LiveEventSeries>> GetAllAsync();
+    Task<LiveEventSeries> GetAsync(string name);
+    Task<IReadOnlyCollection<LiveEventSeries>> GetAllAsync();
 }

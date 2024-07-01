@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
-using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
@@ -13,7 +12,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind });
+        await AddAsync(new [] { tlgAgentRoleBind });
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
@@ -29,27 +28,29 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "@tlgUserId, @tlgChatId, " +
                                 "@activationDate, @deactivationDate, @status, @mode)";
 
-        var commands = tlgAgentRoleBindings.Select(arb =>
+        var commands = tlgAgentRoleBindings.Select(tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@token", arb.Role.Token },
-                { "@tlgUserId", (long)arb.TlgAgent.UserId },
-                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
-                { "@activationDate", arb.ActivationDate },
-                { "@status", (int)arb.Status },
-                { "@mode", (int)arb.TlgAgent.Mode }
+                { "@token", tarb.Role.Token },
+                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
+                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
+                { "@activationDate", tarb.ActivationDate },
+                { "@status", (int)tarb.Status },
+                { "@mode", (int)tarb.TlgAgent.Mode }
             };
 
-            if (arb.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", arb.DeactivationDate.GetValueOrThrow());
+            if (tarb.DeactivationDate.IsSome)
+                normalParameters.Add("@deactivationDate", tarb.DeactivationDate.GetValueOrThrow());
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
 
             return GenerateCommand(rawQuery, normalParameters);
         });
 
-        await ExecuteTransactionAsync(commands);
+        await ExecuteTransactionAsync(
+            commands
+            .ToImmutableReadOnlyCollection());
         
         _cache = _cache.Match(
             cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
@@ -57,7 +58,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
     }
 
-    public async Task<IEnumerable<TlgAgentRoleBind>> GetAllAsync()
+    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllAsync()
     {
         if (_cache.IsNone)
         {
@@ -76,9 +77,6 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "usr.email AS user_email, " +
                                             "usr.language_setting AS user_language, " +
                                             "usr.status AS user_status, " +
-
-                                            "ven.name AS venue_name, " +
-                                            "ven.status AS venue_status, " +
 
                                             "lve.name AS live_event_name, " +
                                             "lve.start_date AS live_event_start_date, " +
@@ -100,7 +98,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                             "INNER JOIN roles r on tarb.role_id = r.id " +
                                             "INNER JOIN users usr on r.user_id = usr.id " +
                                             "INNER JOIN live_events lve on r.live_event_id = lve.id " +
-                                            "INNER JOIN live_event_venues ven on lve.venue_id = ven.id";
+                                            
+                                            "ORDER BY tarb.id";
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
@@ -120,8 +119,13 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         return _cache.GetValueOrThrow();
     }
 
+    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
+        (await GetAllAsync())
+        .Where(tarb => tarb.Status.Equals(DbRecordStatus.Active))
+        .ToImmutableReadOnlyCollection();
+
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
-        await UpdateStatusAsync(new List<TlgAgentRoleBind> { tlgAgentRoleBind }, newStatus);
+        await UpdateStatusAsync(new [] { tlgAgentRoleBind }, newStatus);
 
     public async Task UpdateStatusAsync(
         IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
@@ -134,15 +138,15 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                                 "AND tlg_chat_id = @tlgChatId " + 
                                 "AND interaction_mode = @mode";
 
-        var commands = tlgAgentRoleBindings.Select(arb =>
+        var commands = tlgAgentRoleBindings.Select(tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
                 { "@status", (int)newStatus },
-                { "@token", arb.Role.Token },
-                { "@tlgUserId", (long)arb.TlgAgent.UserId },
-                { "@tlgChatId", (long)arb.TlgAgent.ChatId },
-                { "@mode", (int)arb.TlgAgent.Mode }
+                { "@token", tarb.Role.Token },
+                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
+                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
+                { "@mode", (int)tarb.TlgAgent.Mode }
             };
 
             if (newStatus != DbRecordStatus.Active)
@@ -153,7 +157,9 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             return GenerateCommand(rawQuery, normalParameters);
         });
         
-        await ExecuteTransactionAsync(commands);
+        await ExecuteTransactionAsync(
+            commands
+                .ToImmutableReadOnlyCollection());
         EmptyCache();
     }
 
@@ -175,7 +181,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        await ExecuteTransactionAsync(new [] { command });
         EmptyCache();
     }
 

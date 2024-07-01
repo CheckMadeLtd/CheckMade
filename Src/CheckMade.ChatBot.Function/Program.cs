@@ -44,8 +44,8 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        // Part of 'StartUp' rather than in shared Services method below b/c different value for Tests starutp.
-        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.de));
+        // Part of 'StartUp' rather than in shared Services method below to enable different values for Tests Startup.
+        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         services.RegisterChatBotFunctionBotClientServices(config, hostingEnvironment);
         services.RegisterChatBotFunctionUpdateHandlingServices();
@@ -55,6 +55,13 @@ var host = new HostBuilder()
         services.RegisterCommonPersistenceServices(config, hostingEnvironment);
         services.RegisterCommonUtilsServices();
         services.RegisterCommonExternalServices(config);
+        
+        services.AddOptions<ServiceProviderOptions>()
+            .Configure(options =>
+            {
+                options.ValidateOnBuild = true;
+                options.ValidateScopes = true;
+            });
     })
     .ConfigureLogging((hostContext, logging) =>
     {
@@ -126,6 +133,7 @@ var host = new HostBuilder()
     .Build();
 
 await host.StartAsync();
+
 
 /* The combination of host.Start() and host.WaitForShutdown() let's me run code HERE
 after the host started (contrary to just using Run()).

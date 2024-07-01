@@ -8,4 +8,6 @@ public interface ILiveEventInfo
     DateTime StartDate { get; }
     DateTime EndDate { get; }
     DbRecordStatus Status { get; }
+    
+    bool Equals(ILiveEventInfo? other);
 }

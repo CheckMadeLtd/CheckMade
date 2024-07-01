@@ -12,4 +12,6 @@ public interface IUserInfo
     Option<EmailAddress> Email { get; }
     LanguageCode Language { get; }
     DbRecordStatus Status { get; }
+
+    bool Equals(IUserInfo? other);
 }

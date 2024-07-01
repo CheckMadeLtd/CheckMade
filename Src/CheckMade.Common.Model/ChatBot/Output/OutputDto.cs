@@ -11,17 +11,17 @@ public record OutputDto
     public Option<UiString> Text { get; init; } 
         = Option<UiString>.None();
     
-    public Option<IEnumerable<DomainTerm>> DomainTermSelection { get; init; } 
-        = Option<IEnumerable<DomainTerm>>.None();
+    public Option<IReadOnlyCollection<DomainTerm>> DomainTermSelection { get; init; } 
+        = Option<IReadOnlyCollection<DomainTerm>>.None();
     
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();
     
-    public Option<IEnumerable<string>> PredefinedChoices { get; init; } 
-        = Option<IEnumerable<string>>.None();
+    public Option<IReadOnlyCollection<string>> PredefinedChoices { get; init; } 
+        = Option<IReadOnlyCollection<string>>.None();
     
-    public Option<IEnumerable<OutputAttachmentDetails>> Attachments { get; init; }
-        = Option<IEnumerable<OutputAttachmentDetails>>.None();
+    public Option<IReadOnlyCollection<OutputAttachmentDetails>> Attachments { get; init; }
+        = Option<IReadOnlyCollection<OutputAttachmentDetails>>.None();
     
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();

@@ -1,8 +1,8 @@
 using CheckMade.Common.ExternalServices.ExternalUtils;
 
-namespace CheckMade.Tests.Startup.DefaultMocks;
+namespace CheckMade.Tests.Startup.DefaultStubs;
 
-public class MockHttpDownloader : IHttpDownloader
+public class StubHttpDownloader : IHttpDownloader
 {
     public Task<MemoryStream> DownloadDataAsync(Uri fileUri)
     {

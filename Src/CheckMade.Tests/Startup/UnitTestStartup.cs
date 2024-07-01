@@ -1,13 +1,8 @@
-using System.Collections.Immutable;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.ChatBot.Function.Services.BotClient;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Tests.Startup.DefaultMocks;
-using CheckMade.Tests.Startup.DefaultMocks.Repositories.ChatBot;
-using CheckMade.Tests.Startup.DefaultMocks.Repositories.Core;
+using CheckMade.Tests.Startup.DefaultStubs;
+using CheckMade.Tests.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -25,25 +20,29 @@ public class UnitTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        RegisterBotClientMocks();
-        RegisterExternalServicesMocks();
-        RegisterPersistenceMocks();
+        RegisterTestBotClient();
+        RegisterTestExternalServices();
+        
+        // adds stubRepos with default values
+        Services.ConfigureTestRepositories();
     }
 
-    private void RegisterBotClientMocks()
+    private void RegisterTestBotClient()
     {
-        Services.AddScoped<IBotClientFactory, MockBotClientFactory>(sp => 
-            new MockBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
+        Services.AddScoped<IBotClientFactory, StubBotClientFactory>(sp => 
+            new StubBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
-         in my tests that is also used by the MockBotClientFactory below. This way I can verify behaviour on the
+         in my tests that is also used by the StubBotClientFactory below. This way I can verify behavior on the
          mockBotClientWrapper without explicitly setting up the mock in the unit test itself.
 
          We choose 'AddScoped' because we want our dependencies scoped to the execution of each test method.
-         That's why each test method creates its own ServiceProvider. That prevents:
+         That's why each test method creates its own ServiceProvider. 
+         
+         That prevents:
 
          a) interference between test runs e.g. because of shared state in some dependency (which could e.g.
-         falsify Moq's behaviour 'verifications'
+         falsify Moq's behavior 'verifications'
 
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
@@ -62,52 +61,9 @@ public class UnitTestStartup : TestStartupBase
         });
     }
 
-    private void RegisterExternalServicesMocks()
+    private void RegisterTestExternalServices()
     {
-        Services.AddScoped<IBlobLoader, MockBlobLoader>();
-        Services.AddScoped<IHttpDownloader, MockHttpDownloader>(); 
-    }
-
-    private void RegisterPersistenceMocks()
-    {
-        Services.AddScoped<ITlgInputsRepository, MockTlgInputsRepository>(_ => 
-            new MockTlgInputsRepository(new Mock<ITlgInputsRepository>()));
-
-        Services.AddScoped<ILiveEventSeriesRepository, MockLiveEventSeriesRepository>();
-        
-        Services.AddScoped<IRolesRepository, MockRolesRepository>();
-
-        var mockUserRepo = new Mock<IUsersRepository>();
-        Services.AddScoped<IUsersRepository>(_ => mockUserRepo.Object);
-        Services.AddScoped<Mock<IUsersRepository>>(_ => mockUserRepo);
-        
-        var mockTlgAgentRoleRepo = new Mock<ITlgAgentRoleBindingsRepository>();
-
-        mockTlgAgentRoleRepo
-            .Setup(arb => arb.GetAllAsync())
-            .ReturnsAsync(GetTestingTlgAgentRoleBindings());
-
-        Services.AddScoped<ITlgAgentRoleBindingsRepository>(_ => mockTlgAgentRoleRepo.Object);
-        Services.AddScoped<Mock<ITlgAgentRoleBindingsRepository>>(_ => mockTlgAgentRoleRepo);
-    }
-
-    private static ImmutableArray<TlgAgentRoleBind> GetTestingTlgAgentRoleBindings()
-    {
-        var builder = ImmutableArray.CreateBuilder<TlgAgentRoleBind>();
-        
-        builder.Add(RoleBindFor_SanitaryOpsAdmin_Default);
-        
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_OperationsMode);
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_CommunicationsMode);
-        builder.Add(RoleBindFor_SanitaryOpsInspector1_InPrivateChat_NotificationsMode);
-        
-        builder.Add(RoleBindFor_SanitaryOpsEngineer1_HistoricOnly);
-        builder.Add(RoleBindFor_SanitaryOpsCleanLead1_German);
-        builder.Add(RoleBindFor_SanitaryOpsEngineer2_OnlyCommunicationsMode);
-        
-        builder.Add(RoleBindFor_SanitaryOpsObserver1);
-        builder.Add(RoleBindFor_SanitaryOpsCleanLead2);
-        
-        return builder.ToImmutable();
+        Services.AddScoped<IBlobLoader, StubBlobLoader>();
+        Services.AddScoped<IHttpDownloader, StubHttpDownloader>(); 
     }
 }

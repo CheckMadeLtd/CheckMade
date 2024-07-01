@@ -214,12 +214,11 @@ internal class ToModelConverter(
 
     private async Task<Result<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
     {
-        var originatorRole = (await roleBindingsRepo.GetAllAsync())
-            .FirstOrDefault(arb =>
-                arb.TlgAgent.UserId == update.Message.From?.Id &&
-                arb.TlgAgent.ChatId == update.Message.Chat.Id &&
-                arb.TlgAgent.Mode == mode &&
-                arb.Status == DbRecordStatus.Active)?
+        var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
+            .FirstOrDefault(tarb =>
+                tarb.TlgAgent.UserId == update.Message.From?.Id &&
+                tarb.TlgAgent.ChatId == update.Message.Chat.Id &&
+                tarb.TlgAgent.Mode == mode)?
             .Role;
 
         return Result<Option<Role>>.FromSuccess(originatorRole ?? Option<Role>.None());
@@ -228,7 +227,7 @@ internal class ToModelConverter(
     private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
     {
         return originatorRole.IsSome 
-            ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().LiveEvent) 
+            ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().AtLiveEvent) 
             : Result<Option<ILiveEventInfo>>.FromSuccess(Option<ILiveEventInfo>.None());
     }
     

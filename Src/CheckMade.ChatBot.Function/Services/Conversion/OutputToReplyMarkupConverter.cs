@@ -51,8 +51,8 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         return allTrue;
     }
     
-    private static IEnumerable<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
-        Option<IEnumerable<DomainTerm>> domainTermSelection,
+    private static IReadOnlyCollection<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
+        Option<IReadOnlyCollection<DomainTerm>> domainTermSelection,
         Option<ControlPrompts> promptSelection,
         IUiTranslator translator)
     {
@@ -117,7 +117,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         };
     }
     
-    private static Option<ReplyKeyboardMarkup> GenerateReplyKeyboardMarkup(IEnumerable<string> choices)
+    private static Option<ReplyKeyboardMarkup> GenerateReplyKeyboardMarkup(IReadOnlyCollection<string> choices)
     {
         const int replyKeyboardNumberOfColumns = 3;
 

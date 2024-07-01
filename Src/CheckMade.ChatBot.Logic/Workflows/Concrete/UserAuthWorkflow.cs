@@ -13,12 +13,12 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    UserAuthWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
+    UserAuthWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
 }
 
 internal class UserAuthWorkflow(
         IRolesRepository rolesRepo,
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
         ILogicUtils logicUtils)
     : IUserAuthWorkflow
 {
@@ -27,39 +27,39 @@ internal class UserAuthWorkflow(
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
 
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(history) == ReceivedTokenSubmissionAttempt;
+        return DetermineCurrentState(inputHistory) == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
-        var inputText = tlgInput.Details.Text.GetValueOrDefault();
+        var inputText = currentInput.Details.Text.GetValueOrDefault();
         
-        var relevantHistory = 
-            await logicUtils.GetAllInputsOfTlgAgentInCurrentRoleAsync(tlgInput.TlgAgent);
+        var tlgAgentInputHistory = 
+            await logicUtils.GetAllCurrentInputsAsync(currentInput.TlgAgent);
         
-        return DetermineCurrentState(relevantHistory) switch
+        return DetermineCurrentState(tlgAgentInputHistory) switch
         {
             Initial => new List<OutputDto> { EnterTokenPrompt },
             
             ReceivedTokenSubmissionAttempt => IsValidToken(inputText) switch
             {
-                true => await TokenExists(tlgInput.Details.Text.GetValueOrDefault()) switch
+                true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
                 {
-                    true => await AuthenticateUserAsync(tlgInput),
+                    true => await AuthenticateUserAsync(currentInput),
                     
-                    false => [ new OutputDto
+                    false => [new OutputDto
                         {
                             Text = Ui("This is an unknown token. Try again...")
                         },
-                        EnterTokenPrompt ]
+                        EnterTokenPrompt]
                 },
-                false => [ new OutputDto
+                false => [new OutputDto
                     {
                         Text = Ui("Bad token format! Try again...")
                     },
-                    EnterTokenPrompt ]
+                    EnterTokenPrompt]
             },
             
             _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
@@ -67,10 +67,10 @@ internal class UserAuthWorkflow(
         };
     }
     
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> tlgAgentInputHistory)
     {
-        var lastTextSubmitted = history
-            .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
+        var lastTextSubmitted = tlgAgentInputHistory
+            .LastOrDefault(i => i.InputType.Equals(TlgInputType.TextMessage));
 
         return lastTextSubmitted switch
         {
@@ -80,28 +80,32 @@ internal class UserAuthWorkflow(
     }
 
     private async Task<bool> TokenExists(string tokenAttempt) =>
-        (await rolesRepo.GetAllAsync()).Any(role => role.Token == tokenAttempt);
+        (await rolesRepo.GetAllAsync())
+        .Any(role => role.Token.Equals(tokenAttempt));
 
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
         var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
-        var originatingMode = tokenInputAttempt.TlgAgent.Mode;
-        var preExistingTlgAgentRoles = 
-            (await tlgAgentRoleBindingsRepo.GetAllAsync()).ToImmutableReadOnlyCollection();
+        var currentMode = tokenInputAttempt.TlgAgent.Mode;
         
         var outputs = new List<OutputDto>();
         
-        var newTlgAgentRoleForOriginatingMode = new TlgAgentRoleBind(
-            (await rolesRepo.GetAllAsync()).First(r => r.Token == inputText),
-            tokenInputAttempt.TlgAgent with { Mode = originatingMode },
+        var newTlgAgentRoleBindForCurrentMode = new TlgAgentRoleBind(
+            (await rolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
+            tokenInputAttempt.TlgAgent with { Mode = currentMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var preExistingActiveTlgAgentRole = FirstOrDefaultPreExistingActiveTlgAgentRoleMode(originatingMode);
+        var preExistingRoleBindings = 
+            (await roleBindingsRepo.GetAllActiveAsync())
+            .ToImmutableReadOnlyCollection();
+        
+        var preExistingActiveRoleBind = 
+            FirstOrDefaultPreExistingActiveRoleBind(currentMode);
 
-        if (preExistingActiveTlgAgentRole != null)
+        if (preExistingActiveRoleBind != null)
         {
-            await tlgAgentRoleBindingsRepo.UpdateStatusAsync(preExistingActiveTlgAgentRole, DbRecordStatus.Historic);
+            await roleBindingsRepo.UpdateStatusAsync(preExistingActiveRoleBind, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -109,18 +113,18 @@ internal class UserAuthWorkflow(
                           Warning: you were already authenticated with this token in another {0} chat. 
                           This will be the new {0} chat where you receive messages in your role {1} at {2}. 
                           """, 
-                    originatingMode,
-                    newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                    newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
+                    currentMode,
+                    newTlgAgentRoleBindForCurrentMode.Role.RoleType,
+                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
             });
         }
         
         outputs.Add(new OutputDto
         {
             Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
-                newTlgAgentRoleForOriginatingMode.Role.User.FirstName,
-                newTlgAgentRoleForOriginatingMode.Role.RoleType,
-                newTlgAgentRoleForOriginatingMode.Role.LiveEvent.Name)
+                newTlgAgentRoleBindForCurrentMode.Role.ByUser.FirstName,
+                newTlgAgentRoleBindForCurrentMode.Role.RoleType,
+                newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
         });
 
         outputs.Add(new OutputDto
@@ -128,37 +132,37 @@ internal class UserAuthWorkflow(
             Text = IInputProcessor.SeeValidBotCommandsInstruction
         });
 
-        var tlgAgentRolesToAdd = new List<TlgAgentRoleBind> { newTlgAgentRoleForOriginatingMode };
+        var tlgAgentRoleBindingsToAdd = new List<TlgAgentRoleBind> { newTlgAgentRoleBindForCurrentMode };
         
-        var isInputTlgAgentPrivateChat = 
-            tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
+        var isInputInPrivateBotChat = 
+            tokenInputAttempt.TlgAgent.ChatId.Id.Equals(
+                tokenInputAttempt.TlgAgent.UserId.Id);
 
-        if (isInputTlgAgentPrivateChat)
+        if (isInputInPrivateBotChat)
         {
-            AddTlgAgentRolesForOtherNonOriginatingAndVirginModes();
+            AddTlgAgentRoleBindingsForOtherModes();
         }
         
-        await tlgAgentRoleBindingsRepo.AddAsync(tlgAgentRolesToAdd);
+        await roleBindingsRepo.AddAsync(tlgAgentRoleBindingsToAdd);
         
         return outputs;
         
-        TlgAgentRoleBind? FirstOrDefaultPreExistingActiveTlgAgentRoleMode(InteractionMode mode) =>
-        preExistingTlgAgentRoles.FirstOrDefault(arb => 
-            arb.Role.Token == inputText &&
-            arb.TlgAgent.Mode == mode && 
-            arb.Status == DbRecordStatus.Active);
+        TlgAgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
+        preExistingRoleBindings.FirstOrDefault(tarb => 
+            tarb.Role.Token.Equals(inputText) &&
+            tarb.TlgAgent.Mode.Equals(mode));
 
-        void AddTlgAgentRolesForOtherNonOriginatingAndVirginModes()
+        void AddTlgAgentRoleBindingsForOtherModes()
         {
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
-            var nonOriginatingModes = allModes.Except(new [] { originatingMode });
+            var otherModes = allModes.Except(new [] { currentMode });
 
-            tlgAgentRolesToAdd.AddRange(
-                from mode in nonOriginatingModes 
-                where FirstOrDefaultPreExistingActiveTlgAgentRoleMode(mode) == null
-                select newTlgAgentRoleForOriginatingMode with
+            tlgAgentRoleBindingsToAdd.AddRange(
+                from mode in otherModes 
+                where FirstOrDefaultPreExistingActiveRoleBind(mode) == null
+                select newTlgAgentRoleBindForCurrentMode with
                 {
-                    TlgAgent = newTlgAgentRoleForOriginatingMode.TlgAgent with { Mode = mode },
+                    TlgAgent = newTlgAgentRoleBindForCurrentMode.TlgAgent with { Mode = mode },
                     ActivationDate = DateTime.UtcNow
                 });
         }

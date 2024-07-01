@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    LanguageSettingWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
+    LanguageSettingWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LanguageSettingWorkflow(
@@ -18,19 +18,20 @@ internal class LanguageSettingWorkflow(
         ILogicUtils logicUtils) 
     : ILanguageSettingWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        var currentState = DetermineCurrentState(history);
+        var currentState = DetermineCurrentState(inputHistory);
         
         return (currentState & States.ReceivedLanguageSetting) != 0 || 
                (currentState & States.Completed) != 0;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
-        var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
+        var workflowInputHistory = 
+            await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
         
-        return DetermineCurrentState(recentHistory) switch
+        return DetermineCurrentState(workflowInputHistory) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -43,7 +44,7 @@ internal class LanguageSettingWorkflow(
                 }
             },
             
-            States.ReceivedLanguageSetting => await SetNewLanguageAsync(tlgInput),
+            States.ReceivedLanguageSetting => await SetNewLanguageAsync(currentInput),
             
             States.Completed => new List<OutputDto>{ new() { Text = ILogicUtils.WorkflowWasCompleted }},
             
@@ -52,13 +53,13 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
     {
-        var lastInput = history.Last();
+        var lastInput = workflowInputHistory.Last();
 
         var previousInputCompletedThisWorkflow = 
-            history.Count > 1 && 
-            AnyPreviousInputContainsCallbackQuery(history.ToArray()[..^1]);
+            workflowInputHistory.Count > 1 && 
+            AnyPreviousInputContainsCallbackQuery(workflowInputHistory.ToArray()[..^1]);
         
         return lastInput.InputType switch
         {
@@ -72,21 +73,23 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    private static bool AnyPreviousInputContainsCallbackQuery(IReadOnlyCollection<TlgInput> recentHistory) =>
-        recentHistory.Any(x => x.InputType == TlgInputType.CallbackQuery);
+    private static bool AnyPreviousInputContainsCallbackQuery(
+        IReadOnlyCollection<TlgInput> preCurrentInputHistory) =>
+        preCurrentInputHistory.Any(x => 
+            x.InputType.Equals(TlgInputType.CallbackQuery));
 
-    private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageInput)
+    private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageChoice)
     {
         var domainGlossary = new DomainGlossary();
-        var newLanguage = newLanguageInput.Details.DomainTerm.GetValueOrThrow();
+        var newLanguage = newLanguageChoice.Details.DomainTerm.GetValueOrThrow();
 
         if (newLanguage.EnumType != typeof(LanguageCode))
             throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
-        var currentUser = (await roleBindingsRepo.GetAllAsync())
-            .First(arb => arb.TlgAgent == newLanguageInput.TlgAgent)
-            .Role.User;
+        var currentUser = (await roleBindingsRepo.GetAllActiveAsync())
+            .First(tarb => tarb.TlgAgent.Equals(newLanguageChoice.TlgAgent))
+            .Role.ByUser;
 
         await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
         

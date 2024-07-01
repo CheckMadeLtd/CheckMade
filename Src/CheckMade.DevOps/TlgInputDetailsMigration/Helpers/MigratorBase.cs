@@ -6,10 +6,10 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
     {
         return (await 
                 (from historicPairs 
-                    in Attempt<IEnumerable<OldFormatDetailsPair>>.RunAsync(
+                    in Attempt<IReadOnlyCollection<OldFormatDetailsPair>>.RunAsync(
                         migRepo.GetMessageOldFormatDetailsPairsAsync)
                 from detailsUpdate 
-                    in Attempt<IEnumerable<DetailsUpdate>>.RunAsync(() => 
+                    in Attempt<IReadOnlyCollection<DetailsUpdate>>.RunAsync(() => 
                         GenerateMigrationUpdatesAsync(historicPairs))
                 from unit 
                     in Attempt<Unit>.RunAsync(() => 
@@ -20,10 +20,10 @@ internal abstract class MigratorBase(MigrationRepository migRepo)
                 ex => ex);
     }
 
-    protected abstract Task<IEnumerable<DetailsUpdate>> GenerateMigrationUpdatesAsync(
-        IEnumerable<OldFormatDetailsPair> allHistoricMessageDetailPairs);
+    protected abstract Task<IReadOnlyCollection<DetailsUpdate>> GenerateMigrationUpdatesAsync(
+        IReadOnlyCollection<OldFormatDetailsPair> allHistoricMessageDetailPairs);
     
-    private async Task<Unit> MigrateHistoricMessagesAsync(IEnumerable<DetailsUpdate> detailsUpdates)
+    private async Task<Unit> MigrateHistoricMessagesAsync(IReadOnlyCollection<DetailsUpdate> detailsUpdates)
     {
         await migRepo.UpdateAsync(detailsUpdates);
 

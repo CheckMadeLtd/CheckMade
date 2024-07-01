@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILogoutWorkflow : IWorkflow
 {
-    LogoutWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> history);
+    LogoutWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LogoutWorkflow(
@@ -17,21 +17,20 @@ internal class LogoutWorkflow(
         ILogicUtils logicUtils) 
     : ILogoutWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> history)
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(history) == States.LogoutConfirmed;
+        return DetermineCurrentState(inputHistory) == States.LogoutConfirmed;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetNextOutputAsync(TlgInput tlgInput)
+    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
-        var recentHistory = await logicUtils.GetInputsForCurrentWorkflow(tlgInput.TlgAgent);
+        var workflowInputHistory = 
+            await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
 
-        var currentRoleBind = (await roleBindingsRepo.GetAllAsync())
-            .First(arb => 
-                arb.TlgAgent == tlgInput.TlgAgent &&
-                arb.Status == DbRecordStatus.Active);
+        var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
+            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
 
-        return DetermineCurrentState(recentHistory) switch
+        return DetermineCurrentState(workflowInputHistory) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -41,9 +40,9 @@ internal class LogoutWorkflow(
                               {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
                               FYI: You will also be logged out from other non-group bot chats in this role.
                               """,
-                        currentRoleBind.Role.User.FirstName,
+                        currentRoleBind.Role.ByUser.FirstName,
                         currentRoleBind.Role.RoleType,
-                        currentRoleBind.Role.LiveEvent.Name),
+                        currentRoleBind.Role.AtLiveEvent.Name),
                     
                     ControlPromptsSelection = ControlPrompts.YesNo
                 }
@@ -66,11 +65,11 @@ internal class LogoutWorkflow(
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> history)
+    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
     {
-        var lastInput = history.Last();
+        var lastInput = workflowInputHistory.Last();
 
-        if (lastInput.InputType == TlgInputType.CallbackQuery)
+        if (lastInput.InputType.Equals(TlgInputType.CallbackQuery))
         {
             return lastInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
             {
@@ -87,12 +86,11 @@ internal class LogoutWorkflow(
     private async Task<List<OutputDto>> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)
     {
         var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
-            (await roleBindingsRepo.GetAllAsync())
-            .Where(arb =>
-                arb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
-                arb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
-                arb.Role.Token == currentRoleBind.Role.Token &&
-                arb.Status == DbRecordStatus.Active)
+            (await roleBindingsRepo.GetAllActiveAsync())
+            .Where(tarb =>
+                tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
+                tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
+                tarb.Role.Token.Equals(currentRoleBind.Role.Token))
             .ToImmutableReadOnlyCollection();
         
         await roleBindingsRepo

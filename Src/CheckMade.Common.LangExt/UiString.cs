@@ -22,7 +22,7 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
     public static UiString UiConcatenate(params UiString?[] uiStrings) => 
         UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());
     
-    public static UiString UiConcatenate(IEnumerable<UiString?> uiStrings) => 
+    public static UiString UiConcatenate(IReadOnlyCollection<UiString?> uiStrings) => 
         new(uiStrings.ToImmutableReadOnlyCollection(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)

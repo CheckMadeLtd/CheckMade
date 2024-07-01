@@ -6,7 +6,7 @@ CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [er
 CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
 CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
 CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
-CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klick auf den Menüknopf oder tippe '/' um verfügbare Befehle zu sehen.
+CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klicken Sie auf den Menüknopf oder tippen Sie '/' um verfügbare Befehle zu sehen.
 CheckMade.Telegram.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
 CheckMade.Telegram.Logic	What type of issue?	Welche Art von Problem?
@@ -52,6 +52,6 @@ CheckMade.Telegram.Logic	The previous workflow was completed. You can continue w
 CheckMade.Telegram.Logic	The previous workflow was completed, so your last message/action will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht/Aktion wird deswegen ignoriert.
 CheckMade.Telegram.Logic	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.
 CheckMade.Telegram.Logic	💨 Logged out.	💨 Ausgeloggt.
-CheckMade.Telegram.Logic	{0}, are you sure you want to log out from this chat in your role as {1} for {2}?\nFYI: You will also be logged out from other non-group bot chats in this role.	{0}, sind Sie sicher, dass Sie sich aus diesem Chat in deiner Rolle als {1} für {2} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
+CheckMade.Telegram.Logic	{0}, are you sure you want to log out from this chat in your role as {1} for {2}?\nFYI: You will also be logged out from other non-group bot chats in this role.	{0}, sind Sie sicher, dass Sie sich aus diesem Chat in Ihrer Rolle als {1} für {2} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.Telegram.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.Telegram.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
