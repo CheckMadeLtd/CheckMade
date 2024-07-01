@@ -132,7 +132,7 @@ public class ModelEqualityTests
     }
     
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingLiveEvents_WithDifferenceOnlyInVenue()
+    public void Equals_ShouldReturnFalse_WhenComparingLiveEvents_WithDifferenceOnlyInVenue()
     {
         ILiveEventInfo liveEvent1 = new LiveEvent(
             "Test Event",
@@ -150,7 +150,7 @@ public class ModelEqualityTests
 
         var areEqual = liveEvent1 .Equals(liveEvent2);
 
-        Assert.True(
+        Assert.False(
             areEqual,
             "Two LiveEvents with the same data but different venues should still be considered equal.");
     }

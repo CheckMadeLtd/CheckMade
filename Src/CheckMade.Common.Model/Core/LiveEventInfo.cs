@@ -24,23 +24,13 @@ public record LiveEventInfo(
     {
         return other switch
         {
-            LiveEventInfo liveEventInfo => Equals(liveEventInfo),
+            LiveEventInfo liveEventInfo => this == liveEventInfo,
             LiveEvent liveEvent => Equals(liveEvent),
             null => false,
             _ => throw new InvalidOperationException("Every subtype should be explicitly handled")
         };
     }
     
-    public virtual bool Equals(LiveEventInfo? other)
-    {
-        if (other is null) 
-            return false;
-        
-        return 
-            ReferenceEquals(this, other) || 
-            AreEqual(this, other);
-    }
-
     protected virtual bool Equals(LiveEvent other)
     {
         return AreEqual(this, other);

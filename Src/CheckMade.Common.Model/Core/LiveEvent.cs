@@ -47,7 +47,7 @@ public record LiveEvent : ILiveEventInfo
         return other switch
         {
             LiveEventInfo liveEventInfo => Equals(liveEventInfo),
-            LiveEvent liveEvent => Equals(liveEvent), 
+            LiveEvent liveEvent => this == liveEvent, 
             null => false,
             _ => throw new InvalidOperationException("Every subtype should be explicitly handled")
         };
@@ -58,16 +58,6 @@ public record LiveEvent : ILiveEventInfo
         return AreEqual(this, other);
     }
     
-    public virtual bool Equals(LiveEvent? other)
-    {
-        if (other is null) 
-            return false;
-        
-        return 
-            ReferenceEquals(this, other) || 
-            AreEqual(this, other);
-    }
-
     public override int GetHashCode()
     {
         return HashCode.Combine(Name, StartDate, EndDate, Status);
