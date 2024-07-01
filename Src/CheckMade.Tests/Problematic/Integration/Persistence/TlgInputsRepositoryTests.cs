@@ -7,11 +7,11 @@ using CheckMade.Common.Persistence;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using CheckMade.Tests.Utils;
-using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
+using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
-namespace CheckMade.Tests.Fine.Integration.Persistence;
+namespace CheckMade.Tests.Problematic.Integration.Persistence;
 
 public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
 {
@@ -193,7 +193,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     }
     
     [Fact]
-    public async Task GetAllAsync_ReturnsCorrectInputsForGivenLiveEvent()
+    public async Task GetAllAsync_ReturnsCorrectInputs_ForGivenLiveEvent()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -208,7 +208,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 text: "Input for X 2024 2", 
                 roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2024)
         };
-
+        
         var inputsX2025 = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
@@ -223,14 +223,14 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             inputsX2024
                 .Concat(inputsX2025)
                 .ToArray());
-
+        
         var retrievedInputsX2024 = 
             (await inputRepo.GetAllAsync(X2024))
             .ToImmutableReadOnlyCollection();
         var retrievedInputsX2025 = 
             (await inputRepo.GetAllAsync(X2025))
             .ToImmutableReadOnlyCollection();
-
+        
         await inputRepo.HardDeleteAllAsync(inputsX2024[0].TlgAgent);
         await inputRepo.HardDeleteAllAsync(inputsX2025[0].TlgAgent);
         
