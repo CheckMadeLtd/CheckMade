@@ -27,7 +27,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault),
+                roleSetting: None),
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: IntegrationTestDefault),
             inputGenerator.GetValidTlgInputTextMessage(
@@ -67,7 +67,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         
         var expectedDomainTerm = Dt(LanguageCode.de);
-        var tlgInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(expectedDomainTerm);
+        var tlgInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+            expectedDomainTerm,
+            roleSetting: IntegrationTestDefault);
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
@@ -98,7 +100,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgInput = inputGenerator.GetValidTlgInputLocationMessage(
             expectedGeo.Latitude, 
             expectedGeo.Longitude,
-            expectedGeo.UncertaintyRadiusInMeters);
+            expectedGeo.UncertaintyRadiusInMeters,
+            roleSetting: IntegrationTestDefault);
         
         await inputRepo.AddAsync(tlgInput);
         
@@ -123,7 +126,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var tlgInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault),
+                roleSetting: None),
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: IntegrationTestDefault),
             inputGenerator.GetValidTlgInputTextMessage(

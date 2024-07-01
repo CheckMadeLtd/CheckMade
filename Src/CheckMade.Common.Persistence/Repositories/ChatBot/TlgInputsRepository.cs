@@ -101,10 +101,13 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                 cacheForTlgInput.Add(input);
             }
 
-            if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
-                    out var cacheForLiveEvent))
+            if (input.LiveEventContext.IsSome)
             {
-                cacheForLiveEvent.Add(input);
+                if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
+                        out var cacheForLiveEvent))
+                {
+                    cacheForLiveEvent.Add(input);
+                }
             }
         }
     }
