@@ -6,9 +6,9 @@ internal static class LiveEventInfoComparer
 {
     public static bool AreEqual(ILiveEventInfo first, ILiveEventInfo second)
     {
-        return first.Name == second.Name && 
-               first.StartDate == second.StartDate &&
-               first.EndDate == second.EndDate &&
-               first.Status == second.Status;
+        return first.Name.Equals(second.Name) && 
+               first.StartDate.Equals(second.StartDate) &&
+               first.EndDate.Equals(second.EndDate) &&
+               first.Status.Equals(second.Status);
     }
 }
