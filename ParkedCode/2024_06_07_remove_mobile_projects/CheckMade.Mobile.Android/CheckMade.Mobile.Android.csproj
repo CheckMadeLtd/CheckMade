@@ -4,8 +4,8 @@
         <TargetFramework>net8.0-android</TargetFramework>
         <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
         <ApplicationId>com.CheckMadeOrga.CheckMade-Mobile</ApplicationId>
-        <ApplicationVersion>44</ApplicationVersion>
-                                                                                                                                                                                                                                                                                                                                                                                                        <ApplicationDisplayVersion>0.9.4</ApplicationDisplayVersion>
+        <ApplicationVersion>45</ApplicationVersion>
+                                                                                                                                                                                                                                                                                                                                                                                                                    <ApplicationDisplayVersion>0.9.5</ApplicationDisplayVersion>
         <AndroidPackageFormat>apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
         <Configurations>Debug_Non_iOS;Debug_All;No_Build;Release</Configurations>
