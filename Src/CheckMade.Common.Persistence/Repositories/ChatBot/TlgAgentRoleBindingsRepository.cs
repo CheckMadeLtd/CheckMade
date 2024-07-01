@@ -121,7 +121,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
 
     public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
-        .Where(tarb => tarb.Status == DbRecordStatus.Active)
+        .Where(tarb => tarb.Status.Equals(DbRecordStatus.Active))
         .ToImmutableReadOnlyCollection();
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>

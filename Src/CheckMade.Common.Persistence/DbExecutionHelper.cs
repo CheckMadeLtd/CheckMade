@@ -23,7 +23,7 @@ internal class DbExecutionHelper(
     {
         await using var db = dbProvider.CreateConnection() as NpgsqlConnection;
 
-        if (db == null)
+        if (db is null)
             throw new DataException("Failed to assign IDbConnection");
         
         await dbOpenRetryPolicy.ExecuteAsync(async () => await db.OpenAsync());

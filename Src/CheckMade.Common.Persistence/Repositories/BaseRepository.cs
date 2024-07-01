@@ -185,7 +185,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return roles;
 
         bool IsSameUser(string mobile, DbRecordStatus status) =>
-            mobile == currentUserMobile && status == currentUserStatus;
+            mobile.Equals(currentUserMobile) && status.Equals(currentUserStatus);
     }
     
     private static TlgInput ConstituteTlgInput(
