@@ -6,6 +6,14 @@ namespace CheckMade.Tests.Fine.Unit.Common.ModelEquality;
 
 public class LiveEventInfoEqualityTests
 {
+    /*
+     * This region contains tests, the equivalents of which are not in this region for IRoleInfo.
+     * This shows the limitations of the C# default value-comparison for records. It breaks down with
+     * navigational properties for collections, here List<IRoleInfo>. For IRoleInfo this is not true because both
+     * navigational properties are NOT collections but simple types. 
+     */
+    #region TestsThatPassOnlyThanksToCustomEqualityLogic
+    
     [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingDifferentTypesImplementingILiveEventInfo()
     {
@@ -32,6 +40,86 @@ public class LiveEventInfoEqualityTests
             areEqual2,
             "LiveEventInfo and LiveEvent with the same data should be considered equal.");
     }
+
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingLiveEvents_WithDifferenceOnlyInVenue()
+    {
+        ILiveEventInfo liveEvent1 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo>(),
+            new LiveEventVenue("Test Venue 1"));
+
+        ILiveEventInfo liveEvent2 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo>(),
+            new LiveEventVenue("Test Venue 2"));
+
+        var areEqual = liveEvent1.Equals(liveEvent2);
+
+        Assert.True(
+            areEqual,
+            "Two LiveEvents with the same data but different venues should still be considered equal.");
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingDifferentLiveEventInstancesWithSameBasicData()
+    {
+        ILiveEventInfo liveEvent1 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo>(),
+            new LiveEventVenue("Test Venue"));
+
+        ILiveEventInfo liveEvent2 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo>(),
+            new LiveEventVenue("Test Venue"));
+
+        var areEqual = liveEvent1.Equals(liveEvent2);
+
+        Assert.True(
+            areEqual,
+            "Two LiveEvent instances with the same basic data should be considered equal.");
+    }
+
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingLiveEventsWithDifferentRoleInfoCollections()
+    {
+        var roleInfo1 = new RoleInfo("Token1", RoleType.SanitaryOps_Admin);
+        var roleInfo2 = new RoleInfo("Token2", RoleType.SanitaryOps_Inspector);
+
+        ILiveEventInfo liveEvent1 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo> { roleInfo1 },
+            new LiveEventVenue("Test Venue"));
+
+        ILiveEventInfo liveEvent2 = new LiveEvent(
+            "Test Event",
+            new DateTime(2024, 7, 1),
+            new DateTime(2024, 7, 5),
+            new List<IRoleInfo> { roleInfo2 },
+            new LiveEventVenue("Test Venue"));
+
+        var areEqual = liveEvent1.Equals(liveEvent2);
+
+        Assert.True(
+            areEqual,
+            "Two LiveEvents with different RoleInfo collections but otherwise identical data should " +
+            "be considered equal.");
+    }
+
+    #endregion
+
+    #region TestsThatWouldPassAlsoWithDefaultRecordEqualityComparison
 
     [Fact]
     public void Equals_ShouldReturnFalse_WhenComparingDifferentTypesImplementingILiveEventInfo_WithEqualsOperator()
@@ -157,30 +245,6 @@ public class LiveEventInfoEqualityTests
     }
 
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingLiveEvents_WithDifferenceOnlyInVenue()
-    {
-        ILiveEventInfo liveEvent1 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo>(),
-            new LiveEventVenue("Test Venue 1"));
-
-        ILiveEventInfo liveEvent2 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo>(),
-            new LiveEventVenue("Test Venue 2"));
-
-        var areEqual = liveEvent1.Equals(liveEvent2);
-
-        Assert.True(
-            areEqual,
-            "Two LiveEvents with the same data but different venues should still be considered equal.");
-    }
-
-    [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingDifferentLiveEventInfoInstancesWithSameBasicData()
     {
         ILiveEventInfo liveEventInfo1 = new LiveEventInfo(
@@ -200,58 +264,6 @@ public class LiveEventInfoEqualityTests
         Assert.True(
             areEqual,
             "Two LiveEventInfo instances with the same basic data should be considered equal.");
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingDifferentLiveEventInstancesWithSameBasicData()
-    {
-        ILiveEventInfo liveEvent1 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo>(),
-            new LiveEventVenue("Test Venue"));
-
-        ILiveEventInfo liveEvent2 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo>(),
-            new LiveEventVenue("Test Venue"));
-
-        var areEqual = liveEvent1.Equals(liveEvent2);
-
-        Assert.True(
-            areEqual,
-            "Two LiveEvent instances with the same basic data should be considered equal.");
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingLiveEventsWithDifferentRoleInfoCollections()
-    {
-        var roleInfo1 = new RoleInfo("Token1", RoleType.SanitaryOps_Admin);
-        var roleInfo2 = new RoleInfo("Token2", RoleType.SanitaryOps_Inspector);
-
-        ILiveEventInfo liveEvent1 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo> { roleInfo1 },
-            new LiveEventVenue("Test Venue"));
-
-        ILiveEventInfo liveEvent2 = new LiveEvent(
-            "Test Event",
-            new DateTime(2024, 7, 1),
-            new DateTime(2024, 7, 5),
-            new List<IRoleInfo> { roleInfo2 },
-            new LiveEventVenue("Test Venue"));
-
-        var areEqual = liveEvent1.Equals(liveEvent2);
-
-        Assert.True(
-            areEqual,
-            "Two LiveEvents with different RoleInfo collections but otherwise identical data should " +
-            "be considered equal.");
     }
 
     [Fact]
@@ -279,4 +291,6 @@ public class LiveEventInfoEqualityTests
             areEqual,
             "Two LiveEvents with different Status but otherwise identical data should not be considered equal.");
     }
+    
+    #endregion
 }
