@@ -47,8 +47,9 @@ public record LiveEvent : ILiveEventInfo
         return other switch
         {
             LiveEventInfo liveEventInfo => Equals(liveEventInfo),
-            LiveEvent liveEvent => Equals(liveEvent),
-            _ => false
+            LiveEvent liveEvent => Equals(liveEvent), 
+            null => false,
+            _ => throw new InvalidOperationException("Every subtype should be explicitly handled")
         };
     }
 
