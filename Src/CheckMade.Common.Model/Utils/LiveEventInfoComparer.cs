@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Model.Utils;
 
-public static class LiveEventInfoComparer
+internal static class LiveEventInfoComparer
 {
     public static bool AreEqual(ILiveEventInfo first, ILiveEventInfo second)
     {

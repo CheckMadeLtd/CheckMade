@@ -4,7 +4,7 @@ using static CheckMade.Common.Model.Utils.LiveEventInfoComparer;
 
 namespace CheckMade.Common.Model.Core;
 
-public record LiveEventInfo(
+public sealed record LiveEventInfo(
         string Name,
         DateTime StartDate,
         DateTime EndDate,
@@ -24,17 +24,18 @@ public record LiveEventInfo(
     {
         return other switch
         {
-            LiveEventInfo liveEventInfo => this == liveEventInfo,
+            LiveEventInfo liveEventInfo => Equals(liveEventInfo),
             LiveEvent liveEvent => Equals(liveEvent),
             null => false,
             _ => throw new InvalidOperationException("Every subtype should be explicitly handled")
         };
     }
-    
-    protected virtual bool Equals(LiveEvent other)
-    {
-        return AreEqual(this, other);
-    }
+
+    private bool Equals(LiveEvent other) =>
+        AreEqual(this, other);
+
+    public bool Equals(LiveEventInfo? other) =>
+        AreEqual(this, other!);
 
     public override int GetHashCode()
     {
