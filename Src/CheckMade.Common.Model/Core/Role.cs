@@ -37,7 +37,8 @@ public sealed record Role(
         AreEqual(this, other);
 
     public bool Equals(Role? other) =>
-        AreEqual(this, other!);
+        other is not null &&
+        AreEqual(this, other);
     
     public override int GetHashCode()
     {

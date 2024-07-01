@@ -35,7 +35,8 @@ public sealed record LiveEventInfo(
         AreEqual(this, other);
 
     public bool Equals(LiveEventInfo? other) =>
-        AreEqual(this, other!);
+        other is not null &&
+        AreEqual(this, other);
 
     public override int GetHashCode()
     {
