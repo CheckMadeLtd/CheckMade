@@ -75,7 +75,8 @@ internal class LanguageSettingWorkflow(
 
     private static bool AnyPreviousInputContainsCallbackQuery(
         IReadOnlyCollection<TlgInput> preCurrentInputHistory) =>
-        preCurrentInputHistory.Any(x => x.InputType == TlgInputType.CallbackQuery);
+        preCurrentInputHistory.Any(x => 
+            x.InputType.Equals(TlgInputType.CallbackQuery));
 
     private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageChoice)
     {
@@ -87,7 +88,7 @@ internal class LanguageSettingWorkflow(
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
         var currentUser = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent == newLanguageChoice.TlgAgent)
+            .First(tarb => tarb.TlgAgent.Equals(newLanguageChoice.TlgAgent))
             .Role.ByUser;
 
         await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);

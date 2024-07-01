@@ -70,7 +70,7 @@ internal class UserAuthWorkflow(
     public States DetermineCurrentState(IReadOnlyCollection<TlgInput> tlgAgentInputHistory)
     {
         var lastTextSubmitted = tlgAgentInputHistory
-            .LastOrDefault(i => i.InputType == TlgInputType.TextMessage);
+            .LastOrDefault(i => i.InputType.Equals(TlgInputType.TextMessage));
 
         return lastTextSubmitted switch
         {
@@ -81,7 +81,7 @@ internal class UserAuthWorkflow(
 
     private async Task<bool> TokenExists(string tokenAttempt) =>
         (await rolesRepo.GetAllAsync())
-        .Any(role => role.Token == tokenAttempt);
+        .Any(role => role.Token.Equals(tokenAttempt));
 
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
     {
@@ -91,7 +91,7 @@ internal class UserAuthWorkflow(
         var outputs = new List<OutputDto>();
         
         var newTlgAgentRoleBindForCurrentMode = new TlgAgentRoleBind(
-            (await rolesRepo.GetAllAsync()).First(r => r.Token == inputText),
+            (await rolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
             tokenInputAttempt.TlgAgent with { Mode = currentMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
@@ -135,7 +135,8 @@ internal class UserAuthWorkflow(
         var tlgAgentRoleBindingsToAdd = new List<TlgAgentRoleBind> { newTlgAgentRoleBindForCurrentMode };
         
         var isInputInPrivateBotChat = 
-            tokenInputAttempt.TlgAgent.ChatId == tokenInputAttempt.TlgAgent.UserId;
+            tokenInputAttempt.TlgAgent.ChatId.Id.Equals(
+                tokenInputAttempt.TlgAgent.UserId.Id);
 
         if (isInputInPrivateBotChat)
         {
@@ -148,8 +149,8 @@ internal class UserAuthWorkflow(
         
         TlgAgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
         preExistingRoleBindings.FirstOrDefault(tarb => 
-            tarb.Role.Token == inputText &&
-            tarb.TlgAgent.Mode == mode);
+            tarb.Role.Token.Equals(inputText) &&
+            tarb.TlgAgent.Mode.Equals(mode));
 
         void AddTlgAgentRoleBindingsForOtherModes()
         {

@@ -32,8 +32,8 @@ internal class InputProcessor(
                 
                 var responseBuilder = new List<OutputDto>();
 
-                if (currentInput.InputType == TlgInputType.CommandMessage
-                    && currentInput.Details.BotCommandEnumCode == TlgStart.CommandCode)
+                if (currentInput.InputType.Equals(TlgInputType.CommandMessage)
+                    && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode))
                 {
                     responseBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
                                                                "I shall follow your command!") });
@@ -114,7 +114,8 @@ internal class InputProcessor(
         var previousWorkflowInputHistory = 
             (await logicUtils.GetAllCurrentInputsAsync(currentInput.TlgAgent))
             .SkipLast(1) // Excluding the current BotCommand input
-            .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
+            .GetLatestRecordsUpTo(input => 
+                input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
 
         var previousWorkflow = workflowIdentifier.Identify(previousWorkflowInputHistory);

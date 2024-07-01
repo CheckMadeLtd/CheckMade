@@ -28,7 +28,7 @@ internal class LogoutWorkflow(
             await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent == currentInput.TlgAgent);
+            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
 
         return DetermineCurrentState(workflowInputHistory) switch
         {
@@ -69,7 +69,7 @@ internal class LogoutWorkflow(
     {
         var lastInput = workflowInputHistory.Last();
 
-        if (lastInput.InputType == TlgInputType.CallbackQuery)
+        if (lastInput.InputType.Equals(TlgInputType.CallbackQuery))
         {
             return lastInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
             {
@@ -88,9 +88,9 @@ internal class LogoutWorkflow(
         var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
             (await roleBindingsRepo.GetAllActiveAsync())
             .Where(tarb =>
-                tarb.TlgAgent.UserId == currentRoleBind.TlgAgent.UserId &&
-                tarb.TlgAgent.ChatId == currentRoleBind.TlgAgent.ChatId &&
-                tarb.Role.Token == currentRoleBind.Role.Token)
+                tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
+                tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
+                tarb.Role.Token.Equals(currentRoleBind.Role.Token))
             .ToImmutableReadOnlyCollection();
         
         await roleBindingsRepo

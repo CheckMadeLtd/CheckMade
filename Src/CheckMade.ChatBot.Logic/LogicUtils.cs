@@ -30,7 +30,7 @@ internal class LogicUtils(
         
         var lastExpiredRoleBind = (await tlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(tarb =>
-                tarb.TlgAgent == tlgAgent &&
+                tarb.TlgAgent.Equals(tlgAgent) &&
                 tarb.DeactivationDate.IsSome)
             .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
 
@@ -50,7 +50,7 @@ internal class LogicUtils(
         var currentRoleInputs = await GetAllCurrentInputsAsync(tlgAgent);
 
         return currentRoleInputs
-            .GetLatestRecordsUpTo(input => input.InputType == TlgInputType.CommandMessage)
+            .GetLatestRecordsUpTo(input => input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
     }
 }
