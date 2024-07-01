@@ -118,9 +118,9 @@ public class LogoutWorkflowTests
         var expectedBindingsUpdated = 
             (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
             .Where(tarb => 
-                tarb.TlgAgent.UserId == tlgAgentOperations.UserId &&
-                tarb.TlgAgent.ChatId == tlgAgentOperations.ChatId &&
-                tarb.Role == boundRole)
+                tarb.TlgAgent.UserId.Equals(tlgAgentOperations.UserId) &&
+                tarb.TlgAgent.ChatId.Equals(tlgAgentOperations.ChatId) &&
+                tarb.Role.Equals(boundRole))
             .ToImmutableReadOnlyList();
         
         var actualTlgAgentRoleBindingsUpdated = new List<TlgAgentRoleBind>();

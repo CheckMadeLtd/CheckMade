@@ -324,8 +324,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 
                 TlgChatId = activeRoleBindings
                     .First(tarb => 
-                        tarb.Role == output.LogicalPort.GetValueOrThrow().Role &&
-                        tarb.TlgAgent.Mode == output.LogicalPort.GetValueOrThrow().InteractionMode)
+                        tarb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
+                        tarb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
                     .TlgAgent.ChatId.Id
             }).ToList();
 
