@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - tmp/oh4in
 
 jobs:  
   tag_version:
