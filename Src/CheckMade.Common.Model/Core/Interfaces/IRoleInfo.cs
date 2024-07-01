@@ -7,4 +7,6 @@ public interface IRoleInfo
     string Token { get; }
     RoleType RoleType { get; }
     DbRecordStatus Status { get; }
+
+    bool Equals(IRoleInfo? other);
 }

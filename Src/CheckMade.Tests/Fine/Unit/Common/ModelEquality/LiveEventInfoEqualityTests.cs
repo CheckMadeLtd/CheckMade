@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Tests.Fine.Unit.Common;
+namespace CheckMade.Tests.Fine.Unit.Common.ModelEquality;
 
 public class LiveEventInfoEqualityTests
 {

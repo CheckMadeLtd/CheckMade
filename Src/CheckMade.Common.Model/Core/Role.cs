@@ -1,9 +1,10 @@
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
-
+using static CheckMade.Common.Model.Utils.RoleInfoComparer;
+    
 namespace CheckMade.Common.Model.Core;
 
-public record Role(
+public sealed record Role(
         string Token,
         RoleType RoleType,
         IUserInfo ByUser,
@@ -19,5 +20,27 @@ public record Role(
             liveEventInfo,
             roleInfo.Status)
     {
+    }
+
+    public bool Equals(IRoleInfo? other)
+    {
+        return other switch
+        {
+            RoleInfo roleInfo => Equals(roleInfo),
+            Role role => Equals(role), 
+            null => false,
+            _ => throw new InvalidOperationException("Every subtype should be explicitly handled")
+        };
+    }
+
+    private bool Equals(RoleInfo other) =>
+        AreEqual(this, other);
+
+    public bool Equals(Role? other) =>
+        AreEqual(this, other!);
+    
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Token, RoleType, Status);
     }
 }
