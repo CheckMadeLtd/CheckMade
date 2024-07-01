@@ -3,6 +3,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -132,9 +133,15 @@ internal static class TestRepositoryUtils
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(It.IsAny<TlgAgent>()))
             .ReturnsAsync((TlgAgent tlgAgent) => inputs
-                .Where(i => i.TlgAgent == tlgAgent)
+                .Where(i => i.TlgAgent.Equals(tlgAgent))
                 .ToImmutableReadOnlyCollection());
         
+        mockTlgInputsRepo
+            .Setup(repo => repo.GetAllAsync(It.IsAny<ILiveEventInfo>()))
+            .ReturnsAsync((ILiveEventInfo liveEvent) => inputs
+                .Where(i => i.LiveEventContext.GetValueOrDefault().Equals(liveEvent))
+                .ToImmutableReadOnlyCollection());
+
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
         

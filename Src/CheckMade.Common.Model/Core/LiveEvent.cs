@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Model.Utils.LiveEventInfoComparer;
 
 namespace CheckMade.Common.Model.Core;
 
@@ -40,4 +41,34 @@ public record LiveEvent : ILiveEventInfo
     public IReadOnlyCollection<IRoleInfo> WithRoles { get; init; }
     public LiveEventVenue AtVenue { get; init; }
     public DbRecordStatus Status { get; init; }
+    
+    public bool Equals(ILiveEventInfo? other)
+    {
+        return other switch
+        {
+            LiveEventInfo liveEventInfo => Equals(liveEventInfo),
+            LiveEvent liveEvent => Equals(liveEvent),
+            _ => false
+        };
+    }
+
+    protected virtual bool Equals(LiveEventInfo other)
+    {
+        return AreEqual(this, other);
+    }
+    
+    public virtual bool Equals(LiveEvent? other)
+    {
+        if (other is null) 
+            return false;
+        
+        return 
+            ReferenceEquals(this, other) || 
+            AreEqual(this, other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name, StartDate, EndDate, Status);
+    }
 }
