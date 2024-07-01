@@ -35,8 +35,4 @@
       </Compile>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Fine\" />
-    </ItemGroup>
-
 </Project>
