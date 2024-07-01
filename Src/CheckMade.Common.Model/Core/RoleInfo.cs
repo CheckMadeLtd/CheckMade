@@ -6,5 +6,5 @@ namespace CheckMade.Common.Model.Core;
 public record RoleInfo(
         string Token,
         RoleType RoleType,
-        DbRecordStatus Status) 
+        DbRecordStatus Status = DbRecordStatus.Active) 
     : IRoleInfo;

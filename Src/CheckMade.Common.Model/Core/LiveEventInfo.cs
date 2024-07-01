@@ -8,7 +8,7 @@ public record LiveEventInfo(
         string Name,
         DateTime StartDate,
         DateTime EndDate,
-        DbRecordStatus Status)
+        DbRecordStatus Status = DbRecordStatus.Active)
     : ILiveEventInfo
 {
     public LiveEventInfo(LiveEvent liveEvent) 

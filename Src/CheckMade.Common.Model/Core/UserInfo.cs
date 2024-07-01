@@ -11,7 +11,7 @@ public record UserInfo(
     string LastName,
     Option<EmailAddress> Email,
     LanguageCode Language,
-    DbRecordStatus Status)
+    DbRecordStatus Status = DbRecordStatus.Active)
     : IUserInfo
 {
     public UserInfo(User user)
