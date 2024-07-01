@@ -6,6 +6,8 @@ namespace CheckMade.Tests.Fine.Unit.Common.ModelEquality;
 
 public class RoleInfoEqualityTests
 {
+    #region TestsThatPassOnlyThanksToCustomEqualityLogic
+
     [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingDifferentTypesImplementingIRoleInfo()
     {
@@ -31,6 +33,32 @@ public class RoleInfoEqualityTests
             "RoleInfo and Role with the same data should be considered equal.");
     }
 
+    [Fact]
+    public void Equals_ShouldReturnTrue_WhenComparingRoles_WithDifferenceOnlyInUserAndLiveEvent()
+    {
+        IRoleInfo role1 = new Role(
+            "Token1",
+            RoleType.SanitaryOps_Admin,
+            new UserInfo(DanielEn),
+            new LiveEventInfo(X2024));
+
+        IRoleInfo role2 = new Role(
+            "Token1",
+            RoleType.SanitaryOps_Admin,
+            new UserInfo(DanielDe),
+            new LiveEventInfo(Y2024));
+
+        var areEqual = role1.Equals(role2);
+
+        Assert.True(
+            areEqual,
+            "Two Roles with the same token and type but different users and live events should still be considered equal.");
+    }
+    
+    #endregion
+    
+    #region TestsThatWouldPassAlsoWithDefaultRecordEqualityComparison
+    
     [Fact]
     public void Equals_ShouldReturnFalse_WhenComparingDifferentTypesImplementingIRoleInfo_WithEqualsOperator()
     {
@@ -148,28 +176,6 @@ public class RoleInfoEqualityTests
     }
 
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingRoles_WithDifferenceOnlyInUserAndLiveEvent()
-    {
-        IRoleInfo role1 = new Role(
-            "Token1",
-            RoleType.SanitaryOps_Admin,
-            new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
-
-        IRoleInfo role2 = new Role(
-            "Token1",
-            RoleType.SanitaryOps_Admin,
-            new UserInfo(DanielDe),
-            new LiveEventInfo(Y2024));
-
-        var areEqual = role1.Equals(role2);
-
-        Assert.True(
-            areEqual,
-            "Two Roles with the same token and type but different users and live events should still be considered equal.");
-    }
-
-    [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingDifferentRoleInfoInstancesWithSameBasicData()
     {
         IRoleInfo roleInfo1 = new RoleInfo(
@@ -234,4 +240,6 @@ public class RoleInfoEqualityTests
             areEqual,
             "Two Roles with different Status but otherwise identical data should not be considered equal.");
     }
+    
+    #endregion
 }
