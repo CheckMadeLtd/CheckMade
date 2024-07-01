@@ -139,7 +139,7 @@ internal static class TestRepositoryUtils
         mockTlgInputsRepo
             .Setup(repo => repo.GetAllAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) => inputs
-                .Where(i => i.LiveEventContext.GetValueOrDefault().Equals(liveEvent))
+                .Where(i => Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent))
                 .ToImmutableReadOnlyCollection());
 
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
