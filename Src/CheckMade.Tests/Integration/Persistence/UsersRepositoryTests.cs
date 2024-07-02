@@ -9,14 +9,14 @@ public class UsersRepositoryTests
     private IServiceProvider? _services;
 
     [Fact]
-    public async Task GetAllAsync_ReturnsIntegrationTestUsers()
+    public async Task GetAllAsync_ReturnsIntegrationTestUsers_WithCorrectOneToManyRolesMapping()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
-        var usersRepository = _services.GetRequiredService<IUsersRepository>();
+        var usersRepo = _services.GetRequiredService<IUsersRepository>();
         
         var users = 
-            (await usersRepository.GetAllAsync())
+            (await usersRepo.GetAllAsync())
             .ToList();
         
         Assert.Equal(
