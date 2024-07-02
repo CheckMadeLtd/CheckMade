@@ -16,7 +16,6 @@ internal static class TestData
 {
     #region UsersSetup #################################################################################################
     
-    // used for integration tests
     internal static readonly User DanielEn = new(
         new MobileNumber("+447777111999"),
         "_Daniel",
@@ -35,7 +34,6 @@ internal static class TestData
         LanguageCode.de,
         new List<IRoleInfo>());
     
-    // used for integration tests
     internal static readonly User LukasDe = new(
         new MobileNumber("+49111199999"),
         "_Lukas",
@@ -57,13 +55,19 @@ internal static class TestData
     // 2024 LiveEvents
 
     internal static readonly SphereOfAction Sphere1_AtX2024 =
-        new SphereOfAction("Camp1", typeof(SanitaryOps));
+        new SphereOfAction(
+            "Camp1",
+            new SphereOfActionDetails(typeof(SanitaryOps)));
     
     internal static readonly SphereOfAction Sphere2_AtX2024 =
-        new SphereOfAction("Camp2", typeof(SanitaryOps));
+        new SphereOfAction(
+            "Camp2",
+            new SphereOfActionDetails(typeof(SanitaryOps)));
     
     internal static readonly SphereOfAction Sphere3_AtX2024 =
-        new SphereOfAction("Zone1", typeof(SiteCleaning));
+        new SphereOfAction(
+            "Zone1",
+            new SphereOfActionDetails(typeof(SiteCleaning)));
     
     internal static readonly LiveEvent X2024 = new("LiveEvent X 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
@@ -119,7 +123,6 @@ internal static class TestData
     #region RoleSetup ##################################################################################################
     
     // Default for testing
-    // used for integration tests
     internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
         new("RVB70T",
             SanitaryOps_Admin, 
@@ -132,14 +135,12 @@ internal static class TestData
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
-    // used for integration tests
     internal static readonly Role SOpsInspector_DanielEn_X2025 = 
         new("R9AAB5",
             SanitaryOps_Inspector,
             new UserInfo(DanielEn),
             new LiveEventInfo(X2025));
-
-    // used for integration tests
+    
     internal static readonly Role SOpsInspector_LukasDe_X2024 = 
         new("R7UIP8",
             SanitaryOps_Inspector,
