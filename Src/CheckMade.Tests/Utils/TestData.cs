@@ -62,7 +62,7 @@ internal static class TestData
         new("Camp2",
             new SphereOfActionDetails());
     
-    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere3_AtX2024 =
+    internal static readonly SphereOfAction<TradeTypeSiteCleaning> Sphere3_AtX2024 =
         new("Zone1",
             new SphereOfActionDetails());
     
