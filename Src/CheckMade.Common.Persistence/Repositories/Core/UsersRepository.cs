@@ -1,3 +1,4 @@
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
@@ -95,5 +96,26 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
         EmptyCache();
     }
 
+    private static (
+        Func<DbDataReader, int> getKey,
+        Func<DbDataReader, User> initializeModel,
+        Action<User, DbDataReader> accumulateData,
+        Func<User, User> finalizeModel) GetUserReader()
+    {
+        return (
+            getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
+            initializeModel: reader => new User(ConstituteUserInfo(reader), new List<IRoleInfo>()),
+            accumulateData: (user, reader) =>
+            {
+                var roleInfo = ConstituteRoleInfo(reader);
+                if (roleInfo.IsSome)
+                {
+                    ((List<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
+                }
+            },
+            finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
+        );
+    }
+    
     private void EmptyCache() => _cache = Option<IReadOnlyCollection<User>>.None();
 }

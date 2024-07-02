@@ -114,27 +114,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return builder.ToImmutable();
     }
     
-    protected static (
-        Func<DbDataReader, int> getKey,
-        Func<DbDataReader, User> initializeModel,
-        Action<User, DbDataReader> accumulateData,
-        Func<User, User> finalizeModel) GetUserReader()
-    {
-        return (
-            getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
-            initializeModel: reader => new User(ConstituteUserInfo(reader), new List<IRoleInfo>()),
-            accumulateData: (user, reader) =>
-            {
-                var roleInfo = ConstituteRoleInfo(reader);
-                if (roleInfo.IsSome)
-                {
-                    ((List<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
-                }
-            },
-            finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
-        );
-    }
-    
     protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
         var userInfo = ConstituteUserInfo(reader);
@@ -159,7 +138,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    private static IUserInfo ConstituteUserInfo(DbDataReader reader)
+    protected static IUserInfo ConstituteUserInfo(DbDataReader reader)
     {
         return new UserInfo(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
@@ -173,7 +152,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
     }
 
-    private static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
+    protected static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
     {
         return new LiveEventVenue(
             reader.GetString(reader.GetOrdinal("venue_name")),
@@ -181,7 +160,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
     }
 
-    private static LiveEvent ConstituteLiveEvent(
+    protected static LiveEvent ConstituteLiveEvent(
         DbDataReader reader,
         IReadOnlyCollection<IRoleInfo> roles,
         LiveEventVenue venue,
@@ -192,7 +171,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             venue,
             spheres);
     
-    private static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
+    protected static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("live_event_name")))
             return Option<ILiveEventInfo>.None();
@@ -205,12 +184,12 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    private static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
+    protected static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
         new(ConstituteRoleInfo(reader).GetValueOrThrow(),
             userInfo,
             liveEventInfo);
 
-    private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader)
+    protected static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
@@ -223,7 +202,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
     }
 
-    private static TlgInput ConstituteTlgInput(
+    protected static TlgInput ConstituteTlgInput(
         DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
     {
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
@@ -243,7 +222,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             ?? throw new InvalidOperationException("Failed to deserialize"));
     }
 
-    private static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    protected static TlgAgent ConstituteTlgAgent(DbDataReader reader)
     {
         return new TlgAgent(
             reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
@@ -252,7 +231,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
     }
 
-    private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    protected static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
         var activationDate = reader.GetDateTime(reader.GetOrdinal("tarb_activation_date"));
 
