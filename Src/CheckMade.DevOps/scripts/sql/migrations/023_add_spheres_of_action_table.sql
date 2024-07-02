@@ -7,6 +7,7 @@ DO $$
                 'CREATE TABLE IF NOT EXISTS %I (
                     id SERIAL PRIMARY KEY,
                     name varchar(255) NOT NULL,
+                    trade_type varchar(6) NOT NULL,
                     live_event_id INT NOT NULL REFERENCES live_events(id),
                     details JSONB NOT NULL,
                     status SMALLINT NOT NULL,
@@ -18,4 +19,4 @@ DO $$
     END
 $$;
 
-CREATE UNIQUE INDEX spheres_of_action_id_name ON spheres_of_action (id, name);
+CREATE UNIQUE INDEX spheres_of_action_live_event_name ON spheres_of_action (live_event_id, name);
