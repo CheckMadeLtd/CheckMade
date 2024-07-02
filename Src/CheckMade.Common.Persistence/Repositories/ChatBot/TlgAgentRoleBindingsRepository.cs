@@ -16,17 +16,21 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
-        const string rawQuery = "INSERT INTO tlg_agent_role_bindings (" +
-                                "role_id, " +
-                                "tlg_user_id, " +
-                                "tlg_chat_id, " +
-                                "activation_date, " +
-                                "deactivation_date, " +
-                                "status, " +
-                                "interaction_mode) " +
-                                "VALUES ((SELECT id FROM roles WHERE token = @token), " +
-                                "@tlgUserId, @tlgChatId, " +
-                                "@activationDate, @deactivationDate, @status, @mode)";
+        const string rawQuery = """
+                                INSERT INTO tlg_agent_role_bindings (
+
+                                role_id, 
+                                tlg_user_id, 
+                                tlg_chat_id, 
+                                activation_date, 
+                                deactivation_date, 
+                                status, 
+                                interaction_mode) 
+                                
+                                VALUES ((SELECT id FROM roles WHERE token = @token), 
+                                @tlgUserId, @tlgChatId, 
+                                @activationDate, @deactivationDate, @status, @mode)
+                                """;
 
         var commands = tlgAgentRoleBindings.Select(tarb =>
         {
@@ -68,38 +72,40 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
             {
                 if (_cache.IsNone)
                 {
-                    const string rawQuery = "SELECT " +
+                    const string rawQuery = """
+                                            SELECT 
 
-                                            "usr.mobile AS user_mobile, " +
-                                            "usr.first_name AS user_first_name, " +
-                                            "usr.middle_name AS user_middle_name, " +
-                                            "usr.last_name AS user_last_name, " +
-                                            "usr.email AS user_email, " +
-                                            "usr.language_setting AS user_language, " +
-                                            "usr.status AS user_status, " +
+                                            usr.mobile AS user_mobile, 
+                                            usr.first_name AS user_first_name, 
+                                            usr.middle_name AS user_middle_name, 
+                                            usr.last_name AS user_last_name, 
+                                            usr.email AS user_email, 
+                                            usr.language_setting AS user_language, 
+                                            usr.status AS user_status, 
 
-                                            "lve.name AS live_event_name, " +
-                                            "lve.start_date AS live_event_start_date, " +
-                                            "lve.end_date AS live_event_end_date, " +
-                                            "lve.status AS live_event_status, " +
+                                            lve.name AS live_event_name, 
+                                            lve.start_date AS live_event_start_date, 
+                                            lve.end_date AS live_event_end_date, 
+                                            lve.status AS live_event_status, 
 
-                                            "r.token AS role_token, " +
-                                            "r.role_type AS role_type, " +
-                                            "r.status AS role_status, " +
+                                            r.token AS role_token, 
+                                            r.role_type AS role_type, 
+                                            r.status AS role_status, 
 
-                                            "tarb.tlg_user_id AS tarb_tlg_user_id, " +
-                                            "tarb.tlg_chat_id AS tarb_tlg_chat_id, " +
-                                            "tarb.interaction_mode AS tarb_interaction_mode, " +
-                                            "tarb.activation_date AS tarb_activation_date, " +
-                                            "tarb.deactivation_date AS tarb_deactivation_date, " +
-                                            "tarb.status AS tarb_status " +
+                                            tarb.tlg_user_id AS tarb_tlg_user_id, 
+                                            tarb.tlg_chat_id AS tarb_tlg_chat_id, 
+                                            tarb.interaction_mode AS tarb_interaction_mode, 
+                                            tarb.activation_date AS tarb_activation_date, 
+                                            tarb.deactivation_date AS tarb_deactivation_date, 
+                                            tarb.status AS tarb_status 
 
-                                            "FROM tlg_agent_role_bindings tarb " +
-                                            "INNER JOIN roles r on tarb.role_id = r.id " +
-                                            "INNER JOIN users usr on r.user_id = usr.id " +
-                                            "INNER JOIN live_events lve on r.live_event_id = lve.id " +
+                                            FROM tlg_agent_role_bindings tarb 
+                                            INNER JOIN roles r on tarb.role_id = r.id 
+                                            INNER JOIN users usr on r.user_id = usr.id 
+                                            INNER JOIN live_events lve on r.live_event_id = lve.id 
                                             
-                                            "ORDER BY tarb.id";
+                                            ORDER BY tarb.id
+                                            """;
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
@@ -131,13 +137,17 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
         DbRecordStatus newStatus)
     {
-        const string rawQuery = "UPDATE tlg_agent_role_bindings " +
-                                "SET status = @newStatus, deactivation_date = @deactivationDate " +
-                                "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
-                                "AND tlg_user_id = @tlgUserId " +
-                                "AND tlg_chat_id = @tlgChatId " + 
-                                "AND interaction_mode = @mode " +
-                                "AND status = @oldStatus";
+        const string rawQuery = """
+                                UPDATE tlg_agent_role_bindings 
+                                
+                                SET status = @newStatus, deactivation_date = @deactivationDate 
+                                
+                                WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
+                                AND tlg_user_id = @tlgUserId 
+                                AND tlg_chat_id = @tlgChatId  
+                                AND interaction_mode = @mode 
+                                AND status = @oldStatus
+                                """;
 
         var commands = tlgAgentRoleBindings.Select(tarb =>
         {
@@ -167,11 +177,14 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
 
     public async Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind)
     {
-        const string rawQuery = "DELETE FROM tlg_agent_role_bindings " +
-                                "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
-                                "AND tlg_user_id = @tlgUserId " +
-                                "AND tlg_chat_id = @tlgChatId " +
-                                "AND interaction_mode = @mode";
+        const string rawQuery = """
+                                DELETE FROM tlg_agent_role_bindings 
+                                       
+                                WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
+                                AND tlg_user_id = @tlgUserId 
+                                AND tlg_chat_id = @tlgChatId 
+                                AND interaction_mode = @mode
+                                """;
         
         var normalParameters = new Dictionary<string, object>
         {

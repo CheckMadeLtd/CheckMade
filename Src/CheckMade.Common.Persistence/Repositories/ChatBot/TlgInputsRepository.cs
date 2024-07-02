@@ -47,19 +47,23 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
-        const string rawQuery = "INSERT INTO tlg_inputs " +
-                                "(user_id, " +
-                                "chat_id, " +
-                                "details, " +
-                                "last_data_migration, " +
-                                "interaction_mode, " +
-                                "input_type, " +
-                                "role_id, " +
-                                "live_event_id) " +
-                                "VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, " +
-                                "@lastDataMig, @interactionMode, @tlgInputType, " +
-                                "(SELECT id FROM roles WHERE token = @token), " +
-                                "(SELECT id FROM live_events WHERE name = @liveEventName))";
+        const string rawQuery = """
+                                INSERT INTO tlg_inputs 
+                                
+                                (user_id, 
+                                chat_id, 
+                                details, 
+                                last_data_migration, 
+                                interaction_mode, 
+                                input_type, 
+                                role_id, 
+                                live_event_id) 
+                                
+                                VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                @lastDataMig, @interactionMode, @tlgInputType, 
+                                (SELECT id FROM roles WHERE token = @token), 
+                                (SELECT id FROM live_events WHERE name = @liveEventName))
+                                """;
         
         var commands = tlgInputs.Select(tlgInput =>
         {
@@ -206,10 +210,13 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
     
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
     {
-        const string rawQuery = "DELETE FROM tlg_inputs " +
-                                "WHERE user_id = @tlgUserId " +
-                                "AND chat_id = @tlgChatId " +
-                                "AND interaction_mode = @mode";
+        const string rawQuery = """
+                                DELETE FROM tlg_inputs 
+                                       
+                                WHERE user_id = @tlgUserId 
+                                AND chat_id = @tlgChatId 
+                                AND interaction_mode = @mode
+                                """;
         
         var normalParameters = new Dictionary<string, object>
         {
