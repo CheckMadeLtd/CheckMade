@@ -8,6 +8,7 @@ DO $$
                     id SERIAL PRIMARY KEY,
                     name varchar(255) NOT NULL,
                     live_event_id INT NOT NULL REFERENCES live_events(id),
+                    details JSONB NOT NULL,
                     status SMALLINT NOT NULL,
                     last_data_migration SMALLINT)',
                 tableName);
