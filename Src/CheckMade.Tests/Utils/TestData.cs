@@ -4,6 +4,7 @@ using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Structs;
+using CheckMade.Common.Model.Core.Trades.Types;
 using static CheckMade.Common.Model.Core.Actors.RoleType;
 using User = CheckMade.Common.Model.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
@@ -48,40 +49,63 @@ internal static class TestData
     
     #region LiveEventSetup #############################################################################################
     
+    // Venues
+    
     internal static readonly LiveEventVenue Venue1 = new("Venue1 near Cologne");
+    internal static readonly LiveEventVenue Venue2 = new("Venue2 near Bremen");
 
+    // 2024 LiveEvents
+
+    internal static readonly SphereOfAction Sphere1_AtX2024 =
+        new SphereOfAction("Camp1", typeof(SanitaryOps));
+    
+    internal static readonly SphereOfAction Sphere2_AtX2024 =
+        new SphereOfAction("Camp2", typeof(SanitaryOps));
+    
+    internal static readonly SphereOfAction Sphere3_AtX2024 =
+        new SphereOfAction("Zone1", typeof(SiteCleaning));
+    
     internal static readonly LiveEvent X2024 = new("LiveEvent X 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2024, 07, 22, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
-        Venue1);
+        Venue1,
+        new List<SphereOfAction>
+        {
+            Sphere1_AtX2024, Sphere2_AtX2024, Sphere3_AtX2024
+        });
 
+    internal static readonly LiveEvent Y2024 = new("LiveEvent Y 2024",
+        new DateTime(2024, 06, 21, 10, 00, 00, DateTimeKind.Utc),
+        new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc),
+        new List<IRoleInfo>(),
+        Venue2,
+        new List<SphereOfAction>());
+
+    // 2025 LiveEvents
+    
     internal static readonly LiveEvent X2025 = new("LiveEvent X 2025",
         new DateTime(2025, 07, 18, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2025, 07, 21, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
-        Venue1);
+        Venue1,
+        new List<SphereOfAction>());
 
+    internal static readonly LiveEvent Y2025 = new("LiveEvent Y 2025",
+        new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
+        new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc),
+        new List<IRoleInfo>(),
+        Venue2,
+        new List<SphereOfAction>());
+
+    // Series
+    
     internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
         new [] 
         {
             X2024,
             X2025
         });
-
-    internal static readonly LiveEventVenue Venue2 = new("Venue2 near Bremen");
-    
-    internal static readonly LiveEvent Y2024 = new("LiveEvent Y 2024",
-        new DateTime(2024, 06, 21, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue2);
-
-    internal static readonly LiveEvent Y2025 = new("LiveEvent Y 2025",
-        new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue2);
 
     internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
         new []

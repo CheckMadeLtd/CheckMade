@@ -184,11 +184,13 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     private static LiveEvent ConstituteLiveEvent(
         DbDataReader reader,
         IReadOnlyCollection<IRoleInfo> roles,
-        LiveEventVenue venue) =>
+        LiveEventVenue venue,
+        IReadOnlyCollection<SphereOfAction> spheres) =>
         new(
             ConstituteLiveEventInfo(reader).GetValueOrThrow(),
             roles,
-            venue);
+            venue,
+            spheres);
     
     private static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
     {

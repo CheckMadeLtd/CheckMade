@@ -12,6 +12,7 @@ public sealed record LiveEvent : ILiveEventInfo
         DateTime EndDate,
         IReadOnlyCollection<IRoleInfo> WithRoles,
         LiveEventVenue AtVenue,
+        IReadOnlyCollection<SphereOfAction> DivIntoSpheres,
         DbRecordStatus Status = DbRecordStatus.Active)
     {
         if (EndDate < StartDate)
@@ -22,16 +23,22 @@ public sealed record LiveEvent : ILiveEventInfo
         this.EndDate = EndDate;
         this.WithRoles = WithRoles;
         this.AtVenue = AtVenue;
+        this.DivIntoSpheres = DivIntoSpheres;
         this.Status = Status;
     }
     
-    public LiveEvent(ILiveEventInfo liveEventInfo,IReadOnlyCollection<IRoleInfo> roles, LiveEventVenue venue)
+    public LiveEvent(
+        ILiveEventInfo liveEventInfo,
+        IReadOnlyCollection<IRoleInfo> roles,
+        LiveEventVenue venue,
+        IReadOnlyCollection<SphereOfAction> spheres)
     : this(
         liveEventInfo.Name,
         liveEventInfo.StartDate,
         liveEventInfo.EndDate,
         roles,
         venue,
+        spheres,
         liveEventInfo.Status)
     {}
 
@@ -40,6 +47,7 @@ public sealed record LiveEvent : ILiveEventInfo
     public DateTime EndDate { get; init; }
     public IReadOnlyCollection<IRoleInfo> WithRoles { get; init; }
     public LiveEventVenue AtVenue { get; init; }
+    public IReadOnlyCollection<SphereOfAction> DivIntoSpheres { get; init; }
     public DbRecordStatus Status { get; init; }
     
     public bool Equals(ILiveEventInfo? other)
