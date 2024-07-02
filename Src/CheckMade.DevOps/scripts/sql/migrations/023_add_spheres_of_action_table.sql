@@ -1,7 +1,7 @@
 DO $$
     DECLARE
         userName CONSTANT text := 'cmappuser';
-        tableName CONSTANT text := 'sphere_of_action';
+        tableName CONSTANT text := 'spheres_of_action';
     BEGIN
         EXECUTE FORMAT(
                 'CREATE TABLE IF NOT EXISTS %I (
@@ -17,4 +17,4 @@ DO $$
     END
 $$;
 
-CREATE UNIQUE INDEX sphere_of_action_id_name ON sphere_of_action (id, name);
+CREATE UNIQUE INDEX spheres_of_action_id_name ON spheres_of_action (id, name);
