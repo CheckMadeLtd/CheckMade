@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Trades.SubDomain.SanitaryOps.Facilities;
 using CheckMade.Common.Model.Core.Trades.SubDomain.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.Types;
 
 namespace CheckMade.Common.Model.Utils;
 
@@ -17,6 +18,8 @@ public class DomainGlossary
     
     public DomainGlossary()
     {
+        #region SubDomainSanitaryOps
+
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", "🪣 Cleanliness");
         AddTerm(typeof(TechnicalIssue), "DM46NG", "🔧 Technical");
         AddTerm(typeof(ConsumablesIssue), "D582QJ", "🗄 Consumables");
@@ -28,6 +31,17 @@ public class DomainGlossary
         AddTerm(typeof(Toilet), "D1540N", "🚽 Toilet");
         AddTerm(typeof(Shower), "D4W2GW", "🚿 Shower");
         AddTerm(typeof(Staff), "D9MRJ9", "🙋 Staff");
+        
+        // ToDo: add RoleTypes once switched over from Enum to Types (de.tsv already has en/de strings for it!!
+        
+        #endregion
+        
+        #region TradeTypes
+        
+        AddTerm(typeof(SanitaryOps), "DX3KFI", "🪠 Sanitary Operations");
+        AddTerm(typeof(SiteCleaning), "DSIL7M", "🧹 Site Cleaning");
+        
+        #endregion
         
         AddTerm(LanguageCode.en, "DCQ4ME", "🇬🇧 English");
         AddTerm(LanguageCode.de, "DFVN7W", "🇩🇪 German");
