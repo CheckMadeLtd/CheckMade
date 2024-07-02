@@ -12,45 +12,36 @@ namespace CheckMade.Tests.Utils;
 internal static class TestData
 {
     #region UsersSetup #################################################################################################
-
-    // Needs to be in-sync with seeding script
-    internal static readonly User IntegrationTests_DanielEn = new(
-        new MobileNumber("+447538521999"),
-        "_Daniel",
-        "IntegrationTest",
-        "_Gorin",
-        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
-        LanguageCode.en,
-        new List<IRoleInfo>());
-
-    // Needs to be in-sync with seeding script
-    internal static readonly User IntegrationTests_PatrickDe = new(
-        new MobileNumber("+4999999999"),
-        "_Patrick",
-        "IntegrationTest",
-        "_Bauer",
-        Option<EmailAddress>.None(), 
-        LanguageCode.de,
-        new List<IRoleInfo>());
-
+    
+    // used for integration tests
     internal static readonly User DanielEn = new(
-        new MobileNumber("+447538521999"),
+        new MobileNumber("+447777111999"),
         "_Daniel",
-        "UnitTest English",
+        "Test English",
         "_Gorin",
-        Option<EmailAddress>.None(),
+        new EmailAddress("daniel-test-checkmade@neocortek.net"),
         LanguageCode.en,
         new List<IRoleInfo>());
     
     internal static readonly User DanielDe = new(
-        new MobileNumber("+447538521999"),
+        new MobileNumber("+447777111999"),
         "_Daniel",
-        "UnitTest German",
+        "Test German",
         "_Gorin",
         Option<EmailAddress>.None(),
         LanguageCode.de,
         new List<IRoleInfo>());
-
+    
+    // used for integration tests
+    internal static readonly User LukasDe = new(
+        new MobileNumber("+49111199999"),
+        "_Lukas",
+        "Test German",
+        "_Gorin",
+        Option<EmailAddress>.None(),
+        LanguageCode.de,
+        new List<IRoleInfo>());
+    
     #endregion
     
     #region LiveEventSetup #############################################################################################
@@ -101,27 +92,8 @@ internal static class TestData
     
     #region RoleSetup ##################################################################################################
     
-    // Needs to be in-sync with seeding script    
-    internal static readonly Role IntegrationTests_SOpsInspector_DanielEn_X2024 = new(
-        "RAAAA1",
-        SanitaryOps_Inspector,
-        new UserInfo(IntegrationTests_DanielEn),
-        new LiveEventInfo(X2024));
-    
-    // Needs to be in-sync with seeding script    
-    internal static readonly Role IntegrationTests_SOpsEngineer_PatrickDe_X2024 = new(
-        "RAAAA2",
-        SanitaryOps_Engineer,
-        new UserInfo(IntegrationTests_PatrickDe),
-        new LiveEventInfo(X2024));
-    
-    internal static readonly Role IntegrationTests_SOpsInspector_DanielEn_X2025 = new(
-        "RX2025",
-        SanitaryOps_Inspector,
-        new UserInfo(IntegrationTests_DanielEn),
-        new LiveEventInfo(X2025));
-    
     // Default for testing
+    // used for integration tests
     internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
         new("RVB70T",
             SanitaryOps_Admin, 
@@ -134,6 +106,20 @@ internal static class TestData
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
     
+    // used for integration tests
+    internal static readonly Role SOpsInspector_DanielEn_X2025 = 
+        new("R9AAB5",
+            SanitaryOps_Inspector,
+            new UserInfo(DanielEn),
+            new LiveEventInfo(X2025));
+
+    // used for integration tests
+    internal static readonly Role SOpsInspector_LukasDe_X2024 = 
+        new("R7UIP8",
+            SanitaryOps_Inspector,
+            new UserInfo(LukasDe),
+            new LiveEventInfo(X2024));
+
     internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
             SanitaryOps_CleanLead,
@@ -221,7 +207,7 @@ internal static class TestData
             UserId03,
             ChatId06,
             Communications);
-    
+
     #endregion
 }
 

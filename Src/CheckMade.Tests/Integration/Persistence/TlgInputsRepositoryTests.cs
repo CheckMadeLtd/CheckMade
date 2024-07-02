@@ -30,9 +30,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: None),
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault),
+                roleSetting: Default),
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault)
+                roleSetting: Default)
         };
         
         foreach (var input in tlgInputs)
@@ -70,7 +70,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var expectedDomainTerm = Dt(LanguageCode.de);
         var tlgInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
             expectedDomainTerm,
-            roleSetting: IntegrationTestDefault);
+            roleSetting: Default);
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         await inputRepo.AddAsync(tlgInput);
@@ -102,7 +102,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             expectedGeo.Latitude, 
             expectedGeo.Longitude,
             expectedGeo.UncertaintyRadiusInMeters,
-            roleSetting: IntegrationTestDefault);
+            roleSetting: Default);
         
         await inputRepo.AddAsync(tlgInput);
         
@@ -129,9 +129,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: None),
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault),
+                roleSetting: Default),
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: IntegrationTestDefault)
+                roleSetting: Default)
         };
         
         await inputRepo.AddAsync(tlgInputs);
@@ -204,20 +204,20 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2024 1",
-                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2024),
+                roleSpecified: SOpsInspector_DanielEn_X2024),
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2024 2", 
-                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2024)
+                roleSpecified: SOpsInspector_DanielEn_X2024)
         };
         
         var inputsX2025 = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2025 1",
-                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2025),
+                roleSpecified: SOpsInspector_DanielEn_X2025),
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2025 2",
-                roleSpecified: IntegrationTests_SOpsInspector_DanielEn_X2025)
+                roleSpecified: SOpsInspector_DanielEn_X2025)
         };
 
         await inputRepo.AddAsync(

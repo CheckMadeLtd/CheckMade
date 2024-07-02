@@ -1,18 +1,20 @@
--- This script is executed in CI environment by the apply_migration.sh script, to enable db integration tests.
--- It is also used in DEV environment to help run integration tests.
+-- This scripts fills db with data required by integration tests
+-- Note: it is automatically executed in CI environment by the apply_migration.sh script!
 
-WITH ci_user_daniel AS (
+-- Important: the data here needs to be kept in-sync with CheckMade.Tests.Utils.TestData !!
+
+WITH ci_user_daniel_en AS (
     INSERT INTO users (mobile, first_name, middle_name, last_name, email, status, language_setting)
-        VALUES ('+447538521999', '_Daniel', 'IntegrationTest', '_Gorin', 'daniel-integrtest-checkmade@neocortek.net', 1, 0)
+        VALUES ('+447777111999', '_Daniel', 'Test English', '_Gorin', 'daniel-test-checkmade@neocortek.net', 1, 0)
         ON CONFLICT (mobile) WHERE status = 1
             DO UPDATE SET status = users.status -- a fake update just so we can return the id
         RETURNING id 
 ),
 
 -- To test correct handling of absence of optional value
-ci_user_patrick_without_email AS (
+ci_user_lukas_de_without_email AS (
      INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
-         VALUES ('+4999999999', '_Patrick','IntegrationTest', '_Bauer', 1, 1)
+         VALUES ('+49111199999', '_Lukas','Test German', '_Gorin', 1, 1)
          ON CONFLICT (mobile) WHERE status = 1 
              DO UPDATE SET status = users.status
          RETURNING id
@@ -58,23 +60,24 @@ ci_live_event_X2025 AS (
         RETURNING id
 ),
 
-ci_role_for_user_without_email AS (
+ci_role_for_lukas_de_without_email AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
-        VALUES ('RAAAA2', 1003, 1, 
-                (SELECT id FROM ci_user_patrick_without_email),
+        VALUES ('R7UIP8', 1002, 1, 
+                (SELECT id FROM ci_user_lukas_de_without_email),
                 (SELECT id FROM ci_live_event_X2024))
         ON CONFLICT (token) DO NOTHING
 ),
 
-ci_role_for_x2025 AS (
+ci_role_for_daniel_en_x2025 AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
-        VALUES ('RX2025', 1002, 1,
-                (SELECT id FROM ci_user_daniel),
+        VALUES ('R9AAB5', 1002, 1,
+                (SELECT id FROM ci_user_daniel_en),
                 (SELECT id FROM ci_live_event_X2025))
         ON CONFLICT (token) DO NOTHING
 )
 
--- Role: IntegrationTests_SOpsInspector_DanielEn_X2024
 INSERT INTO roles (token, role_type, status, user_id, live_event_id) 
-    VALUES ('RAAAA1', 1002, 1, (SELECT id FROM ci_user_daniel), (SELECT id FROM ci_live_event_X2024))
+    VALUES ('RVB70T', 1001, 1,
+            (SELECT id FROM ci_user_daniel_en),
+            (SELECT id FROM ci_live_event_X2024))
     ON CONFLICT (token) DO NOTHING;

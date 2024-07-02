@@ -20,16 +20,16 @@ public class UsersRepositoryTests
             .ToList();
         
         Assert.Equal(
-            IntegrationTests_DanielEn.FirstName,
+            DanielEn.FirstName,
             users[0].FirstName);
         Assert.Equal(
-            IntegrationTests_PatrickDe.FirstName,
+            LukasDe.FirstName,
             users[1].FirstName);
         Assert.Equal(
-            IntegrationTests_SOpsInspector_DanielEn_X2024.Token,
+            SOpsAdmin_DanielEn_X2024.Token,
             users[0].HasRoles.First().Token);
         Assert.Equal(
-            IntegrationTests_SOpsInspector_DanielEn_X2025.Token,
+            SOpsInspector_DanielEn_X2025.Token,
             users[0].HasRoles.Last().Token);
     }
 }

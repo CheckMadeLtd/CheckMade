@@ -18,7 +18,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         
         var newInputTlgAgentRoleBind = 
             TestRepositoryUtils.GetNewRoleBind(
-                IntegrationTests_SOpsInspector_DanielEn_X2024, 
+                SOpsAdmin_DanielEn_X2024, 
                 PrivateBotChat_Operations);
         
         await repo.AddAsync(newInputTlgAgentRoleBind);
@@ -42,7 +42,7 @@ public class TlgAgentRoleBindingsRepositoryTests
         
         var activeTlgAgentRole = 
             TestRepositoryUtils.GetNewRoleBind(
-                IntegrationTests_SOpsInspector_DanielEn_X2024,
+                SOpsAdmin_DanielEn_X2024,
                 PrivateBotChat_Operations);
 
         var repo = _services.GetRequiredService<ITlgAgentRoleBindingsRepository>();
