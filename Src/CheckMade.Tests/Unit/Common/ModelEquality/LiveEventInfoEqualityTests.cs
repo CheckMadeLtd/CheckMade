@@ -30,7 +30,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual1 = liveEvent.Equals(liveEventInfo);
         var areEqual2 = liveEventInfo.Equals(liveEvent);
@@ -52,7 +52,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue 1"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         ILiveEventInfo liveEvent2 = new LiveEvent(
             "Test Event",
@@ -60,7 +60,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue 2"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual = liveEvent1.Equals(liveEvent2);
 
@@ -78,7 +78,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         ILiveEventInfo liveEvent2 = new LiveEvent(
             "Test Event",
@@ -86,7 +86,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual = liveEvent1.Equals(liveEvent2);
 
@@ -107,7 +107,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo> { roleInfo1 },
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         ILiveEventInfo liveEvent2 = new LiveEvent(
             "Test Event",
@@ -115,7 +115,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo> { roleInfo2 },
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual = liveEvent1.Equals(liveEvent2);
 
@@ -144,7 +144,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual = liveEvent == liveEventInfo; // shows that we need to use .Equals() instead of '=='
 
@@ -168,7 +168,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var areEqual1 = liveEvent.Equals(liveEventInfo);
         var areEqual2 = liveEventInfo.Equals(liveEvent);
@@ -208,7 +208,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         var liveEvent2 = liveEvent1;
 
@@ -228,7 +228,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>());
+            new List<ISphereOfAction>());
 
         ILiveEventInfo? liveEvent2 = null;
 
@@ -287,7 +287,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>(),
+            new List<ISphereOfAction>(),
             DbRecordStatus.Active);
 
         ILiveEventInfo liveEvent2 = new LiveEvent(
@@ -296,7 +296,7 @@ public class LiveEventInfoEqualityTests
             new DateTime(2024, 7, 5),
             new List<IRoleInfo>(),
             new LiveEventVenue("Test Venue"),
-            new List<SphereOfAction>(),
+            new List<ISphereOfAction>(),
             DbRecordStatus.Historic);
 
         var areEqual = liveEvent1.Equals(liveEvent2);

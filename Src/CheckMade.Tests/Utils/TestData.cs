@@ -54,27 +54,24 @@ internal static class TestData
 
     // 2024 LiveEvents
 
-    internal static readonly SphereOfAction Sphere1_AtX2024 =
-        new SphereOfAction(
-            "Camp1",
-            new SphereOfActionDetails(typeof(SanitaryOps)));
+    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere1_AtX2024 =
+        new("Camp1",
+            new SphereOfActionDetails());
     
-    internal static readonly SphereOfAction Sphere2_AtX2024 =
-        new SphereOfAction(
-            "Camp2",
-            new SphereOfActionDetails(typeof(SanitaryOps)));
+    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere2_AtX2024 =
+        new("Camp2",
+            new SphereOfActionDetails());
     
-    internal static readonly SphereOfAction Sphere3_AtX2024 =
-        new SphereOfAction(
-            "Zone1",
-            new SphereOfActionDetails(typeof(SiteCleaning)));
+    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere3_AtX2024 =
+        new("Zone1",
+            new SphereOfActionDetails());
     
     internal static readonly LiveEvent X2024 = new("LiveEvent X 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2024, 07, 22, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
         Venue1,
-        new List<SphereOfAction>
+        new List<ISphereOfAction>
         {
             Sphere1_AtX2024, Sphere2_AtX2024, Sphere3_AtX2024
         });
@@ -84,7 +81,7 @@ internal static class TestData
         new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
         Venue2,
-        new List<SphereOfAction>());
+        new List<ISphereOfAction>());
 
     // 2025 LiveEvents
     
@@ -93,14 +90,14 @@ internal static class TestData
         new DateTime(2025, 07, 21, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
         Venue1,
-        new List<SphereOfAction>());
+        new List<ISphereOfAction>());
 
     internal static readonly LiveEvent Y2025 = new("LiveEvent Y 2025",
         new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
         new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc),
         new List<IRoleInfo>(),
         Venue2,
-        new List<SphereOfAction>());
+        new List<ISphereOfAction>());
 
     // Series
     

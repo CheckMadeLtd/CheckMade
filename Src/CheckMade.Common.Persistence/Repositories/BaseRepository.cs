@@ -185,7 +185,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         DbDataReader reader,
         IReadOnlyCollection<IRoleInfo> roles,
         LiveEventVenue venue,
-        IReadOnlyCollection<SphereOfAction> spheres) =>
+        IReadOnlyCollection<ISphereOfAction> spheres) =>
         new(
             ConstituteLiveEventInfo(reader).GetValueOrThrow(),
             roles,
