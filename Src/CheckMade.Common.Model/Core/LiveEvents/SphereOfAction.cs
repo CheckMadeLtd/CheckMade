@@ -6,7 +6,7 @@ namespace CheckMade.Common.Model.Core.LiveEvents;
 public record SphereOfAction<T>(
         string Name,
         SphereOfActionDetails Details) 
-    : ISphereOfAction where T : ITradeType
+    : ISphereOfAction where T : ITrade
 {
-    public Type TradeType => typeof(T);
+    public Type Trade => typeof(T);
 }

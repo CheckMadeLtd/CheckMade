@@ -1,3 +1,3 @@
 namespace CheckMade.Common.Model.Core.Trades.Types;
 
-public class TradeTypeSanitaryOps : ITradeType;
+public class TradeSiteCleaning : ITrade;

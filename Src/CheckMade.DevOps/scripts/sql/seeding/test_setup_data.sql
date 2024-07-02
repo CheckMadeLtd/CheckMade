@@ -50,7 +50,7 @@ live_event_X2024 AS (
 ),
 
 sphere1_sanitary_ops_at_X2024 AS (
-    INSERT INTO spheres_of_action (name, trade_type, live_event_id, details, status)
+    INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
        VALUES ('Camp1',
                'DX3KFI',
                (SELECT id FROM live_event_X2024),
@@ -60,7 +60,7 @@ sphere1_sanitary_ops_at_X2024 AS (
 ),
 
 sphere2_sanitary_ops_at_X2024 AS (
-    INSERT INTO spheres_of_action (name, trade_type, live_event_id, details, status)
+    INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Camp2',
                 'DX3KFI',
                 (SELECT id FROM live_event_X2024),
@@ -70,7 +70,7 @@ sphere2_sanitary_ops_at_X2024 AS (
 ),
 
 sphere3_site_cleaning_at_X2024 AS (
-    INSERT INTO spheres_of_action (name, trade_type, live_event_id, details, status)
+    INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Zone1',
                 'DSIL7M',
                 (SELECT id FROM live_event_X2024),

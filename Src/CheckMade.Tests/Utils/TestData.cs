@@ -54,15 +54,15 @@ internal static class TestData
 
     // 2024 LiveEvents
 
-    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere1_AtX2024 =
+    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere1_AtX2024 =
         new("Camp1",
             new SphereOfActionDetails());
     
-    internal static readonly SphereOfAction<TradeTypeSanitaryOps> Sphere2_AtX2024 =
+    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere2_AtX2024 =
         new("Camp2",
             new SphereOfActionDetails());
     
-    internal static readonly SphereOfAction<TradeTypeSiteCleaning> Sphere3_AtX2024 =
+    internal static readonly SphereOfAction<TradeSiteCleaning> Sphere3_AtX2024 =
         new("Zone1",
             new SphereOfActionDetails());
     

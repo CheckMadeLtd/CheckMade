@@ -5,6 +5,6 @@ namespace CheckMade.Common.Model.Core.Interfaces;
 public interface ISphereOfAction
 {
     string Name { get; }
-    Type TradeType { get; }
+    Type Trade { get; }
     SphereOfActionDetails Details { get; }
 }
