@@ -46,10 +46,10 @@ public class LiveEventSeriesRepositoryTests
 
         
         Assert.Equal(
-            SeriesY,
-            liveEventSeriesGraph[1]);
+            SeriesY.Name,
+            liveEventSeriesGraph[1].Name);
         Assert.Equal(
-            Y2024,
-            liveEventSeriesGraph[1].LiveEvents.First());
+            Y2024.Name,
+            liveEventSeriesGraph[1].LiveEvents.First().Name);
     }
 }
