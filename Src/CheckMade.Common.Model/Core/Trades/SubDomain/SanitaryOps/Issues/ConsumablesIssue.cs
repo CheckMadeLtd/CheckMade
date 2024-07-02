@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.SanitaryOps.Issues;
+namespace CheckMade.Common.Model.Core.Trades.SubDomain.SanitaryOps.Issues;
 
 public record ConsumablesIssue
 {

@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.SanitaryOps.Facilities;
-using CheckMade.Common.Model.Core.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.SubDomain.SanitaryOps.Facilities;
+using CheckMade.Common.Model.Core.Trades.SubDomain.SanitaryOps.Issues;
 
 namespace CheckMade.Common.Model.Utils;
 
