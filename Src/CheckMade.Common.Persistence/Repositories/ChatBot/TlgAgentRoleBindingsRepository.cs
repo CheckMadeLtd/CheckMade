@@ -132,21 +132,23 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
         DbRecordStatus newStatus)
     {
         const string rawQuery = "UPDATE tlg_agent_role_bindings " +
-                                "SET status = @status, deactivation_date = @deactivationDate " +
+                                "SET status = @newStatus, deactivation_date = @deactivationDate " +
                                 "WHERE role_id = (SELECT id FROM roles WHERE token = @token) " +
                                 "AND tlg_user_id = @tlgUserId " +
                                 "AND tlg_chat_id = @tlgChatId " + 
-                                "AND interaction_mode = @mode";
+                                "AND interaction_mode = @mode " +
+                                "AND status = @oldStatus";
 
         var commands = tlgAgentRoleBindings.Select(tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@status", (int)newStatus },
+                { "@newStatus", (int)newStatus },
                 { "@token", tarb.Role.Token },
                 { "@tlgUserId", (long)tarb.TlgAgent.UserId },
                 { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
-                { "@mode", (int)tarb.TlgAgent.Mode }
+                { "@mode", (int)tarb.TlgAgent.Mode },
+                { "@oldStatus", (int)tarb.Status }
             };
 
             if (newStatus != DbRecordStatus.Active)

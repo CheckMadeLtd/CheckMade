@@ -163,7 +163,8 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     private static IReadOnlyCollection<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
     {
         var currentUserMobile = reader.GetString(reader.GetOrdinal("user_mobile"));
-        var currentUserStatus = (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"));
+        var currentUserStatus = EnsureEnumValidityOrThrow(
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
 
         var roles = new List<IRoleInfo>();
 
@@ -176,7 +177,8 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
             if (!reader.Read() || 
                 !IsSameUser(reader.GetString(reader.GetOrdinal("user_mobile")),
-                    (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))))
+                    EnsureEnumValidityOrThrow(
+                        (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")))))
             {
                 break;
             }

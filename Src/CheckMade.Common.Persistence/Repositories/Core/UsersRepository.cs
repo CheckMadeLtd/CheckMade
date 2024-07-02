@@ -60,12 +60,14 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
     {
         const string rawQuery = "UPDATE users " +
                                 "SET language_setting = @newLanguage " +
-                                "WHERE mobile = @mobileNumber";
+                                "WHERE mobile = @mobileNumber " +
+                                "AND status = @status";
 
         var normalParameters = new Dictionary<string, object>
         {
             { "@newLanguage", (int)newLanguage },
-            { "@mobileNumber", user.Mobile.ToString() }
+            { "@mobileNumber", user.Mobile.ToString() },
+            { "@status", (int)user.Status }
         };
 
         var command = GenerateCommand(rawQuery, normalParameters);
