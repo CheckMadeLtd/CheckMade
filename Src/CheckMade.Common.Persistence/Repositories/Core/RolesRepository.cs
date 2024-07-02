@@ -1,5 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 

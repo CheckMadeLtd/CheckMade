@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Interfaces.Persistence.Core;
 

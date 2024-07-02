@@ -1,5 +1,6 @@
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;

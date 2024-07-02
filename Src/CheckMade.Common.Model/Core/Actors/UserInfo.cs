@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Utils.UserInfoComparer;
 
-namespace CheckMade.Common.Model.Core;
+namespace CheckMade.Common.Model.Core.Actors;
 
 public sealed record UserInfo(
     MobileNumber Mobile,

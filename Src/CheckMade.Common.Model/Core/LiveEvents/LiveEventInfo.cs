@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Utils.LiveEventInfoComparer;
 
-namespace CheckMade.Common.Model.Core;
+namespace CheckMade.Common.Model.Core.LiveEvents;
 
 public sealed record LiveEventInfo(
         string Name,

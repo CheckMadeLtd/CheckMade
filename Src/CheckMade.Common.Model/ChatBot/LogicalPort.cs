@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 
 namespace CheckMade.Common.Model.ChatBot;
 

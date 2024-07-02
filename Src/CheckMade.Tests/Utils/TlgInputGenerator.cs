@@ -2,6 +2,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Utils.Generic;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
