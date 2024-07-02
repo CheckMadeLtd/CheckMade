@@ -110,7 +110,8 @@ for config in "${config_array[@]}"
 do
     dotnet restore /p:Configuration="$config"
     dotnet build --configuration "$config" --no-restore --verbosity minimal
-    # dotnet test --no-build --configuration "$config" --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Fine
+#    Only unit tests due to mysterious fatal crashes of 'dotnet test' with some integration tests
+    dotnet test --no-build --configuration "$config" --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Unit
 done
 
 set +x # Stop tracing
