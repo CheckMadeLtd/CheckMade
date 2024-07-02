@@ -43,7 +43,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         });
     }
 
-    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderAsync<TModel>(
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToOneAsync<TModel>(
         NpgsqlCommand command, Func<DbDataReader, TModel> readData)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
@@ -64,10 +64,74 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
         return builder.ToImmutable();
     }
+    
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToManyAsync<TModel, TKey>(
+        NpgsqlCommand command, 
+        Func<DbDataReader, TKey> getKey,
+        Func<DbDataReader, TModel> initializeModel,
+        Action<TModel, DbDataReader> accumulateData,
+        Func<TModel, TModel> finalizeModel)
+    {
+        var builder = ImmutableList.CreateBuilder<TModel>();
 
-    protected static readonly Func<DbDataReader, User> ReadUser = reader => 
-        ConstituteUser(reader, ConstituteRolesInfo(reader));
+        await dbHelper.ExecuteAsync(async (db, transaction) =>
+        {
+            command.Connection = db;
+            command.Transaction = transaction;
 
+            await using (var reader = await command.ExecuteReaderAsync())
+            {
+                TModel? currentModel = default;
+                TKey? currentKey = default;
+
+                while (await reader.ReadAsync())
+                {
+                    var key = getKey(reader);
+
+                    if (!Equals(key, currentKey))
+                    {
+                        if (currentModel != null)
+                        {
+                            builder.Add(finalizeModel(currentModel));
+                        }
+                        currentModel = initializeModel(reader);
+                        currentKey = key;
+                    }
+
+                    accumulateData(currentModel!, reader);
+                }
+
+                if (currentModel != null)
+                {
+                    builder.Add(finalizeModel(currentModel));
+                }
+            }
+        });
+
+        return builder.ToImmutable();
+    }
+    
+    protected static (
+        Func<DbDataReader, int> getKey,
+        Func<DbDataReader, User> initializeModel,
+        Action<User, DbDataReader> accumulateData,
+        Func<User, User> finalizeModel) GetUserReader()
+    {
+        return (
+            getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
+            initializeModel: reader => new User(ConstituteUserInfo(reader), new List<IRoleInfo>()),
+            accumulateData: (user, reader) =>
+            {
+                var roleInfo = ConstituteRoleInfo(reader);
+                if (roleInfo.IsSome)
+                {
+                    ((List<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
+                }
+            },
+            finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
+        );
+    }
+    
     protected static readonly Func<DbDataReader, Role> ReadRole = reader =>
     {
         var userInfo = ConstituteUserInfo(reader);
@@ -92,11 +156,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    private static User ConstituteUser(DbDataReader reader, IReadOnlyCollection<IRoleInfo> roles) =>
-        new(
-            ConstituteUserInfo(reader),
-            roles);
-    
     private static IUserInfo ConstituteUserInfo(DbDataReader reader)
     {
         return new UserInfo(
@@ -159,37 +218,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
     }
 
-    // ToDo: Check with IntegrationTest for UsersRepo !!
-    private static IReadOnlyCollection<IRoleInfo> ConstituteRolesInfo(DbDataReader reader)
-    {
-        var currentUserMobile = reader.GetString(reader.GetOrdinal("user_mobile"));
-        var currentUserStatus = EnsureEnumValidityOrThrow(
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")));
-
-        var roles = new List<IRoleInfo>();
-
-        do
-        {
-            var roleInfo = ConstituteRoleInfo(reader);
-            
-            if (roleInfo.IsSome)
-                roles.Add(roleInfo.GetValueOrThrow());
-
-            if (!reader.Read() || 
-                !IsSameUser(reader.GetString(reader.GetOrdinal("user_mobile")),
-                    EnsureEnumValidityOrThrow(
-                        (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status")))))
-            {
-                break;
-            }
-        } while (true);
-
-        return roles;
-
-        bool IsSameUser(string mobile, DbRecordStatus status) =>
-            mobile.Equals(currentUserMobile) && status.Equals(currentUserStatus);
-    }
-    
     private static TlgInput ConstituteTlgInput(
         DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
     {

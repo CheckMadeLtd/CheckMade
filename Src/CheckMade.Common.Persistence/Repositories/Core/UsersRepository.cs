@@ -27,6 +27,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
                                             "r.role_type AS role_type, " +
                                             "r.status AS role_status, " +
                                             
+                                            "usr.id AS user_id, " +
                                             "usr.mobile AS user_mobile, " +
                                             "usr.first_name AS user_first_name, " +
                                             "usr.middle_name AS user_middle_name, " +
@@ -41,10 +42,21 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
                                             "ORDER BY usr.id, r.id";
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+
+                    var (getKey,
+                        initializeModel,
+                        accumulateData,
+                        finalizeModel) = GetUserReader();
+
+                    var users =
+                        await ExecuteReaderOneToManyAsync(
+                            command, 
+                            getKey,
+                            initializeModel,
+                            accumulateData,
+                            finalizeModel);
                     
-                    _cache = Option<IReadOnlyCollection<User>>.Some(
-                        new List<User>(await ExecuteReaderAsync(command, ReadUser))
-                            .ToImmutableReadOnlyCollection());
+                    _cache = Option<IReadOnlyCollection<User>>.Some(users);
                 }
             }
             finally

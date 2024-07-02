@@ -201,7 +201,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteReaderAsync(command, ReadTlgInput);
+        return await ExecuteReaderOneToOneAsync(command, ReadTlgInput);
     }
     
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
