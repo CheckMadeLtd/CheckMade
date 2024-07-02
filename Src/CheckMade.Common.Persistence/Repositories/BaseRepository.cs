@@ -47,22 +47,29 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
         NpgsqlCommand command, Func<DbDataReader, TModel> readData)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
-
+        
+        await ExecuteReaderCoreAsync(command, async reader =>
+        {
+            while (await reader.ReadAsync())
+            {
+                builder.Add(readData(reader));
+            }
+        });
+        return builder.ToImmutable();
+    }
+    
+    private async Task ExecuteReaderCoreAsync(
+        NpgsqlCommand command,
+        Func<DbDataReader, Task> processReader)
+    {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
             command.Connection = db;
             command.Transaction = transaction;
 
-            await using (var reader = await command.ExecuteReaderAsync())
-            {
-                while (await reader.ReadAsync())
-                {
-                    builder.Add(readData(reader));
-                }
-            }
+            await using var reader = await command.ExecuteReaderAsync();
+            await processReader(reader);
         });
-
-        return builder.ToImmutable();
     }
     
     protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToManyAsync<TModel, TKey>(
@@ -74,37 +81,31 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
 
-        await dbHelper.ExecuteAsync(async (db, transaction) =>
+        await ExecuteReaderCoreAsync(command, async reader =>
         {
-            command.Connection = db;
-            command.Transaction = transaction;
+            TModel? currentModel = default;
+            TKey? currentKey = default;
 
-            await using (var reader = await command.ExecuteReaderAsync())
+            while (await reader.ReadAsync())
             {
-                TModel? currentModel = default;
-                TKey? currentKey = default;
+                var key = getKey(reader);
 
-                while (await reader.ReadAsync())
+                if (!Equals(key, currentKey))
                 {
-                    var key = getKey(reader);
-
-                    if (!Equals(key, currentKey))
+                    if (currentModel != null)
                     {
-                        if (currentModel != null)
-                        {
-                            builder.Add(finalizeModel(currentModel));
-                        }
-                        currentModel = initializeModel(reader);
-                        currentKey = key;
+                        builder.Add(finalizeModel(currentModel));
                     }
-
-                    accumulateData(currentModel!, reader);
+                    currentModel = initializeModel(reader);
+                    currentKey = key;
                 }
 
-                if (currentModel != null)
-                {
-                    builder.Add(finalizeModel(currentModel));
-                }
+                accumulateData(currentModel!, reader);
+            }
+
+            if (currentModel != null)
+            {
+                builder.Add(finalizeModel(currentModel));
             }
         });
 
