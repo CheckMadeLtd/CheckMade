@@ -86,5 +86,8 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync(new [] { command });
+        EmptyCache();
     }
+
+    private void EmptyCache() => _cache = Option<IReadOnlyCollection<User>>.None();
 }
