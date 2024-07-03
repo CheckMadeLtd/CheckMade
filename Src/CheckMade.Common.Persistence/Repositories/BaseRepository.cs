@@ -160,17 +160,6 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
     }
 
-    protected static LiveEvent ConstituteLiveEvent(
-        DbDataReader reader,
-        IReadOnlyCollection<IRoleInfo> roles,
-        LiveEventVenue venue,
-        IReadOnlyCollection<ISphereOfAction> spheres) =>
-        new(
-            ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-            roles,
-            venue,
-            spheres);
-    
     protected static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("live_event_name")))
