@@ -54,11 +54,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
 
                     var users =
                         await ExecuteReaderOneToManyAsync(
-                            command, 
-                            getKey,
-                            initializeModel,
-                            accumulateData,
-                            finalizeModel);
+                            command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<User>>.Some(users);
                 }
@@ -109,9 +105,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
             {
                 var roleInfo = ConstituteRoleInfo(reader);
                 if (roleInfo.IsSome)
-                {
                     ((List<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
-                }
             },
             finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
         );
