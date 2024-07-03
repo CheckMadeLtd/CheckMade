@@ -90,6 +90,7 @@ public class LiveEventSeriesRepository(IDbExecutionHelper dbHelper)
         return _cache.GetValueOrThrow();
     }
 
+    // Unfinished early attempt, pre recursive approach to nested one-to-many constitution
     private static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, LiveEventSeries> initializeModel,
