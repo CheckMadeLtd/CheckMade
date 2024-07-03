@@ -100,7 +100,6 @@ public class LiveEventsRepository(IDbExecutionHelper dbHelper)
                 var sphereOfAction = ConstituteSphereOfAction(reader);
                 if (sphereOfAction.IsSome)
                     ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-
             },
             finalizeModel: liveEvent => liveEvent with
             {

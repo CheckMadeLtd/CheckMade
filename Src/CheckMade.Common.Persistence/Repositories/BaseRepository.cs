@@ -185,7 +185,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
         const string invalidTradeTypeException = $"""
                                                   This is not an existing '{nameof(trade)}' or we forgot to
-                                                  implement a new type for '{nameof(ConstituteSphereOfAction)}' 
+                                                  implement a new type in method '{nameof(ConstituteSphereOfAction)}' 
                                                   """;
 
         var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
