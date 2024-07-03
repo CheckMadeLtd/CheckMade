@@ -9,15 +9,18 @@ public class UsersRepositoryTests
     private IServiceProvider? _services;
 
     [Fact]
-    public async Task GetAsync_ReturnsSpecificTestUser()
+    public async Task GetAsync_ReturnsSpecificTestUser_IncludingCurrentVendor()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var repo = _services.GetRequiredService<IUsersRepository>();
-        var user = await repo.GetAsync(DanielEn);
+        var user = await repo.GetAsync(LukasDe);
 
         Assert.NotNull(user);
-        Assert.True(user.Equals(DanielEn));
+        Assert.True(user.Equals(LukasDe));
+        Assert.Equal(
+            EveConGmbH,
+            user.CurrentlyWorksFor.GetValueOrThrow());
     }
     
     [Fact]

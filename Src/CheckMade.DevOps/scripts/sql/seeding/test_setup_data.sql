@@ -5,8 +5,8 @@
 -- Important: all the data below needs to be kept in-sync with CheckMade.Tests.Utils.TestData !!
 
 WITH user_daniel_en AS (
-    INSERT INTO users (mobile, first_name, middle_name, last_name, email, status, language_setting)
-        VALUES ('+447777111999', '_Daniel', 'Test English', '_Gorin', 'daniel-test-checkmade@neocortek.net', 1, 0)
+    INSERT INTO users (mobile, first_name, middle_name, last_name, email, status, language_setting, details)
+        VALUES ('+447777111999', '_Daniel', 'Test English', '_Gorin', 'daniel-test-checkmade@neocortek.net', 1, 0, '{}')
         ON CONFLICT (mobile) WHERE status = 1
             DO UPDATE SET status = users.status -- a fake update just so we can return the id
         RETURNING id 
@@ -20,8 +20,22 @@ new_vendor_evecon AS (
 
 -- To test correct handling of absence of optional value
 new_user_lukas_de_without_email AS (
-     INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
-         VALUES ('+49111199999', '_Lukas','Test German', '_Gorin', 1, 1)
+     INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting, details)
+         VALUES ('+49111199999', '_Lukas','Test German', '_Gorin', 1, 1,
+                 '{
+                   "WorksForHistory": {
+                     "Seq1": {
+                       "StartDate": "2022-01-01",
+                       "EndDate": "2022-12-31",
+                       "VendorName": "FakeDecoyVendor1"
+                     },
+                     "Seq2": {
+                       "StartDate": "2023-01-01",
+                       "EndDate": null,
+                       "VendorName": "eveCon GmbH"
+                     }
+                   }
+                 }')
          ON CONFLICT (mobile) WHERE status = 1 
              DO UPDATE SET status = users.status
          RETURNING id
