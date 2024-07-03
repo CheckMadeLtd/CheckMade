@@ -19,10 +19,10 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                              r.role_type AS role_type, 
                                              r.status AS role_status, 
                                                  
-                                             lve.name AS live_event_name, 
-                                             lve.start_date AS live_event_start_date, 
-                                             lve.end_date AS live_event_end_date, 
-                                             lve.status AS live_event_status, 
+                                             le.name AS live_event_name, 
+                                             le.start_date AS live_event_start_date, 
+                                             le.end_date AS live_event_end_date, 
+                                             le.status AS live_event_status, 
                                                  
                                              inp.user_id AS input_user_id, 
                                              inp.chat_id AS input_chat_id, 
@@ -32,7 +32,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                                  
                                              FROM tlg_inputs inp 
                                              LEFT JOIN roles r on inp.role_id = r.id 
-                                             LEFT JOIN live_events lve on inp.live_event_id = lve.id
+                                             LEFT JOIN live_events le on inp.live_event_id = le.id
                                              """;
 
     private const string OrderByClause = "ORDER BY inp.id";
