@@ -21,21 +21,7 @@ new_vendor_evecon AS (
 -- To test correct handling of absence of optional value
 new_user_lukas_de_without_email AS (
      INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting, details)
-         VALUES ('+49111199999', '_Lukas','Test German', '_Gorin', 1, 1,
-                 '{
-                   "WorksForHistory": {
-                     "Seq1": {
-                       "StartDate": "2022-01-01",
-                       "EndDate": "2022-12-31",
-                       "VendorName": "FakeDecoyVendor1"
-                     },
-                     "Seq2": {
-                       "StartDate": "2023-01-01",
-                       "EndDate": null,
-                       "VendorName": "eveCon GmbH"
-                     }
-                   }
-                 }')
+         VALUES ('+49111199999', '_Lukas','Test German', '_Gorin', 1, 1, '{}')
          ON CONFLICT (mobile) WHERE status = 1 
              DO UPDATE SET status = users.status
          RETURNING id
