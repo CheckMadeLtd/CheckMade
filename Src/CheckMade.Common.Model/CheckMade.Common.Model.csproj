@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_Telegram;Debug_DevOps</Configurations>
+        <Configurations>Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_DevOps;Debug_ChatBot</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
