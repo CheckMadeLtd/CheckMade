@@ -13,7 +13,7 @@ public sealed record User(
     Option<EmailAddress> Email,
     LanguageCode Language,
     IReadOnlyCollection<IRoleInfo> HasRoles,
-    Option<Vendor> CurrentlyWorksFor,
+    Option<Vendor> CurrentEmployer,
     DbRecordStatus Status = DbRecordStatus.Active)
     : IUserInfo
 {

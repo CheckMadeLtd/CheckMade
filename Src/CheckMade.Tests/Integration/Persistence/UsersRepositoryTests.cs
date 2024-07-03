@@ -20,7 +20,7 @@ public class UsersRepositoryTests
         Assert.True(user.Equals(LukasDe));
         Assert.Equal(
             EveConGmbH,
-            user.CurrentlyWorksFor.GetValueOrThrow());
+            user.CurrentEmployer.GetValueOrThrow());
     }
     
     [Fact]
