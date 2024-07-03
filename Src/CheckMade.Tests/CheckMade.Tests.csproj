@@ -3,22 +3,28 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <Configurations>Debug_All;No_Build;Release;Debug_Telegram;Debug_DevOps</Configurations>
+        <Configurations>Debug_All;No_Build;Release;Debug_DevOps;Debug_ChatBot</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
         <PackageReference Include="Moq" Version="4.20.70" />
         <PackageReference Include="Telegram.Bot" Version="19.0.0" />
-        <PackageReference Include="xunit" Version="2.5.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+        <PackageReference Include="xunit" Version="2.8.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -33,10 +39,6 @@
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Fine\" />
     </ItemGroup>
 
 </Project>

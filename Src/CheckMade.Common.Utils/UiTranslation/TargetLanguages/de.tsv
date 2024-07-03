@@ -55,3 +55,5 @@ CheckMade.Telegram.Logic	💨 Logged out.	💨 Ausgeloggt.
 CheckMade.Telegram.Logic	{0}, are you sure you want to log out from this chat in your role as {1} for {2}?\nFYI: You will also be logged out from other non-group bot chats in this role.	{0}, sind Sie sicher, dass Sie sich aus diesem Chat in Ihrer Rolle als {1} für {2} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.Telegram.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.Telegram.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
+CheckMade.Common.Model	🪠 Sanitary Operations	🪠 Sanitärbetrieb
+CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländeräumung

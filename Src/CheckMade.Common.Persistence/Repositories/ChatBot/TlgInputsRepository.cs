@@ -19,10 +19,10 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                              r.role_type AS role_type, 
                                              r.status AS role_status, 
                                                  
-                                             lve.name AS live_event_name, 
-                                             lve.start_date AS live_event_start_date, 
-                                             lve.end_date AS live_event_end_date, 
-                                             lve.status AS live_event_status, 
+                                             le.name AS live_event_name, 
+                                             le.start_date AS live_event_start_date, 
+                                             le.end_date AS live_event_end_date, 
+                                             le.status AS live_event_status, 
                                                  
                                              inp.user_id AS input_user_id, 
                                              inp.chat_id AS input_chat_id, 
@@ -32,7 +32,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
                                                  
                                              FROM tlg_inputs inp 
                                              LEFT JOIN roles r on inp.role_id = r.id 
-                                             LEFT JOIN live_events lve on inp.live_event_id = lve.id
+                                             LEFT JOIN live_events le on inp.live_event_id = le.id
                                              """;
 
     private const string OrderByClause = "ORDER BY inp.id";
@@ -47,19 +47,23 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
-        const string rawQuery = "INSERT INTO tlg_inputs " +
-                                "(user_id, " +
-                                "chat_id, " +
-                                "details, " +
-                                "last_data_migration, " +
-                                "interaction_mode, " +
-                                "input_type, " +
-                                "role_id, " +
-                                "live_event_id) " +
-                                "VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, " +
-                                "@lastDataMig, @interactionMode, @tlgInputType, " +
-                                "(SELECT id FROM roles WHERE token = @token), " +
-                                "(SELECT id FROM live_events WHERE name = @liveEventName))";
+        const string rawQuery = """
+                                INSERT INTO tlg_inputs 
+                                
+                                (user_id, 
+                                chat_id, 
+                                details, 
+                                last_data_migration, 
+                                interaction_mode, 
+                                input_type, 
+                                role_id, 
+                                live_event_id) 
+                                
+                                VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                @lastDataMig, @interactionMode, @tlgInputType, 
+                                (SELECT id FROM roles WHERE token = @token), 
+                                (SELECT id FROM live_events WHERE name = @liveEventName))
+                                """;
         
         var commands = tlgInputs.Select(tlgInput =>
         {
@@ -201,15 +205,19 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteReaderAsync(command, ReadTlgInput);
+        return await ExecuteReaderOneToOneAsync(
+            command, ModelReaders.ReadTlgInput);
     }
     
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
     {
-        const string rawQuery = "DELETE FROM tlg_inputs " +
-                                "WHERE user_id = @tlgUserId " +
-                                "AND chat_id = @tlgChatId " +
-                                "AND interaction_mode = @mode";
+        const string rawQuery = """
+                                DELETE FROM tlg_inputs 
+                                       
+                                WHERE user_id = @tlgUserId 
+                                AND chat_id = @tlgChatId 
+                                AND interaction_mode = @mode
+                                """;
         
         var normalParameters = new Dictionary<string, object>
         {

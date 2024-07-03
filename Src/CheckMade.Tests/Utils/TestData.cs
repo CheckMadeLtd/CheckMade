@@ -1,9 +1,13 @@
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
-using static CheckMade.Common.Model.Core.RoleType;
-using User = CheckMade.Common.Model.Core.User;
+using CheckMade.Common.Model.Core.Trades.Types;
+using static CheckMade.Common.Model.Core.Actors.RoleType;
+using User = CheckMade.Common.Model.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 
@@ -13,82 +17,191 @@ internal static class TestData
 {
     #region UsersSetup #################################################################################################
 
-    // Needs to be in-sync with seeding script
-    internal static readonly User IntegrationTests_DanielEn = new(
-        new MobileNumber("+447538521999"),
-        "_Daniel",
-        "IntegrationTest",
-        "_Gorin",
-        new EmailAddress("daniel-integrtest-checkmade@neocortek.net"),
-        LanguageCode.en,
-        new List<IRoleInfo>());
-
-    // Needs to be in-sync with seeding script
-    internal static readonly User IntegrationTests_PatrickDe = new(
-        new MobileNumber("+4999999999"),
-        "_Patrick",
-        "IntegrationTest",
-        "_Bauer",
-        Option<EmailAddress>.None(), 
-        LanguageCode.de,
-        new List<IRoleInfo>());
-
+    internal static readonly Vendor EveConGmbH = new Vendor("eveCon GmbH");
+    
     internal static readonly User DanielEn = new(
-        new MobileNumber("+447538521999"),
+        new MobileNumber("+447777111999"),
         "_Daniel",
-        "UnitTest English",
+        "Test English",
         "_Gorin",
-        Option<EmailAddress>.None(),
+        new EmailAddress("daniel-test-checkmade@neocortek.net"),
         LanguageCode.en,
-        new List<IRoleInfo>());
+        new List<IRoleInfo>(),
+        Option<Vendor>.None());
     
     internal static readonly User DanielDe = new(
-        new MobileNumber("+447538521999"),
+        new MobileNumber("+447777111999"),
         "_Daniel",
-        "UnitTest German",
+        "Test German",
         "_Gorin",
         Option<EmailAddress>.None(),
         LanguageCode.de,
-        new List<IRoleInfo>());
-
+        new List<IRoleInfo>(),
+        EveConGmbH);
+    
+    internal static readonly User LukasDe = new(
+        new MobileNumber("+49111199999"),
+        "_Lukas",
+        "Test German",
+        "_Gorin",
+        Option<EmailAddress>.None(),
+        LanguageCode.de,
+        new List<IRoleInfo>(),
+        EveConGmbH);
+    
     #endregion
     
-    #region LiveEventSetup #############################################################################################
+    #region ILiveEventInfoSetup ########################################################################################
+    
+    // Venues
     
     internal static readonly LiveEventVenue Venue1 = new("Venue1 near Cologne");
+    internal static readonly LiveEventVenue Venue2 = new("Venue2 near Bremen");
 
-    internal static readonly LiveEvent X2024 = new("LiveEvent X 2024",
+    // 2024 ILiveEventInfos
+
+    internal static readonly LiveEventInfo X2024Info = new("LiveEvent X 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2024, 07, 22, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue1);
+        new DateTime(2024, 07, 22, 18, 00, 00, DateTimeKind.Utc));
 
-    internal static readonly LiveEvent X2025 = new("LiveEvent X 2025",
+    internal static readonly LiveEventInfo Y2024Info = new("LiveEvent Y 2024",
+        new DateTime(2024, 06, 21, 10, 00, 00, DateTimeKind.Utc),
+        new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc));
+    
+    // 2025 ILiveEventInfos
+
+    internal static readonly LiveEventInfo X2025Info = new("LiveEvent X 2025",
         new DateTime(2025, 07, 18, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2025, 07, 21, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue1);
+        new DateTime(2025, 07, 21, 18, 00, 00, DateTimeKind.Utc));
 
+    internal static readonly LiveEventInfo Y2025Info = new("LiveEvent Y 2025",
+        new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
+        new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc));
+    
+    #endregion
+    
+    #region RoleSetup ##################################################################################################
+    
+    // Default for testing
+    internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
+        new("RVB70T",
+            SanitaryOps_Admin, 
+            new UserInfo(DanielEn),
+            X2024Info);
+    
+    internal static readonly Role SOpsInspector_DanielEn_X2024 = 
+        new("R3UDXW",
+            SanitaryOps_Inspector,
+            new UserInfo(DanielEn),
+            X2024Info);
+    
+    internal static readonly Role SOpsInspector_DanielEn_X2025 = 
+        new("R9AAB5",
+            SanitaryOps_Inspector,
+            new UserInfo(DanielEn),
+            X2025Info);
+    
+    internal static readonly Role SOpsInspector_LukasDe_X2024 = 
+        new("R7UIP8",
+            SanitaryOps_Inspector,
+            new UserInfo(LukasDe),
+            X2024Info);
+
+    internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
+        new("R2JXNM",
+            SanitaryOps_CleanLead,
+            new UserInfo(DanielDe),
+            X2024Info);
+
+    internal static readonly Role SOpsObserver_DanielEn_X2024 = 
+        new("RYEATF",
+            SanitaryOps_Observer,
+            new UserInfo(DanielEn),
+            X2024Info);
+    
+    internal static readonly Role SOpsInspector_DanielDe_X2024 = 
+        new("RMAM8S",
+            SanitaryOps_Inspector,
+            new UserInfo(DanielDe),
+            X2024Info);
+    
+    internal static readonly Role SOpsEngineer_DanielEn_X2024 = 
+        new("RP4XPK",
+            SanitaryOps_Engineer,
+            new UserInfo(DanielEn),
+            X2024Info);
+    
+    internal static readonly Role SOpsCleanLead_DanielEn_X2024 = 
+        new("RI8MJ1",
+            SanitaryOps_CleanLead,
+            new UserInfo(DanielEn), 
+            X2024Info);
+    
+    #endregion
+
+    #region LiveEventSetup #############################################################################################
+    
+    // 2024 LiveEvents
+
+    internal static readonly Geo Sphere1_Location =
+        new Geo(51.240067, -0.789706, Option<float>.None());
+    
+    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere1_AtX2024 =
+        new("Camp1",
+            new SanitaryCampDetails(Sphere1_Location));
+    
+    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere2_AtX2024 =
+        new("Camp2",
+            new SanitaryCampDetails(Option<Geo>.None()));
+    
+    internal static readonly SphereOfAction<TradeSiteCleaning> Sphere3_AtX2024 =
+        new("Zone1",
+            new SiteCleaningZoneDetails(Option<Geo>.None()));
+    
+    internal static readonly LiveEvent X2024 = new(
+        X2024Info,
+        new List<IRoleInfo>
+        {
+            SOpsInspector_LukasDe_X2024,
+            SOpsAdmin_DanielEn_X2024
+        },
+        Venue1,
+        new List<ISphereOfAction>
+        {
+            Sphere1_AtX2024, Sphere2_AtX2024, Sphere3_AtX2024
+        });
+
+    internal static readonly LiveEvent Y2024 = new(
+        Y2024Info,
+        new List<IRoleInfo>(),
+        Venue2,
+        new List<ISphereOfAction>());
+
+    // 2025 LiveEvents
+    
+    internal static readonly LiveEvent X2025 = new(
+        X2025Info,
+        new List<IRoleInfo>
+        {
+            SOpsInspector_DanielEn_X2025
+        },
+        Venue1,
+        new List<ISphereOfAction>());
+
+    internal static readonly LiveEvent Y2025 = new(
+        Y2025Info,
+        new List<IRoleInfo>(),
+        Venue2,
+        new List<ISphereOfAction>());
+    
+    // Series
+    
     internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
         new [] 
         {
             X2024,
             X2025
         });
-
-    internal static readonly LiveEventVenue Venue2 = new("Venue2 near Bremen");
-    
-    internal static readonly LiveEvent Y2024 = new("LiveEvent Y 2024",
-        new DateTime(2024, 06, 21, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2024, 06, 24, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue2);
-
-    internal static readonly LiveEvent Y2025 = new("LiveEvent Y 2025",
-        new DateTime(2025, 06, 20, 10, 00, 00, DateTimeKind.Utc),
-        new DateTime(2025, 06, 23, 18, 00, 00, DateTimeKind.Utc),
-        new List<IRoleInfo>(),
-        Venue2);
 
     internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
         new []
@@ -99,73 +212,6 @@ internal static class TestData
     
     #endregion
     
-    #region RoleSetup ##################################################################################################
-    
-    // Needs to be in-sync with seeding script    
-    internal static readonly Role IntegrationTests_SOpsInspector_DanielEn_X2024 = new(
-        "RAAAA1",
-        SanitaryOps_Inspector,
-        new UserInfo(IntegrationTests_DanielEn),
-        new LiveEventInfo(X2024));
-    
-    // Needs to be in-sync with seeding script    
-    internal static readonly Role IntegrationTests_SOpsEngineer_PatrickDe_X2024 = new(
-        "RAAAA2",
-        SanitaryOps_Engineer,
-        new UserInfo(IntegrationTests_PatrickDe),
-        new LiveEventInfo(X2024));
-    
-    internal static readonly Role IntegrationTests_SOpsInspector_DanielEn_X2025 = new(
-        "RX2025",
-        SanitaryOps_Inspector,
-        new UserInfo(IntegrationTests_DanielEn),
-        new LiveEventInfo(X2025));
-    
-    // Default for testing
-    internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
-        new("RVB70T",
-            SanitaryOps_Admin, 
-            new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
-    
-    internal static readonly Role SOpsInspector_DanielEn_X2024 = 
-        new("R3UDXW",
-            SanitaryOps_Inspector,
-            new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
-    
-    internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
-        new("R2JXNM",
-            SanitaryOps_CleanLead,
-            new UserInfo(DanielDe),
-            new LiveEventInfo(X2024));
-
-    internal static readonly Role SOpsObserver_DanielEn_X2024 = 
-        new("RYEATF",
-            SanitaryOps_Observer,
-            new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
-    
-    internal static readonly Role SOpsInspector_DanielDe_X2024 = 
-        new("RMAM8S",
-            SanitaryOps_Inspector,
-            new UserInfo(DanielDe),
-            new LiveEventInfo(X2024));
-    
-    internal static readonly Role SOpsEngineer_DanielEn_X2024 = 
-        new("RP4XPK",
-            SanitaryOps_Engineer,
-            new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
-    
-    internal static readonly Role SOpsCleanLead_DanielEn_X2024 = 
-        new("RI8MJ1",
-            SanitaryOps_CleanLead,
-            new UserInfo(DanielEn), 
-            new LiveEventInfo(X2024));
-    
-    #endregion
-
     #region TlgAgentElementsSetup ######################################################################################
 
     // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
@@ -221,7 +267,7 @@ internal static class TestData
             UserId03,
             ChatId06,
             Communications);
-    
+
     #endregion
 }
 

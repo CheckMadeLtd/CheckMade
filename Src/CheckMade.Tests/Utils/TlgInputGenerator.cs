@@ -2,6 +2,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Utils.Generic;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
@@ -14,39 +15,39 @@ internal interface ITlgInputGenerator
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", DateTime? dateTime = null,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault,
+        TestOriginatorRoleSetting roleSetting = Default,
         Role? roleSpecified = null);
     
     TlgInput GetValidTlgInputTextMessageWithAttachment(
         TlgAttachmentType type,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
+        TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
+        TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
         int messageId = 1,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
+        TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         DateTime? dateTime = null, int messageId = 1,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
+        TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
         DateTime? dateTime = null,
-        TestOriginatorRoleSetting roleSetting = UnitTestDefault);
+        TestOriginatorRoleSetting roleSetting = Default);
 }
 
 internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
@@ -201,13 +202,9 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
                 (Option<IRoleInfo>.None(),
                     Option<ILiveEventInfo>.None()),
             
-            UnitTestDefault =>
+            Default =>
                 (SOpsAdmin_DanielEn_X2024,
                     Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent)),
-            
-            IntegrationTestDefault =>
-                (IntegrationTests_SOpsInspector_DanielEn_X2024, 
-                    Option<ILiveEventInfo>.Some(IntegrationTests_SOpsInspector_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };
@@ -216,7 +213,6 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
 
 internal enum TestOriginatorRoleSetting
 {
-    UnitTestDefault,
-    IntegrationTestDefault,
+    Default,
     None
 }

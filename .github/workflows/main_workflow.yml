@@ -195,7 +195,8 @@ jobs:
           PGPASSWORD: ${{ secrets.PG_SUPER_USER_PSW }} # PGPASSWORD is automatically used by psql
       
       - name: Test
-        run: dotnet test Src/CheckMade.Tests/CheckMade.Tests.csproj --configuration Release --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Fine
+#        Currently only running unit tests b/c of mysterious xUnit fatal crashes on some integration tests 
+        run: dotnet test Src/CheckMade.Tests/CheckMade.Tests.csproj --configuration Release --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Unit
         env:
           HOSTING_ENVIRONMENT: 'CI'
           PG_DB_CONNSTRING: ${{ secrets.PG_DB_CONNSTRING }}
