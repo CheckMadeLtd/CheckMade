@@ -41,10 +41,17 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
                                             usr.email AS user_email, 
                                             usr.language_setting AS user_language, 
                                             usr.status AS user_status,
-                                            usr.details AS user_details
+                                            usr.details AS user_details,
+                                            
+                                            v.name AS vendor_name,
+                                            v.status AS vendor_status,
+                                            v.details AS vendor_details
                                             
                                             FROM users usr 
-                                            LEFT JOIN roles r on r.user_id = usr.id 
+                                            LEFT JOIN roles r on r.user_id = usr.id
+                                            LEFT JOIN users_employment_history ueh ON ueh.user_id = usr.id 
+                                                                                          AND ueh.status = 1
+                                            LEFT JOIN vendors v ON v.id = ueh.vendor_id
                                             
                                             ORDER BY usr.id, r.id
                                             """;

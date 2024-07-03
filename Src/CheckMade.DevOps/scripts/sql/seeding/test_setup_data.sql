@@ -15,7 +15,17 @@ WITH user_daniel_en AS (
 new_vendor_evecon AS (
     INSERT INTO vendors (name, details, status)
         VALUES ('eveCon GmbH', '{}', 1)
-        ON CONFLICT (name) DO NOTHING
+        ON CONFLICT (name)
+            DO UPDATE SET status = vendors.status
+        RETURNING id
+),
+
+new_fake_old_vendor AS (
+    INSERT INTO vendors (name, details, status)
+        VALUES ('FakeOld GmbH', '{}', 1)
+        ON CONFLICT (name)
+            DO UPDATE SET status = vendors.status
+        RETURNING id
 ),
 
 -- To test correct handling of absence of optional value
@@ -26,7 +36,23 @@ new_user_lukas_de_without_email AS (
              DO UPDATE SET status = users.status
          RETURNING id
 ),    
-    
+
+new_employment_history_lukas_old AS (
+    INSERT INTO users_employment_history (start_date, end_date, user_id, vendor_id, details, status)
+        VALUES ('2020-01-01', '2020-06-30', 
+                (SELECT id FROM new_user_lukas_de_without_email),
+                (SELECT id FROM new_fake_old_vendor),
+                '{}', 90)
+),
+
+new_employment_history_lukas_current AS (
+    INSERT INTO users_employment_history (start_date, end_date, user_id, vendor_id, details, status)
+        VALUES ('2020-07-01', null,
+                (SELECT id FROM new_user_lukas_de_without_email),
+                (SELECT id FROM new_vendor_evecon),
+                '{}', 1)
+),
+
 new_live_event_venue_1 AS (
     INSERT INTO live_event_venues (name, status) 
         VALUES ('Venue1 near Cologne', 1) 

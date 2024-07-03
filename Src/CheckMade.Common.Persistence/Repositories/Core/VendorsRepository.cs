@@ -28,7 +28,8 @@ public class VendorsRepository(IDbExecutionHelper dbHelper)
                                             SELECT 
                                             
                                             v.name AS vendor_name,
-                                            v.status AS vendor_status
+                                            v.status AS vendor_status,
+                                            v.details AS vendor_details
                                             
                                             FROM vendors v 
                                             ORDER BY id

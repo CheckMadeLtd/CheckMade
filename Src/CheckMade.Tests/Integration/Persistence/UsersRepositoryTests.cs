@@ -24,6 +24,19 @@ public class UsersRepositoryTests
     }
     
     [Fact]
+    public async Task GetAsync_ReturnsSpecificTestUser_WithNoCurrentVendor()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+
+        var repo = _services.GetRequiredService<IUsersRepository>();
+        var user = await repo.GetAsync(DanielEn);
+
+        Assert.NotNull(user);
+        Assert.True(user.Equals(DanielEn));
+        Assert.True(user.CurrentEmployer.IsNone);
+    }
+
+    [Fact]
     public async Task GetAllAsync_ReturnsIntegrationTestUsers_WithCorrectOneToManyRolesMapping()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();

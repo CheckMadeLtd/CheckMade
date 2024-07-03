@@ -42,13 +42,16 @@ internal static class ModelReaders
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    internal static readonly Func<DbDataReader, Vendor> ReadVendor = ConstituteVendor;
+    internal static readonly Func<DbDataReader, Vendor> ReadVendor = reader => 
+        ConstituteVendor(reader).GetValueOrThrow();
 
     internal static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, User> initializeModel,
         Action<User, DbDataReader> accumulateData,
-        Func<User, User> finalizeModel) GetUserReader()
+        Func<User, User> finalizeModel) 
+        
+        GetUserReader()
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
@@ -56,7 +59,7 @@ internal static class ModelReaders
                 new User(
                     ConstituteUserInfo(reader),
                     new HashSet<IRoleInfo>(),
-                    Option<Vendor>.None()),
+                    ConstituteVendor(reader)),
             accumulateData: (user, reader) =>
             {
                 var roleInfo = ConstituteRoleInfo(reader);
@@ -71,7 +74,9 @@ internal static class ModelReaders
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, LiveEvent> initializeModel,
         Action<LiveEvent, DbDataReader> accumulateData,
-        Func<LiveEvent, LiveEvent> finalizeModel) GetLiveEventReader()
+        Func<LiveEvent, LiveEvent> finalizeModel) 
+        
+        GetLiveEventReader()
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
@@ -99,8 +104,11 @@ internal static class ModelReaders
         );
     }
 
-    private static Vendor ConstituteVendor(DbDataReader reader)
+    private static Option<Vendor> ConstituteVendor(DbDataReader reader)
     {
+        if (reader.IsDBNull(reader.GetOrdinal("vendor_name")))
+            return Option<Vendor>.None();
+        
         return new Vendor(
             reader.GetString(reader.GetOrdinal("vendor_name")),
             EnsureEnumValidityOrThrow(
