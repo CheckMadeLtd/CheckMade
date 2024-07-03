@@ -13,11 +13,14 @@ public sealed record User(
     Option<EmailAddress> Email,
     LanguageCode Language,
     IReadOnlyCollection<IRoleInfo> HasRoles,
-    // Option<Vendor> CurrentlyWorksFor,
+    Option<Vendor> CurrentlyWorksFor,
     DbRecordStatus Status = DbRecordStatus.Active)
     : IUserInfo
 {
-    public User(IUserInfo userInfo, IReadOnlyCollection<IRoleInfo> roles) 
+    public User(
+        IUserInfo userInfo,
+        IReadOnlyCollection<IRoleInfo> roles,
+        Option<Vendor> vendor) 
         : this(
             userInfo.Mobile,
             userInfo.FirstName,
@@ -26,6 +29,7 @@ public sealed record User(
             userInfo.Email,
             userInfo.Language,
             roles,
+            vendor,
             userInfo.Status)
     {
     }

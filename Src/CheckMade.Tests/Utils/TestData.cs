@@ -16,6 +16,8 @@ namespace CheckMade.Tests.Utils;
 internal static class TestData
 {
     #region UsersSetup #################################################################################################
+
+    internal static readonly Vendor EveConGmbH = new Vendor("eveCon GmbH");
     
     internal static readonly User DanielEn = new(
         new MobileNumber("+447777111999"),
@@ -24,7 +26,8 @@ internal static class TestData
         "_Gorin",
         new EmailAddress("daniel-test-checkmade@neocortek.net"),
         LanguageCode.en,
-        new List<IRoleInfo>());
+        new List<IRoleInfo>(),
+        Option<Vendor>.None());
     
     internal static readonly User DanielDe = new(
         new MobileNumber("+447777111999"),
@@ -33,7 +36,8 @@ internal static class TestData
         "_Gorin",
         Option<EmailAddress>.None(),
         LanguageCode.de,
-        new List<IRoleInfo>());
+        new List<IRoleInfo>(),
+        EveConGmbH);
     
     internal static readonly User LukasDe = new(
         new MobileNumber("+49111199999"),
@@ -42,7 +46,8 @@ internal static class TestData
         "_Gorin",
         Option<EmailAddress>.None(),
         LanguageCode.de,
-        new List<IRoleInfo>());
+        new List<IRoleInfo>(),
+        EveConGmbH);
     
     #endregion
     

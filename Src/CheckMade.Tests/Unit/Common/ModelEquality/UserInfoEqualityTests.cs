@@ -29,7 +29,8 @@ public class UserInfoEqualityTests
             "Doe",
             new EmailAddress("johndoe@checkmade.io"),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         var areEqual1 = user.Equals(userInfo);
         var areEqual2 = userInfo.Equals(user);
@@ -52,7 +53,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token1", RoleType.SanitaryOps_Admin) });
+            new List<IRoleInfo> { new RoleInfo("Token1", RoleType.SanitaryOps_Admin) },
+            Option<Vendor>.None());
 
         IUserInfo user2 = new User(
             new MobileNumber("+1234567890"),
@@ -61,7 +63,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token2", RoleType.SanitaryOps_Inspector) });
+            new List<IRoleInfo> { new RoleInfo("Token2", RoleType.SanitaryOps_Inspector) },
+            Option<Vendor>.None());
 
         var areEqual = user1.Equals(user2);
 
@@ -80,7 +83,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         IUserInfo user2 = new User(
             new MobileNumber("+1234567890"),
@@ -89,7 +93,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         var areEqual = user1.Equals(user2);
 
@@ -120,7 +125,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         var areEqual = user == userInfo;
 
@@ -147,7 +153,8 @@ public class UserInfoEqualityTests
             "Smith",
             Option<EmailAddress>.None(),
             LanguageCode.de,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         var areEqual1 = user.Equals(userInfo);
         var areEqual2 = userInfo.Equals(user);
@@ -190,7 +197,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         var user2 = user1;
 
@@ -211,7 +219,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         IUserInfo? user2 = null;
 
@@ -278,7 +287,8 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo>());
+            new List<IRoleInfo>(),
+            Option<Vendor>.None());
 
         IUserInfo user2 = new User(
             new MobileNumber("+1234567890"),
@@ -288,6 +298,7 @@ public class UserInfoEqualityTests
             Option<EmailAddress>.None(),
             LanguageCode.en,
             new List<IRoleInfo>(),
+            Option<Vendor>.None(),
             DbRecordStatus.Historic);
 
         var areEqual = user1.Equals(user2);

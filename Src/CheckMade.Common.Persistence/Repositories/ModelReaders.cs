@@ -50,7 +50,11 @@ internal static class ModelReaders
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
-            initializeModel: reader => new User(ConstituteUserInfo(reader), new HashSet<IRoleInfo>()),
+            initializeModel: reader => 
+                new User(
+                    ConstituteUserInfo(reader),
+                    new HashSet<IRoleInfo>(),
+                    Option<Vendor>.None()), // ToDo: Implement logic to parse 'CurrentlyWorksFor' from Details
             accumulateData: (user, reader) =>
             {
                 var roleInfo = ConstituteRoleInfo(reader);

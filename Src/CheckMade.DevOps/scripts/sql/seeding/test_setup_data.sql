@@ -12,6 +12,10 @@ WITH user_daniel_en AS (
         RETURNING id 
 ),
 
+-- new_vendor_evecon AS (
+--     INSERT INTO vendors
+-- ),
+    
 -- To test correct handling of absence of optional value
 new_user_lukas_de_without_email AS (
      INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
@@ -20,7 +24,7 @@ new_user_lukas_de_without_email AS (
              DO UPDATE SET status = users.status
          RETURNING id
 ),    
-
+    
 new_live_event_venue_1 AS (
     INSERT INTO live_event_venues (name, status) 
         VALUES ('Venue1 near Cologne', 1) 
