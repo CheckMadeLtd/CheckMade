@@ -12,6 +12,10 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
     
     private Option<IReadOnlyCollection<User>> _cache = Option<IReadOnlyCollection<User>>.None();
 
+    public async Task<User?> GetAsync(IUserInfo user) =>
+        (await GetAllAsync())
+        .FirstOrDefault(u => u.Equals(user));
+
     public async Task<IReadOnlyCollection<User>> GetAllAsync()
     {
         if (_cache.IsNone)

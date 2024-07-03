@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -9,7 +10,11 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
-    
+
+    public async Task<Role?> GetAsync(IRoleInfo role) =>
+        (await GetAllAsync())
+        .FirstOrDefault(r => r.Equals(role));
+
     public async Task<IReadOnlyCollection<Role>> GetAllAsync()
     {
         if (_cache.IsNone)
