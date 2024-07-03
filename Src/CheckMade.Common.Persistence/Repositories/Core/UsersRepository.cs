@@ -40,7 +40,8 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
                                             usr.last_name AS user_last_name, 
                                             usr.email AS user_email, 
                                             usr.language_setting AS user_language, 
-                                            usr.status AS user_status 
+                                            usr.status AS user_status,
+                                            usr.details AS user_details
                                             
                                             FROM users usr 
                                             LEFT JOIN roles r on r.user_id = usr.id 
@@ -58,7 +59,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
                     var users =
                         await ExecuteReaderOneToManyAsync(
                             command, getKey, initializeModel, accumulateData, finalizeModel);
-                    
+
                     _cache = Option<IReadOnlyCollection<User>>.Some(users);
                 }
             }
