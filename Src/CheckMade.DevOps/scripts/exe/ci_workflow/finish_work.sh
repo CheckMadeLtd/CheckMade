@@ -41,16 +41,22 @@ echo "Now running local Build & Tests for all Debug configurations contained in 
 "current branch was rebased on a newer origin/main in the previous step)."
 
 # Initialize flags for preventing ios or ios and android builds
+all_configs=false
 noios=false
 nomob=false
 
 # Process options
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --all)
+            echo "--all option active: all Debug configurations will be included."
+            all_configs=true
+            shift # Remove this option from processing (= SHIFT positional arguments to the left)
+            ;;
         --noios)
             echo "--noios option active: projects containing 'iOS' in their name will be skipped."
             noios=true
-            shift # Remove this option from processing (= SHIFT positional arguments to the left)
+            shift
             ;;
         --nomob)
             echo "--nomob option active: projects containing 'iOS' or 'Android' in their name will be skipped."
@@ -85,18 +91,22 @@ config_array=()
 shopt -s nocasematch  # Set shell option to ignore case in pattern matching
 
 while IFS= read -r line; do
-    if [[ "$noios" == true && $line =~ ios ]]; then
-        echo "Skipping iOS build configuration: $line"
-    elif [[ "$nomob" == true && ($line =~ ios || $line =~ android) ]]; then
-        echo "Skipping mobile build configuration: $line"
-    elif [[ $line =~ _all ]]; then
-        echo "Skipping build configuration: $line"
-    else
+    if [[ "$all_configs" == true ]]; then
+        if [[ "$noios" == true && $line =~ ios ]]; then
+            echo "Skipping iOS build configuration: $line"
+        elif [[ "$nomob" == true && ($line =~ ios || $line =~ android) ]]; then
+            echo "Skipping mobile build configuration: $line"
+        elif [[ $line =~ _all ]]; then
+            echo "Skipping build configuration: $line"
+        else
+            config_array+=("$line")
+        fi
+    elif [[ $line =~ debug_chatbot ]]; then
         config_array+=("$line")
     fi
 done <<< "$configurations"
 
-shopt -u nocasematch  # Unset the nocasematch option to return to default behavior
+shopt -u nocasematch  # Unset the nocasematch option to return to default behavior  
 
 echo "The following Debug configurations have been found in the local Solution:"
 for config in "${config_array[@]}"
