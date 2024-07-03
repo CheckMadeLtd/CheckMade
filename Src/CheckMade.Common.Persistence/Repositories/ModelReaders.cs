@@ -41,7 +41,9 @@ internal static class ModelReaders
 
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
-    
+
+    internal static readonly Func<DbDataReader, Vendor> ReadVendor = ConstituteVendor;
+
     internal static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, User> initializeModel,
@@ -54,7 +56,7 @@ internal static class ModelReaders
                 new User(
                     ConstituteUserInfo(reader),
                     new HashSet<IRoleInfo>(),
-                    Option<Vendor>.None()), // ToDo: Implement logic to parse 'CurrentlyWorksFor' from Details
+                    Option<Vendor>.None()),
             accumulateData: (user, reader) =>
             {
                 var roleInfo = ConstituteRoleInfo(reader);
@@ -97,6 +99,14 @@ internal static class ModelReaders
         );
     }
 
+    private static Vendor ConstituteVendor(DbDataReader reader)
+    {
+        return new Vendor(
+            reader.GetString(reader.GetOrdinal("vendor_name")),
+            EnsureEnumValidityOrThrow(
+                (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("vendor_status"))));
+    }
+    
     private static IUserInfo ConstituteUserInfo(DbDataReader reader)
     {
         return new UserInfo(
