@@ -7,7 +7,10 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
+using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Types;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
@@ -173,7 +176,64 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    protected static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
+    protected static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader)
+    {
+        if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
+            return Option<ISphereOfAction>.None();
+
+        var trade = GetTradeType();
+
+        const string invalidTradeTypeException = $"""
+                                                  This is not an existing '{nameof(trade)}' or we forgot to
+                                                  implement a new type for '{nameof(ConstituteSphereOfAction)}' 
+                                                  """;
+
+        var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
+        
+        ISphereOfActionDetails typedDetails = trade.Name switch
+        {
+            nameof(TradeSanitaryOps) => 
+                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson) 
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
+            nameof(TradeSiteCleaning) => 
+                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson) 
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
+            _ => 
+                throw new InvalidOperationException(invalidTradeTypeException)
+        };
+        
+        var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
+
+        ISphereOfAction typedSphereOfAction = trade.Name switch
+        {
+            nameof(TradeSanitaryOps) => 
+                new SphereOfAction<TradeSanitaryOps>(sphereName, typedDetails),
+            nameof(TradeSiteCleaning) => 
+                new SphereOfAction<TradeSiteCleaning>(sphereName, typedDetails),
+            _ => 
+                throw new InvalidOperationException(invalidTradeTypeException)
+        };
+        
+        return Option<ISphereOfAction>.Some(typedSphereOfAction);
+
+        Type GetTradeType()
+        {
+            var domainGlossary = new DomainGlossary();
+            var tradeId = new CallbackId(reader.GetString(reader.GetOrdinal("sphere_trade")));
+            var tradeType = domainGlossary.TermById[tradeId].TypeValue;
+
+            if (tradeType is null || 
+                !tradeType.IsAssignableTo(typeof(ITrade)))
+            {
+                throw new InvalidDataException($"The '{nameof(tradeType)}:' '{tradeType?.FullName}' of this sphere " +
+                                               $"can't be determined.");
+            }
+
+            return tradeType;
+        }
+    }
+    
+    private static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
         new(ConstituteRoleInfo(reader).GetValueOrThrow(),
             userInfo,
             liveEventInfo);
@@ -191,7 +251,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
     }
 
-    protected static TlgInput ConstituteTlgInput(
+    private static TlgInput ConstituteTlgInput(
         DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
     {
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
@@ -208,10 +268,10 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             roleInfo,
             liveEventInfo,
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails)
-            ?? throw new InvalidOperationException("Failed to deserialize"));
+            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
     }
 
-    protected static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    private static TlgAgent ConstituteTlgAgent(DbDataReader reader)
     {
         return new TlgAgent(
             reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
@@ -220,7 +280,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
     }
 
-    protected static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
         var activationDate = reader.GetDateTime(reader.GetOrdinal("tarb_activation_date"));
 

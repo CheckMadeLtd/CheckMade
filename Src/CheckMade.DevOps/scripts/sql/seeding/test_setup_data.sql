@@ -58,7 +58,7 @@ new_live_event_X2024 AS (
         VALUES ('LiveEvent X 2024',
                 '2024-07-19 10:00:00', '2024-07-22 18:00:00', 
                 (SELECT id FROM new_live_event_venue_1), 
-                (SELECT id FROM live_event_series), 
+                (SELECT id FROM new_live_event_series_X), 
                 1)
         ON CONFLICT (name)
             DO UPDATE SET status = live_events.status
@@ -80,7 +80,7 @@ new_sphere2_sanitary_ops_at_X2024 AS (
         VALUES ('Camp2',
                 'DX3KFI',
                 (SELECT id FROM new_live_event_X2024),
-                '{}',
+                '{"GeoCoordinates": null}',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
@@ -90,7 +90,7 @@ new_sphere3_site_cleaning_at_X2024 AS (
         VALUES ('Zone1',
                 'DSIL7M',
                 (SELECT id FROM new_live_event_X2024),
-                '{}',
+                '{"GeoCoordinates": null}',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),

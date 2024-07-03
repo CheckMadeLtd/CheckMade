@@ -100,12 +100,12 @@ public class UsersRepository(IDbExecutionHelper dbHelper)
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
-            initializeModel: reader => new User(ConstituteUserInfo(reader), new List<IRoleInfo>()),
+            initializeModel: reader => new User(ConstituteUserInfo(reader), new HashSet<IRoleInfo>()),
             accumulateData: (user, reader) =>
             {
                 var roleInfo = ConstituteRoleInfo(reader);
                 if (roleInfo.IsSome)
-                    ((List<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
+                    ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
             },
             finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
         );
