@@ -1,4 +1,3 @@
-using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
@@ -59,7 +58,7 @@ public class LiveEventsRepository(IDbExecutionHelper dbHelper)
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = GetLiveEventReader();
+                        finalizeModel) = ModelReaders.GetLiveEventReader();
 
                     var liveEvents =
                         await ExecuteReaderOneToManyAsync(
@@ -75,37 +74,5 @@ public class LiveEventsRepository(IDbExecutionHelper dbHelper)
         }
 
         return _cache.GetValueOrThrow();
-    }
-
-    private static (
-        Func<DbDataReader, int> getKey,
-        Func<DbDataReader, LiveEvent> initializeModel,
-        Action<LiveEvent, DbDataReader> accumulateData,
-        Func<LiveEvent, LiveEvent> finalizeModel) GetLiveEventReader()
-    {
-        return (
-            getKey: reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
-            initializeModel: reader => 
-                new LiveEvent(
-                    ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-                    new HashSet<IRoleInfo>(),
-                    ConstituteLiveEventVenue(reader),
-                    new HashSet<ISphereOfAction>()),
-            accumulateData: (liveEvent, reader) =>
-            {
-                var roleInfo = ConstituteRoleInfo(reader);
-                if (roleInfo.IsSome)
-                    ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
-
-                var sphereOfAction = ConstituteSphereOfAction(reader);
-                if (sphereOfAction.IsSome)
-                    ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-            },
-            finalizeModel: liveEvent => liveEvent with
-            {
-                WithRoles = liveEvent.WithRoles.ToImmutableReadOnlyCollection(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableReadOnlyCollection()
-            }
-        );
     }
 }

@@ -110,7 +110,8 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     var fetchedBindings = new List<TlgAgentRoleBind>(
-                        await ExecuteReaderOneToOneAsync(command, ReadTlgAgentRoleBind));
+                        await ExecuteReaderOneToOneAsync(
+                            command, ModelReaders.ReadTlgAgentRoleBind));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
                         fetchedBindings.ToImmutableReadOnlyCollection());

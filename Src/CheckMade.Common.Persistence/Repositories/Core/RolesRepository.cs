@@ -50,7 +50,7 @@ public class RolesRepository(IDbExecutionHelper dbHelper)
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     _cache = Option<IReadOnlyCollection<Role>>.Some(
-                        new List<Role>(await ExecuteReaderOneToOneAsync(command, ReadRole))
+                        new List<Role>(await ExecuteReaderOneToOneAsync(command, ModelReaders.ReadRole))
                             .ToImmutableReadOnlyCollection());
                 }
             }
