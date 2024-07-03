@@ -12,10 +12,12 @@ WITH user_daniel_en AS (
         RETURNING id 
 ),
 
--- new_vendor_evecon AS (
---     INSERT INTO vendors
--- ),
-    
+new_vendor_evecon AS (
+    INSERT INTO vendors (name, details, status)
+        VALUES ('eveCon GmbH', '{}', 1)
+        ON CONFLICT (name) DO NOTHING
+),
+
 -- To test correct handling of absence of optional value
 new_user_lukas_de_without_email AS (
      INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting)
