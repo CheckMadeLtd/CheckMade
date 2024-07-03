@@ -27,13 +27,15 @@ internal static class TestRepositoryUtils
 
     internal static (ServiceProvider sp, MockContainer container) ConfigureTestRepositories(
         this IServiceCollection serviceCollection,
-        IReadOnlyCollection<LiveEventSeries>? liveEventSeries = null,
+        LiveEvent? liveEvent = null,
+        IReadOnlyCollection<LiveEvent>? liveEvents = null,
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
         IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
         IReadOnlyCollection<TlgInput>? inputs = null)
     {
-        List<LiveEventSeries> defaultSeries = [SeriesX, SeriesY];
+        var defaultLiveEvent = X2024;
+        List<LiveEvent> defaultLiveEvents = [X2024, X2025];
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SOpsAdmin_DanielEn_X2024];
         List<TlgAgentRoleBind> defaultRoleBindings = 
@@ -43,7 +45,7 @@ internal static class TestRepositoryUtils
         var mockContainer = new MockContainer();
         
         serviceCollection = serviceCollection
-            .ArrangeTestLiveEventSeriesRepo(liveEventSeries ?? defaultSeries, mockContainer)
+            .ArrangeTestLiveEventsRepo(liveEvent ?? defaultLiveEvent, liveEvents ?? defaultLiveEvents, mockContainer)
             .ArrangeTestUsersRepo(users ?? defaultUsers, mockContainer)
             .ArrangeTestRolesRepo(roles ?? defaultRoles, mockContainer)
             .ArrangeTestRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
@@ -52,20 +54,26 @@ internal static class TestRepositoryUtils
         return (serviceCollection.BuildServiceProvider(), mockContainer);
     }
 
-    private static IServiceCollection ArrangeTestLiveEventSeriesRepo(
+    private static IServiceCollection ArrangeTestLiveEventsRepo(
         this IServiceCollection serviceCollection,
-        IReadOnlyCollection<LiveEventSeries> liveEventSeries,
+        LiveEvent liveEvent,
+        IReadOnlyCollection<LiveEvent> liveEvents,
         MockContainer container)
     {
-        var mockLiveEventSeriesRepo = new Mock<ILiveEventSeriesRepository>();
-        mockLiveEventSeriesRepo
-            .Setup(repo => repo.GetAllAsync())
-            .ReturnsAsync(liveEventSeries);
+        var mockLiveEventsRepo = new Mock<ILiveEventsRepository>();
 
-        container.Mocks[typeof(ILiveEventSeriesRepository)] = mockLiveEventSeriesRepo;
-        var stubLiveEventSeriesRepo = mockLiveEventSeriesRepo.Object;
+        mockLiveEventsRepo
+            .Setup(repo => repo.GetAsync(liveEvent))
+            .ReturnsAsync(liveEvent);
         
-        return serviceCollection.AddScoped<ILiveEventSeriesRepository>(_ => stubLiveEventSeriesRepo);
+        mockLiveEventsRepo
+            .Setup(repo => repo.GetAllAsync())
+            .ReturnsAsync(liveEvents);
+
+        container.Mocks[typeof(ILiveEventsRepository)] = mockLiveEventsRepo;
+        var stubLiveEventsRepo = mockLiveEventsRepo.Object;
+        
+        return serviceCollection.AddScoped<ILiveEventsRepository>(_ => stubLiveEventsRepo);
     }
     
     private static IServiceCollection ArrangeTestUsersRepo(

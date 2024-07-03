@@ -24,5 +24,6 @@ public static class ServiceRegistration
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<ITlgAgentRoleBindingsRepository, TlgAgentRoleBindingsRepository>();
+        services.AddScoped<ILiveEventsRepository, LiveEventsRepository>();
     }
 }
