@@ -27,6 +27,11 @@ public class LiveEventsRepositoryTests
         Assert.Equivalent(
             Sphere1_AtX2024.Trade,
             liveEventGraph.DivIntoSpheres.ToList()[0].Trade);
+        Assert.Equivalent(
+            Sphere1_Location,
+            liveEventGraph.DivIntoSpheres.ToList()[0].Details.Location.GetValueOrThrow());
+        
+        
         Assert.Equal(
             Sphere2_AtX2024.Name,
             liveEventGraph.DivIntoSpheres.ToList()[1].Name);

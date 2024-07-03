@@ -70,7 +70,7 @@ new_sphere1_sanitary_ops_at_X2024 AS (
        VALUES ('Camp1',
                'DX3KFI',
                (SELECT id FROM new_live_event_X2024),
-               '{}', 
+               '{"GeoCoordinates": {"Latitude": {"Value": 51.240067}, "Longitude": {"Value": -0.789706}, "UncertaintyRadiusInMeters": null}}', 
                1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),

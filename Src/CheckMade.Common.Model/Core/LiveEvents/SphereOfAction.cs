@@ -6,7 +6,7 @@ namespace CheckMade.Common.Model.Core.LiveEvents;
 
 public record SphereOfAction<T>(
         string Name,
-        SphereOfActionDetails Details,
+        ISphereOfActionDetails Details,
         DbRecordStatus Status = DbRecordStatus.Active) 
     : ISphereOfAction where T : ITrade
 {

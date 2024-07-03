@@ -3,6 +3,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Core.Trades.Types;
 using static CheckMade.Common.Model.Core.Actors.RoleType;
@@ -54,17 +55,20 @@ internal static class TestData
 
     // 2024 LiveEvents
 
+    internal static readonly Geo Sphere1_Location =
+        new Geo(51.240067, -0.789706, Option<float>.None());
+    
     internal static readonly SphereOfAction<TradeSanitaryOps> Sphere1_AtX2024 =
         new("Camp1",
-            new SphereOfActionDetails());
+            new SanitaryCampDetails(Sphere1_Location));
     
     internal static readonly SphereOfAction<TradeSanitaryOps> Sphere2_AtX2024 =
         new("Camp2",
-            new SphereOfActionDetails());
+            new SanitaryCampDetails(Option<Geo>.None()));
     
     internal static readonly SphereOfAction<TradeSiteCleaning> Sphere3_AtX2024 =
         new("Zone1",
-            new SphereOfActionDetails());
+            new SiteCleaningZoneDetails(Option<Geo>.None()));
     
     internal static readonly LiveEvent X2024 = new("LiveEvent X 2024",
         new DateTime(2024, 07, 19, 10, 00, 00, DateTimeKind.Utc),
