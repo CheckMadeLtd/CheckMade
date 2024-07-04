@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Facilities;
 
 namespace CheckMade.Tests.Unit.Common;
 
@@ -9,9 +9,9 @@ public class DomainTermTests
     public void Equals_ReturnsFalse_ForTwoEnumsOfSameValueButDifferentType()
     {
         var enum1 = Dt(LanguageCode.en);
-        var enum2 = Dt(ConsumablesIssue.Item.ToiletPaper);
+        var enum2 = Dt(Consumables.Item.ToiletPaper);
 
-        Assert.Equal((int)LanguageCode.en, (int)ConsumablesIssue.Item.ToiletPaper);
+        Assert.Equal((int)LanguageCode.en, (int)Consumables.Item.ToiletPaper);
         Assert.False(enum1.Equals(enum2));
     }
 }

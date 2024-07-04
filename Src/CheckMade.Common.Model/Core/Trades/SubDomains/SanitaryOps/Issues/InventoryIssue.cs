@@ -3,11 +3,12 @@ using CheckMade.Common.Model.Core.Trades.Types;
 
 namespace CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
 
-public record TechnicalIssue(
+public record InventoryIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
         ITradeFacility<TradeSanitaryOps> Facility,
-        Geo Location, IssueEvidence Evidence,
+        Geo Location,
+        IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 

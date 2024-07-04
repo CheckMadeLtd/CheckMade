@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Facilities;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 
@@ -12,7 +12,7 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
     [Fact]
     public void IsDefined_ShouldBeTrue_ForDefinedEnum_InNormalEnum()
     {
-        Assert.True(EnumChecker.IsDefined(ConsumablesIssue.Item.ToiletPaper));
+        Assert.True(EnumChecker.IsDefined(Consumables.Item.ToiletPaper));
     }
     
     [Fact]

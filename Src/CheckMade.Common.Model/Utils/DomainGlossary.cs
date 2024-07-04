@@ -22,11 +22,11 @@ public class DomainGlossary
 
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", "🪣 Cleanliness");
         AddTerm(typeof(TechnicalIssue), "DM46NG", "🔧 Technical");
-        AddTerm(typeof(ConsumablesIssue), "D582QJ", "🗄 Consumables");
+        AddTerm(typeof(InventoryIssue), "D582QJ", "🗄 Consumables");
 
-        AddTerm(ConsumablesIssue.Item.ToiletPaper, "DSTP1N", "🧻 Toilet Paper");
-        AddTerm(ConsumablesIssue.Item.PaperTowels, "DOJH85", "🌫️ Paper Towels");
-        AddTerm(ConsumablesIssue.Item.Soap, "D79AMO", "🧴 Soap");
+        AddTerm(Consumables.Item.ToiletPaper, "DSTP1N", "🧻 Toilet Paper");
+        AddTerm(Consumables.Item.PaperTowels, "DOJH85", "🌫️ Paper Towels");
+        AddTerm(Consumables.Item.Soap, "D79AMO", "🧴 Soap");
 
         AddTerm(typeof(Toilet), "D1540N", "🚽 Toilet");
         AddTerm(typeof(Shower), "D4W2GW", "🚿 Shower");
