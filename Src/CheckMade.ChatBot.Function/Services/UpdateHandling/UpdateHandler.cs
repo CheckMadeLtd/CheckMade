@@ -23,7 +23,7 @@ public interface IUpdateHandler
 
 public class UpdateHandler(
         IBotClientFactory botClientFactory,
-        IInputProcessorFactory inputProcessorFactory,
+        IInputProcessor inputProcessor,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
         IToModelConverterFactory toModelConverterFactory,
         DefaultUiLanguageCodeProvider defaultUiLanguage,
@@ -80,8 +80,7 @@ public class UpdateHandler(
                         toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
-                        inputProcessorFactory.GetInputProcessor(currentlyReceivingInteractionMode)
-                            .ProcessInputAsync(tlgInput))
+                        inputProcessor.ProcessInputAsync(tlgInput))
                 from activeRoleBindings
                     in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
                         (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())

@@ -20,7 +20,6 @@ public class InputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = UserId02_ChatId03_Operations;
 
         var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
             UserId02_ChatId03_Operations.Mode,
@@ -34,7 +33,7 @@ public class InputProcessorTests
             inputs: new[] { startCommand });
         _services = services;
         
-        var inputProcessor = _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
+        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
         
         var expectedOutputs = new List<OutputDto>
         {
@@ -85,8 +84,7 @@ public class InputProcessorTests
         
         const string expectedWarningOutput = 
             "The previous workflow was completed, so your last message/action will be ignored.";
-        var inputProcessor = 
-            _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
+        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
 
         var actualOutput = 
             await inputProcessor
@@ -130,9 +128,8 @@ public class InputProcessorTests
         
         const string expectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
-        var inputProcessor = 
-            _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
-
+        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
+        
         var actualOutput =
             await inputProcessor
                 .ProcessInputAsync(interruptingBotCommandInput);
@@ -170,9 +167,8 @@ public class InputProcessorTests
         
         const string notExpectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
-        var inputProcessor = 
-            _services.GetRequiredService<IInputProcessorFactory>().GetInputProcessor(tlgAgent.Mode);
-
+        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
+        
         var actualOutput = 
             await inputProcessor
                 .ProcessInputAsync(notInterruptingBotCommandInput);

@@ -1,7 +1,6 @@
 ﻿using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +15,6 @@ public interface IInputProcessor
 }
 
 internal class InputProcessor(
-        InteractionMode interactionMode,
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
         ILogicUtils logicUtils,
@@ -89,7 +87,7 @@ internal class InputProcessor(
                                            The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
                                            this Error Result: '{error}'. Next, the corresponding input parameters.
                                            UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                           InputType: {currentInput.InputType}; InteractionMode: {interactionMode};
+                                           InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
                                            Date: {currentInput.Details.TlgDate}; 
                                            For more details of input, check database!
                                            """);

@@ -7,7 +7,7 @@ public static class ServiceRegistration
 {
     public static void Register_ChatBotLogic_Services(this IServiceCollection services)
     {
-        services.AddScoped<IInputProcessorFactory, InputProcessorFactory>();
+        services.AddScoped<IInputProcessor, InputProcessor>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<ILogicUtils, LogicUtils>();
 
