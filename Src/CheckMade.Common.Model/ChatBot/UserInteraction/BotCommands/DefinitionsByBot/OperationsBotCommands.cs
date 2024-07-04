@@ -7,6 +7,7 @@ public enum OperationsBotCommands
     // Code '1' is reserved for '/start' command, which is not part of the menu however
     NewIssue = 10,
     NewAssessment = 20,
-    Settings = 90,
+    
+    Settings = BotCommandMenus.SameBotCommandSemanticsThreshold_90,
     Logout = 99
 }

@@ -53,6 +53,25 @@ public class WorkflowIdentifierTests
     }
 
     [Fact]
+    public void Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
+        
+        var inputWithNewIssueBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+            Operations, 
+            (int)OperationsBotCommands.NewIssue);
+        
+        var workflow = workflowIdentifier
+            .Identify(new [] { inputWithNewIssueBotCommand }
+                .ToImmutableReadOnlyCollection());
+        
+        Assert.True(
+            workflow.GetValueOrThrow() is NewIssueWorkflow);
+    }
+    
+    [Fact]
     public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();

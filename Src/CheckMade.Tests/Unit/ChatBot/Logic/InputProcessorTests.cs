@@ -108,7 +108,7 @@ public class InputProcessorTests
         var interruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewIssue); 
+                (int)OperationsBotCommands.NewAssessment); 
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -153,7 +153,7 @@ public class InputProcessorTests
         var notInterruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewIssue); 
+                (int)OperationsBotCommands.NewAssessment); 
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
