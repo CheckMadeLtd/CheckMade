@@ -20,8 +20,8 @@ public record OutputDto
     public Option<IReadOnlyCollection<string>> PredefinedChoices { get; init; } 
         = Option<IReadOnlyCollection<string>>.None();
     
-    public Option<IReadOnlyCollection<OutputAttachmentDetails>> Attachments { get; init; }
-        = Option<IReadOnlyCollection<OutputAttachmentDetails>>.None();
+    public Option<IReadOnlyCollection<AttachmentDetails>> Attachments { get; init; }
+        = Option<IReadOnlyCollection<AttachmentDetails>>.None();
     
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();

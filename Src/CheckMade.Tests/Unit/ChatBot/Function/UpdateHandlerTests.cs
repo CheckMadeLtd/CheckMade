@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -391,7 +392,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         [
             new OutputDto
             {
-                Attachments = new List<OutputAttachmentDetails>
+                Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
                         TlgAttachmentType.Photo, Option<UiString>.None()),
@@ -448,7 +449,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             {
                 Text = UiNoTranslate(mainText),
-                Attachments = new List<OutputAttachmentDetails>
+                Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
                         TlgAttachmentType.Photo, Ui("Random caption for Attachment 1")),
