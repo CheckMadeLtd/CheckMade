@@ -27,6 +27,9 @@ internal class InputProcessor(
             async currentInput =>
             {
                 await inputsRepo.AddAsync(currentInput);
+
+                if (currentInput.InputType == TlgInputType.Location)
+                    return [];
                 
                 var responseBuilder = new List<OutputDto>();
 
@@ -36,9 +39,6 @@ internal class InputProcessor(
                     responseBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
                                                                "I shall follow your command!") });
                 }
-                
-                // ToDo: Probably here, add branching for InputType: Location vs. not Location... 
-                // A Location update is not part of any workflow, it needs separate logic to handle location updates!
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {

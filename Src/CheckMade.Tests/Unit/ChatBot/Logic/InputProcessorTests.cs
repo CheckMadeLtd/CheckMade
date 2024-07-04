@@ -140,7 +140,7 @@ public class InputProcessorTests
     }
     
     [Fact]
-    public async Task? ProcessInputAsync_NoWarning_ForNewBotCommand_WhenUserCompletedPreviousWorkflow()
+    public async Task ProcessInputAsync_NoWarning_ForNewBotCommand_WhenUserCompletedPreviousWorkflow()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -176,5 +176,29 @@ public class InputProcessorTests
         Assert.NotEqual(
             notExpectedWarningOutput,
             TestUtils.GetFirstRawEnglish(actualOutput));
+    }
+
+    [Fact]
+    public async Task ProcessInputAsync_ReturnsEmptyOutput_ForLocationUpdate()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var locationUpdate =
+            inputGenerator.GetValidTlgInputLocationMessage(
+                17, -22, Option<float>.None());
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: new[] { locationUpdate });
+        _services = services;
+        
+        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
+
+        var actualOutput =
+            await inputProcessor
+                .ProcessInputAsync(locationUpdate);
+        
+        Assert.Empty(actualOutput);
     }
 }
