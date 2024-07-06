@@ -30,7 +30,7 @@ public class DomainGlossary
 
         AddTerm(typeof(Toilet), "D1540N", "🚽 Toilet");
         AddTerm(typeof(Shower), "D4W2GW", "🚿 Shower");
-        AddTerm(typeof(Staff), "D9MRJ9", "🙋 Staff");
+        AddTerm(typeof(StaffIssue), "D9MRJ9", "🙋 StaffIssue");
         
         // ToDo: add RoleTypes once switched over from Enum to Types (de.tsv already has en/de strings for it!!
         

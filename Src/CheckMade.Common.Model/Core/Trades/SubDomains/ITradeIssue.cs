@@ -6,7 +6,7 @@ public interface ITradeIssue<T> where T : ITrade
 {
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }
-    ITradeFacility<T> Facility { get; }
+    Option<ITradeFacility<T>> Facility { get; }
     Geo Location { get; }
     IssueEvidence Evidence { get; }
     IRoleInfo ReportedBy { get; }

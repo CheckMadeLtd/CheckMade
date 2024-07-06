@@ -6,7 +6,7 @@ namespace CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
 public record TechnicalIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        ITradeFacility<TradeSanitaryOps> Facility,
+        Option<ITradeFacility<TradeSanitaryOps>> Facility,
         Geo Location, IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
