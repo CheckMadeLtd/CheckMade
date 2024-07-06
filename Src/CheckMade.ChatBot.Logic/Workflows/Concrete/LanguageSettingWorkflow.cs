@@ -9,7 +9,8 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    LanguageSettingWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
+    LanguageSettingWorkflow.States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LanguageSettingWorkflow(

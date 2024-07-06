@@ -351,8 +351,8 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string fakeOutputMessage = "Output without logical port";
-        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) }];
+        const string expectedOutputMessage = "Output without logical port";
+        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(expectedOutputMessage) }];
 
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputWithoutPort));
@@ -372,7 +372,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageAsync(
                 expectedChatId,
                 It.IsAny<string>(),
-                fakeOutputMessage,
+                expectedOutputMessage,
                 It.IsAny<Option<IReplyMarkup>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
