@@ -126,14 +126,18 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         .Where(i => i.InputType != TlgInputType.Location)
         .ToImmutableReadOnlyCollection();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(TlgAgent tlgAgent) =>
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(TlgAgent tlgAgent, DateTime since) =>
         (await GetAllAsync(tlgAgent))
-        .Where(i => i.InputType == TlgInputType.Location)
+        .Where(i => 
+            i.InputType == TlgInputType.Location && 
+            i.Details.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(ILiveEventInfo liveEvent) =>
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(ILiveEventInfo liveEvent, DateTime since) =>
         (await GetAllAsync(liveEvent))
-        .Where(i => i.InputType == TlgInputType.Location)
+        .Where(i => 
+            i.InputType == TlgInputType.Location &&
+            i.Details.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)

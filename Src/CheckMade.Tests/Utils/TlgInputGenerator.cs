@@ -26,6 +26,7 @@ internal interface ITlgInputGenerator
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
+        DateTime? dateTime = null, 
         TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputCommandMessage(
@@ -106,7 +107,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
 
     public TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius,
-        long userId, long chatId,
+        long userId, long chatId, DateTime? dateTime,
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
@@ -115,7 +116,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
             CreateFromRelevantDetails(
-                DateTime.UtcNow, 
+                dateTime ?? DateTime.UtcNow, 
                 1,
                 geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
     }

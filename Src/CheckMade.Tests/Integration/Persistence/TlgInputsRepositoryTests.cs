@@ -105,7 +105,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         await inputRepo.AddAsync(tlgInput);
         
         var retrievedInput = 
-            (await inputRepo.GetAllLocationAsync(PrivateBotChat_Operations))
+            (await inputRepo.GetAllLocationAsync(PrivateBotChat_Operations, DateTime.MinValue))
             .First();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
@@ -245,5 +245,54 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         Assert.All(
             retrievedInputsX2025,
             input => Assert.Equal("LiveEvent X 2025", input.LiveEventContext.GetValueOrThrow().Name));
+    }
+    
+    [Fact]
+    public async Task GetAllLocationAsync_GetsOnlyLocations_FromGivenDate()
+    {
+        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var sinceParam = new DateTime(2024, 07, 01, 12, 15, 00);
+        
+        var tlgInputLongBefore = inputGenerator.GetValidTlgInputLocationMessage(
+            13.4, 51.2, Option<float>.None(),
+            dateTime: sinceParam.AddHours(-2));
+        
+        var tlgInputRightBefore = inputGenerator.GetValidTlgInputLocationMessage(
+            13.6, 51.7, Option<float>.None(),
+            dateTime: sinceParam.AddMilliseconds(-1));
+
+        var tlgInputExactlyAt = inputGenerator.GetValidTlgInputLocationMessage(
+            11.4, 47.2, Option<float>.None(),
+            dateTime: sinceParam);
+        
+        var tlgInputAfter = inputGenerator.GetValidTlgInputLocationMessage(
+            11.5, 47.6, Option<float>.None(),
+            dateTime: sinceParam.AddSeconds(1));
+
+        await inputRepo.AddAsync(new List<TlgInput>
+        {
+            tlgInputLongBefore,
+            tlgInputRightBefore,
+            tlgInputExactlyAt,
+            tlgInputAfter
+        });
+        
+        var retrievedInputs = 
+            await inputRepo.GetAllLocationAsync(
+                PrivateBotChat_Operations, 
+                sinceParam);
+        var retrievedDates =
+            retrievedInputs
+                .Select(i => i.Details.TlgDate)
+                .ToList();
+        
+        await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
+        
+        Assert.Contains(tlgInputExactlyAt.Details.TlgDate, retrievedDates);
+        Assert.Contains(tlgInputAfter.Details.TlgDate, retrievedDates);
+        Assert.DoesNotContain(tlgInputRightBefore.Details.TlgDate, retrievedDates);
+        Assert.DoesNotContain(tlgInputLongBefore.Details.TlgDate, retrievedDates);
     }
 }
