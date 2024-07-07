@@ -10,8 +10,8 @@ internal interface ILogicUtils
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
 
-    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent);
-    Task<IReadOnlyCollection<TlgInput>> GetInputsSinceLastBotCommand(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgAgent tlgAgent);
     
     public static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
         inputs.LastOrDefault(i => 
@@ -24,7 +24,7 @@ internal class LogicUtils(
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     : ILogicUtils
 {
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInputsAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(TlgAgent tlgAgent)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         
@@ -45,9 +45,9 @@ internal class LogicUtils(
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInputsSinceLastBotCommand(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgAgent tlgAgent)
     {
-        var currentRoleInputs = await GetAllCurrentInputsAsync(tlgAgent);
+        var currentRoleInputs = await GetAllCurrentInteractiveAsync(tlgAgent);
 
         return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.InputType.Equals(TlgInputType.CommandMessage))

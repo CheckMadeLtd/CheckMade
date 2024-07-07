@@ -25,7 +25,7 @@ internal class LogoutWorkflow(
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
+            await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));

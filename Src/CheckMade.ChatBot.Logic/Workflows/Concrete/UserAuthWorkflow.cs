@@ -37,7 +37,7 @@ internal class UserAuthWorkflow(
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
         var tlgAgentInputHistory = 
-            await logicUtils.GetAllCurrentInputsAsync(currentInput.TlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent);
         
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {

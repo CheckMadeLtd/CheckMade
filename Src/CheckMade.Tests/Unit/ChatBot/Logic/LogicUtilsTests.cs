@@ -35,7 +35,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
         
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Equal(
             inputs.Length,
@@ -76,7 +76,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Equal(
             2,
@@ -139,7 +139,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Single(result);
         Assert.True(
@@ -180,7 +180,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Empty(result);
     }
@@ -216,7 +216,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Equal(
             inputs.Length,
@@ -248,7 +248,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent1);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent1);
         
         Assert.Equal(
             2, result.Count);
@@ -274,7 +274,7 @@ public class LogicUtilsTests
         var logicUtils = _services.GetRequiredService<ILogicUtils>();
 
         var result = 
-            await logicUtils.GetAllCurrentInputsAsync(tlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
 
         Assert.Empty(result);
     }

@@ -50,7 +50,7 @@ internal class InputProcessor(
                 }
 
                 var activeWorkflowInputHistory = 
-                    await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
+                    await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
@@ -110,7 +110,7 @@ internal class InputProcessor(
             return false;
         
         var previousWorkflowInputHistory = 
-            (await logicUtils.GetAllCurrentInputsAsync(currentInput.TlgAgent))
+            (await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))
