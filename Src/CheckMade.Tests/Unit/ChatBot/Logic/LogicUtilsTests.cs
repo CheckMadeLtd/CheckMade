@@ -16,6 +16,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_ReturnsAllInputs_WhenNoExpiredRoleBinds()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
@@ -30,9 +31,7 @@ public class LogicUtilsTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
         
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
@@ -46,6 +45,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_ReturnsInputsAfterCutoffDate_WhenExpiredRoleBindExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
@@ -71,9 +71,7 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { expiredRoleBind },
             inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
@@ -91,6 +89,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_ReturnsInputsAfterLatestExpiredRoleBind_WhenMultipleExpiredExist()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
@@ -134,9 +133,7 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: expiredRoleBinds,
             inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
@@ -150,6 +147,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_ReturnsEmptyCollection_WhenNoInputsAfterLatestExpiredRoleBind()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
@@ -175,9 +173,7 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { expiredRoleBind },
             inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
@@ -189,6 +185,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_HandlesNullDeactivationDate_InExpiredRoleBinds()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
@@ -211,9 +208,7 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { roleBindWithNullDeactivation },
             inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
@@ -227,6 +222,7 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_FiltersInputsBySpecificTlgAgent()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent1 = PrivateBotChat_Operations;
         var tlgAgent2 = UserId02_ChatId03_Operations;
@@ -243,9 +239,7 @@ public class LogicUtilsTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(inputs: inputs);
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent1);
@@ -264,14 +258,13 @@ public class LogicUtilsTests
     public async Task GetAllCurrentInteractiveAsync_HandlesNoInputs()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
         var tlgAgent = PrivateBotChat_Operations;
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: Array.Empty<TlgInput>());
-        _services = services;
-
-        var logicUtils = _services.GetRequiredService<ILogicUtils>();
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var result = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);

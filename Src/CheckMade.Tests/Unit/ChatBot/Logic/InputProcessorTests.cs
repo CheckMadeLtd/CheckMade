@@ -20,7 +20,6 @@ public class InputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-
         var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
             UserId02_ChatId03_Operations.Mode,
             TlgStart.CommandCode,
@@ -31,9 +30,7 @@ public class InputProcessorTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: new[] { startCommand });
-        _services = services;
-        
-        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
+        var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         List<OutputDto> expectedOutputs = [
             new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
@@ -78,12 +75,11 @@ public class InputProcessorTests
                     messageId: 6),
                 outOfScopeCallbackQuery
             });
-        _services = services;
+        var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string expectedWarningOutput = 
             "The previous workflow was completed, so your last message/action will be ignored.";
-        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
-
+        
         var actualOutput = 
             await inputProcessor
                 .ProcessInputAsync(outOfScopeCallbackQuery);
@@ -122,11 +118,10 @@ public class InputProcessorTests
                     (int)OperationsBotCommands.Settings),
                 interruptingBotCommandInput
             });
-        _services = services;
+        var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string expectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
-        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
         
         var actualOutput =
             await inputProcessor
@@ -161,11 +156,10 @@ public class InputProcessorTests
                     Dt(LanguageCode.de)),
                 notInterruptingBotCommandInput
             });
-        _services = services;
+        var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string notExpectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
-        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
         
         var actualOutput = 
             await inputProcessor
@@ -189,9 +183,7 @@ public class InputProcessorTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: new[] { locationUpdate });
-        _services = services;
-        
-        var inputProcessor = _services.GetRequiredService<IInputProcessor>();
+        var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
         var actualOutput =
             await inputProcessor

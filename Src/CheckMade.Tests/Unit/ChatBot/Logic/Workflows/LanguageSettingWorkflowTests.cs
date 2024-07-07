@@ -37,9 +37,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory);
-        _services = services;
-        
-        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
             workflow.DetermineCurrentState(inputHistory);
@@ -67,9 +65,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory);
-        _services = services;
-        
-        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
             workflow.DetermineCurrentState(inputHistory);
@@ -97,9 +93,7 @@ public class LanguageSettingWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory);
-        _services = services;
-        
-        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
             workflow.DetermineCurrentState(inputHistory);
@@ -127,9 +121,7 @@ public class LanguageSettingWorkflowTests
                     text: "random decoy irrelevant to workflow"),
                 inputSettingsCommand
             });
-        _services = services;
-        
-        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
 
         var actualOutput = 
             await workflow.GetResponseAsync(inputSettingsCommand);
@@ -172,10 +164,8 @@ public class LanguageSettingWorkflowTests
             },
             roles: new []{ roleBind.Role },
             roleBindings: new []{ roleBind });
-        _services = services;
-        
         var mockUserRepo = (Mock<IUsersRepository>)container.Mocks[typeof(IUsersRepository)];
-        var workflow = _services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
 
         var actualOutput = await workflow.GetResponseAsync(languageSettingInput);
         

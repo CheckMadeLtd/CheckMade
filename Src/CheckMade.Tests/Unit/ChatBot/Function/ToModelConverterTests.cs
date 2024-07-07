@@ -84,9 +84,7 @@ public class ToModelConverterTests
                     new DateTime(2021, 01, 05),
                     DbRecordStatus.Historic)
             });
-        _services = services;
-        
-        var basics = GetBasicTestingServices(_services);
+        var basics = GetBasicTestingServices(services);
         
         var expectedTlgInput = new TlgInput(
             tlgAgent,
