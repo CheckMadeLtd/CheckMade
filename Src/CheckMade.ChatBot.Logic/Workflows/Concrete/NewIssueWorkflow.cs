@@ -6,7 +6,8 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 internal interface INewIssueWorkflow : IWorkflow
 {
     NewIssueWorkflow.States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> workflowInputHistory);
+        IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
+        IReadOnlyCollection<TlgInput> recentLocationHistory);
 }
 
 internal class NewIssueWorkflow : INewIssueWorkflow
@@ -18,12 +19,39 @@ internal class NewIssueWorkflow : INewIssueWorkflow
 
     public Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
     {
+        // get workflowinputHistory and locationHistory separately
+        
         throw new NotImplementedException();
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
+    public States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
+        IReadOnlyCollection<TlgInput> recentLocationHistory)
     {
-        throw new NotImplementedException();
+        var lastInteractiveInput = workflowInteractiveHistory.Last();
+
+        if (IsBeginningOfWorkflow())
+        {
+            return CanDetermineSphereOfActionLocation() switch
+            {
+                true => States.InitialSphereKnown,
+                _ => States.InitialSphereUnknown
+            };
+        }
+
+        throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
+        
+        bool IsBeginningOfWorkflow() => lastInteractiveInput.InputType == TlgInputType.CommandMessage;
+
+        bool CanDetermineSphereOfActionLocation()
+        {
+            if (recentLocationHistory.Count == 0)
+                return false;
+             
+            // ToDo: then compare the last (!!!) location update to the saved locations of spheres. 
+            // if it's not further than the threshold defined for the corresponding TradeType then return true! 
+            return true;
+        }
     }
 
     [Flags]
