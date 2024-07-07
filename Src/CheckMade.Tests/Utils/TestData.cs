@@ -143,16 +143,19 @@ internal static class TestData
     
     // 2024 LiveEvents
 
-    internal static readonly Geo Sphere1_Location =
-        new Geo(51.240067, -0.789706, Option<float>.None());
+    internal static readonly Geo Sphere1_Location = 
+        new(51.60955, 6.13004, Option<float>.None());
     
+    internal static readonly Geo Sphere2_Location =
+        new Geo(51.60893, 6.13328, Option<float>.None());
+
     internal static readonly SphereOfAction<TradeSanitaryOps> Sphere1_AtX2024 =
         new("Camp1",
             new SanitaryCampDetails(Sphere1_Location));
     
     internal static readonly SphereOfAction<TradeSanitaryOps> Sphere2_AtX2024 =
         new("Camp2",
-            new SanitaryCampDetails(Option<Geo>.None()));
+            new SanitaryCampDetails(Sphere2_Location));
     
     internal static readonly SphereOfAction<TradeSiteCleaning> Sphere3_AtX2024 =
         new("Zone1",
