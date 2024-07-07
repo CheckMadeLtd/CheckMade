@@ -116,7 +116,27 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         }
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllHumanAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllUserInitiatedAsync(TlgAgent tlgAgent) =>
+        (await GetAllAsync(tlgAgent))
+        .Where(i => i.InputType != TlgInputType.Location)
+        .ToImmutableReadOnlyCollection();
+
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllUserInitiatedAsync(ILiveEventInfo liveEvent) =>
+        (await GetAllAsync(liveEvent))
+        .Where(i => i.InputType != TlgInputType.Location)
+        .ToImmutableReadOnlyCollection();
+
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(TlgAgent tlgAgent) =>
+        (await GetAllAsync(tlgAgent))
+        .Where(i => i.InputType == TlgInputType.Location)
+        .ToImmutableReadOnlyCollection();
+
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(ILiveEventInfo liveEvent) =>
+        (await GetAllAsync(liveEvent))
+        .Where(i => i.InputType == TlgInputType.Location)
+        .ToImmutableReadOnlyCollection();
+
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
     {
         if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
         {
@@ -152,7 +172,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllHumanAsync(ILiveEventInfo liveEvent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
     {
         if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
         {

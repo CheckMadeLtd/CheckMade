@@ -140,13 +140,13 @@ internal static class TestRepositoryUtils
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllHumanAsync(It.IsAny<TlgAgent>()))
+            .Setup(repo => repo.GetAllUserInitiatedAsync(It.IsAny<TlgAgent>()))
             .ReturnsAsync((TlgAgent tlgAgent) => inputs
                 .Where(i => i.TlgAgent.Equals(tlgAgent))
                 .ToImmutableReadOnlyCollection());
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllHumanAsync(It.IsAny<ILiveEventInfo>()))
+            .Setup(repo => repo.GetAllUserInitiatedAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) => inputs
                 .Where(i => Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent))
                 .ToImmutableReadOnlyCollection());
