@@ -116,12 +116,12 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         }
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllUserInitiatedAsync(TlgAgent tlgAgent) =>
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent) =>
         (await GetAllAsync(tlgAgent))
         .Where(i => i.InputType != TlgInputType.Location)
         .ToImmutableReadOnlyCollection();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllUserInitiatedAsync(ILiveEventInfo liveEvent) =>
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync(liveEvent))
         .Where(i => i.InputType != TlgInputType.Location)
         .ToImmutableReadOnlyCollection();
