@@ -116,7 +116,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
         }
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllHumanAsync(TlgAgent tlgAgent)
     {
         if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
         {
@@ -152,7 +152,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllHumanAsync(ILiveEventInfo liveEvent)
     {
         if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
         {

@@ -38,7 +38,7 @@ internal class LogicUtils(
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        return (await inputsRepo.GetAllAsync(tlgAgent))
+        return (await inputsRepo.GetAllHumanAsync(tlgAgent))
             .Where(i => 
                 i.Details.TlgDate.ToUniversalTime() > 
                 cutOffDate.ToUniversalTime())

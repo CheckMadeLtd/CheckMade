@@ -49,7 +49,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             await inputRepo.AddAsync(input);
             
             var retrievedInputs = 
-                (await inputRepo.GetAllAsync(input.TlgAgent))
+                (await inputRepo.GetAllHumanAsync(input.TlgAgent))
                 .OrderByDescending(x => x.Details.TlgDate)
                 .ToImmutableReadOnlyCollection();
             
@@ -76,7 +76,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         await inputRepo.AddAsync(tlgInput);
         
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
+            (await inputRepo.GetAllHumanAsync(PrivateBotChat_Operations))
             .First();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
@@ -107,7 +107,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         await inputRepo.AddAsync(tlgInput);
         
         var retrievedInput = 
-            (await inputRepo.GetAllAsync(PrivateBotChat_Operations))
+            (await inputRepo.GetAllHumanAsync(PrivateBotChat_Operations))
             .First();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
@@ -136,7 +136,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         await inputRepo.AddAsync(tlgInputs);
         var retrievedInputs = 
-            await inputRepo.GetAllAsync(PrivateBotChat_Operations);
+            await inputRepo.GetAllHumanAsync(PrivateBotChat_Operations);
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
 
         Assert.Equivalent(
@@ -157,7 +157,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             Operations);
     
         var retrievedInputs = 
-            await inputRepo.GetAllAsync(tlgAgent);
+            await inputRepo.GetAllHumanAsync(tlgAgent);
     
         Assert.Empty(
             retrievedInputs);
@@ -188,9 +188,9 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Operations));
-        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Communications));
-        await inputRepo.GetAllAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Notifications));
+        await inputRepo.GetAllHumanAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Operations));
+        await inputRepo.GetAllHumanAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Communications));
+        await inputRepo.GetAllHumanAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Notifications));
     }
     
     [Fact]
@@ -226,10 +226,10 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 .ToArray());
         
         var retrievedInputsX2024 = 
-            (await inputRepo.GetAllAsync(X2024))
+            (await inputRepo.GetAllHumanAsync(X2024))
             .ToImmutableReadOnlyCollection();
         var retrievedInputsX2025 = 
-            (await inputRepo.GetAllAsync(X2025))
+            (await inputRepo.GetAllHumanAsync(X2025))
             .ToImmutableReadOnlyCollection();
         
         await inputRepo.HardDeleteAllAsync(inputsX2024[0].TlgAgent);
