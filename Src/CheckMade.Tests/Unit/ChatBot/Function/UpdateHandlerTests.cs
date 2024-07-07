@@ -196,13 +196,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        var outputWithPrompts = new List<OutputDto>{ 
+        List<OutputDto> outputWithPrompts = [ 
             new ()
             {
               Text = EnglishUiStringForTests,
               ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
-            }
-        };
+            }];
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputWithPrompts));
@@ -302,12 +301,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputsWithLogicalPort));
 
-        var activeRoleBindings = new List<TlgAgentRoleBind>
-        {
+        List<TlgAgentRoleBind> activeRoleBindings = [ 
             TestRepositoryUtils.GetNewRoleBind(SOpsInspector_DanielEn_X2024, PrivateBotChat_Operations),
             TestRepositoryUtils.GetNewRoleBind(SOpsCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
-            TestRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)
-        };
+            TestRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: activeRoleBindings);

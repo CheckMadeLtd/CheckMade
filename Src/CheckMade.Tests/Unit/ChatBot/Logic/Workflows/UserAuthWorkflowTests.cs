@@ -24,7 +24,7 @@ public class UserAuthWorkflowTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputHistory = new List<TlgInput> { inputGenerator.GetValidTlgInputTextMessage() };
+        List<TlgInput> inputHistory = [inputGenerator.GetValidTlgInputTextMessage()];
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
         var actualState = workflow.DetermineCurrentState(inputHistory);
@@ -176,7 +176,7 @@ public class UserAuthWorkflowTests
             DateTime.UtcNow,
             Option<DateTime>.None());
         
-        var actualTlgAgentRoleBindAdded = new List<TlgAgentRoleBind>(); 
+        List<TlgAgentRoleBind> actualTlgAgentRoleBindAdded = []; 
         mockRoleBindingsRepo
             .Setup(x => 
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
@@ -232,7 +232,7 @@ public class UserAuthWorkflowTests
                 Option<DateTime>.None()))
             .ToImmutableReadOnlyList();
 
-        var actualTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>();
+        List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
         mockTlgAgentRoleBindingsRepo
             .Setup(x =>
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
@@ -283,8 +283,8 @@ public class UserAuthWorkflowTests
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
 
-        var expectedTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>
-        {
+        List<TlgAgentRoleBind> expectedTlgAgentRoleBindingsAdded = [ 
+        
             // Adds missing bind for Operations Mode
             new(roleForAuth,
                 tlgAgent,
@@ -296,9 +296,9 @@ public class UserAuthWorkflowTests
                 tlgAgent with { Mode = Notifications },
                 DateTime.UtcNow,
                 Option<DateTime>.None()),
-        };
+        ];
 
-        var actualTlgAgentRoleBindingsAdded = new List<TlgAgentRoleBind>();
+        List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
         mockTlgAgentRoleBindingsRepo
             .Setup(x =>
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))

@@ -23,12 +23,10 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<DomainTerm>
-        {
+        List<DomainTerm> domainTermSelection = [ 
             Dt(typeof(CleanlinessIssue)),
             Dt(typeof(TechnicalIssue)),
-            Dt(typeof(InventoryIssue))
-        };
+            Dt(typeof(InventoryIssue))];
 
         var outputWithDomainTerms = new OutputDto
         {
@@ -134,10 +132,8 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<DomainTerm>
-        {
-            Dt(Consumables.Item.PaperTowels)
-        };
+        List<DomainTerm> domainTermSelection = [
+            Dt(Consumables.Item.PaperTowels)];
         
         var promptSelection = new[] 
         {

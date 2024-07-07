@@ -35,11 +35,9 @@ public class InputProcessorTests
         
         var inputProcessor = _services.GetRequiredService<IInputProcessor>();
         
-        var expectedOutputs = new List<OutputDto>
-        {
+        List<OutputDto> expectedOutputs = [
             new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
-            new(){ Text = UserAuthWorkflow.EnterTokenPrompt.Text.GetValueOrThrow() }
-        };
+            new(){ Text = UserAuthWorkflow.EnterTokenPrompt.Text.GetValueOrThrow() }];
         
         var actualOutput = 
             await inputProcessor

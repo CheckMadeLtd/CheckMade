@@ -13,7 +13,7 @@ public class LogicUtilsTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsAllInputs_WhenNoExpiredRoleBinds()
+    public async Task GetAllCurrentInteractiveAsync_ReturnsAllInputs_WhenNoExpiredRoleBinds()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -43,7 +43,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsInputsAfterCutoffDate_WhenExpiredRoleBindExists()
+    public async Task GetAllCurrentInteractiveAsync_ReturnsInputsAfterCutoffDate_WhenExpiredRoleBindExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -88,7 +88,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsInputsAfterLatestExpiredRoleBind_WhenMultipleExpiredExist()
+    public async Task GetAllCurrentInteractiveAsync_ReturnsInputsAfterLatestExpiredRoleBind_WhenMultipleExpiredExist()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -147,7 +147,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_ReturnsEmptyCollection_WhenNoInputsAfterLatestExpiredRoleBind()
+    public async Task GetAllCurrentInteractiveAsync_ReturnsEmptyCollection_WhenNoInputsAfterLatestExpiredRoleBind()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -186,7 +186,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_HandlesNullDeactivationDate_InExpiredRoleBinds()
+    public async Task GetAllCurrentInteractiveAsync_HandlesNullDeactivationDate_InExpiredRoleBinds()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -224,7 +224,7 @@ public class LogicUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInputsAsync_FiltersInputsBySpecificTlgAgent()
+    public async Task GetAllCurrentInteractiveAsync_FiltersInputsBySpecificTlgAgent()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -261,7 +261,7 @@ public class LogicUtilsTests
     }
     
     [Fact]
-    public async Task GetAllCurrentInputsAsync_HandlesNoInputs()
+    public async Task GetAllCurrentInteractiveAsync_HandlesNoInputs()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var tlgAgent = PrivateBotChat_Operations;

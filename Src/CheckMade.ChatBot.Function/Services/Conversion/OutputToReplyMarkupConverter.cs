@@ -59,7 +59,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var promptsGlossary = new ControlPromptsGlossary();
         var domainGlossary = new DomainGlossary();
 
-        var allTextIdPairs = new List<(string text, string id)>();
+        List<(string text, string id)> allTextIdPairs = [];
 
         allTextIdPairs.AddRange(domainTermSelection.Match(
             terms =>

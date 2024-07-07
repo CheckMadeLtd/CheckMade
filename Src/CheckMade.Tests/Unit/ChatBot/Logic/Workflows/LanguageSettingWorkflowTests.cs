@@ -29,12 +29,10 @@ public class LanguageSettingWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var inputHistory = new List<TlgInput>
-        {
+        List<TlgInput> inputHistory = [
             inputGenerator.GetValidTlgInputTextMessage(),
             inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, botCommand)
-        };
+                tlgAgent.Mode, botCommand)];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -59,14 +57,12 @@ public class LanguageSettingWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var inputHistory = new List<TlgInput>
-        {
+        List<TlgInput> inputHistory = [ 
             inputGenerator.GetValidTlgInputTextMessage(),
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode, (int)OperationsBotCommands.Settings),
             inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                Dt(LanguageCode.de))
-        };
+                Dt(LanguageCode.de))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -91,14 +87,12 @@ public class LanguageSettingWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var inputHistory = new List<TlgInput>
-        {
+        List<TlgInput> inputHistory = [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode, (int)OperationsBotCommands.Settings),
             inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                 Dt(LanguageCode.de)),
-            inputGenerator.GetValidTlgInputTextMessage()
-        }; 
+            inputGenerator.GetValidTlgInputTextMessage()]; 
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(

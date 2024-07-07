@@ -31,7 +31,7 @@ internal class InputProcessor(
                 if (currentInput.InputType == TlgInputType.Location)
                     return [];
                 
-                var responseBuilder = new List<OutputDto>();
+                List<OutputDto> responseBuilder = [];
 
                 if (currentInput.InputType.Equals(TlgInputType.CommandMessage)
                     && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode))

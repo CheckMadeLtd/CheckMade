@@ -123,7 +123,7 @@ public class LogoutWorkflowTests
                 tarb.Role.Equals(boundRole))
             .ToImmutableReadOnlyList();
         
-        var actualTlgAgentRoleBindingsUpdated = new List<TlgAgentRoleBind>();
+        List<TlgAgentRoleBind> actualTlgAgentRoleBindingsUpdated = [];
         mockTlgAgentRoleBindingsForAllModes
             .Setup(x => x.UpdateStatusAsync(
                 It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>(), DbRecordStatus.Historic))
