@@ -157,7 +157,7 @@ internal static class TestData
         new("Camp2",
             new SanitaryCampDetails(Sphere2_Location));
     
-    internal static readonly SphereOfAction<TradeSiteCleaning> Sphere3_AtX2024 =
+    internal static readonly SphereOfAction<TradeSiteClean> Sphere3_AtX2024 =
         new("Zone1",
             new SiteCleaningZoneDetails(Option<Geo>.None()));
     

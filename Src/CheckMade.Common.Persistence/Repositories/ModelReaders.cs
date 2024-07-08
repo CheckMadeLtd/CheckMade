@@ -169,7 +169,7 @@ internal static class ModelReaders
             nameof(TradeSaniClean) => 
                 JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
-            nameof(TradeSiteCleaning) => 
+            nameof(TradeSiteClean) => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
@@ -182,8 +182,8 @@ internal static class ModelReaders
         {
             nameof(TradeSaniClean) => 
                 new SphereOfAction<TradeSaniClean>(sphereName, details),
-            nameof(TradeSiteCleaning) => 
-                new SphereOfAction<TradeSiteCleaning>(sphereName, details),
+            nameof(TradeSiteClean) => 
+                new SphereOfAction<TradeSiteClean>(sphereName, details),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };

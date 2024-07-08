@@ -39,7 +39,7 @@ public class DomainGlossary
         #region Trades
         
         AddTerm(typeof(TradeSaniClean), "DX3KFI", "🪠 Sanitary Operations");
-        AddTerm(typeof(TradeSiteCleaning), "DSIL7M", "🧹 Site Cleaning");
+        AddTerm(typeof(TradeSiteClean), "DSIL7M", "🧹 Site Cleaning");
         
         #endregion
         
