@@ -9,7 +9,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface ILogoutWorkflow : IWorkflow
 {
-    LogoutWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
+    LogoutWorkflow.States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory,
+        TlgInput? currentInput);
 }
 
 internal class LogoutWorkflow(
@@ -19,7 +21,7 @@ internal class LogoutWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(inputHistory) == States.LogoutConfirmed;
+        return DetermineCurrentState(inputHistory, inputHistory.LastOrDefault()) == States.LogoutConfirmed;
     }
 
     public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
@@ -30,7 +32,7 @@ internal class LogoutWorkflow(
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
 
-        return DetermineCurrentState(workflowInputHistory) switch
+        return DetermineCurrentState(workflowInputHistory, currentInput) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -65,17 +67,20 @@ internal class LogoutWorkflow(
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
+    public States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory,
+        TlgInput? currentInput)
     {
-        var lastInput = workflowInputHistory.Last();
-
-        if (lastInput.InputType.Equals(TlgInputType.CallbackQuery))
+        if (currentInput is null)
+            return States.Initial;
+        
+        if (currentInput.InputType.Equals(TlgInputType.CallbackQuery))
         {
-            return lastInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
+            return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
             {
                 (int)ControlPrompts.Yes => States.LogoutConfirmed,
                 (int)ControlPrompts.No => States.LogoutAborted,
-                _ => throw new ArgumentOutOfRangeException(nameof(lastInput), 
+                _ => throw new ArgumentOutOfRangeException(nameof(currentInput), 
                     "Unexpected value for ControlPromptEnumCode")
             };
         }

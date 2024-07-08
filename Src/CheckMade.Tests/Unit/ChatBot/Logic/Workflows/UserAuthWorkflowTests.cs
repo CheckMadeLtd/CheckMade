@@ -27,7 +27,8 @@ public class UserAuthWorkflowTests
         List<TlgInput> inputHistory = [inputGenerator.GetValidTlgInputTextMessage()];
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
         
-        var actualState = workflow.DetermineCurrentState(inputHistory);
+        var actualState = 
+            workflow.DetermineCurrentState(inputHistory, inputHistory.Last());
         
         Assert.Equal(
             ReceivedTokenSubmissionAttempt,
@@ -68,7 +69,8 @@ public class UserAuthWorkflowTests
         var tlgAgentInputHistory = 
             await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
         
-        var actualState = workflow.DetermineCurrentState(tlgAgentInputHistory);
+        var actualState = 
+            workflow.DetermineCurrentState(tlgAgentInputHistory, tlgAgentInputHistory.LastOrDefault());
         
         Assert.Equal(
             Initial, // Instead of 'ReceivedTokenSubmissionAttempt'

@@ -7,7 +7,8 @@ internal interface INewIssueWorkflow : IWorkflow
 {
     NewIssueWorkflow.States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
-        IReadOnlyCollection<TlgInput> recentLocationHistory);
+        IReadOnlyCollection<TlgInput> recentLocationHistory,
+        TlgInput? currentInput);
 }
 
 internal class NewIssueWorkflow : INewIssueWorkflow
@@ -26,7 +27,8 @@ internal class NewIssueWorkflow : INewIssueWorkflow
 
     public States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
-        IReadOnlyCollection<TlgInput> recentLocationHistory)
+        IReadOnlyCollection<TlgInput> recentLocationHistory,
+        TlgInput? currentInput)
     {
         // var lastInteractiveInput = workflowInteractiveHistory.Last();
 

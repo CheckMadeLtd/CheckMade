@@ -35,7 +35,8 @@ public class NewIssueWorkflowTests
         var actualState =
             workflow.DetermineCurrentState(
                 interactiveHistory, 
-                []);
+                [],
+                interactiveHistory.LastOrDefault());
         
         Assert.Equal(
             NewIssueWorkflow.States.Initial_SphereUnknown,
@@ -89,7 +90,8 @@ public class NewIssueWorkflowTests
         var actualState = 
             workflow.DetermineCurrentState(
                 interactiveHistory,
-                recentLocationHistory);
+                recentLocationHistory,
+                interactiveHistory.LastOrDefault());
 
         Assert.Equal(NewIssueWorkflow.States.Initial_SphereKnown, actualState);
     }

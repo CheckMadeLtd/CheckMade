@@ -9,7 +9,8 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
     LanguageSettingWorkflow.States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> workflowInputHistory);
+        IReadOnlyCollection<TlgInput> workflowInputHistory,
+        TlgInput? currentInput);
 }
 
 internal class LanguageSettingWorkflow(
@@ -20,7 +21,7 @@ internal class LanguageSettingWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        var currentState = DetermineCurrentState(inputHistory);
+        var currentState = DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
         
         return (currentState & States.ReceivedLanguageSetting) != 0 || 
                (currentState & States.Completed) != 0;
@@ -31,7 +32,7 @@ internal class LanguageSettingWorkflow(
         var workflowInputHistory = 
             await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
         
-        return DetermineCurrentState(workflowInputHistory) switch
+        return DetermineCurrentState(workflowInputHistory, currentInput) switch
         {
             States.Initial => new List<OutputDto>
             {
@@ -53,15 +54,18 @@ internal class LanguageSettingWorkflow(
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
+    public States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory,
+        TlgInput? currentInput)
     {
-        var lastInput = workflowInputHistory.Last();
-
+        if (currentInput is null)
+            return States.Initial;
+        
         var previousInputCompletedThisWorkflow = 
             workflowInputHistory.Count > 1 && 
-            AnyPreviousInputContainsCallbackQuery(workflowInputHistory.ToArray()[..^1]);
+            AnyPreviousInputContainsCallbackQuery(workflowInputHistory);
         
-        return lastInput.InputType switch
+        return currentInput.InputType switch
         {
             TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
             
