@@ -85,55 +85,55 @@ internal static class TestData
     // Default for testing
     internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
         new("RVB70T",
-            SanitaryOps_Admin, 
+            SaniClean_Admin, 
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SOpsInspector_DanielEn_X2024 = 
         new("R3UDXW",
-            SanitaryOps_Inspector,
+            SaniClean_Inspector,
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SOpsInspector_DanielEn_X2025 = 
         new("R9AAB5",
-            SanitaryOps_Inspector,
+            SaniClean_Inspector,
             new UserInfo(DanielEn),
             X2025Info);
     
     internal static readonly Role SOpsInspector_LukasDe_X2024 = 
         new("R7UIP8",
-            SanitaryOps_Inspector,
+            SaniClean_Inspector,
             new UserInfo(LukasDe),
             X2024Info);
 
     internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
-            SanitaryOps_CleanLead,
+            SaniClean_CleanLead,
             new UserInfo(DanielDe),
             X2024Info);
 
     internal static readonly Role SOpsObserver_DanielEn_X2024 = 
         new("RYEATF",
-            SanitaryOps_Observer,
+            SaniClean_Observer,
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SOpsInspector_DanielDe_X2024 = 
         new("RMAM8S",
-            SanitaryOps_Inspector,
+            SaniClean_Inspector,
             new UserInfo(DanielDe),
             X2024Info);
     
     internal static readonly Role SOpsEngineer_DanielEn_X2024 = 
         new("RP4XPK",
-            SanitaryOps_Engineer,
+            SaniClean_Engineer,
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SOpsCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
-            SanitaryOps_CleanLead,
+            SaniClean_CleanLead,
             new UserInfo(DanielEn), 
             X2024Info);
     

@@ -18,7 +18,7 @@ public class DomainGlossary
     
     public DomainGlossary()
     {
-        #region SubDomainSanitaryOps
+        #region SubDomainSaniClean
 
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", "🪣 Cleanliness");
         AddTerm(typeof(TechnicalIssue), "DM46NG", "🔧 Technical");
