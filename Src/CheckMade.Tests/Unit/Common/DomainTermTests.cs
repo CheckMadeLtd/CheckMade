@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Facilities;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Facilities;
 
 namespace CheckMade.Tests.Unit.Common;
 

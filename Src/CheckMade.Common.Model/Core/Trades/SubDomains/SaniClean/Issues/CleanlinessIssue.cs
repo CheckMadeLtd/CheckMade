@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.Trades.Types;
 
-namespace CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
+namespace CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Issues;
 
 public record CleanlinessIssue(
         DateTime CreationDate,

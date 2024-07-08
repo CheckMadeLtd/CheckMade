@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Facilities;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
