@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Interfaces.Persistence.ChatBot;
+﻿using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -18,6 +19,7 @@ internal class InputProcessor(
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
         ILogicUtils logicUtils,
+        IDomainGlossary glossary,
         ILogger<InputProcessor> logger)
     : IInputProcessor
 {
@@ -26,10 +28,12 @@ internal class InputProcessor(
         return await input.Match(
             async currentInput =>
             {
-                await inputsRepo.AddAsync(currentInput);
-
                 if (currentInput.InputType == TlgInputType.Location)
+                {
+                    await inputsRepo.AddAsync(currentInput);
+                    
                     return [];
+                }
                 
                 List<OutputDto> responseBuilder = [];
 
@@ -54,6 +58,8 @@ internal class InputProcessor(
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
+                    await inputsRepo.AddAsync(currentInput);
+                    
                     return 
                         [new OutputDto 
                         {
@@ -75,6 +81,15 @@ internal class InputProcessor(
                             }])
                         ));
 
+                await inputsRepo.AddAsync(currentInput with
+                {
+                    ResultantWorkflow = new ResultantWorkflowInfo(
+                        glossary.IdAndUiByTerm[Dt(activeWorkflow.GetType())].callbackId.Id,
+                        // ToDo: probably save the State that was determined in each Workflow class in a private field and expose via GetProperty? OO now!
+                        // So we avoid recalculating it, in case e.g. DetermineCurrentState() will require DB access in the future in some Workflows.
+                        // (at this point it already was calculated from the GetResponseAsync call so it feels natural to save it in the instance of the Workflow)
+                });
+                
                 return response.Match(
                     outputs => 
                     {
