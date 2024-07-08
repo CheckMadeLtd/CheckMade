@@ -6,10 +6,10 @@ namespace CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Issues;
 public record InventoryIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        Option<ITradeFacility<TradeSanitaryOps>> Facility,
+        Option<ITradeFacility<TradeSaniClean>> Facility,
         Geo Location,
         IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 
-    : ITradeIssue<TradeSanitaryOps>;
+    : ITradeIssue<TradeSaniClean>;

@@ -149,11 +149,11 @@ internal static class TestData
     internal static readonly Geo Sphere2_Location =
         new Geo(51.60893, 6.13328, Option<float>.None());
 
-    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere1_AtX2024 =
+    internal static readonly SphereOfAction<TradeSaniClean> Sphere1_AtX2024 =
         new("Camp1",
             new SanitaryCampDetails(Sphere1_Location));
     
-    internal static readonly SphereOfAction<TradeSanitaryOps> Sphere2_AtX2024 =
+    internal static readonly SphereOfAction<TradeSaniClean> Sphere2_AtX2024 =
         new("Camp2",
             new SanitaryCampDetails(Sphere2_Location));
     
