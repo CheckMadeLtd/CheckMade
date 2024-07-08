@@ -79,6 +79,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.TextMessage,
             originatorRole, 
             liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 
@@ -96,6 +97,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.AttachmentMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 1,
@@ -115,6 +117,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.Location,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1,
@@ -131,6 +134,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CommandMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 messageId,
@@ -147,6 +151,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 messageId,
@@ -163,6 +168,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,

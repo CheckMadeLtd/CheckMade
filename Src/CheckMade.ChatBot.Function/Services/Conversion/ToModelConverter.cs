@@ -286,6 +286,7 @@ internal class ToModelConverter(
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
                 : Option<IRoleInfo>.None(),
             liveEventContext,
+            Option<ResultantWorkflowInfo>.None(), 
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

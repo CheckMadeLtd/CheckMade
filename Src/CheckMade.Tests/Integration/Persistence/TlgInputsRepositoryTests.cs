@@ -42,6 +42,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                     input.InputType, 
                     input.OriginatorRole, 
                     input.LiveEventContext, 
+                    input.ResultantWorkflow,
                     input.Details)];
         
             await inputRepo.AddAsync(input);

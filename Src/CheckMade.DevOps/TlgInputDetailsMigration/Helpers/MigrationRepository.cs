@@ -50,6 +50,7 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             new TlgInputDetails(DateTime.MinValue,
                 0,
                 Option<string>.None(),

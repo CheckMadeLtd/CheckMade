@@ -7,5 +7,6 @@ public record TlgInput(
      TlgInputType InputType,
      Option<IRoleInfo> OriginatorRole,
      Option<ILiveEventInfo> LiveEventContext,
+     Option<ResultantWorkflowInfo> ResultantWorkflow,
      TlgInputDetails Details);
      

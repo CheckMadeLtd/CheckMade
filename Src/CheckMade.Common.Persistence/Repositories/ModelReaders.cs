@@ -241,6 +241,7 @@ internal static class ModelReaders
             (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
         var tlgInputType = EnsureEnumValidityOrThrow(
             (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+        var resultantWorkflow = GetWorkflowInfo();
         var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
         return new TlgInput(
@@ -248,8 +249,19 @@ internal static class ModelReaders
             tlgInputType,
             roleInfo,
             liveEventInfo,
+            resultantWorkflow,
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
+
+        Option<ResultantWorkflowInfo> GetWorkflowInfo()
+        {
+            if (reader.IsDBNull(reader.GetOrdinal("input_workflow")))
+                return Option<ResultantWorkflowInfo>.None();
+            
+            return new ResultantWorkflowInfo(
+                reader.GetString(reader.GetOrdinal("input_workflow")),
+                reader.GetInt64(reader.GetOrdinal("input_wf_state")));
+        }
     }
 
     private static TlgAgent ConstituteTlgAgent(DbDataReader reader)

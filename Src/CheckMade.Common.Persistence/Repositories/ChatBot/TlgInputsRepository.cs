@@ -25,15 +25,19 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
                                              le.end_date AS live_event_end_date, 
                                              le.status AS live_event_status, 
                                                  
+                                             dws.resultant_workflow AS input_workflow,
+                                             dws.in_state AS input_wf_state,
+                                             
                                              inp.user_id AS input_user_id, 
                                              inp.chat_id AS input_chat_id, 
                                              inp.interaction_mode AS input_mode, 
-                                             inp.input_type AS input_type, 
+                                             inp.input_type AS input_type,
                                              inp.details AS input_details 
                                                  
                                              FROM tlg_inputs inp 
                                              LEFT JOIN roles r on inp.role_id = r.id 
                                              LEFT JOIN live_events le on inp.live_event_id = le.id
+                                             LEFT JOIN derived_workflow_states dws on inp.derived_workflow_states_id = dws.id
                                              """;
 
     private const string OrderByClause = "ORDER BY inp.id";

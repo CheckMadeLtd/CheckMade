@@ -46,6 +46,7 @@ public class ToModelConverterTests
             TlgInputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -92,6 +93,7 @@ public class ToModelConverterTests
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -137,6 +139,7 @@ public class ToModelConverterTests
             TlgInputType.AttachmentMessage,
             SOpsAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
@@ -178,6 +181,7 @@ public class ToModelConverterTests
                 TlgInputType.Location,
                 SOpsAdmin_DanielEn_X2024, 
                 X2024, 
+                Option<ResultantWorkflowInfo>.None(), 
                 TlgInputGenerator.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
@@ -214,6 +218,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             SOpsAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -250,6 +255,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -286,6 +292,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -321,6 +328,7 @@ public class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SOpsAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -353,6 +361,7 @@ public class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SOpsAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
