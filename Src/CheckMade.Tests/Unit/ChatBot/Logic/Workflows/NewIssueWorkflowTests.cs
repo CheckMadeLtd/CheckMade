@@ -38,7 +38,7 @@ public class NewIssueWorkflowTests
                 []);
         
         Assert.Equal(
-            NewIssueWorkflow.States.InitialSphereUnknown,
+            NewIssueWorkflow.States.Initial_SphereUnknown,
             actualState);
     }
 
@@ -91,6 +91,6 @@ public class NewIssueWorkflowTests
                 interactiveHistory,
                 recentLocationHistory);
 
-        Assert.Equal(NewIssueWorkflow.States.InitialSphereKnown, actualState);
+        Assert.Equal(NewIssueWorkflow.States.Initial_SphereKnown, actualState);
     }
 }

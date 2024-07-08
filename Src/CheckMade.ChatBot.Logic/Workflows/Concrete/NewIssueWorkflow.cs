@@ -30,15 +30,19 @@ internal class NewIssueWorkflow : INewIssueWorkflow
     {
         var lastInteractiveInput = workflowInteractiveHistory.Last();
 
-        if (IsBeginningOfWorkflow())
-        {
-            return CanDetermineSphereOfActionLocation() switch
-            {
-                true => States.InitialSphereKnown,
-                _ => States.InitialSphereUnknown
-            };
-        }
+        // if (IsBeginningOfWorkflow())
+        // {
+        //     if (IsTradeKnown())
+        //     {
+        //         return CanDetermineSphereOfActionLocation() switch
+        //         {
+        //             true => States.Initial_SphereKnown,
+        //             _ => States.Initial_SphereUnknown
+        //         };
+        //     }
+        // }
 
+        
         throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
         
         bool IsBeginningOfWorkflow() => lastInteractiveInput.InputType == TlgInputType.CommandMessage;
@@ -57,18 +61,20 @@ internal class NewIssueWorkflow : INewIssueWorkflow
     [Flags]
     internal enum States
     {
-        InitialSphereKnown = 1,
-        InitialSphereUnknown = 1<<1,
+        Initial_TradeUnknown = 1,
+        Initial_SphereKnown = 1<<1,
+        Initial_SphereUnknown = 1<<2,
         
-        SphereConfirmed = 1<<2,
+        SphereConfirmed = 1<<5,
         
-        IssueTypeInventorySelected = 1<<3,
-        IssueTypeCleanlinessSelected = 1<<4,
+        IssueType_SanitaryCleaning_Inventory_Selected = 1<<8,
+        IssueType_SanitaryCleaning_WithFacilities_Selected = 1<<9,
+        IssueType_WithoutFacilities_Selected = 1<<10,
         
-        ReadyForEvidenceEntry = 1<<5,
+        ReadyForEvidenceEntry = 1<<13,
         
-        AwaitingReviewResults = 1<<6,
-        EditingDetails = 1<<7,
-        Completed = 1<<8
+        AwaitingReviewResults = 1<<16,
+        EditingDetails = 1<<17,
+        Completed = 1<<18
     }    
 }
