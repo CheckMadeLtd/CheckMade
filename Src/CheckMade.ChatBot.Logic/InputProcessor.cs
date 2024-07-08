@@ -54,31 +54,34 @@ internal class InputProcessor(
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
-                    return [new OutputDto 
+                    return 
+                        [new OutputDto 
                         {
                             Text = Ui("The previous workflow was completed, " +
                                       "so your last message/action will be ignored.") 
-                        }
-                    ];
+                        }];
                 }
 
                 var activeWorkflow = workflowIdentifier.Identify(activeWorkflowInputHistory);
                 
                 var response = await activeWorkflow.Match(
-                    wf => wf.GetResponseAsync(currentInput),
-                    () => Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
-                    [new OutputDto
-                        {
-                            Text = Ui("My placeholder answer for lack of a workflow handling your input."),
-                        }
-                    ])));
+                    wf => 
+                        wf.GetResponseAsync(currentInput),
+                    () => 
+                        Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
+                            [new OutputDto 
+                            { 
+                                Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
+                            }])
+                        ));
 
                 return response.Match(
-                    outputs =>
+                    outputs => 
                     {
                         responseBuilder.AddRange(outputs);
                         
-                        return responseBuilder
+                        return 
+                            responseBuilder
                             .ToImmutableReadOnlyCollection();
                     },
                     error =>
@@ -92,13 +95,15 @@ internal class InputProcessor(
                                            For more details of input, check database!
                                            """);
                         
-                        return [new OutputDto { Text = error }];
+                        return 
+                            [new OutputDto { Text = error }];
                     }
                 );
             },
             // This error was already logged at its source, in ToModelConverter
-            error => Task.FromResult<IReadOnlyCollection<OutputDto>>(
-                [new OutputDto { Text = error }]));
+            error => 
+                Task.FromResult<IReadOnlyCollection<OutputDto>>(
+                    [new OutputDto { Text = error }]));
     }
 
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
