@@ -28,7 +28,7 @@ internal class NewIssueWorkflow : INewIssueWorkflow
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
         IReadOnlyCollection<TlgInput> recentLocationHistory)
     {
-        var lastInteractiveInput = workflowInteractiveHistory.Last();
+        // var lastInteractiveInput = workflowInteractiveHistory.Last();
 
         // if (IsBeginningOfWorkflow())
         // {
@@ -45,17 +45,17 @@ internal class NewIssueWorkflow : INewIssueWorkflow
         
         throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
         
-        bool IsBeginningOfWorkflow() => lastInteractiveInput.InputType == TlgInputType.CommandMessage;
-
-        bool CanDetermineSphereOfActionLocation()
-        {
-            if (recentLocationHistory.Count == 0)
-                return false;
-             
-            // ToDo: then compare the last (!!!) location update to the saved locations of spheres. 
-            // if it's not further than the threshold defined for the corresponding TradeType then return true! 
-            return true;
-        }
+        // bool IsBeginningOfWorkflow() => lastInteractiveInput.InputType == TlgInputType.CommandMessage;
+        //
+        // bool CanDetermineSphereOfActionLocation()
+        // {
+        //     if (recentLocationHistory.Count == 0)
+        //         return false;
+        //      
+        //     // ToDo: then compare the last (!!!) location update to the saved locations of spheres. 
+        //     // if it's not further than the threshold defined for the corresponding TradeType then return true! 
+        //     return true;
+        // }
     }
 
     [Flags]
