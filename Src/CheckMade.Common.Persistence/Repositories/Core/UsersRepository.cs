@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
@@ -5,8 +6,8 @@ using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class UsersRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), IUsersRepository
+public class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), IUsersRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     

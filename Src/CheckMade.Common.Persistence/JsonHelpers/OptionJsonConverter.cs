@@ -1,12 +1,12 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-internal class OptionJsonConverter<T>(DomainGlossary glossary) : JsonConverter<Option<T>>
+internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
 {
     public override void WriteJson(JsonWriter writer, Option<T>? value, JsonSerializer serializer)
     {

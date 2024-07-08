@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -9,8 +10,8 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputsRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgInputsRepository
+public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), ITlgInputsRepository
 {
     private const string GetAllBaseQuery =   """
                                              SELECT
@@ -90,7 +91,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper)
             
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJson(tlgInput.Details)
+                Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
             });
 
             return command;

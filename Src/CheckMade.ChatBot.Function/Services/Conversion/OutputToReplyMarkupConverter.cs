@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;

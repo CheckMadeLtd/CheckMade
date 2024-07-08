@@ -1,11 +1,12 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class LiveEventsRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ILiveEventsRepository
+public class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
@@ -58,7 +59,7 @@ public class LiveEventsRepository(IDbExecutionHelper dbHelper)
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = ModelReaders.GetLiveEventReader();
+                        finalizeModel) = ModelReaders.GetLiveEventReader(Glossary);
 
                     var liveEvents =
                         await ExecuteReaderOneToManyAsync(

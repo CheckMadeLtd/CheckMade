@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.ChatBot.Logic;
@@ -7,6 +8,8 @@ public static class ServiceRegistration
 {
     public static void Register_ChatBotLogic_Services(this IServiceCollection services)
     {
+        services.AddScoped<IDomainGlossary, DomainGlossary>();
+        
         services.AddScoped<IInputProcessor, InputProcessor>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<ILogicUtils, LogicUtils>();

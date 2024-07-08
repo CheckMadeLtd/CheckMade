@@ -3,7 +3,6 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 

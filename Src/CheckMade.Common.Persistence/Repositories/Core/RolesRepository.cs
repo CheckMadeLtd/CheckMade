@@ -1,11 +1,12 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class RolesRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), IRolesRepository
+public class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), IRolesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     

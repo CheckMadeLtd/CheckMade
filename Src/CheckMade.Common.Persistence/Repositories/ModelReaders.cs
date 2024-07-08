@@ -1,4 +1,5 @@
 using System.Data.Common;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -18,7 +19,8 @@ namespace CheckMade.Common.Persistence.Repositories;
 
 internal static class ModelReaders
 {
-    internal static readonly Func<DbDataReader, Role> ReadRole = reader =>
+    internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
+        (reader, _) =>
     {
         var userInfo = ConstituteUserInfo(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
@@ -26,23 +28,26 @@ internal static class ModelReaders
         return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow());
     };
 
-    internal static readonly Func<DbDataReader, TlgInput> ReadTlgInput = reader =>
+    internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
+        (reader, glossary) =>
     {
         var originatorRoleInfo = ConstituteRoleInfo(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
         
-        return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo);
+        return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
     };
 
-    internal static readonly Func<DbDataReader, TlgAgentRoleBind> ReadTlgAgentRoleBind = reader =>
+    internal static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> ReadTlgAgentRoleBind = 
+        (reader, glossary) =>
     {
-        var role = ReadRole(reader);
+        var role = ReadRole(reader, glossary);
         var tlgAgent = ConstituteTlgAgent(reader);
 
         return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
     };
 
-    internal static readonly Func<DbDataReader, Vendor> ReadVendor = reader => 
+    internal static readonly Func<DbDataReader, IDomainGlossary, Vendor> ReadVendor = 
+        (reader, _) => 
         ConstituteVendor(reader).GetValueOrThrow();
 
     internal static (
@@ -76,7 +81,7 @@ internal static class ModelReaders
         Action<LiveEvent, DbDataReader> accumulateData,
         Func<LiveEvent, LiveEvent> finalizeModel) 
         
-        GetLiveEventReader()
+        GetLiveEventReader(IDomainGlossary glossary)
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
@@ -92,7 +97,7 @@ internal static class ModelReaders
                 if (roleInfo.IsSome)
                     ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
-                var sphereOfAction = ConstituteSphereOfAction(reader);
+                var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
                 if (sphereOfAction.IsSome)
                     ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
             },
@@ -150,7 +155,7 @@ internal static class ModelReaders
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    private static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader)
+    private static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
@@ -167,10 +172,10 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade.Name switch
         {
             nameof(TradeSaniClean) => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson) 
+                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
             nameof(TradeSiteClean) => 
-                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson) 
+                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
@@ -192,9 +197,8 @@ internal static class ModelReaders
 
         Type GetTradeType()
         {
-            var domainGlossary = new DomainGlossary();
             var tradeId = new CallbackId(reader.GetString(reader.GetOrdinal("sphere_trade")));
-            var tradeType = domainGlossary.TermById[tradeId].TypeValue;
+            var tradeType = glossary.TermById[tradeId].TypeValue;
 
             if (tradeType is null || 
                 !tradeType.IsAssignableTo(typeof(ITrade)))
@@ -226,7 +230,10 @@ internal static class ModelReaders
     }
 
     private static TlgInput ConstituteTlgInput(
-        DbDataReader reader, Option<IRoleInfo> roleInfo, Option<ILiveEventInfo> liveEventInfo)
+        DbDataReader reader, 
+        Option<IRoleInfo> roleInfo,
+        Option<ILiveEventInfo> liveEventInfo,
+        IDomainGlossary glossary)
     {
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
@@ -241,7 +248,7 @@ internal static class ModelReaders
             tlgInputType,
             roleInfo,
             liveEventInfo,
-            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails)
+            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
     }
 

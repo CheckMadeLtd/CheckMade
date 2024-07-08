@@ -1,10 +1,10 @@
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-internal class OptionContractResolver : DefaultContractResolver
+internal class OptionContractResolver(IDomainGlossary glossary) : DefaultContractResolver
 {
     protected override JsonContract CreateContract(Type objectType)
     {
@@ -17,7 +17,7 @@ internal class OptionContractResolver : DefaultContractResolver
             // Becomes e.g. typeof(OptionJsonConverter<string>) when underlyingType = 'string' 
             var converterType = typeof(OptionJsonConverter<>).MakeGenericType(underlyingType);
             
-            contract.Converter = (JsonConverter)Activator.CreateInstance(converterType, new DomainGlossary())!;
+            contract.Converter = (JsonConverter)Activator.CreateInstance(converterType, glossary)!;
 
             return contract;
         }
