@@ -49,13 +49,14 @@ public class DomainGlossary : IDomainGlossary
         #region Workflows
         
         AddTerm(typeof(UserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
+        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
+        AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
+        AddTerm(typeof(NewIssueWorkflow), "D6SORL", UiNoTranslate(nameof(NewIssueWorkflow)));
         
-        // DI3H3
-        //     PAWEY
-        // 6SORL
-        //     IV8LK
+        // Spare codes
+        // IV8LK
         // BN6SZ
-        //     WWD3W
+        // WWD3W
         // FIY82
             
         #endregion
