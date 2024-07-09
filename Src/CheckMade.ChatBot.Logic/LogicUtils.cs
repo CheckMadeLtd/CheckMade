@@ -11,7 +11,7 @@ internal interface ILogicUtils
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgent, TlgInput? appendCurrentInputToHistory = null);
+        TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
     
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgInput currentInput);
     
@@ -27,34 +27,36 @@ internal class LogicUtils(
     : ILogicUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgent,
-        // appendCurrentInputToHistory - used in case this method is called BEFORE currentInput was added to DB!
-        TlgInput? appendCurrentInputToHistory = null)
+        TlgAgent tlgAgentForDbQuery,
+        TlgInput newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         
         var lastExpiredRoleBind = (await tlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(tarb =>
-                tarb.TlgAgent.Equals(tlgAgent) &&
+                tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
                 tarb.DeactivationDate.IsSome)
             .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
+
+        var allInteractiveFromDb =
+            await inputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
+
+        var allInteractiveIncludingNewInput =
+            allInteractiveFromDb.Concat(new[] { newInputToAppend });
         
-        var allCurrentInteractiveFromDb = (await inputsRepo.GetAllInteractiveAsync(tlgAgent))
+        var allCurrentInteractive = 
+            allInteractiveIncludingNewInput
             .Where(i =>
                 i.Details.TlgDate.ToUniversalTime() >
                 cutOffDate.ToUniversalTime())
             .ToList();
 
-        if (appendCurrentInputToHistory is not null)
-            allCurrentInteractiveFromDb
-                .Add(appendCurrentInputToHistory);
-
         return 
-            allCurrentInteractiveFromDb
+            allCurrentInteractive
             .ToImmutableReadOnlyCollection();
     }
 

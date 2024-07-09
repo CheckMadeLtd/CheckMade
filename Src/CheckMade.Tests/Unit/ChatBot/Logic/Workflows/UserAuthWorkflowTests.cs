@@ -1,4 +1,3 @@
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -32,48 +31,6 @@ public class UserAuthWorkflowTests
         
         Assert.Equal(
             ReceivedTokenSubmissionAttempt,
-            actualState);
-    }
-
-    [Fact]
-    public async Task DetermineCurrentState_OnlyConsidersInputs_SinceDeactivationOfLastRoleBind()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = UserId02_ChatId03_Operations;
-        
-        var historicRoleBind = new TlgAgentRoleBind(
-            SOpsAdmin_DanielEn_X2024,
-            tlgAgent,
-            new DateTime(2001, 09, 27),
-            new DateTime(2001, 09, 30),
-            DbRecordStatus.Historic);
-
-        var tlgPastInputToBeIgnored = 
-            inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId,
-                tlgAgent.ChatId,
-                historicRoleBind.Role.Token,
-                historicRoleBind
-                    .DeactivationDate.GetValueOrThrow()
-                    .AddDays(-1));
-
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new []{ historicRoleBind },
-            inputs: new []{ tlgPastInputToBeIgnored });
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
-        
-        var tlgAgentInputHistory = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent);
-        
-        var actualState = 
-            workflow.DetermineCurrentState(tlgAgentInputHistory);
-        
-        Assert.Equal(
-            Initial, // Instead of 'ReceivedTokenSubmissionAttempt'
             actualState);
     }
 

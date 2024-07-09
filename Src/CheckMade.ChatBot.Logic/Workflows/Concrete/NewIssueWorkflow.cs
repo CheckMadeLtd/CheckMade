@@ -3,8 +3,6 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
-using static NewIssueWorkflow.States;
-
 internal interface INewIssueWorkflow : IWorkflow
 {
     NewIssueWorkflow.States DetermineCurrentState(
