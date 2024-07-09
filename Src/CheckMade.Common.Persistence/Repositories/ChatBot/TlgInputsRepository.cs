@@ -37,7 +37,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
                                              FROM tlg_inputs inp 
                                              LEFT JOIN roles r on inp.role_id = r.id 
                                              LEFT JOIN live_events le on inp.live_event_id = le.id
-                                             LEFT JOIN derived_workflow_states dws on inp.derived_workflow_states_id = dws.id
+                                             LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
                                              """;
 
     private const string OrderByClause = "ORDER BY inp.id";
