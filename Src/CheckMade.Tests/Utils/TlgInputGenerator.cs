@@ -16,7 +16,8 @@ internal interface ITlgInputGenerator
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = Default,
-        Role? roleSpecified = null);
+        Role? roleSpecified = null,
+        ResultantWorkflowInfo? workflowInfo = null);
     
     TlgInput GetValidTlgInputTextMessageWithAttachment(
         TlgAttachmentType type,
@@ -58,7 +59,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
     public TlgInput GetValidTlgInputTextMessage(
         long userId, long chatId, string text, DateTime? dateTime,
         TestOriginatorRoleSetting roleSetting,
-        Role? roleSpecified)
+        Role? roleSpecified,
+        ResultantWorkflowInfo? workflowInfo)
     {
         Option<IRoleInfo> originatorRole;
         Option<ILiveEventInfo> liveEvent;
@@ -79,7 +81,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.TextMessage,
             originatorRole, 
             liveEvent, 
-            Option<ResultantWorkflowInfo>.None(), 
+            workflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 

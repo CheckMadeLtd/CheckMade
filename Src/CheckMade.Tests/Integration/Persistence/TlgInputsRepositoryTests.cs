@@ -1,3 +1,5 @@
+using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -24,6 +26,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
         
         var tlgInputs = new[]
         {
@@ -32,7 +35,10 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: Default),
             inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: Default)
+                roleSetting: Default,
+                workflowInfo: new ResultantWorkflowInfo(
+                    glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
+                    UserAuthWorkflow.States.Initial))
         };
         
         foreach (var input in tlgInputs)
