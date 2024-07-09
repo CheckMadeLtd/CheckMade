@@ -133,7 +133,7 @@ internal class InputProcessor(
             return false;
         
         var previousWorkflowInputHistory = 
-            (await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent))
+            (await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))

@@ -14,8 +14,7 @@ using static UserAuthWorkflow.States;
 internal interface IUserAuthWorkflow : IWorkflow
 {
     UserAuthWorkflow.States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> tlgAgentInputHistory,
-        TlgInput? currentInput);
+        IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
 }
 
 internal class UserAuthWorkflow(
@@ -32,9 +31,7 @@ internal class UserAuthWorkflow(
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
         return 
-            DetermineCurrentState(
-                inputHistory,
-                inputHistory.LastOrDefault()) 
+            DetermineCurrentState(inputHistory) 
             == ReceivedTokenSubmissionAttempt;
     }
 
@@ -44,9 +41,9 @@ internal class UserAuthWorkflow(
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
         var tlgAgentInputHistory = 
-            await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
         
-        return DetermineCurrentState(tlgAgentInputHistory, currentInput) switch
+        return DetermineCurrentState(tlgAgentInputHistory) switch
         {
             Initial => 
                 (new List<OutputDto> { EnterTokenPrompt },
@@ -78,8 +75,7 @@ internal class UserAuthWorkflow(
     }
     
     public States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> tlgAgentInputHistory,
-        TlgInput? currentInput)
+        IReadOnlyCollection<TlgInput> tlgAgentInputHistory)
     {
         var lastTextSubmitted = tlgAgentInputHistory
             .LastOrDefault(i => i.InputType.Equals(TlgInputType.TextMessage));
