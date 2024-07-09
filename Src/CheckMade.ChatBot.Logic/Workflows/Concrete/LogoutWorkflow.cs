@@ -26,7 +26,7 @@ internal class LogoutWorkflow(
         return DetermineCurrentState(inputHistory, inputHistory.LastOrDefault()) == LogoutConfirmed;
     }
 
-    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
@@ -50,11 +50,11 @@ internal class LogoutWorkflow(
                         
                         ControlPromptsSelection = ControlPrompts.YesNo 
                     }
-            }, (long)Initial),
+            }, Initial),
             
             LogoutConfirmed => 
                 (await PerformLogoutAsync(currentRoleBind),
-                    (long)LogoutConfirmed),
+                    LogoutConfirmed),
             
             LogoutAborted => 
                 (new List<OutputDto> { new() 
@@ -63,9 +63,9 @@ internal class LogoutWorkflow(
                         Ui("Logout aborted.\n"),
                         IInputProcessor.SeeValidBotCommandsInstruction) 
                     }
-                }, (long)LogoutAborted),
+                }, LogoutAborted),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<long>)>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
         };
     }

@@ -20,7 +20,7 @@ internal class NewIssueWorkflow : INewIssueWorkflow
         throw new NotImplementedException();
     }
 
-    public Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+    public Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
         GetResponseAsync(TlgInput currentInput)
     {
         // get workflowinputHistory and locationHistory separately

@@ -38,7 +38,7 @@ internal class UserAuthWorkflow(
             == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var inputText = currentInput.Details.Text.GetValueOrDefault();
@@ -50,7 +50,7 @@ internal class UserAuthWorkflow(
         {
             Initial => 
                 (new List<OutputDto> { EnterTokenPrompt },
-                    (long)States.Initial),
+                    Initial),
             
             ReceivedTokenSubmissionAttempt => 
                 (IsValidToken(inputText) switch
@@ -70,9 +70,9 @@ internal class UserAuthWorkflow(
                             Text = Ui("Bad token format! Try again...")
                         },
                         EnterTokenPrompt]
-                }, (long)ReceivedTokenSubmissionAttempt),
+                }, ReceivedTokenSubmissionAttempt),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<long>)>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }

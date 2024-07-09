@@ -30,7 +30,7 @@ internal class LanguageSettingWorkflow(
     }
 
     public async 
-        Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+        Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
@@ -46,20 +46,20 @@ internal class LanguageSettingWorkflow(
                         Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
                             .Select(lc => Dt(lc))) 
                     } 
-                }, (long)Initial),
+                }, Initial),
             
             ReceivedLanguageSetting => 
                 (await SetNewLanguageAsync(currentInput), 
-                    (long)ReceivedLanguageSetting),
+                    ReceivedLanguageSetting),
             
             Completed => 
                 (new List<OutputDto>{ new()
                     {
                         Text = ILogicUtils.WorkflowWasCompleted
                     }},
-                    (long)Completed),
+                    Completed),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<long>)>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
     }

@@ -95,14 +95,14 @@ internal class InputProcessor(
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
     private ResultantWorkflowInfo? GetResultantWorkflowInfo(
-        Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)> response,
+        Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)> response,
         Option<IWorkflow> activeWorkflow)
     {
         ResultantWorkflowInfo? workflowInfo = null;
                 
         var newState = response.Match(
             r => r.NewState,
-            _ => Option<long>.None());
+            _ => Option<Enum>.None());
                 
         if (activeWorkflow.IsSome && newState.IsSome)
         {
@@ -157,7 +157,7 @@ internal class InputProcessor(
             },
             () => false);
 
-    private static async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>>
+    private static async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>>
         GetResponseFromActiveWorkflowAsync(
             Option<IWorkflow> activeWorkflow,
             TlgInput currentInput)
@@ -166,16 +166,16 @@ internal class InputProcessor(
             wf => 
                 wf.GetResponseAsync(currentInput),
             () => 
-                Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>
+                Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>
                     .FromSuccess(
                         ([new OutputDto 
                         { 
                             Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
-                        }], Option<long>.None()))));
+                        }], Option<Enum>.None()))));
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
-        Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)> responseResult,
+        Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)> responseResult,
         List<OutputDto> outputBuilder,
         Option<IWorkflow> activeWorkflow,
         TlgInput currentInput)
