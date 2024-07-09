@@ -11,8 +11,7 @@ using static LanguageSettingWorkflow.States;
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
     LanguageSettingWorkflow.States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> workflowInputHistory,
-        TlgInput? currentInput);
+        IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LanguageSettingWorkflow(
@@ -23,7 +22,7 @@ internal class LanguageSettingWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        var currentState = DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
+        var currentState = DetermineCurrentState(inputHistory);
         
         return (currentState & ReceivedLanguageSetting) != 0 || 
                (currentState & Completed) != 0;
@@ -36,7 +35,7 @@ internal class LanguageSettingWorkflow(
         var workflowInputHistory = 
             await logicUtils.GetInteractiveSinceLastBotCommand(currentInput);
         
-        return DetermineCurrentState(workflowInputHistory, currentInput) switch
+        return DetermineCurrentState(workflowInputHistory) switch
         {
             Initial => 
                 (new List<OutputDto> { new() 
@@ -65,17 +64,15 @@ internal class LanguageSettingWorkflow(
     }
 
     public States DetermineCurrentState(
-        IReadOnlyCollection<TlgInput> workflowInputHistory,
-        TlgInput? currentInput)
+        IReadOnlyCollection<TlgInput> workflowInputHistory)
     {
-        if (currentInput is null)
-            return Initial;
+        var lastInput = workflowInputHistory.Last();
         
         var previousInputCompletedThisWorkflow = 
             workflowInputHistory.Count > 1 && 
-            AnyPreviousInputContainsCallbackQuery(workflowInputHistory);
+            AnyPreviousInputContainsCallbackQuery(workflowInputHistory.ToArray()[..^1]);
         
-        return currentInput.InputType switch
+        return lastInput.InputType switch
         {
             TlgInputType.CallbackQuery => ReceivedLanguageSetting,
             

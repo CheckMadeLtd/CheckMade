@@ -148,8 +148,7 @@ public class InputProcessorTests
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
-                    (int)OperationsBotCommands.Settings),
-                interruptingBotCommandInput
+                    (int)OperationsBotCommands.Settings)
             });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         

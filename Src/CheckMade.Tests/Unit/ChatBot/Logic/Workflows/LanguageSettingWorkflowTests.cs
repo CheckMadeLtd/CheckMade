@@ -40,7 +40,7 @@ public class LanguageSettingWorkflowTests
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
-            workflow.DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
+            workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(
             States.Initial, 
@@ -68,7 +68,7 @@ public class LanguageSettingWorkflowTests
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
-            workflow.DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
+            workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(
             States.ReceivedLanguageSetting,
@@ -96,7 +96,7 @@ public class LanguageSettingWorkflowTests
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
         
         var actualState = 
-            workflow.DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
+            workflow.DetermineCurrentState(inputHistory);
         
         Assert.Equal(
             States.Completed,
