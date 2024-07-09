@@ -1,6 +1,7 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -81,7 +82,7 @@ internal static class OutputSender
                             converter.GetReplyMarkup(output));
                 }
 
-                async Task InvokeSendAttachmentAsync(OutputAttachmentDetails details)
+                async Task InvokeSendAttachmentAsync(AttachmentDetails details)
                 {
                     var (blobData, fileName) =
                         await blobLoader.DownloadBlobAsync(details.AttachmentUri);

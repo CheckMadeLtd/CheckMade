@@ -1,11 +1,12 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper) 
-    : BaseRepository(dbHelper), ITlgAgentRoleBindingsRepository
+public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), ITlgAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
@@ -41,13 +42,11 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper)
                 { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
                 { "@activationDate", tarb.ActivationDate },
                 { "@status", (int)tarb.Status },
-                { "@mode", (int)tarb.TlgAgent.Mode }
+                { "@mode", (int)tarb.TlgAgent.Mode },
+                { "@deactivationDate", tarb.DeactivationDate.Match<object>(
+                    date => date,
+                    () => DBNull.Value)}
             };
-
-            if (tarb.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", tarb.DeactivationDate.GetValueOrThrow());
-            else
-                normalParameters.Add("@deactivationDate", DBNull.Value);
 
             return GenerateCommand(rawQuery, normalParameters);
         });

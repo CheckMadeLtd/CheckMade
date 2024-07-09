@@ -28,7 +28,7 @@ public class LogoutWorkflowTests
             ControlPrompts.Yes);
 
         var boundRole = TestRepositoryUtils.GetNewRoleBind(
-            SOpsEngineer_DanielEn_X2024,
+            SaniCleanEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -48,11 +48,9 @@ public class LogoutWorkflowTests
                 confirmLogoutCommand
             },
             roleBindings: new []{ boundRole } );
-        _services = services;
-
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = _services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<ILogoutWorkflow>();
         
         const string expectedMessage = "💨 Logged out.";
         
@@ -60,7 +58,7 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage, 
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -78,7 +76,7 @@ public class LogoutWorkflowTests
         var tlgAgentOperations = PrivateBotChat_Operations;
         var tlgAgentComms = PrivateBotChat_Communications;
         var tlgAgentNotif = PrivateBotChat_Notifications;
-        var boundRole = SOpsEngineer_DanielEn_X2024; 
+        var boundRole = SaniCleanEngineer_DanielEn_X2024; 
         
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
@@ -104,16 +102,14 @@ public class LogoutWorkflowTests
                 // Decoys
                 new(boundRole, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None(), DbRecordStatus.SoftDeleted),
-                new(SOpsCleanLead_DanielDe_X2024, tlgAgentOperations,
+                new(SaniCleanCleanLead_DanielDe_X2024, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None()),
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTime.UtcNow, Option<DateTime>.None())
             });
-        _services = services;
-
         var mockTlgAgentRoleBindingsForAllModes =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = _services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<ILogoutWorkflow>();
         
         var expectedBindingsUpdated = 
             (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
@@ -123,7 +119,7 @@ public class LogoutWorkflowTests
                 tarb.Role.Equals(boundRole))
             .ToImmutableReadOnlyList();
         
-        var actualTlgAgentRoleBindingsUpdated = new List<TlgAgentRoleBind>();
+        List<TlgAgentRoleBind> actualTlgAgentRoleBindingsUpdated = [];
         mockTlgAgentRoleBindingsForAllModes
             .Setup(x => x.UpdateStatusAsync(
                 It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>(), DbRecordStatus.Historic))
@@ -179,9 +175,7 @@ public class LogoutWorkflowTests
                     (int)OperationsBotCommands.Logout),
                 abortLogoutCommand
             });
-        _services = services;
-        
-        var workflow = _services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<ILogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
         
         var actualOutput = 
@@ -189,9 +183,17 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage1,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
         Assert.Equivalent(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow().Concatenations.Last()!.RawEnglishText);
+            actualOutput
+                .GetValueOrThrow()
+                .Output
+                .First()
+                .Text
+                .GetValueOrThrow()
+                .Concatenations
+                .Last()!
+                .RawEnglishText);
     }
 }

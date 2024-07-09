@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
@@ -59,7 +60,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var promptsGlossary = new ControlPromptsGlossary();
         var domainGlossary = new DomainGlossary();
 
-        var allTextIdPairs = new List<(string text, string id)>();
+        List<(string text, string id)> allTextIdPairs = [];
 
         allTextIdPairs.AddRange(domainTermSelection.Match(
             terms =>

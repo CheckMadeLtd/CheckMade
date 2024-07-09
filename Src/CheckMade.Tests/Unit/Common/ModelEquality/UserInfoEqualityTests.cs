@@ -53,7 +53,7 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token1", RoleType.SanitaryOps_Admin) },
+            new List<IRoleInfo> { new RoleInfo("Token1", RoleType.SaniClean_Admin) },
             Option<Vendor>.None());
 
         IUserInfo user2 = new User(
@@ -63,7 +63,7 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token2", RoleType.SanitaryOps_Inspector) },
+            new List<IRoleInfo> { new RoleInfo("Token2", RoleType.SaniClean_Inspector) },
             Option<Vendor>.None());
 
         var areEqual = user1.Equals(user2);

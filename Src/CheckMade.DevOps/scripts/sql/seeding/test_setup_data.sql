@@ -102,7 +102,7 @@ new_sphere1_sanitary_ops_at_X2024 AS (
        VALUES ('Camp1',
                'DX3KFI',
                (SELECT id FROM new_live_event_X2024),
-               '{"GeoCoordinates": {"Latitude": {"Value": 51.240067}, "Longitude": {"Value": -0.789706}, "UncertaintyRadiusInMeters": null}}', 
+               '{"GeoCoordinates": {"Latitude": {"Value": 51.60955}, "Longitude": {"Value": 6.13004}, "UncertaintyRadiusInMeters": null}}', 
                1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
@@ -112,7 +112,7 @@ new_sphere2_sanitary_ops_at_X2024 AS (
         VALUES ('Camp2',
                 'DX3KFI',
                 (SELECT id FROM new_live_event_X2024),
-                '{"GeoCoordinates": null}',
+                '{"GeoCoordinates": {"Latitude": {"Value": 51.60893}, "Longitude": {"Value": 6.13328}, "UncertaintyRadiusInMeters": null}}',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),

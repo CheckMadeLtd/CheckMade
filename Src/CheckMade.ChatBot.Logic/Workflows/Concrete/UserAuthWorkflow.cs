@@ -13,7 +13,8 @@ using static UserAuthWorkflow.States;
 
 internal interface IUserAuthWorkflow : IWorkflow
 {
-    UserAuthWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
+    UserAuthWorkflow.States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
 }
 
 internal class UserAuthWorkflow(
@@ -29,45 +30,52 @@ internal class UserAuthWorkflow(
 
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(inputHistory) == ReceivedTokenSubmissionAttempt;
+        return 
+            DetermineCurrentState(inputHistory) 
+            == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
+    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+        GetResponseAsync(TlgInput currentInput)
     {
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
         var tlgAgentInputHistory = 
-            await logicUtils.GetAllCurrentInputsAsync(currentInput.TlgAgent);
+            await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
         
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {
-            Initial => new List<OutputDto> { EnterTokenPrompt },
+            Initial => 
+                (new List<OutputDto> { EnterTokenPrompt },
+                    Initial),
             
-            ReceivedTokenSubmissionAttempt => IsValidToken(inputText) switch
-            {
-                true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+            ReceivedTokenSubmissionAttempt => 
+                (IsValidToken(inputText) switch
                 {
-                    true => await AuthenticateUserAsync(currentInput),
-                    
+                    true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+                    {
+                        true => await AuthenticateUserAsync(currentInput),
+                        
+                        false => [new OutputDto
+                            {
+                                Text = Ui("This is an unknown token. Try again...")
+                            },
+                            EnterTokenPrompt]
+                    },
                     false => [new OutputDto
                         {
-                            Text = Ui("This is an unknown token. Try again...")
+                            Text = Ui("Bad token format! Try again...")
                         },
                         EnterTokenPrompt]
-                },
-                false => [new OutputDto
-                    {
-                        Text = Ui("Bad token format! Try again...")
-                    },
-                    EnterTokenPrompt]
-            },
+                }, ReceivedTokenSubmissionAttempt),
             
-            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }
     
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> tlgAgentInputHistory)
+    public States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> tlgAgentInputHistory)
     {
         var lastTextSubmitted = tlgAgentInputHistory
             .LastOrDefault(i => i.InputType.Equals(TlgInputType.TextMessage));

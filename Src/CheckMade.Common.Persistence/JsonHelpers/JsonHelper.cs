@@ -1,26 +1,27 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
 internal static class JsonHelper
 {
-    public static string SerializeToJson(object obj)
+    public static string SerializeToJson(object obj, IDomainGlossary glossary)
     {
         var jsonSettings = new JsonSerializerSettings
         {
-            ContractResolver = new OptionContractResolver()
+            ContractResolver = new OptionContractResolver(glossary)
         };
         
         return JsonConvert.SerializeObject(obj, jsonSettings);
     }
 
-    public static T? DeserializeFromJsonStrict<T>(string json)
+    public static T? DeserializeFromJsonStrict<T>(string json, IDomainGlossary glossary)
     {
         var jsonSettings = new JsonSerializerSettings
         {
             // Throws exception during deserialization when json data has a field that doesn't map to my model class
             MissingMemberHandling = MissingMemberHandling.Error,
-            ContractResolver = new OptionContractResolver()
+            ContractResolver = new OptionContractResolver(glossary)
         };
         
         return JsonConvert.DeserializeObject<T>(json, jsonSettings);

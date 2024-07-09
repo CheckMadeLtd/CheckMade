@@ -1,11 +1,14 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
-public abstract class BaseRepository(IDbExecutionHelper dbHelper)
+public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary)
 {
+    protected IDomainGlossary Glossary { get; } = glossary;
+    
     protected static NpgsqlCommand GenerateCommand(string query, Option<Dictionary<string, object>> parameters)
     {
         var command = new NpgsqlCommand(query);
@@ -35,15 +38,15 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     }
 
     protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToOneAsync<TModel>(
-        NpgsqlCommand command, Func<DbDataReader, TModel> readData)
+        NpgsqlCommand command, Func<DbDataReader, IDomainGlossary, TModel> readData)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
         
-        await ExecuteReaderCoreAsync(command, async reader =>
+        await ExecuteReaderCoreAsync(command, async (reader, glossary) =>
         {
             while (await reader.ReadAsync())
             {
-                builder.Add(readData(reader));
+                builder.Add(readData(reader, glossary));
             }
         });
         return builder.ToImmutable();
@@ -58,7 +61,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
 
-        await ExecuteReaderCoreAsync(command, async reader =>
+        await ExecuteReaderCoreAsync(command, async (reader, _) =>
         {
             TModel? currentModel = default;
             TKey? currentKey = default;
@@ -91,7 +94,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
 
     private async Task ExecuteReaderCoreAsync(
         NpgsqlCommand command,
-        Func<DbDataReader, Task> processReader)
+        Func<DbDataReader, IDomainGlossary, Task> processReader)
     {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
@@ -99,7 +102,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper)
             command.Transaction = transaction;
 
             await using var reader = await command.ExecuteReaderAsync();
-            await processReader(reader);
+            await processReader(reader, Glossary);
         });
     }
 }

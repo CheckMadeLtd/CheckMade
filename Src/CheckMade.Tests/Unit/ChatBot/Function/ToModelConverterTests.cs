@@ -1,6 +1,7 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -36,15 +37,16 @@ public class ToModelConverterTests
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         
         // based on defaultRoleBindings in TestRepositoryUtils
-        var expectedOriginatorRole = SOpsAdmin_DanielEn_X2024;
+        var expectedOriginatorRole = SaniCleanAdmin_DanielEn_X2024;
         var expectedLiveEventContext = 
-            Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent); 
+            Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent); 
         
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -78,21 +80,20 @@ public class ToModelConverterTests
             roleBindings: new[]
             {
                 new TlgAgentRoleBind(
-                    SOpsInspector_DanielEn_X2024,
+                    SaniCleanInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),
                     new DateTime(2021, 01, 05),
                     DbRecordStatus.Historic)
             });
-        _services = services;
-        
-        var basics = GetBasicTestingServices(_services);
+        var basics = GetBasicTestingServices(services);
         
         var expectedTlgInput = new TlgInput(
             tlgAgent,
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -136,8 +137,9 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Operations,
             TlgInputType.AttachmentMessage,
-            SOpsAdmin_DanielEn_X2024, 
+            SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
@@ -177,8 +179,9 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
                 PrivateBotChat_Operations,
                 TlgInputType.Location,
-                SOpsAdmin_DanielEn_X2024, 
+                SaniCleanAdmin_DanielEn_X2024, 
                 X2024, 
+                Option<ResultantWorkflowInfo>.None(), 
                 TlgInputGenerator.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
@@ -213,8 +216,9 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Operations,
             TlgInputType.CommandMessage,
-            SOpsAdmin_DanielEn_X2024, 
+            SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -251,6 +255,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -287,6 +292,7 @@ public class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -320,8 +326,9 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SOpsAdmin_DanielEn_X2024, 
+            SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -352,8 +359,9 @@ public class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SOpsAdmin_DanielEn_X2024, 
+            SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
+            Option<ResultantWorkflowInfo>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,

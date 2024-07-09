@@ -16,7 +16,8 @@ internal interface ITlgInputGenerator
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", DateTime? dateTime = null,
         TestOriginatorRoleSetting roleSetting = Default,
-        Role? roleSpecified = null);
+        Role? roleSpecified = null,
+        ResultantWorkflowInfo? workflowInfo = null);
     
     TlgInput GetValidTlgInputTextMessageWithAttachment(
         TlgAttachmentType type,
@@ -26,6 +27,7 @@ internal interface ITlgInputGenerator
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
+        DateTime? dateTime = null, 
         TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputCommandMessage(
@@ -57,7 +59,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
     public TlgInput GetValidTlgInputTextMessage(
         long userId, long chatId, string text, DateTime? dateTime,
         TestOriginatorRoleSetting roleSetting,
-        Role? roleSpecified)
+        Role? roleSpecified,
+        ResultantWorkflowInfo? workflowInfo)
     {
         Option<IRoleInfo> originatorRole;
         Option<ILiveEventInfo> liveEvent;
@@ -78,6 +81,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.TextMessage,
             originatorRole, 
             liveEvent, 
+            workflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow, 
                 1, 
@@ -95,6 +99,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.AttachmentMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 1,
@@ -106,7 +111,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
 
     public TlgInput GetValidTlgInputLocationMessage(
         double latitudeRaw, double longitudeRaw, Option<float> uncertaintyRadius,
-        long userId, long chatId,
+        long userId, long chatId, DateTime? dateTime,
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
@@ -114,8 +119,9 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.Location,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
-                DateTime.UtcNow, 
+                dateTime ?? DateTime.UtcNow, 
                 1,
                 geoCoordinates: new Geo(latitudeRaw, longitudeRaw, uncertaintyRadius)));
     }
@@ -130,6 +136,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CommandMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
                 messageId,
@@ -146,6 +153,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 messageId,
@@ -162,6 +170,7 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
+            Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 dateTime ?? DateTime.UtcNow,
                 1,
@@ -203,8 +212,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
                     Option<ILiveEventInfo>.None()),
             
             Default =>
-                (SOpsAdmin_DanielEn_X2024,
-                    Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent)),
+                (SaniCleanAdmin_DanielEn_X2024,
+                    Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };

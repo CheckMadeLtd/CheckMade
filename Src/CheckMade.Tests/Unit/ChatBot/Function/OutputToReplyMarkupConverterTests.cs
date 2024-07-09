@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SanitaryOps.Issues;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
@@ -22,12 +24,10 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<DomainTerm>
-        {
+        List<DomainTerm> domainTermSelection = [ 
             Dt(typeof(CleanlinessIssue)),
             Dt(typeof(TechnicalIssue)),
-            Dt(typeof(ConsumablesIssue))
-        };
+            Dt(typeof(InventoryIssue))];
 
         var outputWithDomainTerms = new OutputDto
         {
@@ -55,9 +55,9 @@ public class OutputToReplyMarkupConverterTests
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(ConsumablesIssue))].uiString.GetFormattedEnglish(),
+                            Dt(typeof(InventoryIssue))].uiString.GetFormattedEnglish(),
                         basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(ConsumablesIssue))].callbackId), 
+                            Dt(typeof(InventoryIssue))].callbackId), 
                 ]
             }));
 
@@ -133,10 +133,8 @@ public class OutputToReplyMarkupConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
-        var domainTermSelection = new List<DomainTerm>
-        {
-            Dt(ConsumablesIssue.Item.PaperTowels)
-        };
+        List<DomainTerm> domainTermSelection = [
+            Dt(Consumables.Item.PaperTowels)];
         
         var promptSelection = new[] 
         {
@@ -159,9 +157,9 @@ public class OutputToReplyMarkupConverterTests
             {
                 InlineKeyboardButton.WithCallbackData(
                     basics.domainGlossary.IdAndUiByTerm[
-                        Dt(ConsumablesIssue.Item.PaperTowels)].uiString.GetFormattedEnglish(),
+                        Dt(Consumables.Item.PaperTowels)].uiString.GetFormattedEnglish(),
                     basics.domainGlossary.IdAndUiByTerm[
-                        Dt(ConsumablesIssue.Item.PaperTowels)].callbackId), 
+                        Dt(Consumables.Item.PaperTowels)].callbackId), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),

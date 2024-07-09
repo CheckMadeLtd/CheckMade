@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -60,21 +61,17 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_LogsError_WhenInputProcessorThrowsException(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
-        var mockInputProcessorFactory = new Mock<IInputProcessorFactory>();
-        var mockOperationsInputProcessor = new Mock<IInputProcessor>();
         
-        mockOperationsInputProcessor
+        var mockInputProcessor = new Mock<IInputProcessor>();
+        mockInputProcessor
             .Setup(opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Throws<Exception>();
-        mockInputProcessorFactory
-            .Setup(x => x.GetInputProcessor(mode))
-            .Returns(mockOperationsInputProcessor.Object);
+        serviceCollection.AddScoped<IInputProcessor>(_ => mockInputProcessor.Object);
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ => mockInputProcessorFactory.Object);
         var mockLogger = new Mock<ILogger<UpdateHandler>>();
         serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
-        _services = serviceCollection.BuildServiceProvider();
         
+        _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
@@ -126,11 +123,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     public async Task HandleUpdateAsync_ReturnsEnglishTestString_ForEnglishSpeakingUser()
     {
         var serviceCollection = new UnitTestStartup().Services;
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetStubInputProcessorFactoryWithSetUpReturnValue(
-                new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
-        _services = serviceCollection.BuildServiceProvider();
         
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(new List<OutputDto> { 
+                new() { Text = EnglishUiStringForTests }
+        }));
+        
+        _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var updateFromEnglishUser = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
@@ -152,22 +151,23 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetStubInputProcessorFactoryWithSetUpReturnValue(
-                new List<OutputDto>{ new() { Text = EnglishUiStringForTests } }));
-
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(new List<OutputDto>
+            {
+                new() { Text = EnglishUiStringForTests }
+            }));
+        
         var tlgAgent = UserId02_ChatId04_Operations;
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new []
             {
                 TestRepositoryUtils.GetNewRoleBind(
-                    SOpsInspector_DanielDe_X2024,
+                    SaniCleanInspector_DanielDe_X2024,
                     tlgAgent)
             }); 
         
         _services = repoServices;
-        
         var basics = GetBasicTestingServices(_services);
         var updateFromGermanUser = basics.updateGenerator.GetValidTelegramTextMessage(
             "random valid text",
@@ -196,18 +196,17 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        var outputWithPrompts = new List<OutputDto>{ 
+        List<OutputDto> outputWithPrompts = [ 
             new ()
             {
               Text = EnglishUiStringForTests,
               ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
-            }
-        };
+            }];
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ => 
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithPrompts, mode));
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputWithPrompts));
+
         _services = serviceCollection.BuildServiceProvider();
-        
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
@@ -247,10 +246,10 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto { Text = UiNoTranslate("Output2") }
         ];
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputsMultiple, mode));
-        _services = serviceCollection.BuildServiceProvider();
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputsMultiple));
         
+        _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
@@ -279,41 +278,38 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    SOpsInspector_DanielEn_X2024, 
+                    SaniCleanInspector_DanielEn_X2024, 
                     Operations), 
                 Text = UiNoTranslate("Output1")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SOpsCleanLead_DanielEn_X2024, 
+                    SaniCleanCleanLead_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output2") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SOpsEngineer_DanielEn_X2024, 
+                    SaniCleanEngineer_DanielEn_X2024, 
                     Communications),
                 Text = UiNoTranslate("Output3)") 
             }
         ];
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputsWithLogicalPort, mode));
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputsWithLogicalPort));
 
-        var activeRoleBindings = new List<TlgAgentRoleBind>
-        {
-            TestRepositoryUtils.GetNewRoleBind(SOpsInspector_DanielEn_X2024, PrivateBotChat_Operations),
-            TestRepositoryUtils.GetNewRoleBind(SOpsCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
-            TestRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)
-        };
+        List<TlgAgentRoleBind> activeRoleBindings = [ 
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanInspector_DanielEn_X2024, PrivateBotChat_Operations),
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: activeRoleBindings);
         
         _services = repoServices;
-        
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
         
@@ -352,10 +348,12 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
-        const string fakeOutputMessage = "Output without logical port";
-        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(fakeOutputMessage) }];
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithoutPort, mode));
+        const string expectedOutputMessage = "Output without logical port";
+        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(expectedOutputMessage) }];
+
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputWithoutPort));
+        
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
@@ -371,7 +369,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageAsync(
                 expectedChatId,
                 It.IsAny<string>(),
-                fakeOutputMessage,
+                expectedOutputMessage,
                 It.IsAny<Option<IReplyMarkup>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
@@ -391,7 +389,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         [
             new OutputDto
             {
-                Attachments = new List<OutputAttachmentDetails>
+                Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
                         TlgAttachmentType.Photo, Option<UiString>.None()),
@@ -405,8 +403,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithMultipleAttachmentTypes, mode));
+        serviceCollection.AddScoped<IInputProcessor>(_ =>
+            GetStubInputProcessor(outputWithMultipleAttachmentTypes));
+        
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -447,7 +446,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             {
                 Text = UiNoTranslate(mainText),
-                Attachments = new List<OutputAttachmentDetails>
+                Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
                         TlgAttachmentType.Photo, Ui("Random caption for Attachment 1")),
@@ -457,8 +456,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
     
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithTextAndCaptions, mode));
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputWithTextAndCaptions));
+
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -497,8 +497,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             }
         ];
         
-        serviceCollection.AddScoped<IInputProcessorFactory>(_ =>
-            GetStubInputProcessorFactoryWithSetUpReturnValue(outputWithLocation, mode));
+        serviceCollection.AddScoped<IInputProcessor>(_ => 
+            GetStubInputProcessor(outputWithLocation));
+
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -527,25 +528,15 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                     sp.GetRequiredService<ILogger<UiTranslator>>()));
 
-    // Useful when we need to mock up what ChatBot.Logic returns, e.g. to test ChatBot.Function related mechanics
-    private static IInputProcessorFactory 
-        GetStubInputProcessorFactoryWithSetUpReturnValue(
-            IReadOnlyCollection<OutputDto> returnValue, InteractionMode interactionMode = Operations)
+    private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returnValue)
     {
         var mockInputProcessor = new Mock<IInputProcessor>();
-        
         mockInputProcessor
-            .Setup<Task<IReadOnlyCollection<OutputDto>>>(rp => 
-                rp.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
-            .Returns(Task.FromResult(returnValue));
+            .Setup<Task<IReadOnlyCollection<OutputDto>>>(ip =>
+                ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .ReturnsAsync(returnValue);
 
-        var mockInputProcessorFactory = new Mock<IInputProcessorFactory>();
-        
-        mockInputProcessorFactory
-            .Setup(rps => 
-                rps.GetInputProcessor(interactionMode))
-            .Returns(mockInputProcessor.Object);
-
-        return mockInputProcessorFactory.Object;
+        return mockInputProcessor.Object;
     }
+    
 }

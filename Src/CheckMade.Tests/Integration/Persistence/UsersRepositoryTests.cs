@@ -54,10 +54,10 @@ public class UsersRepositoryTests
             LukasDe.FirstName,
             users[1].FirstName);
         Assert.Equal(
-            SOpsAdmin_DanielEn_X2024.Token,
+            SaniCleanAdmin_DanielEn_X2024.Token,
             users[0].HasRoles.First().Token);
         Assert.Equal(
-            SOpsInspector_DanielEn_X2025.Token,
+            SaniCleanInspector_DanielEn_X2025.Token,
             users[0].HasRoles.Last().Token);
     }
 }

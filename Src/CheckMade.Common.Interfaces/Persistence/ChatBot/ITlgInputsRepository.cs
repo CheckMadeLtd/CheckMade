@@ -8,7 +8,9 @@ public interface ITlgInputsRepository
 {
     Task AddAsync(TlgInput tlgInput);
     Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs);
-    Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent);
-    Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent);
+    Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(TlgAgent tlgAgent, DateTime since);
+    Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(ILiveEventInfo liveEvent, DateTime since);
     Task HardDeleteAllAsync(TlgAgent tlgAgent);
 }

@@ -61,10 +61,10 @@ public class LiveEventsRepositoryTests
                 .Details.GeoCoordinates.GetValueOrThrow());
         
         Assert.Equivalent(
-            Option<Geo>.None(),
+            Sphere2_Location,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Details.GeoCoordinates);
+                .Details.GeoCoordinates.GetValueOrThrow());
 
         Assert.Equivalent(
             Option<Geo>.None(),

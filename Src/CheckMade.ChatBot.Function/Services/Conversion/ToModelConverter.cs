@@ -93,28 +93,28 @@ internal class ToModelConverter(
                 $"and shouldn't be handled in this converter!")
         };
 
-    private static Result<AttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
+    private static Result<TlgAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
 
         return update.Message.Type switch
         {
-            MessageType.Text or MessageType.Location => new AttachmentDetails(
+            MessageType.Text or MessageType.Location => new TlgAttachmentDetails(
                 Option<string>.None(), Option<TlgAttachmentType>.None()),
 
-            MessageType.Document => new AttachmentDetails(
+            MessageType.Document => new TlgAttachmentDetails(
                 update.Message.Document?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
                 TlgAttachmentType.Document),
 
-            MessageType.Photo => new AttachmentDetails(
+            MessageType.Photo => new TlgAttachmentDetails(
                 update.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
                 TlgAttachmentType.Photo),
 
-            MessageType.Voice => new AttachmentDetails(
+            MessageType.Voice => new TlgAttachmentDetails(
                 update.Message.Voice?.FileId ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
                 TlgAttachmentType.Voice),
@@ -123,7 +123,7 @@ internal class ToModelConverter(
         };
     }
 
-    private record AttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
+    private record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
@@ -236,7 +236,7 @@ internal class ToModelConverter(
         UpdateWrapper update,
         InteractionMode interactionMode,
         TlgInputType tlgInputType,
-        AttachmentDetails attachmentDetails,
+        TlgAttachmentDetails attachmentDetails,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,
@@ -286,6 +286,7 @@ internal class ToModelConverter(
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
                 : Option<IRoleInfo>.None(),
             liveEventContext,
+            Option<ResultantWorkflowInfo>.None(), 
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

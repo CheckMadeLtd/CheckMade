@@ -3,13 +3,15 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
+using static LanguageSettingWorkflow.States;
+
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
-    LanguageSettingWorkflow.States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory);
+    LanguageSettingWorkflow.States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
 internal class LanguageSettingWorkflow(
@@ -22,53 +24,62 @@ internal class LanguageSettingWorkflow(
     {
         var currentState = DetermineCurrentState(inputHistory);
         
-        return (currentState & States.ReceivedLanguageSetting) != 0 || 
-               (currentState & States.Completed) != 0;
+        return (currentState & ReceivedLanguageSetting) != 0 || 
+               (currentState & Completed) != 0;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
+    public async 
+        Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+        GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInputsSinceLastBotCommand(currentInput.TlgAgent);
+            await logicUtils.GetInteractiveSinceLastBotCommand(currentInput);
         
         return DetermineCurrentState(workflowInputHistory) switch
         {
-            States.Initial => new List<OutputDto>
-            {
-                new()
-                {
-                    Text = Ui("🌎 Please select your preferred language:"),
-                    DomainTermSelection = new List<DomainTerm>(
+            Initial => 
+                (new List<OutputDto> { new() 
+                    { 
+                        Text = Ui("🌎 Please select your preferred language:"), 
+                        DomainTermSelection = new List<DomainTerm>(
                         Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                            .Select(lc => Dt(lc)))
-                }
-            },
+                            .Select(lc => Dt(lc))) 
+                    } 
+                }, Initial),
             
-            States.ReceivedLanguageSetting => await SetNewLanguageAsync(currentInput),
+            ReceivedLanguageSetting => 
+                (await SetNewLanguageAsync(currentInput), 
+                    ReceivedLanguageSetting),
             
-            States.Completed => new List<OutputDto>{ new() { Text = ILogicUtils.WorkflowWasCompleted }},
+            Completed => 
+                (new List<OutputDto>{ new()
+                    {
+                        Text = ILogicUtils.WorkflowWasCompleted
+                    }},
+                    Completed),
             
-            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
     }
 
-    public States DetermineCurrentState(IReadOnlyCollection<TlgInput> workflowInputHistory)
+    public States DetermineCurrentState(
+        IReadOnlyCollection<TlgInput> workflowInputHistory)
     {
         var lastInput = workflowInputHistory.Last();
-
+        
         var previousInputCompletedThisWorkflow = 
             workflowInputHistory.Count > 1 && 
             AnyPreviousInputContainsCallbackQuery(workflowInputHistory.ToArray()[..^1]);
         
         return lastInput.InputType switch
         {
-            TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
+            TlgInputType.CallbackQuery => ReceivedLanguageSetting,
             
             _ => previousInputCompletedThisWorkflow switch
             {
-                true => States.Completed,
-                _ => States.Initial
+                true => Completed,
+                _ => Initial
             }
         };
     }
