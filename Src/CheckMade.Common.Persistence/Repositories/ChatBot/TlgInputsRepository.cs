@@ -52,24 +52,38 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
-        const string rawQuery = """
-                                INSERT INTO tlg_inputs 
-                                
-                                (user_id, 
-                                chat_id, 
-                                details, 
-                                last_data_migration, 
-                                interaction_mode, 
-                                input_type, 
-                                role_id, 
-                                live_event_id) 
-                                
-                                VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
-                                @lastDataMig, @interactionMode, @tlgInputType, 
-                                (SELECT id FROM roles WHERE token = @token), 
-                                (SELECT id FROM live_events WHERE name = @liveEventName))
-                                """;
-        
+        const string baseQuery = """
+                                 INSERT INTO tlg_inputs 
+                                 
+                                 (user_id, 
+                                 chat_id, 
+                                 details, 
+                                 last_data_migration, 
+                                 interaction_mode, 
+                                 input_type, 
+                                 role_id, 
+                                 live_event_id) 
+                                 
+                                 VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                 @lastDataMig, @interactionMode, @tlgInputType, 
+                                 (SELECT id FROM roles WHERE token = @token), 
+                                 (SELECT id FROM live_events WHERE name = @liveEventName))
+                                 """;
+
+         const string queryWithWorkflowInfo = $"""
+                                               WITH inserted_input AS (
+                                                 {baseQuery}
+                                                 RETURNING id
+                                               )
+                                               INSERT INTO derived_workflow_states
+                                               (tlg_inputs_id,
+                                               resultant_workflow,
+                                               in_state)
+                                               
+                                               SELECT id, @workflowId, @workflowState
+                                               FROM inserted_input
+                                               """;
+         
         var commands = tlgInputs.Select(tlgInput =>
         {
             var normalParameters = new Dictionary<string, object>
@@ -78,21 +92,28 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
                 { "@tlgChatId", tlgInput.TlgAgent.ChatId.Id },
                 { "@lastDataMig", 0 },
                 { "@interactionMode", (int)tlgInput.TlgAgent.Mode },
-                { "@tlgInputType", (int) tlgInput.InputType }
+                { "@tlgInputType", (int) tlgInput.InputType },
+                { "@token", tlgInput.OriginatorRole.Match<object>(  
+                        r => r.Token, 
+                        () => DBNull.Value) },  
+                { "@liveEventName",  
+                     tlgInput.LiveEventContext.Match<object>(  
+                         le => le.Name, 
+                         () => DBNull.Value) },  
+                { "@workflowId", tlgInput.ResultantWorkflow.Match<object>(  
+                        w => w.WorkflowId, 
+                        () => DBNull.Value) },  
+                { "@workflowState",  
+                    tlgInput.ResultantWorkflow.Match<object>(  
+                        w => w.InState,  
+                        () => DBNull.Value) }
             };
             
-            if (tlgInput.OriginatorRole.IsSome)
-                normalParameters.Add("@token", tlgInput.OriginatorRole.GetValueOrThrow().Token);
-            else
-                normalParameters.Add("@token", DBNull.Value);    
-            
-            if (tlgInput.LiveEventContext.IsSome)
-                normalParameters.Add("@liveEventName", tlgInput.LiveEventContext.GetValueOrThrow().Name);
-            else
-                normalParameters.Add("@liveEventName", DBNull.Value);    
-            
-            var command = GenerateCommand(rawQuery, normalParameters);
-            
+            var command = GenerateCommand(tlgInput.ResultantWorkflow.IsSome 
+                    ? queryWithWorkflowInfo 
+                    : baseQuery, 
+                normalParameters);
+
             command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
@@ -241,11 +262,20 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
     {
         const string rawQuery = """
+                                WITH inputs_to_delete AS (
+                                    SELECT id 
+                                    FROM tlg_inputs 
+                                    WHERE user_id = @tlgUserId 
+                                    AND chat_id = @tlgChatId 
+                                    AND interaction_mode = @mode
+                                )
+                                DELETE FROM derived_workflow_states 
+                                WHERE tlg_inputs_id IN (SELECT id FROM inputs_to_delete);
+
                                 DELETE FROM tlg_inputs 
-                                       
                                 WHERE user_id = @tlgUserId 
                                 AND chat_id = @tlgChatId 
-                                AND interaction_mode = @mode
+                                AND interaction_mode = @mode;
                                 """;
         
         var normalParameters = new Dictionary<string, object>
