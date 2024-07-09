@@ -42,13 +42,11 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
                 { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
                 { "@activationDate", tarb.ActivationDate },
                 { "@status", (int)tarb.Status },
-                { "@mode", (int)tarb.TlgAgent.Mode }
+                { "@mode", (int)tarb.TlgAgent.Mode },
+                { "@deactivationDate", tarb.DeactivationDate.Match<object>(
+                    date => date,
+                    () => DBNull.Value)}
             };
-
-            if (tarb.DeactivationDate.IsSome)
-                normalParameters.Add("@deactivationDate", tarb.DeactivationDate.GetValueOrThrow());
-            else
-                normalParameters.Add("@deactivationDate", DBNull.Value);
 
             return GenerateCommand(rawQuery, normalParameters);
         });
