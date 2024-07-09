@@ -3,6 +3,8 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
+using static NewIssueWorkflow.States;
+
 internal interface INewIssueWorkflow : IWorkflow
 {
     NewIssueWorkflow.States DetermineCurrentState(
@@ -18,7 +20,8 @@ internal class NewIssueWorkflow : INewIssueWorkflow
         throw new NotImplementedException();
     }
 
-    public Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
+    public Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+        GetResponseAsync(TlgInput currentInput)
     {
         // get workflowinputHistory and locationHistory separately
         

@@ -58,7 +58,7 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage, 
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -183,9 +183,17 @@ public class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage1,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
         Assert.Equivalent(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            actualOutput.GetValueOrThrow().First().Text.GetValueOrThrow().Concatenations.Last()!.RawEnglishText);
+            actualOutput
+                .GetValueOrThrow()
+                .Output
+                .First()
+                .Text
+                .GetValueOrThrow()
+                .Concatenations
+                .Last()!
+                .RawEnglishText);
     }
 }

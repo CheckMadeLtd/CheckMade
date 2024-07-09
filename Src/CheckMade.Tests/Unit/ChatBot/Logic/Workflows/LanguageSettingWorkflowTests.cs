@@ -128,7 +128,7 @@ public class LanguageSettingWorkflowTests
         
         Assert.Equal(
             "🌎 Please select your preferred language:", 
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
     }
     
     [Theory]
@@ -171,7 +171,7 @@ public class LanguageSettingWorkflowTests
         
         Assert.StartsWith(
             "New language: ",
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
             roleBind.Role.ByUser,

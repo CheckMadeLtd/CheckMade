@@ -7,6 +7,8 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
+using static LogoutWorkflow.States;
+
 internal interface ILogoutWorkflow : IWorkflow
 {
     LogoutWorkflow.States DetermineCurrentState(
@@ -21,10 +23,11 @@ internal class LogoutWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        return DetermineCurrentState(inputHistory, inputHistory.LastOrDefault()) == States.LogoutConfirmed;
+        return DetermineCurrentState(inputHistory, inputHistory.LastOrDefault()) == LogoutConfirmed;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
+    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+        GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
             await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
@@ -34,35 +37,35 @@ internal class LogoutWorkflow(
 
         return DetermineCurrentState(workflowInputHistory, currentInput) switch
         {
-            States.Initial => new List<OutputDto>
-            {
-                new()
-                {
-                    Text = Ui("""
-                              {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
-                              FYI: You will also be logged out from other non-group bot chats in this role.
-                              """,
-                        currentRoleBind.Role.ByUser.FirstName,
-                        currentRoleBind.Role.RoleType,
-                        currentRoleBind.Role.AtLiveEvent.Name),
-                    
-                    ControlPromptsSelection = ControlPrompts.YesNo
-                }
-            },
+            Initial => 
+                (new List<OutputDto> { new() 
+                    { 
+                        Text = Ui("""
+                                {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
+                                FYI: You will also be logged out from other non-group bot chats in this role.
+                                """, 
+                            currentRoleBind.Role.ByUser.FirstName, 
+                            currentRoleBind.Role.RoleType, 
+                            currentRoleBind.Role.AtLiveEvent.Name),
+                        
+                        ControlPromptsSelection = ControlPrompts.YesNo 
+                    }
+            }, (long)Initial),
             
-            States.LogoutConfirmed => await PerformLogoutAsync(currentRoleBind),
+            LogoutConfirmed => 
+                (await PerformLogoutAsync(currentRoleBind),
+                    (long)LogoutConfirmed),
             
-            States.LogoutAborted => new List<OutputDto>
-            {
-                new()
-                {
-                    Text = UiConcatenate(
+            LogoutAborted => 
+                (new List<OutputDto> { new() 
+                    { 
+                        Text = UiConcatenate(
                         Ui("Logout aborted.\n"),
-                        IInputProcessor.SeeValidBotCommandsInstruction)
-                }
-            },
+                        IInputProcessor.SeeValidBotCommandsInstruction) 
+                    }
+                }, (long)LogoutAborted),
             
-            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<long>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
         };
     }
@@ -72,20 +75,20 @@ internal class LogoutWorkflow(
         TlgInput? currentInput)
     {
         if (currentInput is null)
-            return States.Initial;
+            return Initial;
         
         if (currentInput.InputType.Equals(TlgInputType.CallbackQuery))
         {
             return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
             {
-                (int)ControlPrompts.Yes => States.LogoutConfirmed,
-                (int)ControlPrompts.No => States.LogoutAborted,
+                (int)ControlPrompts.Yes => LogoutConfirmed,
+                (int)ControlPrompts.No => LogoutAborted,
                 _ => throw new ArgumentOutOfRangeException(nameof(currentInput), 
                     "Unexpected value for ControlPromptEnumCode")
             };
         }
 
-        return States.Initial;
+        return Initial;
     }
 
     private async Task<List<OutputDto>> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)

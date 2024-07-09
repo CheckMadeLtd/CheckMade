@@ -15,7 +15,7 @@ public class InputProcessorTests
     private ServiceProvider? _services;
  
     [Fact]
-    public async Task ProcessInputAsync_WelcomesAndPromptsAuthentication_ForStartCommandOfUnauthenticatedUser()
+    public async Task ProcessInputAsync_WelcomesAndPromptsAuth_AndSavesToDb_ForStartCommandOfUnauthenticatedUser()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -46,7 +46,7 @@ public class InputProcessorTests
     }
     
     [Fact]
-    public async Task ProcessInputAsync_ReturnsWarning_ForCallbackQuery_ToOutOfScopeInlineKeyboardButtonClick()
+    public async Task ProcessInputAsync_ReturnsWarning_AndSavesToDb_ForOutOfScopeCallbackQuery()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -171,7 +171,7 @@ public class InputProcessorTests
     }
 
     [Fact]
-    public async Task ProcessInputAsync_ReturnsEmptyOutput_ForLocationUpdate()
+    public async Task ProcessInputAsync_ReturnsEmptyOutput_AndSavesToDb_ForLocationUpdate()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         

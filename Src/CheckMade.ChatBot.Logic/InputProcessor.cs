@@ -74,26 +74,34 @@ internal class InputProcessor(
                     wf => 
                         wf.GetResponseAsync(currentInput),
                     () => 
-                        Task.FromResult(Result<IReadOnlyCollection<OutputDto>>.FromSuccess(
-                            [new OutputDto 
+                        Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>.FromSuccess(
+                            ([new OutputDto 
                             { 
                                 Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
-                            }])
-                        ));
+                            }], Option<long>.None()))));
 
-                await inputsRepo.AddAsync(currentInput with
+                var newState = response.Match(
+                    r => r.NewState,
+                    _ => Option<long>.None());
+                
+                if (activeWorkflow.IsSome && newState.IsSome)
                 {
-                    ResultantWorkflow = new ResultantWorkflowInfo(
-                        glossary.IdAndUiByTerm[Dt(activeWorkflow.GetType())].callbackId.Id,
-                        // ToDo: probably save the State that was determined in each Workflow class in a private field and expose via GetProperty? OO now!
-                        // So we avoid recalculating it, in case e.g. DetermineCurrentState() will require DB access in the future in some Workflows.
-                        // (at this point it already was calculated from the GetResponseAsync call so it feels natural to save it in the instance of the Workflow)
-                });
+                    await inputsRepo.AddAsync(currentInput with
+                    {
+                        ResultantWorkflow = new ResultantWorkflowInfo(
+                            glossary.IdAndUiByTerm[Dt(activeWorkflow.GetValueOrThrow().GetType())].callbackId,
+                            newState.GetValueOrThrow())
+                    });
+                }
+                else
+                {
+                    await inputsRepo.AddAsync(currentInput);
+                }
                 
                 return response.Match(
-                    outputs => 
+                    r => 
                     {
-                        responseBuilder.AddRange(outputs);
+                        responseBuilder.AddRange(r.Output);
                         
                         return 
                             responseBuilder

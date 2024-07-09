@@ -6,6 +6,8 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
+using static LanguageSettingWorkflow.States;
+
 internal interface ILanguageSettingWorkflow : IWorkflow
 {
     LanguageSettingWorkflow.States DetermineCurrentState(
@@ -23,33 +25,41 @@ internal class LanguageSettingWorkflow(
     {
         var currentState = DetermineCurrentState(inputHistory, inputHistory.LastOrDefault());
         
-        return (currentState & States.ReceivedLanguageSetting) != 0 || 
-               (currentState & States.Completed) != 0;
+        return (currentState & ReceivedLanguageSetting) != 0 || 
+               (currentState & Completed) != 0;
     }
 
-    public async Task<Result<IReadOnlyCollection<OutputDto>>> GetResponseAsync(TlgInput currentInput)
+    public async 
+        Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>> 
+        GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
             await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
         
         return DetermineCurrentState(workflowInputHistory, currentInput) switch
         {
-            States.Initial => new List<OutputDto>
-            {
-                new()
-                {
-                    Text = Ui("🌎 Please select your preferred language:"),
-                    DomainTermSelection = new List<DomainTerm>(
+            Initial => 
+                (new List<OutputDto> { new() 
+                    { 
+                        Text = Ui("🌎 Please select your preferred language:"), 
+                        DomainTermSelection = new List<DomainTerm>(
                         Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                            .Select(lc => Dt(lc)))
-                }
-            },
+                            .Select(lc => Dt(lc))) 
+                    } 
+                }, (long)Initial),
             
-            States.ReceivedLanguageSetting => await SetNewLanguageAsync(currentInput),
+            ReceivedLanguageSetting => 
+                (await SetNewLanguageAsync(currentInput), 
+                    (long)ReceivedLanguageSetting),
             
-            States.Completed => new List<OutputDto>{ new() { Text = ILogicUtils.WorkflowWasCompleted }},
+            Completed => 
+                (new List<OutputDto>{ new()
+                    {
+                        Text = ILogicUtils.WorkflowWasCompleted
+                    }},
+                    (long)Completed),
             
-            _ => Result<IReadOnlyCollection<OutputDto>>.FromError(
+            _ => Result<(IReadOnlyCollection<OutputDto>, Option<long>)>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
     }
@@ -59,7 +69,7 @@ internal class LanguageSettingWorkflow(
         TlgInput? currentInput)
     {
         if (currentInput is null)
-            return States.Initial;
+            return Initial;
         
         var previousInputCompletedThisWorkflow = 
             workflowInputHistory.Count > 1 && 
@@ -67,12 +77,12 @@ internal class LanguageSettingWorkflow(
         
         return currentInput.InputType switch
         {
-            TlgInputType.CallbackQuery => States.ReceivedLanguageSetting,
+            TlgInputType.CallbackQuery => ReceivedLanguageSetting,
             
             _ => previousInputCompletedThisWorkflow switch
             {
-                true => States.Completed,
-                _ => States.Initial
+                true => Completed,
+                _ => Initial
             }
         };
     }
