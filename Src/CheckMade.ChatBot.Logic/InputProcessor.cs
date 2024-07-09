@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Interfaces.ChatBot.Logic;
+﻿using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -30,23 +31,22 @@ internal class InputProcessor(
             {
                 if (currentInput.InputType == TlgInputType.Location)
                 {
-                    await inputsRepo.AddAsync(currentInput);
+                    await SaveCurrentInputToDbAsync(currentInput);
                     
                     return [];
                 }
                 
-                List<OutputDto> responseBuilder = [];
+                List<OutputDto> outputBuilder = [];
 
-                if (currentInput.InputType.Equals(TlgInputType.CommandMessage)
-                    && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode))
+                if (IsStartCommand(currentInput))
                 {
-                    responseBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
+                    outputBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
                                                                "I shall follow your command!") });
                 }
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {
-                    responseBuilder.Add(new OutputDto
+                    outputBuilder.Add(new OutputDto
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission.")
@@ -58,7 +58,7 @@ internal class InputProcessor(
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
-                    await inputsRepo.AddAsync(currentInput);
+                    await SaveCurrentInputToDbAsync(currentInput);
                     
                     return 
                         [new OutputDto 
@@ -68,60 +68,21 @@ internal class InputProcessor(
                         }];
                 }
 
-                var activeWorkflow = workflowIdentifier.Identify(activeWorkflowInputHistory);
+                var activeWorkflow = 
+                    workflowIdentifier.Identify(activeWorkflowInputHistory);
                 
-                var response = await activeWorkflow.Match(
-                    wf => 
-                        wf.GetResponseAsync(currentInput),
-                    () => 
-                        Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>.FromSuccess(
-                            ([new OutputDto 
-                            { 
-                                Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
-                            }], Option<long>.None()))));
+                var responseResult = 
+                    await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
+                
+                await SaveCurrentInputToDbAsync(
+                    currentInput,
+                    GetResultantWorkflowInfo(responseResult, activeWorkflow));
 
-                var newState = response.Match(
-                    r => r.NewState,
-                    _ => Option<long>.None());
-                
-                if (activeWorkflow.IsSome && newState.IsSome)
-                {
-                    await inputsRepo.AddAsync(currentInput with
-                    {
-                        ResultantWorkflow = new ResultantWorkflowInfo(
-                            glossary.IdAndUiByTerm[Dt(activeWorkflow.GetValueOrThrow().GetType())].callbackId,
-                            newState.GetValueOrThrow())
-                    });
-                }
-                else
-                {
-                    await inputsRepo.AddAsync(currentInput);
-                }
-                
-                return response.Match(
-                    r => 
-                    {
-                        responseBuilder.AddRange(r.Output);
-                        
-                        return 
-                            responseBuilder
-                            .ToImmutableReadOnlyCollection();
-                    },
-                    error =>
-                    {
-                        logger.LogWarning($"""
-                                           The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
-                                           this Error Result: '{error}'. Next, the corresponding input parameters.
-                                           UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                           InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
-                                           Date: {currentInput.Details.TlgDate}; 
-                                           For more details of input, check database!
-                                           """);
-                        
-                        return 
-                            [new OutputDto { Text = error }];
-                    }
-                );
+                return ResolveResponseResultIntoOutputs(
+                    responseResult,
+                    outputBuilder,
+                    activeWorkflow,
+                    currentInput);
             },
             // This error was already logged at its source, in ToModelConverter
             error => 
@@ -129,6 +90,40 @@ internal class InputProcessor(
                     [new OutputDto { Text = error }]));
     }
 
+    private static bool IsStartCommand(TlgInput currentInput) =>
+        currentInput.InputType.Equals(TlgInputType.CommandMessage)
+        && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
+    
+    private ResultantWorkflowInfo? GetResultantWorkflowInfo(
+        Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)> response,
+        Option<IWorkflow> activeWorkflow)
+    {
+        ResultantWorkflowInfo? workflowInfo = null;
+                
+        var newState = response.Match(
+            r => r.NewState,
+            _ => Option<long>.None());
+                
+        if (activeWorkflow.IsSome && newState.IsSome)
+        {
+            workflowInfo = new ResultantWorkflowInfo(
+                glossary.IdAndUiByTerm[Dt(activeWorkflow.GetValueOrThrow().GetType())].callbackId,
+                newState.GetValueOrThrow());
+        }
+
+        return workflowInfo;
+    }
+    
+    private async Task SaveCurrentInputToDbAsync(
+        TlgInput currentInput,
+        ResultantWorkflowInfo? workflowInfo = null)
+    {
+        await inputsRepo.AddAsync(currentInput with
+        {
+            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowInfo>.None()
+        });
+    }
+    
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
@@ -161,4 +156,53 @@ internal class InputProcessor(
                 return currentInput.Details.TlgMessageId < activeWorkflowStartMessageId;
             },
             () => false);
+
+    private static async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>>
+        GetResponseFromActiveWorkflowAsync(
+            Option<IWorkflow> activeWorkflow,
+            TlgInput currentInput)
+    {
+        return await activeWorkflow.Match(
+            wf => 
+                wf.GetResponseAsync(currentInput),
+            () => 
+                Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)>
+                    .FromSuccess(
+                        ([new OutputDto 
+                        { 
+                            Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
+                        }], Option<long>.None()))));
+    }
+
+    private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
+        Result<(IReadOnlyCollection<OutputDto> Output, Option<long> NewState)> responseResult,
+        List<OutputDto> outputBuilder,
+        Option<IWorkflow> activeWorkflow,
+        TlgInput currentInput)
+    {
+        return responseResult.Match(
+            r => 
+            {
+                outputBuilder.AddRange(r.Output);
+                        
+                return 
+                    outputBuilder
+                        .ToImmutableReadOnlyCollection();
+            },
+            error =>
+            {
+                logger.LogWarning($"""
+                                   The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
+                                   this Error Result: '{error}'. Next, the corresponding input parameters.
+                                   UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
+                                   InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
+                                   Date: {currentInput.Details.TlgDate}; 
+                                   For more details of input, check database!
+                                   """);
+                        
+                return 
+                    [new OutputDto { Text = error }];
+            }
+        );
+    }
 }
