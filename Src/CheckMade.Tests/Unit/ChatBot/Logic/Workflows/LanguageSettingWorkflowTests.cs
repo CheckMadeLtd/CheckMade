@@ -148,7 +148,7 @@ public class LanguageSettingWorkflowTests
             Dt(languageCode));
 
         var roleBind = TestRepositoryUtils.GetNewRoleBind(
-            SOpsEngineer_DanielEn_X2024,
+            SaniCleanEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         
         var serviceCollection = new UnitTestStartup().Services;

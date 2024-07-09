@@ -83,55 +83,55 @@ internal static class TestData
     #region RoleSetup ##################################################################################################
     
     // Default for testing
-    internal static readonly Role SOpsAdmin_DanielEn_X2024 = 
+    internal static readonly Role SaniCleanAdmin_DanielEn_X2024 = 
         new("RVB70T",
             SaniClean_Admin, 
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SOpsInspector_DanielEn_X2024 = 
+    internal static readonly Role SaniCleanInspector_DanielEn_X2024 = 
         new("R3UDXW",
             SaniClean_Inspector,
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SOpsInspector_DanielEn_X2025 = 
+    internal static readonly Role SaniCleanInspector_DanielEn_X2025 = 
         new("R9AAB5",
             SaniClean_Inspector,
             new UserInfo(DanielEn),
             X2025Info);
     
-    internal static readonly Role SOpsInspector_LukasDe_X2024 = 
+    internal static readonly Role SaniCleanInspector_LukasDe_X2024 = 
         new("R7UIP8",
             SaniClean_Inspector,
             new UserInfo(LukasDe),
             X2024Info);
 
-    internal static readonly Role SOpsCleanLead_DanielDe_X2024 = 
+    internal static readonly Role SaniCleanCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
             SaniClean_CleanLead,
             new UserInfo(DanielDe),
             X2024Info);
 
-    internal static readonly Role SOpsObserver_DanielEn_X2024 = 
+    internal static readonly Role SaniCleanObserver_DanielEn_X2024 = 
         new("RYEATF",
             SaniClean_Observer,
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SOpsInspector_DanielDe_X2024 = 
+    internal static readonly Role SaniCleanInspector_DanielDe_X2024 = 
         new("RMAM8S",
             SaniClean_Inspector,
             new UserInfo(DanielDe),
             X2024Info);
     
-    internal static readonly Role SOpsEngineer_DanielEn_X2024 = 
+    internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
         new("RP4XPK",
             SaniClean_Engineer,
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SOpsCleanLead_DanielEn_X2024 = 
+    internal static readonly Role SaniCleanCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
             SaniClean_CleanLead,
             new UserInfo(DanielEn), 
@@ -165,8 +165,8 @@ internal static class TestData
         X2024Info,
         new List<IRoleInfo>
         {
-            SOpsInspector_LukasDe_X2024,
-            SOpsAdmin_DanielEn_X2024
+            SaniCleanInspector_LukasDe_X2024,
+            SaniCleanAdmin_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>
@@ -186,7 +186,7 @@ internal static class TestData
         X2025Info,
         new List<IRoleInfo>
         {
-            SOpsInspector_DanielEn_X2025
+            SaniCleanInspector_DanielEn_X2025
         },
         Venue1,
         new List<ISphereOfAction>());

@@ -51,7 +51,7 @@ public class LogicUtilsTests
 
         var cutoffDate = DateTime.UtcNow.AddDays(-1);
         var expiredRoleBind = new TlgAgentRoleBind(
-            SOpsAdmin_DanielEn_X2024,
+            SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
             cutoffDate.AddDays(-2),
             cutoffDate,
@@ -100,14 +100,14 @@ public class LogicUtilsTests
         var expiredRoleBinds = new[]
         {
             new TlgAgentRoleBind(
-                SOpsAdmin_DanielEn_X2024,
+                SaniCleanAdmin_DanielEn_X2024,
                 tlgAgent,
                 oldestCutoffDate.AddDays(-1),
                 oldestCutoffDate,
                 DbRecordStatus.Historic),
             
             new TlgAgentRoleBind(
-                SOpsInspector_DanielEn_X2024,
+                SaniCleanInspector_DanielEn_X2024,
                 tlgAgent,
                 latestCutoffDate.AddDays(-1),
                 latestCutoffDate,
@@ -155,7 +155,7 @@ public class LogicUtilsTests
 
         var cutoffDate = DateTime.UtcNow.AddDays(-1);
         var expiredRoleBind = new TlgAgentRoleBind(
-            SOpsAdmin_DanielEn_X2024,
+            SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
             cutoffDate.AddDays(-2),
             cutoffDate,
@@ -193,7 +193,7 @@ public class LogicUtilsTests
         var tlgAgent = PrivateBotChat_Operations;
 
         var roleBindWithNullDeactivation = new TlgAgentRoleBind(
-            SOpsAdmin_DanielEn_X2024,
+            SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
             DateTime.UtcNow.AddDays(-2),
             Option<DateTime>.None(),

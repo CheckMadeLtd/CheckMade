@@ -212,8 +212,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
                     Option<ILiveEventInfo>.None()),
             
             Default =>
-                (SOpsAdmin_DanielEn_X2024,
-                    Option<ILiveEventInfo>.Some(SOpsAdmin_DanielEn_X2024.AtLiveEvent)),
+                (SaniCleanAdmin_DanielEn_X2024,
+                    Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };

@@ -65,11 +65,11 @@ public class UserAuthWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputTokenWithPreExistingActiveTlgAgentRoleBind = 
             inputGenerator.GetValidTlgInputTextMessage(
-                text: SOpsAdmin_DanielEn_X2024.Token);
+                text: SaniCleanAdmin_DanielEn_X2024.Token);
         
         var preExistingActiveTlgAgentRoleBind = 
             TestRepositoryUtils.GetNewRoleBind(
-                SOpsAdmin_DanielEn_X2024,
+                SaniCleanAdmin_DanielEn_X2024,
                 PrivateBotChat_Operations);
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -106,7 +106,7 @@ public class UserAuthWorkflowTests
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = UserId03_ChatId06_Operations;
-        var roleForAuth = SOpsEngineer_DanielEn_X2024;
+        var roleForAuth = SaniCleanEngineer_DanielEn_X2024;
 
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
@@ -115,7 +115,7 @@ public class UserAuthWorkflowTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new []{ SOpsEngineer_DanielEn_X2024 },
+            roles: new []{ SaniCleanEngineer_DanielEn_X2024 },
             inputs: new[] { inputValidToken });
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
@@ -159,7 +159,7 @@ public class UserAuthWorkflowTests
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
-        var roleForAuth = SOpsInspector_DanielDe_X2024;
+        var roleForAuth = SaniCleanInspector_DanielDe_X2024;
         
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
@@ -168,7 +168,7 @@ public class UserAuthWorkflowTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new []{ SOpsInspector_DanielDe_X2024 },
+            roles: new []{ SaniCleanInspector_DanielDe_X2024 },
             inputs: new[] { inputValidToken });
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
@@ -216,7 +216,7 @@ public class UserAuthWorkflowTests
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
-        var roleForAuth = SOpsEngineer_DanielEn_X2024;
+        var roleForAuth = SaniCleanEngineer_DanielEn_X2024;
 
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
@@ -225,9 +225,9 @@ public class UserAuthWorkflowTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new[] { SOpsEngineer_DanielEn_X2024 },
+            roles: new[] { SaniCleanEngineer_DanielEn_X2024 },
             roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
-                SOpsEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) },
+                SaniCleanEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) },
             inputs: new[] { inputValidToken });
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];

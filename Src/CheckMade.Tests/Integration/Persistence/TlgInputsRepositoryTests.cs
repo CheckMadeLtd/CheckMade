@@ -209,20 +209,20 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2024 1",
-                roleSpecified: SOpsInspector_DanielEn_X2024),
+                roleSpecified: SaniCleanInspector_DanielEn_X2024),
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2024 2", 
-                roleSpecified: SOpsInspector_DanielEn_X2024)
+                roleSpecified: SaniCleanInspector_DanielEn_X2024)
         };
         
         var inputsX2025 = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2025 1",
-                roleSpecified: SOpsInspector_DanielEn_X2025),
+                roleSpecified: SaniCleanInspector_DanielEn_X2025),
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for X 2025 2",
-                roleSpecified: SOpsInspector_DanielEn_X2025)
+                roleSpecified: SaniCleanInspector_DanielEn_X2025)
         };
 
         await inputRepo.AddAsync(

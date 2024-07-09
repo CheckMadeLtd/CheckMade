@@ -28,7 +28,7 @@ public class LogoutWorkflowTests
             ControlPrompts.Yes);
 
         var boundRole = TestRepositoryUtils.GetNewRoleBind(
-            SOpsEngineer_DanielEn_X2024,
+            SaniCleanEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -76,7 +76,7 @@ public class LogoutWorkflowTests
         var tlgAgentOperations = PrivateBotChat_Operations;
         var tlgAgentComms = PrivateBotChat_Communications;
         var tlgAgentNotif = PrivateBotChat_Notifications;
-        var boundRole = SOpsEngineer_DanielEn_X2024; 
+        var boundRole = SaniCleanEngineer_DanielEn_X2024; 
         
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
@@ -102,7 +102,7 @@ public class LogoutWorkflowTests
                 // Decoys
                 new(boundRole, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None(), DbRecordStatus.SoftDeleted),
-                new(SOpsCleanLead_DanielDe_X2024, tlgAgentOperations,
+                new(SaniCleanCleanLead_DanielDe_X2024, tlgAgentOperations,
                     DateTime.UtcNow, Option<DateTime>.None()),
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTime.UtcNow, Option<DateTime>.None())

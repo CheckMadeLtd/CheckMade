@@ -163,7 +163,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             roleBindings: new []
             {
                 TestRepositoryUtils.GetNewRoleBind(
-                    SOpsInspector_DanielDe_X2024,
+                    SaniCleanInspector_DanielDe_X2024,
                     tlgAgent)
             }); 
         
@@ -278,21 +278,21 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
-                    SOpsInspector_DanielEn_X2024, 
+                    SaniCleanInspector_DanielEn_X2024, 
                     Operations), 
                 Text = UiNoTranslate("Output1")   
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SOpsCleanLead_DanielEn_X2024, 
+                    SaniCleanCleanLead_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output2") 
             },
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SOpsEngineer_DanielEn_X2024, 
+                    SaniCleanEngineer_DanielEn_X2024, 
                     Communications),
                 Text = UiNoTranslate("Output3)") 
             }
@@ -302,9 +302,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
             GetStubInputProcessor(outputsWithLogicalPort));
 
         List<TlgAgentRoleBind> activeRoleBindings = [ 
-            TestRepositoryUtils.GetNewRoleBind(SOpsInspector_DanielEn_X2024, PrivateBotChat_Operations),
-            TestRepositoryUtils.GetNewRoleBind(SOpsCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
-            TestRepositoryUtils.GetNewRoleBind(SOpsEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanInspector_DanielEn_X2024, PrivateBotChat_Operations),
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
+            TestRepositoryUtils.GetNewRoleBind(SaniCleanEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: activeRoleBindings);
