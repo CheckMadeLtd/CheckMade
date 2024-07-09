@@ -9,9 +9,11 @@ internal interface ILogicUtils
     public static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
-
-    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(TlgAgent tlgAgent);
-    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgAgent tlgAgent);
+    
+    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
+        TlgAgent tlgAgent, TlgInput? appendCurrentInputToHistory = null);
+    
+    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgInput currentInput);
     
     public static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
         inputs.LastOrDefault(i => 
@@ -24,7 +26,10 @@ internal class LogicUtils(
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
     : ILogicUtils
 {
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
+        TlgAgent tlgAgent,
+        // appendCurrentInputToHistory - used in case this method is called BEFORE currentInput was added to DB!
+        TlgInput? appendCurrentInputToHistory = null)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         
@@ -38,17 +43,28 @@ internal class LogicUtils(
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
             : DateTime.MinValue;
         
-        return (await inputsRepo.GetAllInteractiveAsync(tlgAgent))
-            .Where(i => 
-                i.Details.TlgDate.ToUniversalTime() > 
+        var allCurrentInteractiveFromDb = (await inputsRepo.GetAllInteractiveAsync(tlgAgent))
+            .Where(i =>
+                i.Details.TlgDate.ToUniversalTime() >
                 cutOffDate.ToUniversalTime())
+            .ToList();
+
+        if (appendCurrentInputToHistory is not null)
+            allCurrentInteractiveFromDb
+                .Add(appendCurrentInputToHistory);
+
+        return 
+            allCurrentInteractiveFromDb
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgInput currentInput)
     {
-        var currentRoleInputs = await GetAllCurrentInteractiveAsync(tlgAgent);
-
+        var currentRoleInputs = 
+            await GetAllCurrentInteractiveAsync(
+                currentInput.TlgAgent,
+                currentInput);
+        
         return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();

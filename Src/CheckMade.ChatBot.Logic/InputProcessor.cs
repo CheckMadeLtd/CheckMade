@@ -54,7 +54,7 @@ internal class InputProcessor(
                 }
 
                 var activeWorkflowInputHistory = 
-                    await logicUtils.GetInteractiveSinceLastBotCommand(currentInput.TlgAgent);
+                    await logicUtils.GetInteractiveSinceLastBotCommand(currentInput);
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
