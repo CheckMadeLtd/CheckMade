@@ -1,5 +1,8 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -7,6 +10,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
@@ -28,9 +32,25 @@ public class InputProcessorTests
             roleSetting: TestOriginatorRoleSetting.None);
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: new[] { startCommand });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
+
+        var glossary = services.GetRequiredService<IDomainGlossary>();
+        var expectedTlgInputSavedToDb = 
+            startCommand with
+            {
+                ResultantWorkflow = new ResultantWorkflowInfo(
+                    glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
+                    (long)UserAuthWorkflow.States.Initial)
+            };
+        
+        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
+        mockInputRepo
+            .Setup(repo => 
+                repo.AddAsync(It.Is<TlgInput>(input => 
+                    input.Equals(expectedTlgInputSavedToDb))))
+            .Verifiable();
         
         List<OutputDto> expectedOutputs = [
             new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
@@ -43,6 +63,8 @@ public class InputProcessorTests
         Assert.Equivalent(
             expectedOutputs,
             actualOutput);
+        
+        mockInputRepo.Verify();
     }
     
     [Fact]
@@ -59,7 +81,7 @@ public class InputProcessorTests
                 messageId: 4);
 
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: new[]
             {
                 inputGenerator.GetValidTlgInputCommandMessage(
@@ -76,6 +98,15 @@ public class InputProcessorTests
                 outOfScopeCallbackQuery
             });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
+
+        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = outOfScopeCallbackQuery;
+        
+        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
+        mockInputRepo
+            .Setup(repo => 
+                repo.AddAsync(It.Is<TlgInput>(input => 
+                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
+            .Verifiable();
         
         const string expectedWarningOutput = 
             "The previous workflow was completed, so your last message/action will be ignored.";
@@ -87,6 +118,8 @@ public class InputProcessorTests
         Assert.Equal(
             expectedWarningOutput,
             TestUtils.GetFirstRawEnglish(actualOutput));
+        
+        mockInputRepo.Verify();
     }
 
     [Fact]
@@ -181,14 +214,24 @@ public class InputProcessorTests
                 17, -22, Option<float>.None());
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: new[] { locationUpdate });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
+        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = locationUpdate;
+
+        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
+        mockInputRepo
+            .Setup(repo => 
+                repo.AddAsync(It.Is<TlgInput>(input => 
+                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
+            .Verifiable();
+        
         var actualOutput =
             await inputProcessor
                 .ProcessInputAsync(locationUpdate);
         
         Assert.Empty(actualOutput);
+        mockInputRepo.Verify();
     }
 }
