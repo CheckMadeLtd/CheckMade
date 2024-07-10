@@ -17,8 +17,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
@@ -68,8 +67,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
@@ -89,8 +87,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token2",
@@ -114,8 +111,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         var roleInfo2 = roleInfo1;
 
@@ -167,8 +163,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo? roleInfo2 = null;
 
@@ -184,13 +179,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo roleInfo2 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         var areEqual = roleInfo1.Equals(roleInfo2);
 
@@ -228,8 +221,7 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024),
-            DbRecordStatus.Active);
+            new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
