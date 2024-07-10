@@ -1,4 +1,8 @@
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
@@ -6,56 +10,92 @@ internal interface INewIssueWorkflow : IWorkflow
 {
     NewIssueWorkflow.States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
-        IReadOnlyCollection<TlgInput> recentLocationHistory);
+        IReadOnlyCollection<TlgInput> recentLocationHistory,
+        LiveEvent liveEvent);
 }
 
-internal class NewIssueWorkflow : INewIssueWorkflow
+internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssueWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<WorkflowResponse>> 
+    public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         // get workflowinputHistory and locationHistory separately
         
         throw new NotImplementedException();
+
+        // var lifeEvent = await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow();
     }
 
     public States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
-        IReadOnlyCollection<TlgInput> recentLocationHistory)
+        IReadOnlyCollection<TlgInput> recentLocationHistory,
+        LiveEvent liveEvent)
     {
-        // var lastInteractiveInput = workflowInteractiveHistory.Last();
+        var lastInteractiveInput = workflowInteractiveHistory.Last();
+        var activeRoleType = lastInteractiveInput.OriginatorRole.GetValueOrThrow().RoleType;
 
-        // if (IsBeginningOfWorkflow())
-        // {
-        //     if (IsTradeKnown())
-        //     {
-        //         return CanDetermineSphereOfActionLocation() switch
-        //         {
-        //             true => States.Initial_SphereKnown,
-        //             _ => States.Initial_SphereUnknown
-        //         };
-        //     }
-        // }
+        if (IsBeginningOfWorkflow())
+        {
+            if (IsRoleTradeAgnostic())
+            {
+                return States.Initial_TradeUnknown;
+            }
+            
+            return CanDetermineSphereOfActionLocation() switch
+            {
+                true => States.Initial_SphereKnown,
+                _ => States.Initial_SphereUnknown
+            };
+        }
 
+        if (lastInteractiveInput.ResultantWorkflow.IsNone)
+        {
+            throw new InvalidOperationException($"Lack of '{nameof(ResultantWorkflowInfo)}' for last input processed " +
+                                                $" by ({nameof(NewIssueWorkflow)}).");
+        }
+        
+        // From here, base calc of State on combination of resultantState plus new input.
         
         throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
         
-        // bool IsBeginningOfWorkflow() => lastInteractiveInput.InputType == TlgInputType.CommandMessage;
-        //
-        // bool CanDetermineSphereOfActionLocation()
-        // {
-        //     if (recentLocationHistory.Count == 0)
-        //         return false;
-        //      
-        //     // ToDo: then compare the last (!!!) location update to the saved locations of spheres. 
-        //     // if it's not further than the threshold defined for the corresponding TradeType then return true! 
-        //     return true;
-        // }
+        bool IsBeginningOfWorkflow() => 
+            lastInteractiveInput.InputType == TlgInputType.CommandMessage;
+
+        bool IsRoleTradeAgnostic() =>
+            activeRoleType.GetType().IsAssignableTo(typeof(ILiveEventRoleType));
+        
+        bool CanDetermineSphereOfActionLocation()
+        {
+            var lastLocationUpdate = recentLocationHistory.LastOrDefault();
+            
+            if (lastLocationUpdate is null)
+                return false;
+
+            var trade = activeRoleType.GetType().GetGenericArguments()[0];
+            
+            if (liveEvent is null)
+                throw new InvalidOperationException();
+
+            var spheres = 
+                liveEvent
+                    .DivIntoSpheres
+                    .Where(soa => soa.Trade == trade)
+                    .ToImmutableReadOnlyCollection();
+            
+            return IsLocationNearASphere(lastLocationUpdate, spheres);
+        }
+
+        static bool IsLocationNearASphere(
+            TlgInput lastLocationUpdate,
+            IReadOnlyCollection<ISphereOfAction> spheres)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     [Flags]

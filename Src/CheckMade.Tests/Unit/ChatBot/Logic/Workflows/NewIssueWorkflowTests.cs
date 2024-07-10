@@ -13,15 +13,37 @@ public class NewIssueWorkflowTests
     private ServiceProvider? _services;
 
     [Fact]
-    public void DetermineCurrentState_ReturnsInitialTradeUnknown_OnNewIssueFromRoleWithMultipleTrades()
+    public void DetermineCurrentState_ReturnsInitialTradeUnknown_OnNewIssueFromLiveEventAdminRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
 
-        // var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var tlgAgent = PrivateBotChat_Operations;
+
+        List<TlgInput> interactiveHistory = [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode, 
+                (int)OperationsBotCommands.NewIssue,
+                roleSpecified: LiveEventAdmin_DanielEn_X2024)];
+
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: interactiveHistory
+        );
+        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+
+        var actualState =
+            workflow.DetermineCurrentState(
+                interactiveHistory,
+                [],
+                X2024);
         
+        Assert.Equal(
+            NewIssueWorkflow.States.Initial_TradeUnknown,
+            actualState);
     }
     
-    [Fact(Skip = "Not implemented")]
+    [Fact]
     public void DetermineCurrentState_ReturnsInitialSphereUnknown_OnNewIssueWithoutRecentLocationUpdates()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -32,7 +54,8 @@ public class NewIssueWorkflowTests
         List<TlgInput> interactiveHistory = [
             inputGenerator.GetValidTlgInputTextMessage(),
             inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, (int)OperationsBotCommands.NewIssue)];
+                tlgAgent.Mode, 
+                (int)OperationsBotCommands.NewIssue)];
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -42,21 +65,19 @@ public class NewIssueWorkflowTests
         var actualState =
             workflow.DetermineCurrentState(
                 interactiveHistory, 
-                []);
+                [],
+                X2024);
         
         Assert.Equal(
             NewIssueWorkflow.States.Initial_SphereUnknown,
             actualState);
     }
 
-    [Fact(Skip = "Not implemented")]
-    public void DetermineCurrentState_ReturnsInitialSphereUnknown_OnNewIssue_WithLocationUpdateNotNearAnySphere()
-    {
-        throw new NotImplementedException();
-    }
-
-    [Fact(Skip = "Not implemented")]
-    public void DetermineCurrentState_ReturnsInitialSphereKnown_OnNewIssueForSanitaryCleaning_WithLocationUpdateNearAnySphere()
+    [Theory]
+    [InlineData(true, NewIssueWorkflow.States.Initial_SphereKnown)]
+    [InlineData(false, NewIssueWorkflow.States.Initial_SphereUnknown)]
+    public void DetermineCurrentState_ReturnsInitialSphereKnown_OnNewIssueForSaniClean_NearASphere(
+        bool isNearSphere, Enum expectedState)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
 
@@ -66,7 +87,8 @@ public class NewIssueWorkflowTests
         List<TlgInput> interactiveHistory = [
             inputGenerator.GetValidTlgInputTextMessage(), 
             inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, (int)OperationsBotCommands.NewIssue)];
+                tlgAgent.Mode, 
+                (int)OperationsBotCommands.NewIssue)];
 
         var nearSphere1LocationLatitude = 
             Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
@@ -82,11 +104,16 @@ public class NewIssueWorkflowTests
                 farFromSphere1LocationLatitude,
                 farFromSphere1LocationLongitude,
                 Option<float>.None(),
-                dateTime: DateTime.UtcNow.AddSeconds(-10)),
-            inputGenerator.GetValidTlgInputLocationMessage(
-                nearSphere1LocationLatitude,
-                nearSphere1LocationLongitude,
-                Option<float>.None())];
+                dateTime: DateTime.UtcNow.AddSeconds(-10))];
+
+        if (isNearSphere)
+        {
+            recentLocationHistory.Add(
+                inputGenerator.GetValidTlgInputLocationMessage(
+                    nearSphere1LocationLatitude,
+                    nearSphere1LocationLongitude,
+                    Option<float>.None()));
+        }
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -96,8 +123,9 @@ public class NewIssueWorkflowTests
         var actualState = 
             workflow.DetermineCurrentState(
                 interactiveHistory,
-                recentLocationHistory);
+                recentLocationHistory,
+                X2024);
 
-        Assert.Equal(NewIssueWorkflow.States.Initial_SphereKnown, actualState);
+        Assert.Equal(expectedState, actualState);
     }
 }
