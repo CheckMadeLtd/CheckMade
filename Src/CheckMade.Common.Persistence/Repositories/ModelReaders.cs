@@ -8,6 +8,7 @@ using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -17,24 +18,25 @@ using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
+using Microsoft.Extensions.Options;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
 internal static class ModelReaders
 {
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
-        (reader, _) =>
+        (reader, glossary) =>
     {
         var userInfo = ConstituteUserInfo(reader);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
 
-        return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow());
+        return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
     };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
         (reader, glossary) =>
     {
-        var originatorRoleInfo = ConstituteRoleInfo(reader);
+        var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
         var liveEventInfo = ConstituteLiveEventInfo(reader);
         
         return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
@@ -59,7 +61,7 @@ internal static class ModelReaders
         Action<User, DbDataReader> accumulateData,
         Func<User, User> finalizeModel) 
         
-        GetUserReader()
+        GetUserReader(IDomainGlossary glossary)
     {
         return (
             getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
@@ -70,7 +72,7 @@ internal static class ModelReaders
                     ConstituteVendor(reader)),
             accumulateData: (user, reader) =>
             {
-                var roleInfo = ConstituteRoleInfo(reader);
+                var roleInfo = ConstituteRoleInfo(reader, glossary);
                 if (roleInfo.IsSome)
                     ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
             },
@@ -96,7 +98,7 @@ internal static class ModelReaders
                     new HashSet<ISphereOfAction>()),
             accumulateData: (liveEvent, reader) =>
             {
-                var roleInfo = ConstituteRoleInfo(reader);
+                var roleInfo = ConstituteRoleInfo(reader, glossary);
                 if (roleInfo.IsSome)
                     ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
@@ -206,7 +208,7 @@ internal static class ModelReaders
             if (tradeType is null || 
                 !tradeType.IsAssignableTo(typeof(ITrade)))
             {
-                throw new InvalidDataException($"The '{nameof(tradeType)}:' '{tradeType?.FullName}' of this sphere " +
+                throw new InvalidDataException($"The '{nameof(tradeType)}': '{tradeType?.FullName}' of this sphere " +
                                                $"can't be determined.");
             }
 
@@ -214,22 +216,67 @@ internal static class ModelReaders
         }
     }
     
-    private static Role ConstituteRole(DbDataReader reader, IUserInfo userInfo, ILiveEventInfo liveEventInfo) =>
-        new(ConstituteRoleInfo(reader).GetValueOrThrow(),
+    private static Role ConstituteRole(
+        DbDataReader reader,
+        IUserInfo userInfo,
+        ILiveEventInfo liveEventInfo,
+        IDomainGlossary glossary) =>
+        new(ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
             userInfo,
             liveEventInfo);
 
-    private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader)
+    private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
+
+        Dictionary<string, Func<IRoleType>> roleTypeFactoryByFullTypeName = new()
+        {
+            [typeof(LiveEventAdmin).FullName!] = () => new LiveEventAdmin(),
+            [typeof(LiveEventObserver).FullName!] = () => new LiveEventObserver(),
+            
+            [typeof(TradeAdmin<SaniCleanTrade>).FullName!] = () => new TradeAdmin<SaniCleanTrade>(),
+            [typeof(TradeInspector<SaniCleanTrade>).FullName!] = () => new TradeInspector<SaniCleanTrade>(),
+            [typeof(TradeEngineer<SaniCleanTrade>).FullName!] = () => new TradeEngineer<SaniCleanTrade>(),
+            [typeof(TradeTeamLead<SaniCleanTrade>).FullName!] = () => new TradeTeamLead<SaniCleanTrade>(),
+            [typeof(TradeObserver<SaniCleanTrade>).FullName!] = () => new TradeObserver<SaniCleanTrade>(),
+            
+            [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
+            [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),
+            [typeof(TradeEngineer<SiteCleanTrade>).FullName!] = () => new TradeEngineer<SiteCleanTrade>(),
+            [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
+            [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
+        };
+        
+        var roleTypeTypeInfo = GetRoleTypeTypeInfo();
+
+        if (!roleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
+        {
+            throw new InvalidOperationException($"Unhandled role type: {roleTypeTypeInfo.FullName}");
+        }
+
+        var roleType = factory();
         
         return new RoleInfo(
             reader.GetString(reader.GetOrdinal("role_token")),
-            EnsureEnumValidityOrThrow(
-                (RoleType)reader.GetInt16(reader.GetOrdinal("role_type"))),
+            roleType,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status"))));
+
+        Type GetRoleTypeTypeInfo()
+        {
+            var roleTypeId = new CallbackId(reader.GetString(reader.GetOrdinal("role_type")));
+            var roleTypeTypeRaw = glossary.TermById[roleTypeId].TypeValue;
+
+            if (roleTypeTypeRaw is null ||
+                !roleTypeTypeRaw.IsAssignableTo(typeof(IRoleType)))
+            {
+                throw new InvalidDataException($"The '{nameof(roleTypeTypeRaw)}': " +
+                                               $"'{roleTypeTypeRaw?.FullName}' of this Role can't be determined.");
+            }
+
+            return roleTypeTypeRaw;
+        }
     }
 
     private static TlgInput ConstituteTlgInput(
