@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
@@ -35,15 +36,17 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 StaffIssue"));
         
-        // AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "123456", Ui("SaniCleanAdmin"));
-        
-        // ToDo: add RoleTypes once switched over from Enum to Types (de.tsv already has en/de strings for it!!
+        AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));
+        AddTerm(typeof(TradeInspector<SaniCleanTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
+        AddTerm(typeof(TradeEngineer<SaniCleanTrade>), "D2PC58", Ui("SaniClean-Engineer"));
+        AddTerm(typeof(TradeTeamLead<SaniCleanTrade>), "DE4E59", Ui("SaniClean-CleanLead"));
+        AddTerm(typeof(TradeObserver<SaniCleanTrade>), "DH4QH5", Ui("SaniClean-Observer"));
         
         #endregion
         
         #region Trades
         
-        AddTerm(typeof(SaniCleanTrade), "DX3KFI", Ui("🪠 Sanitary Operations"));
+        AddTerm(typeof(SaniCleanTrade), "DX3KFI", Ui("🪠 Sanitary Cleaning"));
         AddTerm(typeof(SiteCleanTrade), "DSIL7M", Ui("🧹 Site Cleaning"));
         
         #endregion
@@ -55,13 +58,10 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
         AddTerm(typeof(NewIssueWorkflow), "D6SORL", UiNoTranslate(nameof(NewIssueWorkflow)));
         
-        // Spare codes
-        // IV8LK
-        // BN6SZ
-        // WWD3W
-        // FIY82
-            
         #endregion
+        
+        AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
+        AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
         
         AddTerm(LanguageCode.en, "DCQ4ME", Ui("🇬🇧 English"));
         AddTerm(LanguageCode.de, "DFVN7W", Ui("🇩🇪 German"));
