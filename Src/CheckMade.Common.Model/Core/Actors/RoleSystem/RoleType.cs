@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Actors;
+namespace CheckMade.Common.Model.Core.Actors.RoleSystem;
 
 public enum RoleType
 {

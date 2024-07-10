@@ -35,6 +35,8 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 StaffIssue"));
         
+        // AddTerm(typeof(TradeAdmin<TradeSaniClean>), "123456", Ui("SaniCleanAdmin"));
+        
         // ToDo: add RoleTypes once switched over from Enum to Types (de.tsv already has en/de strings for it!!
         
         #endregion

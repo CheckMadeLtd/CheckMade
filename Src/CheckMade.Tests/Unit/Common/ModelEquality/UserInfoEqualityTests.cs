@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Utils;

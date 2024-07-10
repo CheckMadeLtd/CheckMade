@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Utils.Comparers.RoleInfoComparer;
     
-namespace CheckMade.Common.Model.Core.Actors;
+namespace CheckMade.Common.Model.Core.Actors.RoleSystem;
 
 public sealed record Role(
         string Token,

@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Interfaces.Persistence.Core;

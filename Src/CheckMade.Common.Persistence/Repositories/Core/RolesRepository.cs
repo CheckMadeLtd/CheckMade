@@ -1,6 +1,6 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Interfaces;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;

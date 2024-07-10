@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot;
