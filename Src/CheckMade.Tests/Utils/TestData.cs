@@ -3,12 +3,12 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
-using static CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleType;
 using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
@@ -87,55 +87,55 @@ internal static class TestData
     // Default for testing
     internal static readonly Role SaniCleanAdmin_DanielEn_X2024 = 
         new("RVB70T",
-            SaniClean_Admin, 
+            new TradeAdmin<SaniCleanTrade>(), 
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SaniCleanInspector_DanielEn_X2024 = 
         new("R3UDXW",
-            SaniClean_Inspector,
+            new TradeInspector<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SaniCleanInspector_DanielEn_X2025 = 
         new("R9AAB5",
-            SaniClean_Inspector,
+            new TradeInspector<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2025Info);
     
     internal static readonly Role SaniCleanInspector_LukasDe_X2024 = 
         new("R7UIP8",
-            SaniClean_Inspector,
+            new TradeInspector<SaniCleanTrade>(),
             new UserInfo(LukasDe),
             X2024Info);
 
     internal static readonly Role SaniCleanCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
-            SaniClean_CleanLead,
+            new TradeTeamLead<SaniCleanTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
 
     internal static readonly Role SaniCleanObserver_DanielEn_X2024 = 
         new("RYEATF",
-            SaniClean_Observer,
+            new TradeObserver<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SaniCleanInspector_DanielDe_X2024 = 
         new("RMAM8S",
-            SaniClean_Inspector,
+            new TradeInspector<SaniCleanTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
     
     internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
         new("RP4XPK",
-            SaniClean_Engineer,
+            new TradeEngineer<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
     internal static readonly Role SaniCleanCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
-            SaniClean_CleanLead,
+            new TradeTeamLead<SaniCleanTrade>(),
             new UserInfo(DanielEn), 
             X2024Info);
     

@@ -62,7 +62,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossa
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = ModelReaders.GetUserReader();
+                        finalizeModel) = ModelReaders.GetUserReader(Glossary);
 
                     var users =
                         await ExecuteReaderOneToManyAsync(

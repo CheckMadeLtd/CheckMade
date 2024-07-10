@@ -3,7 +3,9 @@ using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Structs;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
@@ -55,7 +57,11 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token1", RoleType.SaniClean_Admin) },
+            new List<IRoleInfo>
+            {
+                new RoleInfo("Token1",
+                    new TradeAdmin<SaniCleanTrade>())
+            },
             Option<Vendor>.None());
 
         IUserInfo user2 = new User(
@@ -65,7 +71,11 @@ public class UserInfoEqualityTests
             "Doe",
             Option<EmailAddress>.None(),
             LanguageCode.en,
-            new List<IRoleInfo> { new RoleInfo("Token2", RoleType.SaniClean_Inspector) },
+            new List<IRoleInfo>
+            {
+                new RoleInfo("Token2", 
+                    new TradeInspector<SaniCleanTrade>())
+            },
             Option<Vendor>.None());
 
         var areEqual = user1.Equals(user2);

@@ -18,7 +18,6 @@ using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
-using Microsoft.Extensions.Options;
 
 namespace CheckMade.Common.Persistence.Repositories;
 

@@ -5,7 +5,7 @@ namespace CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 
 public sealed record RoleInfo(
         string Token,
-        RoleType RoleType,
+        IRoleType RoleType,
         DbRecordStatus Status = DbRecordStatus.Active) 
     : IRoleInfo
 {

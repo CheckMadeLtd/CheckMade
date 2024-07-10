@@ -22,6 +22,28 @@ public class DomainGlossary : IDomainGlossary
     
     public DomainGlossary()
     {
+        AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
+        AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
+        
+        AddTerm(LanguageCode.en, "DCQ4ME", Ui("🇬🇧 English"));
+        AddTerm(LanguageCode.de, "DFVN7W", Ui("🇩🇪 German"));
+
+        #region Trades
+        
+        AddTerm(typeof(SaniCleanTrade), "DX3KFI", Ui("🪠 Sanitary Cleaning"));
+        AddTerm(typeof(SiteCleanTrade), "DSIL7M", Ui("🧹 Site Cleaning"));
+        
+        #endregion
+        
+        #region Workflows
+        
+        AddTerm(typeof(UserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
+        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
+        AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
+        AddTerm(typeof(NewIssueWorkflow), "D6SORL", UiNoTranslate(nameof(NewIssueWorkflow)));
+        
+        #endregion
+        
         #region SubDomainSaniClean
 
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
@@ -44,28 +66,8 @@ public class DomainGlossary : IDomainGlossary
         
         #endregion
         
-        #region Trades
+        // ToDo: Add SubDomain SiteClean, start with Roles
         
-        AddTerm(typeof(SaniCleanTrade), "DX3KFI", Ui("🪠 Sanitary Cleaning"));
-        AddTerm(typeof(SiteCleanTrade), "DSIL7M", Ui("🧹 Site Cleaning"));
-        
-        #endregion
-        
-        #region Workflows
-        
-        AddTerm(typeof(UserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
-        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
-        AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
-        AddTerm(typeof(NewIssueWorkflow), "D6SORL", UiNoTranslate(nameof(NewIssueWorkflow)));
-        
-        #endregion
-        
-        AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
-        AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
-        
-        AddTerm(LanguageCode.en, "DCQ4ME", Ui("🇬🇧 English"));
-        AddTerm(LanguageCode.de, "DFVN7W", Ui("🇩🇪 German"));
-
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
         TermById = IdAndUiByTerm.ToDictionary(

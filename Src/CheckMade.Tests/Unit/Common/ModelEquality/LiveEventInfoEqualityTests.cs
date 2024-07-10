@@ -1,7 +1,9 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
@@ -99,8 +101,8 @@ public class LiveEventInfoEqualityTests
     [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingLiveEventsWithDifferentRoleInfoCollections()
     {
-        var roleInfo1 = new RoleInfo("Token1", RoleType.SaniClean_Admin);
-        var roleInfo2 = new RoleInfo("Token2", RoleType.SaniClean_Inspector);
+        var roleInfo1 = new RoleInfo("Token1", new TradeAdmin<SaniCleanTrade>());
+        var roleInfo2 = new RoleInfo("Token2", new TradeInspector<SaniCleanTrade>());
 
         ILiveEventInfo liveEvent1 = new LiveEvent(
             "Test Event",
