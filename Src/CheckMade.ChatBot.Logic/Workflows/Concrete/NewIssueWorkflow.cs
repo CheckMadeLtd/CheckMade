@@ -3,6 +3,8 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
@@ -73,20 +75,29 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
             if (lastLocationUpdate is null)
                 return false;
 
-            var spheres = 
+            var spheresForCurrentTrade = 
                 liveEvent
                     .DivIntoSpheres
-                    .Where(soa => soa.GetTrade() == activeRoleType.GetTrade().GetValueOrThrow())
+                    .Where(soa => 
+                        soa.GetTrade().GetType() 
+                        == activeRoleType.GetTrade().GetValueOrThrow().GetType())
                     .ToImmutableReadOnlyCollection();
             
-            return IsLocationNearASphere(lastLocationUpdate, spheres);
+            return IsLocationNearASphere(lastLocationUpdate, spheresForCurrentTrade);
         }
 
         static bool IsLocationNearASphere(
             TlgInput lastLocationUpdate,
             IReadOnlyCollection<ISphereOfAction> spheres)
         {
-            throw new NotImplementedException();
+            var lastLocation = 
+                lastLocationUpdate.Details.GeoCoordinates.GetValueOrThrow();
+
+            return 
+                spheres
+                    .Any(soa => 
+                        soa.Details.GeoCoordinates.GetValueOrThrow()
+                            .MetersAwayFrom(lastLocation) < SaniCleanTrade.SphereNearnessThresholdInMeters);
         }
     }
 

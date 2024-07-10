@@ -1,7 +1,9 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Utils.GIS;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,13 +93,22 @@ public class NewIssueWorkflowTests
                 (int)OperationsBotCommands.NewIssue)];
 
         var nearSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Latitude;
         var nearSphere1LocationLongitude =
-            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Longitude;
+        
         var farFromSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Latitude + 1.0;
         var farFromSphere1LocationLongitude = 
-            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Longitude + 1.0;
+        
+        Assert.True(
+            new Geo(
+                    farFromSphere1LocationLatitude, 
+                    farFromSphere1LocationLongitude,
+                    Option<float>.None())
+                .MetersAwayFrom(Sphere1_Location) 
+            > SaniCleanTrade.SphereNearnessThresholdInMeters);
         
         List<TlgInput> recentLocationHistory = [
             inputGenerator.GetValidTlgInputLocationMessage(
