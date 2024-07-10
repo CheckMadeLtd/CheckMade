@@ -76,7 +76,7 @@ public class NewIssueWorkflowTests
     [Theory]
     [InlineData(true, NewIssueWorkflow.States.Initial_SphereKnown)]
     [InlineData(false, NewIssueWorkflow.States.Initial_SphereUnknown)]
-    public void DetermineCurrentState_ReturnsInitialSphereKnown_OnNewIssueForSaniClean_NearASphere(
+    public void DetermineCurrentState_ReturnsCorrectInitialSphereState_OnNewIssueForSaniClean(
         bool isNearSphere, Enum expectedState)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
