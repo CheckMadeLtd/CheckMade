@@ -1,3 +1,8 @@
+using CheckMade.Common.Model.Core.Trades;
+
 namespace CheckMade.Common.Model.Core.Actors.RoleSystem;
 
-public interface IRoleType;
+public interface IRoleType
+{
+    Option<ITrade> GetTradeParameter();
+}
