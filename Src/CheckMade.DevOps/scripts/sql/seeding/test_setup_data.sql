@@ -43,6 +43,8 @@ new_employment_history_lukas_old AS (
                 (SELECT id FROM new_user_lukas_de_without_email),
                 (SELECT id FROM new_fake_old_vendor),
                 '{}', 90)
+        ON CONFLICT (user_id, vendor_id) WHERE status = 1
+           DO NOTHING
 ),
 
 new_employment_history_lukas_current AS (
@@ -51,6 +53,8 @@ new_employment_history_lukas_current AS (
                 (SELECT id FROM new_user_lukas_de_without_email),
                 (SELECT id FROM new_vendor_evecon),
                 '{}', 1)
+        ON CONFLICT (user_id, vendor_id) WHERE status = 1
+            DO NOTHING
 ),
 
 new_live_event_venue_1 AS (
@@ -153,7 +157,7 @@ new_live_event_Y2024 AS (
     
 new_role_for_lukas_de_without_email AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
-        VALUES ('R7UIP8', 1002, 1, 
+        VALUES ('R7UIP8', 'DYHG6E', 1, 
                 (SELECT id FROM new_user_lukas_de_without_email),
                 (SELECT id FROM new_live_event_X2024))
         ON CONFLICT (token) DO NOTHING
@@ -161,14 +165,14 @@ new_role_for_lukas_de_without_email AS (
 
 new_role_for_daniel_en_x2025 AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
-        VALUES ('R9AAB5', 1002, 1,
+        VALUES ('R9AAB5', 'DYHG6E', 1,
                 (SELECT id FROM user_daniel_en),
                 (SELECT id FROM new_live_event_X2025))
         ON CONFLICT (token) DO NOTHING
 )
 
 INSERT INTO roles (token, role_type, status, user_id, live_event_id) 
-    VALUES ('RVB70T', 1001, 1,
+    VALUES ('RVB70T', 'DLE960', 1,
             (SELECT id FROM user_daniel_en),
             (SELECT id FROM new_live_event_X2024))
     ON CONFLICT (token) DO NOTHING;
