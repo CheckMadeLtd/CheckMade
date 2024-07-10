@@ -1,7 +1,7 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 

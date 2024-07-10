@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Core.Trades.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +12,14 @@ public class NewIssueWorkflowTests
 {
     private ServiceProvider? _services;
 
-    // ToDo: Review State names after update of possible States.
+    [Fact]
+    public void DetermineCurrentState_ReturnsInitialTradeUnknown_OnNewIssueFromRoleWithMultipleTrades()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+
+        // var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        
+    }
     
     [Fact(Skip = "Not implemented")]
     public void DetermineCurrentState_ReturnsInitialSphereUnknown_OnNewIssueWithoutRecentLocationUpdates()
@@ -62,13 +69,13 @@ public class NewIssueWorkflowTests
                 tlgAgent.Mode, (int)OperationsBotCommands.NewIssue)];
 
         var nearSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + TradeSaniClean.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
         var nearSphere1LocationLongitude =
-            Sphere1_Location.Longitude + TradeSaniClean.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
         var farFromSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + TradeSaniClean.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
         var farFromSphere1LocationLongitude = 
-            Sphere1_Location.Longitude + TradeSaniClean.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
         
         List<TlgInput> recentLocationHistory = [
             inputGenerator.GetValidTlgInputLocationMessage(

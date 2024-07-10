@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
@@ -20,7 +21,8 @@ internal interface IUserAuthWorkflow : IWorkflow
 internal class UserAuthWorkflow(
         IRolesRepository rolesRepo,
         ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils)
+        ILogicUtils logicUtils,
+        IDomainGlossary glossary)
     : IUserAuthWorkflow
 {
     internal static readonly OutputDto EnterTokenPrompt = new()
@@ -35,7 +37,7 @@ internal class UserAuthWorkflow(
             == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+    public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var inputText = currentInput.Details.Text.GetValueOrDefault();
@@ -46,30 +48,33 @@ internal class UserAuthWorkflow(
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {
             Initial => 
-                (new List<OutputDto> { EnterTokenPrompt },
+                new WorkflowResponse(
+                    new List<OutputDto> { EnterTokenPrompt },
                     Initial),
             
             ReceivedTokenSubmissionAttempt => 
-                (IsValidToken(inputText) switch
-                {
-                    true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+                new WorkflowResponse(
+                    IsValidToken(inputText) switch 
                     {
-                        true => await AuthenticateUserAsync(currentInput),
-                        
+                        true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+                        {
+                            true => await AuthenticateUserAsync(currentInput),
+                            
+                            false => [new OutputDto 
+                                {
+                                    Text = Ui("This is an unknown token. Try again...")
+                                },
+                                EnterTokenPrompt]
+                        },
                         false => [new OutputDto
                             {
-                                Text = Ui("This is an unknown token. Try again...")
+                                Text = Ui("Bad token format! Try again...")
                             },
-                            EnterTokenPrompt]
-                    },
-                    false => [new OutputDto
-                        {
-                            Text = Ui("Bad token format! Try again...")
-                        },
-                        EnterTokenPrompt]
-                }, ReceivedTokenSubmissionAttempt),
+                            EnterTokenPrompt] 
+                    }, 
+                    ReceivedTokenSubmissionAttempt),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
+            _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }
@@ -111,28 +116,34 @@ internal class UserAuthWorkflow(
         var preExistingActiveRoleBind = 
             FirstOrDefaultPreExistingActiveRoleBind(currentMode);
 
+        var roleTypeUiString = 
+            glossary.IdAndUiByTerm[Dt(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType())]
+            .uiString; 
+        
         if (preExistingActiveRoleBind != null)
         {
             await roleBindingsRepo.UpdateStatusAsync(preExistingActiveRoleBind, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
-                Text = Ui("""
-                          Warning: you were already authenticated with this token in another {0} chat. 
-                          This will be the new {0} chat where you receive messages in your role {1} at {2}. 
-                          """, 
+                Text = UiConcatenate(
+                    Ui("""
+                       Warning: you were already authenticated with this token in another {0} chat.
+                       This will be the new {0} chat where you receive messages at {1}, in your role as: 
+                       """, 
                     currentMode,
-                    newTlgAgentRoleBindForCurrentMode.Role.RoleType,
-                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
+                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
+                    roleTypeUiString)
             });
         }
         
         outputs.Add(new OutputDto
         {
-            Text = Ui("{0}, you have successfully authenticated as a {1} at live-event {2}.", 
+            Text = UiConcatenate(
+                Ui("{0}, you have successfully authenticated at live-event {1} in your role as: ", 
                 newTlgAgentRoleBindForCurrentMode.Role.ByUser.FirstName,
-                newTlgAgentRoleBindForCurrentMode.Role.RoleType,
-                newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name)
+                newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
+                roleTypeUiString)
         });
 
         outputs.Add(new OutputDto

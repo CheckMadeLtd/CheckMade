@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Trades.Types;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.Common.Model.Utils;
 
@@ -9,7 +9,7 @@ public static class SphereDetailsTypeByTrade
 {
     public static Dictionary<Type, Type> Map { get; } = new()
     {
-        { typeof(TradeSaniClean), typeof(SanitaryCampDetails) },
-        { typeof(TradeSiteClean), typeof(SiteCleaningZoneDetails) }
+        { typeof(SaniCleanTrade), typeof(SanitaryCampDetails) },
+        { typeof(SiteCleanTrade), typeof(SiteCleaningZoneDetails) }
     };
 };

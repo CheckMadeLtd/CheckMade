@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.Concrete;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -62,7 +62,7 @@ public class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossa
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = ModelReaders.GetUserReader();
+                        finalizeModel) = ModelReaders.GetUserReader(Glossary);
 
                     var users =
                         await ExecuteReaderOneToManyAsync(

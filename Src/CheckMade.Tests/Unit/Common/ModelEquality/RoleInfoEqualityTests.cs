@@ -1,6 +1,9 @@
-using CheckMade.Common.Model.Core.Actors;
-using CheckMade.Common.Model.Core.Interfaces;
-using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.Actors.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
@@ -14,12 +17,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -39,13 +41,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielDe),
             new LiveEventInfo(Y2024));
 
@@ -65,12 +67,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -86,12 +87,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo role = new Role(
             "Token2",
-            RoleType.SaniClean_Inspector,
+            new TradeInspector<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -111,8 +111,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         var roleInfo2 = roleInfo1;
 
@@ -128,7 +127,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -146,7 +145,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -164,8 +163,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo? roleInfo2 = null;
 
@@ -181,13 +179,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         IRoleInfo roleInfo2 = new RoleInfo(
             "Token1",
-            RoleType.SaniClean_Admin,
-            DbRecordStatus.Active);
+            new TradeAdmin<SaniCleanTrade>());
 
         var areEqual = roleInfo1.Equals(roleInfo2);
 
@@ -201,13 +197,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -223,14 +219,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024),
-            DbRecordStatus.Active);
+            new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            RoleType.SaniClean_Admin,
+            new TradeAdmin<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024),
             DbRecordStatus.Historic);

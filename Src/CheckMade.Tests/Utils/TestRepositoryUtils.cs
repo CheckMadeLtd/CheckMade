@@ -2,13 +2,13 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors;
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using User = CheckMade.Common.Model.Core.Actors.User;
+using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 
 namespace CheckMade.Tests.Utils;
 
