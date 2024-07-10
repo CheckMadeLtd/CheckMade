@@ -172,10 +172,10 @@ internal static class ModelReaders
         
         ISphereOfActionDetails details = trade.Name switch
         {
-            nameof(TradeSaniClean) => 
+            nameof(SaniCleanTrade) => 
                 JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
-            nameof(TradeSiteClean) => 
+            nameof(SiteCleanTrade) => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
@@ -186,10 +186,10 @@ internal static class ModelReaders
 
         ISphereOfAction sphere = trade.Name switch
         {
-            nameof(TradeSaniClean) => 
-                new SphereOfAction<TradeSaniClean>(sphereName, details),
-            nameof(TradeSiteClean) => 
-                new SphereOfAction<TradeSiteClean>(sphereName, details),
+            nameof(SaniCleanTrade) => 
+                new SphereOfAction<SaniCleanTrade>(sphereName, details),
+            nameof(SiteCleanTrade) => 
+                new SphereOfAction<SiteCleanTrade>(sphereName, details),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };

@@ -69,13 +69,13 @@ public class NewIssueWorkflowTests
                 tlgAgent.Mode, (int)OperationsBotCommands.NewIssue)];
 
         var nearSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + TradeSaniClean.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
         var nearSphere1LocationLongitude =
-            Sphere1_Location.Longitude + TradeSaniClean.SphereNearnessThresholdInMeters - 1;
+            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters - 1;
         var farFromSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + TradeSaniClean.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Latitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
         var farFromSphere1LocationLongitude = 
-            Sphere1_Location.Longitude + TradeSaniClean.SphereNearnessThresholdInMeters + 1;
+            Sphere1_Location.Longitude + SaniCleanTrade.SphereNearnessThresholdInMeters + 1;
         
         List<TlgInput> recentLocationHistory = [
             inputGenerator.GetValidTlgInputLocationMessage(
