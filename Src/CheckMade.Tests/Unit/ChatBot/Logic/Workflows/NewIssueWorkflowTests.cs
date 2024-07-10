@@ -12,7 +12,14 @@ public class NewIssueWorkflowTests
 {
     private ServiceProvider? _services;
 
-    // ToDo: Review State names after update of possible States.
+    [Fact]
+    public void DetermineCurrentState_ReturnsInitialTradeUnknown_OnNewIssueFromRoleWithMultipleTrades()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+
+        // var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        
+    }
     
     [Fact(Skip = "Not implemented")]
     public void DetermineCurrentState_ReturnsInitialSphereUnknown_OnNewIssueWithoutRecentLocationUpdates()
