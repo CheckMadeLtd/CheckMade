@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Utils.LiveEventInfoComparer;
+using static CheckMade.Common.Model.Utils.Comparers.LiveEventInfoComparer;
 
 namespace CheckMade.Common.Model.Core.LiveEvents;
 
