@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -18,7 +19,8 @@ internal interface ILogoutWorkflow : IWorkflow
 
 internal class LogoutWorkflow(
         ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils) 
+        ILogicUtils logicUtils,
+        IDomainGlossary glossary) 
     : ILogoutWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -41,13 +43,16 @@ internal class LogoutWorkflow(
                 new WorkflowResponse(
                     new List<OutputDto> { new() 
                         { 
-                            Text = Ui("""
-                                    {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
+                            Text = UiConcatenate(
+                                Ui("{0}, your current role is: ", 
+                                    currentRoleBind.Role.ByUser.FirstName),
+                                glossary.IdAndUiByTerm[Dt(currentRoleBind.Role.RoleType.GetType())].uiString,
+                                UiNoTranslate(".\n"),
+                                Ui("""
+                                    Are you sure you want to log out from this chat for {0}?
                                     FYI: You will also be logged out from other non-group bot chats in this role.
                                     """, 
-                                currentRoleBind.Role.ByUser.FirstName, 
-                                currentRoleBind.Role.RoleType, 
-                                currentRoleBind.Role.AtLiveEvent.Name),
+                                currentRoleBind.Role.AtLiveEvent.Name)),
                             
                             ControlPromptsSelection = ControlPrompts.YesNo 
                         } 

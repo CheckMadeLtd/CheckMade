@@ -81,8 +81,8 @@ public class UserAuthWorkflowTests
         var workflow = services.GetRequiredService<IUserAuthWorkflow>();
         
         const string expectedWarning = """
-                                       Warning: you were already authenticated with this token in another {0} chat. 
-                                       This will be the new {0} chat where you receive messages in your role {1} at {2}. 
+                                       Warning: you were already authenticated with this token in another {0} chat.
+                                       This will be the new {0} chat where you receive messages at {1}, in your role as: 
                                        """;
         
         var actualOutputs = 
@@ -121,7 +121,7 @@ public class UserAuthWorkflowTests
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<IUserAuthWorkflow>();
         
-        const string expectedConfirmation = "{0}, you have successfully authenticated as a {1} at live-event {2}.";
+        const string expectedConfirmation = "{0}, you have successfully authenticated at live-event {1} in your role as: ";
         
         var expectedTlgAgentRoleBindAdded = new TlgAgentRoleBind(
             roleForAuth,

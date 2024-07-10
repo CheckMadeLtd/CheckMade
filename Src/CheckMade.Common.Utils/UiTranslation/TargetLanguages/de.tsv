@@ -42,20 +42,21 @@ CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.Telegram.Function	Please choose:	Bitte wählen:
 CheckMade.Telegram.Logic	🌀 Please enter your role token (format '{0}'): 	🌀 Bitte geben Sie Ihren Rollentoken ein (Format '{0}'): 
-CheckMade.Telegram.Logic	{0}, you have successfully authenticated as a {1} at live-event {2}.	{0}, Sie haben sich erfolgreich als {1} beim Live-Event {2} authentifiziert.
+CheckMade.Telegram.Logic	{0}, you have successfully authenticated at live-event {1} in your role as: 	{0}, Sie haben sich erfolgreich beim Live-Event {1} authentifiziert in Ihrer Rolle als: 
 CheckMade.Telegram.Logic	This is an unknown token. Try again...	Dieser Token ist unbekannt. Erneut versuchen...
 CheckMade.Telegram.Logic	Bad token format! Try again...	Falsches Tokenformat! Erneut versuchen...
-CheckMade.Telegram.Logic	Warning: you were already authenticated with this token in another {0} chat.\nThis will be the new {0} chat where you receive messages in your role {1} at {2}.	Warnung: Sie wurden bereits mit diesem Token in einem anderen {0}-Chat authentifiziert.\nDies wird der neue {0}-Chat sein, in dem Sie Nachrichten in Ihrer Rolle {1} bei {2} erhalten.
+CheckMade.Telegram.Logic	Warning: you were already authenticated with this token in another {0} chat.\nThis will be the new {0} chat where you receive messages at {1}, in your role as: 	Warnung: Sie wurden bereits mit diesem Token in einem anderen {0}-Chat authentifiziert.\nDies wird der neue {0}-Chat sein, in dem Sie Nachrichten bei {1} erhalten, in Ihrer Rolle als: 
 CheckMade.Telegram.Logic	My placeholder answer for lack of a workflow handling your input.	Platzhatlerantwort bei nicht-existierendem Workflow.
 CheckMade.Telegram.Logic	🌎 Please select your preferred language:	🌎 Bitte wählen Sie Ihre bevorzugte Sprache:
 CheckMade.Telegram.Logic	The previous workflow was completed. You can continue with a new one... 	Der vorherige Workflow wurde abgeschlossen. Sie können nun einen neuen anfangen... 
 CheckMade.Telegram.Logic	The previous workflow was completed, so your last message/action will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht/Aktion wird deswegen ignoriert.
 CheckMade.Telegram.Logic	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.
 CheckMade.Telegram.Logic	💨 Logged out.	💨 Ausgeloggt.
-CheckMade.Telegram.Logic	{0}, are you sure you want to log out from this chat in your role as {1} for {2}?\nFYI: You will also be logged out from other non-group bot chats in this role.	{0}, sind Sie sicher, dass Sie sich aus diesem Chat in Ihrer Rolle als {1} für {2} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
+CheckMade.Telegram.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.Telegram.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.Telegram.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
 CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitärreinigung
 CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländeräumung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
+CheckMade.Telegram.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
