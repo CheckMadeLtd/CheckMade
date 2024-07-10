@@ -95,7 +95,7 @@ internal class InputProcessor(
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
     private ResultantWorkflowInfo? GetResultantWorkflowInfo(
-        Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)> response,
+        Result<WorkflowResponse> response,
         Option<IWorkflow> activeWorkflow)
     {
         ResultantWorkflowInfo? workflowInfo = null;
@@ -157,7 +157,7 @@ internal class InputProcessor(
             },
             () => false);
 
-    private static async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>>
+    private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
             Option<IWorkflow> activeWorkflow,
             TlgInput currentInput)
@@ -166,8 +166,8 @@ internal class InputProcessor(
             wf => 
                 wf.GetResponseAsync(currentInput),
             () => 
-                Task.FromResult(Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>
-                    .FromSuccess(
+                Task.FromResult(Result<WorkflowResponse>
+                    .FromSuccess(new WorkflowResponse
                         ([new OutputDto 
                         { 
                             Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
@@ -175,7 +175,7 @@ internal class InputProcessor(
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
-        Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)> responseResult,
+        Result<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
         Option<IWorkflow> activeWorkflow,
         TlgInput currentInput)

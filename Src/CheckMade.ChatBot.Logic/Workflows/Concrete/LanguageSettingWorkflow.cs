@@ -29,7 +29,7 @@ internal class LanguageSettingWorkflow(
     }
 
     public async 
-        Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+        Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
@@ -38,27 +38,30 @@ internal class LanguageSettingWorkflow(
         return DetermineCurrentState(workflowInputHistory) switch
         {
             Initial => 
-                (new List<OutputDto> { new() 
-                    { 
-                        Text = Ui("🌎 Please select your preferred language:"), 
-                        DomainTermSelection = new List<DomainTerm>(
-                        Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                            .Select(lc => Dt(lc))) 
-                    } 
-                }, Initial),
+                new WorkflowResponse(
+                    new List<OutputDto> { new() 
+                        { 
+                            Text = Ui("🌎 Please select your preferred language:"), 
+                            DomainTermSelection = new List<DomainTerm>(
+                            Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
+                                .Select(lc => Dt(lc))) 
+                        } 
+                    },
+                    Initial),
             
             ReceivedLanguageSetting => 
-                (await SetNewLanguageAsync(currentInput), 
+                new WorkflowResponse(
+                    await SetNewLanguageAsync(currentInput), 
                     ReceivedLanguageSetting),
             
             Completed => 
-                (new List<OutputDto>{ new()
+                new WorkflowResponse(new List<OutputDto>{ new() 
                     {
                         Text = ILogicUtils.WorkflowWasCompleted
                     }},
                     Completed),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
+            _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
         };
     }

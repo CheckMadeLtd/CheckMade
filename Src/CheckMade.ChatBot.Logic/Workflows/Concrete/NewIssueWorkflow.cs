@@ -1,5 +1,4 @@
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
@@ -17,7 +16,7 @@ internal class NewIssueWorkflow : INewIssueWorkflow
         throw new NotImplementedException();
     }
 
-    public Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+    public Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         // get workflowinputHistory and locationHistory separately

@@ -26,7 +26,7 @@ internal class LogoutWorkflow(
         return DetermineCurrentState(inputHistory, inputHistory.LastOrDefault()) == LogoutConfirmed;
     }
 
-    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+    public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
@@ -38,34 +38,39 @@ internal class LogoutWorkflow(
         return DetermineCurrentState(workflowInputHistory, currentInput) switch
         {
             Initial => 
-                (new List<OutputDto> { new() 
-                    { 
-                        Text = Ui("""
-                                {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
-                                FYI: You will also be logged out from other non-group bot chats in this role.
-                                """, 
-                            currentRoleBind.Role.ByUser.FirstName, 
-                            currentRoleBind.Role.RoleType, 
-                            currentRoleBind.Role.AtLiveEvent.Name),
-                        
-                        ControlPromptsSelection = ControlPrompts.YesNo 
-                    }
-            }, Initial),
+                new WorkflowResponse(
+                    new List<OutputDto> { new() 
+                        { 
+                            Text = Ui("""
+                                    {0}, are you sure you want to log out from this chat in your role as {1} for {2}?
+                                    FYI: You will also be logged out from other non-group bot chats in this role.
+                                    """, 
+                                currentRoleBind.Role.ByUser.FirstName, 
+                                currentRoleBind.Role.RoleType, 
+                                currentRoleBind.Role.AtLiveEvent.Name),
+                            
+                            ControlPromptsSelection = ControlPrompts.YesNo 
+                        } 
+                    }, 
+                    Initial),
             
             LogoutConfirmed => 
-                (await PerformLogoutAsync(currentRoleBind),
+                new WorkflowResponse(
+                    await PerformLogoutAsync(currentRoleBind),
                     LogoutConfirmed),
             
             LogoutAborted => 
-                (new List<OutputDto> { new() 
-                    { 
-                        Text = UiConcatenate(
-                        Ui("Logout aborted.\n"),
-                        IInputProcessor.SeeValidBotCommandsInstruction) 
-                    }
-                }, LogoutAborted),
+                new WorkflowResponse(
+                    new List<OutputDto> { new() 
+                        { 
+                            Text = UiConcatenate(
+                            Ui("Logout aborted.\n"),
+                            IInputProcessor.SeeValidBotCommandsInstruction) 
+                        } 
+                    },
+                    LogoutAborted),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
+            _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
         };
     }

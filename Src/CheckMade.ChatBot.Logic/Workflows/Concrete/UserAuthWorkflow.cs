@@ -35,7 +35,7 @@ internal class UserAuthWorkflow(
             == ReceivedTokenSubmissionAttempt;
     }
 
-    public async Task<Result<(IReadOnlyCollection<OutputDto> Output, Option<Enum> NewState)>> 
+    public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
         var inputText = currentInput.Details.Text.GetValueOrDefault();
@@ -46,30 +46,33 @@ internal class UserAuthWorkflow(
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {
             Initial => 
-                (new List<OutputDto> { EnterTokenPrompt },
+                new WorkflowResponse(
+                    new List<OutputDto> { EnterTokenPrompt },
                     Initial),
             
             ReceivedTokenSubmissionAttempt => 
-                (IsValidToken(inputText) switch
-                {
-                    true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+                new WorkflowResponse(
+                    IsValidToken(inputText) switch 
                     {
-                        true => await AuthenticateUserAsync(currentInput),
-                        
+                        true => await TokenExists(currentInput.Details.Text.GetValueOrDefault()) switch
+                        {
+                            true => await AuthenticateUserAsync(currentInput),
+                            
+                            false => [new OutputDto 
+                                {
+                                    Text = Ui("This is an unknown token. Try again...")
+                                },
+                                EnterTokenPrompt]
+                        },
                         false => [new OutputDto
                             {
-                                Text = Ui("This is an unknown token. Try again...")
+                                Text = Ui("Bad token format! Try again...")
                             },
-                            EnterTokenPrompt]
-                    },
-                    false => [new OutputDto
-                        {
-                            Text = Ui("Bad token format! Try again...")
-                        },
-                        EnterTokenPrompt]
-                }, ReceivedTokenSubmissionAttempt),
+                            EnterTokenPrompt] 
+                    }, 
+                    ReceivedTokenSubmissionAttempt),
             
-            _ => Result<(IReadOnlyCollection<OutputDto>, Option<Enum>)>.FromError(
+            _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
         };
     }
