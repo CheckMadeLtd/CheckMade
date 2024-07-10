@@ -138,6 +138,12 @@ internal static class TestData
             new TradeTeamLead<SaniCleanTrade>(),
             new UserInfo(DanielEn), 
             X2024Info);
+
+    internal static readonly Role LiveEventAdmin_DanielEn_X2024 =
+        new("R23QI6",
+            new LiveEventAdmin(),
+            new UserInfo(DanielEn),
+            X2024Info);
     
     #endregion
 

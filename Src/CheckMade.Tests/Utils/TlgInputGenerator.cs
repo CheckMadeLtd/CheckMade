@@ -36,7 +36,8 @@ internal interface ITlgInputGenerator
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
         int messageId = 1,
-        TestOriginatorRoleSetting roleSetting = Default);
+        TestOriginatorRoleSetting roleSetting = Default,
+        Role? roleSpecified = null);
     
     TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
@@ -63,19 +64,8 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
         Role? roleSpecified,
         ResultantWorkflowInfo? workflowInfo)
     {
-        Option<IRoleInfo> originatorRole;
-        Option<ILiveEventInfo> liveEvent;
-
-        if (roleSpecified != null)
-        {
-            originatorRole = roleSpecified;
-            liveEvent = Option<ILiveEventInfo>.Some(roleSpecified.AtLiveEvent);
-        }
-        else
-        {
-            originatorRole = GetInputContextInfo(roleSetting).originatorRole;
-            liveEvent = GetInputContextInfo(roleSetting).liveEvent;
-        }
+        var (originatorRole, liveEvent) = 
+            GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new TlgInput(
             new TlgAgent(userId, chatId, Operations),
@@ -130,13 +120,17 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
     public TlgInput GetValidTlgInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode,
         long userId, long chatId, int messageId,
-        TestOriginatorRoleSetting roleSetting)
+        TestOriginatorRoleSetting roleSetting,
+        Role? roleSpecified)
     {
+        var (originatorRole, liveEvent) = 
+            GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
+        
         return new TlgInput(
             new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
-            GetInputContextInfo(roleSetting).originatorRole, 
-            GetInputContextInfo(roleSetting).liveEvent, 
+            originatorRole, 
+            liveEvent, 
             Option<ResultantWorkflowInfo>.None(), 
             CreateFromRelevantDetails(
                 DateTime.UtcNow,
@@ -201,6 +195,28 @@ internal class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
             botCommandEnumCode ?? Option<int>.None(),
             domainTerm ?? Option<DomainTerm>.None(),
             controlPromptEnumCode ?? Option<long>.None());
+    }
+
+    private static (Option<IRoleInfo> originatorRole, Option<ILiveEventInfo> liveEvent) 
+        GetOriginatorRoleAndLiveEventFromArgs(
+            TestOriginatorRoleSetting roleSetting,
+            Role? roleSpecified)
+    {
+        Option<IRoleInfo> originatorRole;
+        Option<ILiveEventInfo> liveEvent;
+
+        if (roleSpecified != null)
+        {
+            originatorRole = roleSpecified;
+            liveEvent = Option<ILiveEventInfo>.Some(roleSpecified.AtLiveEvent);
+        }
+        else
+        {
+            originatorRole = GetInputContextInfo(roleSetting).originatorRole;
+            liveEvent = GetInputContextInfo(roleSetting).liveEvent;
+        }
+
+        return (originatorRole, liveEvent);
     }
     
     private static (Option<IRoleInfo> originatorRole, Option<ILiveEventInfo> liveEvent)
