@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Facilities;
-using CheckMade.Common.Model.Core.Trades.SubDomains.SaniClean.Issues;
-using CheckMade.Common.Model.Core.Trades.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;

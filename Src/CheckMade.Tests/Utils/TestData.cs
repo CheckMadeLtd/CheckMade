@@ -1,14 +1,15 @@
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors;
+using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades.Types;
-using static CheckMade.Common.Model.Core.Actors.RoleSystem.RoleType;
-using User = CheckMade.Common.Model.Core.Actors.User;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using static CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleType;
+using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 

@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.Core.Interfaces;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
 namespace CheckMade.Common.Interfaces.Persistence.Core;
 

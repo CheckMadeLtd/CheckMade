@@ -1,6 +1,7 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;

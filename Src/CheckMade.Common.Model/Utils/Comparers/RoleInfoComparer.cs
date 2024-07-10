@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 
 namespace CheckMade.Common.Model.Utils.Comparers;
 

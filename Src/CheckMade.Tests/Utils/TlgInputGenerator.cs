@@ -3,7 +3,8 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Interfaces;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Utils.Generic;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 

@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Core.Trades.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
