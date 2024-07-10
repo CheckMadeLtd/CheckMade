@@ -66,7 +66,15 @@ public class DomainGlossary : IDomainGlossary
         
         #endregion
         
-        // ToDo: Add SubDomain SiteClean, start with Roles
+        #region SubDomainSiteClean
+        
+        AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
+        AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));
+        AddTerm(typeof(TradeEngineer<SiteCleanTrade>), "DWWD3W", Ui("SiteClean-Engineer"));
+        AddTerm(typeof(TradeTeamLead<SiteCleanTrade>), "DFIY82", Ui("SiteClean-CleanLead"));
+        AddTerm(typeof(TradeObserver<SiteCleanTrade>), "DOV3F2", Ui("SiteClean-Observer"));
+        
+        #endregion
         
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
