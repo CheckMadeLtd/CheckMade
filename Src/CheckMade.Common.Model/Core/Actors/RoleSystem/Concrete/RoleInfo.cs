@@ -29,6 +29,6 @@ public sealed record RoleInfo(
     
     public override int GetHashCode()
     {
-        return HashCode.Combine(Token, RoleType, Status);
+        return HashCode.Combine(Token, RoleType.GetType(), Status);
     }
 }
