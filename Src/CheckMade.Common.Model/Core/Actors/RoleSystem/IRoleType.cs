@@ -4,5 +4,5 @@ namespace CheckMade.Common.Model.Core.Actors.RoleSystem;
 
 public interface IRoleType
 {
-    Option<ITrade> GetTradeParameter();
+    Option<ITrade> GetTrade();
 }

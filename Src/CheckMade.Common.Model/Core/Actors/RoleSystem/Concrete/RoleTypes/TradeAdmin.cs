@@ -4,5 +4,5 @@ namespace CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 
 public class TradeAdmin<T> : ITradeRoleType<T> where T : ITrade, new()
 {
-    public Option<ITrade> GetTradeParameter() => new T();
+    public Option<ITrade> GetTrade() => new T();
 }

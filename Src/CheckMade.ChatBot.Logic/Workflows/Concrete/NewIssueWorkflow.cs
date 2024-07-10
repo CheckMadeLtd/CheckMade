@@ -41,7 +41,7 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
 
         if (IsBeginningOfWorkflow())
         {
-            if (IsRoleTradeAgnostic())
+            if (activeRoleType.GetTrade().IsNone)
             {
                 return States.Initial_TradeUnknown;
             }
@@ -66,9 +66,6 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
         bool IsBeginningOfWorkflow() => 
             lastInteractiveInput.InputType == TlgInputType.CommandMessage;
 
-        bool IsRoleTradeAgnostic() =>
-            activeRoleType.GetType().IsAssignableTo(typeof(ILiveEventRoleType));
-        
         bool CanDetermineSphereOfActionLocation()
         {
             var lastLocationUpdate = recentLocationHistory.LastOrDefault();
@@ -76,15 +73,10 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
             if (lastLocationUpdate is null)
                 return false;
 
-            var trade = activeRoleType.GetType().GetGenericArguments()[0];
-            
-            if (liveEvent is null)
-                throw new InvalidOperationException();
-
             var spheres = 
                 liveEvent
                     .DivIntoSpheres
-                    .Where(soa => soa.Trade == trade)
+                    .Where(soa => soa.GetTrade() == activeRoleType.GetTrade().GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
             
             return IsLocationNearASphere(lastLocationUpdate, spheres);
