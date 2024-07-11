@@ -58,11 +58,16 @@ internal class NewIssueWorkflow(
             {
                 return Initial_TradeUnknown;
             }
-            
-            return CanDetermineSphereOfActionLocation() switch
+
+            return CurrentTradeDividesLiveEventIntoSpheresOfAction() switch
             {
-                true => Initial_SphereKnown,
-                _ => Initial_SphereUnknown
+                true => CanDetermineSphereOfActionLocation() switch
+                {
+                    true => Initial_SphereKnown,
+                    _ => Initial_SphereUnknown
+                },
+
+                _ => SphereConfirmed
             };
         }
         
@@ -120,6 +125,11 @@ internal class NewIssueWorkflow(
         bool IsBeginningOfWorkflow() => 
             currentInteractiveInput.InputType == TlgInputType.CommandMessage;
 
+        bool CurrentTradeDividesLiveEventIntoSpheresOfAction() =>
+            currentRoleType
+                .GetTradeInstance().GetValueOrThrow()
+                .DividesLiveEventIntoSpheresOfAction;
+        
         bool CanDetermineSphereOfActionLocation()
         {
             var lastLocationUpdate = recentLocationHistory.LastOrDefault();
@@ -137,7 +147,7 @@ internal class NewIssueWorkflow(
             currentLiveEvent
                 .DivIntoSpheres
                 .Where(soa => 
-                    soa.GetTrade().GetType() 
+                    soa.GetTradeType() 
                     == currentRoleType.GetTradeType().GetValueOrThrow())
                 .ToImmutableReadOnlyCollection();
         
