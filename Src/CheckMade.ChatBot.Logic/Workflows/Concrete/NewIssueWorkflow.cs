@@ -1,9 +1,12 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
@@ -21,6 +24,8 @@ internal interface INewIssueWorkflow : IWorkflow
 
 internal class NewIssueWorkflow(
         ILiveEventsRepository liveEventsRepo,
+        ITlgInputsRepository inputsRepo,
+        ILogicUtils logicUtils,
         IDomainGlossary glossary) 
     : INewIssueWorkflow
 {
@@ -32,16 +37,44 @@ internal class NewIssueWorkflow(
     public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
-        // get WorkflowInputHistory and locationHistory separately
-        
-        // Here I will also need to switch on lastState! 
+        var workflowInteractiveHistory =
+            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+        var recentLocationHistory =
+            await logicUtils.GetRecentLocationHistory(currentInput.TlgAgent);
+        var currentLifeEvent = 
+            await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
+
+        if (currentLifeEvent is null)
+            return Result<WorkflowResponse>.FromError(
+                UiNoTranslate($"Can't determine current {nameof(LiveEvent)} for {nameof(NewIssueWorkflow)}"));
+
+        // Here I will also need to compare to lastState! 
         // For example, if the lastState is SphereUnknown and the resulting state is again the same,
         // then an error message.
-        // In other words, the info from which to which state we transitioned determines what prompt user sees next!
-        
-        throw new NotImplementedException();
+        // In other words, if the state stays the same, probably user entered nonsense and we show corresp. message!
 
-        // var lifeEvent = await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
+        return DetermineCurrentState(
+                workflowInteractiveHistory,
+                recentLocationHistory,
+                currentLifeEvent) switch
+            {
+                Initial_TradeUnknown => 
+                    new WorkflowResponse(
+                        new List<OutputDto>{ new()
+                        {
+                            Text = Ui("Please select a Trade:"),
+                            
+                            DomainTermSelection = 
+                                Option<IReadOnlyCollection<DomainTerm>>.Some(
+                                    glossary.GetAll(typeof(ITrade)))
+                        }},
+                        Initial_TradeUnknown),
+                
+                _ =>
+                    Result<WorkflowResponse>.FromError(
+                        UiNoTranslate($"Can't determine State in {nameof(NewIssueWorkflow)}"))
+
+            };
     }
 
     public States DetermineCurrentState(
