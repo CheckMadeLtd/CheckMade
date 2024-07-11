@@ -176,7 +176,8 @@ internal static class TestData
         new List<IRoleInfo>
         {
             SaniCleanInspector_LukasDe_X2024,
-            SaniCleanAdmin_DanielEn_X2024
+            SaniCleanAdmin_DanielEn_X2024,
+            LiveEventAdmin_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>

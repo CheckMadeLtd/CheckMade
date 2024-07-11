@@ -57,7 +57,7 @@ public class UsersRepositoryTests
             SaniCleanAdmin_DanielEn_X2024.Token,
             users[0].HasRoles.First().Token);
         Assert.Equal(
-            SaniCleanInspector_DanielEn_X2025.Token,
+            LiveEventAdmin_DanielEn_X2024.Token,
             users[0].HasRoles.Last().Token);
     }
 }
