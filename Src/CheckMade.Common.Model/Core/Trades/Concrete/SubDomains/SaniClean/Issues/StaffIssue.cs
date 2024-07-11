@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 
