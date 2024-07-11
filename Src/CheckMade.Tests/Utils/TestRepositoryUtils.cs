@@ -140,17 +140,38 @@ internal static class TestRepositoryUtils
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync((TlgAgent tlgAgent) => inputs
-                .Where(i => i.TlgAgent.Equals(tlgAgent))
-                .ToImmutableReadOnlyCollection());
+            .Setup(repo => 
+                repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
+            .ReturnsAsync((TlgAgent tlgAgent) => 
+                inputs
+                    .Where(i => 
+                        i.TlgAgent.Equals(tlgAgent) &&
+                        i.InputType != TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
-            .ReturnsAsync((ILiveEventInfo liveEvent) => inputs
-                .Where(i => Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent))
-                .ToImmutableReadOnlyCollection());
+            .Setup(repo => 
+                repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
+            .ReturnsAsync((ILiveEventInfo liveEvent) => 
+                inputs
+                    .Where(i => 
+                        Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
+                        i.InputType != TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
 
+        mockTlgInputsRepo
+            .Setup(repo =>
+                repo.GetAllLocationAsync(
+                    It.IsAny<TlgAgent>(),
+                    It.IsAny<DateTime>()))
+            .ReturnsAsync((TlgAgent tlgAgent, DateTime dateTime) =>
+                inputs
+                    .Where(i => 
+                        i.TlgAgent.Equals(tlgAgent) && 
+                        i.Details.TlgDate >= dateTime &&
+                        i.InputType == TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
+        
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
         

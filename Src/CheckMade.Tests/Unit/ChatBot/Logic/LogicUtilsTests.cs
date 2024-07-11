@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
@@ -228,15 +229,15 @@ public class LogicUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent1 = PrivateBotChat_Operations;
-        var tlgAgent2 = UserId02_ChatId03_Operations;
+        var tlgAgent = PrivateBotChat_Operations;
+        var tlgAgentDecoy = UserId02_ChatId03_Operations;
 
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent1.UserId, tlgAgent1.ChatId),
+                tlgAgent.UserId, tlgAgent.ChatId),
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent2.UserId, tlgAgent2.ChatId)
+                tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -245,18 +246,69 @@ public class LogicUtilsTests
         var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent1.UserId, tlgAgent1.ChatId);
+            tlgAgent.UserId, tlgAgent.ChatId);
             
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent1, currentInput);
+            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
         
         Assert.Equal(
             2, result.Count);
         Assert.All(
             result,
-            input => Assert.Equal(tlgAgent1.UserId, input.TlgAgent.UserId));
+            input => Assert.Equal(tlgAgent.UserId, input.TlgAgent.UserId));
         Assert.All(
             result,
-            input => Assert.Equal(tlgAgent1.ChatId, input.TlgAgent.ChatId));
+            input => Assert.Equal(tlgAgent.ChatId, input.TlgAgent.ChatId));
+    }
+
+    [Fact]
+    public async Task GetRecentLocationHistory_FiltersInputs_ByTlgAgentAndLocationTypeAndTimeFrame()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var tlgAgent = PrivateBotChat_Operations;
+        var tlgAgentDecoy = UserId02_ChatId03_Operations;
+
+        var randomDecoyLocation = 
+            new Geo(0, 0, Option<float>.None());
+
+        var expectedLocation =
+            new Geo(1, 1, Option<float>.None());
+
+        var historicInputs = new[]
+        {
+            // Decoy: too long ago
+            inputGenerator.GetValidTlgInputLocationMessage(
+                randomDecoyLocation,
+                tlgAgent.UserId, tlgAgent.ChatId,
+                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
+            // Decoy: wrong TlgAgent
+            inputGenerator.GetValidTlgInputLocationMessage(
+                randomDecoyLocation,
+                tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId,
+                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes -1))),
+            // Decoy: not a LocationUpdate
+            inputGenerator.GetValidTlgInputTextMessage(),
+            
+            // Expected to be included
+            inputGenerator.GetValidTlgInputLocationMessage(
+                expectedLocation,
+                tlgAgent.UserId, tlgAgent.ChatId,
+                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes -1)))
+        };
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: historicInputs);
+        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        
+        var result = 
+            await logicUtils.GetRecentLocationHistory(tlgAgent);
+        
+        Assert.Single(result);
+        Assert.Equivalent(
+            expectedLocation, 
+            result.First().Details.GeoCoordinates.GetValueOrThrow());
     }
 }

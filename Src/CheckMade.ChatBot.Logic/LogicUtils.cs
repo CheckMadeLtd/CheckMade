@@ -6,16 +6,18 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface ILogicUtils
 {
-    public static readonly UiString WorkflowWasCompleted = UiConcatenate(
+    const int RecentLocationHistoryTimeFrameInMinutes = 2;
+    
+    static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
+    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
+    Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     
-    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgInput currentInput);
-    
-    public static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
+    static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
         inputs.LastOrDefault(i => 
             i.Details.BotCommandEnumCode.IsSome) 
         ?? Option<TlgInput>.None();
@@ -60,7 +62,7 @@ internal class LogicUtils(
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommand(TlgInput currentInput)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput)
     {
         var currentRoleInputs = 
             await GetAllCurrentInteractiveAsync(
@@ -70,5 +72,14 @@ internal class LogicUtils(
         return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
+    }
+
+    public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
+    {
+        return 
+            await inputsRepo.GetAllLocationAsync(
+                tlgAgent, 
+                DateTime.UtcNow
+                    .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 }
