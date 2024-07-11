@@ -18,7 +18,7 @@ public class LogoutWorkflowTests
     private ServiceProvider? _services;
 
     [Fact]
-    public async Task GetNextOutputAsync_LogsOutAndReturnsConfirmation_AfterUserConfirmsLogoutIntention()
+    public async Task GetResponseAsync_LogsOutAndReturnsConfirmation_AfterUserConfirmsLogoutIntention()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -68,7 +68,7 @@ public class LogoutWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_LogsOutFromAllModes_WhenLoggingOutInPrivateChat()
+    public async Task GetResponseAsync_LogsOutFromAllModes_WhenLoggingOutInPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
@@ -151,7 +151,7 @@ public class LogoutWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ConfirmsAbortion_AfterUserAbortsLogout()
+    public async Task GetResponseAsync_ConfirmsAbortion_AfterUserAbortsLogout()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         

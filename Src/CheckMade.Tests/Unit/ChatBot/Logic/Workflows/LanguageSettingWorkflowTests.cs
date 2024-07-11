@@ -104,7 +104,7 @@ public class LanguageSettingWorkflowTests
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_ShowsLanguageSelectionMenu_InInitialState()
+    public async Task GetResponseAsync_ShowsLanguageSelectionMenu_InInitialState()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -134,7 +134,7 @@ public class LanguageSettingWorkflowTests
     [Theory]
     [InlineData(LanguageCode.en)]
     [InlineData(LanguageCode.de)]
-    public async Task GetNextOutputAsync_ReturnsSuccessMessage_AndSavesNewLanguageSetting_WhenLanguageChosen(
+    public async Task GetResponseAsync_ReturnsSuccessMessage_AndSavesNewLanguageSetting_WhenLanguageChosen(
         LanguageCode languageCode)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
