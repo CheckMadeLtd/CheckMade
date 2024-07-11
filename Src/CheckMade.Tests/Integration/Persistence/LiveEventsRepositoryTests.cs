@@ -36,23 +36,23 @@ public class LiveEventsRepositoryTests
         Assert.Contains(Sphere2_AtX2024.Name, allSphereNames);
         Assert.Contains(Sphere3_AtX2024.Name, allSphereNames);
         
-        Assert.Equivalent(
-            Sphere1_AtX2024.GetTrade(),
+        Assert.Equal(
+            Sphere1_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
-                .GetTrade());
+                .GetTradeType());
         
-        Assert.Equivalent(
-            Sphere2_AtX2024.GetTrade(),
+        Assert.Equal(
+            Sphere2_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .GetTrade());
+                .GetTradeType());
         
-        Assert.Equivalent(
-            Sphere3_AtX2024.GetTrade(),
+        Assert.Equal(
+            Sphere3_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere3_AtX2024.Name)
-                .GetTrade());
+                .GetTradeType());
 
         Assert.Equivalent(
             Sphere1_Location,

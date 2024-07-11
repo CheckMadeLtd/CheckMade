@@ -9,5 +9,6 @@ public record SphereOfAction<T>(
         DbRecordStatus Status = DbRecordStatus.Active) 
     : ISphereOfAction where T : ITrade, new()
 {
-    public ITrade GetTrade() => new T();
+    public ITrade GetTradeInstance() => new T();
+    public Type GetTradeType() => typeof(T);
 }

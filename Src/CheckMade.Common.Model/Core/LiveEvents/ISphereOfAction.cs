@@ -7,5 +7,6 @@ public interface ISphereOfAction
     string Name { get; }
     ISphereOfActionDetails Details { get; }
     
-    ITrade GetTrade();
+    ITrade GetTradeInstance();
+    Type GetTradeType();
 }
