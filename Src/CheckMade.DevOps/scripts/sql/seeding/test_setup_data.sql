@@ -155,7 +155,7 @@ new_live_event_Y2024 AS (
         RETURNING id
 ),
     
-new_role_for_lukas_de_without_email AS (
+new_role_for_lukas_de_without_email_as_saniclean_inspector AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
         VALUES ('R7UIP8', 'DYHG6E', 1, 
                 (SELECT id FROM new_user_lukas_de_without_email),
@@ -163,14 +163,23 @@ new_role_for_lukas_de_without_email AS (
         ON CONFLICT (token) DO NOTHING
 ),
 
-new_role_for_daniel_en_x2025 AS (
+new_role_for_daniel_en_x2025_as_saniclean_inspector AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
         VALUES ('R9AAB5', 'DYHG6E', 1,
                 (SELECT id FROM user_daniel_en),
                 (SELECT id FROM new_live_event_X2025))
         ON CONFLICT (token) DO NOTHING
+),
+    
+new_role_for_daniel_en_x2024_as_liveevent_admin AS (
+    INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+        VALUES ('R23QI6', 'DD6I1A', 1,
+                (SELECT id FROM user_daniel_en),
+                (SELECT id FROM new_live_event_X2024))
+        ON CONFLICT (token) DO NOTHING    
 )
 
+-- RoleType: TradeAdmin<SaniCleanTrade>
 INSERT INTO roles (token, role_type, status, user_id, live_event_id) 
     VALUES ('RVB70T', 'DLE960', 1,
             (SELECT id FROM user_daniel_en),
