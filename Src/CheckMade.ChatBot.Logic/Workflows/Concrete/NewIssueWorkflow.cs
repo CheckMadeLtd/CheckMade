@@ -16,7 +16,7 @@ internal interface INewIssueWorkflow : IWorkflow
     NewIssueWorkflow.States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
         IReadOnlyCollection<TlgInput> recentLocationHistory,
-        LiveEvent liveEvent);
+        LiveEvent currentLiveEvent);
 }
 
 internal class NewIssueWorkflow(
@@ -34,6 +34,11 @@ internal class NewIssueWorkflow(
     {
         // get WorkflowInputHistory and locationHistory separately
         
+        // Here I will also need to switch on lastState! 
+        // For example, if the lastState is SphereUnknown and the resulting state is again the same,
+        // then an error message.
+        // In other words, the info from which to which state we transitioned determines what prompt user sees next!
+        
         throw new NotImplementedException();
 
         // var lifeEvent = await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
@@ -42,7 +47,7 @@ internal class NewIssueWorkflow(
     public States DetermineCurrentState(
         IReadOnlyCollection<TlgInput> workflowInteractiveHistory,
         IReadOnlyCollection<TlgInput> recentLocationHistory,
-        LiveEvent liveEvent)
+        LiveEvent currentLiveEvent)
     {
         var currentInteractiveInput = workflowInteractiveHistory.Last();
         var currentRoleType = currentInteractiveInput.OriginatorRole.GetValueOrThrow().RoleType;
@@ -81,9 +86,9 @@ internal class NewIssueWorkflow(
                 .ResultantWorkflow.GetValueOrThrow()
                 .InState;
 
-        if (lastState == Initial_SphereKnown)
+        return lastState switch
         {
-            return currentInteractiveInput.InputType switch
+            Initial_SphereKnown => currentInteractiveInput.InputType switch
             {
                 TlgInputType.CallbackQuery =>
                     currentInteractiveInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
@@ -94,10 +99,23 @@ internal class NewIssueWorkflow(
 
                 // e.g., someone entered a text instead of pressing a button -> no state change, instead "try again"
                 _ => Initial_SphereKnown
-            };
-        }
-        
-        throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
+            },
+            
+            Initial_SphereUnknown => currentInteractiveInput.InputType switch
+            {
+                TlgInputType.TextMessage => 
+                    IsValidSphereOfActionName(
+                            currentInteractiveInput.Details.Text.GetValueOrThrow()) switch 
+                        {
+                            true => SphereConfirmed,
+                            _ => Initial_SphereUnknown
+                        },
+                
+                _ => throw new InvalidOperationException("Nothing but free text entry should be possible at this State.")
+            },
+            
+            _ => throw new InvalidOperationException($"Unhandled {nameof(lastState)}: '{lastState.ToString()}'")
+        };
         
         bool IsBeginningOfWorkflow() => 
             currentInteractiveInput.InputType == TlgInputType.CommandMessage;
@@ -108,18 +126,21 @@ internal class NewIssueWorkflow(
             
             if (lastLocationUpdate is null)
                 return false;
-
-            var spheresForCurrentTrade = 
-                liveEvent
-                    .DivIntoSpheres
-                    .Where(soa => 
-                        soa.GetTrade().GetType() 
-                        == currentRoleType.GetTradeType().GetValueOrThrow())
-                    .ToImmutableReadOnlyCollection();
             
-            return IsLocationNearASphere(lastLocationUpdate, spheresForCurrentTrade);
+            return 
+                IsLocationNearASphere(
+                    lastLocationUpdate,
+                    GetAllSpheresForCurrentTrade());
         }
 
+        IReadOnlyCollection<ISphereOfAction> GetAllSpheresForCurrentTrade() =>
+            currentLiveEvent
+                .DivIntoSpheres
+                .Where(soa => 
+                    soa.GetTrade().GetType() 
+                    == currentRoleType.GetTradeType().GetValueOrThrow())
+                .ToImmutableReadOnlyCollection();
+        
         static bool IsLocationNearASphere(
             TlgInput lastLocationUpdate,
             IReadOnlyCollection<ISphereOfAction> spheres)
@@ -132,6 +153,14 @@ internal class NewIssueWorkflow(
                     .Any(soa => 
                         soa.Details.GeoCoordinates.GetValueOrThrow()
                             .MetersAwayFrom(lastLocation) < SaniCleanTrade.SphereNearnessThresholdInMeters);
+        }
+
+        bool IsValidSphereOfActionName(string textInput)
+        {
+            return
+                GetAllSpheresForCurrentTrade()
+                    .Select(soa => soa.Name)
+                    .Contains(textInput);
         }
     }
 

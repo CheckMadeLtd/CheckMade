@@ -7,6 +7,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueWorkflow.States;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
@@ -37,7 +38,7 @@ public class NewIssueWorkflowTests
                 X2024);
         
         Assert.Equal(
-            NewIssueWorkflow.States.Initial_TradeUnknown,
+            Initial_TradeUnknown,
             actualState);
     }
     
@@ -64,13 +65,13 @@ public class NewIssueWorkflowTests
                 X2024);
         
         Assert.Equal(
-            NewIssueWorkflow.States.Initial_SphereUnknown,
+            Initial_SphereUnknown,
             actualState);
     }
 
     [Theory]
-    [InlineData(true, NewIssueWorkflow.States.Initial_SphereKnown)]
-    [InlineData(false, NewIssueWorkflow.States.Initial_SphereUnknown)]
+    [InlineData(true, Initial_SphereKnown)]
+    [InlineData(false, Initial_SphereUnknown)]
     public void DetermineCurrentState_ReturnsCorrectInitialSphereState_OnNewIssueForSaniClean(
         bool isNearSphere, Enum expectedState)
     {
@@ -129,7 +130,7 @@ public class NewIssueWorkflowTests
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
                     workflowId,
-                    NewIssueWorkflow.States.Initial_SphereKnown)),
+                    Initial_SphereKnown)),
             inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
                 ControlPrompts.Yes)];
 
@@ -142,14 +143,47 @@ public class NewIssueWorkflowTests
                 X2024);
         
         Assert.Equal(
-            NewIssueWorkflow.States.SphereConfirmed, 
+            SphereConfirmed, 
             actualState);
     }
 
-    [Fact]
-    public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserManuallyChoseSphere()
+    [Theory]
+    [InlineData(Sphere1_AtX2024_Name, SphereConfirmed)]
+    [InlineData("Invalid sphere name", Initial_SphereUnknown)]
+    public void DetermineCurrentState_ReturnsCorrectState_WhenUserManuallyEntersSphere(
+        string enteredSphereName, Enum expectedState)
     {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var tlgAgent = PrivateBotChat_Operations;
+        var workflowId = glossary.IdAndUiByTerm[Dt(typeof(NewIssueWorkflow))].callbackId;
+    
+        List<TlgInput> recentLocationHistory = [
+            inputGenerator.GetValidTlgInputLocationMessage(
+                GetLocationFarFromAnySaniCleanSphere(),
+                dateTime: DateTime.UtcNow)];
+    
+        List<TlgInput> interactiveHistory = [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                (int)OperationsBotCommands.NewIssue,
+                resultantWorkflowInfo: new ResultantWorkflowInfo(
+                    workflowId,
+                    Initial_SphereUnknown)),
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: enteredSphereName)];
+
+        var workflow = _services.GetRequiredService<INewIssueWorkflow>();
+
+        var actualState =
+            workflow.DetermineCurrentState(
+                interactiveHistory,
+                recentLocationHistory,
+                X2024);
         
+        Assert.Equal(expectedState, actualState);
     }
 
     private Geo GetLocationNearSaniCleanSphere() =>
