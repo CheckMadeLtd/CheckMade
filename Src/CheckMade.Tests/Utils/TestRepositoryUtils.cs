@@ -63,7 +63,8 @@ internal static class TestRepositoryUtils
         var mockLiveEventsRepo = new Mock<ILiveEventsRepository>();
 
         mockLiveEventsRepo
-            .Setup(repo => repo.GetAsync(liveEvent))
+            .Setup(repo => 
+                repo.GetAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync(liveEvent);
         
         mockLiveEventsRepo
