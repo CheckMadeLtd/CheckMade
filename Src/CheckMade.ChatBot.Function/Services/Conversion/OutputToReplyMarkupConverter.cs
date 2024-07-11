@@ -99,7 +99,8 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(
         IReadOnlyCollection<(string text, string id)> textIdPairs)
     {
-        const int inlineKeyboardNumberOfColumns = 2;
+        // Note the documented pitfall about medium length instructions problem!
+        const int inlineKeyboardNumberOfColumns = 1;
 
         return textIdPairs.Count switch
         {
