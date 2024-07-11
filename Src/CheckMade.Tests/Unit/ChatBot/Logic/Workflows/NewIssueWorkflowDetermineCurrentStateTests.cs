@@ -11,7 +11,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueWorkflow.States;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public class NewIssueWorkflowTests
+public class NewIssueWorkflowDetermineCurrentStateTests
 {
     private ServiceProvider? _services;
 
