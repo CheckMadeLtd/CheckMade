@@ -1,11 +1,15 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
+
+using static NewIssueWorkflow.States;
 
 internal interface INewIssueWorkflow : IWorkflow
 {
@@ -15,7 +19,10 @@ internal interface INewIssueWorkflow : IWorkflow
         LiveEvent liveEvent);
 }
 
-internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssueWorkflow
+internal class NewIssueWorkflow(
+        ILiveEventsRepository liveEventsRepo,
+        IDomainGlossary glossary) 
+    : INewIssueWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
@@ -37,35 +44,63 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
         IReadOnlyCollection<TlgInput> recentLocationHistory,
         LiveEvent liveEvent)
     {
-        var lastInteractiveInput = workflowInteractiveHistory.Last();
-        var activeRoleType = lastInteractiveInput.OriginatorRole.GetValueOrThrow().RoleType;
+        var currentInteractiveInput = workflowInteractiveHistory.Last();
+        var currentRoleType = currentInteractiveInput.OriginatorRole.GetValueOrThrow().RoleType;
 
         if (IsBeginningOfWorkflow())
         {
-            if (activeRoleType.GetTradeInstance().IsNone)
+            if (currentRoleType.GetTradeInstance().IsNone)
             {
-                return States.Initial_TradeUnknown;
+                return Initial_TradeUnknown;
             }
             
             return CanDetermineSphereOfActionLocation() switch
             {
-                true => States.Initial_SphereKnown,
-                _ => States.Initial_SphereUnknown
+                true => Initial_SphereKnown,
+                _ => Initial_SphereUnknown
             };
         }
+        
+        var lastInteractiveInput = workflowInteractiveHistory.SkipLast(1).Last();
 
         if (lastInteractiveInput.ResultantWorkflow.IsNone)
         {
             throw new InvalidOperationException($"Lack of '{nameof(ResultantWorkflowInfo)}' for last input processed " +
                                                 $" by ({nameof(NewIssueWorkflow)}).");
         }
-        
-        // From here, base calc of State on combination of resultantState plus new input.
+
+        if (lastInteractiveInput.ResultantWorkflow.GetValueOrThrow().WorkflowId !=
+            glossary.IdAndUiByTerm[Dt(typeof(NewIssueWorkflow))].callbackId)
+        {
+            throw new InvalidOperationException($"WorkflowId of last Input unexpectedly is not for " +
+                                                $"'{nameof(NewIssueWorkflow)}'");
+        }
+
+        var lastState = 
+            (States)lastInteractiveInput
+                .ResultantWorkflow.GetValueOrThrow()
+                .InState;
+
+        if (lastState == Initial_SphereKnown)
+        {
+            return currentInteractiveInput.InputType switch
+            {
+                TlgInputType.CallbackQuery =>
+                    currentInteractiveInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
+                    {
+                        (long)ControlPrompts.Yes => SphereConfirmed,
+                        _ => Initial_SphereUnknown
+                    },
+
+                // e.g. someone entered text instead of pressing a button -> no state change, instead "try again"
+                _ => Initial_SphereKnown
+            };
+        }
         
         throw new InvalidOperationException($"Current State for {nameof(NewIssueWorkflow)} couldn't be determined.");
         
         bool IsBeginningOfWorkflow() => 
-            lastInteractiveInput.InputType == TlgInputType.CommandMessage;
+            currentInteractiveInput.InputType == TlgInputType.CommandMessage;
 
         bool CanDetermineSphereOfActionLocation()
         {
@@ -79,7 +114,7 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
                     .DivIntoSpheres
                     .Where(soa => 
                         soa.GetTrade().GetType() 
-                        == activeRoleType.GetTradeInstance().GetValueOrThrow().GetType())
+                        == currentRoleType.GetTradeType().GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
             
             return IsLocationNearASphere(lastLocationUpdate, spheresForCurrentTrade);

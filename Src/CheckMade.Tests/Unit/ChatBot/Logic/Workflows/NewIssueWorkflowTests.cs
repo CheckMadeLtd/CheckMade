@@ -1,9 +1,9 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
-using CheckMade.Common.Utils.GIS;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,11 +28,7 @@ public class NewIssueWorkflowTests
                 (int)OperationsBotCommands.NewIssue,
                 roleSpecified: LiveEventAdmin_DanielEn_X2024)];
 
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: interactiveHistory
-        );
-        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+        var workflow = _services.GetRequiredService<INewIssueWorkflow>();
 
         var actualState =
             workflow.DetermineCurrentState(
@@ -59,10 +55,7 @@ public class NewIssueWorkflowTests
                 tlgAgent.Mode, 
                 (int)OperationsBotCommands.NewIssue)];
 
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: interactiveHistory);
-        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+        var workflow = _services.GetRequiredService<INewIssueWorkflow>();
 
         var actualState =
             workflow.DetermineCurrentState(
@@ -86,50 +79,25 @@ public class NewIssueWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        List<TlgInput> interactiveHistory = [
-            inputGenerator.GetValidTlgInputTextMessage(), 
-            inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, 
-                (int)OperationsBotCommands.NewIssue)];
-
-        var nearSphere1LocationLatitude = 
-            Sphere1_Location.Latitude;
-        var nearSphere1LocationLongitude =
-            Sphere1_Location.Longitude;
-        
-        var farFromSphere1LocationLatitude = 
-            Sphere1_Location.Latitude + 1.0;
-        var farFromSphere1LocationLongitude = 
-            Sphere1_Location.Longitude + 1.0;
-        
-        Assert.True(
-            new Geo(
-                    farFromSphere1LocationLatitude, 
-                    farFromSphere1LocationLongitude,
-                    Option<float>.None())
-                .MetersAwayFrom(Sphere1_Location) 
-            > SaniCleanTrade.SphereNearnessThresholdInMeters);
-        
         List<TlgInput> recentLocationHistory = [
             inputGenerator.GetValidTlgInputLocationMessage(
-                farFromSphere1LocationLatitude,
-                farFromSphere1LocationLongitude,
-                Option<float>.None(),
+                GetLocationFarFromAnySaniCleanSphere(),
                 dateTime: DateTime.UtcNow.AddSeconds(-10))];
 
         if (isNearSphere)
         {
             recentLocationHistory.Add(
                 inputGenerator.GetValidTlgInputLocationMessage(
-                    nearSphere1LocationLatitude,
-                    nearSphere1LocationLongitude,
-                    Option<float>.None()));
+                    GetLocationNearSaniCleanSphere()));
         }
         
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: interactiveHistory);
-        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+        List<TlgInput> interactiveHistory = [
+            inputGenerator.GetValidTlgInputTextMessage(), 
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode, 
+                (int)OperationsBotCommands.NewIssue)];
+
+        var workflow = _services.GetRequiredService<INewIssueWorkflow>();
 
         var actualState = 
             workflow.DetermineCurrentState(
@@ -139,4 +107,60 @@ public class NewIssueWorkflowTests
 
         Assert.Equal(expectedState, actualState);
     }
+
+    [Fact]
+    public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserConfirmsAutomaticNearSphere()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var tlgAgent = PrivateBotChat_Operations;
+        var workflowId = glossary.IdAndUiByTerm[Dt(typeof(NewIssueWorkflow))].callbackId;
+    
+        List<TlgInput> recentLocationHistory = [
+            inputGenerator.GetValidTlgInputLocationMessage(
+                GetLocationNearSaniCleanSphere(),
+                dateTime: DateTime.UtcNow)];
+    
+        List<TlgInput> interactiveHistory = [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                (int)OperationsBotCommands.NewIssue,
+                resultantWorkflowInfo: new ResultantWorkflowInfo(
+                    workflowId,
+                    NewIssueWorkflow.States.Initial_SphereKnown)),
+            inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
+                ControlPrompts.Yes)];
+
+        var workflow = _services.GetRequiredService<INewIssueWorkflow>();
+
+        var actualState =
+            workflow.DetermineCurrentState(
+                interactiveHistory,
+                recentLocationHistory,
+                X2024);
+        
+        Assert.Equal(
+            NewIssueWorkflow.States.SphereConfirmed, 
+            actualState);
+    }
+
+    [Fact]
+    public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserManuallyChoseSphere()
+    {
+        
+    }
+
+    private Geo GetLocationNearSaniCleanSphere() =>
+        new Geo(
+            Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off
+            Sphere1_Location.Longitude + 0.00001,
+            Option<float>.None());
+
+    private Geo GetLocationFarFromAnySaniCleanSphere() =>
+        new Geo(
+            Sphere1_Location.Latitude + 1, // ca. 100km off
+            Sphere1_Location.Longitude,
+            Option<float>.None());
 }
