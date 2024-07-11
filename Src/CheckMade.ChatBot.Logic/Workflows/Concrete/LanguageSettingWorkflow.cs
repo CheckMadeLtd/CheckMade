@@ -33,7 +33,7 @@ internal class LanguageSettingWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInteractiveSinceLastBotCommand(currentInput);
+            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
         return DetermineCurrentState(workflowInputHistory) switch
         {

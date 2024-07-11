@@ -32,7 +32,7 @@ internal class LogoutWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInteractiveSinceLastBotCommand(currentInput);
+            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
         var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
