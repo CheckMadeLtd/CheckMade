@@ -1,6 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
@@ -43,7 +42,7 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
 
         if (IsBeginningOfWorkflow())
         {
-            if (activeRoleType.GetTrade().IsNone)
+            if (activeRoleType.GetTradeInstance().IsNone)
             {
                 return States.Initial_TradeUnknown;
             }
@@ -80,7 +79,7 @@ internal class NewIssueWorkflow(ILiveEventsRepository liveEventsRepo) : INewIssu
                     .DivIntoSpheres
                     .Where(soa => 
                         soa.GetTrade().GetType() 
-                        == activeRoleType.GetTrade().GetValueOrThrow().GetType())
+                        == activeRoleType.GetTradeInstance().GetValueOrThrow().GetType())
                     .ToImmutableReadOnlyCollection();
             
             return IsLocationNearASphere(lastLocationUpdate, spheresForCurrentTrade);
