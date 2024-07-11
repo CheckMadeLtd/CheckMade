@@ -4,11 +4,11 @@ using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
 
 namespace CheckMade.Common.Model.Core.Trades;
 
-public interface ITradeIssue<T> where T : ITrade
+public interface ITradeIssue
 {
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }
-    Option<ITradeFacility<T>> Facility { get; }
+    Option<ITradeFacility> Facility { get; }
     Geo Location { get; }
     IssueEvidence Evidence { get; }
     IRoleInfo ReportedBy { get; }
