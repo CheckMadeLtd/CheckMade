@@ -210,7 +210,7 @@ public class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var locationUpdate =
             inputGenerator.GetValidTlgInputLocationMessage(
-                17, -22, Option<float>.None());
+                new Geo(17, -22, Option<float>.None()));
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(

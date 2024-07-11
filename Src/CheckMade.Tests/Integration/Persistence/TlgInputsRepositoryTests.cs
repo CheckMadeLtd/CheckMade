@@ -104,9 +104,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             15.7f);
         
         var tlgInput = inputGenerator.GetValidTlgInputLocationMessage(
-            expectedGeo.Latitude, 
-            expectedGeo.Longitude,
-            expectedGeo.UncertaintyRadiusInMeters,
+            expectedGeo,
             roleSetting: Default);
         
         await inputRepo.AddAsync(tlgInput);
@@ -263,19 +261,19 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var sinceParam = new DateTime(2024, 07, 01, 12, 15, 00);
         
         var tlgInputLongBefore = inputGenerator.GetValidTlgInputLocationMessage(
-            13.4, 51.2, Option<float>.None(),
+            new Geo( 13.4, 51.2, Option<float>.None()),
             dateTime: sinceParam.AddHours(-2));
         
         var tlgInputRightBefore = inputGenerator.GetValidTlgInputLocationMessage(
-            13.6, 51.7, Option<float>.None(),
+            new Geo(13.6, 51.7, Option<float>.None()),
             dateTime: sinceParam.AddMilliseconds(-1));
 
         var tlgInputExactlyAt = inputGenerator.GetValidTlgInputLocationMessage(
-            11.4, 47.2, Option<float>.None(),
+            new Geo(11.4, 47.2, Option<float>.None()),
             dateTime: sinceParam);
         
         var tlgInputAfter = inputGenerator.GetValidTlgInputLocationMessage(
-            11.5, 47.6, Option<float>.None(),
+            new Geo(11.5, 47.6, Option<float>.None()),
             dateTime: sinceParam.AddSeconds(1));
 
         await inputRepo.AddAsync(new List<TlgInput>
