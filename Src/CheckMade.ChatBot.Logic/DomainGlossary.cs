@@ -17,7 +17,6 @@ public class DomainGlossary : IDomainGlossary
             ImmutableDictionary.CreateBuilder<DomainTerm, (CallbackId callbackId, UiString uiString)>();
     
     public IReadOnlyDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
-
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
     
     public DomainGlossary()
@@ -83,6 +82,16 @@ public class DomainGlossary : IDomainGlossary
             kvp => kvp.Key);
     }
 
+    public IReadOnlyCollection<DomainTerm> GetAll(Type superType)
+    {
+        return
+            IdAndUiByTerm
+                .Select(kvp => kvp.Key)
+                .Where(dt => dt.TypeValue != null &&
+                             superType.IsAssignableFrom(dt.TypeValue))
+                .ToImmutableReadOnlyCollection();
+    }
+    
     private void AddTerm(object term, string idRaw, UiString uiString)
     {
         var callBackIdAndUi = (new CallbackId(idRaw), uiString);
