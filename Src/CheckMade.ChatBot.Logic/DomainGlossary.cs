@@ -48,6 +48,7 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
         AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
         AddTerm(typeof(InventoryIssue), "D582QJ", Ui("🗄 Consumables"));
+        AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 Staff"));
 
         AddTerm(Consumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
         AddTerm(Consumables.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
@@ -55,7 +56,6 @@ public class DomainGlossary : IDomainGlossary
 
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
-        AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 StaffIssue"));
         
         AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));
         AddTerm(typeof(TradeInspector<SaniCleanTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
