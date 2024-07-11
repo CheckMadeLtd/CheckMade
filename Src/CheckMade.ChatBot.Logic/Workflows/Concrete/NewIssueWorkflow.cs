@@ -31,7 +31,8 @@ internal class NewIssueWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        throw new NotImplementedException();
+        // ToDo: Implement when workflow is done
+        return true;
     }
 
     public async Task<Result<WorkflowResponse>> 
