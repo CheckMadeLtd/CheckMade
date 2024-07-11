@@ -32,11 +32,11 @@ internal class NewIssueWorkflow(
     public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {
-        // get workflowinputHistory and locationHistory separately
+        // get WorkflowInputHistory and locationHistory separately
         
         throw new NotImplementedException();
 
-        // var lifeEvent = await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow();
+        // var lifeEvent = await liveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
     }
 
     public States DetermineCurrentState(
@@ -92,7 +92,7 @@ internal class NewIssueWorkflow(
                         _ => Initial_SphereUnknown
                     },
 
-                // e.g. someone entered text instead of pressing a button -> no state change, instead "try again"
+                // e.g., someone entered a text instead of pressing a button -> no state change, instead "try again"
                 _ => Initial_SphereKnown
             };
         }
