@@ -32,8 +32,7 @@ public class InputProcessorTests
             roleSetting: TestOriginatorRoleSetting.None);
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { startCommand });
+        var (services, container) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
         var glossary = services.GetRequiredService<IDomainGlossary>();
@@ -94,8 +93,7 @@ public class InputProcessorTests
                 inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.NewIssue,
-                    messageId: 6),
-                outOfScopeCallbackQuery
+                    messageId: 6)
             });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
@@ -185,9 +183,7 @@ public class InputProcessorTests
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                    Dt(LanguageCode.de)),
-                notInterruptingBotCommandInput
-            });
+                    Dt(LanguageCode.de))});
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string notExpectedWarningOutput = 
@@ -213,8 +209,7 @@ public class InputProcessorTests
                 new Geo(17, -22, Option<float>.None()));
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { locationUpdate });
+        var (services, container) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
         var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = locationUpdate;

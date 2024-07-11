@@ -44,8 +44,7 @@ public class LogoutWorkflowTests
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout),
-                confirmLogoutCommand
+                    (int)OperationsBotCommands.Logout)
             },
             roleBindings: new []{ boundRole } );
         var mockRoleBindingsRepo =
@@ -87,8 +86,7 @@ public class LogoutWorkflowTests
             {
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout),
-                confirmLogoutCommand
+                    (int)OperationsBotCommands.Logout)
             },
             roleBindings: new List<TlgAgentRoleBind>
             {
@@ -172,8 +170,7 @@ public class LogoutWorkflowTests
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout),
-                abortLogoutCommand
+                    (int)OperationsBotCommands.Logout)
             });
         var workflow = services.GetRequiredService<ILogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 

@@ -118,8 +118,7 @@ public class LanguageSettingWorkflowTests
             inputs: new[]
             {
                 inputGenerator.GetValidTlgInputTextMessage(
-                    text: "random decoy irrelevant to workflow"),
-                inputSettingsCommand
+                    text: "random decoy irrelevant to workflow")
             });
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
 
@@ -159,8 +158,7 @@ public class LanguageSettingWorkflowTests
                     text: "random decoy irrelevant to workflow"),
                 inputSettingsCommand,
                 inputGenerator.GetValidTlgInputTextMessage(
-                    text: "random decoy irrelevant to workflow"),
-                languageSettingInput
+                    text: "random decoy irrelevant to workflow")
             },
             roles: new []{ roleBind.Role },
             roleBindings: new []{ roleBind });

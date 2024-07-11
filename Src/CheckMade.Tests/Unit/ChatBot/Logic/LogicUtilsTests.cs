@@ -240,7 +240,8 @@ public class LogicUtilsTests
         };
 
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, _) = serviceCollection.ConfigureTestRepositories(inputs: historicInputs);
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: historicInputs);
         var logicUtils = services.GetRequiredService<ILogicUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
