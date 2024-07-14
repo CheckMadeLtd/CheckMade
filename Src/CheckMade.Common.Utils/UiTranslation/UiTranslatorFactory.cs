@@ -65,8 +65,8 @@ public class UiTranslatorFactory(
                      In the .tsv file any '\n' is a string literal, while in the resulting translation dictionary
                      we need them to become actual line-breaking control characters to ensure a match against any
                      UiString.RawEnglishText in the Translate() method. */ 
-                    var enKey = csv.GetField(1).Replace("\\n", "\n");
-                    var translation = csv.GetField(2).Replace("\\n", "\n");
+                    var enKey = csv.GetField(1)!.Replace("\\n", "\n");
+                    var translation = csv.GetField(2)!.Replace("\\n", "\n");
                     
                     builder.Add(enKey, translation);
                 }
