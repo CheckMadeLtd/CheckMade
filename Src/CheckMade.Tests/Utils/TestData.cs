@@ -152,10 +152,10 @@ internal static class TestData
     // 2024 LiveEvents
 
     internal static readonly Geo Sphere1_Location = 
-        new(51.60955, 6.13004, Option<float>.None());
+        new(51.60955, 6.13004, Option<double>.None());
     
     internal static readonly Geo Sphere2_Location =
-        new Geo(51.60893, 6.13328, Option<float>.None());
+        new Geo(51.60893, 6.13328, Option<double>.None());
 
     internal const string Sphere1_AtX2024_Name = "Camp1";
     

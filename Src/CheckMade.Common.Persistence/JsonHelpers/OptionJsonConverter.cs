@@ -71,8 +71,8 @@ internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<
         var uncertaintyRadiusRaw = geoObj[nameof(Geo.UncertaintyRadiusInMeters)]?.Value<float?>();
                 
         var uncertaintyRadius = uncertaintyRadiusRaw != null
-            ? Option<float>.Some(uncertaintyRadiusRaw.Value)
-            : Option<float>.None(); 
+            ? Option<double>.Some(uncertaintyRadiusRaw.Value)
+            : Option<double>.None(); 
 
         var latitudeSafe = new Latitude(latitudeRaw);
         var longitudeSafe = new Longitude(longitudeRaw);

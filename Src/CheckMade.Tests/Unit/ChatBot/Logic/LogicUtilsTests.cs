@@ -271,10 +271,10 @@ public class LogicUtilsTests
         var tlgAgentDecoy = UserId02_ChatId03_Operations;
 
         var randomDecoyLocation = 
-            new Geo(0, 0, Option<float>.None());
+            new Geo(0, 0, Option<double>.None());
 
         var expectedLocation =
-            new Geo(1, 1, Option<float>.None());
+            new Geo(1, 1, Option<double>.None());
 
         var historicInputs = new[]
         {

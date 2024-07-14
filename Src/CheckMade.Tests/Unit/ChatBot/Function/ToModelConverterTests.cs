@@ -175,7 +175,7 @@ public class ToModelConverterTests
         var expectedGeoCoordinates = new Geo(
             location!.Latitude,
             location.Longitude,
-            horizontalAccuracy ?? Option<float>.None());
+            horizontalAccuracy ?? Option<double>.None());
         
         var expectedTlgInput = new TlgInput(
                 PrivateBotChat_Operations,

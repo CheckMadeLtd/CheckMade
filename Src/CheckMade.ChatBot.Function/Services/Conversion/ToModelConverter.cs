@@ -132,7 +132,7 @@ internal class ToModelConverter(
             { } location => Option<Geo>.Some(new Geo(
                 location.Latitude,
                 location.Longitude,
-                location.HorizontalAccuracy ?? Option<float>.None())),
+                location.HorizontalAccuracy ?? Option<double>.None())),
             
             _ => Option<Geo>.None() 
         };

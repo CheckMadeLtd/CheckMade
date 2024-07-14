@@ -190,11 +190,11 @@
 //         new Geo(
 //             Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off
 //             Sphere1_Location.Longitude + 0.00001,
-//             Option<float>.None());
+//             Option<double>.None());
 //
 //     private Geo GetLocationFarFromAnySaniCleanSphere() =>
 //         new Geo(
 //             Sphere1_Location.Latitude + 1, // ca. 100km off
 //             Sphere1_Location.Longitude,
-//             Option<float>.None());
+//             Option<double>.None());
 // }

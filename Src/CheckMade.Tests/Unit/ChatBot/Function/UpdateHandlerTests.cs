@@ -493,7 +493,7 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
         [
             new OutputDto
             {
-                Location = new Geo(35.098, -17.077, Option<float>.None()) 
+                Location = new Geo(35.098, -17.077, Option<double>.None()) 
             }
         ];
         
