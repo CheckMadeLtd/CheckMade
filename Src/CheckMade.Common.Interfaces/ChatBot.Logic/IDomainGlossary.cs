@@ -16,4 +16,6 @@ public interface IDomainGlossary
     UiString GetUi(Type dtType);
     UiString GetUi(Enum dtEnum);
     UiString GetUi(DomainTerm domainTerm);
+
+    Type GetDtType(string dtId);
 }

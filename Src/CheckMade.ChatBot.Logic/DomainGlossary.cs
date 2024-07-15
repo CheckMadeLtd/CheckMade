@@ -126,6 +126,17 @@ public class DomainGlossary : IDomainGlossary
     public UiString GetUi(Type dtType) => IdAndUiByTerm[Dt(dtType)].uiString;
     public UiString GetUi(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].uiString;
     public UiString GetUi(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].uiString;
+    
+    public Type GetDtType(string dtId)
+    {
+        var dtType = TermById[new CallbackId(dtId)].TypeValue;
+
+        return 
+            dtType ?? 
+            throw new ArgumentException(
+                $"Given {nameof(dtId)} '{dtId}' not found in {nameof(DomainGlossary)}", 
+                nameof(dtId));
+    }
 
     private void AddTerm(object term, string idRaw, UiString uiString)
     {
