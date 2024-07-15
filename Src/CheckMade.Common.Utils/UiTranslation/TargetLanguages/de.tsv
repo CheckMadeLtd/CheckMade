@@ -61,3 +61,6 @@ CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
 CheckMade.Telegram.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
 CheckMade.Telegram.Logic	Please select a Trade:	Bitte wählen Sie ein Gewerk aus:
+CheckMade.Telegram.Logic	Please confirm: are you at {0} '{1}'?	Bitte bestätigen: Sind Sie beim {0} '{1}'?
+CheckMade.Telegram.Logic	sanitary camp	Sanitärcamp
+CheckMade.Telegram.Logic	zone	Zone

@@ -1,8 +1,8 @@
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
-using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,8 +51,51 @@ public class NewIssueWorkflowInitTests
     public async Task GetResponseAsync_PromptsSphereConfirmation_WhenUserIsNearSphere()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-
+    
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
         var tlgAgent = PrivateBotChat_Operations;
+        
+        List<TlgInput> recentLocationHistory = [
+            basics.inputGenerator.GetValidTlgInputLocationMessage(
+                GetLocationFarFromAnySaniCleanSphere(),
+                dateTime: DateTime.UtcNow.AddSeconds(-10)),
+            basics.inputGenerator.GetValidTlgInputLocationMessage(
+                GetLocationNearSaniCleanSphere())];
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: recentLocationHistory);
+
+        var currentInput = 
+            basics.inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode, 
+                (int)OperationsBotCommands.NewIssue);
+        
+        const string expectedOutput = "Please confirm: are you at {0} '{1}'?";
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereKnown));
+        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+
+        var actualOutput =
+            await workflow.GetResponseAsync(currentInput);
+        
+        Assert.Equal(
+            expectedOutput,
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+        
+        Assert.Equal(
+            expectedNewState,
+            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
     }
+    
+    private static Geo GetLocationNearSaniCleanSphere() =>
+        new(
+            Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off
+            Sphere1_Location.Longitude + 0.00001,
+            Option<double>.None());
+
+    private static Geo GetLocationFarFromAnySaniCleanSphere() =>
+        new(
+            Sphere1_Location.Latitude + 1, // ca. 100km off
+            Sphere1_Location.Longitude,
+            Option<double>.None());
 }

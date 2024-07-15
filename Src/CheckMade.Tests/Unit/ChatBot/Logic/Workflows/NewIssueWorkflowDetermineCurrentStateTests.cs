@@ -69,46 +69,6 @@
 //             actualState);
 //     }
 //
-//     [Theory]
-//     [InlineData(true, Initial_SphereKnown)]
-//     [InlineData(false, Initial_SphereUnknown)]
-//     public void DetermineCurrentState_ReturnsCorrectInitialSphereState_OnNewIssueForSaniClean(
-//         bool isNearSphere, Enum expectedState)
-//     {
-//         _services = new UnitTestStartup().Services.BuildServiceProvider();
-//
-//         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-//         var tlgAgent = PrivateBotChat_Operations;
-//
-//         List<TlgInput> recentLocationHistory = [
-//             inputGenerator.GetValidTlgInputLocationMessage(
-//                 GetLocationFarFromAnySaniCleanSphere(),
-//                 dateTime: DateTime.UtcNow.AddSeconds(-10))];
-//
-//         if (isNearSphere)
-//         {
-//             recentLocationHistory.Add(
-//                 inputGenerator.GetValidTlgInputLocationMessage(
-//                     GetLocationNearSaniCleanSphere()));
-//         }
-//         
-//         List<TlgInput> interactiveHistory = [
-//             inputGenerator.GetValidTlgInputTextMessage(), 
-//             inputGenerator.GetValidTlgInputCommandMessage(
-//                 tlgAgent.Mode, 
-//                 (int)OperationsBotCommands.NewIssue)];
-//
-//         var workflow = _services.GetRequiredService<INewIssueWorkflow>();
-//
-//         var actualState = 
-//             workflow.DetermineCurrentState(
-//                 interactiveHistory,
-//                 recentLocationHistory,
-//                 X2024);
-//
-//         Assert.Equal(expectedState, actualState);
-//     }
-//
 //     [Fact]
 //     public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserConfirmsAutomaticNearSphere()
 //     {
@@ -186,15 +146,4 @@
 //         Assert.Equal(expectedState, actualState);
 //     }
 //
-//     private Geo GetLocationNearSaniCleanSphere() =>
-//         new Geo(
-//             Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off
-//             Sphere1_Location.Longitude + 0.00001,
-//             Option<double>.None());
-//
-//     private Geo GetLocationFarFromAnySaniCleanSphere() =>
-//         new Geo(
-//             Sphere1_Location.Latitude + 1, // ca. 100km off
-//             Sphere1_Location.Longitude,
-//             Option<double>.None());
 // }
