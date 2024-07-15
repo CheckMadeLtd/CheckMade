@@ -35,9 +35,37 @@ internal class NewIssueWorkflow(
             return await NewIssueWorkflowInitAsync(currentInput);
         }
 
-        return currentInput.ResultantWorkflow.GetValueOrThrow().InStateId switch
+        var lastInput =
+            (await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+            .SkipLast(1) // skip currentInput
+            .Last(); // no OrDefault: at this point we are certain the history has at least 2 inputs!
+
+        var currentState = 
+            glossary.GetDtType(
+                lastInput
+                    .ResultantWorkflow.GetValueOrThrow()
+                    .InStateId);
+        
+        return currentState.Name switch
         {
+            nameof(NewIssueInitialTradeUnknown) => 
+                await initialTradeUnknown
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(),
             
+            nameof(NewIssueInitialSphereKnown) =>
+                await initialSphereKnown
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(),
+            
+            nameof(NewIssueInitialSphereUnknown) =>
+                await initialSphereUnknown
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(),
+            
+            nameof(NewIssueSphereConfirmed) =>
+                await sphereConfirmed
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(),
+            
+            _ => throw new InvalidOperationException(
+                $"Lack of handling of state '{currentState.Name}' in '{nameof(NewIssueWorkflow)}'")
         };
     }
 

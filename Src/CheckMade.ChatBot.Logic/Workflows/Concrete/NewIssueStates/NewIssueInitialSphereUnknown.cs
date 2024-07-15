@@ -11,7 +11,7 @@ internal class NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
         throw new NotImplementedException();
     }
 
-    public async Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync()
+    public Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync()
     {
         throw new NotImplementedException();
     }
