@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 
@@ -16,7 +17,9 @@ internal class NewIssueInitialSphereKnown(ITrade trade, ISphereOfAction sphere) 
             {
                 Text = Ui("Please confirm: are you at {0} '{1}'?",
                     trade.GetSphereOfActionLabel,
-                    sphere.Name)
+                    sphere.Name),
+                
+                ControlPromptsSelection = ControlPrompts.YesNo
             }
         };
     }

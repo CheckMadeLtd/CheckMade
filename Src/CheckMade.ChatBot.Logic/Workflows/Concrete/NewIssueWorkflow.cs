@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
@@ -60,11 +61,24 @@ internal class NewIssueWorkflow(
                     ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
                     : GetLastUserProvidedTrade();
 
-                var sphere = 
-                    (await SphereNearCurrentUserAsync(currentInput, trade))
-                    .GetValueOrThrow(); 
+                var liveEvent = await liveEventsRepo.GetAsync(
+                    currentInput.LiveEventContext.GetValueOrThrow());
+
+                var lastKnownLocation = await LastKnownLocationAsync(currentInput);
                 
-                return await new NewIssueInitialSphereKnown(trade, sphere)
+                var sphere = lastKnownLocation.IsSome
+                    ? SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), trade)
+                    : Option<ISphereOfAction>.None();
+
+                if (sphere.IsNone)
+                {
+                    // ToDo: break? Handle case where user has moved away since confirming Sphere... 
+                    // should lead back to SphereUnknown state.
+                    // it's an edge case.
+                    // Maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
+                }
+                
+                return await new NewIssueInitialSphereKnown(trade, sphere.GetValueOrThrow())
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
             
             case nameof(NewIssueInitialSphereUnknown):
@@ -110,47 +124,53 @@ internal class NewIssueWorkflow(
         }
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
-
-        return trade.DividesLiveEventIntoSpheresOfAction switch
+        
+        if (trade.DividesLiveEventIntoSpheresOfAction)
         {
-            true => (await SphereNearCurrentUserAsync(currentInput, trade)).Match(
-                sphere => new WorkflowResponse(
-                    new NewIssueInitialSphereKnown(trade, sphere).MyPrompt(),
-                    glossary.GetId(typeof(NewIssueInitialSphereKnown))),
+            var liveEvent = await liveEventsRepo.GetAsync(
+                currentInput.LiveEventContext.GetValueOrThrow());
 
+            var lastKnownLocation = await LastKnownLocationAsync(currentInput);
+
+            var sphere = lastKnownLocation.IsSome
+                ? SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), trade)
+                : Option<ISphereOfAction>.None();
+
+            return sphere.Match(
+                soa => new WorkflowResponse(
+                    new NewIssueInitialSphereKnown(trade, soa).MyPrompt(),
+                    glossary.GetId(typeof(NewIssueInitialSphereKnown))),
                 () => new WorkflowResponse(
                     new NewIssueInitialSphereUnknown().MyPrompt(),
-                    glossary.GetId(typeof(NewIssueInitialSphereUnknown)))),
+                    glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
+        }
 
-            _ => new WorkflowResponse(
-                new NewIssueSphereConfirmed().MyPrompt(),
-                glossary.GetId(typeof(NewIssueSphereConfirmed)))
-        };
+        return new WorkflowResponse(
+            new NewIssueSphereConfirmed().MyPrompt(),
+            glossary.GetId(typeof(NewIssueSphereConfirmed)));
     }
 
     private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
-    
-    private async Task<Option<ISphereOfAction>> SphereNearCurrentUserAsync(
-        TlgInput currentInput,
-        ITrade trade)
+
+    private async Task<Option<Geo>> LastKnownLocationAsync(TlgInput currentInput)
     {
         var lastKnownLocationInput =
             (await logicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
             .LastOrDefault();
 
-        if (lastKnownLocationInput is null)
-            return Option<ISphereOfAction>.None();
-
-        var lastKnownLocation =
-            lastKnownLocationInput.Details.GeoCoordinates.GetValueOrThrow();
-
-        var liveEvent =
-            await liveEventsRepo.GetAsync(
-                currentInput.LiveEventContext.GetValueOrThrow());
-
+        return lastKnownLocationInput is null 
+            ? Option<Geo>.None() 
+            : lastKnownLocationInput.Details.GeoCoordinates.GetValueOrThrow();
+    }
+    
+    private static Option<ISphereOfAction> SphereNearCurrentUser(
+        LiveEvent liveEvent,
+        Geo lastKnownLocation,
+        ITrade trade)
+    {
         var tradeSpecificNearnessThreshold = trade switch
         {
             SaniCleanTrade => SaniCleanTrade.SphereNearnessThresholdInMeters,
