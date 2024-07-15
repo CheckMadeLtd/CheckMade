@@ -1,4 +1,6 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Utils;
 
@@ -18,5 +20,13 @@ internal static class TestUtils
         return text.Concatenations.Count > 0
             ? text.Concatenations.First()!.RawEnglishText
             : text.RawEnglishText;
+    }
+
+    internal static (ITlgInputGenerator inputGenerator, IDomainGlossary glossary)
+        GetBasicWorkflowTestingServices(IServiceProvider services)
+    {
+        return (
+            services.GetRequiredService<ITlgInputGenerator>(),
+            services.GetRequiredService<IDomainGlossary>());
     }
 }
