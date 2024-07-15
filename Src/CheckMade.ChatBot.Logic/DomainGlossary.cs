@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
@@ -39,7 +40,15 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(typeof(UserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
         AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
         AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
-        AddTerm(typeof(NewIssueWorkflow), "D6SORL", UiNoTranslate(nameof(NewIssueWorkflow)));
+        
+        AddTerm(typeof(NewIssueWorkflow), "D6SORL", 
+            UiNoTranslate(nameof(NewIssueWorkflow)));
+        AddTerm(typeof(NewIssueInitialTradeUnknown), "DA0ZMD", 
+            UiNoTranslate(nameof(NewIssueInitialTradeUnknown)));
+        AddTerm(typeof(NewIssueInitialSphereUnknown), "D8T63V",
+            UiNoTranslate(nameof(NewIssueInitialSphereUnknown)));
+        AddTerm(typeof(NewIssueInitialSphereKnown), "D45JQ1",
+            UiNoTranslate(nameof(NewIssueInitialSphereKnown)));
         
         #endregion
         
