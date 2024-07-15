@@ -66,8 +66,8 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             terms =>
             {
                 return terms.Select(term => (
-                    text: translator.Translate(domainGlossary.IdAndUiByTerm[term].uiString),
-                    id: domainGlossary.IdAndUiByTerm[term].callbackId.Id
+                    text: translator.Translate(domainGlossary.GetUi(term)),
+                    id: domainGlossary.GetId(term)
                 )).ToList();
             },
             () => []

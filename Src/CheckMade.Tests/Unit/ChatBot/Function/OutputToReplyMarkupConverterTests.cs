@@ -41,23 +41,17 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.IdAndUiByTerm[
-                                Dt(typeof(CleanlinessIssue))].uiString.GetFormattedEnglish(),
-                        basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(CleanlinessIssue))].callbackId), 
+                        basics.domainGlossary.GetUi(typeof(CleanlinessIssue)).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(typeof(CleanlinessIssue))), 
                         
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(TechnicalIssue))].uiString.GetFormattedEnglish(),
-                        basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(TechnicalIssue))].callbackId), 
+                        basics.domainGlossary.GetUi(typeof(TechnicalIssue)).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(typeof(TechnicalIssue))), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(InventoryIssue))].uiString.GetFormattedEnglish(),
-                        basics.domainGlossary.IdAndUiByTerm[
-                            Dt(typeof(InventoryIssue))].callbackId), 
+                        basics.domainGlossary.GetUi(typeof(InventoryIssue)).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(typeof(InventoryIssue))), 
                 ]
             }));
 
@@ -156,10 +150,8 @@ public class OutputToReplyMarkupConverterTests
             new InlineKeyboardMarkup(new[]
             {
                 InlineKeyboardButton.WithCallbackData(
-                    basics.domainGlossary.IdAndUiByTerm[
-                        Dt(Consumables.Item.PaperTowels)].uiString.GetFormattedEnglish(),
-                    basics.domainGlossary.IdAndUiByTerm[
-                        Dt(Consumables.Item.PaperTowels)].callbackId), 
+                    basics.domainGlossary.GetUi(Consumables.Item.PaperTowels).GetFormattedEnglish(),
+                    basics.domainGlossary.GetId(Consumables.Item.PaperTowels)), 
                 
                 InlineKeyboardButton.WithCallbackData(
                     basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),

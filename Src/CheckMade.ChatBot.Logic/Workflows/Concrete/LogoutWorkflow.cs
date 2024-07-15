@@ -46,7 +46,7 @@ internal class LogoutWorkflow(
                             Text = UiConcatenate(
                                 Ui("{0}, your current role is: ", 
                                     currentRoleBind.Role.ByUser.FirstName),
-                                glossary.IdAndUiByTerm[Dt(currentRoleBind.Role.RoleType.GetType())].uiString,
+                                glossary.GetUi(currentRoleBind.Role.RoleType.GetType()),
                                 UiNoTranslate(".\n"),
                                 Ui("""
                                     Are you sure you want to log out from this chat for {0}?
@@ -57,12 +57,12 @@ internal class LogoutWorkflow(
                             ControlPromptsSelection = ControlPrompts.YesNo 
                         } 
                     }, 
-                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
+                    glossary.GetId(Initial)),
             
             LogoutConfirmed => 
                 new WorkflowResponse(
                     await PerformLogoutAsync(currentRoleBind),
-                    glossary.IdAndUiByTerm[Dt(LogoutConfirmed)].callbackId.Id),
+                    glossary.GetId(LogoutConfirmed)),
             
             LogoutAborted => 
                 new WorkflowResponse(
@@ -73,7 +73,7 @@ internal class LogoutWorkflow(
                             IInputProcessor.SeeValidBotCommandsInstruction) 
                         } 
                     },
-                    glossary.IdAndUiByTerm[Dt(LogoutAborted)].callbackId.Id),
+                    glossary.GetId(LogoutAborted)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))

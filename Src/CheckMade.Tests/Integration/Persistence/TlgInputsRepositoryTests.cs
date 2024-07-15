@@ -37,8 +37,8 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             inputGenerator.GetValidTlgInputTextMessage(
                 roleSetting: Default,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
-                    glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
-                    glossary.IdAndUiByTerm[Dt(UserAuthWorkflow.States.Initial)].callbackId))
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(UserAuthWorkflow.States.Initial)))
         };
         
         foreach (var input in tlgInputs)

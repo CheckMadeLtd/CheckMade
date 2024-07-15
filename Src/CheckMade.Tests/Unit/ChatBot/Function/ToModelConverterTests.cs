@@ -354,7 +354,7 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var domainGlossary = new DomainGlossary();
         var domainTerm = Dt(LanguageCode.de);
-        var callbackQueryData = new CallbackId(domainGlossary.IdAndUiByTerm[domainTerm].callbackId);
+        var callbackQueryData = new CallbackId(domainGlossary.GetId(domainTerm));
         var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedTlgInput = new TlgInput(

@@ -49,19 +49,19 @@ internal class LanguageSettingWorkflow(
                                 .Select(lc => Dt(lc))) 
                         } 
                     },
-                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
+                    glossary.GetId(Initial)),
             
             ReceivedLanguageSetting => 
                 new WorkflowResponse(
                     await SetNewLanguageAsync(currentInput), 
-                    glossary.IdAndUiByTerm[Dt(ReceivedLanguageSetting)].callbackId.Id),
+                    glossary.GetId(ReceivedLanguageSetting)),
             
             Completed => 
                 new WorkflowResponse(new List<OutputDto>{ new() 
                     {
                         Text = ILogicUtils.WorkflowWasCompleted
                     }},
-                    glossary.IdAndUiByTerm[Dt(Completed)].callbackId.Id),
+                    glossary.GetId(Completed)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
@@ -113,7 +113,7 @@ internal class LanguageSettingWorkflow(
         {
             Text = UiConcatenate(
                 Ui("New language: "), 
-                domainGlossary.IdAndUiByTerm[newLanguage].uiString)
+                domainGlossary.GetUi(newLanguage))
         }];
     }
     

@@ -119,11 +119,14 @@ public class DomainGlossary : IDomainGlossary
                 .ToImmutableReadOnlyCollection();
     }
 
-    public string GetId(Type dtType)
-    {
-        return IdAndUiByTerm[Dt(dtType)].callbackId;
-    }
-    
+    public string GetId(Type dtType) => IdAndUiByTerm[Dt(dtType)].callbackId;
+    public string GetId(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].callbackId;
+    public string GetId(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].callbackId;
+
+    public UiString GetUi(Type dtType) => IdAndUiByTerm[Dt(dtType)].uiString;
+    public UiString GetUi(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].uiString;
+    public UiString GetUi(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].uiString;
+
     private void AddTerm(object term, string idRaw, UiString uiString)
     {
         var callBackIdAndUi = (new CallbackId(idRaw), uiString);

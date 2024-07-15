@@ -50,7 +50,7 @@ internal class UserAuthWorkflow(
             Initial => 
                 new WorkflowResponse(
                     new List<OutputDto> { EnterTokenPrompt },
-                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
+                    glossary.GetId(Initial)),
             
             ReceivedTokenSubmissionAttempt => 
                 new WorkflowResponse(
@@ -72,7 +72,7 @@ internal class UserAuthWorkflow(
                             },
                             EnterTokenPrompt] 
                     }, 
-                    glossary.IdAndUiByTerm[Dt(ReceivedTokenSubmissionAttempt)].callbackId.Id),
+                    glossary.GetId(ReceivedTokenSubmissionAttempt)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
@@ -117,8 +117,7 @@ internal class UserAuthWorkflow(
             FirstOrDefaultPreExistingActiveRoleBind(currentMode);
 
         var roleTypeUiString = 
-            glossary.IdAndUiByTerm[Dt(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType())]
-            .uiString; 
+            glossary.GetUi(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType()); 
         
         if (preExistingActiveRoleBind != null)
         {

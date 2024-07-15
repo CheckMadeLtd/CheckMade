@@ -40,8 +40,8 @@ public class InputProcessorTests
             startCommand with
             {
                 ResultantWorkflow = new ResultantWorkflowInfo(
-                    glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
-                    glossary.IdAndUiByTerm[Dt(UserAuthWorkflow.States.Initial)].callbackId)
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(UserAuthWorkflow.States.Initial))
             };
         
         var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];

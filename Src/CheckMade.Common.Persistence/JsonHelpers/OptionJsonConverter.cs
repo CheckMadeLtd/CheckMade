@@ -15,8 +15,7 @@ internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<
             if (typeof(T) == typeof(DomainTerm))
             {
                 var domainTerm = value.GetValueOrThrow() as DomainTerm;
-                var callbackId = glossary.IdAndUiByTerm.First(kvp => 
-                    kvp.Key == domainTerm).Value.callbackId;
+                var callbackId = glossary.GetId(domainTerm!);
                     
                 writer.WriteValue(callbackId);
             }
