@@ -7,7 +7,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueInitialSphereKnown : IWorkflowState;
 
-internal class NewIssueInitialSphereKnown(ITrade trade, ISphereOfAction sphere) : INewIssueInitialSphereKnown
+internal class NewIssueInitialSphereKnown(
+        ITrade trade,
+        ISphereOfAction sphere) 
+    : INewIssueInitialSphereKnown
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()
     {

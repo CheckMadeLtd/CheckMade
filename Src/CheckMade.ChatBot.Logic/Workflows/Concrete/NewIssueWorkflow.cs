@@ -48,6 +48,13 @@ internal class NewIssueWorkflow(
                     .ResultantWorkflow.GetValueOrThrow()
                     .InStateId);
 
+        var liveEvent = await liveEventsRepo.GetAsync(
+            currentInput.LiveEventContext.GetValueOrThrow());
+        
+        var trade = IsCurrentRoleTradeSpecific(currentRole)
+            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
+            : GetLastUserProvidedTrade();
+
         switch (currentState.Name)
         {
             case nameof(NewIssueInitialTradeUnknown):
@@ -57,13 +64,6 @@ internal class NewIssueWorkflow(
             
             case nameof(NewIssueInitialSphereKnown):
                 
-                var trade = IsCurrentRoleTradeSpecific(currentRole)
-                    ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
-                    : GetLastUserProvidedTrade();
-
-                var liveEvent = await liveEventsRepo.GetAsync(
-                    currentInput.LiveEventContext.GetValueOrThrow());
-
                 var lastKnownLocation = await LastKnownLocationAsync(currentInput);
                 
                 var sphere = lastKnownLocation.IsSome
@@ -83,7 +83,7 @@ internal class NewIssueWorkflow(
             
             case nameof(NewIssueInitialSphereUnknown):
                 
-                return await new NewIssueInitialSphereUnknown()
+                return await new NewIssueInitialSphereUnknown(trade, liveEvent!)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
             
             case nameof(NewIssueSphereConfirmed):
@@ -141,7 +141,7 @@ internal class NewIssueWorkflow(
                     new NewIssueInitialSphereKnown(trade, soa).MyPrompt(),
                     glossary.GetId(typeof(NewIssueInitialSphereKnown))),
                 () => new WorkflowResponse(
-                    new NewIssueInitialSphereUnknown().MyPrompt(),
+                    new NewIssueInitialSphereUnknown(trade, liveEvent!).MyPrompt(),
                     glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
         }
 

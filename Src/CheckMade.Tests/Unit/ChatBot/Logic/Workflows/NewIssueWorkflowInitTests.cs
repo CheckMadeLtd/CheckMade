@@ -88,7 +88,7 @@ public class NewIssueWorkflowInitTests
     }
     
     [Fact]
-    public async Task GetResponseAsync_PromptsSphereSelection_WhenUserIsNearSphere()
+    public async Task GetResponseAsync_PromptsSphereSelection_WhenUserNotNearSphere()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
@@ -98,9 +98,7 @@ public class NewIssueWorkflowInitTests
         List<TlgInput> recentLocationHistory = [
             basics.inputGenerator.GetValidTlgInputLocationMessage(
                 GetLocationFarFromAnySaniCleanSphere(),
-                dateTime: DateTime.UtcNow.AddSeconds(-10)),
-            basics.inputGenerator.GetValidTlgInputLocationMessage(
-                GetLocationNearSaniCleanSphere())];
+                dateTime: DateTime.UtcNow)];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -111,8 +109,8 @@ public class NewIssueWorkflowInitTests
                 tlgAgent.Mode, 
                 (int)OperationsBotCommands.NewIssue);
         
-        const string expectedOutput = "Please confirm: are you at {0} '{1}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereKnown));
+        const string expectedOutput = "Please select a {0}:";
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualOutput =
