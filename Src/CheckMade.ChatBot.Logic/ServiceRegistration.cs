@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +16,12 @@ public static class ServiceRegistration
         services.AddScoped<ILogicUtils, LogicUtils>();
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
-        // services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
+        
+        services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
+        services.AddScoped<INewIssueInitialTradeUnknown, NewIssueInitialTradeUnknown>();
+        
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
+        
         services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
     }
 }

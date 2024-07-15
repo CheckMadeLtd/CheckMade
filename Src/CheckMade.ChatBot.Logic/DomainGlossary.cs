@@ -118,6 +118,11 @@ public class DomainGlossary : IDomainGlossary
                              superType.IsAssignableFrom(dt.TypeValue))
                 .ToImmutableReadOnlyCollection();
     }
+
+    public string GetId(Type dtType)
+    {
+        return IdAndUiByTerm[Dt(dtType)].callbackId;
+    }
     
     private void AddTerm(object term, string idRaw, UiString uiString)
     {
