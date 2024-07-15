@@ -16,60 +16,6 @@
 //     private ServiceProvider? _services;
 //
 //     [Fact]
-//     public void DetermineCurrentState_ReturnsInitialTradeUnknown_OnNewIssueFromLiveEventAdminRole()
-//     {
-//         _services = new UnitTestStartup().Services.BuildServiceProvider();
-//
-//         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-//         var tlgAgent = PrivateBotChat_Operations;
-//
-//         List<TlgInput> interactiveHistory = [
-//             inputGenerator.GetValidTlgInputCommandMessage(
-//                 tlgAgent.Mode, 
-//                 (int)OperationsBotCommands.NewIssue,
-//                 roleSpecified: LiveEventAdmin_DanielEn_X2024)];
-//
-//         var workflow = _services.GetRequiredService<INewIssueWorkflow>();
-//
-//         var actualState =
-//             workflow.DetermineCurrentState(
-//                 interactiveHistory,
-//                 [],
-//                 X2024);
-//         
-//         Assert.Equal(
-//             Initial_TradeUnknown,
-//             actualState);
-//     }
-//     
-//     [Fact]
-//     public void DetermineCurrentState_ReturnsInitialSphereUnknown_OnNewIssueWithoutRecentLocationUpdates()
-//     {
-//         _services = new UnitTestStartup().Services.BuildServiceProvider();
-//
-//         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-//         var tlgAgent = PrivateBotChat_Operations;
-//
-//         List<TlgInput> interactiveHistory = [
-//             inputGenerator.GetValidTlgInputTextMessage(),
-//             inputGenerator.GetValidTlgInputCommandMessage(
-//                 tlgAgent.Mode, 
-//                 (int)OperationsBotCommands.NewIssue)];
-//
-//         var workflow = _services.GetRequiredService<INewIssueWorkflow>();
-//
-//         var actualState =
-//             workflow.DetermineCurrentState(
-//                 interactiveHistory, 
-//                 [],
-//                 X2024);
-//         
-//         Assert.Equal(
-//             Initial_SphereUnknown,
-//             actualState);
-//     }
-//
-//     [Fact]
 //     public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserConfirmsAutomaticNearSphere()
 //     {
 //         _services = new UnitTestStartup().Services.BuildServiceProvider();
