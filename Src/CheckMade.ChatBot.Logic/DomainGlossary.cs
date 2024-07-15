@@ -59,8 +59,8 @@ public class DomainGlossary : IDomainGlossary
         AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR", 
             UiNoTranslate(LogoutWorkflow.States.LogoutAborted.ToString()));
         
-        // AddTerm(typeof(NewIssueWorkflow), "D6SORL", 
-        //     UiNoTranslate(nameof(NewIssueWorkflow)));
+        AddTerm(typeof(NewIssueWorkflow), "D6SORL", 
+            UiNoTranslate(nameof(NewIssueWorkflow)));
         AddTerm(typeof(NewIssueInitialTradeUnknown), "DA0ZMD", 
             UiNoTranslate(nameof(NewIssueInitialTradeUnknown)));
         AddTerm(typeof(NewIssueInitialSphereUnknown), "D8T63V",

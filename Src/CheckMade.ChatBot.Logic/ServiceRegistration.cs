@@ -19,6 +19,9 @@ public static class ServiceRegistration
         
         services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
         services.AddScoped<INewIssueInitialTradeUnknown, NewIssueInitialTradeUnknown>();
+        services.AddScoped<INewIssueInitialSphereKnown, NewIssueInitialSphereKnown>();
+        services.AddScoped<INewIssueInitialSphereUnknown, NewIssueInitialSphereUnknown>();
+        services.AddScoped<INewIssueSphereConfirmed, NewIssueSphereConfirmed>();
         
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
         
