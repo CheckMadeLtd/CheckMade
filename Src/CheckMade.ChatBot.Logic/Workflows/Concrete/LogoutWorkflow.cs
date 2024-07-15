@@ -57,12 +57,12 @@ internal class LogoutWorkflow(
                             ControlPromptsSelection = ControlPrompts.YesNo 
                         } 
                     }, 
-                    Initial),
+                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
             
             LogoutConfirmed => 
                 new WorkflowResponse(
                     await PerformLogoutAsync(currentRoleBind),
-                    LogoutConfirmed),
+                    glossary.IdAndUiByTerm[Dt(LogoutConfirmed)].callbackId.Id),
             
             LogoutAborted => 
                 new WorkflowResponse(
@@ -73,7 +73,7 @@ internal class LogoutWorkflow(
                             IInputProcessor.SeeValidBotCommandsInstruction) 
                         } 
                     },
-                    LogoutAborted),
+                    glossary.IdAndUiByTerm[Dt(LogoutAborted)].callbackId.Id),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))

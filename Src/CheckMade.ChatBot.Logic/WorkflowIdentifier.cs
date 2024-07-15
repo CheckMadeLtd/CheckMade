@@ -14,7 +14,7 @@ internal interface IWorkflowIdentifier
 
 internal class WorkflowIdentifier(
         IUserAuthWorkflow userAuthWorkflow,
-        INewIssueWorkflow newIssueWorkflow,
+        // INewIssueWorkflow newIssueWorkflow,
         ILanguageSettingWorkflow languageSettingWorkflow,
         ILogoutWorkflow logoutWorkflow) 
     : IWorkflowIdentifier
@@ -51,7 +51,7 @@ internal class WorkflowIdentifier(
                 {
                     InteractionMode.Operations => lastBotCommandCode switch
                     {
-                        (int)OperationsBotCommands.NewIssue => Option<IWorkflow>.Some(newIssueWorkflow),
+                        // (int)OperationsBotCommands.NewIssue => Option<IWorkflow>.Some(newIssueWorkflow),
                         _ => Option<IWorkflow>.None()
                     },
 

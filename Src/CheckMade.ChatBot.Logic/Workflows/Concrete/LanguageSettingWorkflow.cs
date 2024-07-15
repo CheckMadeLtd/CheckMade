@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -17,7 +18,8 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 internal class LanguageSettingWorkflow(
         IUsersRepository usersRepo,
         ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils) 
+        ILogicUtils logicUtils,
+        IDomainGlossary glossary) 
     : ILanguageSettingWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -47,19 +49,19 @@ internal class LanguageSettingWorkflow(
                                 .Select(lc => Dt(lc))) 
                         } 
                     },
-                    Initial),
+                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
             
             ReceivedLanguageSetting => 
                 new WorkflowResponse(
                     await SetNewLanguageAsync(currentInput), 
-                    ReceivedLanguageSetting),
+                    glossary.IdAndUiByTerm[Dt(ReceivedLanguageSetting)].callbackId.Id),
             
             Completed => 
                 new WorkflowResponse(new List<OutputDto>{ new() 
                     {
                         Text = ILogicUtils.WorkflowWasCompleted
                     }},
-                    Completed),
+                    glossary.IdAndUiByTerm[Dt(Completed)].callbackId.Id),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))

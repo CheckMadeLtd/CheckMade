@@ -309,7 +309,7 @@ internal static class ModelReaders
             
             return new ResultantWorkflowInfo(
                 reader.GetString(reader.GetOrdinal("input_workflow")),
-                reader.GetInt64(reader.GetOrdinal("input_wf_state")));
+                reader.GetString(reader.GetOrdinal("input_wf_state")));
         }
     }
 

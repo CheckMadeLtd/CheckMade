@@ -50,7 +50,7 @@ internal class UserAuthWorkflow(
             Initial => 
                 new WorkflowResponse(
                     new List<OutputDto> { EnterTokenPrompt },
-                    Initial),
+                    glossary.IdAndUiByTerm[Dt(Initial)].callbackId.Id),
             
             ReceivedTokenSubmissionAttempt => 
                 new WorkflowResponse(
@@ -72,7 +72,7 @@ internal class UserAuthWorkflow(
                             },
                             EnterTokenPrompt] 
                     }, 
-                    ReceivedTokenSubmissionAttempt),
+                    glossary.IdAndUiByTerm[Dt(ReceivedTokenSubmissionAttempt)].callbackId.Id),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))

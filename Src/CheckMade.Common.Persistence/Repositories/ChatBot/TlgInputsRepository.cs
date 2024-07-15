@@ -105,7 +105,7 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
                         () => DBNull.Value) },  
                 { "@workflowState",  
                     tlgInput.ResultantWorkflow.Match<object>(  
-                        w => w.InState,  
+                        w => w.InStateId,  
                         () => DBNull.Value) }
             };
             

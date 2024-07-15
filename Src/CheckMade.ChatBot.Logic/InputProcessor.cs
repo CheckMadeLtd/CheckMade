@@ -102,7 +102,7 @@ internal class InputProcessor(
                 
         var newState = response.Match(
             r => r.NewState,
-            _ => Option<Enum>.None());
+            _ => Option<string>.None());
                 
         if (activeWorkflow.IsSome && newState.IsSome)
         {
@@ -171,7 +171,7 @@ internal class InputProcessor(
                         ([new OutputDto 
                         { 
                             Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
-                        }], Option<Enum>.None()))));
+                        }], Option<string>.None()))));
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(

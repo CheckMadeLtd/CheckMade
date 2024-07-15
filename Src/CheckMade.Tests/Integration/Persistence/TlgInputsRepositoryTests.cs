@@ -38,7 +38,7 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 roleSetting: Default,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
                     glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
-                    UserAuthWorkflow.States.Initial))
+                    glossary.IdAndUiByTerm[Dt(UserAuthWorkflow.States.Initial)].callbackId))
         };
         
         foreach (var input in tlgInputs)

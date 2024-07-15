@@ -15,7 +15,7 @@ public static class ServiceRegistration
         services.AddScoped<ILogicUtils, LogicUtils>();
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
-        services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
+        // services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
         services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
     }
