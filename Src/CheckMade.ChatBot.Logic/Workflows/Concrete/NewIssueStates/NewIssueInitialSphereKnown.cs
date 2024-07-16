@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
@@ -27,7 +28,8 @@ internal class NewIssueInitialSphereKnown(
         };
     }
 
-    public Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync()
+    public Task<Result<WorkflowResponse>> 
+        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
     {
         throw new NotImplementedException();
     }

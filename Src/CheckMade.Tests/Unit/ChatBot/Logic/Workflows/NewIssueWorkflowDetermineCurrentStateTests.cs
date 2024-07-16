@@ -15,43 +15,6 @@
 // {
 //     private ServiceProvider? _services;
 //
-//     [Fact]
-//     public void DetermineCurrentState_ReturnsSphereConfirmed_WhenUserConfirmsAutomaticNearSphere()
-//     {
-//         _services = new UnitTestStartup().Services.BuildServiceProvider();
-//
-//         var glossary = _services.GetRequiredService<IDomainGlossary>();
-//         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-//         var tlgAgent = PrivateBotChat_Operations;
-//         var workflowId = glossary.IdAndUiByTerm[Dt(typeof(NewIssueWorkflow))].callbackId;
-//     
-//         List<TlgInput> recentLocationHistory = [
-//             inputGenerator.GetValidTlgInputLocationMessage(
-//                 GetLocationNearSaniCleanSphere(),
-//                 dateTime: DateTime.UtcNow)];
-//     
-//         List<TlgInput> interactiveHistory = [
-//             inputGenerator.GetValidTlgInputCommandMessage(
-//                 tlgAgent.Mode,
-//                 (int)OperationsBotCommands.NewIssue,
-//                 resultantWorkflowInfo: new ResultantWorkflowInfo(
-//                     workflowId,
-//                     Initial_SphereKnown)),
-//             inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
-//                 ControlPrompts.Yes)];
-//
-//         var workflow = _services.GetRequiredService<INewIssueWorkflow>();
-//
-//         var actualState =
-//             workflow.DetermineCurrentState(
-//                 interactiveHistory,
-//                 recentLocationHistory,
-//                 X2024);
-//         
-//         Assert.Equal(
-//             SphereConfirmed, 
-//             actualState);
-//     }
 //
 //     [Theory]
 //     [InlineData(Sphere1_AtX2024_Name, SphereConfirmed)]

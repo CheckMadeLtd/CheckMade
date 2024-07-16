@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Trades;
 
@@ -25,7 +26,8 @@ internal class NewIssueInitialTradeUnknown(
         };
     }
 
-    public Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync()
+    public Task<Result<WorkflowResponse>> 
+        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
     {
         throw new NotImplementedException();
     }

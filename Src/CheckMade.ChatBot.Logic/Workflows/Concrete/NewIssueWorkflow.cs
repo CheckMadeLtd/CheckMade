@@ -15,9 +15,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 internal interface INewIssueWorkflow : IWorkflow;
 
 internal class NewIssueWorkflow(
-    ILiveEventsRepository liveEventsRepo,
-    ILogicUtils logicUtils,
-    IDomainGlossary glossary)
+        ILiveEventsRepository liveEventsRepo,
+        ILogicUtils logicUtils,
+        IDomainGlossary glossary)
     : INewIssueWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -29,18 +29,18 @@ internal class NewIssueWorkflow(
     {
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
         
-        if (currentInput.ResultantWorkflow.IsNone)
-        {
-            return await NewIssueWorkflowInitAsync(currentInput, currentRole);
-        }
-
         var interactiveHistory =
             await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
         var lastInput =
             interactiveHistory
                 .SkipLast(1) // skip currentInput
-                .Last(); // no OrDefault: at this point we are certain the history has at least 2 inputs!
+                .LastOrDefault();
+
+        if (lastInput is null)
+        {
+            return await NewIssueWorkflowInitAsync(currentInput, currentRole);
+        }
 
         var currentState =
             glossary.GetDtType(
@@ -60,7 +60,7 @@ internal class NewIssueWorkflow(
             case nameof(NewIssueInitialTradeUnknown):
                 
                 return await new NewIssueInitialTradeUnknown(glossary)
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueInitialSphereKnown):
                 
@@ -72,24 +72,23 @@ internal class NewIssueWorkflow(
 
                 if (sphere.IsNone)
                 {
-                    // ToDo: break? Handle case where user has moved away since confirming Sphere... 
-                    // should lead back to SphereUnknown state.
-                    // it's an edge case.
-                    // Maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
+                    // ToDo: break? Handle case where user has moved away since confirming Sphere in last step! 
+                    // It's an edge case. I think should lead back to SphereUnknown state.
+                    // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
                 }
                 
                 return await new NewIssueInitialSphereKnown(trade, sphere.GetValueOrThrow())
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueInitialSphereUnknown):
                 
-                return await new NewIssueInitialSphereUnknown(trade, liveEvent!)
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
+                return await new NewIssueInitialSphereUnknown(trade, liveEvent!, glossary)
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueSphereConfirmed):
                 
                 return await new NewIssueSphereConfirmed()
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync();
+                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             default:
                 
@@ -141,7 +140,7 @@ internal class NewIssueWorkflow(
                     new NewIssueInitialSphereKnown(trade, soa).MyPrompt(),
                     glossary.GetId(typeof(NewIssueInitialSphereKnown))),
                 () => new WorkflowResponse(
-                    new NewIssueInitialSphereUnknown(trade, liveEvent!).MyPrompt(),
+                    new NewIssueInitialSphereUnknown(trade, liveEvent!, glossary).MyPrompt(),
                     glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
         }
 

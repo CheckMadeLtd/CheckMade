@@ -125,6 +125,47 @@ public class NewIssueWorkflowInitTests
             actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
     }
 
+    [Fact]
+    public async Task GetResponseAsync_PromptsIssueTypeSelection_WhenSphereConfirmed()
+    {
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+    
+        var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
+        var tlgAgent = PrivateBotChat_Operations;
+
+        List<TlgInput> interactiveHistory = [
+            basics.inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                (int)OperationsBotCommands.NewIssue,
+                resultantWorkflowInfo: new ResultantWorkflowInfo(
+                    basics.glossary.GetId(typeof(NewIssueWorkflow)),
+                    basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown))))];
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, _) = serviceCollection.ConfigureTestRepositories(
+            inputs: interactiveHistory);
+
+        var currentInput =
+            basics.inputGenerator.GetValidTlgInputTextMessage(
+                text: Sphere1_AtX2024.Name);
+
+        const string expectedOutput = "Please select the type of issue:";
+        var expectedNewState = 
+            basics.glossary.GetId(typeof(NewIssueSphereConfirmed));
+        var workflow = services.GetRequiredService<INewIssueWorkflow>();
+
+        var actualOutput =
+            await workflow.GetResponseAsync(currentInput);
+        
+        Assert.Equal(
+            expectedOutput,
+            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+        
+        Assert.Equal(
+            expectedNewState,
+            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
+    }
+    
     private static Geo GetLocationNearSaniCleanSphere() =>
         new(
             Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off

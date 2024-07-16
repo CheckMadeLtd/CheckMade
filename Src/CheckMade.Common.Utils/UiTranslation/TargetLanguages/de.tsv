@@ -65,3 +65,5 @@ CheckMade.Telegram.Logic	Please confirm: are you at {0} '{1}'?	Bitte bestätigen
 CheckMade.Telegram.Logic	sanitary camp	Sanitärcamp
 CheckMade.Telegram.Logic	zone	Zone
 CheckMade.Telegram.Logic	Please select a {0}:	Bitte wählen Sie ein(e) {0}:
+CheckMade.Telegram.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
+CheckMade.Telegram.Logic	Expected a simple text with the name of a {0}! Please try again.	Ein einfacher Text mit dem '{0}' Namen war erwartet. Bitte erneut versuchen.

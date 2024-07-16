@@ -67,6 +67,8 @@ public class DomainGlossary : IDomainGlossary
             UiNoTranslate(nameof(NewIssueInitialSphereUnknown)));
         AddTerm(typeof(NewIssueInitialSphereKnown), "D45JQ1",
             UiNoTranslate(nameof(NewIssueInitialSphereKnown)));
+        AddTerm(typeof(NewIssueSphereConfirmed), "DDQHWW",
+            UiNoTranslate(nameof(NewIssueSphereConfirmed)));
         
         #endregion
         
