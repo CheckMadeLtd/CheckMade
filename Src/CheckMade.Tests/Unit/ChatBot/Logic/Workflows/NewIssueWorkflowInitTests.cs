@@ -87,18 +87,26 @@ public class NewIssueWorkflowInitTests
             actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
     }
     
-    [Fact]
-    public async Task GetResponseAsync_PromptsSphereSelection_WhenUserNotNearSphere()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task GetResponseAsync_PromptsSphereSelection_WhenNoLocationHistoryOrNotNearSphere(
+        bool hasLocationHistory)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
         var tlgAgent = PrivateBotChat_Operations;
+
+        List<TlgInput> recentLocationHistory = [];
         
-        List<TlgInput> recentLocationHistory = [
-            basics.inputGenerator.GetValidTlgInputLocationMessage(
-                GetLocationFarFromAnySaniCleanSphere(),
-                dateTime: DateTime.UtcNow)];
+        if (hasLocationHistory)
+        {
+            recentLocationHistory.Add(
+                basics.inputGenerator.GetValidTlgInputLocationMessage(
+                    GetLocationFarFromAnySaniCleanSphere(),
+                    dateTime: DateTime.UtcNow));
+        }
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(

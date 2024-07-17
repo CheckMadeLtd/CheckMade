@@ -15,7 +15,7 @@ internal record NewIssueSphereConfirmed : INewIssueSphereConfirmed
             {
                 Text = Ui("Please select the type of issue:"),
                 
-                // Try adding generic T back to ITradeIssue so it can represent a trade-specific supertype for this:
+                // ToDo: Try adding generic T back to ITradeIssue so it can represent a trade-specific supertype for this:
                 // DomainTermSelection = glossary.GetAll()
             }
         };
