@@ -37,8 +37,11 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
-            return  defaultOkResponse;
+            var attempt = await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+
+            return attempt.Match(
+                _ => defaultOkResponse,
+                ex => throw new InvalidOperationException("Unhandled exception", ex));
         }
         catch (Exception ex)
         {
