@@ -33,7 +33,7 @@ public class NewIssueWorkflowInitTests
             roleSpecified: currentRole);
 
         const string expectedOutput = "Please select a Trade:";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialTradeUnknown));
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueTradeSelection));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -73,7 +73,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereKnown));
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereConfirmation));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -119,7 +119,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please select a ";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown));
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereSelection));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -148,7 +148,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
                     basics.glossary.GetId(typeof(NewIssueWorkflow)),
-                    basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown))))];
+                    basics.glossary.GetId(typeof(NewIssueSphereSelection))))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -160,7 +160,7 @@ public class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select the type of issue:";
         var expectedNewState = 
-            basics.glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>));
+            basics.glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =

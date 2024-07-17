@@ -61,16 +61,16 @@ public record DomainGlossary : IDomainGlossary
         
         AddTerm(typeof(NewIssueWorkflow), "D6SORL", 
             UiNoTranslate(nameof(NewIssueWorkflow)));
-        AddTerm(typeof(NewIssueInitialTradeUnknown), "DA0ZMD", 
-            UiNoTranslate(nameof(NewIssueInitialTradeUnknown)));
-        AddTerm(typeof(NewIssueInitialSphereUnknown), "D8T63V",
-            UiNoTranslate(nameof(NewIssueInitialSphereUnknown)));
-        AddTerm(typeof(NewIssueInitialSphereKnown), "D45JQ1",
-            UiNoTranslate(nameof(NewIssueInitialSphereKnown)));
-        AddTerm(typeof(NewIssueSphereConfirmed<SaniCleanTrade>), "DDQHWW",
-            UiNoTranslate(nameof(NewIssueSphereConfirmed<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueSphereConfirmed<SiteCleanTrade>), "D88CK2",
-            UiNoTranslate(nameof(NewIssueSphereConfirmed<SiteCleanTrade>)));
+        AddTerm(typeof(NewIssueTradeSelection), "DA0ZMD", 
+            UiNoTranslate(nameof(NewIssueTradeSelection)));
+        AddTerm(typeof(NewIssueSphereSelection), "D8T63V",
+            UiNoTranslate(nameof(NewIssueSphereSelection)));
+        AddTerm(typeof(NewIssueSphereConfirmation), "D45JQ1",
+            UiNoTranslate(nameof(NewIssueSphereConfirmation)));
+        AddTerm(typeof(NewIssueTypeSelection<SaniCleanTrade>), "DDQHWW",
+            UiNoTranslate(nameof(NewIssueTypeSelection<SaniCleanTrade>)));
+        AddTerm(typeof(NewIssueTypeSelection<SiteCleanTrade>), "D88CK2",
+            UiNoTranslate(nameof(NewIssueTypeSelection<SiteCleanTrade>)));
         
         #endregion
         

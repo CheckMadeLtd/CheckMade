@@ -5,10 +5,9 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueSphereConfirmed : IWorkflowState; 
+internal interface INewIssueTypeSelection : IWorkflowState; 
 
-internal record NewIssueSphereConfirmed<T>(IDomainGlossary Glossary) 
-    : INewIssueSphereConfirmed 
+internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTypeSelection 
     where T : ITrade
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()

@@ -58,14 +58,14 @@ internal record NewIssueWorkflow(
 
         switch (currentState.Name)
         {
-            case nameof(NewIssueInitialTradeUnknown):
+            case nameof(NewIssueTradeSelection):
                 
-                return await new NewIssueInitialTradeUnknown(Glossary)
+                return await new NewIssueTradeSelection(Glossary, liveEvent!, LogicUtils)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
-            case nameof(NewIssueInitialSphereKnown):
+            case nameof(NewIssueSphereConfirmation):
                 
-                var lastKnownLocation = await LastKnownLocationAsync(currentInput);
+                var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
                 
                 var sphere = lastKnownLocation.IsSome
                     ? SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), trade)
@@ -78,23 +78,24 @@ internal record NewIssueWorkflow(
                     // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
                 }
                 
-                return await new NewIssueInitialSphereKnown(trade, sphere.GetValueOrThrow())
+                return await new NewIssueSphereConfirmation(trade, sphere.GetValueOrThrow())
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
-            case nameof(NewIssueInitialSphereUnknown):
+            case nameof(NewIssueSphereSelection):
                 
-                return await new NewIssueInitialSphereUnknown(trade, liveEvent!, Glossary)
+                return await new NewIssueSphereSelection(trade, liveEvent!, Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
-            case nameof(NewIssueSphereConfirmed<ITrade>):
+            case nameof(NewIssueTypeSelection<ITrade>):
 
                 return trade switch
                 {
-                    SaniCleanTrade => await new NewIssueSphereConfirmed<SaniCleanTrade>(Glossary)
+                    SaniCleanTrade => await new NewIssueTypeSelection<SaniCleanTrade>(Glossary)
                         .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
-                    SiteCleanTrade => await new NewIssueSphereConfirmed<SiteCleanTrade>(Glossary)
+                    SiteCleanTrade => await new NewIssueTypeSelection<SiteCleanTrade>(Glossary)
                         .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
-                    _ => throw new InvalidOperationException($"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
+                    _ => throw new InvalidOperationException(
+                        $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
                 };
             
             default:
@@ -120,9 +121,12 @@ internal record NewIssueWorkflow(
         TlgInput currentInput, 
         IRoleInfo currentRole)
     {
+        var liveEvent = await LiveEventsRepo.GetAsync(
+            currentInput.LiveEventContext.GetValueOrThrow());
+
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            var initialTradeUnknown = new NewIssueInitialTradeUnknown(Glossary);
+            var initialTradeUnknown = new NewIssueTradeSelection(Glossary, liveEvent!, LogicUtils);
 
             return new WorkflowResponse(
                 initialTradeUnknown.MyPrompt(),
@@ -133,10 +137,7 @@ internal record NewIssueWorkflow(
         
         if (trade.DividesLiveEventIntoSpheresOfAction)
         {
-            var liveEvent = await LiveEventsRepo.GetAsync(
-                currentInput.LiveEventContext.GetValueOrThrow());
-
-            var lastKnownLocation = await LastKnownLocationAsync(currentInput);
+            var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
 
             var sphere = lastKnownLocation.IsSome
                 ? SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), trade)
@@ -144,36 +145,36 @@ internal record NewIssueWorkflow(
 
             return sphere.Match(
                 soa => new WorkflowResponse(
-                    new NewIssueInitialSphereKnown(trade, soa).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueInitialSphereKnown))),
+                    new NewIssueSphereConfirmation(trade, soa).MyPrompt(),
+                    Glossary.GetId(typeof(NewIssueSphereConfirmation))),
                 () => new WorkflowResponse(
-                    new NewIssueInitialSphereUnknown(trade, liveEvent!, Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
+                    new NewIssueSphereSelection(trade, liveEvent!, Glossary).MyPrompt(),
+                    Glossary.GetId(typeof(NewIssueSphereSelection))));
         }
 
         return trade switch
         {
             SaniCleanTrade => new WorkflowResponse(
-                new NewIssueSphereConfirmed<SaniCleanTrade>(Glossary).MyPrompt(),
-                Glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>))),
-            
+                new NewIssueTypeSelection<SaniCleanTrade>(Glossary).MyPrompt(),
+                Glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
             SiteCleanTrade => new WorkflowResponse(
-                new NewIssueSphereConfirmed<SiteCleanTrade>(Glossary).MyPrompt(),
-                Glossary.GetId(typeof(NewIssueSphereConfirmed<SiteCleanTrade>))),
-            
-            _ => throw new InvalidOperationException($"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
+                new NewIssueTypeSelection<SiteCleanTrade>(Glossary).MyPrompt(),
+                Glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
+            _ => throw new InvalidOperationException(
+                $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
         };
     }
 
-    private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
+    internal static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
 
-    private async Task<Option<Geo>> LastKnownLocationAsync(TlgInput currentInput)
+    internal static async Task<Option<Geo>> LastKnownLocationAsync(
+        TlgInput currentInput, ILogicUtils logicUtils)
     {
         var lastKnownLocationInput =
-            (await LogicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await logicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 
@@ -181,7 +182,7 @@ internal record NewIssueWorkflow(
             : lastKnownLocationInput.Details.GeoCoordinates.GetValueOrThrow();
     }
     
-    private static Option<ISphereOfAction> SphereNearCurrentUser(
+    internal static Option<ISphereOfAction> SphereNearCurrentUser(
         LiveEvent liveEvent,
         Geo lastKnownLocation,
         ITrade trade)

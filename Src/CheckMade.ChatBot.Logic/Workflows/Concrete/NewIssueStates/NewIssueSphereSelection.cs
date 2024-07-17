@@ -7,15 +7,15 @@ using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueInitialSphereUnknown : IWorkflowState;
+internal interface INewIssueSphereSelection : IWorkflowState;
 
-internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
+internal record NewIssueSphereSelection : INewIssueSphereSelection
 {
     private readonly ITrade _trade;
     private readonly IDomainGlossary _glossary;
     private readonly IReadOnlyCollection<string> _tradeSpecificSphereNames;
     
-    public NewIssueInitialSphereUnknown(ITrade trade, LiveEvent liveEvent, IDomainGlossary glossary)
+    public NewIssueSphereSelection(ITrade trade, LiveEvent liveEvent, IDomainGlossary glossary)
     {
         _trade = trade;
         _glossary = glossary;
@@ -77,15 +77,16 @@ internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
             { 
                 SaniCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueSphereConfirmed<SaniCleanTrade>(_glossary).MyPrompt(),
-                        _glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>)))),
+                        new NewIssueTypeSelection<SaniCleanTrade>(_glossary).MyPrompt(),
+                        _glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>)))),
                 
                 SiteCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueSphereConfirmed<SiteCleanTrade>(_glossary).MyPrompt(),
-                        _glossary.GetId(typeof(NewIssueSphereConfirmed<SiteCleanTrade>)))),
+                        new NewIssueTypeSelection<SiteCleanTrade>(_glossary).MyPrompt(),
+                        _glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>)))),
                 
-                _ => throw new InvalidOperationException($"Unhandled type of {nameof(_trade)}: '{_trade.GetType()}'") 
+                _ => throw new InvalidOperationException(
+                    $"Unhandled type of {nameof(_trade)}: '{_trade.GetType()}'") 
             }
         };
     }
