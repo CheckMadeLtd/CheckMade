@@ -85,10 +85,16 @@ internal record NewIssueWorkflow(
                 return await new NewIssueInitialSphereUnknown(trade, liveEvent!, Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
-            case nameof(NewIssueSphereConfirmed):
-                
-                return await new NewIssueSphereConfirmed()
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
+            case nameof(NewIssueSphereConfirmed<ITrade>):
+
+                return trade switch
+                {
+                    SaniCleanTrade => await new NewIssueSphereConfirmed<SaniCleanTrade>(Glossary)
+                        .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
+                    SiteCleanTrade => await new NewIssueSphereConfirmed<SiteCleanTrade>(Glossary)
+                        .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
+                    _ => throw new InvalidOperationException($"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
+                };
             
             default:
                 
@@ -144,9 +150,18 @@ internal record NewIssueWorkflow(
                     Glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
         }
 
-        return new WorkflowResponse(
-            new NewIssueSphereConfirmed().MyPrompt(),
-            Glossary.GetId(typeof(NewIssueSphereConfirmed)));
+        return trade switch
+        {
+            SaniCleanTrade => new WorkflowResponse(
+                new NewIssueSphereConfirmed<SaniCleanTrade>(Glossary).MyPrompt(),
+                Glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>))),
+            
+            SiteCleanTrade => new WorkflowResponse(
+                new NewIssueSphereConfirmed<SiteCleanTrade>(Glossary).MyPrompt(),
+                Glossary.GetId(typeof(NewIssueSphereConfirmed<SiteCleanTrade>))),
+            
+            _ => throw new InvalidOperationException($"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
+        };
     }
 
     private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>

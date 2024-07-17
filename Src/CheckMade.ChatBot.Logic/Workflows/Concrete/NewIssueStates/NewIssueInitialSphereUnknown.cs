@@ -3,6 +3,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -66,10 +67,20 @@ internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
                         }, 
                         _glossary.GetId(GetType()))),
             
-            _ => Task.FromResult<Result<WorkflowResponse>>(
+            _ => _trade switch 
+            { 
+                SaniCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueSphereConfirmed().MyPrompt(),
-                        _glossary.GetId(typeof(NewIssueSphereConfirmed))))
+                        new NewIssueSphereConfirmed<SaniCleanTrade>(_glossary).MyPrompt(),
+                        _glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>)))),
+                
+                SiteCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
+                    new WorkflowResponse(
+                        new NewIssueSphereConfirmed<SiteCleanTrade>(_glossary).MyPrompt(),
+                        _glossary.GetId(typeof(NewIssueSphereConfirmed<SiteCleanTrade>)))),
+                
+                _ => throw new InvalidOperationException($"Unhandled type of {nameof(_trade)}: '{_trade.GetType()}'") 
+            }
         };
     }
 }

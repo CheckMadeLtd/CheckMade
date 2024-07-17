@@ -67,8 +67,10 @@ public record DomainGlossary : IDomainGlossary
             UiNoTranslate(nameof(NewIssueInitialSphereUnknown)));
         AddTerm(typeof(NewIssueInitialSphereKnown), "D45JQ1",
             UiNoTranslate(nameof(NewIssueInitialSphereKnown)));
-        AddTerm(typeof(NewIssueSphereConfirmed), "DDQHWW",
-            UiNoTranslate(nameof(NewIssueSphereConfirmed)));
+        AddTerm(typeof(NewIssueSphereConfirmed<SaniCleanTrade>), "DDQHWW",
+            UiNoTranslate(nameof(NewIssueSphereConfirmed<SaniCleanTrade>)));
+        AddTerm(typeof(NewIssueSphereConfirmed<SiteCleanTrade>), "D88CK2",
+            UiNoTranslate(nameof(NewIssueSphereConfirmed<SiteCleanTrade>)));
         
         #endregion
         

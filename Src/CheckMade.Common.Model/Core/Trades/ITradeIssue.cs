@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
 
 namespace CheckMade.Common.Model.Core.Trades;
 
-public interface ITradeIssue
+public interface ITradeIssue<T> where T : ITrade
 {
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }

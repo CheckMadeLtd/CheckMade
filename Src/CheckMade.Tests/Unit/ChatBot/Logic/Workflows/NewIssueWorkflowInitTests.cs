@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -159,7 +160,7 @@ public class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select the type of issue:";
         var expectedNewState = 
-            basics.glossary.GetId(typeof(NewIssueSphereConfirmed));
+            basics.glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualOutput =

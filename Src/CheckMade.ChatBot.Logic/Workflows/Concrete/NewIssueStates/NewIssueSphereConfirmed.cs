@@ -1,11 +1,15 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueSphereConfirmed : IWorkflowState; 
 
-internal record NewIssueSphereConfirmed : INewIssueSphereConfirmed
+internal record NewIssueSphereConfirmed<T>(IDomainGlossary Glossary) 
+    : INewIssueSphereConfirmed 
+    where T : ITrade
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()
     {
@@ -15,8 +19,8 @@ internal record NewIssueSphereConfirmed : INewIssueSphereConfirmed
             {
                 Text = Ui("Please select the type of issue:"),
                 
-                // ToDo: Try adding generic T back to ITradeIssue so it can represent a trade-specific supertype for this:
-                // DomainTermSelection = glossary.GetAll()
+                DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
+                    Glossary.GetAll(typeof(ITradeIssue<T>)))
             }
         };
     }
