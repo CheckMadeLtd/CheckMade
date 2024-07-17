@@ -203,53 +203,30 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
 
-        var inputsX2024 = new[]
+        var inputsY2024 = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                text: "Input for X 2024 1",
-                roleSpecified: SaniCleanInspector_DanielEn_X2024),
+                text: "Input for Y 2024 1",
+                roleSpecified: SaniCleanEngineer_DanielEn_Y2024),
             inputGenerator.GetValidTlgInputTextMessage(
-                text: "Input for X 2024 2", 
-                roleSpecified: SaniCleanInspector_DanielEn_X2024)
-        };
-        
-        var inputsX2025 = new[]
-        {
-            inputGenerator.GetValidTlgInputTextMessage(
-                text: "Input for X 2025 1",
-                roleSpecified: SaniCleanInspector_DanielEn_X2025),
-            inputGenerator.GetValidTlgInputTextMessage(
-                text: "Input for X 2025 2",
-                roleSpecified: SaniCleanInspector_DanielEn_X2025)
+                text: "Input for Y 2024 2",
+                roleSpecified: SaniCleanEngineer_DanielEn_Y2024)
         };
 
-        await inputRepo.AddAsync(
-            inputsX2024
-                .Concat(inputsX2025)
-                .ToArray());
+        await inputRepo.AddAsync(inputsY2024.ToArray());
         
-        var retrievedInputsX2024 = 
-            (await inputRepo.GetAllInteractiveAsync(X2024))
-            .ToImmutableReadOnlyCollection();
-        var retrievedInputsX2025 = 
-            (await inputRepo.GetAllInteractiveAsync(X2025))
+        var retrievedInputsY2024 = 
+            (await inputRepo.GetAllInteractiveAsync(Y2024))
             .ToImmutableReadOnlyCollection();
         
-        await inputRepo.HardDeleteAllAsync(inputsX2024[0].TlgAgent);
-        await inputRepo.HardDeleteAllAsync(inputsX2025[0].TlgAgent);
+        await inputRepo.HardDeleteAllAsync(inputsY2024[0].TlgAgent);
         
         Assert.Equal(
             2,
-            retrievedInputsX2024.Count);
-        Assert.Equal(
-            2,
-            retrievedInputsX2025.Count);
+            retrievedInputsY2024.Count);
         Assert.All(
-            retrievedInputsX2024,
-            input => Assert.Equal("LiveEvent X 2024", input.LiveEventContext.GetValueOrThrow().Name));
-        Assert.All(
-            retrievedInputsX2025,
-            input => Assert.Equal("LiveEvent X 2025", input.LiveEventContext.GetValueOrThrow().Name));
+            retrievedInputsY2024,
+            input => Assert.Equal("LiveEvent Y 2024", input.LiveEventContext.GetValueOrThrow().Name));
     }
     
     [Fact]

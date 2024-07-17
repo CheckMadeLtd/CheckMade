@@ -145,6 +145,12 @@ internal static class TestData
             new UserInfo(DanielEn),
             X2024Info);
     
+    internal static readonly Role SaniCleanEngineer_DanielEn_Y2024 = 
+        new("RS0BSU",
+            new TradeEngineer<SaniCleanTrade>(),
+            new UserInfo(DanielEn),
+            Y2024Info);
+    
     #endregion
 
     #region LiveEventSetup #############################################################################################
