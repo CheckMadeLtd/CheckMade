@@ -22,7 +22,8 @@ internal record NewIssueWorkflow(
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {
-        throw new NotImplementedException();
+        // ToDo: implement correctly once we have entire workflow.
+        return false;
     }
 
     public async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)

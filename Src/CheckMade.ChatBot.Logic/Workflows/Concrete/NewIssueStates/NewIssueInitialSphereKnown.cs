@@ -19,10 +19,7 @@ internal record NewIssueInitialSphereKnown(
         {
             new()
             {
-                Text = Ui("Please confirm: are you at {0} '{1}'?",
-                    Trade.GetSphereOfActionLabel,
-                    Sphere.Name),
-                
+                Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
                 ControlPromptsSelection = ControlPrompts.YesNo
             }
         };

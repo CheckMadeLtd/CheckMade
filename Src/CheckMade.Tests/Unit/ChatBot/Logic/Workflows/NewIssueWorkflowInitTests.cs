@@ -72,7 +72,7 @@ public class NewIssueWorkflowInitTests
                 tlgAgent.Mode, 
                 (int)OperationsBotCommands.NewIssue);
         
-        const string expectedOutput = "Please confirm: are you at {0} '{1}'?";
+        const string expectedOutput = "Please confirm: are you at '{0}'?";
         var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereKnown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
@@ -118,7 +118,7 @@ public class NewIssueWorkflowInitTests
                 tlgAgent.Mode, 
                 (int)OperationsBotCommands.NewIssue);
         
-        const string expectedOutput = "Please select a {0}:";
+        const string expectedOutput = "Please select a ";
         var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 

@@ -32,8 +32,10 @@ internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
         {
             new()
             {
-                Text = Ui("Please select a {0}:",
-                    _trade.GetSphereOfActionLabel),
+                Text = UiConcatenate(
+                    Ui("Please select a "), 
+                    _trade.GetSphereOfActionLabel, 
+                    UiNoTranslate(":")),
 
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     _tradeSpecificSphereNames)
@@ -51,8 +53,10 @@ internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
                     new WorkflowResponse(
                         new OutputDto
                         {
-                            Text = Ui("Expected a simple text with the name of a {0}! Please try again.",
-                                _trade.GetSphereOfActionLabel)
+                            Text = UiConcatenate(
+                                Ui("Expected a simple text! Please try again entering a "),
+                                _trade.GetSphereOfActionLabel,
+                                UiNoTranslate(":"))
                         },
                         _glossary.GetId(GetType()))),
             
@@ -62,8 +66,10 @@ internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
                     new WorkflowResponse(
                         new OutputDto
                         {
-                            Text = Ui("This is not a valid {0} name. Please choose from the valid options.",
-                                _trade.GetSphereOfActionLabel)
+                            Text = UiConcatenate(
+                                Ui("This is not a valid name. Please choose from the valid options for a "),
+                                _trade.GetSphereOfActionLabel,
+                                UiNoTranslate(":"))
                         }, 
                         _glossary.GetId(GetType()))),
             
