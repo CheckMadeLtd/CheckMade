@@ -122,12 +122,12 @@ public class LanguageSettingWorkflowTests
             });
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
 
-        var actualOutput = 
+        var actualResponse = 
             await workflow.GetResponseAsync(inputSettingsCommand);
         
         Assert.Equal(
             "🌎 Please select your preferred language:", 
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
     }
     
     [Theory]
@@ -165,11 +165,11 @@ public class LanguageSettingWorkflowTests
         var mockUserRepo = (Mock<IUsersRepository>)container.Mocks[typeof(IUsersRepository)];
         var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
 
-        var actualOutput = await workflow.GetResponseAsync(languageSettingInput);
+        var actualResponse = await workflow.GetResponseAsync(languageSettingInput);
         
         Assert.StartsWith(
             "New language: ",
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
             roleBind.Role.ByUser,

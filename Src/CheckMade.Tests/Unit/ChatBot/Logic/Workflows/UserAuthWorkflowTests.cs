@@ -45,13 +45,13 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
-        var actualOutputs = 
+        var actualResponses = 
             await workflow
                 .GetResponseAsync(nonExistingTokenInput);
         
         Assert.Equal(
             "This is an unknown token. Try again...",
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
     }
 
     [Fact]
@@ -81,13 +81,13 @@ public class UserAuthWorkflowTests
                                        This will be the new {0} chat where you receive messages at {1}, in your role as: 
                                        """;
         
-        var actualOutputs = 
+        var actualResponses = 
             await workflow
                 .GetResponseAsync(inputTokenWithPreExistingActiveTlgAgentRoleBind);
         
         Assert.Equal(
             expectedWarning,
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
         
         mockTlgAgentRoleBindingsRepo.Verify(x => 
             x.UpdateStatusAsync(
@@ -131,11 +131,11 @@ public class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
                 actualTlgAgentRoleBindAdded = tlgAgentRole.ToList());
         
-        var actualOutputs = await workflow.GetResponseAsync(inputValidToken);
+        var actualResponses = await workflow.GetResponseAsync(inputValidToken);
         
         Assert.Equal(
             expectedConfirmation,
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
         Assert.Equivalent(
             expectedTlgAgentRoleBindAdded.Role,
             actualTlgAgentRoleBindAdded[0].Role);
@@ -282,10 +282,10 @@ public class UserAuthWorkflowTests
         
         var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
     
-        var actualOutputs = await workflow.GetResponseAsync(badTokenInput);
+        var actualResponses = await workflow.GetResponseAsync(badTokenInput);
         
         Assert.Equal(
             "Bad token format! Try again...",
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
     }
 }

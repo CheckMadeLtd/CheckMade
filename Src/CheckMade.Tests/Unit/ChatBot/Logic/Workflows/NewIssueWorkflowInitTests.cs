@@ -36,16 +36,16 @@ public class NewIssueWorkflowInitTests
         var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialTradeUnknown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
-        var actualOutput =
+        var actualResponse =
             await workflow.GetResponseAsync(currentInput);
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         Assert.Equal(
             expectedNewState,
-            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
     }
 
     [Fact]
@@ -76,16 +76,16 @@ public class NewIssueWorkflowInitTests
         var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereKnown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
-        var actualOutput =
+        var actualResponse =
             await workflow.GetResponseAsync(currentInput);
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         Assert.Equal(
             expectedNewState,
-            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
     }
     
     [Theory]
@@ -122,16 +122,16 @@ public class NewIssueWorkflowInitTests
         var expectedNewState = basics.glossary.GetId(typeof(NewIssueInitialSphereUnknown));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
-        var actualOutput =
+        var actualResponse =
             await workflow.GetResponseAsync(currentInput);
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         Assert.Equal(
             expectedNewState,
-            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
     }
 
     [Fact]
@@ -163,16 +163,16 @@ public class NewIssueWorkflowInitTests
             basics.glossary.GetId(typeof(NewIssueSphereConfirmed<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
-        var actualOutput =
+        var actualResponse =
             await workflow.GetResponseAsync(currentInput);
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         Assert.Equal(
             expectedNewState,
-            actualOutput.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
     }
     
     private static Geo GetLocationNearSaniCleanSphere() =>

@@ -53,11 +53,11 @@ public class LogoutWorkflowTests
         
         const string expectedMessage = "💨 Logged out.";
         
-        var actualOutput = await workflow.GetResponseAsync(confirmLogoutCommand);
+        var actualResponse = await workflow.GetResponseAsync(confirmLogoutCommand);
         
         Assert.Equal(
             expectedMessage, 
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -175,15 +175,15 @@ public class LogoutWorkflowTests
         var workflow = services.GetRequiredService<ILogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
         
-        var actualOutput = 
+        var actualResponse = 
             await workflow.GetResponseAsync(abortLogoutCommand);
         
         Assert.Equal(
             expectedMessage1,
-            TestUtils.GetFirstRawEnglish(actualOutput.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
         Assert.Equivalent(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            actualOutput
+            actualResponse
                 .GetValueOrThrow()
                 .Output
                 .First()
