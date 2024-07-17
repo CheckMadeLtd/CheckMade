@@ -6,5 +6,9 @@ public record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
     Option<string> NewState)
 {
-    
+    internal WorkflowResponse(OutputDto singleOutput, Option<string> newState) 
+    : this(Output: new List<OutputDto>{ singleOutput }, 
+        NewState: newState)
+    {
+    }
 }

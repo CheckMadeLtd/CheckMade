@@ -49,7 +49,7 @@ internal class UserAuthWorkflow(
         {
             Initial => 
                 new WorkflowResponse(
-                    new List<OutputDto> { EnterTokenPrompt },
+                    EnterTokenPrompt,
                     glossary.GetId(Initial)),
             
             ReceivedTokenSubmissionAttempt => 

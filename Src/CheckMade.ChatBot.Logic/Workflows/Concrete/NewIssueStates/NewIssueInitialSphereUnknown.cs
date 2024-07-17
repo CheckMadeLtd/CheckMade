@@ -48,13 +48,10 @@ internal class NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
             { InputType: not TlgInputType.TextMessage } => 
                 Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new[]
+                        new OutputDto
                         {
-                            new OutputDto
-                            {
-                                Text = Ui("Expected a simple text with the name of a {0}! Please try again.",
-                                    _trade.GetSphereOfActionLabel)
-                            }
+                            Text = Ui("Expected a simple text with the name of a {0}! Please try again.",
+                                _trade.GetSphereOfActionLabel)
                         },
                         _glossary.GetId(GetType()))),
             
@@ -62,13 +59,10 @@ internal class NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
                 when !_tradeSpecificSphereNames.Contains(text.GetValueOrThrow()) => 
                 Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new[]
+                        new OutputDto
                         {
-                            new OutputDto
-                            {
-                                Text = Ui("This is not a valid {0} name. Please choose from the valid options.",
-                                    _trade.GetSphereOfActionLabel)
-                            }
+                            Text = Ui("This is not a valid {0} name. Please choose from the valid options.",
+                                _trade.GetSphereOfActionLabel)
                         }, 
                         _glossary.GetId(GetType()))),
             

@@ -41,13 +41,12 @@ internal class LanguageSettingWorkflow(
         {
             Initial => 
                 new WorkflowResponse(
-                    new List<OutputDto> { new() 
-                        { 
-                            Text = Ui("🌎 Please select your preferred language:"), 
-                            DomainTermSelection = new List<DomainTerm>(
-                            Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                                .Select(lc => Dt(lc))) 
-                        } 
+                    new OutputDto() 
+                    { 
+                        Text = Ui("🌎 Please select your preferred language:"), 
+                        DomainTermSelection = new List<DomainTerm>(
+                        Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
+                            .Select(lc => Dt(lc))) 
                     },
                     glossary.GetId(Initial)),
             
@@ -57,10 +56,8 @@ internal class LanguageSettingWorkflow(
                     glossary.GetId(ReceivedLanguageSetting)),
             
             Completed => 
-                new WorkflowResponse(new List<OutputDto>{ new() 
-                    {
-                        Text = ILogicUtils.WorkflowWasCompleted
-                    }},
+                new WorkflowResponse(
+                    new OutputDto  { Text = ILogicUtils.WorkflowWasCompleted },
                     glossary.GetId(Completed)),
             
             _ => Result<WorkflowResponse>.FromError(
