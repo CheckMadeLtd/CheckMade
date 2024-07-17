@@ -1,8 +1,8 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
@@ -12,7 +12,7 @@ internal interface INewIssueTradeSelection : IWorkflowState;
 
 internal record NewIssueTradeSelection(
         IDomainGlossary Glossary,
-        LiveEvent LiveEvent,
+        ILiveEventsRepository LiveEventRepo,
         ILogicUtils LogicUtils) 
     : INewIssueTradeSelection
 {
@@ -68,16 +68,19 @@ internal record NewIssueTradeSelection(
         
         var lastKnownLocation = await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
 
+        var liveEvent =
+            await LiveEventRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
+        
         var sphere = lastKnownLocation.IsSome
-            ? NewIssueWorkflow.SphereNearCurrentUser(LiveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
+            ? NewIssueWorkflow.SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
         
         return sphere.Match(
                 soa => new WorkflowResponse(
-                    new NewIssueSphereConfirmation(selectedTrade, soa).MyPrompt(),
+                    new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary).MyPrompt(),
                     Glossary.GetId(typeof(NewIssueSphereConfirmation))),
                 () => new WorkflowResponse(
-                    new NewIssueSphereSelection(selectedTrade, LiveEvent, Glossary).MyPrompt(),
+                    new NewIssueSphereSelection(selectedTrade, liveEvent!, Glossary).MyPrompt(),
                     Glossary.GetId(typeof(NewIssueSphereSelection))));
     }
 }

@@ -60,7 +60,7 @@ internal record NewIssueWorkflow(
         {
             case nameof(NewIssueTradeSelection):
                 
-                return await new NewIssueTradeSelection(Glossary, liveEvent!, LogicUtils)
+                return await new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueSphereConfirmation):
@@ -78,7 +78,7 @@ internal record NewIssueWorkflow(
                     // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
                 }
                 
-                return await new NewIssueSphereConfirmation(trade, sphere.GetValueOrThrow())
+                return await new NewIssueSphereConfirmation(trade, sphere.GetValueOrThrow(), LiveEventsRepo, Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueSphereSelection):
@@ -126,7 +126,7 @@ internal record NewIssueWorkflow(
 
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            var initialTradeUnknown = new NewIssueTradeSelection(Glossary, liveEvent!, LogicUtils);
+            var initialTradeUnknown = new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils);
 
             return new WorkflowResponse(
                 initialTradeUnknown.MyPrompt(),
@@ -145,7 +145,7 @@ internal record NewIssueWorkflow(
 
             return sphere.Match(
                 soa => new WorkflowResponse(
-                    new NewIssueSphereConfirmation(trade, soa).MyPrompt(),
+                    new NewIssueSphereConfirmation(trade, soa, LiveEventsRepo, Glossary).MyPrompt(),
                     Glossary.GetId(typeof(NewIssueSphereConfirmation))),
                 () => new WorkflowResponse(
                     new NewIssueSphereSelection(trade, liveEvent!, Glossary).MyPrompt(),
