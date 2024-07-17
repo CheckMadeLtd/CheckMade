@@ -15,11 +15,11 @@ internal interface ILanguageSettingWorkflow : IWorkflow
         IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
-internal class LanguageSettingWorkflow(
-        IUsersRepository usersRepo,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils,
-        IDomainGlossary glossary) 
+internal record LanguageSettingWorkflow(
+        IUsersRepository UsersRepo,
+        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+        ILogicUtils LogicUtils,
+        IDomainGlossary Glossary) 
     : ILanguageSettingWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -35,7 +35,7 @@ internal class LanguageSettingWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
         return DetermineCurrentState(workflowInputHistory) switch
         {
@@ -48,17 +48,17 @@ internal class LanguageSettingWorkflow(
                         Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
                             .Select(lc => Dt(lc))) 
                     },
-                    glossary.GetId(Initial)),
+                    Glossary.GetId(Initial)),
             
             ReceivedLanguageSetting => 
                 new WorkflowResponse(
                     await SetNewLanguageAsync(currentInput), 
-                    glossary.GetId(ReceivedLanguageSetting)),
+                    Glossary.GetId(ReceivedLanguageSetting)),
             
             Completed => 
                 new WorkflowResponse(
                     new OutputDto  { Text = ILogicUtils.WorkflowWasCompleted },
-                    glossary.GetId(Completed)),
+                    Glossary.GetId(Completed)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
@@ -100,11 +100,11 @@ internal class LanguageSettingWorkflow(
             throw new ArgumentException($"Expected a {nameof(DomainTerm)} of type {nameof(LanguageCode)}" +
                                         $"but got {nameof(newLanguage.EnumType)} instead!");
 
-        var currentUser = (await roleBindingsRepo.GetAllActiveAsync())
+        var currentUser = (await RoleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(newLanguageChoice.TlgAgent))
             .Role.ByUser;
 
-        await usersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
+        await UsersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
         
         return [new OutputDto 
         {

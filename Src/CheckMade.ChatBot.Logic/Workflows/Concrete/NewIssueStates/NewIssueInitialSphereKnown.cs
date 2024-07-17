@@ -8,9 +8,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueInitialSphereKnown : IWorkflowState;
 
-internal class NewIssueInitialSphereKnown(
-        ITrade trade,
-        ISphereOfAction sphere) 
+internal record NewIssueInitialSphereKnown(
+        ITrade Trade,
+        ISphereOfAction Sphere) 
     : INewIssueInitialSphereKnown
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()
@@ -20,8 +20,8 @@ internal class NewIssueInitialSphereKnown(
             new()
             {
                 Text = Ui("Please confirm: are you at {0} '{1}'?",
-                    trade.GetSphereOfActionLabel,
-                    sphere.Name),
+                    Trade.GetSphereOfActionLabel,
+                    Sphere.Name),
                 
                 ControlPromptsSelection = ControlPrompts.YesNo
             }

@@ -18,11 +18,11 @@ internal interface IUserAuthWorkflow : IWorkflow
         IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
 }
 
-internal class UserAuthWorkflow(
-        IRolesRepository rolesRepo,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils,
-        IDomainGlossary glossary)
+internal record UserAuthWorkflow(
+        IRolesRepository RolesRepo,
+        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+        ILogicUtils LogicUtils,
+        IDomainGlossary Glossary)
     : IUserAuthWorkflow
 {
     internal static readonly OutputDto EnterTokenPrompt = new()
@@ -43,14 +43,14 @@ internal class UserAuthWorkflow(
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
         var tlgAgentInputHistory = 
-            await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
+            await LogicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
         
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {
             Initial => 
                 new WorkflowResponse(
                     EnterTokenPrompt,
-                    glossary.GetId(Initial)),
+                    Glossary.GetId(Initial)),
             
             ReceivedTokenSubmissionAttempt => 
                 new WorkflowResponse(
@@ -72,7 +72,7 @@ internal class UserAuthWorkflow(
                             },
                             EnterTokenPrompt] 
                     }, 
-                    glossary.GetId(ReceivedTokenSubmissionAttempt)),
+                    Glossary.GetId(ReceivedTokenSubmissionAttempt)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
@@ -93,7 +93,7 @@ internal class UserAuthWorkflow(
     }
 
     private async Task<bool> TokenExists(string tokenAttempt) =>
-        (await rolesRepo.GetAllAsync())
+        (await RolesRepo.GetAllAsync())
         .Any(role => role.Token.Equals(tokenAttempt));
 
     private async Task<List<OutputDto>> AuthenticateUserAsync(TlgInput tokenInputAttempt)
@@ -104,24 +104,24 @@ internal class UserAuthWorkflow(
         var outputs = new List<OutputDto>();
         
         var newTlgAgentRoleBindForCurrentMode = new TlgAgentRoleBind(
-            (await rolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
+            (await RolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
             tokenInputAttempt.TlgAgent with { Mode = currentMode },
             DateTime.UtcNow,
             Option<DateTime>.None());
         
         var preExistingRoleBindings = 
-            (await roleBindingsRepo.GetAllActiveAsync())
+            (await RoleBindingsRepo.GetAllActiveAsync())
             .ToImmutableReadOnlyCollection();
         
         var preExistingActiveRoleBind = 
             FirstOrDefaultPreExistingActiveRoleBind(currentMode);
 
         var roleTypeUiString = 
-            glossary.GetUi(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType()); 
+            Glossary.GetUi(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType()); 
         
         if (preExistingActiveRoleBind != null)
         {
-            await roleBindingsRepo.UpdateStatusAsync(preExistingActiveRoleBind, DbRecordStatus.Historic);
+            await RoleBindingsRepo.UpdateStatusAsync(preExistingActiveRoleBind, DbRecordStatus.Historic);
             
             outputs.Add(new OutputDto
             {
@@ -161,7 +161,7 @@ internal class UserAuthWorkflow(
             AddTlgAgentRoleBindingsForOtherModes();
         }
         
-        await roleBindingsRepo.AddAsync(tlgAgentRoleBindingsToAdd);
+        await RoleBindingsRepo.AddAsync(tlgAgentRoleBindingsToAdd);
         
         return outputs;
         

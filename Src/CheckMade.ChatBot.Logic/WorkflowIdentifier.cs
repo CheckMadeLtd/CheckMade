@@ -12,17 +12,17 @@ internal interface IWorkflowIdentifier
     Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
-internal class WorkflowIdentifier(
-        IUserAuthWorkflow userAuthWorkflow,
-        INewIssueWorkflow newIssueWorkflow,
-        ILanguageSettingWorkflow languageSettingWorkflow,
-        ILogoutWorkflow logoutWorkflow) 
+internal record WorkflowIdentifier(
+        IUserAuthWorkflow UserAuthWorkflow,
+        INewIssueWorkflow NewIssueWorkflow,
+        ILanguageSettingWorkflow LanguageSettingWorkflow,
+        ILogoutWorkflow LogoutWorkflow) 
     : IWorkflowIdentifier
 {
     public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
-            return Option<IWorkflow>.Some(userAuthWorkflow);
+            return Option<IWorkflow>.Some(UserAuthWorkflow);
 
         var lastBotCommand = ILogicUtils.GetLastBotCommand(inputHistory);
         
@@ -37,9 +37,9 @@ internal class WorkflowIdentifier(
                     return lastBotCommandCode switch
                     {
                         (int)OperationsBotCommands.Settings => 
-                            Option<IWorkflow>.Some(languageSettingWorkflow),
+                            Option<IWorkflow>.Some(LanguageSettingWorkflow),
                         (int)OperationsBotCommands.Logout => 
-                            Option<IWorkflow>.Some(logoutWorkflow),
+                            Option<IWorkflow>.Some(LogoutWorkflow),
                         _ => 
                             throw new ArgumentOutOfRangeException(nameof(lastBotCommandCode), 
                             $"An unhandled BotCommand must not exist above the " +
@@ -51,7 +51,7 @@ internal class WorkflowIdentifier(
                 {
                     InteractionMode.Operations => lastBotCommandCode switch
                     {
-                        (int)OperationsBotCommands.NewIssue => Option<IWorkflow>.Some(newIssueWorkflow),
+                        (int)OperationsBotCommands.NewIssue => Option<IWorkflow>.Some(NewIssueWorkflow),
                         _ => Option<IWorkflow>.None()
                     },
 

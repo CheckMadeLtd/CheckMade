@@ -14,10 +14,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface INewIssueWorkflow : IWorkflow;
 
-internal class NewIssueWorkflow(
-        ILiveEventsRepository liveEventsRepo,
-        ILogicUtils logicUtils,
-        IDomainGlossary glossary)
+internal record NewIssueWorkflow(
+        ILiveEventsRepository LiveEventsRepo,
+        ILogicUtils LogicUtils,
+        IDomainGlossary Glossary)
     : INewIssueWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -30,7 +30,7 @@ internal class NewIssueWorkflow(
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
         
         var interactiveHistory =
-            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
         var lastInput =
             interactiveHistory
@@ -43,12 +43,12 @@ internal class NewIssueWorkflow(
         }
 
         var currentState =
-            glossary.GetDtType(
+            Glossary.GetDtType(
                 lastInput
                     .ResultantWorkflow.GetValueOrThrow()
                     .InStateId);
 
-        var liveEvent = await liveEventsRepo.GetAsync(
+        var liveEvent = await LiveEventsRepo.GetAsync(
             currentInput.LiveEventContext.GetValueOrThrow());
         
         var trade = IsCurrentRoleTradeSpecific(currentRole)
@@ -59,7 +59,7 @@ internal class NewIssueWorkflow(
         {
             case nameof(NewIssueInitialTradeUnknown):
                 
-                return await new NewIssueInitialTradeUnknown(glossary)
+                return await new NewIssueInitialTradeUnknown(Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueInitialSphereKnown):
@@ -82,7 +82,7 @@ internal class NewIssueWorkflow(
             
             case nameof(NewIssueInitialSphereUnknown):
                 
-                return await new NewIssueInitialSphereUnknown(trade, liveEvent!, glossary)
+                return await new NewIssueInitialSphereUnknown(trade, liveEvent!, Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueSphereConfirmed):
@@ -115,18 +115,18 @@ internal class NewIssueWorkflow(
     {
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            var initialTradeUnknown = new NewIssueInitialTradeUnknown(glossary);
+            var initialTradeUnknown = new NewIssueInitialTradeUnknown(Glossary);
 
             return new WorkflowResponse(
                 initialTradeUnknown.MyPrompt(),
-                glossary.GetId(initialTradeUnknown.GetType()));
+                Glossary.GetId(initialTradeUnknown.GetType()));
         }
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
         
         if (trade.DividesLiveEventIntoSpheresOfAction)
         {
-            var liveEvent = await liveEventsRepo.GetAsync(
+            var liveEvent = await LiveEventsRepo.GetAsync(
                 currentInput.LiveEventContext.GetValueOrThrow());
 
             var lastKnownLocation = await LastKnownLocationAsync(currentInput);
@@ -138,15 +138,15 @@ internal class NewIssueWorkflow(
             return sphere.Match(
                 soa => new WorkflowResponse(
                     new NewIssueInitialSphereKnown(trade, soa).MyPrompt(),
-                    glossary.GetId(typeof(NewIssueInitialSphereKnown))),
+                    Glossary.GetId(typeof(NewIssueInitialSphereKnown))),
                 () => new WorkflowResponse(
-                    new NewIssueInitialSphereUnknown(trade, liveEvent!, glossary).MyPrompt(),
-                    glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
+                    new NewIssueInitialSphereUnknown(trade, liveEvent!, Glossary).MyPrompt(),
+                    Glossary.GetId(typeof(NewIssueInitialSphereUnknown))));
         }
 
         return new WorkflowResponse(
             new NewIssueSphereConfirmed().MyPrompt(),
-            glossary.GetId(typeof(NewIssueSphereConfirmed)));
+            Glossary.GetId(typeof(NewIssueSphereConfirmed)));
     }
 
     private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
@@ -157,7 +157,7 @@ internal class NewIssueWorkflow(
     private async Task<Option<Geo>> LastKnownLocationAsync(TlgInput currentInput)
     {
         var lastKnownLocationInput =
-            (await logicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await LogicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 

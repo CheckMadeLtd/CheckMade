@@ -17,10 +17,10 @@ internal interface ILogoutWorkflow : IWorkflow
         TlgInput? currentInput);
 }
 
-internal class LogoutWorkflow(
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogicUtils logicUtils,
-        IDomainGlossary glossary) 
+internal record LogoutWorkflow(
+        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+        ILogicUtils LogicUtils,
+        IDomainGlossary Glossary) 
     : ILogoutWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -32,9 +32,9 @@ internal class LogoutWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
-        var currentRoleBind = (await roleBindingsRepo.GetAllActiveAsync())
+        var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
 
         return DetermineCurrentState(workflowInputHistory, currentInput) switch
@@ -46,7 +46,7 @@ internal class LogoutWorkflow(
                         Text = UiConcatenate(
                             Ui("{0}, your current role is: ", 
                                 currentRoleBind.Role.ByUser.FirstName),
-                            glossary.GetUi(currentRoleBind.Role.RoleType.GetType()),
+                            Glossary.GetUi(currentRoleBind.Role.RoleType.GetType()),
                             UiNoTranslate(".\n"),
                             Ui("""
                                 Are you sure you want to log out from this chat for {0}?
@@ -56,12 +56,12 @@ internal class LogoutWorkflow(
                         
                         ControlPromptsSelection = ControlPrompts.YesNo 
                     }, 
-                    glossary.GetId(Initial)),
+                    Glossary.GetId(Initial)),
             
             LogoutConfirmed => 
                 new WorkflowResponse(
                     await PerformLogoutAsync(currentRoleBind),
-                    glossary.GetId(LogoutConfirmed)),
+                    Glossary.GetId(LogoutConfirmed)),
             
             LogoutAborted => 
                 new WorkflowResponse(
@@ -71,7 +71,7 @@ internal class LogoutWorkflow(
                         Ui("Logout aborted.\n"),
                         IInputProcessor.SeeValidBotCommandsInstruction) 
                     },
-                    glossary.GetId(LogoutAborted)),
+                    Glossary.GetId(LogoutAborted)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
@@ -102,14 +102,14 @@ internal class LogoutWorkflow(
     private async Task<List<OutputDto>> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)
     {
         var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
-            (await roleBindingsRepo.GetAllActiveAsync())
+            (await RoleBindingsRepo.GetAllActiveAsync())
             .Where(tarb =>
                 tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
                 tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
                 tarb.Role.Token.Equals(currentRoleBind.Role.Token))
             .ToImmutableReadOnlyCollection();
         
-        await roleBindingsRepo
+        await RoleBindingsRepo
             .UpdateStatusAsync(
                 roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat, 
                 DbRecordStatus.Historic);

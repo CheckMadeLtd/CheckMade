@@ -5,7 +5,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueSphereConfirmed : IWorkflowState; 
 
-internal class NewIssueSphereConfirmed : INewIssueSphereConfirmed
+internal record NewIssueSphereConfirmed : INewIssueSphereConfirmed
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()
     {

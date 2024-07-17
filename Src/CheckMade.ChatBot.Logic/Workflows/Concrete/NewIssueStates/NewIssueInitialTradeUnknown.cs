@@ -7,8 +7,8 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueInitialTradeUnknown : IWorkflowState;
 
-internal class NewIssueInitialTradeUnknown(
-        IDomainGlossary glossary) 
+internal record NewIssueInitialTradeUnknown(
+        IDomainGlossary Glossary) 
     : INewIssueInitialTradeUnknown
 {
     public IReadOnlyCollection<OutputDto> MyPrompt()
@@ -21,7 +21,7 @@ internal class NewIssueInitialTradeUnknown(
                 
                 DomainTermSelection = 
                     Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        glossary.GetAll(typeof(ITrade))) 
+                        Glossary.GetAll(typeof(ITrade))) 
             }
         };
     }

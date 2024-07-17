@@ -23,9 +23,9 @@ internal interface ILogicUtils
         ?? Option<TlgInput>.None();
 }
 
-internal class LogicUtils(
-        ITlgInputsRepository inputsRepo,
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo)
+internal record LogicUtils(
+        ITlgInputsRepository InputsRepo,
+        ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo)
     : ILogicUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
@@ -34,7 +34,7 @@ internal class LogicUtils(
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         
-        var lastExpiredRoleBind = (await tlgAgentRoleBindingsRepo.GetAllAsync())
+        var lastExpiredRoleBind = (await TlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(tarb =>
                 tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
                 tarb.DeactivationDate.IsSome)
@@ -45,7 +45,7 @@ internal class LogicUtils(
             : DateTime.MinValue;
 
         var allInteractiveFromDb =
-            await inputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
+            await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
 
         var allInteractiveIncludingNewInput =
             allInteractiveFromDb.Concat(new[] { newInputToAppend });
@@ -77,7 +77,7 @@ internal class LogicUtils(
     public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
     {
         return 
-            await inputsRepo.GetAllLocationAsync(
+            await InputsRepo.GetAllLocationAsync(
                 tlgAgent, 
                 DateTime.UtcNow
                     .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));

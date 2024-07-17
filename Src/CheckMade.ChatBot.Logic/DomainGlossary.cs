@@ -11,7 +11,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
 
-public class DomainGlossary : IDomainGlossary
+public record DomainGlossary : IDomainGlossary
 {
     private readonly ImmutableDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)>.Builder
         _domainGlossaryBuilder =

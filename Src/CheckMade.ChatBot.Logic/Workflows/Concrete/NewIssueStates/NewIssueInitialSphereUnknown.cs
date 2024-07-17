@@ -8,7 +8,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueInitialSphereUnknown : IWorkflowState;
 
-internal class NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
+internal record NewIssueInitialSphereUnknown : INewIssueInitialSphereUnknown
 {
     private readonly ITrade _trade;
     private readonly IDomainGlossary _glossary;
