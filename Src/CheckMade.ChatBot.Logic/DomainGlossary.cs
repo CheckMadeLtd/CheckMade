@@ -71,6 +71,16 @@ public record DomainGlossary : IDomainGlossary
             UiNoTranslate(nameof(NewIssueTypeSelection<SaniCleanTrade>)));
         AddTerm(typeof(NewIssueTypeSelection<SiteCleanTrade>), "D88CK2",
             UiNoTranslate(nameof(NewIssueTypeSelection<SiteCleanTrade>)));
+        AddTerm(typeof(NewIssueConsumablesSelection), "DWBYSV",
+            UiNoTranslate(nameof(NewIssueConsumablesSelection)));
+        AddTerm(typeof(NewIssueEvidenceEntry), "DKUR0Z",
+            UiNoTranslate(nameof(NewIssueEvidenceEntry)));
+        AddTerm(typeof(NewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L",
+            UiNoTranslate(nameof(NewIssueFacilitySelection<SaniCleanTrade>)));
+        AddTerm(typeof(NewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7",
+            UiNoTranslate(nameof(NewIssueFacilitySelection<SiteCleanTrade>)));
+        AddTerm(typeof(NewIssueReview), "DAH8TX",
+            UiNoTranslate(nameof(NewIssueReview)));
         
         #endregion
         
@@ -78,7 +88,7 @@ public record DomainGlossary : IDomainGlossary
 
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
         AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(typeof(InventoryIssue), "D582QJ", Ui("🗄 Consumables"));
+        AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
         AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 Staff"));
 
         AddTerm(Consumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
@@ -119,7 +129,8 @@ public record DomainGlossary : IDomainGlossary
             IdAndUiByTerm
                 .Select(kvp => kvp.Key)
                 .Where(dt => dt.TypeValue != null &&
-                             superType.IsAssignableFrom(dt.TypeValue))
+                             superType.IsAssignableFrom(dt.TypeValue) ||
+                             superType == dt.EnumType)
                 .ToImmutableReadOnlyCollection();
     }
 

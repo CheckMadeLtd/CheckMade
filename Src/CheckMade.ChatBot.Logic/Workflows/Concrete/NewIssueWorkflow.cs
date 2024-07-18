@@ -53,7 +53,9 @@ internal record NewIssueWorkflow(
             ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
             : GetLastUserProvidedTrade();
 
-        switch (currentState.Name)
+        var currentStateNameWithoutGenerics = currentState.Name.Split('`')[0];
+        
+        switch (currentStateNameWithoutGenerics)
         {
             case nameof(NewIssueTradeSelection):
                 
@@ -108,7 +110,7 @@ internal record NewIssueWorkflow(
             default:
                 
                 throw new InvalidOperationException(
-                    $"Lack of handling of state '{currentState.Name}' in '{nameof(NewIssueWorkflow)}'");
+                    $"Lack of handling of state '{currentStateNameWithoutGenerics}' in '{nameof(NewIssueWorkflow)}'");
         }
         
         ITrade GetLastUserProvidedTrade()

@@ -43,9 +43,9 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
                     await WorkflowResponse.CreateAsync(
                         new NewIssueFacilitySelection<T>(Glossary)),
             
-            nameof(InventoryIssue) => 
+            nameof(ConsumablesIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueReview(Glossary)),
+                    new NewIssueConsumablesSelection(Glossary)),
             
             nameof(TechnicalIssue) 
                 or nameof(StaffIssue) => 

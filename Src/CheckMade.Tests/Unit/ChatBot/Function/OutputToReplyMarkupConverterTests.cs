@@ -27,7 +27,7 @@ public class OutputToReplyMarkupConverterTests
         List<DomainTerm> domainTermSelection = [ 
             Dt(typeof(CleanlinessIssue)),
             Dt(typeof(TechnicalIssue)),
-            Dt(typeof(InventoryIssue))];
+            Dt(typeof(ConsumablesIssue))];
 
         var outputWithDomainTerms = new OutputDto
         {
@@ -50,8 +50,8 @@ public class OutputToReplyMarkupConverterTests
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.GetUi(typeof(InventoryIssue)).GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(InventoryIssue))), 
+                        basics.domainGlossary.GetUi(typeof(ConsumablesIssue)).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(typeof(ConsumablesIssue))), 
                 ]
             }));
 

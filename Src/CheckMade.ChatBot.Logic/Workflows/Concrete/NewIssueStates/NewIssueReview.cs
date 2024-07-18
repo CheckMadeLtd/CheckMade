@@ -6,7 +6,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueReview : IWorkflowState;
 
-internal record NewIssueReview(IDomainGlossary Glossary) : IWorkflowState
+internal record NewIssueReview(IDomainGlossary Glossary) : INewIssueReview
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {

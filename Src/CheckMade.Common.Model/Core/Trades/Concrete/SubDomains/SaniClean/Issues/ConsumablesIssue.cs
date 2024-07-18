@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 
-public record InventoryIssue(
+public record ConsumablesIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
         Option<ITradeFacility<SaniCleanTrade>> Facility,
