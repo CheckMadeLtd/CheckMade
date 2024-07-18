@@ -36,7 +36,6 @@ internal record NewIssueSphereSelection : INewIssueSphereSelection
                     Ui("Please select a "), 
                     _trade.GetSphereOfActionLabel, 
                     UiNoTranslate(":")),
-
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     _tradeSpecificSphereNames)
             }

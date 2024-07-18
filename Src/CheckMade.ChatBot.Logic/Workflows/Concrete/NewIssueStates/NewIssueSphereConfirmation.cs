@@ -37,10 +37,7 @@ internal record NewIssueSphereConfirmation(
         {
             return 
                 new WorkflowResponse(
-                    new OutputDto
-                    {
-                        Text = Ui("Please answer only using the buttons above.")
-                    },
+                    new OutputDto { Text = Ui("Please answer only using the buttons above.") },
                     Glossary.GetId(GetType()));
         }
 

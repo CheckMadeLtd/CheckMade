@@ -23,7 +23,6 @@ internal record NewIssueTradeSelection(
             new()
             {
                 Text = Ui("Please select a Trade:"),
-                
                 DomainTermSelection = 
                     Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary.GetAll(typeof(ITrade))) 
@@ -38,10 +37,7 @@ internal record NewIssueTradeSelection(
         {
             return 
                 new WorkflowResponse(
-                    new OutputDto
-                    {
-                        Text = Ui("Please answer only using the buttons above.")
-                    },
+                    new OutputDto { Text = Ui("Please answer only using the buttons above.") },
                     Glossary.GetId(GetType()));
         }
 
