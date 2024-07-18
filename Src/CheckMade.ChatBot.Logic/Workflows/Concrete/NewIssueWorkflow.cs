@@ -53,8 +53,6 @@ internal record NewIssueWorkflow(
             ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
             : GetLastUserProvidedTrade();
 
-        LiveEvent liveEvent;
-
         switch (currentState.Name)
         {
             case nameof(NewIssueTradeSelection):
@@ -64,7 +62,7 @@ internal record NewIssueWorkflow(
             
             case nameof(NewIssueSphereConfirmation):
                 
-                liveEvent = (await LiveEventsRepo.GetAsync(
+                var liveEvent = (await LiveEventsRepo.GetAsync(
                     currentInput.LiveEventContext.GetValueOrThrow()))!;
         
                 var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
@@ -85,10 +83,9 @@ internal record NewIssueWorkflow(
             
             case nameof(NewIssueSphereSelection):
                 
-                liveEvent = (await LiveEventsRepo.GetAsync(
-                    currentInput.LiveEventContext.GetValueOrThrow()))!;
+                var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
                 
-                return await new NewIssueSphereSelection(trade, liveEvent, Glossary)
+                return await new NewIssueSphereSelection(trade, liveEventInfo, LiveEventsRepo, Glossary)
                     .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
             
             case nameof(NewIssueTypeSelection<ITrade>):
@@ -128,7 +125,7 @@ internal record NewIssueWorkflow(
     {
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            return new WorkflowResponse(
+            return await WorkflowResponse.CreateAsync(
                 new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils));
         }
 
@@ -145,18 +142,18 @@ internal record NewIssueWorkflow(
                 ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
                 : Option<ISphereOfAction>.None();
 
-            return sphere.Match(
-                soa => new WorkflowResponse(
+            return await sphere.Match(
+                soa => WorkflowResponse.CreateAsync(
                     new NewIssueSphereConfirmation(trade, soa, LiveEventsRepo, Glossary)),
-                () => new WorkflowResponse(
-                    new NewIssueSphereSelection(trade, liveEvent, Glossary)));
+                () => WorkflowResponse.CreateAsync(
+                    new NewIssueSphereSelection(trade, liveEvent, LiveEventsRepo, Glossary)));
         }
 
         return trade switch
         {
-            SaniCleanTrade => new WorkflowResponse(
+            SaniCleanTrade => await WorkflowResponse.CreateAsync(
                 new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
-            SiteCleanTrade => new WorkflowResponse(
+            SiteCleanTrade => await WorkflowResponse.CreateAsync(
                 new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")

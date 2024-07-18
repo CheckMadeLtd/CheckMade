@@ -9,7 +9,7 @@ internal interface INewIssueCleanlinessFacilitySelection : IWorkflowState;
 internal record NewIssueCleanlinessFacilitySelection(IDomainGlossary Glossary) 
     : INewIssueCleanlinessFacilitySelection
 {
-    public IReadOnlyCollection<OutputDto> MyPrompt()
+    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
     {
         throw new NotImplementedException();
     }

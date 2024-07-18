@@ -1,7 +1,8 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
@@ -9,84 +10,78 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueSphereSelection : IWorkflowState;
 
-internal record NewIssueSphereSelection : INewIssueSphereSelection
+internal record NewIssueSphereSelection(
+    ITrade Trade,
+    ILiveEventInfo LiveEventInfo,
+    ILiveEventsRepository LiveEventsRepo,
+    IDomainGlossary Glossary) 
+    : INewIssueSphereSelection
 {
-    private readonly ITrade _trade;
-    private readonly IDomainGlossary _glossary;
-    private readonly IReadOnlyCollection<string> _tradeSpecificSphereNames;
-    
-    public NewIssueSphereSelection(ITrade trade, LiveEvent liveEvent, IDomainGlossary glossary)
-    {
-        _trade = trade;
-        _glossary = glossary;
-
-        _tradeSpecificSphereNames = liveEvent.DivIntoSpheres
-            .Where(soa => soa.GetTradeType() == _trade.GetType())
-            .Select(soa => soa.Name)
-            .ToImmutableReadOnlyCollection();
-    }
-    
-    public IReadOnlyCollection<OutputDto> MyPrompt()
+    public async Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
     {
         return new List<OutputDto>
         {
             new()
             {
                 Text = UiConcatenate(
-                    Ui("Please select a "), 
-                    _trade.GetSphereOfActionLabel, 
+                    Ui("Please select a "),
+                    Trade.GetSphereOfActionLabel,
                     UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
-                    _tradeSpecificSphereNames)
+                    await GetTradeSpecificSphereNames(Trade))
             }
         };
     }
 
-    public Task<Result<WorkflowResponse>> 
+    public async Task<Result<WorkflowResponse>>
         ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
     {
         return currentInput switch
         {
-            { InputType: not TlgInputType.TextMessage } => 
-                Task.FromResult<Result<WorkflowResponse>>(
+            { InputType: not TlgInputType.TextMessage } =>
                     new WorkflowResponse(
                         new OutputDto
                         {
                             Text = UiConcatenate(
                                 Ui("Expected a simple text! Please try again entering a "),
-                                _trade.GetSphereOfActionLabel,
+                                Trade.GetSphereOfActionLabel,
                                 UiNoTranslate(":"))
                         },
-                        GetType(), _glossary)),
-            
-            { Details.Text: var text } 
-                when !_tradeSpecificSphereNames.Contains(text.GetValueOrThrow()) => 
-                Task.FromResult<Result<WorkflowResponse>>(
-                    new WorkflowResponse(
-                        new OutputDto
-                        {
-                            Text = UiConcatenate(
-                                Ui("This is not a valid name. Please choose from the valid options for a "),
-                                _trade.GetSphereOfActionLabel,
-                                UiNoTranslate(":"))
-                        }, 
-                        GetType(), _glossary)),
-            
-            _ => _trade switch 
-            { 
-                SaniCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
-                    new WorkflowResponse(
-                        new NewIssueTypeSelection<SaniCleanTrade>(_glossary))),
-                
-                SiteCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
-                    new WorkflowResponse(
-                        new NewIssueTypeSelection<SiteCleanTrade>(_glossary))),
-                
+                        GetType(), Glossary),
+
+            { Details.Text: var text }
+                when !(await GetTradeSpecificSphereNames(Trade))
+                    .Contains(text.GetValueOrThrow()) => 
+                new WorkflowResponse(
+                    new OutputDto
+                    {
+                        Text = UiConcatenate(
+                            Ui("This is not a valid name. Please choose from the valid options for a "),
+                            Trade.GetSphereOfActionLabel,
+                            UiNoTranslate(":"))
+                    },
+                    GetType(), Glossary),
+
+            _ => Trade switch
+            {
+                SaniCleanTrade => 
+                    await WorkflowResponse.CreateAsync(
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+
+                SiteCleanTrade => 
+                    await WorkflowResponse.CreateAsync(
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+
                 _ => throw new InvalidOperationException(
-                    $"Unhandled type of {nameof(_trade)}: '{_trade.GetType()}'") 
+                    $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
             }
         };
     }
 
-    public IDomainGlossary Glossary => _glossary;
+    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNames(ITrade trade) =>
+        (await LiveEventsRepo.GetAsync(LiveEventInfo))!
+        .DivIntoSpheres
+        .Where(soa => soa.GetTradeType() == trade.GetType())
+        .Select(soa => soa.Name)
+        .ToImmutableReadOnlyCollection();
 }

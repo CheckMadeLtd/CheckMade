@@ -16,18 +16,19 @@ internal record NewIssueTradeSelection(
         ILogicUtils LogicUtils) 
     : INewIssueTradeSelection
 {
-    public IReadOnlyCollection<OutputDto> MyPrompt()
+    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
     {
-        return new List<OutputDto>
-        {
-            new()
+        return 
+            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
             {
-                Text = Ui("Please select a Trade:"),
-                DomainTermSelection = 
-                    Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(ITrade))) 
-            }
-        };
+                new()
+                {
+                    Text = Ui("Please select a Trade:"),
+                    DomainTermSelection = 
+                        Option<IReadOnlyCollection<DomainTerm>>.Some(
+                            Glossary.GetAll(typeof(ITrade))) 
+                }
+            });
     }
 
     public async Task<Result<WorkflowResponse>> 
@@ -50,10 +51,10 @@ internal record NewIssueTradeSelection(
             return selectedTrade switch
             {
                 SaniCleanTrade => 
-                    new WorkflowResponse(
+                    await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
                 SiteCleanTrade => 
-                    new WorkflowResponse(
+                    await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(selectedTrade)}: '{selectedTrade.GetType()}'")
@@ -70,10 +71,10 @@ internal record NewIssueTradeSelection(
             ? NewIssueWorkflow.SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
         
-        return sphere.Match(
-                soa => new WorkflowResponse(
+        return await sphere.Match(
+            soa => WorkflowResponse.CreateAsync(
                     new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary)),
-                () => new WorkflowResponse(
-                    new NewIssueSphereSelection(selectedTrade, liveEvent, Glossary)));
+                () => WorkflowResponse.CreateAsync(
+                    new NewIssueSphereSelection(selectedTrade, liveEvent, LiveEventRepo, Glossary)));
     }
 }

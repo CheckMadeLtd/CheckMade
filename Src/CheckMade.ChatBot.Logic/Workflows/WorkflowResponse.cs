@@ -21,10 +21,7 @@ public record WorkflowResponse(
     {
     }
 
-    internal WorkflowResponse(IWorkflowState newState)
-        : this(
-            Output: newState.MyPrompt(),
-            NewState: newState.Glossary.GetId(newState.GetType()))
-    {
-    }
+    internal static async Task<WorkflowResponse> CreateAsync(IWorkflowState newState) =>
+        new(Output: await newState.MyPromptAsync(),
+            NewState: newState.Glossary.GetId(newState.GetType()));
 }

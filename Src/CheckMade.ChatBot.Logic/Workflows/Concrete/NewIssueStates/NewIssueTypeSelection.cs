@@ -11,37 +11,36 @@ internal interface INewIssueTypeSelection : IWorkflowState;
 internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTypeSelection 
     where T : ITrade
 {
-    public IReadOnlyCollection<OutputDto> MyPrompt()
+    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
     {
-        return new List<OutputDto>
-        {
-            new()
+        return 
+            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
             {
-                Text = Ui("Please select the type of issue:"),
-                DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                    Glossary.GetAll(typeof(ITradeIssue<T>)))
-            }
-        };
+                new()
+                {
+                    Text = Ui("Please select the type of issue:"),
+                    DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
+                        Glossary.GetAll(typeof(ITradeIssue<T>)))
+                }
+            });
     }
 
-    public Task<Result<WorkflowResponse>> 
+    public async Task<Result<WorkflowResponse>> 
         ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
         {
             return 
-                Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
                         new OutputDto { Text = Ui("Please answer only using the buttons above.") },
-                        GetType(), Glossary));
+                        GetType(), Glossary);
         }
 
         return currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name switch
         {
             nameof(CleanlinessIssue) => 
-                Task.FromResult<Result<WorkflowResponse>>(
-                    new WorkflowResponse(
-                        new NewIssueCleanlinessFacilitySelection(Glossary)))
+                    await WorkflowResponse.CreateAsync(
+                        new NewIssueCleanlinessFacilitySelection(Glossary))
         };
     }
 }

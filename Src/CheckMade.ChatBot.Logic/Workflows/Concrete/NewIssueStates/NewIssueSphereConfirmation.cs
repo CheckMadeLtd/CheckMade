@@ -18,16 +18,17 @@ internal record NewIssueSphereConfirmation(
         IDomainGlossary Glossary) 
     : INewIssueSphereConfirmation
 {
-    public IReadOnlyCollection<OutputDto> MyPrompt()
+    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
     {
-        return new List<OutputDto>
-        {
-            new()
+        return 
+            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto> 
             {
-                Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
-                ControlPromptsSelection = ControlPrompts.YesNo
-            }
-        };
+                new()
+                {
+                    Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
+                    ControlPromptsSelection = ControlPrompts.YesNo
+                }
+            });
     }
 
     public async Task<Result<WorkflowResponse>> 
@@ -41,7 +42,7 @@ internal record NewIssueSphereConfirmation(
                     GetType(), Glossary);
         }
 
-        var liveEventContext = 
+        var liveEventInfo = 
             currentInput.LiveEventContext.GetValueOrThrow();
         
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
@@ -49,20 +50,21 @@ internal record NewIssueSphereConfirmation(
             (int)ControlPrompts.Yes => Trade switch
             {
                 SaniCleanTrade => 
-                    new WorkflowResponse(
+                    await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
                 SiteCleanTrade =>
-                    new WorkflowResponse(
+                    await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
             },
             
             (int)ControlPrompts.No => 
-                new WorkflowResponse(
+                await WorkflowResponse.CreateAsync(
                     new NewIssueSphereSelection(
                         Trade,
-                        (await LiveEventRepo.GetAsync(liveEventContext))!, 
+                        liveEventInfo,
+                        LiveEventRepo,
                         Glossary)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
