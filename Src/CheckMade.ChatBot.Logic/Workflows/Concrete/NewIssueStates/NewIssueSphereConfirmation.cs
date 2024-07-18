@@ -38,7 +38,7 @@ internal record NewIssueSphereConfirmation(
             return 
                 new WorkflowResponse(
                     new OutputDto { Text = Ui("Please answer only using the buttons above.") },
-                    Glossary.GetId(GetType()));
+                    GetType(), Glossary);
         }
 
         var liveEventContext = 
@@ -50,12 +50,10 @@ internal record NewIssueSphereConfirmation(
             {
                 SaniCleanTrade => 
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary).MyPrompt(),
-                        Glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
                 SiteCleanTrade =>
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary).MyPrompt(),
-                        Glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
             },
@@ -65,8 +63,7 @@ internal record NewIssueSphereConfirmation(
                     new NewIssueSphereSelection(
                         Trade,
                         (await LiveEventRepo.GetAsync(liveEventContext))!, 
-                        Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueSphereSelection))),
+                        Glossary)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
         };

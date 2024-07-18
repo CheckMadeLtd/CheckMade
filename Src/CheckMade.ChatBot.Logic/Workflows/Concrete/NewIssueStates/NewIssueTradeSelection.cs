@@ -38,7 +38,7 @@ internal record NewIssueTradeSelection(
             return 
                 new WorkflowResponse(
                     new OutputDto { Text = Ui("Please answer only using the buttons above.") },
-                    Glossary.GetId(GetType()));
+                    GetType(), Glossary);
         }
 
         var selectedTrade = 
@@ -51,12 +51,10 @@ internal record NewIssueTradeSelection(
             {
                 SaniCleanTrade => 
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary).MyPrompt(),
-                        Glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
                 SiteCleanTrade => 
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary).MyPrompt(),
-                        Glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(selectedTrade)}: '{selectedTrade.GetType()}'")
             };
@@ -74,10 +72,8 @@ internal record NewIssueTradeSelection(
         
         return sphere.Match(
                 soa => new WorkflowResponse(
-                    new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueSphereConfirmation))),
+                    new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary)),
                 () => new WorkflowResponse(
-                    new NewIssueSphereSelection(selectedTrade, liveEvent, Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueSphereSelection))));
+                    new NewIssueSphereSelection(selectedTrade, liveEvent, Glossary)));
     }
 }

@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
@@ -7,4 +8,5 @@ public interface IWorkflowState
 {
     IReadOnlyCollection<OutputDto> MyPrompt();
     Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput);
+    IDomainGlossary Glossary { get; }
 }

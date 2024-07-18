@@ -33,7 +33,7 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
                 Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
                         new OutputDto { Text = Ui("Please answer only using the buttons above.") },
-                        Glossary.GetId(GetType())));
+                        GetType(), Glossary));
         }
 
         return currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name switch
@@ -41,8 +41,7 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
             nameof(CleanlinessIssue) => 
                 Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueCleanlinessFacilitySelection().MyPrompt(),
-                        Glossary.GetId(typeof(NewIssueCleanlinessFacilitySelection))))
+                        new NewIssueCleanlinessFacilitySelection(Glossary)))
         };
     }
 }

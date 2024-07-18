@@ -57,7 +57,7 @@ internal record NewIssueSphereSelection : INewIssueSphereSelection
                                 _trade.GetSphereOfActionLabel,
                                 UiNoTranslate(":"))
                         },
-                        _glossary.GetId(GetType()))),
+                        GetType(), _glossary)),
             
             { Details.Text: var text } 
                 when !_tradeSpecificSphereNames.Contains(text.GetValueOrThrow()) => 
@@ -70,23 +70,23 @@ internal record NewIssueSphereSelection : INewIssueSphereSelection
                                 _trade.GetSphereOfActionLabel,
                                 UiNoTranslate(":"))
                         }, 
-                        _glossary.GetId(GetType()))),
+                        GetType(), _glossary)),
             
             _ => _trade switch 
             { 
                 SaniCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SaniCleanTrade>(_glossary).MyPrompt(),
-                        _glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>)))),
+                        new NewIssueTypeSelection<SaniCleanTrade>(_glossary))),
                 
                 SiteCleanTrade => Task.FromResult<Result<WorkflowResponse>>(
                     new WorkflowResponse(
-                        new NewIssueTypeSelection<SiteCleanTrade>(_glossary).MyPrompt(),
-                        _glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>)))),
+                        new NewIssueTypeSelection<SiteCleanTrade>(_glossary))),
                 
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(_trade)}: '{_trade.GetType()}'") 
             }
         };
     }
+
+    public IDomainGlossary Glossary => _glossary;
 }

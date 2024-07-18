@@ -128,11 +128,8 @@ internal record NewIssueWorkflow(
     {
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            var initialTradeUnknown = new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils);
-
             return new WorkflowResponse(
-                initialTradeUnknown.MyPrompt(),
-                Glossary.GetId(initialTradeUnknown.GetType()));
+                new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils));
         }
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
@@ -150,27 +147,23 @@ internal record NewIssueWorkflow(
 
             return sphere.Match(
                 soa => new WorkflowResponse(
-                    new NewIssueSphereConfirmation(trade, soa, LiveEventsRepo, Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueSphereConfirmation))),
+                    new NewIssueSphereConfirmation(trade, soa, LiveEventsRepo, Glossary)),
                 () => new WorkflowResponse(
-                    new NewIssueSphereSelection(trade, liveEvent, Glossary).MyPrompt(),
-                    Glossary.GetId(typeof(NewIssueSphereSelection))));
+                    new NewIssueSphereSelection(trade, liveEvent, Glossary)));
         }
 
         return trade switch
         {
             SaniCleanTrade => new WorkflowResponse(
-                new NewIssueTypeSelection<SaniCleanTrade>(Glossary).MyPrompt(),
-                Glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
+                new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
             SiteCleanTrade => new WorkflowResponse(
-                new NewIssueTypeSelection<SiteCleanTrade>(Glossary).MyPrompt(),
-                Glossary.GetId(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
+                new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
         };
     }
 
-    internal static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
+    private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
