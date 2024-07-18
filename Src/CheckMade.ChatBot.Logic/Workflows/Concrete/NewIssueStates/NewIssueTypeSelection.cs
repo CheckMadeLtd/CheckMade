@@ -35,11 +35,25 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
                         GetType(), Glossary);
         }
 
-        return currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name switch
+        var issueTypeName = currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name;
+        
+        return issueTypeName switch
         {
             nameof(CleanlinessIssue) => 
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueCleanlinessFacilitySelection(Glossary))
+                        new NewIssueCleanlinessFacilitySelection(Glossary)),
+            
+            nameof(InventoryIssue) => 
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueReview(Glossary)),
+            
+            nameof(TechnicalIssue) 
+                or nameof(StaffIssue) => 
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueEvidenceEntry(Glossary)),
+            
+            _ => throw new InvalidOperationException($"Unhandled {nameof(currentInput.Details.DomainTerm)}: " +
+                                                     $"'{issueTypeName}'")
         };
     }
 }
