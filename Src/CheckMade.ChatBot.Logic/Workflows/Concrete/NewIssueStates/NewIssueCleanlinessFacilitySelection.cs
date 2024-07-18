@@ -9,13 +9,12 @@ internal interface INewIssueCleanlinessFacilitySelection : IWorkflowState;
 internal record NewIssueCleanlinessFacilitySelection(IDomainGlossary Glossary) 
     : INewIssueCleanlinessFacilitySelection
 {
-    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<WorkflowResponse>> 
-        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
+    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         throw new NotImplementedException();
     }

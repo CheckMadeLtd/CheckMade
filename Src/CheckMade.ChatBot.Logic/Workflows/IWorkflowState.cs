@@ -6,7 +6,7 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 
 public interface IWorkflowState
 {
-    Task<IReadOnlyCollection<OutputDto>> MyPromptAsync();
-    Task<Result<WorkflowResponse>> ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput);
+    Task<IReadOnlyCollection<OutputDto>> GetPromptAsync();
+    Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
     IDomainGlossary Glossary { get; }
 }

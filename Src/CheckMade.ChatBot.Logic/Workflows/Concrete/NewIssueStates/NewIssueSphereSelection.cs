@@ -17,7 +17,7 @@ internal record NewIssueSphereSelection(
     IDomainGlossary Glossary) 
     : INewIssueSphereSelection
 {
-    public async Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {
         return new List<OutputDto>
         {
@@ -33,8 +33,7 @@ internal record NewIssueSphereSelection(
         };
     }
 
-    public async Task<Result<WorkflowResponse>>
-        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         return currentInput switch
         {

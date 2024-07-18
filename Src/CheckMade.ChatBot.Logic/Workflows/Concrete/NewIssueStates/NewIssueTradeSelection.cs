@@ -16,7 +16,7 @@ internal record NewIssueTradeSelection(
         ILogicUtils LogicUtils) 
     : INewIssueTradeSelection
 {
-    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -31,8 +31,7 @@ internal record NewIssueTradeSelection(
             });
     }
 
-    public async Task<Result<WorkflowResponse>> 
-        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
         {

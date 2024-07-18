@@ -22,6 +22,6 @@ public record WorkflowResponse(
     }
 
     internal static async Task<WorkflowResponse> CreateAsync(IWorkflowState newState) =>
-        new(Output: await newState.MyPromptAsync(),
+        new(Output: await newState.GetPromptAsync(),
             NewState: newState.Glossary.GetId(newState.GetType()));
 }

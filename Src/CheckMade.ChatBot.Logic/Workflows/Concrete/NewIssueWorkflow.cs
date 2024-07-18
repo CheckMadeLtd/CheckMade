@@ -57,8 +57,9 @@ internal record NewIssueWorkflow(
         {
             case nameof(NewIssueTradeSelection):
                 
-                return await new NewIssueTradeSelection(Glossary, LiveEventsRepo, LogicUtils)
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
+                return await new NewIssueTradeSelection(
+                        Glossary, LiveEventsRepo, LogicUtils)
+                    .GetWorkflowResponseAsync(currentInput);
             
             case nameof(NewIssueSphereConfirmation):
                 
@@ -78,24 +79,28 @@ internal record NewIssueWorkflow(
                     // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
                 }
                 
-                return await new NewIssueSphereConfirmation(trade, sphere.GetValueOrThrow(), LiveEventsRepo, Glossary)
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
+                return await new NewIssueSphereConfirmation(
+                        trade, sphere.GetValueOrThrow(), LiveEventsRepo, Glossary)
+                    .GetWorkflowResponseAsync(currentInput);
             
             case nameof(NewIssueSphereSelection):
                 
                 var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
                 
-                return await new NewIssueSphereSelection(trade, liveEventInfo, LiveEventsRepo, Glossary)
-                    .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput);
+                return await new NewIssueSphereSelection(
+                        trade, liveEventInfo, LiveEventsRepo, Glossary)
+                    .GetWorkflowResponseAsync(currentInput);
             
             case nameof(NewIssueTypeSelection<ITrade>):
 
                 return trade switch
                 {
-                    SaniCleanTrade => await new NewIssueTypeSelection<SaniCleanTrade>(Glossary)
-                        .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
-                    SiteCleanTrade => await new NewIssueTypeSelection<SiteCleanTrade>(Glossary)
-                        .ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(currentInput),
+                    SaniCleanTrade => 
+                        await new NewIssueTypeSelection<SaniCleanTrade>(Glossary)
+                            .GetWorkflowResponseAsync(currentInput),
+                    SiteCleanTrade => 
+                        await new NewIssueTypeSelection<SiteCleanTrade>(Glossary)
+                            .GetWorkflowResponseAsync(currentInput),
                     _ => throw new InvalidOperationException(
                         $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
                 };
@@ -151,10 +156,12 @@ internal record NewIssueWorkflow(
 
         return trade switch
         {
-            SaniCleanTrade => await WorkflowResponse.CreateAsync(
-                new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
-            SiteCleanTrade => await WorkflowResponse.CreateAsync(
-                new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+            SaniCleanTrade => 
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+            SiteCleanTrade => 
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
         };

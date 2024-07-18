@@ -11,7 +11,7 @@ internal interface INewIssueTypeSelection : IWorkflowState;
 internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTypeSelection 
     where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> MyPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -25,8 +25,7 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
             });
     }
 
-    public async Task<Result<WorkflowResponse>> 
-        ProcessAnswerToMyPromptToGetNextStateWithItsPromptAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
         {
