@@ -69,10 +69,11 @@ internal record NewIssueTradeSelection(
         var lastKnownLocation = await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
 
         var liveEvent =
-            await LiveEventRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow());
+            (await LiveEventRepo.GetAsync(
+                currentInput.LiveEventContext.GetValueOrThrow()))!;
         
         var sphere = lastKnownLocation.IsSome
-            ? NewIssueWorkflow.SphereNearCurrentUser(liveEvent!, lastKnownLocation.GetValueOrThrow(), selectedTrade)
+            ? NewIssueWorkflow.SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
         
         return sphere.Match(
@@ -80,7 +81,7 @@ internal record NewIssueTradeSelection(
                     new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary).MyPrompt(),
                     Glossary.GetId(typeof(NewIssueSphereConfirmation))),
                 () => new WorkflowResponse(
-                    new NewIssueSphereSelection(selectedTrade, liveEvent!, Glossary).MyPrompt(),
+                    new NewIssueSphereSelection(selectedTrade, liveEvent, Glossary).MyPrompt(),
                     Glossary.GetId(typeof(NewIssueSphereSelection))));
     }
 }

@@ -44,7 +44,8 @@ internal record NewIssueSphereConfirmation(
                     Glossary.GetId(GetType()));
         }
 
-        var liveEventContext = currentInput.LiveEventContext.GetValueOrThrow();
+        var liveEventContext = 
+            currentInput.LiveEventContext.GetValueOrThrow();
         
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
         {
