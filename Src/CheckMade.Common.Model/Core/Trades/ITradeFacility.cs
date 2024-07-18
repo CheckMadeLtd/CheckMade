@@ -1,3 +1,3 @@
 namespace CheckMade.Common.Model.Core.Trades;
 
-public interface ITradeFacility;
+public interface ITradeFacility<T> where T : ITrade;

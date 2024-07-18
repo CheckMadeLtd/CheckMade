@@ -7,7 +7,7 @@ namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issue
 public record TechnicalIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        Option<ITradeFacility> Facility,
+        Option<ITradeFacility<SaniCleanTrade>> Facility,
         Geo Location, IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
