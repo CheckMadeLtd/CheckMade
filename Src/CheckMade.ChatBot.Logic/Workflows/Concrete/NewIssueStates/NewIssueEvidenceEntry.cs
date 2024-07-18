@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -10,7 +11,15 @@ internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvide
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
     {
-        throw new NotImplementedException();
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+            new List<OutputDto>
+            {
+                new()
+                {
+                    Text = Ui("Please (optionally) provide description and/or photos of the issue."),
+                    ControlPromptsSelection = ControlPrompts.SaveSkip
+                }
+            });
     }
 
     public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

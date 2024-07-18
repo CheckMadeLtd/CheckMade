@@ -8,6 +8,7 @@ public enum ControlPrompts : long
     BackCancel = Back | Cancel,
     Skip = 1L<<3,
     Save = 1L<<4,
+    SaveSkip = Save | Skip,
     Submit = 1L<<5,
     Review = 1L<<6,
     Edit = 1L<<7,
