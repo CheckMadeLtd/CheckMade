@@ -11,9 +11,6 @@ internal interface ILogicUtils
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
-
-    static readonly UiString ToggleOffSuffix = UiNoTranslate("[ ]");
-    static readonly UiString ToggleOnSuffix = UiNoTranslate("[✔]");
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
@@ -24,6 +21,11 @@ internal interface ILogicUtils
         inputs.LastOrDefault(i => 
             i.Details.BotCommandEnumCode.IsSome) 
         ?? Option<TlgInput>.None();
+    
+    static bool IsToggleOn(DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
+        inputHistory
+            .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
+        % 2 != 0;
 }
 
 internal record LogicUtils(
@@ -65,7 +67,8 @@ internal record LogicUtils(
             .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput)
+    public async Task<IReadOnlyCollection<TlgInput>> 
+        GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput)
     {
         var currentRoleInputs = 
             await GetAllCurrentInteractiveAsync(

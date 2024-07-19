@@ -26,7 +26,12 @@ internal record NewIssueConsumablesSelection(
                 {
                     Text = Ui("Choose affected consumables:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(Consumables.Item))),
+                        Glossary.GetAll(typeof(Consumables.Item))
+                            .Select(dt => 
+                                ILogicUtils.IsToggleOn(dt, InteractiveHistory) 
+                                    ? dt with { Toggle = Option<bool>.Some(true) } 
+                                    : dt with { Toggle = Option<bool>.Some(false) })
+                            .ToImmutableReadOnlyCollection()),
                     ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                     EditReplyMarkupOfMessageId = editMessageId
                 }

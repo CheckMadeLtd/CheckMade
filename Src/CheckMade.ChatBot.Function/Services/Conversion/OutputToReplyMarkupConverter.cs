@@ -79,14 +79,19 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             terms =>
             {
                 return terms.Select(term => (
-                    text: translator.Translate(glossary.GetUi(term)),
+                    text: translator.Translate(glossary.GetUi(term)) + 
+                          (term.Toggle.IsSome 
+                              ? term.Toggle.GetValueOrThrow() 
+                                  ? $" {DomainGlossary.ToggleOnSuffix.GetFormattedEnglish()}" 
+                                  : $" {DomainGlossary.ToggleOffSuffix.GetFormattedEnglish()}" 
+                              : string.Empty),
                     id: glossary.GetId(term)
                 )).ToList();
             },
             () => []
         ).ToImmutableReadOnlyCollection();
     }
-
+    
     private static InlineKeyboardButton[][] GenerateInlineKeyboardButtonsForDomainTerms(
         IReadOnlyCollection<(string text, string id)> textCallbackIdPairsForDomainTerms)
     {
