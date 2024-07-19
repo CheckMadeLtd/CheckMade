@@ -9,7 +9,7 @@ internal interface INewIssueEvidenceEntry : IWorkflowState;
 
 internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvidenceEntry
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             new List<OutputDto>
@@ -17,7 +17,8 @@ internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvide
                 new()
                 {
                     Text = Ui("Please (optionally) provide description and/or photos of the issue."),
-                    ControlPromptsSelection = ControlPrompts.SaveSkip
+                    ControlPromptsSelection = ControlPrompts.SaveSkip,
+                    EditReplyMarkupOfMessageId = editMessageId
                 }
             });
     }

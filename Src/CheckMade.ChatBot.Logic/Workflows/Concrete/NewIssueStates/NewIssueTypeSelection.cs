@@ -11,7 +11,7 @@ internal interface INewIssueTypeSelection : IWorkflowState;
 internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTypeSelection 
     where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -20,7 +20,8 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
                 {
                     Text = Ui("Please select the type of issue:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(ITradeIssue<T>)))
+                        Glossary.GetAll(typeof(ITradeIssue<T>))),
+                    EditReplyMarkupOfMessageId = editMessageId
                 }
             });
     }

@@ -18,7 +18,7 @@ internal record NewIssueSphereConfirmation(
         IDomainGlossary Glossary) 
     : INewIssueSphereConfirmation
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto> 
@@ -26,7 +26,8 @@ internal record NewIssueSphereConfirmation(
                 new()
                 {
                     Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
-                    ControlPromptsSelection = ControlPrompts.YesNo
+                    ControlPromptsSelection = ControlPrompts.YesNo,
+                    EditReplyMarkupOfMessageId = editMessageId
                 }
             });
     }

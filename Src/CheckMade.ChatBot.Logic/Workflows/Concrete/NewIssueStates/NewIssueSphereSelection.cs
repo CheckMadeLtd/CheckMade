@@ -17,7 +17,7 @@ internal record NewIssueSphereSelection(
     IDomainGlossary Glossary) 
     : INewIssueSphereSelection
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return new List<OutputDto>
         {

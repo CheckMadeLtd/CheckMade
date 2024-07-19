@@ -20,8 +20,8 @@ public record WorkflowResponse(
     {
     }
 
-    internal static async Task<WorkflowResponse> CreateAsync(IWorkflowState newState) =>
-        new(Output: await newState.GetPromptAsync(),
+    internal static async Task<WorkflowResponse> CreateAsync(IWorkflowState newState, int? editMessageId = null) =>
+        new(Output: await newState.GetPromptAsync(editMessageId ?? Option<int>.None()),
             NewStateId: newState.Glossary.GetId(newState.GetType()));
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>

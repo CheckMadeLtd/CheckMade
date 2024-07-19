@@ -16,7 +16,7 @@ internal record NewIssueTradeSelection(
         ILogicUtils LogicUtils) 
     : INewIssueTradeSelection
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -26,7 +26,8 @@ internal record NewIssueTradeSelection(
                     Text = Ui("Please select a Trade:"),
                     DomainTermSelection = 
                         Option<IReadOnlyCollection<DomainTerm>>.Some(
-                            Glossary.GetAll(typeof(ITrade))) 
+                            Glossary.GetAll(typeof(ITrade))),
+                    EditReplyMarkupOfMessageId = editMessageId
                 }
             });
     }

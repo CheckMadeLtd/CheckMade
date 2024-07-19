@@ -8,7 +8,7 @@ internal interface INewIssueReview : IWorkflowState;
 
 internal record NewIssueReview(IDomainGlossary Glossary) : INewIssueReview
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync()
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         throw new NotImplementedException();
     }
