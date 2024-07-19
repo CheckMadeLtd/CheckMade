@@ -8,7 +8,6 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
@@ -60,8 +59,8 @@ internal static class OutputSender
                         await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                         break;
 
-                    case { EditReplyMarkupOfMessageId.IsSome: true }:
-                        await InvokeEditReplyMarkup(output);
+                    case { Text.IsSome: true, EditReplyMarkupOfMessageId.IsSome: true }:
+                        await InvokeEditTextMessageAsync(output);
                         break;
                     
                     case { Attachments.IsSome: true }:
@@ -88,14 +87,14 @@ internal static class OutputSender
                             converter.GetReplyMarkup(output));
                 }
 
-                async Task InvokeEditReplyMarkup(OutputDto outputWithUpdatedMarkup)
+                async Task InvokeEditTextMessageAsync(OutputDto outputWithUpdatedMessage)
                 {
                     await outputBotClient
-                        .EditReplyMarkup(
+                        .EditTextMessageAsync(
                             outputChatId,
-                            outputWithUpdatedMarkup.EditReplyMarkupOfMessageId.GetValueOrThrow(),
-                            (InlineKeyboardMarkup)converter
-                                .GetReplyMarkup(outputWithUpdatedMarkup).GetValueOrThrow());
+                            uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow()),
+                            outputWithUpdatedMessage.EditReplyMarkupOfMessageId.GetValueOrThrow(),
+                            converter.GetReplyMarkup(outputWithUpdatedMessage));
                 }
                 
                 async Task InvokeSendAttachmentAsync(AttachmentDetails details)
@@ -105,7 +104,7 @@ internal static class OutputSender
                     var fileStream = new InputFileStream(blobData, fileName);
                     
                     var caption = details.Caption.Match(
-                        value => Option<string>.Some(uiTranslator.Translate(value)),
+                        value => uiTranslator.Translate(value),
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(

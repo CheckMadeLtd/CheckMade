@@ -22,10 +22,11 @@ public interface IBotClientWrapper
     
     Task<File> GetFileAsync(string fileId);
 
-    Task<Unit> EditReplyMarkup(
+    Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
+        string text,
         int messageId,
-        InlineKeyboardMarkup replyMarkup,
+        Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
     Task<Unit> SendDocumentAsync(
@@ -68,19 +69,25 @@ public class BotClientWrapper(
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
-    
-    public async Task<Unit> EditReplyMarkup(
+
+    public async Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
-        int messageId,
-        InlineKeyboardMarkup replyMarkup,
+        string text, 
+        int messageId, 
+        Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
+        var updatedInlineKeyboard = replyMarkup.IsSome
+            ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
+            : null;
+        
         await retryPolicy.ExecuteAsync(async () => 
             
-            await botClient.EditMessageReplyMarkupAsync(
+            await botClient.EditMessageTextAsync(
                 chatId,
                 messageId,
-                replyMarkup,
+                text,
+                replyMarkup: updatedInlineKeyboard,
                 cancellationToken: cancellationToken));
 
         return Unit.Value;
