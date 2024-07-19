@@ -131,6 +131,7 @@ public record DomainGlossary : IDomainGlossary
                 .Where(dt => dt.TypeValue != null &&
                              superType.IsAssignableFrom(dt.TypeValue) ||
                              superType == dt.EnumType)
+                .OrderBy(dt => dt.ToString())
                 .ToImmutableReadOnlyCollection();
     }
 
