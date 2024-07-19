@@ -34,12 +34,7 @@ internal record NewIssueSphereConfirmation(
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
-        {
-            return 
-                new WorkflowResponse(
-                    new OutputDto { Text = Ui("Please answer only using the buttons above.") },
-                    GetType(), Glossary);
-        }
+            return WorkflowResponse.CreateOnlyUseButtonsResponse(this);
 
         var liveEventInfo = 
             currentInput.LiveEventContext.GetValueOrThrow();

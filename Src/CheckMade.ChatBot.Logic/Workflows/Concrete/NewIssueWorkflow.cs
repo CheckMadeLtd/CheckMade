@@ -49,10 +49,6 @@ internal record NewIssueWorkflow(
                     .ResultantWorkflow.GetValueOrThrow()
                     .InStateId);
 
-        var trade = IsCurrentRoleTradeSpecific(currentRole)
-            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
-            : GetLastUserProvidedTrade();
-
         var currentStateNameWithoutGenerics = currentState.Name.Split('`')[0];
         
         switch (currentStateNameWithoutGenerics)
@@ -71,7 +67,7 @@ internal record NewIssueWorkflow(
                 var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
                 
                 var sphere = lastKnownLocation.IsSome
-                    ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
+                    ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), GetCurrentTrade())
                     : Option<ISphereOfAction>.None();
 
                 if (sphere.IsNone)
@@ -82,7 +78,7 @@ internal record NewIssueWorkflow(
                 }
                 
                 return await new NewIssueSphereConfirmation(
-                        trade, sphere.GetValueOrThrow(), LiveEventsRepo, Glossary)
+                        GetCurrentTrade(), sphere.GetValueOrThrow(), LiveEventsRepo, Glossary)
                     .GetWorkflowResponseAsync(currentInput);
             
             case nameof(NewIssueSphereSelection):
@@ -90,12 +86,12 @@ internal record NewIssueWorkflow(
                 var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
                 
                 return await new NewIssueSphereSelection(
-                        trade, liveEventInfo, LiveEventsRepo, Glossary)
+                        GetCurrentTrade(), liveEventInfo, LiveEventsRepo, Glossary)
                     .GetWorkflowResponseAsync(currentInput);
             
             case nameof(NewIssueTypeSelection<ITrade>):
 
-                return trade switch
+                return GetCurrentTrade() switch
                 {
                     SaniCleanTrade => 
                         await new NewIssueTypeSelection<SaniCleanTrade>(Glossary)
@@ -104,13 +100,20 @@ internal record NewIssueWorkflow(
                         await new NewIssueTypeSelection<SiteCleanTrade>(Glossary)
                             .GetWorkflowResponseAsync(currentInput),
                     _ => throw new InvalidOperationException(
-                        $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
+                        $"Unhandled type of {nameof(ITrade)}: '{GetCurrentTrade().GetType()}'")
                 };
             
             default:
                 
                 throw new InvalidOperationException(
                     $"Lack of handling of state '{currentStateNameWithoutGenerics}' in '{nameof(NewIssueWorkflow)}'");
+        }
+
+        ITrade GetCurrentTrade()
+        {
+            return IsCurrentRoleTradeSpecific(currentRole)
+                ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
+                : GetLastUserProvidedTrade();
         }
         
         ITrade GetLastUserProvidedTrade()

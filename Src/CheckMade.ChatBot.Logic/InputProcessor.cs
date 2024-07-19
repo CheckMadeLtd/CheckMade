@@ -101,7 +101,7 @@ internal class InputProcessor(
         ResultantWorkflowInfo? workflowInfo = null;
                 
         var newState = response.Match(
-            r => r.NewState,
+            r => r.NewStateId,
             _ => Option<string>.None());
                 
         if (activeWorkflow.IsSome && newState.IsSome)

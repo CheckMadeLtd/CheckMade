@@ -45,7 +45,7 @@ public class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedNewState,
-            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewStateId.GetValueOrThrow());
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedNewState,
-            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewStateId.GetValueOrThrow());
     }
     
     [Theory]
@@ -131,7 +131,7 @@ public class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedNewState,
-            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewStateId.GetValueOrThrow());
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedNewState,
-            actualResponse.GetValueOrThrow().NewState.GetValueOrThrow());
+            actualResponse.GetValueOrThrow().NewStateId.GetValueOrThrow());
     }
     
     private static Geo GetLocationNearSaniCleanSphere() =>
