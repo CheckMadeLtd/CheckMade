@@ -29,8 +29,8 @@ internal record NewIssueConsumablesSelection(
                         Glossary.GetAll(typeof(Consumables.Item))
                             .Select(dt => 
                                 ILogicUtils.IsToggleOn(dt, InteractiveHistory) 
-                                    ? dt with { Toggle = Option<bool>.Some(true) } 
-                                    : dt with { Toggle = Option<bool>.Some(false) })
+                                    ? dt with { Toggle = true } 
+                                    : dt with { Toggle = false })
                             .ToImmutableReadOnlyCollection()),
                     ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                     EditReplyMarkupOfMessageId = editMessageId
