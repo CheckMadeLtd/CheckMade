@@ -24,9 +24,7 @@ internal record NewIssueSphereSelection(
             new()
             {
                 Text = UiConcatenate(
-                    Ui("Please select a "),
-                    Trade.GetSphereOfActionLabel,
-                    UiNoTranslate(":")),
+                    Ui("Please select a "), Trade.GetSphereOfActionLabel, UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     await GetTradeSpecificSphereNamesAsync(Trade))
             }
