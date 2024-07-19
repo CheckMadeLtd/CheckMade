@@ -5,7 +5,6 @@ public enum ControlPrompts : long
 {
     Back = 1L<<1,
     Cancel = 1L<<2,
-    BackCancel = Back | Cancel,
     Skip = 1L<<3,
     Save = 1L<<4,
     SaveSkip = Save | Skip,
