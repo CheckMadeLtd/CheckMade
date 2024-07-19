@@ -22,6 +22,12 @@ public interface IBotClientWrapper
     
     Task<File> GetFileAsync(string fileId);
 
+    Task<Unit> EditReplyMarkup(
+        ChatId chatId, 
+        int messageId,
+        InlineKeyboardMarkup replyMarkup,
+        CancellationToken cancellationToken = default);
+    
     Task<Unit> SendDocumentAsync(
         AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default);
@@ -62,6 +68,23 @@ public class BotClientWrapper(
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    
+    public async Task<Unit> EditReplyMarkup(
+        ChatId chatId, 
+        int messageId,
+        InlineKeyboardMarkup replyMarkup,
+        CancellationToken cancellationToken = default)
+    {
+        await retryPolicy.ExecuteAsync(async () => 
+            
+            await botClient.EditMessageReplyMarkupAsync(
+                chatId,
+                messageId,
+                replyMarkup,
+                cancellationToken: cancellationToken));
+
+        return Unit.Value;
+    }
 
     public async Task<Unit> SendDocumentAsync(AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)

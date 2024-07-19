@@ -17,6 +17,9 @@ public record OutputDto
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();
     
+    public Option<int> EditReplyMarkupOfMessageId { get; init; }
+        = Option<int>.None();
+    
     public Option<IReadOnlyCollection<string>> PredefinedChoices { get; init; } 
         = Option<IReadOnlyCollection<string>>.None();
     
