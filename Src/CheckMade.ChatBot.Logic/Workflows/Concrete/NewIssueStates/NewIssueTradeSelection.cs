@@ -34,7 +34,7 @@ internal record NewIssueTradeSelection(
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
-            return WorkflowResponse.CreateOnlyUseInlineKeyboardButtonResponse(this);
+            return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         var selectedTrade = 
             (ITrade)Activator.CreateInstance(

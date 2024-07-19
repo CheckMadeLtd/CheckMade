@@ -35,31 +35,26 @@ internal record NewIssueSphereSelection(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        return currentInput switch
+        if (currentInput.InputType is not TlgInputType.TextMessage ||
+            !(await GetTradeSpecificSphereNamesAsync(Trade))
+                .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
-            { InputType: not TlgInputType.TextMessage } =>
-                WorkflowResponse.CreateOnlyChooseReplyKeyboardOptionResponse(
-                    this, await GetTradeSpecificSphereNamesAsync(Trade)),
-            
-            { Details.Text: var text } 
-                when !(await GetTradeSpecificSphereNamesAsync(Trade))
-                    .Contains(text.GetValueOrThrow()) => 
-                WorkflowResponse.CreateOnlyChooseReplyKeyboardOptionResponse(
-                    this, await GetTradeSpecificSphereNamesAsync(Trade)),
-                
-            _ => Trade switch
-            {
-                SaniCleanTrade => 
-                    await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+            return WorkflowResponse.CreateWarningChooseReplyKeyboardOptions(
+                this, await GetTradeSpecificSphereNamesAsync(Trade));
+        }
 
-                SiteCleanTrade => 
-                    await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+        return Trade switch
+        {
+            SaniCleanTrade =>
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
 
-                _ => throw new InvalidOperationException(
-                    $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
-            }
+            SiteCleanTrade =>
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+
+            _ => throw new InvalidOperationException(
+                $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
         };
     }
 

@@ -24,7 +24,7 @@ public record WorkflowResponse(
         new(Output: await newState.GetPromptAsync(),
             NewStateId: newState.Glossary.GetId(newState.GetType()));
 
-    internal static WorkflowResponse CreateOnlyUseInlineKeyboardButtonResponse(IWorkflowState currentState) =>
+    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()
@@ -35,7 +35,7 @@ public record WorkflowResponse(
             NewStateId: currentState.Glossary.GetId(currentState.GetType()));
 
     internal static WorkflowResponse
-        CreateOnlyChooseReplyKeyboardOptionResponse(
+        CreateWarningChooseReplyKeyboardOptions(
             IWorkflowState currentState, IReadOnlyCollection<string> choices) => 
         new(Output: new List<OutputDto> 
             {
