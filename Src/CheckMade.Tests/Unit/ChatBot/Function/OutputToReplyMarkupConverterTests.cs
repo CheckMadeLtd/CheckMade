@@ -18,7 +18,7 @@ public class OutputToReplyMarkupConverterTests
 {
     private ServiceProvider? _services;
 
-    [Fact(Skip = "Changed number of columns")]
+    [Fact]
     public void GetReplyMarkup_ReturnsCorrectlyArrangedInlineKeyboard_ForValidDomainCategories()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -34,7 +34,7 @@ public class OutputToReplyMarkupConverterTests
             DomainTermSelection = domainTermSelection
         };
         
-        // Assumes inlineKeyboardNumberOfColumns = 2
+        // Assumes inlineKeyboardNumberOfColumns = 1
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[]
             {
@@ -43,11 +43,12 @@ public class OutputToReplyMarkupConverterTests
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.GetUi(typeof(CleanlinessIssue)).GetFormattedEnglish(),
                         basics.domainGlossary.GetId(typeof(CleanlinessIssue))), 
-                        
+                },
+                [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.GetUi(typeof(TechnicalIssue)).GetFormattedEnglish(),
                         basics.domainGlossary.GetId(typeof(TechnicalIssue))), 
-                },
+                ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.GetUi(typeof(ConsumablesIssue)).GetFormattedEnglish(),
@@ -63,7 +64,7 @@ public class OutputToReplyMarkupConverterTests
             actualReplyMarkup.GetValueOrThrow());
     }
 
-    [Fact(Skip = "Changed number of columns")]
+    [Fact]
     public void GetReplyMarkup_ReturnsCorrectlyArrangedInlineKeyboard_ForValidControlPrompts()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -121,7 +122,7 @@ public class OutputToReplyMarkupConverterTests
             actualReplyMarkup.GetValueOrThrow());
     }
 
-    [Fact(Skip = "Changed number of columns")]
+    [Fact]
     public void GetReplyMarkup_ReturnsInlineKeyboardCombiningCategoriesAndPrompts_ForOutputWithBoth()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
@@ -132,7 +133,8 @@ public class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[] 
         {
-            (prompt: Good, promptId: new CallbackId((long)Good))
+            (prompt: Good, promptId: new CallbackId((long)Good)),
+            (prompt: Bad, promptId: new CallbackId((long)Bad)),
         };
         
         var outputWithBoth = new OutputDto
@@ -149,13 +151,19 @@ public class OutputToReplyMarkupConverterTests
         var expectedReplyMarkup = Option<IReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[]
             {
-                InlineKeyboardButton.WithCallbackData(
-                    basics.domainGlossary.GetUi(Consumables.Item.PaperTowels).GetFormattedEnglish(),
-                    basics.domainGlossary.GetId(Consumables.Item.PaperTowels)), 
-                
-                InlineKeyboardButton.WithCallbackData(
-                    basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
-                    promptSelection[0].promptId)
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(
+                        basics.domainGlossary.GetUi(Consumables.Item.PaperTowels).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(Consumables.Item.PaperTowels)), 
+                },[
+                    InlineKeyboardButton.WithCallbackData(
+                        basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
+                        promptSelection[0].promptId),
+                    InlineKeyboardButton.WithCallbackData(
+                        basics.uiByPromptId[promptSelection[1].promptId].GetFormattedEnglish(),
+                        promptSelection[1].promptId),
+                ]
             }));
 
         var actualReplyMarkup = 
