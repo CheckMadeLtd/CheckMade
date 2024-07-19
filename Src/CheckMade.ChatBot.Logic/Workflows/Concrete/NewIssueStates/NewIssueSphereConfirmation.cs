@@ -15,7 +15,8 @@ internal record NewIssueSphereConfirmation(
         ITrade Trade,
         ISphereOfAction Sphere,
         ILiveEventsRepository LiveEventRepo,
-        IDomainGlossary Glossary) 
+        IDomainGlossary Glossary,
+        ILogicUtils LogicUtils) 
     : INewIssueSphereConfirmation
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
@@ -46,10 +47,10 @@ internal record NewIssueSphereConfirmation(
             {
                 SaniCleanTrade => 
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
                 SiteCleanTrade =>
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
             },
@@ -60,7 +61,8 @@ internal record NewIssueSphereConfirmation(
                         Trade,
                         liveEventInfo,
                         LiveEventRepo,
-                        Glossary)),
+                        Glossary,
+                        LogicUtils)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
         };

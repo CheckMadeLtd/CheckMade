@@ -47,29 +47,33 @@ internal record NewIssueTradeSelection(
             {
                 SaniCleanTrade => 
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
                 SiteCleanTrade => 
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(selectedTrade)}: '{selectedTrade.GetType()}'")
             };
         }
         
-        var lastKnownLocation = await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
+        var lastKnownLocation = 
+            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
 
         var liveEvent =
             (await LiveEventRepo.GetAsync(
                 currentInput.LiveEventContext.GetValueOrThrow()))!;
         
         var sphere = lastKnownLocation.IsSome
-            ? NewIssueWorkflow.SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
+            ? NewIssueWorkflow.SphereNearCurrentUser(
+                liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
         
         return await sphere.Match(
             soa => WorkflowResponse.CreateAsync(
-                    new NewIssueSphereConfirmation(selectedTrade, soa, LiveEventRepo, Glossary)),
+                    new NewIssueSphereConfirmation(
+                        selectedTrade, soa, LiveEventRepo, Glossary, LogicUtils)),
                 () => WorkflowResponse.CreateAsync(
-                    new NewIssueSphereSelection(selectedTrade, liveEvent, LiveEventRepo, Glossary)));
+                    new NewIssueSphereSelection(
+                        selectedTrade, liveEvent, LiveEventRepo, Glossary, LogicUtils)));
     }
 }

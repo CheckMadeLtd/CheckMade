@@ -14,7 +14,8 @@ internal record NewIssueSphereSelection(
     ITrade Trade,
     ILiveEventInfo LiveEventInfo,
     ILiveEventsRepository LiveEventsRepo,
-    IDomainGlossary Glossary) 
+    IDomainGlossary Glossary,
+    ILogicUtils LogicUtils) 
     : INewIssueSphereSelection
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
@@ -45,11 +46,11 @@ internal record NewIssueSphereSelection(
         {
             SaniCleanTrade =>
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueTypeSelection<SaniCleanTrade>(Glossary)),
+                    new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
 
             SiteCleanTrade =>
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueTypeSelection<SiteCleanTrade>(Glossary)),
+                    new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
 
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")

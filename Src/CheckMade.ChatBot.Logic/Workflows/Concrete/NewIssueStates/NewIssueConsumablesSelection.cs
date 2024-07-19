@@ -2,13 +2,20 @@ using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueConsumablesSelection : IWorkflowState;
 
-internal record NewIssueConsumablesSelection(IDomainGlossary Glossary) : INewIssueConsumablesSelection
+internal record NewIssueConsumablesSelection(
+        IDomainGlossary Glossary,
+        IReadOnlyCollection<TlgInput> InteractiveHistory,
+        ITrade Trade,
+        ILogicUtils LogicUtils) 
+    : INewIssueConsumablesSelection
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
@@ -20,27 +27,43 @@ internal record NewIssueConsumablesSelection(IDomainGlossary Glossary) : INewIss
                     Text = Ui("Choose affected consumables:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary.GetAll(typeof(Consumables.Item))),
-                    ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back | ControlPrompts.Cancel,
+                    ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                     EditReplyMarkupOfMessageId = editMessageId
                 }
             });
     }
 
-    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
-            return Task.FromResult<Result<WorkflowResponse>>(WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this));
+            return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
-        throw new NotImplementedException();
+        if (currentInput.Details.DomainTerm.IsSome)
+            return await WorkflowResponse.CreateAsync(
+                this, currentInput.Details.TlgMessageId);
 
-        // if (currentInput.Details.DomainTerm.IsSome)
-        // {
-        //     return ToggleConsumable(currentInput.Details.DomainTerm.GetValueOrThrow());
-        // }
-        //
-        // WorkflowResponse ToggleConsumable(DomainTerm selectedConsumable)
-        // {
-        //     
-        // }
+        var selectedControlPrompt = 
+            currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
+        
+        return selectedControlPrompt switch
+        {
+            (long)ControlPrompts.Save =>
+                await WorkflowResponse.CreateAsync(new NewIssueReview(Glossary)),
+            (long)ControlPrompts.Back => Trade switch
+            {
+                SaniCleanTrade => 
+                    await WorkflowResponse.CreateAsync(
+                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils),
+                        currentInput.Details.TlgMessageId),
+                SiteCleanTrade =>
+                    await WorkflowResponse.CreateAsync(
+                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils),
+                        currentInput.Details.TlgMessageId),
+                _ => throw new InvalidOperationException(
+                    $"Unhandled {nameof(Trade)}: '{Trade.GetType().Name}'")    
+            },
+            _ => throw new InvalidOperationException(
+                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
+        };
     }
 }

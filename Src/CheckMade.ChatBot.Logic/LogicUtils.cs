@@ -11,6 +11,9 @@ internal interface ILogicUtils
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
+
+    static readonly UiString ToggleOffSuffix = UiNoTranslate("[ ]");
+    static readonly UiString ToggleOnSuffix = UiNoTranslate("[✔]");
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);

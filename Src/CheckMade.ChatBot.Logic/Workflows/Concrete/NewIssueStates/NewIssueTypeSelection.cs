@@ -8,7 +8,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueTypeSelection : IWorkflowState; 
 
-internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTypeSelection 
+internal record NewIssueTypeSelection<T>(
+    IDomainGlossary Glossary,
+    ILogicUtils LogicUtils) : INewIssueTypeSelection 
     where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
@@ -41,7 +43,11 @@ internal record NewIssueTypeSelection<T>(IDomainGlossary Glossary) : INewIssueTy
             
             nameof(ConsumablesIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueConsumablesSelection(Glossary),
+                    new NewIssueConsumablesSelection(
+                        Glossary,
+                        await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
+                        (ITrade)Activator.CreateInstance(typeof(T))!,
+                        LogicUtils),
                     currentInput.Details.TlgMessageId),
             
             nameof(TechnicalIssue) 

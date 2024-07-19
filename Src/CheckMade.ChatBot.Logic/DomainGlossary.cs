@@ -97,6 +97,7 @@ public record DomainGlossary : IDomainGlossary
 
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
+        AddTerm(typeof(Consumables), "D8T8CL", Ui("🗄 Consumables"));
         
         AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));
         AddTerm(typeof(TradeInspector<SaniCleanTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
