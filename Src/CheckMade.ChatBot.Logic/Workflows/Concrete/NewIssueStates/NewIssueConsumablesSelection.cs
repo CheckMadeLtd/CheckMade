@@ -27,7 +27,7 @@ internal record NewIssueConsumablesSelection(IDomainGlossary Glossary) : INewIss
     public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
-            return Task.FromResult<Result<WorkflowResponse>>(WorkflowResponse.CreateOnlyUseButtonsResponse(this));
+            return Task.FromResult<Result<WorkflowResponse>>(WorkflowResponse.CreateOnlyUseInlineKeyboardButtonResponse(this));
 
         throw new NotImplementedException();
     }

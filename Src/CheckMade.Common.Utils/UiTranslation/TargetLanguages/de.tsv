@@ -68,6 +68,8 @@ CheckMade.Telegram.Logic	Please select a 	Bitte wählen Sie ein(e)
 CheckMade.Telegram.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
 CheckMade.Telegram.Logic	Expected a simple text! Please try again entering a 	Ein einfacher Text war erwartet. Bitte erneut versuchen - 
 CheckMade.Telegram.Logic	This is not a valid name. Please choose from the valid options for a 	Kein gültiger Name. Bitte eine gültige Option wählen für ein(e) 
-CheckMade.Telegram.Logic	Please answer only using the buttons above.	Bitte antworten Sie nur über einem der oben angezeigten Knöpfe.
+CheckMade.Telegram.Logic	❗️Invalid input! Please answer only using the buttons above.	❗️Ungültige Eingabe! Bitte antworten Sie nur mit einem der oben angezeigten Knöpfe.
 CheckMade.Telegram.Logic	Choose affected facility:	Wählen Sie die betroffene Einrichtung:
 CheckMade.Telegram.Logic	Please (optionally) provide description and/or photos of the issue.	Bitte (optionale) Beschreibung und/oder Photos des Problems eingeben.
+CheckMade.Telegram.Logic	❗️Invalid input! Please choose from the options shown below.	❗Ungültige Eingabe! Bitte wählen Sie eine der unten angezeigten Optionen.
+CheckMade.Telegram.Logic	Choose affected consumables:	Betroffenes Verbrauchsmaterial auswählen:

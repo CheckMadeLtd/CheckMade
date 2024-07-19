@@ -28,7 +28,7 @@ internal record NewIssueSphereSelection(
                     Trade.GetSphereOfActionLabel,
                     UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
-                    await GetTradeSpecificSphereNames(Trade))
+                    await GetTradeSpecificSphereNamesAsync(Trade))
             }
         };
     }
@@ -38,29 +38,15 @@ internal record NewIssueSphereSelection(
         return currentInput switch
         {
             { InputType: not TlgInputType.TextMessage } =>
-                    new WorkflowResponse(
-                        new OutputDto
-                        {
-                            Text = UiConcatenate(
-                                Ui("Expected a simple text! Please try again entering a "),
-                                Trade.GetSphereOfActionLabel,
-                                UiNoTranslate(":"))
-                        },
-                        GetType(), Glossary),
-
-            { Details.Text: var text }
-                when !(await GetTradeSpecificSphereNames(Trade))
+                WorkflowResponse.CreateOnlyChooseReplyKeyboardOptionResponse(
+                    this, await GetTradeSpecificSphereNamesAsync(Trade)),
+            
+            { Details.Text: var text } 
+                when !(await GetTradeSpecificSphereNamesAsync(Trade))
                     .Contains(text.GetValueOrThrow()) => 
-                new WorkflowResponse(
-                    new OutputDto
-                    {
-                        Text = UiConcatenate(
-                            Ui("This is not a valid name. Please choose from the valid options for a "),
-                            Trade.GetSphereOfActionLabel,
-                            UiNoTranslate(":"))
-                    },
-                    GetType(), Glossary),
-
+                WorkflowResponse.CreateOnlyChooseReplyKeyboardOptionResponse(
+                    this, await GetTradeSpecificSphereNamesAsync(Trade)),
+                
             _ => Trade switch
             {
                 SaniCleanTrade => 
@@ -77,7 +63,7 @@ internal record NewIssueSphereSelection(
         };
     }
 
-    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNames(ITrade trade) =>
+    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(ITrade trade) =>
         (await LiveEventsRepo.GetAsync(LiveEventInfo))!
         .DivIntoSpheres
         .Where(soa => soa.GetTradeType() == trade.GetType())
