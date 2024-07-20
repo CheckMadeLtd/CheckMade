@@ -17,7 +17,8 @@ public record OutputDto
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();
     
-    public Option<int> EditReplyMarkupOfMessageId { get; init; }
+    // Probably an example where a detail of the Telegram.Bot API leaks into our logic :-(
+    public Option<int> EditPreviousOutputMessageId { get; init; }
         = Option<int>.None();
     
     public Option<IReadOnlyCollection<string>> PredefinedChoices { get; init; } 

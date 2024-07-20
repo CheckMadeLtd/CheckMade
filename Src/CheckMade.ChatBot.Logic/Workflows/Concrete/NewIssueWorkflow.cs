@@ -41,12 +41,8 @@ internal record NewIssueWorkflow(
         if (lastInput is null)
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
-        var currentStateName =
-            Glossary.GetDtType(
-                lastInput
-                    .ResultantWorkflow.GetValueOrThrow()
-                    .InStateId)
-                .Name.GetTypeNameWithoutGenericParam();
+        var currentStateName = 
+            await LogicUtils.GetLastStateName(currentInput);
         
         switch (currentStateName)
         {

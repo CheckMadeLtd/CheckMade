@@ -33,7 +33,7 @@ internal record NewIssueConsumablesSelection(
                                     : dt with { Toggle = false })
                             .ToImmutableReadOnlyCollection()),
                     ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
-                    EditReplyMarkupOfMessageId = editMessageId
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }

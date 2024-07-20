@@ -23,7 +23,7 @@ internal record NewIssueTypeSelection<T>(
                     Text = Ui("Please select the type of issue:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary.GetAll(typeof(ITradeIssue<T>))),
-                    EditReplyMarkupOfMessageId = editMessageId
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }

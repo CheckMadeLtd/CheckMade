@@ -55,11 +55,11 @@ internal static class OutputSender
                 switch (output)
                 {
                     case { Text.IsSome: true, Attachments.IsSome: false, 
-                        Location.IsSome: false, EditReplyMarkupOfMessageId.IsSome: false }: 
+                        Location.IsSome: false, EditPreviousOutputMessageId.IsSome: false }: 
                         await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                         break;
 
-                    case { Text.IsSome: true, EditReplyMarkupOfMessageId.IsSome: true }:
+                    case { Text.IsSome: true, EditPreviousOutputMessageId.IsSome: true }:
                         await InvokeEditTextMessageAsync(output);
                         break;
                     
@@ -93,7 +93,7 @@ internal static class OutputSender
                         .EditTextMessageAsync(
                             outputChatId,
                             uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow()),
-                            outputWithUpdatedMessage.EditReplyMarkupOfMessageId.GetValueOrThrow(),
+                            outputWithUpdatedMessage.EditPreviousOutputMessageId.GetValueOrThrow(),
                             converter.GetReplyMarkup(outputWithUpdatedMessage));
                 }
                 

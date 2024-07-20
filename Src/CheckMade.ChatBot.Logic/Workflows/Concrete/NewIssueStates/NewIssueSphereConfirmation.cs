@@ -28,7 +28,7 @@ internal record NewIssueSphereConfirmation(
                 {
                     Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
                     ControlPromptsSelection = ControlPrompts.YesNo,
-                    EditReplyMarkupOfMessageId = editMessageId
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }

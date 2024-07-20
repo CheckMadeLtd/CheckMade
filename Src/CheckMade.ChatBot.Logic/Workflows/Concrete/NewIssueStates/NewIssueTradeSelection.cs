@@ -27,7 +27,7 @@ internal record NewIssueTradeSelection(
                     DomainTermSelection = 
                         Option<IReadOnlyCollection<DomainTerm>>.Some(
                             Glossary.GetAll(typeof(ITrade))),
-                    EditReplyMarkupOfMessageId = editMessageId
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }

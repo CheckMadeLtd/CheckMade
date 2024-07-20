@@ -25,7 +25,7 @@ internal record NewIssueFacilitySelection<T>(
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary.GetAll(typeof(ITradeFacility<T>))),
                     ControlPromptsSelection = ControlPrompts.Back,
-                    EditReplyMarkupOfMessageId = editMessageId
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }
