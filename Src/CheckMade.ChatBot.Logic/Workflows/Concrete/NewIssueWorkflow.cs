@@ -7,6 +7,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
@@ -62,7 +63,9 @@ internal record NewIssueWorkflow(
                 var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
                 
                 var sphere = lastKnownLocation.IsSome
-                    ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), GetCurrentTrade())
+                    ? SphereNearCurrentUser(
+                        liveEvent, lastKnownLocation.GetValueOrThrow(), 
+                        GetCurrentTrade(currentRole, interactiveHistory))
                     : Option<ISphereOfAction>.None();
 
                 if (sphere.IsNone)
@@ -72,7 +75,7 @@ internal record NewIssueWorkflow(
                     // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
                 }
 
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
                 
                 return trade switch
                 {
@@ -92,7 +95,7 @@ internal record NewIssueWorkflow(
             case nameof(NewIssueSphereSelection<ITrade>):
                 
                 var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
 
                 return trade switch
                 {
@@ -111,7 +114,7 @@ internal record NewIssueWorkflow(
             
             case nameof(NewIssueTypeSelection<ITrade>):
 
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
                 
                 return trade switch
                 {
@@ -128,7 +131,7 @@ internal record NewIssueWorkflow(
             
             case nameof(NewIssueConsumablesSelection<ITrade>):
 
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
                 
                 return trade switch
                 {
@@ -147,7 +150,7 @@ internal record NewIssueWorkflow(
             
             case nameof(NewIssueFacilitySelection<ITrade>):
 
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
                 
                 return trade switch
                 {
@@ -164,7 +167,7 @@ internal record NewIssueWorkflow(
 
             case nameof(NewIssueEvidenceEntry<ITrade>):
 
-                trade = GetCurrentTrade();
+                trade = GetCurrentTrade(currentRole, interactiveHistory);
                 
                 return trade switch
                 {
@@ -183,25 +186,6 @@ internal record NewIssueWorkflow(
                 
                 throw new InvalidOperationException(
                     $"Lack of handling of state '{currentStateName}' in '{nameof(NewIssueWorkflow)}'");
-        }
-
-        ITrade GetCurrentTrade()
-        {
-            return IsCurrentRoleTradeSpecific(currentRole)
-                ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
-                : GetLastUserProvidedTrade();
-        }
-        
-        ITrade GetLastUserProvidedTrade()
-        {
-            var tradeType = interactiveHistory
-                .Last(i =>
-                    i.Details.DomainTerm.IsSome &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITrade)))
-                .Details.DomainTerm.GetValueOrThrow().TypeValue!;
-
-            return (ITrade)Activator.CreateInstance(tradeType)!;
         }
     }
 
@@ -266,6 +250,27 @@ internal record NewIssueWorkflow(
         };
     }
 
+    private static ITrade GetCurrentTrade(
+        IRoleInfo currentRole, 
+        IReadOnlyCollection<TlgInput> interactiveHistory)
+    {
+        return IsCurrentRoleTradeSpecific(currentRole)
+            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
+            : GetLastUserProvidedTrade(interactiveHistory);
+    }
+        
+    private static ITrade GetLastUserProvidedTrade(IReadOnlyCollection<TlgInput> interactiveHistory)
+    {
+        var tradeType = interactiveHistory
+            .Last(i =>
+                i.Details.DomainTerm.IsSome &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITrade)))
+            .Details.DomainTerm.GetValueOrThrow().TypeValue!;
+
+        return (ITrade)Activator.CreateInstance(tradeType)!;
+    }
+    
     private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
         currentRole
             .RoleType
@@ -322,4 +327,16 @@ internal record NewIssueWorkflow(
                 .Where(soa => soa.GetTradeType() == trade.GetType())
                 .ToImmutableReadOnlyCollection();
     }
+
+    internal IIssue ConstructIssue(IReadOnlyCollection<TlgInput> inputs)
+    {
+        var role = inputs.Last().OriginatorRole.GetValueOrThrow();
+        var trade = GetCurrentTrade(role, inputs);
+        
+        // var issueType = 
+        //     inputs
+        //         .LastOrDefault()
+        
+        return new CleanlinessIssue();
+    } 
 }
