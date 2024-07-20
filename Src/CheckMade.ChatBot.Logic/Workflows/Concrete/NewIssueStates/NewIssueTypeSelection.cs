@@ -39,7 +39,7 @@ internal record NewIssueTypeSelection<T>(
         {
             nameof(CleanlinessIssue) => 
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueFacilitySelection<T>(Glossary),
+                        new NewIssueFacilitySelection<T>(Glossary, LogicUtils),
                         currentInput.Details.TlgMessageId),
             
             nameof(ConsumablesIssue) => 

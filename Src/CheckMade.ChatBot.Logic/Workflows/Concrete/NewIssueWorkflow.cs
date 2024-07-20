@@ -109,6 +109,20 @@ internal record NewIssueWorkflow(
                         Glossary, interactiveHistory, GetCurrentTrade(), LogicUtils)
                     .GetWorkflowResponseAsync(currentInput);
             
+            case nameof(NewIssueFacilitySelection<ITrade>):
+
+                return GetCurrentTrade() switch
+                {
+                    SaniCleanTrade =>
+                        await new NewIssueFacilitySelection<SaniCleanTrade>(Glossary, LogicUtils)
+                            .GetWorkflowResponseAsync(currentInput),
+                    SiteCleanTrade =>
+                        await new NewIssueFacilitySelection<SiteCleanTrade>(Glossary, LogicUtils)
+                            .GetWorkflowResponseAsync(currentInput),
+                    _ => throw new InvalidOperationException(
+                        $"Unhandled type of {nameof(ITrade)}: '{GetCurrentTrade().GetType()}'")
+                };
+
             default:
                 
                 throw new InvalidOperationException(

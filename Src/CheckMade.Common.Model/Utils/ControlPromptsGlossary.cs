@@ -12,7 +12,7 @@ namespace CheckMade.Common.Model.Utils;
 
         public ControlPromptsGlossary()
         {
-            AddPrompt(ControlPrompts.Back, Ui("🔙 Back"));
+            AddPrompt(ControlPrompts.Back, Ui("⬅️ Back"));
             AddPrompt(ControlPrompts.Cancel, Ui("❌ Cancel"));
             AddPrompt(ControlPrompts.Skip, Ui("⏭️ Skip"));
             AddPrompt(ControlPrompts.Save, Ui("💾 Save"));
