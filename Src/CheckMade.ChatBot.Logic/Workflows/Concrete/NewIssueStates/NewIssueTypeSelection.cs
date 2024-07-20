@@ -33,7 +33,8 @@ internal record NewIssueTypeSelection<T>(
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
-        var issueTypeName = currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name;
+        var issueTypeName = 
+            currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name;
         
         return issueTypeName switch
         {
