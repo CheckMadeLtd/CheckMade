@@ -93,19 +93,21 @@ internal record NewIssueEvidenceEntry<T>(
                         await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
             
                     (long)ControlPrompts.Back => 
-                        await LogicUtils.GetLastStateName(currentInput) switch
+                        await LogicUtils.GetPreviousStateNameAsync(currentInput, -2) switch
                             {
                                 nameof(NewIssueTypeSelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
-                                        new NewIssueTypeSelection<T>(Glossary, LogicUtils)),
+                                        new NewIssueTypeSelection<T>(Glossary, LogicUtils),
+                                        currentInput.Details.TlgMessageId),
                                 
                                 nameof(NewIssueFacilitySelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
-                                        new NewIssueFacilitySelection<T>(Glossary, LogicUtils)),
+                                        new NewIssueFacilitySelection<T>(Glossary, LogicUtils),
+                                        currentInput.Details.TlgMessageId),
                                 
                                 _ => throw new InvalidOperationException(
-                                    $"Unhandled {nameof(LogicUtils.GetLastStateName)}: " +
-                                    $"'{LogicUtils.GetLastStateName(currentInput)}'")
+                                    $"Unhandled {nameof(LogicUtils.GetPreviousStateNameAsync)}: " +
+                                    $"'{await LogicUtils.GetPreviousStateNameAsync(currentInput, -2)}'")
                             },
                     
                     _ => throw new InvalidOperationException(

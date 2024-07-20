@@ -17,7 +17,7 @@ internal interface ILogicUtils
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<string> GetLastStateName(TlgInput currentInput);
+    Task<string> GetPreviousStateNameAsync(TlgInput currentInput, int indexFromCurrent);
 }
 
 internal record LogicUtils(
@@ -82,17 +82,17 @@ internal record LogicUtils(
                     .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public async Task<string> GetLastStateName(TlgInput currentInput)
+    public async Task<string> GetPreviousStateNameAsync(TlgInput currentInput, int indexFromCurrent)
     {
         var interactiveHistory =
             await GetInteractiveSinceLastBotCommandAsync(currentInput);
 
-        if (interactiveHistory.Count <= 1)
+        if (interactiveHistory.Count < -(indexFromCurrent - 1))
             throw new InvalidOperationException("Interactive History is too short for this function");
 
         var lastInput =
             interactiveHistory
-                .SkipLast(1)
+                .SkipLast(-indexFromCurrent)
                 .Last();
 
         if (lastInput.ResultantWorkflow.IsNone)

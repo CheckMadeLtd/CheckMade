@@ -42,7 +42,7 @@ internal record NewIssueWorkflow(
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
         var currentStateName = 
-            await LogicUtils.GetLastStateName(currentInput);
+            await LogicUtils.GetPreviousStateNameAsync(currentInput, -1);
 
         ITrade trade;
         
