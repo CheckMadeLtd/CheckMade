@@ -46,4 +46,14 @@ public record WorkflowResponse(
                 }
             },
             NewStateId: currentState.Glossary.GetId(currentState.GetType()));
+
+    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowState currentState) =>
+        new(Output: new List<OutputDto>
+            {
+                new()
+                {
+                    Text = Ui("❗️Invalid input! Please enter a text message or a photo/file attachment only.")
+                }
+            },
+            NewStateId: currentState.Glossary.GetId(currentState.GetType()));
 }

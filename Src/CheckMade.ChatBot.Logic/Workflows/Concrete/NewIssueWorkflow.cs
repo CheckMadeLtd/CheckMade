@@ -123,6 +123,11 @@ internal record NewIssueWorkflow(
                         $"Unhandled type of {nameof(ITrade)}: '{GetCurrentTrade().GetType()}'")
                 };
 
+            case nameof(NewIssueEvidenceEntry):
+
+                return await new NewIssueEvidenceEntry(Glossary)
+                    .GetWorkflowResponseAsync(currentInput);
+            
             default:
                 
                 throw new InvalidOperationException(
@@ -174,9 +179,11 @@ internal record NewIssueWorkflow(
 
             return await sphere.Match(
                 soa => WorkflowResponse.CreateAsync(
-                    new NewIssueSphereConfirmation(trade, soa, LiveEventsRepo, Glossary, LogicUtils)),
+                    new NewIssueSphereConfirmation(
+                        trade, soa, LiveEventsRepo, Glossary, LogicUtils)),
                 () => WorkflowResponse.CreateAsync(
-                    new NewIssueSphereSelection(trade, liveEvent, LiveEventsRepo, Glossary, LogicUtils)));
+                    new NewIssueSphereSelection(
+                        trade, liveEvent, LiveEventsRepo, Glossary, LogicUtils)));
         }
 
         return trade switch
@@ -228,7 +235,8 @@ internal record NewIssueWorkflow(
 
         var nearSphere =
             allSpheres
-                .Where(soa => DistanceFromLastKnownLocation(soa) < tradeSpecificNearnessThreshold)
+                .Where(soa =>
+                    DistanceFromLastKnownLocation(soa) < tradeSpecificNearnessThreshold)
                 .MinBy(DistanceFromLastKnownLocation);
 
         return

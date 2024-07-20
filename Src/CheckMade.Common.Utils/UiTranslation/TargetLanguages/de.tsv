@@ -10,7 +10,7 @@ CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available Bot
 CheckMade.Telegram.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
 CheckMade.Telegram.Logic	What type of issue?	Welche Art von Problem?
-CheckMade.Common.Model	🔙 Back	🔙 Zurück
+CheckMade.Common.Model	⬅️ Back	⬅️ Zurück
 CheckMade.Common.Model	❌ Cancel	❌ Abbrechen
 CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
 CheckMade.Common.Model	💾 Save	💾 Speichern
@@ -35,8 +35,8 @@ CheckMade.Common.Model	🗄 Consumables	🗄 Verbrauchsmaterial
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
 CheckMade.Common.Model	🧴 Soap	🧴 Seife
-CheckMade.Common.Model	🚽 Toilets	🚽 Toiletten
-CheckMade.Common.Model	🚿 Showers	🚿 Duschen
+CheckMade.Common.Model	🚽 Toilet	🚽 Toilette
+CheckMade.Common.Model	🚿 Shower	🚿 Dusche
 CheckMade.Common.Model	🙋 Staff	🙋 Personal
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
@@ -70,6 +70,11 @@ CheckMade.Telegram.Logic	Expected a simple text! Please try again entering a 	Ei
 CheckMade.Telegram.Logic	This is not a valid name. Please choose from the valid options for a 	Kein gültiger Name. Bitte eine gültige Option wählen für ein(e) 
 CheckMade.Telegram.Logic	❗️Invalid input! Please answer only using the buttons above.	❗️Ungültige Eingabe! Bitte antworten Sie nur mit einem der oben angezeigten Knöpfe.
 CheckMade.Telegram.Logic	Choose affected facility:	Wählen Sie die betroffene Einrichtung:
-CheckMade.Telegram.Logic	Please (optionally) provide description and/or photos of the issue.	Bitte (optionale) Beschreibung und/oder Photos des Problems eingeben.
+CheckMade.Telegram.Logic	Please (optionally) provide description and/or photos of the issue.	Bitte (optionale) Beschreibung und/oder Fotos des Problems eingeben.
 CheckMade.Telegram.Logic	❗️Invalid input! Please choose from the options shown below.	❗Ungültige Eingabe! Bitte wählen Sie eine der unten angezeigten Optionen.
 CheckMade.Telegram.Logic	Choose affected consumables:	Betroffenes Verbrauchsmaterial auswählen:
+CheckMade.Telegram.Logic	✅📝 Description received. You can send more text, add photos/documents or save all evidence entered so far and continue with:	✅📝 Beschreibung erhalten. Sie können einen weiteren Text schicken, Fotos/Dokumente hinzufügen oder das bisher eingegebene Beweismaterial speichern und weiter mit:
+CheckMade.Telegram.Logic	❗️Invalid input! Please enter a text message or a photo/file attachment only.	❗️Ungültige Eingabe! Bitte nur Text oder Photo/Datei Anhang schicken.  
+CheckMade.Telegram.Logic	✅📷 Photo received. You can send more attachments, add a description or save all evidence entered so far and continue with:	✅📷 Foto erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder das bisher eingegebene Beweismaterial speichern und weiter mit:
+CheckMade.Telegram.Logic	✅📄 Document received. You can send more attachments, add a description or save all evidence entered so far and continue with:	✅📄 Dokument erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder das bisher eingegebene Beweismaterial speichern und weiter mit:
+CheckMade.Telegram.Logic	❗🎙 Voice messages are not yet supported. You can send photos/documents, add a description or save all evidence entered so far and continue with:	❗🎙 Audionachrichten werden noch nicht unterstützt. Sie können Fotos/Dokumente schicken, eine Beschreibung hinzufügen, oder das bisher eingegebene Beweismaterial speichern und weiter mit:

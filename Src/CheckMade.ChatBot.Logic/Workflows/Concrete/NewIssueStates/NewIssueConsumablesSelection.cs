@@ -60,10 +60,12 @@ internal record NewIssueConsumablesSelection(
                     await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils),
                         currentInput.Details.TlgMessageId),
+                
                 SiteCleanTrade =>
                     await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils),
                         currentInput.Details.TlgMessageId),
+                
                 _ => throw new InvalidOperationException(
                     $"Unhandled {nameof(Trade)}: '{Trade.GetType().Name}'")    
             },
