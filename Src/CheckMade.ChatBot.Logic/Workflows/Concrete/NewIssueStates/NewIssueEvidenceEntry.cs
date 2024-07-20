@@ -22,7 +22,7 @@ internal record NewIssueEvidenceEntry<T>(
                 new()
                 {
                     Text = Ui("Please (optionally) provide description and/or photos of the issue."),
-                    ControlPromptsSelection = ControlPrompts.SaveSkip | ControlPrompts.Back,
+                    ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
                     EditPreviousOutputMessageId = editMessageId
                 }
             });
@@ -38,10 +38,9 @@ internal record NewIssueEvidenceEntry<T>(
                 return new WorkflowResponse(
                     new OutputDto
                     {
-                        Text = Ui("✅📝 Description received. " +
-                                  "You can send more text, add photos/documents or save all evidence " +
-                                  "entered so far and continue with:"),
-                        ControlPromptsSelection = ControlPrompts.Save
+                        Text = Ui("✅📝 Description received. You can send more text, add photos/documents " + 
+                                  "or continue to the next step."),
+                        ControlPromptsSelection = ControlPrompts.Continue
                     }, Glossary.GetId(GetType()));
             
             case TlgInputType.AttachmentMessage:
@@ -54,28 +53,25 @@ internal record NewIssueEvidenceEntry<T>(
                     TlgAttachmentType.Photo => new WorkflowResponse(
                         new OutputDto
                         {
-                            Text = Ui("✅📷 Photo received. " +
-                                      "You can send more attachments, add a description or save all evidence " +
-                                      "entered so far and continue with:"),
-                            ControlPromptsSelection = ControlPrompts.Save
+                            Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
+                                      "or continue to the next step."),
+                            ControlPromptsSelection = ControlPrompts.Continue
                         }, Glossary.GetId(GetType())),
 
                     TlgAttachmentType.Document => new WorkflowResponse(
                         new OutputDto
                         {
-                            Text = Ui("✅📄 Document received. " +
-                                      "You can send more attachments, add a description or save all evidence " +
-                                      "entered so far and continue with:"),
-                            ControlPromptsSelection = ControlPrompts.Save
+                            Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
+                                      "or continue to the next step."),
+                            ControlPromptsSelection = ControlPrompts.Continue
                         }, Glossary.GetId(GetType())),
 
                     TlgAttachmentType.Voice => new WorkflowResponse(
                         new OutputDto
                         {
-                            Text = Ui("❗🎙 Voice messages are not yet supported. " +
-                                      "You can send photos/documents, add a description or save all evidence " +
-                                      "entered so far and continue with:"),
-                            ControlPromptsSelection = ControlPrompts.Save
+                            Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
+                                      "add a description or continue to the next step."),
+                            ControlPromptsSelection = ControlPrompts.Continue
                         }, Glossary.GetId(GetType())),
                     
                     _ => throw new InvalidOperationException(
@@ -89,7 +85,7 @@ internal record NewIssueEvidenceEntry<T>(
 
                 return selectedControlPrompt switch
                 {
-                    (long)ControlPrompts.Save or (long)ControlPrompts.Skip =>
+                    (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
                         await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
             
                     (long)ControlPrompts.Back => 

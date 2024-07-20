@@ -20,6 +20,7 @@ namespace CheckMade.Common.Model.Utils;
             AddPrompt(ControlPrompts.Review, Ui("📋 Review"));
             AddPrompt(ControlPrompts.Edit, Ui("✏️ Edit details"));
             AddPrompt(ControlPrompts.Wait, Ui("⏳ Wait..."));
+            AddPrompt(ControlPrompts.Continue, Ui("Continue ➡️"));
             
             AddPrompt(ControlPrompts.No, Ui("🚫 No"));
             AddPrompt(ControlPrompts.Yes, Ui("✅ Yes"));

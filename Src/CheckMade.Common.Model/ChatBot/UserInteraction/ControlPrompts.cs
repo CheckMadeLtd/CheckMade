@@ -7,12 +7,11 @@ public enum ControlPrompts : long
     Cancel = 1L<<2,
     Skip = 1L<<3,
     Save = 1L<<4,
-    SaveSkip = Save | Skip,
     Submit = 1L<<5,
     Review = 1L<<6,
     Edit = 1L<<7,
     Wait = 1L<<8,
-    // Placeholder <<9
+    Continue = 1L<<9,
     // Placeholder <<10
     // Placeholder <<11
     // Placeholder <<12
