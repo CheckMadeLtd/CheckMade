@@ -4,18 +4,16 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueConsumablesSelection : IWorkflowState;
 
-internal record NewIssueConsumablesSelection(
+internal record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
         IReadOnlyCollection<TlgInput> InteractiveHistory,
-        ITrade Trade,
         ILogicUtils LogicUtils) 
-    : INewIssueConsumablesSelection
+    : INewIssueConsumablesSelection where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
@@ -53,22 +51,13 @@ internal record NewIssueConsumablesSelection(
         return selectedControlPrompt switch
         {
             (long)ControlPrompts.Save =>
-                await WorkflowResponse.CreateAsync(new NewIssueReview(Glossary)),
-            (long)ControlPrompts.Back => Trade switch
-            {
-                SaniCleanTrade => 
-                    await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils),
-                        currentInput.Details.TlgMessageId),
-                
-                SiteCleanTrade =>
-                    await WorkflowResponse.CreateAsync(
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils),
-                        currentInput.Details.TlgMessageId),
-                
-                _ => throw new InvalidOperationException(
-                    $"Unhandled {nameof(Trade)}: '{Trade.GetType().Name}'")    
-            },
+                await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
+            
+            (long)ControlPrompts.Back => 
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueTypeSelection<T>(Glossary, LogicUtils),
+                    currentInput.Details.TlgMessageId),
+            
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
         };

@@ -1,12 +1,14 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueReview : IWorkflowState;
 
-internal record NewIssueReview(IDomainGlossary Glossary) : INewIssueReview
+internal record NewIssueReview<T>(IDomainGlossary Glossary) 
+    : INewIssueReview where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {

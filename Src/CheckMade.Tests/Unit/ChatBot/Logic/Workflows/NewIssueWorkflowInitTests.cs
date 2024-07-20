@@ -73,7 +73,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereConfirmation));
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereConfirmation<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -119,7 +119,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please select a ";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereSelection));
+        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereSelection<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -148,7 +148,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
                     basics.glossary.GetId(typeof(NewIssueWorkflow)),
-                    basics.glossary.GetId(typeof(NewIssueSphereSelection))))];
+                    basics.glossary.GetId(typeof(NewIssueSphereSelection<SaniCleanTrade>))))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(

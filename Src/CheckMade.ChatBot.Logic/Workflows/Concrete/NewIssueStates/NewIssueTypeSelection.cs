@@ -45,20 +45,19 @@ internal record NewIssueTypeSelection<T>(
             
             nameof(ConsumablesIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueConsumablesSelection(
+                    new NewIssueConsumablesSelection<T>(
                         Glossary,
                         await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
-                        (ITrade)Activator.CreateInstance(typeof(T))!,
                         LogicUtils),
                     currentInput.Details.TlgMessageId),
             
             nameof(TechnicalIssue) or nameof(StaffIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueEvidenceEntry(Glossary, LogicUtils),
-                    currentInput.Details.TlgMessageId),
+                    new NewIssueEvidenceEntry<T>(
+                        Glossary, LogicUtils), currentInput.Details.TlgMessageId),
             
-            _ => throw new InvalidOperationException($"Unhandled {nameof(currentInput.Details.DomainTerm)}: " +
-                                                     $"'{issueTypeName}'")
+            _ => throw new InvalidOperationException(
+                $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")
         };
     }
 }

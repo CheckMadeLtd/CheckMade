@@ -3,12 +3,16 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueEvidenceEntry : IWorkflowState; 
 
-internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvidenceEntry
+internal record NewIssueEvidenceEntry<T>(
+        IDomainGlossary Glossary,
+        ILogicUtils LogicUtils) 
+    : INewIssueEvidenceEntry where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
@@ -18,8 +22,8 @@ internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvide
                 new()
                 {
                     Text = Ui("Please (optionally) provide description and/or photos of the issue."),
-                    ControlPromptsSelection = ControlPrompts.SaveSkip,
-                    EditReplyMarkupOfMessageId = editMessageId
+                    ControlPromptsSelection = ControlPrompts.SaveSkip | ControlPrompts.Back,
+                    EditPreviousOutputMessageId = editMessageId
                 }
             });
     }
@@ -86,8 +90,24 @@ internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvide
                 return selectedControlPrompt switch
                 {
                     (long)ControlPrompts.Save or (long)ControlPrompts.Skip =>
-                        await WorkflowResponse.CreateAsync(new NewIssueReview(Glossary)),
+                        await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
             
+                    (long)ControlPrompts.Back => 
+                        await LogicUtils.GetLastStateName(currentInput) switch
+                            {
+                                nameof(NewIssueTypeSelection<ITrade>) =>
+                                    await WorkflowResponse.CreateAsync(
+                                        new NewIssueTypeSelection<T>(Glossary, LogicUtils)),
+                                
+                                nameof(NewIssueFacilitySelection<ITrade>) =>
+                                    await WorkflowResponse.CreateAsync(
+                                        new NewIssueFacilitySelection<T>(Glossary, LogicUtils)),
+                                
+                                _ => throw new InvalidOperationException(
+                                    $"Unhandled {nameof(LogicUtils.GetLastStateName)}: " +
+                                    $"'{LogicUtils.GetLastStateName(currentInput)}'")
+                            },
+                    
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
                 };

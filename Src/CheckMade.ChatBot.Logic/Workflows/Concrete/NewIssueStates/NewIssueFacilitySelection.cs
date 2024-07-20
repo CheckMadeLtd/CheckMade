@@ -44,15 +44,14 @@ internal record NewIssueFacilitySelection<T>(
             {
                 nameof(Consumables) =>
                     await WorkflowResponse.CreateAsync(
-                        new NewIssueConsumablesSelection(
+                        new NewIssueConsumablesSelection<T>(
                             Glossary,
                             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
-                            (ITrade)Activator.CreateInstance(typeof(T))!,
                             LogicUtils),
                         currentInput.Details.TlgMessageId),
 
                 _ => await WorkflowResponse.CreateAsync(
-                    new NewIssueEvidenceEntry(Glossary, LogicUtils),
+                    new NewIssueEvidenceEntry<T>(Glossary, LogicUtils),
                     currentInput.Details.TlgMessageId)
             };
         }

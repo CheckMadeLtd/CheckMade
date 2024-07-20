@@ -4,20 +4,36 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueSphereSelection : IWorkflowState;
 
-internal record NewIssueSphereSelection(
-    ITrade Trade,
-    ILiveEventInfo LiveEventInfo,
-    ILiveEventsRepository LiveEventsRepo,
-    IDomainGlossary Glossary,
-    ILogicUtils LogicUtils) 
-    : INewIssueSphereSelection
+internal record NewIssueSphereSelection<T> : INewIssueSphereSelection where T : ITrade
 {
+    private readonly ILiveEventInfo _liveEventInfo;
+    private readonly ILiveEventsRepository _liveEventsRepo;
+    private readonly ILogicUtils _logicUtils;
+    private readonly ITrade _trade;
+    
+    private IReadOnlyCollection<string>? _tradeSpecificSphereNamesCache;
+    
+    public NewIssueSphereSelection(
+        ILiveEventInfo liveEventInfo,
+        ILiveEventsRepository liveEventsRepo,
+        IDomainGlossary glossary,
+        ILogicUtils logicUtils)
+    {
+        _liveEventInfo = liveEventInfo;
+        Glossary = glossary;
+        _logicUtils = logicUtils;
+        _liveEventsRepo = liveEventsRepo;
+
+        _trade = (ITrade)Activator.CreateInstance(typeof(T))!;
+    }
+    
+    public IDomainGlossary Glossary { get; }
+    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
         return new List<OutputDto>
@@ -25,9 +41,9 @@ internal record NewIssueSphereSelection(
             new()
             {
                 Text = UiConcatenate(
-                    Ui("Please select a "), Trade.GetSphereOfActionLabel, UiNoTranslate(":")),
+                    Ui("Please select a "), _trade.GetSphereOfActionLabel, UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
-                    await GetTradeSpecificSphereNamesAsync(Trade))
+                    await GetTradeSpecificSphereNamesAsync(_trade))
             }
         };
     }
@@ -35,32 +51,24 @@ internal record NewIssueSphereSelection(
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.TextMessage ||
-            !(await GetTradeSpecificSphereNamesAsync(Trade))
+            !(await GetTradeSpecificSphereNamesAsync(_trade))
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
             return WorkflowResponse.CreateWarningChooseReplyKeyboardOptions(
-                this, await GetTradeSpecificSphereNamesAsync(Trade));
+                this, await GetTradeSpecificSphereNamesAsync(_trade));
         }
 
-        return Trade switch
-        {
-            SaniCleanTrade =>
-                await WorkflowResponse.CreateAsync(
-                    new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
-
-            SiteCleanTrade =>
-                await WorkflowResponse.CreateAsync(
-                    new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
-
-            _ => throw new InvalidOperationException(
-                $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
-        };
+        return await WorkflowResponse.CreateAsync(
+            new NewIssueTypeSelection<T>(Glossary, _logicUtils));
     }
 
-    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(ITrade trade) =>
-        (await LiveEventsRepo.GetAsync(LiveEventInfo))!
-        .DivIntoSpheres
-        .Where(soa => soa.GetTradeType() == trade.GetType())
-        .Select(soa => soa.Name)
-        .ToImmutableReadOnlyCollection();
+    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(ITrade trade)
+    {
+        return _tradeSpecificSphereNamesCache ??= 
+            (await _liveEventsRepo.GetAsync(_liveEventInfo))!
+            .DivIntoSpheres
+            .Where(soa => soa.GetTradeType() == trade.GetType())
+            .Select(soa => soa.Name)
+            .ToImmutableReadOnlyCollection();
+    }
 }
