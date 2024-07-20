@@ -28,7 +28,7 @@ internal record NewIssueConsumablesSelection(
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary.GetAll(typeof(Consumables.Item))
                             .Select(dt => 
-                                ILogicUtils.IsToggleOn(dt, InteractiveHistory) 
+                                dt.IsToggleOn(InteractiveHistory) 
                                     ? dt with { Toggle = true } 
                                     : dt with { Toggle = false })
                             .ToImmutableReadOnlyCollection()),

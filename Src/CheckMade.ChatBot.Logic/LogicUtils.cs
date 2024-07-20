@@ -1,3 +1,4 @@
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -16,21 +17,13 @@ internal interface ILogicUtils
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    
-    static Option<TlgInput> GetLastBotCommand(IReadOnlyCollection<TlgInput> inputs) =>
-        inputs.LastOrDefault(i => 
-            i.Details.BotCommandEnumCode.IsSome) 
-        ?? Option<TlgInput>.None();
-    
-    static bool IsToggleOn(DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
-        inputHistory
-            .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
-        % 2 != 0;
+    Task<string> GetLastStateName(TlgInput currentInput);
 }
 
 internal record LogicUtils(
         ITlgInputsRepository InputsRepo,
-        ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo)
+        ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
+        IDomainGlossary Glossary)
     : ILogicUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
@@ -88,4 +81,45 @@ internal record LogicUtils(
                 DateTime.UtcNow
                     .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
+
+    public async Task<string> GetLastStateName(TlgInput currentInput)
+    {
+        var interactiveHistory =
+            await GetInteractiveSinceLastBotCommandAsync(currentInput);
+
+        if (interactiveHistory.Count <= 1)
+            throw new InvalidOperationException("Interactive History is too short for this function");
+
+        var lastInput =
+            interactiveHistory
+                .SkipLast(1)
+                .Last();
+
+        if (lastInput.ResultantWorkflow.IsNone)
+            throw new InvalidOperationException($"The last input has no {nameof(lastInput.ResultantWorkflow)}");
+        
+        return
+            Glossary.GetDtType(
+                lastInput
+                    .ResultantWorkflow.GetValueOrThrow()
+                    .InStateId)
+                .Name
+                .GetTypeNameWithoutGenericParam();
+    }
+}
+
+internal static class LogicUtilsExtensions
+{
+    public static string GetTypeNameWithoutGenericParam(this string typeName) =>
+        typeName.Split('`')[0];
+    
+    public static bool IsToggleOn(this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
+        inputHistory
+            .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
+        % 2 != 0;
+    
+    public static Option<TlgInput> GetLastBotCommand(this IReadOnlyCollection<TlgInput> inputs) =>
+        inputs.LastOrDefault(i => 
+            i.Details.BotCommandEnumCode.IsSome) 
+        ?? Option<TlgInput>.None();
 }

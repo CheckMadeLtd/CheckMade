@@ -52,7 +52,7 @@ internal record NewIssueFacilitySelection<T>(
                         currentInput.Details.TlgMessageId),
 
                 _ => await WorkflowResponse.CreateAsync(
-                    new NewIssueEvidenceEntry(Glossary),
+                    new NewIssueEvidenceEntry(Glossary, LogicUtils),
                     currentInput.Details.TlgMessageId)
             };
         }

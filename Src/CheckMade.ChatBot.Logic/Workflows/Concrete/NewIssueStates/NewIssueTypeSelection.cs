@@ -54,7 +54,7 @@ internal record NewIssueTypeSelection<T>(
             
             nameof(TechnicalIssue) or nameof(StaffIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueEvidenceEntry(Glossary),
+                    new NewIssueEvidenceEntry(Glossary, LogicUtils),
                     currentInput.Details.TlgMessageId),
             
             _ => throw new InvalidOperationException($"Unhandled {nameof(currentInput.Details.DomainTerm)}: " +

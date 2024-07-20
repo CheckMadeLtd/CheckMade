@@ -148,7 +148,7 @@ internal class InputProcessor(
 
     private static bool IsCurrentInputFromOutOfScopeWorkflow(
         TlgInput currentInput, IReadOnlyCollection<TlgInput> activeWorkflowInputHistory) => 
-        ILogicUtils.GetLastBotCommand(activeWorkflowInputHistory).Match(
+        activeWorkflowInputHistory.GetLastBotCommand().Match(
             lastBotCommand => 
             {
                 var activeWorkflowStartMessageId = lastBotCommand.Details.TlgMessageId;

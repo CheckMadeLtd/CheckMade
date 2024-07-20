@@ -24,7 +24,7 @@ internal record WorkflowIdentifier(
         if (!IsUserAuthenticated(inputHistory))
             return Option<IWorkflow>.Some(UserAuthWorkflow);
 
-        var lastBotCommand = ILogicUtils.GetLastBotCommand(inputHistory);
+        var lastBotCommand = inputHistory.GetLastBotCommand();
         
         return lastBotCommand.Match(
             cmd =>

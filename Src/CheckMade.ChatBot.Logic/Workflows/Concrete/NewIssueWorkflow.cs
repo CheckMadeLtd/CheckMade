@@ -41,15 +41,14 @@ internal record NewIssueWorkflow(
         if (lastInput is null)
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
-        var currentState =
+        var currentStateName =
             Glossary.GetDtType(
                 lastInput
                     .ResultantWorkflow.GetValueOrThrow()
-                    .InStateId);
-
-        var currentStateNameWithoutGenerics = currentState.Name.Split('`')[0];
+                    .InStateId)
+                .Name.GetTypeNameWithoutGenericParam();
         
-        switch (currentStateNameWithoutGenerics)
+        switch (currentStateName)
         {
             case nameof(NewIssueTradeSelection):
                 
@@ -127,13 +126,13 @@ internal record NewIssueWorkflow(
 
             case nameof(NewIssueEvidenceEntry):
 
-                return await new NewIssueEvidenceEntry(Glossary)
+                return await new NewIssueEvidenceEntry(Glossary, LogicUtils)
                     .GetWorkflowResponseAsync(currentInput);
             
             default:
                 
                 throw new InvalidOperationException(
-                    $"Lack of handling of state '{currentStateNameWithoutGenerics}' in '{nameof(NewIssueWorkflow)}'");
+                    $"Lack of handling of state '{currentStateName}' in '{nameof(NewIssueWorkflow)}'");
         }
 
         ITrade GetCurrentTrade()
