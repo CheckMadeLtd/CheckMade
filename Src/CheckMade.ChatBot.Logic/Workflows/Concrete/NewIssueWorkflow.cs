@@ -39,9 +39,7 @@ internal record NewIssueWorkflow(
                 .LastOrDefault();
 
         if (lastInput is null)
-        {
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
-        }
 
         var currentState =
             Glossary.GetDtType(
@@ -96,9 +94,11 @@ internal record NewIssueWorkflow(
                     SaniCleanTrade => 
                         await new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)
                             .GetWorkflowResponseAsync(currentInput),
+                    
                     SiteCleanTrade => 
                         await new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)
                             .GetWorkflowResponseAsync(currentInput),
+                    
                     _ => throw new InvalidOperationException(
                         $"Unhandled type of {nameof(ITrade)}: '{GetCurrentTrade().GetType()}'")
                 };
@@ -116,9 +116,11 @@ internal record NewIssueWorkflow(
                     SaniCleanTrade =>
                         await new NewIssueFacilitySelection<SaniCleanTrade>(Glossary, LogicUtils)
                             .GetWorkflowResponseAsync(currentInput),
+                    
                     SiteCleanTrade =>
                         await new NewIssueFacilitySelection<SiteCleanTrade>(Glossary, LogicUtils)
                             .GetWorkflowResponseAsync(currentInput),
+                    
                     _ => throw new InvalidOperationException(
                         $"Unhandled type of {nameof(ITrade)}: '{GetCurrentTrade().GetType()}'")
                 };
@@ -191,9 +193,11 @@ internal record NewIssueWorkflow(
             SaniCleanTrade => 
                 await WorkflowResponse.CreateAsync(
                     new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
+            
             SiteCleanTrade => 
                 await WorkflowResponse.CreateAsync(
                     new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
+            
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
         };

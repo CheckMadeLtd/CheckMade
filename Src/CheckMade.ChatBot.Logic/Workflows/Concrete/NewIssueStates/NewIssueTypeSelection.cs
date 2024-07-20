@@ -52,10 +52,10 @@ internal record NewIssueTypeSelection<T>(
                         LogicUtils),
                     currentInput.Details.TlgMessageId),
             
-            nameof(TechnicalIssue) 
-                or nameof(StaffIssue) => 
+            nameof(TechnicalIssue) or nameof(StaffIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueEvidenceEntry(Glossary)),
+                    new NewIssueEvidenceEntry(Glossary),
+                    currentInput.Details.TlgMessageId),
             
             _ => throw new InvalidOperationException($"Unhandled {nameof(currentInput.Details.DomainTerm)}: " +
                                                      $"'{issueTypeName}'")

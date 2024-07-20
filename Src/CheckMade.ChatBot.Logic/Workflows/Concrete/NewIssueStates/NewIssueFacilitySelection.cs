@@ -64,6 +64,7 @@ internal record NewIssueFacilitySelection<T>(
             (long)ControlPrompts.Back => await WorkflowResponse.CreateAsync(
                 new NewIssueTypeSelection<T>(Glossary, LogicUtils),
                 currentInput.Details.TlgMessageId),
+            
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
         };

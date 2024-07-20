@@ -38,8 +38,7 @@ internal record NewIssueEvidenceEntry(IDomainGlossary Glossary) : INewIssueEvide
                                   "You can send more text, add photos/documents or save all evidence " +
                                   "entered so far and continue with:"),
                         ControlPromptsSelection = ControlPrompts.Save
-                    },
-                    Glossary.GetId(GetType()));
+                    }, Glossary.GetId(GetType()));
             
             case TlgInputType.AttachmentMessage:
 

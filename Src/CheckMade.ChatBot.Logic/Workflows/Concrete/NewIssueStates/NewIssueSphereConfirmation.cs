@@ -48,9 +48,11 @@ internal record NewIssueSphereConfirmation(
                 SaniCleanTrade => 
                     await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
+                
                 SiteCleanTrade =>
                     await WorkflowResponse.CreateAsync(
                         new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
+                
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(Trade)}: '{Trade.GetType()}'")
             },
