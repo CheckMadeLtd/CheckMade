@@ -105,13 +105,13 @@ internal record LogicUtils(
                     .ResultantWorkflow.GetValueOrThrow()
                     .InStateId)
                 .Name
-                .GetTypeNameWithoutGenericParam();
+                .GetTypeNameWithoutGenericParamSuffix();
     }
 }
 
 internal static class LogicUtilsExtensions
 {
-    public static string GetTypeNameWithoutGenericParam(this string typeName) =>
+    public static string GetTypeNameWithoutGenericParamSuffix(this string typeName) =>
         typeName.Split('`')[0];
     
     public static bool IsToggleOn(this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
