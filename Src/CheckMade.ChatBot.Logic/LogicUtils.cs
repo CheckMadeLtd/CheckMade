@@ -8,6 +8,7 @@ namespace CheckMade.ChatBot.Logic;
 internal interface ILogicUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
+    const int IndexFromCurrentWhenNavigatingToPreviousWorkflowState = -2;
     
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),

@@ -89,7 +89,9 @@ internal record NewIssueEvidenceEntry<T>(
                         await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
             
                     (long)ControlPrompts.Back => 
-                        await LogicUtils.GetPreviousStateNameAsync(currentInput, -2) switch
+                        await LogicUtils.GetPreviousStateNameAsync(
+                                currentInput, 
+                                ILogicUtils.IndexFromCurrentWhenNavigatingToPreviousWorkflowState) switch
                             {
                                 nameof(NewIssueTypeSelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
@@ -103,7 +105,9 @@ internal record NewIssueEvidenceEntry<T>(
                                 
                                 _ => throw new InvalidOperationException(
                                     $"Unhandled {nameof(LogicUtils.GetPreviousStateNameAsync)}: " +
-                                    $"'{await LogicUtils.GetPreviousStateNameAsync(currentInput, -2)}'")
+                                    $"'{await LogicUtils.GetPreviousStateNameAsync(
+                                        currentInput,
+                                        ILogicUtils.IndexFromCurrentWhenNavigatingToPreviousWorkflowState)}'")
                             },
                     
                     _ => throw new InvalidOperationException(
