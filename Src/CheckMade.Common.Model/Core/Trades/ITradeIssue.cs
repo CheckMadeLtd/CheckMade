@@ -14,6 +14,8 @@ public interface ITradeIssue<T> where T : ITrade
     IRoleInfo ReportedBy { get; }
     Option<IRoleInfo> HandledBy { get; }
     IssueStatus Status { get; }
+    
+    UiString GetSummary();
 }
 
 public enum IssueStatus

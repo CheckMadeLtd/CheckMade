@@ -13,4 +13,10 @@ public record ConsumablesIssue(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue<SaniCleanTrade>;
+    : ITradeIssue<SaniCleanTrade>
+{
+    public UiString GetSummary()
+    {
+        throw new NotImplementedException();
+    }
+}
