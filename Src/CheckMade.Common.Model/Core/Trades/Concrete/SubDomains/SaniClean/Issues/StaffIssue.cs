@@ -12,5 +12,5 @@ public record StaffIssue(
         IssueEvidence Evidence, 
         IRoleInfo ReportedBy, 
         Option<IRoleInfo> HandledBy, 
-        IssueStatus Status) : 
+        IssueStatus Status = IssueStatus.Reported) : 
     ITradeIssue<SaniCleanTrade>;

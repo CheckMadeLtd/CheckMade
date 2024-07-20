@@ -11,5 +11,5 @@ public record TechnicalIssue(
         Geo Location, IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
-        IssueStatus Status) 
+        IssueStatus Status = IssueStatus.Reported) 
     : ITradeIssue<SaniCleanTrade>;
