@@ -134,19 +134,23 @@ internal record NewIssueWorkflow(
         double DistanceFromLastKnownLocation(ISphereOfAction soa) =>
             soa.Details.GeoCoordinates.GetValueOrThrow()
                 .MetersAwayFrom(lastKnownLocation);
-        
-        static IReadOnlyCollection<ISphereOfAction>
-            GetAllTradeSpecificSpheres(LiveEvent liveEvent, ITrade trade) =>
-            liveEvent
-                .DivIntoSpheres
-                .Where(soa => soa.GetTradeType() == trade.GetType())
-                .ToImmutableReadOnlyCollection();
     }
     
-    internal static IIssue ConstructIssue(IReadOnlyCollection<TlgInput> inputs)
+    private static IReadOnlyCollection<ISphereOfAction>
+        GetAllTradeSpecificSpheres(LiveEvent liveEvent, ITrade trade) =>
+        liveEvent
+            .DivIntoSpheres
+            .Where(soa => soa.GetTradeType() == trade.GetType())
+            .ToImmutableReadOnlyCollection();
+    
+    internal async Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
+        var liveEventInfo = inputs.Last().LiveEventContext.GetValueOrThrow();
+        var liveEvent = (await LiveEventsRepo.GetAsync(liveEventInfo))!;
         var trade = role.GetCurrentTrade(inputs);
+        var spheres = GetAllTradeSpecificSpheres(liveEvent, trade);
+        var guid = Guid.NewGuid();
         
         var lastSelectedIssueType =
             inputs
@@ -157,10 +161,46 @@ internal record NewIssueWorkflow(
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
 
+        var lastSelectedSphereName =
+            inputs.Last(i =>
+                i.Details.Text.IsSome &&
+                spheres.Select(s => s.Name)
+                    .Contains(i.Details.Text.GetValueOrThrow()))
+                .Details.Text.GetValueOrThrow();
+
+        var lastSelectedSphere =
+            spheres
+                .First(s => 
+                    s.Name.Equals(lastSelectedSphereName));
+
+        var lastFacilityType =
+            inputs.LastOrDefault(i =>
+                i.Details.DomainTerm.IsSome &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
+                .Details.DomainTerm.GetValueOrThrow()
+                .TypeValue;
+
+        var lastSelectedFacility = lastFacilityType != null 
+            ? Option<IFacility>.Some(
+                (IFacility)Activator.CreateInstance(lastFacilityType)!) 
+            : Option<IFacility>.None();
+        
+        // ToDo: construct a new IssueEvidence based on submitted descriptions and media
+        // concatenate multiple descriptions into a single string... 
+        
+        // ToDo: correctly handle trade-specific Facility
         var issue = lastSelectedIssueType.Name switch
         {
             nameof(CleanlinessIssue) =>
-                new CleanlinessIssue()
+                new CleanlinessIssue(
+                    Id: guid,
+                    CreationDate: DateTime.UtcNow, 
+                    Sphere: lastSelectedSphere,
+                    Facility: Option<ITradeFacility<SaniCleanTrade>>.None(),
+                    PreciseLocation: Option<Geo>.None(), 
+                    Evidence:
+                    )
         };
         
         // return new CleanlinessIssue();

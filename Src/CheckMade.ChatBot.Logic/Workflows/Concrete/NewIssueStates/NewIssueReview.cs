@@ -16,7 +16,7 @@ internal record NewIssueReview<T>(
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
-        var issue = NewIssueWorkflow.ConstructIssue(
+        var issue = NewIssueWorkflow.ConstructIssueAsync(
             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
         return new List<OutputDto>
