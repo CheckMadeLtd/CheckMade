@@ -7,7 +7,6 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
@@ -328,7 +327,7 @@ internal record NewIssueWorkflow(
                 .ToImmutableReadOnlyCollection();
     }
 
-    internal IIssue ConstructIssue(IReadOnlyCollection<TlgInput> inputs)
+    internal static IIssue ConstructIssue(IReadOnlyCollection<TlgInput> inputs)
     {
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
         var trade = GetCurrentTrade(role, inputs);
@@ -337,6 +336,7 @@ internal record NewIssueWorkflow(
         //     inputs
         //         .LastOrDefault()
         
-        return new CleanlinessIssue();
+        // return new CleanlinessIssue();
+        throw new NotImplementedException();
     } 
 }
