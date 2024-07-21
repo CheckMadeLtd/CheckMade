@@ -9,7 +9,6 @@ internal interface ILogicUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
     const int DistanceFromCurrentWhenRetrievingPreviousWorkflowState = 1;
-    const int DistanceFromCurrentWhenNavigatingToPreviousWorkflowState = 2;
     
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),

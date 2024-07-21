@@ -64,6 +64,6 @@ internal record NewIssueTypeSelection<T>(
         }
 
         return await WorkflowResponse.CreateAsync(
-            currentInput, await Mediator.PreviousAsync(currentInput));
+            currentInput, Mediator.Next(typeof(INewIssueSphereSelection<T>)));
     }
 }
