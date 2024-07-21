@@ -16,7 +16,7 @@ public static class ServiceRegistration
         services.AddScoped<IInputProcessor, InputProcessor>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<ILogicUtils, LogicUtils>();
-        services.AddSingleton<IStateMediator, StateMediator>();
+        services.AddScoped<IStateMediator, StateMediator>();
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
         services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();

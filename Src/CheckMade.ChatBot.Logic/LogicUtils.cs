@@ -8,7 +8,8 @@ namespace CheckMade.ChatBot.Logic;
 internal interface ILogicUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
-    const int IndexFromCurrentWhenNavigatingToPreviousWorkflowState = -2;
+    const int DistanceFromCurrentWhenRetrievingPreviousWorkflowState = 1;
+    const int DistanceFromCurrentWhenNavigatingToPreviousWorkflowState = 2;
     
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
@@ -18,7 +19,7 @@ internal interface ILogicUtils
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<string> GetPreviousStateNameAsync(TlgInput currentInput, int indexFromCurrent);
+    Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
 }
 
 internal record LogicUtils(
@@ -83,29 +84,27 @@ internal record LogicUtils(
                     .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public async Task<string> GetPreviousStateNameAsync(TlgInput currentInput, int indexFromCurrent)
+    public async Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent)
     {
         var interactiveHistory =
             await GetInteractiveSinceLastBotCommandAsync(currentInput);
 
-        if (interactiveHistory.Count < -(indexFromCurrent - 1))
+        if (interactiveHistory.Count <= indexFromCurrent)
             throw new InvalidOperationException("Interactive History is too short for this function");
 
         var lastInput =
             interactiveHistory
-                .SkipLast(-indexFromCurrent)
+                .SkipLast(indexFromCurrent)
                 .Last();
 
         if (lastInput.ResultantWorkflow.IsNone)
             throw new InvalidOperationException($"The last input has no {nameof(lastInput.ResultantWorkflow)}");
-        
+
         return
             Glossary.GetDtType(
                 lastInput
                     .ResultantWorkflow.GetValueOrThrow()
-                    .InStateId)
-                .Name
-                .GetTypeNameWithoutGenericParamSuffix();
+                    .InStateId);
     }
 }
 

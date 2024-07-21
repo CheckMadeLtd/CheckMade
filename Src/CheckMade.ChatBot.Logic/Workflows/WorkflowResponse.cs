@@ -17,7 +17,7 @@ public record WorkflowResponse(
     internal WorkflowResponse(OutputDto singleOutput, IWorkflowState newState) 
         : this(
             Output: new List<OutputDto>{ singleOutput }, 
-            NewStateId: newState.Glossary.GetId(newState.GetType()))
+            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]))
     {
     }
 
@@ -26,7 +26,7 @@ public record WorkflowResponse(
         new(Output: await newState.GetPromptAsync(
                 currentInput, 
                 editPreviousOutput == false ? Option<int>.None() : currentInput.Details.TlgMessageId),
-            NewStateId: newState.Glossary.GetId(newState.GetType()));
+            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]));
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>
         new(Output: new List<OutputDto>
@@ -36,7 +36,7 @@ public record WorkflowResponse(
                     Text = Ui("❗️Invalid input! Please answer only using the buttons above.")
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType()));
+            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]));
 
     internal static WorkflowResponse
         CreateWarningChooseReplyKeyboardOptions(
@@ -49,7 +49,7 @@ public record WorkflowResponse(
                     PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(choices)
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType()));
+            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]));
 
     internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowState currentState) =>
         new(Output: new List<OutputDto>
@@ -59,5 +59,5 @@ public record WorkflowResponse(
                     Text = Ui("❗️Invalid input! Please enter a text message or a photo/file attachment only.")
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType()));
+            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]));
 }

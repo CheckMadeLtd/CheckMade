@@ -16,19 +16,7 @@ internal interface INewIssueWorkflow : IWorkflow;
 internal record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
         ILogicUtils LogicUtils,
-        INewIssueTradeSelection NewIssueTradeSelection,
-        INewIssueSphereConfirmation<SaniCleanTrade> NewIssueSphereConfirmationSaniCleanTrade,
-        INewIssueSphereConfirmation<SiteCleanTrade> NewIssueSphereConfirmationSiteCleanTrade,
-        INewIssueSphereSelection<SaniCleanTrade> NewIssueSphereSelectionSaniCleanTrade,
-        INewIssueSphereSelection<SiteCleanTrade> NewIssueSphereSelectionSiteCleanTrade,
-        INewIssueTypeSelection<SaniCleanTrade> NewIssueTypeSelectionSaniCleanTrade,
-        INewIssueTypeSelection<SiteCleanTrade> NewIssueTypeSelectionSiteCleanTrade,
-        INewIssueConsumablesSelection<SaniCleanTrade> NewIssueConsumablesSelectionSaniCleanTrade,
-        INewIssueConsumablesSelection<SiteCleanTrade> NewIssueConsumablesSelectionSiteCleanTrade,
-        INewIssueFacilitySelection<SaniCleanTrade> NewIssueFacilitySelectionSaniCleanTrade,
-        INewIssueFacilitySelection<SiteCleanTrade> NewIssueFacilitySelectionSiteCleanTrade,
-        INewIssueEvidenceEntry<SaniCleanTrade> NewIssueEvidenceEntrySaniCleanTrade,
-        INewIssueEvidenceEntry<SiteCleanTrade> NewIssueEvidenceEntrySiteCleanTrade)
+        IStateMediator Mediator)
     : INewIssueWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
@@ -52,125 +40,14 @@ internal record NewIssueWorkflow(
         if (lastInput is null)
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
-        var currentStateName = 
-            await LogicUtils.GetPreviousStateNameAsync(currentInput, -1);
+        var currentStateType = 
+            await LogicUtils.GetPreviousStateTypeAsync(
+                currentInput, 
+                ILogicUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
 
-        ITrade trade;
+        var currentState = Mediator.Next(currentStateType); 
         
-        switch (currentStateName)
-        {
-            case nameof(NewIssueTradeSelection):
-                
-                return await NewIssueTradeSelection
-                    .GetWorkflowResponseAsync(currentInput);
-            
-            case nameof(NewIssueSphereConfirmation<ITrade>):
-                
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-                
-                return trade switch
-                {
-                    SaniCleanTrade => 
-                        await NewIssueSphereConfirmationSaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    SiteCleanTrade => 
-                        await NewIssueSphereConfirmationSiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-            
-            case nameof(NewIssueSphereSelection<ITrade>):
-                
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-
-                return trade switch
-                {
-                    SaniCleanTrade => 
-                        await NewIssueSphereSelectionSaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    SiteCleanTrade => 
-                        await NewIssueSphereSelectionSiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-            
-            case nameof(NewIssueTypeSelection<ITrade>):
-
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-                
-                return trade switch
-                {
-                    SaniCleanTrade => 
-                        await NewIssueTypeSelectionSaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    SiteCleanTrade => 
-                        await NewIssueTypeSelectionSiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-            
-            case nameof(NewIssueConsumablesSelection<ITrade>):
-
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-                
-                return trade switch
-                {
-                    SaniCleanTrade => 
-                        await NewIssueConsumablesSelectionSaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    SiteCleanTrade => 
-                        await NewIssueConsumablesSelectionSiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-            
-            case nameof(NewIssueFacilitySelection<ITrade>):
-
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-                
-                return trade switch
-                {
-                    SaniCleanTrade =>
-                        await NewIssueFacilitySelectionSaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    SiteCleanTrade =>
-                        await NewIssueFacilitySelectionSiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-
-            case nameof(NewIssueEvidenceEntry<ITrade>):
-
-                trade = GetCurrentTrade(currentRole, interactiveHistory);
-                
-                return trade switch
-                {
-                    SaniCleanTrade => 
-                        await NewIssueEvidenceEntrySaniCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-
-                    SiteCleanTrade => 
-                        await NewIssueEvidenceEntrySiteCleanTrade
-                            .GetWorkflowResponseAsync(currentInput),
-                    
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade.GetType()}'")
-                };
-            
-            default:
-                
-                throw new InvalidOperationException(
-                    $"Lack of handling of state '{currentStateName}' in '{nameof(NewIssueWorkflow)}'");
-        }
+        return await currentState.GetWorkflowResponseAsync(currentInput);        
     }
 
     private async Task<Result<WorkflowResponse>> NewIssueWorkflowInitAsync(
@@ -179,7 +56,8 @@ internal record NewIssueWorkflow(
     {
         if (!IsCurrentRoleTradeSpecific(currentRole))
         {
-            return await WorkflowResponse.CreateAsync(currentInput, NewIssueTradeSelection);
+            return await WorkflowResponse.CreateAsync(
+                currentInput, Mediator.Next(typeof(INewIssueTradeSelection)));
         }
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
@@ -199,17 +77,17 @@ internal record NewIssueWorkflow(
                 _ => trade switch
                 {
                     SaniCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, NewIssueSphereConfirmationSaniCleanTrade),
+                        currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
                     SiteCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, NewIssueSphereConfirmationSiteCleanTrade),
+                        currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
                     _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
                 },
                 () => trade switch
                 {
                     SaniCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, NewIssueSphereSelectionSaniCleanTrade),
+                        currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
                     SiteCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, NewIssueSphereSelectionSiteCleanTrade),
+                        currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
                     _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
                 });
         }
@@ -218,11 +96,11 @@ internal record NewIssueWorkflow(
         {
             SaniCleanTrade => 
                 await WorkflowResponse.CreateAsync(
-                    currentInput, NewIssueTypeSelectionSaniCleanTrade),
+                    currentInput, Mediator.Next(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
             
             SiteCleanTrade => 
                 await WorkflowResponse.CreateAsync(
-                    currentInput, NewIssueTypeSelectionSiteCleanTrade),
+                    currentInput, Mediator.Next(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")

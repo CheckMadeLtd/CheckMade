@@ -107,7 +107,7 @@ internal class InputProcessor(
         if (activeWorkflow.IsSome && newState.IsSome)
         {
             workflowInfo = new ResultantWorkflowInfo(
-                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType()),
+                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType().GetInterfaces()[0]),
                 newState.GetValueOrThrow());
         }
 

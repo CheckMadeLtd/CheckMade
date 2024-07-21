@@ -62,37 +62,37 @@ public record DomainGlossary : IDomainGlossary
         AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR", 
             UiNoTranslate(LogoutWorkflow.States.LogoutAborted.ToString()));
         
-        AddTerm(typeof(NewIssueWorkflow), "D6SORL", 
+        AddTerm(typeof(INewIssueWorkflow), "D6SORL", 
             UiNoTranslate(nameof(NewIssueWorkflow)));
-        AddTerm(typeof(NewIssueTradeSelection), "DA0ZMD", 
+        AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD", 
             UiNoTranslate(nameof(NewIssueTradeSelection)));
-        AddTerm(typeof(NewIssueSphereSelection<SaniCleanTrade>), "D8T63V",
+        AddTerm(typeof(INewIssueSphereSelection<SaniCleanTrade>), "D8T63V",
             UiNoTranslate(nameof(NewIssueSphereSelection<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueSphereSelection<SiteCleanTrade>), "DYRNZL",
+        AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL",
             UiNoTranslate(nameof(NewIssueSphereSelection<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueSphereConfirmation<SaniCleanTrade>), "D45JQ1",
+        AddTerm(typeof(INewIssueSphereConfirmation<SaniCleanTrade>), "D45JQ1",
             UiNoTranslate(nameof(NewIssueSphereConfirmation<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV",
+        AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV",
             UiNoTranslate(nameof(NewIssueSphereConfirmation<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueTypeSelection<SaniCleanTrade>), "DDQHWW",
+        AddTerm(typeof(INewIssueTypeSelection<SaniCleanTrade>), "DDQHWW",
             UiNoTranslate(nameof(NewIssueTypeSelection<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueTypeSelection<SiteCleanTrade>), "D88CK2",
+        AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2",
             UiNoTranslate(nameof(NewIssueTypeSelection<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV",
+        AddTerm(typeof(INewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV",
             UiNoTranslate(nameof(NewIssueConsumablesSelection<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueConsumablesSelection<SiteCleanTrade>), "DT3M2E",
+        AddTerm(typeof(INewIssueConsumablesSelection<SiteCleanTrade>), "DT3M2E",
             UiNoTranslate(nameof(NewIssueConsumablesSelection<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z",
+        AddTerm(typeof(INewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z",
             UiNoTranslate(nameof(NewIssueEvidenceEntry<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44",
+        AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44",
             UiNoTranslate(nameof(NewIssueEvidenceEntry<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L",
+        AddTerm(typeof(INewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L",
             UiNoTranslate(nameof(NewIssueFacilitySelection<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7",
+        AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7",
             UiNoTranslate(nameof(NewIssueFacilitySelection<SiteCleanTrade>)));
-        AddTerm(typeof(NewIssueReview<SaniCleanTrade>), "DAH8TX",
+        AddTerm(typeof(INewIssueReview<SaniCleanTrade>), "DAH8TX",
             UiNoTranslate(nameof(NewIssueReview<SaniCleanTrade>)));
-        AddTerm(typeof(NewIssueReview<SiteCleanTrade>), "DWNXLY",
+        AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY",
             UiNoTranslate(nameof(NewIssueReview<SiteCleanTrade>)));
         
         #endregion

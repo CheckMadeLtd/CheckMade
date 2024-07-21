@@ -92,26 +92,12 @@ internal record NewIssueEvidenceEntry<T>(
                             currentInput, Mediator.Next(typeof(INewIssueReview<T>))),
             
                     (long)ControlPrompts.Back => 
-                        await LogicUtils.GetPreviousStateNameAsync(
-                                currentInput, 
-                                ILogicUtils.IndexFromCurrentWhenNavigatingToPreviousWorkflowState) switch
-                            {
-                                nameof(NewIssueTypeSelection<ITrade>) =>
-                                    await WorkflowResponse.CreateAsync(
-                                        currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
-                                        true),
-                                
-                                nameof(NewIssueFacilitySelection<ITrade>) =>
-                                    await WorkflowResponse.CreateAsync(
-                                        currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)), 
-                                        true),
-                                
-                                _ => throw new InvalidOperationException(
-                                    $"Unhandled {nameof(LogicUtils.GetPreviousStateNameAsync)}: " +
-                                    $"'{await LogicUtils.GetPreviousStateNameAsync(
-                                        currentInput,
-                                        ILogicUtils.IndexFromCurrentWhenNavigatingToPreviousWorkflowState)}'")
-                            },
+                        await WorkflowResponse.CreateAsync(
+                            currentInput, Mediator.Next(
+                                await LogicUtils.GetPreviousStateTypeAsync(
+                                    currentInput, 
+                                    ILogicUtils.DistanceFromCurrentWhenNavigatingToPreviousWorkflowState)), 
+                            true),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
