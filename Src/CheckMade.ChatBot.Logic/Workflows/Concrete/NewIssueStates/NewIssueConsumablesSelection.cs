@@ -51,7 +51,8 @@ internal record NewIssueConsumablesSelection<T>(
         return selectedControlPrompt switch
         {
             (long)ControlPrompts.Save =>
-                await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
+                await WorkflowResponse.CreateAsync(
+                    new NewIssueReview<T>(Glossary, LogicUtils, currentInput)),
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateAsync(

@@ -86,7 +86,8 @@ internal record NewIssueEvidenceEntry<T>(
                 return selectedControlPrompt switch
                 {
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
-                        await WorkflowResponse.CreateAsync(new NewIssueReview<T>(Glossary)),
+                        await WorkflowResponse.CreateAsync(new NewIssueReview<T>(
+                            Glossary, LogicUtils, currentInput)),
             
                     (long)ControlPrompts.Back => 
                         await LogicUtils.GetPreviousStateNameAsync(
