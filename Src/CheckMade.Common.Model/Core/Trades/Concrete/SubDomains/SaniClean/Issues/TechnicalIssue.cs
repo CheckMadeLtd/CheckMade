@@ -9,7 +9,8 @@ public record TechnicalIssue(
         DateTime CreationDate,
         ISphereOfAction Sphere,
         Option<ITradeFacility<SaniCleanTrade>> Facility,
-        Geo Location, IssueEvidence Evidence,
+        Option<Geo> PreciseLocation, 
+        IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status = IssueStatus.Reported) 
