@@ -6,6 +6,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
@@ -54,7 +55,7 @@ internal record NewIssueWorkflow(
         TlgInput currentInput, 
         IRoleInfo currentRole)
     {
-        if (!IsCurrentRoleTradeSpecific(currentRole))
+        if (!currentRole.IsCurrentRoleTradeSpecific())
         {
             return await WorkflowResponse.CreateAsync(
                 currentInput, Mediator.Next(typeof(INewIssueTradeSelection)));
@@ -107,32 +108,6 @@ internal record NewIssueWorkflow(
         };
     }
 
-    private static ITrade GetCurrentTrade(
-        IRoleInfo currentRole, 
-        IReadOnlyCollection<TlgInput> interactiveHistory)
-    {
-        return IsCurrentRoleTradeSpecific(currentRole)
-            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
-            : GetLastUserProvidedTrade(interactiveHistory);
-    }
-        
-    private static ITrade GetLastUserProvidedTrade(IReadOnlyCollection<TlgInput> interactiveHistory)
-    {
-        var tradeType = interactiveHistory
-            .Last(i =>
-                i.Details.DomainTerm.IsSome &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITrade)))
-            .Details.DomainTerm.GetValueOrThrow().TypeValue!;
-
-        return (ITrade)Activator.CreateInstance(tradeType)!;
-    }
-    
-    private static bool IsCurrentRoleTradeSpecific(IRoleInfo currentRole) =>
-        currentRole
-            .RoleType
-            .GetTradeInstance().IsSome;
-
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
         TlgInput currentInput, ILogicUtils logicUtils)
     {
@@ -184,17 +159,28 @@ internal record NewIssueWorkflow(
                 .Where(soa => soa.GetTradeType() == trade.GetType())
                 .ToImmutableReadOnlyCollection();
     }
-
+    
     internal static IIssue ConstructIssue(IReadOnlyCollection<TlgInput> inputs)
     {
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
-        var trade = GetCurrentTrade(role, inputs);
+        var trade = role.GetCurrentTrade(inputs);
         
-        // var issueType = 
-        //     inputs
-        //         .LastOrDefault()
+        var lastSelectedIssueType =
+            inputs
+                .Last(i => 
+                    i.Details.DomainTerm.IsSome &&
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
+                .Details.DomainTerm.GetValueOrThrow()
+                .TypeValue!;
+
+        var issue = lastSelectedIssueType.Name switch
+        {
+            nameof(CleanlinessIssue) =>
+                new CleanlinessIssue()
+        };
         
         // return new CleanlinessIssue();
         throw new NotImplementedException();
-    } 
+    }
 }

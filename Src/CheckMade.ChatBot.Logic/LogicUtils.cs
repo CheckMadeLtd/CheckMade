@@ -2,6 +2,8 @@ using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic;
 
@@ -121,4 +123,30 @@ internal static class LogicUtilsExtensions
         inputs.LastOrDefault(i => 
             i.Details.BotCommandEnumCode.IsSome) 
         ?? Option<TlgInput>.None();
+    
+    public static ITrade GetCurrentTrade(
+        this IRoleInfo currentRole, 
+        IReadOnlyCollection<TlgInput> interactiveHistory)
+    {
+        return currentRole.IsCurrentRoleTradeSpecific()
+            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
+            : interactiveHistory.GetLastUserProvidedTrade();
+    }
+    
+    public static bool IsCurrentRoleTradeSpecific(this IRoleInfo currentRole) =>
+        currentRole
+            .RoleType
+            .GetTradeInstance().IsSome;
+
+    private static ITrade GetLastUserProvidedTrade(this IReadOnlyCollection<TlgInput> interactiveHistory)
+    {
+        var tradeType = interactiveHistory
+            .Last(i =>
+                i.Details.DomainTerm.IsSome &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITrade)))
+            .Details.DomainTerm.GetValueOrThrow().TypeValue!;
+
+        return (ITrade)Activator.CreateInstance(tradeType)!;
+    }
 }

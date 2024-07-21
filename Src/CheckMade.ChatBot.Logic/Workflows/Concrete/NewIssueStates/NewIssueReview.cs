@@ -19,15 +19,13 @@ internal record NewIssueReview<T>(
         var issue = NewIssueWorkflow.ConstructIssue(
             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
-        // return Task.FromResult<IReadOnlyCollection<OutputDto>>(
-        //     new List<OutputDto>
-        //     {
-        //         new()
-        //         {
-        //             Text = issue.GetSummary()
-        //         }
-        //     });
-        throw new NotImplementedException();
+        return new List<OutputDto>
+        {
+            new()
+            {
+                Text = issue.GetSummary()
+            }
+        };
     }
 
     public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
