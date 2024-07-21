@@ -7,12 +7,12 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueEvidenceEntry : IWorkflowState; 
+internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade; 
 
 internal record NewIssueEvidenceEntry<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils) 
-    : INewIssueEvidenceEntry where T : ITrade
+    : INewIssueEvidenceEntry<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {

@@ -8,14 +8,14 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueSphereConfirmation : IWorkflowState;
+internal interface INewIssueSphereConfirmation<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueSphereConfirmation<T>(
         ISphereOfAction Sphere,
         ILiveEventsRepository LiveEventRepo,
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils) 
-    : INewIssueSphereConfirmation where T : ITrade
+    : INewIssueSphereConfirmation<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {

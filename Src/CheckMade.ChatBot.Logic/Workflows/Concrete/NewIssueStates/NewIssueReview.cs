@@ -5,13 +5,13 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueReview : IWorkflowState;
+internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueReview<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
         TlgInput CurrentInput) 
-    : INewIssueReview where T : ITrade
+    : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {

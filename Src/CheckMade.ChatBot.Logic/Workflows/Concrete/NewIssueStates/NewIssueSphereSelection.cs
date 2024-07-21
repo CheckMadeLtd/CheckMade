@@ -7,9 +7,9 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueSphereSelection : IWorkflowState;
+internal interface INewIssueSphereSelection<T> : IWorkflowState where T : ITrade;
 
-internal record NewIssueSphereSelection<T> : INewIssueSphereSelection where T : ITrade
+internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T : ITrade
 {
     private readonly ILiveEventInfo _liveEventInfo;
     private readonly ILiveEventsRepository _liveEventsRepo;

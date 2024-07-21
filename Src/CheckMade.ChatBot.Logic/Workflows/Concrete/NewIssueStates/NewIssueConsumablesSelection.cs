@@ -7,13 +7,13 @@ using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilitie
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueConsumablesSelection : IWorkflowState;
+internal interface INewIssueConsumablesSelection<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
         IReadOnlyCollection<TlgInput> InteractiveHistory,
         ILogicUtils LogicUtils) 
-    : INewIssueConsumablesSelection where T : ITrade
+    : INewIssueConsumablesSelection<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {

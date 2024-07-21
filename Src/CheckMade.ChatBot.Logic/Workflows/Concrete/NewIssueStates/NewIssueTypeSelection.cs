@@ -6,12 +6,12 @@ using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueTypeSelection : IWorkflowState; 
+internal interface INewIssueTypeSelection<T> : IWorkflowState where T : ITrade; 
 
 internal record NewIssueTypeSelection<T>(
-    IDomainGlossary Glossary,
-    ILogicUtils LogicUtils) : INewIssueTypeSelection 
-    where T : ITrade
+        IDomainGlossary Glossary,
+        ILogicUtils LogicUtils) 
+    : INewIssueTypeSelection<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
     {
