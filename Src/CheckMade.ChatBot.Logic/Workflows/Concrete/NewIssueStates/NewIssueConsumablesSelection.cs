@@ -59,7 +59,7 @@ internal record NewIssueConsumablesSelection<T>(
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
+                    currentInput, await Mediator.PreviousAsync(currentInput), 
                     true),
             
             _ => throw new InvalidOperationException(

@@ -11,7 +11,6 @@ internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueEvidenceEntry<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils,
         IStateMediator Mediator) 
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
@@ -43,7 +42,7 @@ internal record NewIssueEvidenceEntry<T>(
                         Text = Ui("✅📝 Description received. You can send more text, add photos/documents " + 
                                   "or continue to the next step."),
                         ControlPromptsSelection = ControlPrompts.Continue
-                    }, Glossary.GetId(GetType()));
+                    }, Glossary.GetId(GetType().GetInterfaces()[0]));
             
             case TlgInputType.AttachmentMessage:
 
@@ -58,7 +57,7 @@ internal record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType())),
+                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
 
                     TlgAttachmentType.Document => new WorkflowResponse(
                         new OutputDto
@@ -66,7 +65,7 @@ internal record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType())),
+                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
 
                     TlgAttachmentType.Voice => new WorkflowResponse(
                         new OutputDto
@@ -74,7 +73,7 @@ internal record NewIssueEvidenceEntry<T>(
                             Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
                                       "add a description or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType())),
+                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.AttachmentType)}: '{currentAttachmentType}'")
@@ -93,10 +92,7 @@ internal record NewIssueEvidenceEntry<T>(
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateAsync(
-                            currentInput, Mediator.Next(
-                                await LogicUtils.GetPreviousStateTypeAsync(
-                                    currentInput, 
-                                    ILogicUtils.DistanceFromCurrentWhenNavigatingToPreviousWorkflowState)), 
+                            currentInput, await Mediator.PreviousAsync(currentInput), 
                             true),
                     
                     _ => throw new InvalidOperationException(
