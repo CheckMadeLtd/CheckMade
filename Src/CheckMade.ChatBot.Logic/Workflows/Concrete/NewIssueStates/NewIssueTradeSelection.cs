@@ -42,23 +42,6 @@ internal record NewIssueTradeSelection(
             (ITrade)Activator.CreateInstance(
                 currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!)!; 
         
-        if (!selectedTrade.DividesLiveEventIntoSpheresOfAction)
-        {
-            return selectedTrade switch
-            {
-                SaniCleanTrade => 
-                    await WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueTypeSelection<SaniCleanTrade>))),
-                
-                SiteCleanTrade => 
-                    await WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueTypeSelection<SiteCleanTrade>))),
-                
-                _ => throw new InvalidOperationException(
-                    $"Unhandled type of {nameof(selectedTrade)}: '{selectedTrade.GetType()}'")
-            };
-        }
-        
         var lastKnownLocation = 
             await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
 

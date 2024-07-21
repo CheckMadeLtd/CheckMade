@@ -4,6 +4,5 @@ public class SiteCleanTrade : ITrade
 {
     public const int SphereNearnessThresholdInMeters = 100;
     
-    public bool DividesLiveEventIntoSpheresOfAction => true;
     public UiString GetSphereOfActionLabel => Ui("zone");
 }

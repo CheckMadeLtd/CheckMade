@@ -63,49 +63,32 @@ internal record NewIssueWorkflow(
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
         
-        if (trade.DividesLiveEventIntoSpheresOfAction)
-        {
-            var liveEvent = (await LiveEventsRepo.GetAsync(
-                currentInput.LiveEventContext.GetValueOrThrow()))!;
-            
-            var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
+        var liveEvent = (await LiveEventsRepo.GetAsync(
+            currentInput.LiveEventContext.GetValueOrThrow()))!;
+        
+        var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
 
-            var sphere = lastKnownLocation.IsSome
-                ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
-                : Option<ISphereOfAction>.None();
+        var sphere = lastKnownLocation.IsSome
+            ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
+            : Option<ISphereOfAction>.None();
 
-            return await sphere.Match(
-                _ => trade switch
-                {
-                    SaniCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
-                    SiteCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
-                },
-                () => trade switch
-                {
-                    SaniCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
-                    SiteCleanTrade => WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
-                    _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
-                });
-        }
-
-        return trade switch
-        {
-            SaniCleanTrade => 
-                await WorkflowResponse.CreateAsync(
-                    currentInput, Mediator.Next(typeof(NewIssueTypeSelection<SaniCleanTrade>))),
-            
-            SiteCleanTrade => 
-                await WorkflowResponse.CreateAsync(
-                    currentInput, Mediator.Next(typeof(NewIssueTypeSelection<SiteCleanTrade>))),
-            
-            _ => throw new InvalidOperationException(
-                $"Unhandled type of {nameof(trade)}: '{trade.GetType()}'")
-        };
+        return await sphere.Match(
+            _ => trade switch
+            {
+                SaniCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
+                SiteCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
+                _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
+            },
+            () => trade switch
+            {
+                SaniCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
+                SiteCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
+                _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
+            });
     }
 
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
