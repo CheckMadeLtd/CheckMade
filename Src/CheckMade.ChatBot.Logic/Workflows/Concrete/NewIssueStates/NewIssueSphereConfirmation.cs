@@ -11,46 +11,61 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 internal interface INewIssueSphereConfirmation<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueSphereConfirmation<T>(
-        ISphereOfAction Sphere,
-        ILiveEventsRepository LiveEventRepo,
+        ILiveEventsRepository LiveEventsRepo,    
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils) 
+        ILogicUtils LogicUtils,
+        INewIssueTypeSelection<T> NewIssueTypeSelection,
+        INewIssueSphereSelection<T> NewIssueSphereSelection) 
     : INewIssueSphereConfirmation<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
+        var liveEvent = (await LiveEventsRepo.GetAsync(
+            currentInput.LiveEventContext.GetValueOrThrow()))!;
+        
+        var lastKnownLocation = 
+            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
+
+        var currentTrade = (ITrade)Activator.CreateInstance(typeof(T))!;
+        
+        var sphere = lastKnownLocation.IsSome
+            ? NewIssueWorkflow.SphereNearCurrentUser(
+                liveEvent, lastKnownLocation.GetValueOrThrow(), 
+                currentTrade)
+            : Option<ISphereOfAction>.None();
+
+        if (sphere.IsNone)
+        {
+            // ToDo: break? Handle case where user has moved away since confirming Sphere in last step! 
+            // It's an edge case. I think should lead back to SphereUnknown state.
+            // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
+        }
+        
         return 
-            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto> 
+            new List<OutputDto> 
             {
                 new()
                 {
-                    Text = Ui("Please confirm: are you at '{0}'?", Sphere.Name),
+                    Text = Ui("Please confirm: are you at '{0}'?", sphere.GetValueOrThrow().Name),
                     ControlPromptsSelection = ControlPrompts.YesNo,
                     EditPreviousOutputMessageId = editMessageId
                 }
-            });
+            };
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
-
-        var liveEventInfo = 
-            currentInput.LiveEventContext.GetValueOrThrow();
         
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
         {
             (int)ControlPrompts.Yes => 
-                await WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueTypeSelection<T>(Glossary, LogicUtils)),
+                await WorkflowResponse.CreateAsync(currentInput, NewIssueTypeSelection),
             
             (int)ControlPrompts.No => 
-                await WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueSphereSelection<T>(liveEventInfo, LiveEventRepo, Glossary, LogicUtils)),
+                await WorkflowResponse.CreateAsync(currentInput, NewIssueSphereSelection),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
         };

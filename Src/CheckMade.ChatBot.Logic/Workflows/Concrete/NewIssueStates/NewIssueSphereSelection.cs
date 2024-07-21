@@ -11,24 +11,21 @@ internal interface INewIssueSphereSelection<T> : IWorkflowState where T : ITrade
 
 internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T : ITrade
 {
-    private readonly ILiveEventInfo _liveEventInfo;
     private readonly ILiveEventsRepository _liveEventsRepo;
-    private readonly ILogicUtils _logicUtils;
+    private readonly INewIssueTypeSelection<T> _newIssueTypeSelection;
     private readonly ITrade _trade;
     
     private IReadOnlyCollection<string>? _tradeSpecificSphereNamesCache;
     
     public NewIssueSphereSelection(
-        ILiveEventInfo liveEventInfo,
         ILiveEventsRepository liveEventsRepo,
         IDomainGlossary glossary,
-        ILogicUtils logicUtils)
+        INewIssueTypeSelection<T> newIssueTypeSelection)
     {
-        _liveEventInfo = liveEventInfo;
-        Glossary = glossary;
-        _logicUtils = logicUtils;
         _liveEventsRepo = liveEventsRepo;
-
+        Glossary = glossary;
+        _newIssueTypeSelection = newIssueTypeSelection;
+        
         _trade = (ITrade)Activator.CreateInstance(typeof(T))!;
     }
     
@@ -37,6 +34,8 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
+        var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
+        
         return new List<OutputDto>
         {
             new()
@@ -44,30 +43,31 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
                 Text = UiConcatenate(
                     Ui("Please select a "), _trade.GetSphereOfActionLabel, UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
-                    await GetTradeSpecificSphereNamesAsync(_trade))
+                    await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo))
             }
         };
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
+        var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
+        
         if (currentInput.InputType is not TlgInputType.TextMessage ||
-            !(await GetTradeSpecificSphereNamesAsync(_trade))
+            !(await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo))
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
             return WorkflowResponse.CreateWarningChooseReplyKeyboardOptions(
-                this, await GetTradeSpecificSphereNamesAsync(_trade));
+                this, await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo));
         }
 
-        return await WorkflowResponse.CreateAsync(
-            currentInput,
-            new NewIssueTypeSelection<T>(Glossary, _logicUtils));
+        return await WorkflowResponse.CreateAsync(currentInput, _newIssueTypeSelection);
     }
 
-    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(ITrade trade)
+    private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(
+        ITrade trade, ILiveEventInfo liveEventInfo)
     {
         return _tradeSpecificSphereNamesCache ??= 
-            (await _liveEventsRepo.GetAsync(_liveEventInfo))!
+            (await _liveEventsRepo.GetAsync(liveEventInfo))!
             .DivIntoSpheres
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .Select(soa => soa.Name)

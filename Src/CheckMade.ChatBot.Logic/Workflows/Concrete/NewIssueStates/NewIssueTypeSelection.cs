@@ -10,7 +10,9 @@ internal interface INewIssueTypeSelection<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueTypeSelection<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils) 
+        INewIssueFacilitySelection<T> NewIssueFacilitySelection,
+        INewIssueConsumablesSelection<T> NewIssueConsumablesSelection,
+        INewIssueEvidenceEntry<T> NewIssueEvidenceEntry) 
     : INewIssueTypeSelection<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -41,25 +43,15 @@ internal record NewIssueTypeSelection<T>(
         {
             nameof(CleanlinessIssue) => 
                     await WorkflowResponse.CreateAsync(
-                        currentInput,
-                        new NewIssueFacilitySelection<T>(Glossary, LogicUtils),
-                        true),
+                        currentInput, NewIssueFacilitySelection, true),
             
             nameof(ConsumablesIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueConsumablesSelection<T>(
-                        Glossary,
-                        await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
-                        LogicUtils),
-                    true),
+                    currentInput, NewIssueConsumablesSelection, true),
             
             nameof(TechnicalIssue) or nameof(StaffIssue) => 
                 await WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueEvidenceEntry<T>(
-                        Glossary, LogicUtils), 
-                    true),
+                    currentInput, NewIssueEvidenceEntry, true),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")

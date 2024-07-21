@@ -11,7 +11,9 @@ internal interface INewIssueFacilitySelection<T> : IWorkflowState where T : ITra
 
 internal record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils) 
+        INewIssueConsumablesSelection<T> NewIssueConsumablesSelection,
+        INewIssueEvidenceEntry<T> NewIssueEvidenceEntry,
+        INewIssueTypeSelection<T> NewIssueTypeSelection) 
     : INewIssueFacilitySelection<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -45,17 +47,10 @@ internal record NewIssueFacilitySelection<T>(
             {
                 nameof(Consumables) =>
                     await WorkflowResponse.CreateAsync(
-                        currentInput,
-                        new NewIssueConsumablesSelection<T>(
-                            Glossary,
-                            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
-                            LogicUtils),
-                        true),
+                        currentInput, NewIssueConsumablesSelection, true),
 
                 _ => await WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueEvidenceEntry<T>(Glossary, LogicUtils),
-                    true)
+                    currentInput, NewIssueEvidenceEntry, true)
             };
         }
 
@@ -64,9 +59,7 @@ internal record NewIssueFacilitySelection<T>(
         return selectedControlPrompt switch
         {
             (long)ControlPrompts.Back => await WorkflowResponse.CreateAsync(
-                currentInput,
-                new NewIssueTypeSelection<T>(Glossary, LogicUtils),
-                true),
+                currentInput, NewIssueTypeSelection, true),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")

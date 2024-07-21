@@ -13,7 +13,13 @@ internal interface INewIssueTradeSelection : IWorkflowState;
 internal record NewIssueTradeSelection(
         IDomainGlossary Glossary,
         ILiveEventsRepository LiveEventRepo,
-        ILogicUtils LogicUtils) 
+        ILogicUtils LogicUtils,
+        INewIssueTypeSelection<SaniCleanTrade> NewIssueTypeSelectionSaniCleanTrade,
+        INewIssueTypeSelection<SiteCleanTrade> NewIssueTypeSelectionSiteCleanTrade,
+        INewIssueSphereConfirmation<SaniCleanTrade> NewIssueSphereConfirmationSaniCleanTrade,
+        INewIssueSphereConfirmation<SiteCleanTrade> NewIssueSphereConfirmationSiteCleanTrade,
+        INewIssueSphereSelection<SaniCleanTrade> NewIssueSphereSelectionSaniCleanTrade,
+        INewIssueSphereSelection<SiteCleanTrade> NewIssueSphereSelectionSiteCleanTrade) 
     : INewIssueTradeSelection
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -47,13 +53,11 @@ internal record NewIssueTradeSelection(
             {
                 SaniCleanTrade => 
                     await WorkflowResponse.CreateAsync(
-                        currentInput,
-                        new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
+                        currentInput, NewIssueTypeSelectionSaniCleanTrade),
                 
                 SiteCleanTrade => 
                     await WorkflowResponse.CreateAsync(
-                        currentInput,
-                        new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
+                        currentInput, NewIssueTypeSelectionSiteCleanTrade),
                 
                 _ => throw new InvalidOperationException(
                     $"Unhandled type of {nameof(selectedTrade)}: '{selectedTrade.GetType()}'")
@@ -73,17 +77,13 @@ internal record NewIssueTradeSelection(
             : Option<ISphereOfAction>.None();
         
         return await sphere.Match(
-            soa => selectedTrade switch 
+            _ => selectedTrade switch 
             { 
                 SaniCleanTrade => WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueSphereConfirmation<SaniCleanTrade>(
-                        soa, LiveEventRepo, Glossary, LogicUtils)),
+                    currentInput, NewIssueSphereConfirmationSaniCleanTrade),
                 
                 SiteCleanTrade => WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueSphereConfirmation<SiteCleanTrade>(
-                        soa, LiveEventRepo, Glossary, LogicUtils)),
+                    currentInput, NewIssueSphereConfirmationSiteCleanTrade),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +
                                                          $"'{selectedTrade.GetType()}'")
@@ -91,14 +91,10 @@ internal record NewIssueTradeSelection(
             () => selectedTrade switch
             {
                 SaniCleanTrade => WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueSphereSelection<SaniCleanTrade>(
-                        liveEvent, LiveEventRepo, Glossary, LogicUtils)),
+                    currentInput, NewIssueSphereSelectionSaniCleanTrade),
                 
                 SiteCleanTrade => WorkflowResponse.CreateAsync(
-                    currentInput,
-                    new NewIssueSphereSelection<SiteCleanTrade>(
-                        liveEvent, LiveEventRepo, Glossary, LogicUtils)),
+                    currentInput, NewIssueSphereSelectionSiteCleanTrade),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +
                                                          $"'{selectedTrade.GetType()}'")

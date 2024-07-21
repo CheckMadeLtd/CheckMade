@@ -9,15 +9,14 @@ internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueReview<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils,
-        TlgInput CurrentInput) 
+        ILogicUtils LogicUtils) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
         var issue = NewIssueWorkflow.ConstructIssue(
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(CurrentInput));
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
         // return Task.FromResult<IReadOnlyCollection<OutputDto>>(
         //     new List<OutputDto>
