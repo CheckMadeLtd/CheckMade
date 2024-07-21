@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
@@ -20,8 +21,11 @@ public record WorkflowResponse(
     {
     }
 
-    internal static async Task<WorkflowResponse> CreateAsync(IWorkflowState newState, int? editMessageId = null) =>
-        new(Output: await newState.GetPromptAsync(editMessageId ?? Option<int>.None()),
+    internal static async Task<WorkflowResponse> CreateAsync(
+        TlgInput currentInput, IWorkflowState newState, bool editPreviousOutput = false) =>
+        new(Output: await newState.GetPromptAsync(
+                currentInput, 
+                editPreviousOutput == false ? Option<int>.None() : currentInput.Details.TlgMessageId),
             NewStateId: newState.Glossary.GetId(newState.GetType()));
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>

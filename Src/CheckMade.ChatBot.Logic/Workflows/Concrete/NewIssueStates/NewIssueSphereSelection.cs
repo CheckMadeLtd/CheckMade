@@ -34,7 +34,8 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
     
     public IDomainGlossary Glossary { get; }
     
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
         return new List<OutputDto>
         {
@@ -59,6 +60,7 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
         }
 
         return await WorkflowResponse.CreateAsync(
+            currentInput,
             new NewIssueTypeSelection<T>(Glossary, _logicUtils));
     }
 

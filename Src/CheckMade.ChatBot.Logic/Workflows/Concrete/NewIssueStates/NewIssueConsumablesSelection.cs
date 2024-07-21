@@ -11,29 +11,31 @@ internal interface INewIssueConsumablesSelection<T> : IWorkflowState where T : I
 
 internal record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
-        IReadOnlyCollection<TlgInput> InteractiveHistory,
         ILogicUtils LogicUtils) 
     : INewIssueConsumablesSelection<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
-            new List<OutputDto>
+        var interactiveHistory =
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+        
+        return new List<OutputDto> 
+        {
+            new()
             {
-                new()
-                {
-                    Text = Ui("Choose affected consumables:"),
-                    DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(Consumables.Item))
-                            .Select(dt => 
-                                dt.IsToggleOn(InteractiveHistory) 
-                                    ? dt with { Toggle = true } 
-                                    : dt with { Toggle = false })
-                            .ToImmutableReadOnlyCollection()),
-                    ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
-                    EditPreviousOutputMessageId = editMessageId
-                }
-            });
+                Text = Ui("Choose affected consumables:"),
+                DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
+                    Glossary.GetAll(typeof(Consumables.Item))
+                        .Select(dt => 
+                            dt.IsToggleOn(interactiveHistory) 
+                                ? dt with { Toggle = true } 
+                                : dt with { Toggle = false })
+                        .ToImmutableReadOnlyCollection()),
+                ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
+                EditPreviousOutputMessageId = editMessageId
+            }
+        };
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -43,7 +45,7 @@ internal record NewIssueConsumablesSelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
             return await WorkflowResponse.CreateAsync(
-                this, currentInput.Details.TlgMessageId);
+                currentInput, this, true);
 
         var selectedControlPrompt = 
             currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
@@ -52,12 +54,14 @@ internal record NewIssueConsumablesSelection<T>(
         {
             (long)ControlPrompts.Save =>
                 await WorkflowResponse.CreateAsync(
+                    currentInput, 
                     new NewIssueReview<T>(Glossary, LogicUtils, currentInput)),
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateAsync(
+                    currentInput, 
                     new NewIssueTypeSelection<T>(Glossary, LogicUtils),
-                    currentInput.Details.TlgMessageId),
+                    true),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")

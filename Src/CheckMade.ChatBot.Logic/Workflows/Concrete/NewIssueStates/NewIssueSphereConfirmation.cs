@@ -17,7 +17,8 @@ internal record NewIssueSphereConfirmation<T>(
         ILogicUtils LogicUtils) 
     : INewIssueSphereConfirmation<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto> 
@@ -43,12 +44,13 @@ internal record NewIssueSphereConfirmation<T>(
         {
             (int)ControlPrompts.Yes => 
                 await WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueTypeSelection<T>(Glossary, LogicUtils)),
             
             (int)ControlPrompts.No => 
                 await WorkflowResponse.CreateAsync(
-                    new NewIssueSphereSelection<T>(
-                        liveEventInfo, LiveEventRepo, Glossary, LogicUtils)),
+                    currentInput,
+                    new NewIssueSphereSelection<T>(liveEventInfo, LiveEventRepo, Glossary, LogicUtils)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
         };

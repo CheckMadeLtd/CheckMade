@@ -13,7 +13,8 @@ internal record NewIssueTypeSelection<T>(
         ILogicUtils LogicUtils) 
     : INewIssueTypeSelection<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -40,21 +41,25 @@ internal record NewIssueTypeSelection<T>(
         {
             nameof(CleanlinessIssue) => 
                     await WorkflowResponse.CreateAsync(
+                        currentInput,
                         new NewIssueFacilitySelection<T>(Glossary, LogicUtils),
-                        currentInput.Details.TlgMessageId),
+                        true),
             
             nameof(ConsumablesIssue) => 
                 await WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueConsumablesSelection<T>(
                         Glossary,
                         await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
                         LogicUtils),
-                    currentInput.Details.TlgMessageId),
+                    true),
             
             nameof(TechnicalIssue) or nameof(StaffIssue) => 
                 await WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueEvidenceEntry<T>(
-                        Glossary, LogicUtils), currentInput.Details.TlgMessageId),
+                        Glossary, LogicUtils), 
+                    true),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")

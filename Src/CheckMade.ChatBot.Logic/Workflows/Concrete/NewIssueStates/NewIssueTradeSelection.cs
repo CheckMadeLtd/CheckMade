@@ -16,7 +16,8 @@ internal record NewIssueTradeSelection(
         ILogicUtils LogicUtils) 
     : INewIssueTradeSelection
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -46,10 +47,12 @@ internal record NewIssueTradeSelection(
             {
                 SaniCleanTrade => 
                     await WorkflowResponse.CreateAsync(
+                        currentInput,
                         new NewIssueTypeSelection<SaniCleanTrade>(Glossary, LogicUtils)),
                 
                 SiteCleanTrade => 
                     await WorkflowResponse.CreateAsync(
+                        currentInput,
                         new NewIssueTypeSelection<SiteCleanTrade>(Glossary, LogicUtils)),
                 
                 _ => throw new InvalidOperationException(
@@ -73,10 +76,12 @@ internal record NewIssueTradeSelection(
             soa => selectedTrade switch 
             { 
                 SaniCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueSphereConfirmation<SaniCleanTrade>(
                         soa, LiveEventRepo, Glossary, LogicUtils)),
                 
                 SiteCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueSphereConfirmation<SiteCleanTrade>(
                         soa, LiveEventRepo, Glossary, LogicUtils)),
                 
@@ -86,10 +91,12 @@ internal record NewIssueTradeSelection(
             () => selectedTrade switch
             {
                 SaniCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueSphereSelection<SaniCleanTrade>(
                         liveEvent, LiveEventRepo, Glossary, LogicUtils)),
                 
                 SiteCleanTrade => WorkflowResponse.CreateAsync(
+                    currentInput,
                     new NewIssueSphereSelection<SiteCleanTrade>(
                         liveEvent, LiveEventRepo, Glossary, LogicUtils)),
                 

@@ -14,7 +14,8 @@ internal record NewIssueEvidenceEntry<T>(
         ILogicUtils LogicUtils) 
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(Option<int> editMessageId)
+    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, Option<int> editMessageId)
     {
         return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             new List<OutputDto>
@@ -86,8 +87,9 @@ internal record NewIssueEvidenceEntry<T>(
                 return selectedControlPrompt switch
                 {
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
-                        await WorkflowResponse.CreateAsync(new NewIssueReview<T>(
-                            Glossary, LogicUtils, currentInput)),
+                        await WorkflowResponse.CreateAsync(
+                            currentInput, 
+                            new NewIssueReview<T>(Glossary, LogicUtils, currentInput)),
             
                     (long)ControlPrompts.Back => 
                         await LogicUtils.GetPreviousStateNameAsync(
@@ -96,13 +98,15 @@ internal record NewIssueEvidenceEntry<T>(
                             {
                                 nameof(NewIssueTypeSelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
+                                        currentInput, 
                                         new NewIssueTypeSelection<T>(Glossary, LogicUtils),
-                                        currentInput.Details.TlgMessageId),
+                                        true),
                                 
                                 nameof(NewIssueFacilitySelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
+                                        currentInput,
                                         new NewIssueFacilitySelection<T>(Glossary, LogicUtils),
-                                        currentInput.Details.TlgMessageId),
+                                        true),
                                 
                                 _ => throw new InvalidOperationException(
                                     $"Unhandled {nameof(LogicUtils.GetPreviousStateNameAsync)}: " +
