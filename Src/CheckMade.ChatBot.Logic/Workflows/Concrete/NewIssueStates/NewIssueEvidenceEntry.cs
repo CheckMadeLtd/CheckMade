@@ -12,9 +12,7 @@ internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade;
 internal record NewIssueEvidenceEntry<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
-        INewIssueReview<T> NewIssueReview,
-        INewIssueTypeSelection<T> NewIssueTypeSelection,
-        INewIssueFacilitySelection<T> NewIssueFacilitySelection) 
+        IStateMediator Mediator) 
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -90,7 +88,8 @@ internal record NewIssueEvidenceEntry<T>(
                 return selectedControlPrompt switch
                 {
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
-                        await WorkflowResponse.CreateAsync(currentInput, NewIssueReview),
+                        await WorkflowResponse.CreateAsync(
+                            currentInput, Mediator.Next(typeof(INewIssueReview<T>))),
             
                     (long)ControlPrompts.Back => 
                         await LogicUtils.GetPreviousStateNameAsync(
@@ -99,11 +98,13 @@ internal record NewIssueEvidenceEntry<T>(
                             {
                                 nameof(NewIssueTypeSelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
-                                        currentInput, NewIssueTypeSelection, true),
+                                        currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
+                                        true),
                                 
                                 nameof(NewIssueFacilitySelection<ITrade>) =>
                                     await WorkflowResponse.CreateAsync(
-                                        currentInput, NewIssueFacilitySelection, true),
+                                        currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)), 
+                                        true),
                                 
                                 _ => throw new InvalidOperationException(
                                     $"Unhandled {nameof(LogicUtils.GetPreviousStateNameAsync)}: " +

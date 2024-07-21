@@ -12,7 +12,7 @@ internal interface INewIssueSphereSelection<T> : IWorkflowState where T : ITrade
 internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T : ITrade
 {
     private readonly ILiveEventsRepository _liveEventsRepo;
-    private readonly INewIssueTypeSelection<T> _newIssueTypeSelection;
+    private readonly IStateMediator _mediator;
     private readonly ITrade _trade;
     
     private IReadOnlyCollection<string>? _tradeSpecificSphereNamesCache;
@@ -20,11 +20,11 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
     public NewIssueSphereSelection(
         ILiveEventsRepository liveEventsRepo,
         IDomainGlossary glossary,
-        INewIssueTypeSelection<T> newIssueTypeSelection)
+        IStateMediator mediator)
     {
         _liveEventsRepo = liveEventsRepo;
         Glossary = glossary;
-        _newIssueTypeSelection = newIssueTypeSelection;
+        _mediator = mediator;
         
         _trade = (ITrade)Activator.CreateInstance(typeof(T))!;
     }
@@ -60,7 +60,8 @@ internal record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T
                 this, await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo));
         }
 
-        return await WorkflowResponse.CreateAsync(currentInput, _newIssueTypeSelection);
+        return await WorkflowResponse.CreateAsync(
+            currentInput, _mediator.Next(typeof(INewIssueTypeSelection<T>)));
     }
 
     private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(

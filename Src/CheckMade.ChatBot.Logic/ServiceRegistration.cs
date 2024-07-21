@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
@@ -15,6 +16,7 @@ public static class ServiceRegistration
         services.AddScoped<IInputProcessor, InputProcessor>();
         services.AddScoped<IWorkflowIdentifier, WorkflowIdentifier>();
         services.AddScoped<ILogicUtils, LogicUtils>();
+        services.AddSingleton<IStateMediator, StateMediator>();
 
         services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
         services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();

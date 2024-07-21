@@ -11,9 +11,7 @@ internal interface INewIssueFacilitySelection<T> : IWorkflowState where T : ITra
 
 internal record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,
-        INewIssueConsumablesSelection<T> NewIssueConsumablesSelection,
-        INewIssueEvidenceEntry<T> NewIssueEvidenceEntry,
-        INewIssueTypeSelection<T> NewIssueTypeSelection) 
+        IStateMediator Mediator) 
     : INewIssueFacilitySelection<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -47,10 +45,12 @@ internal record NewIssueFacilitySelection<T>(
             {
                 nameof(Consumables) =>
                     await WorkflowResponse.CreateAsync(
-                        currentInput, NewIssueConsumablesSelection, true),
+                        currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
+                        true),
 
                 _ => await WorkflowResponse.CreateAsync(
-                    currentInput, NewIssueEvidenceEntry, true)
+                    currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                    true)
             };
         }
 
@@ -59,7 +59,8 @@ internal record NewIssueFacilitySelection<T>(
         return selectedControlPrompt switch
         {
             (long)ControlPrompts.Back => await WorkflowResponse.CreateAsync(
-                currentInput, NewIssueTypeSelection, true),
+                currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                true),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")

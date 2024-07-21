@@ -9,7 +9,8 @@ internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 
 internal record NewIssueReview<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils) 
+        ILogicUtils LogicUtils,
+        IStateMediator Mediator) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
