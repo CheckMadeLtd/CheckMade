@@ -5,6 +5,7 @@ using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 
 public record StaffIssue(
+        Guid Id,
         DateTime CreationDate, 
         ISphereOfAction Sphere, 
         Option<ITradeFacility<SaniCleanTrade>> Facility, 
@@ -12,8 +13,8 @@ public record StaffIssue(
         IssueEvidence Evidence, 
         IRoleInfo ReportedBy, 
         Option<IRoleInfo> HandledBy, 
-        IssueStatus Status = IssueStatus.Reported) : 
-    ITradeIssue<SaniCleanTrade>
+        IssueStatus Status = IssueStatus.Reported) 
+    : ITradeIssue<SaniCleanTrade>
 {
     public UiString GetSummary()
     {

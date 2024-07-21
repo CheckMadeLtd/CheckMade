@@ -6,6 +6,7 @@ namespace CheckMade.Common.Model.Core.Trades;
 
 public interface IIssue
 {
+    Guid Id { get; }
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }
     Geo Location { get; }
