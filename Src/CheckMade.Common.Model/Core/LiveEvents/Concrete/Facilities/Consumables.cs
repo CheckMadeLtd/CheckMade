@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
+namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.Facilities;
 
 public record Consumables : ITradeFacility
 {

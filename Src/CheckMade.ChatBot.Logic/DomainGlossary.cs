@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.Facilities;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Model.Utils;

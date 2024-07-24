@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Facilities;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.Facilities;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 
