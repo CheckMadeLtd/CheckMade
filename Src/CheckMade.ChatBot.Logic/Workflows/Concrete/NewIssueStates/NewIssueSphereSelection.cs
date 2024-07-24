@@ -68,10 +68,10 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
         ITrade trade, ILiveEventInfo liveEventInfo)
     {
         return _tradeSpecificSphereNamesCache ??= 
-            (await _liveEventsRepo.GetAsync(liveEventInfo))!
-            .DivIntoSpheres
-            .Where(soa => soa.GetTradeType() == trade.GetType())
-            .Select(soa => soa.Name)
-            .ToImmutableReadOnlyCollection();
+            NewIssueWorkflow.GetAllTradeSpecificSpheres(
+                    (await _liveEventsRepo.GetAsync(liveEventInfo))!,
+                    trade)
+                .Select(soa => soa.Name)
+                .ToImmutableReadOnlyCollection();
     }
 }

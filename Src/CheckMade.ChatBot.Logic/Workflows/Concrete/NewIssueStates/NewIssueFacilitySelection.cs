@@ -1,4 +1,5 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -11,24 +12,31 @@ internal interface INewIssueFacilitySelection<T> : IWorkflowState where T : ITra
 
 internal sealed record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,
-        IStateMediator Mediator) 
-    : INewIssueFacilitySelection<T> where T : ITrade
+        IStateMediator Mediator,
+        ILogicUtils LogicUtils,
+        ILiveEventsRepository LiveEventsRepo) 
+    : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
-            new List<OutputDto>
+        var currentSphere = NewIssueWorkflow.GetLastSelectedSphere(
+            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
+            NewIssueWorkflow.GetAllTradeSpecificSpheres(
+                (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
+                new T()));
+        
+        return new List<OutputDto>
+        {
+            new()
             {
-                new()
-                {
-                    Text = Ui("Choose affected facility:"),
-                    DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(IFacility))),
-                    ControlPromptsSelection = ControlPrompts.Back,
-                    EditPreviousOutputMessageId = editMessageId
-                }
-            });
+                Text = Ui("Choose affected facility:"),
+                DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
+                    Glossary.GetAll(typeof(IFacility))),
+                ControlPromptsSelection = ControlPrompts.Back,
+                EditPreviousOutputMessageId = editMessageId
+            }
+        };
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

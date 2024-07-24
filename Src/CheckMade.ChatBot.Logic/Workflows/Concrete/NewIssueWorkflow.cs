@@ -139,7 +139,7 @@ internal sealed record NewIssueWorkflow(
                 .MetersAwayFrom(lastKnownLocation);
     }
     
-    private static IReadOnlyCollection<ISphereOfAction>
+    internal static IReadOnlyCollection<ISphereOfAction>
         GetAllTradeSpecificSpheres(LiveEvent liveEvent, ITrade trade) =>
         liveEvent
             .DivIntoSpheres
@@ -211,22 +211,23 @@ internal sealed record NewIssueWorkflow(
         
         // return new CleanlinessIssue();
         throw new NotImplementedException();
-
-        ISphereOfAction GetLastSelectedSphere()
-        {
-            var lastSelectedSphereName =
-                inputs.Last(i =>
-                        i.Details.Text.IsSome &&
-                        spheres.Select(s => s.Name)
-                            .Contains(i.Details.Text.GetValueOrThrow()))
-                    .Details.Text.GetValueOrThrow();
-
-            return
-                spheres
-                    .First(s => 
-                        s.Name.Equals(lastSelectedSphereName));
-        }
         
-        
+    }
+    
+    internal static ISphereOfAction GetLastSelectedSphere(
+        IReadOnlyCollection<TlgInput> inputs,
+        IReadOnlyCollection<ISphereOfAction> spheres)
+    {
+        var lastSelectedSphereName =
+            inputs.Last(i =>
+                    i.Details.Text.IsSome &&
+                    spheres.Select(s => s.Name)
+                        .Contains(i.Details.Text.GetValueOrThrow()))
+                .Details.Text.GetValueOrThrow();
+
+        return
+            spheres
+                .First(s => 
+                    s.Name.Equals(lastSelectedSphereName));
     }
 }
