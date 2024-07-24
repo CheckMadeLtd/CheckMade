@@ -9,7 +9,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueTypeSelection<T> : IWorkflowState where T : ITrade; 
 
-internal record NewIssueTypeSelection<T>(
+internal sealed record NewIssueTypeSelection<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator) 
     : INewIssueTypeSelection<T> where T : ITrade
@@ -43,7 +43,7 @@ internal record NewIssueTypeSelection<T>(
         
             return issueTypeName switch
             {
-                nameof(CleanlinessIssue) => 
+                nameof(CleanlinessIssue) or nameof(TechnicalIssue) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
                         true),
@@ -53,7 +53,7 @@ internal record NewIssueTypeSelection<T>(
                         currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
                         true),
             
-                nameof(TechnicalIssue) or nameof(StaffIssue) => 
+                nameof(StaffIssue) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
                         true),
