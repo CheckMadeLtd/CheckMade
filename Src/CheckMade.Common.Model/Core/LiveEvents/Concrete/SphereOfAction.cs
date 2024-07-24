@@ -11,4 +11,21 @@ public sealed record SphereOfAction<T>(
 {
     public ITrade GetTradeInstance() => new T();
     public Type GetTradeType() => typeof(T);
+
+    public bool Equals(SphereOfAction<T>? other)
+    {
+        return other is not null &&
+               Name.Equals(other.Name) &&
+               // Details == other.Details &&
+               Details.GeoCoordinates == other.Details.GeoCoordinates &&
+               Status.Equals(other.Status);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            Name,
+            Details.GeoCoordinates,
+            Status);
+    }
 }
