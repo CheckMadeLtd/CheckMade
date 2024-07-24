@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
 
 namespace CheckMade.Common.Model.Utils;
 

@@ -5,8 +5,10 @@ using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;
@@ -119,6 +121,8 @@ public sealed record DomainGlossary : IDomainGlossary
         #endregion
         
         #region TradeModelSiteClean
+        
+        AddTerm(typeof(GeneralIssue), "DVGI3N", Ui("General"));
         
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));

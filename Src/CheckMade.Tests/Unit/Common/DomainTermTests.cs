@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
 namespace CheckMade.Tests.Unit.Common;
 

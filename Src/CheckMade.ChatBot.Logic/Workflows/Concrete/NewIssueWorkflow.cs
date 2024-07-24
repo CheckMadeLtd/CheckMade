@@ -7,7 +7,8 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
 using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;

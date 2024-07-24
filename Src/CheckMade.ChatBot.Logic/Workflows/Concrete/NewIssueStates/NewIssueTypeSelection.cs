@@ -3,7 +3,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -24,7 +24,9 @@ internal sealed record NewIssueTypeSelection<T>(
                 {
                     Text = Ui("Please select the type of issue:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(ITradeIssue))),
+                        Glossary.GetAll(typeof(ITradeIssue))
+                            .Where(dt => dt.TypeValue!.Namespace!.Contains(typeof(T).Namespace!))
+                            .ToImmutableReadOnlyCollection()),
                     EditPreviousOutputMessageId = editMessageId,
                     ControlPromptsSelection = ControlPrompts.Back
                 }
