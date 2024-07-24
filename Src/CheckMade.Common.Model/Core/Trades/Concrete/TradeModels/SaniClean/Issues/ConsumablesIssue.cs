@@ -12,7 +12,7 @@ public record ConsumablesIssue(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue
+    : ITradeIssue, ITradeIssueInvolvingFacility
 {
     public UiString GetSummary()
     {

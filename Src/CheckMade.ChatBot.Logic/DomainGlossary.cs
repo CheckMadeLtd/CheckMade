@@ -95,22 +95,22 @@ public record DomainGlossary : IDomainGlossary
         
         #endregion
         
-        #region SubDomainSaniClean
+        #region TradeModelSaniClean
 
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
         AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
         AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
         AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 Staff"));
 
-        AddTerm(SaniConsumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(SaniConsumables.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(SaniConsumables.Item.Soap, "D79AMO", Ui("🧴 Soap"));
-
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(SaniConsumables), "D8T8CL", Ui("🗄 Consumables"));
         AddTerm(typeof(GeneralMisc), "D55BLT", Ui("General/Misc"));
         
+        AddTerm(SaniConsumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
+        AddTerm(SaniConsumables.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
+        AddTerm(SaniConsumables.Item.Soap, "D79AMO", Ui("🧴 Soap"));
+
         AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));
         AddTerm(typeof(TradeInspector<SaniCleanTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
         AddTerm(typeof(TradeEngineer<SaniCleanTrade>), "D2PC58", Ui("SaniClean-Engineer"));
@@ -119,7 +119,7 @@ public record DomainGlossary : IDomainGlossary
         
         #endregion
         
-        #region SubDomainSiteClean
+        #region TradeModelSiteClean
         
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));
