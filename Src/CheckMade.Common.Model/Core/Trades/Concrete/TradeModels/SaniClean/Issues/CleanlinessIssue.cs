@@ -7,7 +7,7 @@ public record CleanlinessIssue(
         Guid Id,
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        ITradeFacility Facility,
+        IFacility Facility,
         IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,

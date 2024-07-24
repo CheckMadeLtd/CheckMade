@@ -1,3 +1,3 @@
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 
-public sealed record Toilet : ITradeFacility;
+public sealed record Toilet : IFacility;

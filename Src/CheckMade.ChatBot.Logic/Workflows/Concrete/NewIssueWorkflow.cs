@@ -184,7 +184,7 @@ internal sealed record NewIssueWorkflow(
         //             Id: guid,
         //             CreationDate: DateTime.UtcNow, 
         //             Sphere: GetLastSelectedSphere(),
-        //             Facility: lastSelectedFacility, // use a Func<inputs, ITradeFacility<SaniCleanTrade>>
+        //             Facility: lastSelectedFacility, // use a Func<inputs, IFacility<SaniCleanTrade>>
         //             Evidence: evidence,
         //             ReportedBy: role,
         //             HandledBy: Option<IRoleInfo>.None()),
