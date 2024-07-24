@@ -2,7 +2,7 @@ using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;

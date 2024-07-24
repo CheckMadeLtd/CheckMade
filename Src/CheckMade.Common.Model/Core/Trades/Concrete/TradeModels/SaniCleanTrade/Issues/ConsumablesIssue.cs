@@ -1,9 +1,9 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
 
-public sealed record CleanlinessIssue(
+public sealed record ConsumablesIssue(
         Guid Id,
         DateTime CreationDate,
         ISphereOfAction Sphere,
@@ -17,5 +17,14 @@ public sealed record CleanlinessIssue(
     public UiString GetSummary()
     {
         throw new NotImplementedException();
+    }
+    
+    public IReadOnlyCollection<Item> AffectedItems { get; init; } = [];
+    
+    public enum Item
+    {
+        ToiletPaper,
+        PaperTowels,
+        Soap,
     }
 }

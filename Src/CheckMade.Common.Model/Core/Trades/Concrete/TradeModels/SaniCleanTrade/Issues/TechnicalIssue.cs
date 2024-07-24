@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniCleanTrade.Issues;
 
 public sealed record TechnicalIssue(
         Guid Id,    
