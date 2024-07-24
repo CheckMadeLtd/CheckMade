@@ -7,7 +7,7 @@ internal interface IStateMediator
     IWorkflowState Next(Type nextStateType);
 }
 
-internal record StateMediator(IServiceProvider Sp) : IStateMediator
+internal sealed record StateMediator(IServiceProvider Sp) : IStateMediator
 {
     public IWorkflowState Next(Type nextStateType)
     {

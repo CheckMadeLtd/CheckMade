@@ -17,7 +17,7 @@ internal interface ILogoutWorkflow : IWorkflow
         TlgInput? currentInput);
 }
 
-internal record LogoutWorkflow(
+internal sealed record LogoutWorkflow(
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
         ILogicUtils LogicUtils,
         IDomainGlossary Glossary) 

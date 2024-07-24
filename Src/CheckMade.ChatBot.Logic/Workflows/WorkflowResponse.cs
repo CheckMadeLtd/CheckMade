@@ -3,14 +3,14 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-public record WorkflowResponse(
+public sealed record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
     Option<string> NewStateId)
 {
     internal WorkflowResponse(OutputDto singleOutput, Option<string> newStateId) 
-    : this(
-        Output: new List<OutputDto>{ singleOutput }, 
-        NewStateId: newStateId)
+        : this(
+            Output: new List<OutputDto>{ singleOutput }, 
+            NewStateId: newStateId)
     {
     }
     

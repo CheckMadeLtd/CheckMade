@@ -15,7 +15,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
         IReadOnlyCollection<TlgInput> workflowInputHistory);
 }
 
-internal record LanguageSettingWorkflow(
+internal sealed record LanguageSettingWorkflow(
         IUsersRepository UsersRepo,
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
         ILogicUtils LogicUtils,

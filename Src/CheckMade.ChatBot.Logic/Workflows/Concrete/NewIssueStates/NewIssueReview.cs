@@ -7,7 +7,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 
-internal record NewIssueReview<T>(
+internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
         IStateMediator Mediator,

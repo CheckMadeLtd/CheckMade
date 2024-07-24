@@ -17,7 +17,7 @@ internal interface INewIssueWorkflow : IWorkflow
     Task<ITradeIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs);
 }
 
-internal record NewIssueWorkflow(
+internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
         ILogicUtils LogicUtils,
         IStateMediator Mediator)

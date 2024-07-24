@@ -18,7 +18,7 @@ internal interface IUserAuthWorkflow : IWorkflow
         IReadOnlyCollection<TlgInput> tlgAgentInputHistory);
 }
 
-internal record UserAuthWorkflow(
+internal sealed record UserAuthWorkflow(
         IRolesRepository RolesRepo,
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
         ILogicUtils LogicUtils,
