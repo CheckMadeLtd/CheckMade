@@ -15,7 +15,7 @@ internal sealed record NewIssueSphereConfirmation<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
         IStateMediator Mediator) 
-    : INewIssueSphereConfirmation<T> where T : ITrade
+    : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
@@ -26,12 +26,10 @@ internal sealed record NewIssueSphereConfirmation<T>(
         var lastKnownLocation = 
             await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
 
-        var currentTrade = (ITrade)Activator.CreateInstance(typeof(T))!;
-        
         var sphere = lastKnownLocation.IsSome
             ? NewIssueWorkflow.SphereNearCurrentUser(
                 liveEvent, lastKnownLocation.GetValueOrThrow(), 
-                currentTrade)
+                new T())
             : Option<ISphereOfAction>.None();
 
         if (sphere.IsNone)
