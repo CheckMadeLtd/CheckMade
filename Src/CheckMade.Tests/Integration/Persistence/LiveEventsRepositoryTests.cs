@@ -1,5 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -68,38 +69,36 @@ public sealed class LiveEventsRepositoryTests
                 .First(s => s.Name == Sphere3_AtX2024.Name)
                 .Details.GeoCoordinates);
         
-        Assert.True(
+        Assert.Contains(
+            Dt(typeof(GeneralMisc)), 
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
-                .Details.HasFacilityGeneralMisc);
-        Assert.True(
+                .Details.AvailableFacilities);
+        Assert.Contains(
+            Dt(typeof(Shower)),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
-                .Details.HasFacilitySaniConsumables);
-        Assert.True(
+                .Details.AvailableFacilities);
+        Assert.Contains(
+            Dt(typeof(Toilet)),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
-                .Details.HasFacilityShowers);
-        Assert.True(
-            liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere1_AtX2024.Name)
-                .Details.HasFacilityToilets);
+                .Details.AvailableFacilities);
         
-        Assert.True(
+        Assert.Contains(
+            Dt(typeof(GeneralMisc)), 
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Details.HasFacilityGeneralMisc);
-        Assert.False(
+                .Details.AvailableFacilities);
+        Assert.DoesNotContain(
+            Dt(typeof(Shower)),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Details.HasFacilitySaniConsumables);
-        Assert.False(
+                .Details.AvailableFacilities);
+        Assert.DoesNotContain(
+            Dt(typeof(Toilet)),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Details.HasFacilityShowers);
-        Assert.False(
-            liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Details.HasFacilityToilets);
+                .Details.AvailableFacilities);
     }
 }

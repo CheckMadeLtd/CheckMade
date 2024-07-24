@@ -32,7 +32,10 @@ internal sealed record NewIssueFacilitySelection<T>(
             {
                 Text = Ui("Choose affected facility:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                    Glossary.GetAll(typeof(IFacility))),
+                    Glossary
+                        .GetAll(typeof(IFacility))
+                        .Where(dt => currentSphere.Details.AvailableFacilities.Contains(dt))
+                        .ToImmutableReadOnlyCollection()),
                 ControlPromptsSelection = ControlPrompts.Back,
                 EditPreviousOutputMessageId = editMessageId
             }

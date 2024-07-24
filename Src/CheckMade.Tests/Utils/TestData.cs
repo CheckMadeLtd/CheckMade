@@ -7,6 +7,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
@@ -165,20 +166,26 @@ internal static class TestData
 
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
         new("Camp1",
-            new SaniCampDetails(Sphere1_Location)
-            {
-                HasFacilitySaniConsumables = true,
-                HasFacilityShowers = true,
-                HasFacilityToilets = true
-            });
+            new SaniCampDetails(
+                Sphere1_Location,
+                new List<DomainTerm>
+                {
+                    Dt(typeof(GeneralMisc)),
+                    Dt(typeof(Shower)),
+                    Dt(typeof(Toilet))
+                }.ToImmutableReadOnlyCollection()));
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
         new("Camp2",
-            new SaniCampDetails(Sphere2_Location));
+            new SaniCampDetails(
+                Sphere2_Location,
+                new List<DomainTerm>().ToImmutableReadOnlyCollection()));
     
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =
         new("Zone1",
-            new SiteCleaningZoneDetails(Option<Geo>.None()));
+            new SiteCleaningZoneDetails(
+                Option<Geo>.None(),
+                new List<DomainTerm>().ToImmutableReadOnlyCollection()));
     
     internal static readonly LiveEvent X2024 = new(
         X2024Info,

@@ -116,9 +116,7 @@ new_sphere1_sanitary_ops_at_X2024 AS (
                       }, 
                       "UncertaintyRadiusInMeters": null
                     }, 
-                    "HasFacilitySaniConsumables": true,
-                    "HasFacilityShowers": true,
-                    "HasFacilityToilets": true
+                    "AvailableFacilities": ["D1540N", "D4W2GW", "D55BLT"]
                 }', 
                1)
         ON CONFLICT (live_event_id, name) DO NOTHING
@@ -138,7 +136,8 @@ new_sphere2_sanitary_ops_at_X2024 AS (
                         "Value": 6.13328
                       }, 
                       "UncertaintyRadiusInMeters": null
-                    }
+                    },
+                    "AvailableFacilities": ["D55BLT"]
                 }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
@@ -150,7 +149,8 @@ new_sphere3_site_cleaning_at_X2024 AS (
                 'DSIL7M',
                 (SELECT id FROM new_live_event_X2024),
                 '{
-                    "GeoCoordinates": null
+                    "GeoCoordinates": null,
+                    "AvailableFacilities": ["D55BLT"]
                  }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
