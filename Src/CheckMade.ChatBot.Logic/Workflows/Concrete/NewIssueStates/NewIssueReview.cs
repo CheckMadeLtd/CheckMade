@@ -10,13 +10,14 @@ internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 internal record NewIssueReview<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
-        IStateMediator Mediator) 
+        IStateMediator Mediator,
+        INewIssueWorkflow NewIssueWorkflow) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
-        var issue = NewIssueWorkflow.ConstructIssueAsync(
+        var issue = await NewIssueWorkflow.ConstructIssueAsync(
             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
         return new List<OutputDto>
