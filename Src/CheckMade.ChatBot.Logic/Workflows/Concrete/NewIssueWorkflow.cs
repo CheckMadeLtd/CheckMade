@@ -15,7 +15,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
 internal interface INewIssueWorkflow : IWorkflow
 {
-    Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs);
+    Task<ITradeIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs);
 }
 
 internal record NewIssueWorkflow(
@@ -147,7 +147,7 @@ internal record NewIssueWorkflow(
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .ToImmutableReadOnlyCollection();
     
-    public async Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<ITradeIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
         var liveEventInfo = inputs.Last().LiveEventContext.GetValueOrThrow();
@@ -174,41 +174,41 @@ internal record NewIssueWorkflow(
                 .Last(i => 
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITradeIssue)))
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
 
-        IIssue issue = lastSelectedIssueType.Name switch
-        {
-            nameof(CleanlinessIssue) =>
-                new CleanlinessIssue(
-                    Id: guid,
-                    CreationDate: DateTime.UtcNow, 
-                    Sphere: GetLastSelectedSphere(),
-                    Facility: lastSelectedFacility, // use a Func<inputs, ITradeFacility<SaniCleanTrade>>
-                    Evidence: evidence,
-                    ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None()),
-            
-            nameof(TechnicalIssue) =>
-                new TechnicalIssue(
-                    Id: guid,
-                    CreationDate: DateTime.UtcNow, 
-                    Sphere: GetLastSelectedSphere(),
-                    Evidence: evidence,
-                    ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None()),
-            
-            nameof(ConsumablesIssue) =>
-                new ConsumablesIssue(
-                    Id: guid,
-                    CreationDate: DateTime.UtcNow, 
-                    Sphere: GetLastSelectedSphere(),
-                    Facility: lastSelectedFacility, // use delegate, constitute facility incl. affected consumables from input history
-                    Evidence: evidence,
-                    ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None()),
-        };
+        // ITradeIssue tradeIssue = lastSelectedIssueType.Name switch
+        // {
+        //     nameof(CleanlinessIssue) =>
+        //         new CleanlinessIssue(
+        //             Id: guid,
+        //             CreationDate: DateTime.UtcNow, 
+        //             Sphere: GetLastSelectedSphere(),
+        //             Facility: lastSelectedFacility, // use a Func<inputs, ITradeFacility<SaniCleanTrade>>
+        //             Evidence: evidence,
+        //             ReportedBy: role,
+        //             HandledBy: Option<IRoleInfo>.None()),
+        //     
+        //     nameof(TechnicalIssue) =>
+        //         new TechnicalIssue(
+        //             Id: guid,
+        //             CreationDate: DateTime.UtcNow, 
+        //             Sphere: GetLastSelectedSphere(),
+        //             Evidence: evidence,
+        //             ReportedBy: role,
+        //             HandledBy: Option<IRoleInfo>.None()),
+        //     
+        //     nameof(ConsumablesIssue) =>
+        //         new ConsumablesIssue(
+        //             Id: guid,
+        //             CreationDate: DateTime.UtcNow, 
+        //             Sphere: GetLastSelectedSphere(),
+        //             Facility: lastSelectedFacility, // use delegate, constitute facility incl. affected consumables from input history
+        //             Evidence: evidence,
+        //             ReportedBy: role,
+        //             HandledBy: Option<IRoleInfo>.None()),
+        // };
         
         // return new CleanlinessIssue();
         throw new NotImplementedException();

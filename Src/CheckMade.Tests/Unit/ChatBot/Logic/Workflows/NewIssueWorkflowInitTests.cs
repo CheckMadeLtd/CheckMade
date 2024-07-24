@@ -33,7 +33,7 @@ public class NewIssueWorkflowInitTests
             roleSpecified: currentRole);
 
         const string expectedOutput = "Please select a Trade:";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueTradeSelection));
+        var expectedNewState = basics.glossary.GetId(typeof(INewIssueTradeSelection));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -73,7 +73,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereConfirmation<SaniCleanTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereConfirmation<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -119,7 +119,7 @@ public class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please select a ";
-        var expectedNewState = basics.glossary.GetId(typeof(NewIssueSphereSelection<SaniCleanTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereSelection<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =
@@ -147,8 +147,8 @@ public class NewIssueWorkflowInitTests
                 tlgAgent.Mode,
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowInfo: new ResultantWorkflowInfo(
-                    basics.glossary.GetId(typeof(NewIssueWorkflow)),
-                    basics.glossary.GetId(typeof(NewIssueSphereSelection<SaniCleanTrade>))))];
+                    basics.glossary.GetId(typeof(INewIssueWorkflow)),
+                    basics.glossary.GetId(typeof(INewIssueSphereSelection<SaniCleanTrade>))))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -160,7 +160,7 @@ public class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select the type of issue:";
         var expectedNewState = 
-            basics.glossary.GetId(typeof(NewIssueTypeSelection<SaniCleanTrade>));
+            basics.glossary.GetId(typeof(INewIssueTypeSelection<SaniCleanTrade>));
         var workflow = services.GetRequiredService<INewIssueWorkflow>();
 
         var actualResponse =

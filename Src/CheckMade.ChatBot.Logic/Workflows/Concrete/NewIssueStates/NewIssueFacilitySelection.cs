@@ -24,7 +24,7 @@ internal record NewIssueFacilitySelection<T>(
                 {
                     Text = Ui("Choose affected facility:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary.GetAll(typeof(ITradeFacility<T>))),
+                        Glossary.GetAll(typeof(ITradeFacility))),
                     ControlPromptsSelection = ControlPrompts.Back,
                     EditPreviousOutputMessageId = editMessageId
                 }

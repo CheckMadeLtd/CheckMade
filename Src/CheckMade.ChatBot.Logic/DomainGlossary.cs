@@ -40,13 +40,13 @@ public record DomainGlossary : IDomainGlossary
         
         #region Workflows
         
-        AddTerm(typeof(UserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
+        AddTerm(typeof(IUserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
         AddTerm(UserAuthWorkflow.States.Initial, "DTWLPM", 
             UiNoTranslate(UserAuthWorkflow.States.Initial.ToString()));
         AddTerm(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt, "DRGLYG", 
             UiNoTranslate(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt.ToString()));
         
-        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
+        AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
         AddTerm(LanguageSettingWorkflow.States.Initial, "DD4252",
             UiNoTranslate(LanguageSettingWorkflow.States.Initial.ToString()));
         AddTerm(LanguageSettingWorkflow.States.ReceivedLanguageSetting, "DGWJX8",
@@ -54,7 +54,7 @@ public record DomainGlossary : IDomainGlossary
         AddTerm(LanguageSettingWorkflow.States.Completed, "DL32QX",
             UiNoTranslate(LanguageSettingWorkflow.States.Completed.ToString()));
         
-        AddTerm(typeof(LogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
+        AddTerm(typeof(ILogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
         AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4", 
             UiNoTranslate(LogoutWorkflow.States.Initial.ToString()));
         AddTerm(LogoutWorkflow.States.LogoutConfirmed, "DPXFZ8", 

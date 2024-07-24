@@ -40,7 +40,7 @@ public class InputProcessorTests
             startCommand with
             {
                 ResultantWorkflow = new ResultantWorkflowInfo(
-                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflow)),
                     glossary.GetId(UserAuthWorkflow.States.Initial))
             };
         
