@@ -163,15 +163,18 @@ internal static class TestData
     internal static readonly Geo Sphere2_Location =
         new Geo(51.60893, 6.13328, Option<double>.None());
 
-    internal const string Sphere1_AtX2024_Name = "Camp1";
-    
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
-        new(Sphere1_AtX2024_Name,
-            new SanitaryCampDetails(Sphere1_Location));
+        new("Camp1",
+            new SaniCampDetails(Sphere1_Location)
+            {
+                HasFacilitySaniConsumables = true,
+                HasFacilityShowers = true,
+                HasFacilityToilets = true
+            });
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
         new("Camp2",
-            new SanitaryCampDetails(Sphere2_Location));
+            new SaniCampDetails(Sphere2_Location));
     
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =
         new("Zone1",

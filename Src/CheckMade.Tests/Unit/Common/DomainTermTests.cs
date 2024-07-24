@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.Facilities;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 
 namespace CheckMade.Tests.Unit.Common;
 

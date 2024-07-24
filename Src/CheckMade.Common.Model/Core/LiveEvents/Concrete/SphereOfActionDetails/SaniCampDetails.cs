@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 
-public sealed record SiteCleaningZoneDetails(Option<Geo> GeoCoordinates) : ISphereOfActionDetails
+public sealed record SaniCampDetails(Option<Geo> GeoCoordinates) : ISphereOfActionDetails
 {
     public bool HasFacilityGeneralMisc { get; init; } = true;
 

@@ -1,6 +1,6 @@
-namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.Facilities;
+namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 
-public record SaniConsumables : ITradeFacility
+public sealed record SaniConsumables : ITradeFacility
 {
     public IReadOnlyCollection<Item> AffectedItems { get; init; } = [];
     

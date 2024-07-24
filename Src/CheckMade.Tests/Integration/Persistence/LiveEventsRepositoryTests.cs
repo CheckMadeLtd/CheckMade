@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class LiveEventsRepositoryTests
+public sealed class LiveEventsRepositoryTests
 {
     private IServiceProvider? _services;
 
@@ -41,13 +41,11 @@ public class LiveEventsRepositoryTests
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
                 .GetTradeType());
-        
         Assert.Equal(
             Sphere2_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .GetTradeType());
-        
         Assert.Equal(
             Sphere3_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
@@ -59,17 +57,49 @@ public class LiveEventsRepositoryTests
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
-        
         Assert.Equivalent(
             Sphere2_Location,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
-
         Assert.Equivalent(
             Option<Geo>.None(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere3_AtX2024.Name)
                 .Details.GeoCoordinates);
+        
+        Assert.True(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details.HasFacilityGeneralMisc);
+        Assert.True(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details.HasFacilitySaniConsumables);
+        Assert.True(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details.HasFacilityShowers);
+        Assert.True(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details.HasFacilityToilets);
+        
+        Assert.True(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details.HasFacilityGeneralMisc);
+        Assert.False(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details.HasFacilitySaniConsumables);
+        Assert.False(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details.HasFacilityShowers);
+        Assert.False(
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details.HasFacilityToilets);
     }
 }

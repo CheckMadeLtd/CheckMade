@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
-public record SphereOfAction<T>(
+public sealed record SphereOfAction<T>(
         string Name,
         ISphereOfActionDetails Details,
         DbRecordStatus Status = DbRecordStatus.Active) 

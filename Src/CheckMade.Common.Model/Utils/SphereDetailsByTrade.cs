@@ -9,7 +9,7 @@ public static class SphereDetailsTypeByTrade
 {
     public static Dictionary<Type, Type> Map { get; } = new()
     {
-        { typeof(SaniCleanTrade), typeof(SanitaryCampDetails) },
+        { typeof(SaniCleanTrade), typeof(SaniCampDetails) },
         { typeof(SiteCleanTrade), typeof(SiteCleaningZoneDetails) }
     };
 };

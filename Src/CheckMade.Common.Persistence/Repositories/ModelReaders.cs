@@ -176,8 +176,8 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade.Name switch
         {
             nameof(SaniCleanTrade) => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
+                JsonHelper.DeserializeFromJsonStrict<SaniCampDetails>(detailsJson, glossary) 
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SaniCampDetails)}'!"),
             nameof(SiteCleanTrade) => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
