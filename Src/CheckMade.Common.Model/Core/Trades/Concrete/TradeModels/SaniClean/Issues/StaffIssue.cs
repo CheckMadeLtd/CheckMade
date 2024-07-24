@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
-public record StaffIssue(
+public sealed record StaffIssue(
         Guid Id,
         DateTime CreationDate, 
         ISphereOfAction Sphere, 

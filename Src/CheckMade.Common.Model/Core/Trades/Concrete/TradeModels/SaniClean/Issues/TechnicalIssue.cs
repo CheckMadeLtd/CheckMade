@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
-public record TechnicalIssue(
+public sealed record TechnicalIssue(
         Guid Id,    
         DateTime CreationDate,
         ISphereOfAction Sphere,
