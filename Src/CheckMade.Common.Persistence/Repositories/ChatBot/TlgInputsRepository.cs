@@ -10,35 +10,36 @@ using NpgsqlTypes;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), ITlgInputsRepository
 {
-    private const string GetAllBaseQuery =   """
-                                             SELECT
-                                                 
-                                             r.token AS role_token, 
-                                             r.role_type AS role_type, 
-                                             r.status AS role_status, 
-                                                 
-                                             le.name AS live_event_name, 
-                                             le.start_date AS live_event_start_date, 
-                                             le.end_date AS live_event_end_date, 
-                                             le.status AS live_event_status, 
-                                                 
-                                             dws.resultant_workflow AS input_workflow,
-                                             dws.in_state AS input_wf_state,
-                                             
-                                             inp.user_id AS input_user_id, 
-                                             inp.chat_id AS input_chat_id, 
-                                             inp.interaction_mode AS input_mode, 
-                                             inp.input_type AS input_type,
-                                             inp.details AS input_details 
-                                                 
-                                             FROM tlg_inputs inp 
-                                             LEFT JOIN roles r on inp.role_id = r.id 
-                                             LEFT JOIN live_events le on inp.live_event_id = le.id
-                                             LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
-                                             """;
+    private const string GetAllBaseQuery = """
+                                           SELECT
+                                               
+                                           r.token AS role_token, 
+                                           r.role_type AS role_type, 
+                                           r.status AS role_status, 
+                                               
+                                           le.name AS live_event_name, 
+                                           le.start_date AS live_event_start_date, 
+                                           le.end_date AS live_event_end_date, 
+                                           le.status AS live_event_status, 
+                                               
+                                           dws.resultant_workflow AS input_workflow,
+                                           dws.in_state AS input_wf_state,
+
+                                           inp.user_id AS input_user_id, 
+                                           inp.chat_id AS input_chat_id, 
+                                           inp.interaction_mode AS input_mode, 
+                                           inp.input_type AS input_type,
+                                           inp.details AS input_details,
+                                           inp.entity_guid AS input_guid
+                                               
+                                           FROM tlg_inputs inp 
+                                           LEFT JOIN roles r on inp.role_id = r.id 
+                                           LEFT JOIN live_events le on inp.live_event_id = le.id
+                                           LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
+                                           """;
 
     private const string OrderByClause = "ORDER BY inp.id";
     
@@ -62,51 +63,54 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
                                  interaction_mode, 
                                  input_type, 
                                  role_id, 
-                                 live_event_id) 
+                                 live_event_id,
+                                 entity_guid) 
                                  
                                  VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
                                  @lastDataMig, @interactionMode, @tlgInputType, 
                                  (SELECT id FROM roles WHERE token = @token), 
-                                 (SELECT id FROM live_events WHERE name = @liveEventName))
+                                 (SELECT id FROM live_events WHERE name = @liveEventName),
+                                 @guid)
                                  """;
 
-         const string queryWithWorkflowInfo = $"""
-                                               WITH inserted_input AS (
-                                                 {baseQuery}
-                                                 RETURNING id
-                                               )
-                                               INSERT INTO derived_workflow_states
-                                               (tlg_inputs_id,
-                                               resultant_workflow,
-                                               in_state)
-                                               
-                                               SELECT id, @workflowId, @workflowState
-                                               FROM inserted_input
-                                               """;
+        const string queryWithWorkflowInfo = $"""
+                                              WITH inserted_input AS (
+                                                {baseQuery}
+                                                RETURNING id
+                                              )
+                                              INSERT INTO derived_workflow_states
+                                              (tlg_inputs_id,
+                                              resultant_workflow,
+                                              in_state)
+
+                                              SELECT id, @workflowId, @workflowState
+                                              FROM inserted_input
+                                              """;
          
         var commands = tlgInputs.Select(tlgInput =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@tlgUserId", tlgInput.TlgAgent.UserId.Id },
-                { "@tlgChatId", tlgInput.TlgAgent.ChatId.Id },
-                { "@lastDataMig", 0 },
-                { "@interactionMode", (int)tlgInput.TlgAgent.Mode },
-                { "@tlgInputType", (int) tlgInput.InputType },
-                { "@token", tlgInput.OriginatorRole.Match<object>(  
-                        r => r.Token, 
-                        () => DBNull.Value) },  
-                { "@liveEventName",  
-                     tlgInput.LiveEventContext.Match<object>(  
-                         le => le.Name, 
-                         () => DBNull.Value) },  
-                { "@workflowId", tlgInput.ResultantWorkflow.Match<object>(  
-                        w => w.WorkflowId, 
-                        () => DBNull.Value) },  
-                { "@workflowState",  
-                    tlgInput.ResultantWorkflow.Match<object>(  
-                        w => w.InStateId,  
-                        () => DBNull.Value) }
+                ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
+                ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
+                ["@lastDataMig"] = 0,
+                ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
+                ["@tlgInputType"] = (int)tlgInput.InputType,
+                ["@token"] = tlgInput.OriginatorRole.Match<object>(  
+                    r => r.Token, 
+                    () => DBNull.Value),  
+                ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
+                    le => le.Name, 
+                    () => DBNull.Value),  
+                ["@workflowId"] = tlgInput.ResultantWorkflow.Match<object>(  
+                    w => w.WorkflowId, 
+                    () => DBNull.Value),  
+                ["@workflowState"] = tlgInput.ResultantWorkflow.Match<object>(  
+                    w => w.InStateId,  
+                    () => DBNull.Value),
+                ["@guid"] = tlgInput.EntityGuid.Match<object>(
+                    guid => guid,
+                    () => DBNull.Value)
             };
             
             var command = GenerateCommand(tlgInput.ResultantWorkflow.IsSome 
@@ -280,9 +284,9 @@ public class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary gl
         
         var normalParameters = new Dictionary<string, object>
         {
-            { "@tlgUserId", tlgAgent.UserId.Id },
-            { "@tlgChatId", tlgAgent.ChatId.Id },
-            { "@mode", (int) tlgAgent.Mode }
+            ["@tlgUserId"] = tlgAgent.UserId.Id,
+            ["@tlgChatId"] = tlgAgent.ChatId.Id,
+            ["@mode"] = (int)tlgAgent.Mode
         };
         var command = GenerateCommand(rawQuery, normalParameters);
 

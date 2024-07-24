@@ -288,6 +288,7 @@ internal class ToModelConverter(
                 : Option<IRoleInfo>.None(),
             liveEventContext,
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             new TlgInputDetails(
                 update.Message.Date,
                 update.Message.MessageId,

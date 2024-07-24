@@ -16,7 +16,7 @@ using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 namespace CheckMade.Tests.Integration.Persistence;
 
 // ProblematicTestsOutsideOfIDE
-public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
+public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
 {
     private ServiceProvider? _services;
     
@@ -43,13 +43,16 @@ public class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         foreach (var input in tlgInputs)
         {
-            List<TlgInput> expectedRetrieval = [ 
-                new (input.TlgAgent, 
+            List<TlgInput> expectedRetrieval =
+            [ 
+                new(input.TlgAgent, 
                     input.InputType, 
                     input.OriginatorRole, 
                     input.LiveEventContext, 
                     input.ResultantWorkflow,
-                    input.Details)];
+                    input.EntityGuid,
+                    input.Details)
+            ];
         
             await inputRepo.AddAsync(input);
             

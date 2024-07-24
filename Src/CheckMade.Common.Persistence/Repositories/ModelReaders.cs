@@ -290,6 +290,9 @@ internal static class ModelReaders
         var tlgInputType = EnsureEnumValidityOrThrow(
             (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
         var resultantWorkflow = GetWorkflowInfo();
+        var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
+            ? Option<Guid>.None()
+            : reader.GetGuid(reader.GetOrdinal("input_guid"));
         var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
         return new TlgInput(
@@ -298,6 +301,7 @@ internal static class ModelReaders
             roleInfo,
             liveEventInfo,
             resultantWorkflow,
+            guid,
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 

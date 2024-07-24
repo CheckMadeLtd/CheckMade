@@ -20,7 +20,7 @@ using User = Telegram.Bot.Types.User;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
-public class ToModelConverterTests
+public sealed class ToModelConverterTests
 {
     private ServiceProvider? _services;
 
@@ -47,7 +47,8 @@ public class ToModelConverterTests
             TlgInputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(),
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -95,6 +96,7 @@ public class ToModelConverterTests
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Date,
                 update.Message.MessageId,
@@ -141,6 +143,7 @@ public class ToModelConverterTests
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Date,
                 attachmentUpdate.Message.MessageId,
@@ -183,6 +186,7 @@ public class ToModelConverterTests
                 SaniCleanAdmin_DanielEn_X2024, 
                 X2024, 
                 Option<ResultantWorkflowInfo>.None(), 
+                Option<Guid>.None(), 
                 TlgInputGenerator.CreateFromRelevantDetails(
                     locationUpdate.Message.Date,
                     locationUpdate.Message.MessageId,
@@ -220,6 +224,7 @@ public class ToModelConverterTests
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -257,6 +262,7 @@ public class ToModelConverterTests
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -294,6 +300,7 @@ public class ToModelConverterTests
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandUpdate.Message.Date,
                 commandUpdate.Message.MessageId,
@@ -329,7 +336,8 @@ public class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowInfo>.None(),
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -363,6 +371,7 @@ public class ToModelConverterTests
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowInfo>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 callbackQuery.Message.Date,
                 callbackQuery.Message.MessageId,
@@ -382,8 +391,8 @@ public class ToModelConverterTests
     [Fact]
     public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_InAnyMode()
     {
-         _services = new UnitTestStartup().Services.BuildServiceProvider();
-         var basics = GetBasicTestingServices(_services);
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message
         {

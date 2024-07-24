@@ -187,7 +187,11 @@ internal static class TestData
         new("Camp2",
             new SaniCampDetails(
                 Sphere2_Location,
-                new List<DomainTerm>().ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                    {
+                        Dt(typeof(GeneralMisc))
+                    }
+                    .ToImmutableReadOnlyCollection(),
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesIssue.Item.ToiletPaper)
