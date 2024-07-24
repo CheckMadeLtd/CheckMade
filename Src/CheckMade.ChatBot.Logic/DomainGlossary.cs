@@ -80,8 +80,6 @@ public record DomainGlossary : IDomainGlossary
             UiNoTranslate(nameof(NewIssueTypeSelection<SiteCleanTrade>)));
         AddTerm(typeof(INewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV",
             UiNoTranslate(nameof(NewIssueConsumablesSelection<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueConsumablesSelection<SiteCleanTrade>), "DT3M2E",
-            UiNoTranslate(nameof(NewIssueConsumablesSelection<SiteCleanTrade>)));
         AddTerm(typeof(INewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z",
             UiNoTranslate(nameof(NewIssueEvidenceEntry<SaniCleanTrade>)));
         AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44",
@@ -104,13 +102,13 @@ public record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
         AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 Staff"));
 
-        AddTerm(Consumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(Consumables.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(Consumables.Item.Soap, "D79AMO", Ui("🧴 Soap"));
+        AddTerm(SaniConsumables.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
+        AddTerm(SaniConsumables.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
+        AddTerm(SaniConsumables.Item.Soap, "D79AMO", Ui("🧴 Soap"));
 
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
-        AddTerm(typeof(Consumables), "D8T8CL", Ui("🗄 Consumables"));
+        AddTerm(typeof(SaniConsumables), "D8T8CL", Ui("🗄 Consumables"));
         AddTerm(typeof(GeneralMisc), "D55BLT", Ui("General/Misc"));
         
         AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));

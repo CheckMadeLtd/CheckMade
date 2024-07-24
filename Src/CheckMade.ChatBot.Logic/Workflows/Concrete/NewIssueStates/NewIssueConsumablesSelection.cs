@@ -27,7 +27,7 @@ internal record NewIssueConsumablesSelection<T>(
             {
                 Text = Ui("Choose affected consumables:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                    Glossary.GetAll(typeof(Consumables.Item))
+                    Glossary.GetAll(typeof(SaniConsumables.Item))
                         .Select(dt => 
                             dt.IsToggleOn(interactiveHistory) 
                                 ? dt with { Toggle = true } 

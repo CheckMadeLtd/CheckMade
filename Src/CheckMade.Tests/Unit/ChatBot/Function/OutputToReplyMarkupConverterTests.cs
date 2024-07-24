@@ -129,7 +129,7 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         
         List<DomainTerm> domainTermSelection = [
-            Dt(Consumables.Item.PaperTowels)];
+            Dt(SaniConsumables.Item.PaperTowels)];
         
         var promptSelection = new[] 
         {
@@ -154,8 +154,8 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.GetUi(Consumables.Item.PaperTowels).GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(Consumables.Item.PaperTowels)), 
+                        basics.domainGlossary.GetUi(SaniConsumables.Item.PaperTowels).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(SaniConsumables.Item.PaperTowels)), 
                 },[
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),

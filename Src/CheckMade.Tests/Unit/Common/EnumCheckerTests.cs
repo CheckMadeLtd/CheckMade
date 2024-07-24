@@ -12,7 +12,7 @@ public class EnumCheckerTests(ITestOutputHelper outputHelper)
     [Fact]
     public void IsDefined_ShouldBeTrue_ForDefinedEnum_InNormalEnum()
     {
-        Assert.True(EnumChecker.IsDefined(Consumables.Item.ToiletPaper));
+        Assert.True(EnumChecker.IsDefined(SaniConsumables.Item.ToiletPaper));
     }
     
     [Fact]

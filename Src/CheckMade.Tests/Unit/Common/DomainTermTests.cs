@@ -9,9 +9,9 @@ public class DomainTermTests
     public void Equals_ReturnsFalse_ForTwoEnumsOfSameValueButDifferentType()
     {
         var enum1 = Dt(LanguageCode.en);
-        var enum2 = Dt(Consumables.Item.ToiletPaper);
+        var enum2 = Dt(SaniConsumables.Item.ToiletPaper);
 
-        Assert.Equal((int)LanguageCode.en, (int)Consumables.Item.ToiletPaper);
+        Assert.Equal((int)LanguageCode.en, (int)SaniConsumables.Item.ToiletPaper);
         Assert.False(enum1.Equals(enum2));
     }
 }

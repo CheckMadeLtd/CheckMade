@@ -44,7 +44,7 @@ internal record NewIssueFacilitySelection<T>(
 
             return selectedFacilityName switch
             {
-                nameof(Consumables) =>
+                nameof(SaniConsumables) =>
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
                         true),
