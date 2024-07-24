@@ -8,8 +8,6 @@ public record TechnicalIssue(
         Guid Id,    
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        Option<ITradeFacility<SaniCleanTrade>> Facility,
-        Option<Geo> PreciseLocation, 
         IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,

@@ -9,7 +9,6 @@ public interface IIssue
     Guid Id { get; }
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }
-    Option<Geo> PreciseLocation { get; }
     IssueEvidence Evidence { get; }
     IRoleInfo ReportedBy { get; }
     Option<IRoleInfo> HandledBy { get; }
