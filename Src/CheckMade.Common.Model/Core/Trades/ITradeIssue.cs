@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 
 namespace CheckMade.Common.Model.Core.Trades;
 

@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
+namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
 public record StaffIssue(
         Guid Id,

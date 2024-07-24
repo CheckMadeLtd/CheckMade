@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
+namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 
 public record IssueEvidence
 {

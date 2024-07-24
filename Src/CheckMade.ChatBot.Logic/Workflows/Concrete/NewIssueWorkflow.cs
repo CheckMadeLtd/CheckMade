@@ -6,8 +6,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
-using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
