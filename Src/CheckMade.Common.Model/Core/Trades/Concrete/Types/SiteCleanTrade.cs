@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Trades.Concrete.Types;
 
-public class SiteCleanTrade : ITrade
+public sealed record SiteCleanTrade : ITrade
 {
     public const int SphereNearnessThresholdInMeters = 100;
     

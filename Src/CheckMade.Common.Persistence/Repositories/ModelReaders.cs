@@ -25,41 +25,40 @@ internal static class ModelReaders
 {
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
         (reader, glossary) =>
-    {
-        var userInfo = ConstituteUserInfo(reader);
-        var liveEventInfo = ConstituteLiveEventInfo(reader);
+        {
+            var userInfo = ConstituteUserInfo(reader);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
 
-        return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
-    };
+            return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
         (reader, glossary) =>
-    {
-        var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
-        var liveEventInfo = ConstituteLiveEventInfo(reader);
+        {
+            var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
         
-        return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
-    };
+            return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> ReadTlgAgentRoleBind = 
         (reader, glossary) =>
-    {
-        var role = ReadRole(reader, glossary);
-        var tlgAgent = ConstituteTlgAgent(reader);
+        {
+            var role = ReadRole(reader, glossary);
+            var tlgAgent = ConstituteTlgAgent(reader);
 
-        return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
-    };
+            return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, Vendor> ReadVendor = 
         (reader, _) => 
-        ConstituteVendor(reader).GetValueOrThrow();
+            ConstituteVendor(reader).GetValueOrThrow();
 
     internal static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, User> initializeModel,
         Action<User, DbDataReader> accumulateData,
-        Func<User, User> finalizeModel) 
-        
+        Func<User, User> finalizeModel)
         GetUserReader(IDomainGlossary glossary)
     {
         return (
@@ -83,8 +82,7 @@ internal static class ModelReaders
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, LiveEvent> initializeModel,
         Action<LiveEvent, DbDataReader> accumulateData,
-        Func<LiveEvent, LiveEvent> finalizeModel) 
-        
+        Func<LiveEvent, LiveEvent> finalizeModel)
         GetLiveEventReader(IDomainGlossary glossary)
     {
         return (
