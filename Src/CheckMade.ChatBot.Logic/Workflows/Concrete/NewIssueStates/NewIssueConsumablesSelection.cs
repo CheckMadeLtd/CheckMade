@@ -2,8 +2,8 @@ using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -27,7 +27,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
             {
                 Text = Ui("Choose affected consumables:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                    Glossary.GetAll(typeof(SaniConsumables.Item))
+                    Glossary.GetAll(typeof(ConsumablesIssue.Item))
                         .Select(dt => 
                             dt.IsToggleOn(interactiveHistory) 
                                 ? dt with { Toggle = true } 

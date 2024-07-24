@@ -3,7 +3,6 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
@@ -39,20 +38,9 @@ internal sealed record NewIssueFacilitySelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
         {
-            var selectedFacilityName =
-                currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name;
-
-            return selectedFacilityName switch
-            {
-                nameof(SaniConsumables) =>
-                    await WorkflowResponse.CreateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
-                        true),
-
-                _ => await WorkflowResponse.CreateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
-                    true)
-            };
+            return await WorkflowResponse.CreateAsync(
+                currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                true);
         }
 
         var selectedControlPrompt = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();

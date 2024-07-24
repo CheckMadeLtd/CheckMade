@@ -2,7 +2,6 @@ using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
@@ -14,7 +13,7 @@ using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
-public class OutputToReplyMarkupConverterTests
+public sealed class OutputToReplyMarkupConverterTests
 {
     private ServiceProvider? _services;
 
@@ -129,7 +128,7 @@ public class OutputToReplyMarkupConverterTests
         var basics = GetBasicTestingServices(_services);
         
         List<DomainTerm> domainTermSelection = [
-            Dt(SaniConsumables.Item.PaperTowels)];
+            Dt(ConsumablesIssue.Item.PaperTowels)];
         
         var promptSelection = new[] 
         {
@@ -154,9 +153,10 @@ public class OutputToReplyMarkupConverterTests
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.GetUi(SaniConsumables.Item.PaperTowels).GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(SaniConsumables.Item.PaperTowels)), 
-                },[
+                        basics.domainGlossary.GetUi(ConsumablesIssue.Item.PaperTowels).GetFormattedEnglish(),
+                        basics.domainGlossary.GetId(ConsumablesIssue.Item.PaperTowels)), 
+                },
+                [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
                         promptSelection[0].promptId),
@@ -195,7 +195,7 @@ public class OutputToReplyMarkupConverterTests
         {
             new[] 
                 { new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3) },
-                [new KeyboardButton(choice4), new KeyboardButton(choice5)]
+            [new KeyboardButton(choice4), new KeyboardButton(choice5)]
         })
         {
             IsPersistent = false,

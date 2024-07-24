@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
-public record ConsumablesIssue(
+public sealed record ConsumablesIssue(
         Guid Id,
         DateTime CreationDate,
         ISphereOfAction Sphere,
@@ -17,5 +17,14 @@ public record ConsumablesIssue(
     public UiString GetSummary()
     {
         throw new NotImplementedException();
+    }
+    
+    public IReadOnlyCollection<Item> AffectedItems { get; init; } = [];
+    
+    public enum Item
+    {
+        ToiletPaper,
+        PaperTowels,
+        Soap,
     }
 }
