@@ -6,13 +6,17 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains;
 using CheckMade.Common.Model.Core.Trades.Concrete.SubDomains.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.Types;
 using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
-internal interface INewIssueWorkflow : IWorkflow;
+internal interface INewIssueWorkflow : IWorkflow
+{
+    Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs);
+}
 
 internal record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
@@ -143,7 +147,7 @@ internal record NewIssueWorkflow(
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .ToImmutableReadOnlyCollection();
     
-    internal async Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<IIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
         var liveEventInfo = inputs.Last().LiveEventContext.GetValueOrThrow();
@@ -151,6 +155,19 @@ internal record NewIssueWorkflow(
         var trade = role.GetCurrentTrade(inputs);
         var spheres = GetAllTradeSpecificSpheres(liveEvent, trade);
         var guid = Guid.NewGuid();
+        
+        // var lastFacilityType =
+        //     inputs.LastOrDefault(i =>
+        //         i.Details.DomainTerm.IsSome &&
+        //         i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+        //         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
+        //         .Details.DomainTerm.GetValueOrThrow()
+        //         .TypeValue;
+
+        var evidence = new IssueEvidence();
+                
+        // ToDo: construct a new IssueEvidence based on submitted descriptions and media
+        // concatenate multiple descriptions into a single string... 
         
         var lastSelectedIssueType =
             inputs
@@ -161,49 +178,56 @@ internal record NewIssueWorkflow(
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
 
-        var lastSelectedSphereName =
-            inputs.Last(i =>
-                i.Details.Text.IsSome &&
-                spheres.Select(s => s.Name)
-                    .Contains(i.Details.Text.GetValueOrThrow()))
-                .Details.Text.GetValueOrThrow();
-
-        var lastSelectedSphere =
-            spheres
-                .First(s => 
-                    s.Name.Equals(lastSelectedSphereName));
-
-        var lastFacilityType =
-            inputs.LastOrDefault(i =>
-                i.Details.DomainTerm.IsSome &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
-                .Details.DomainTerm.GetValueOrThrow()
-                .TypeValue;
-
-        var lastSelectedFacility = lastFacilityType != null 
-            ? Option<IFacility>.Some(
-                (IFacility)Activator.CreateInstance(lastFacilityType)!) 
-            : Option<IFacility>.None();
-        
-        // ToDo: construct a new IssueEvidence based on submitted descriptions and media
-        // concatenate multiple descriptions into a single string... 
-        
-        // ToDo: correctly handle trade-specific Facility
-        var issue = lastSelectedIssueType.Name switch
+        IIssue issue = lastSelectedIssueType.Name switch
         {
             nameof(CleanlinessIssue) =>
                 new CleanlinessIssue(
                     Id: guid,
                     CreationDate: DateTime.UtcNow, 
-                    Sphere: lastSelectedSphere,
-                    Facility: Option<ITradeFacility<SaniCleanTrade>>.None(),
-                    PreciseLocation: Option<Geo>.None(), 
-                    Evidence:
-                    )
+                    Sphere: GetLastSelectedSphere(),
+                    Facility: lastSelectedFacility, // use a Func<inputs, ITradeFacility<SaniCleanTrade>>
+                    Evidence: evidence,
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None()),
+            
+            nameof(TechnicalIssue) =>
+                new TechnicalIssue(
+                    Id: guid,
+                    CreationDate: DateTime.UtcNow, 
+                    Sphere: GetLastSelectedSphere(),
+                    Evidence: evidence,
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None()),
+            
+            nameof(ConsumablesIssue) =>
+                new ConsumablesIssue(
+                    Id: guid,
+                    CreationDate: DateTime.UtcNow, 
+                    Sphere: GetLastSelectedSphere(),
+                    Facility: lastSelectedFacility, // use delegate, constitute facility incl. affected consumables from input history
+                    Evidence: evidence,
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None()),
         };
         
         // return new CleanlinessIssue();
         throw new NotImplementedException();
+
+        ISphereOfAction GetLastSelectedSphere()
+        {
+            var lastSelectedSphereName =
+                inputs.Last(i =>
+                        i.Details.Text.IsSome &&
+                        spheres.Select(s => s.Name)
+                            .Contains(i.Details.Text.GetValueOrThrow()))
+                    .Details.Text.GetValueOrThrow();
+
+            return
+                spheres
+                    .First(s => 
+                        s.Name.Equals(lastSelectedSphereName));
+        }
+        
+        
     }
 }
