@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.Actors.Concrete;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IVendorsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);

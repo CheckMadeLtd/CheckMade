@@ -5,7 +5,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IRolesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
