@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
+internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
 {
     public override void WriteJson(JsonWriter writer, Option<T>? value, JsonSerializer serializer)
     {

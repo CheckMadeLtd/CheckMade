@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-public class DomainTermJsonConverter(IDomainGlossary glossary) : JsonConverter<DomainTerm>
+internal sealed class DomainTermJsonConverter(IDomainGlossary glossary) : JsonConverter<DomainTerm>
 {
     public override void WriteJson(JsonWriter writer, DomainTerm? value, JsonSerializer serializer)
     {
