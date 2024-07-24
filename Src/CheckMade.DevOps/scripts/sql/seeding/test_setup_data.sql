@@ -116,7 +116,8 @@ new_sphere1_sanitary_ops_at_X2024 AS (
                       }, 
                       "UncertaintyRadiusInMeters": null
                     }, 
-                    "AvailableFacilities": ["D1540N", "D4W2GW", "D55BLT"]
+                    "AvailableFacilities": ["D1540N", "D4W2GW", "D55BLT"],
+                    "AvailableConsumables": ["DSTP1N", "DOJH85", "D79AMO"]
                 }', 
                1)
         ON CONFLICT (live_event_id, name) DO NOTHING
@@ -137,7 +138,8 @@ new_sphere2_sanitary_ops_at_X2024 AS (
                       }, 
                       "UncertaintyRadiusInMeters": null
                     },
-                    "AvailableFacilities": ["D55BLT"]
+                    "AvailableFacilities": ["D55BLT"],
+                    "AvailableConsumables": ["DSTP1N"]
                 }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING

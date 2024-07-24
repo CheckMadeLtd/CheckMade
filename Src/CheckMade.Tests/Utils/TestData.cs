@@ -10,6 +10,7 @@ using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
+using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
 using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
@@ -174,13 +175,23 @@ internal static class TestData
                     Dt(typeof(GeneralMisc)),
                     Dt(typeof(Shower)),
                     Dt(typeof(Toilet))
-                }.ToImmutableReadOnlyCollection()));
+                }.ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesIssue.Item.ToiletPaper),
+                    Dt(ConsumablesIssue.Item.PaperTowels),
+                    Dt(ConsumablesIssue.Item.Soap)
+                }));
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
         new("Camp2",
             new SaniCampDetails(
                 Sphere2_Location,
-                new List<DomainTerm>().ToImmutableReadOnlyCollection()));
+                new List<DomainTerm>().ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesIssue.Item.ToiletPaper)
+                }));
     
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =
         new("Zone1",

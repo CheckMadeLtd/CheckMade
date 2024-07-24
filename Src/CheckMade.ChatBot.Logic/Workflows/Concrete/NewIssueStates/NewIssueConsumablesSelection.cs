@@ -1,7 +1,9 @@
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
@@ -12,14 +14,21 @@ internal interface INewIssueConsumablesSelection<T> : IWorkflowState where T : I
 internal sealed record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
-        IStateMediator Mediator) 
-    : INewIssueConsumablesSelection<T> where T : ITrade
+        IStateMediator Mediator,
+        ILiveEventsRepository LiveEventsRepo) 
+    : INewIssueConsumablesSelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
         var interactiveHistory =
             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+        
+        var currentSphere = NewIssueWorkflow.GetLastSelectedSphere(
+            interactiveHistory,
+            NewIssueWorkflow.GetAllTradeSpecificSpheres(
+                (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
+                new T()));
         
         return new List<OutputDto> 
         {
@@ -28,6 +37,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                 Text = Ui("Choose affected consumables:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(ConsumablesIssue.Item))
+                        .Where(dt => ((SaniCampDetails)currentSphere.Details).AvailableConsumables.Contains(dt))
                         .Select(dt => 
                             dt.IsToggleOn(interactiveHistory) 
                                 ? dt with { Toggle = true } 
