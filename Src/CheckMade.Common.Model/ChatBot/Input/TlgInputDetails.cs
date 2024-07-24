@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Common.Model.ChatBot.Input;
 
-public record TlgInputDetails(
+public sealed record TlgInputDetails(
     DateTime TlgDate,
     int TlgMessageId,
     Option<string> Text,
