@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -13,7 +14,7 @@ internal interface INewIssueConsumablesSelection<T> : IWorkflowState where T : I
 
 internal sealed record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator,
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
@@ -22,7 +23,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         TlgInput currentInput, Option<int> editMessageId)
     {
         var interactiveHistory =
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
         var currentSphere = NewIssueWorkflow.GetLastSelectedSphere(
             interactiveHistory,

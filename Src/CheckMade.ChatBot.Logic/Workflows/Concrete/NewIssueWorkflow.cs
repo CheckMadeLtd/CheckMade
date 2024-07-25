@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -16,7 +17,7 @@ internal interface INewIssueWorkflow : IWorkflow;
 
 internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator)
     : INewIssueWorkflow
 {
@@ -31,7 +32,7 @@ internal sealed record NewIssueWorkflow(
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
         
         var interactiveHistory =
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
         var lastInput =
             interactiveHistory
@@ -42,9 +43,9 @@ internal sealed record NewIssueWorkflow(
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
         var currentStateType = 
-            await LogicUtils.GetPreviousStateTypeAsync(
+            await GeneralWorkflowUtils.GetPreviousStateTypeAsync(
                 currentInput, 
-                ILogicUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
+                IGeneralWorkflowUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
 
         var currentState = Mediator.Next(currentStateType); 
         
@@ -66,7 +67,7 @@ internal sealed record NewIssueWorkflow(
         var liveEvent = (await LiveEventsRepo.GetAsync(
             currentInput.LiveEventContext.GetValueOrThrow()))!;
         
-        var lastKnownLocation = await LastKnownLocationAsync(currentInput, LogicUtils);
+        var lastKnownLocation = await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
 
         var sphere = lastKnownLocation.IsSome
             ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
@@ -92,10 +93,10 @@ internal sealed record NewIssueWorkflow(
     }
 
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
-        TlgInput currentInput, ILogicUtils logicUtils)
+        TlgInput currentInput, IGeneralWorkflowUtils generalWorkflowUtils)
     {
         var lastKnownLocationInput =
-            (await logicUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await generalWorkflowUtils.GetRecentLocationHistory(currentInput.TlgAgent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 

@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -13,7 +14,7 @@ internal interface INewIssueSphereConfirmation<T> : IWorkflowState where T : ITr
 internal sealed record NewIssueSphereConfirmation<T>(
         ILiveEventsRepository LiveEventsRepo,    
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator) 
     : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
@@ -24,7 +25,7 @@ internal sealed record NewIssueSphereConfirmation<T>(
             currentInput.LiveEventContext.GetValueOrThrow()))!;
         
         var lastKnownLocation = 
-            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
+            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
 
         var sphere = lastKnownLocation.IsSome
             ? NewIssueWorkflow.SphereNearCurrentUser(

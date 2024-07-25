@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -21,7 +22,7 @@ internal interface IUserAuthWorkflow : IWorkflow
 internal sealed record UserAuthWorkflow(
         IRolesRepository RolesRepo,
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IDomainGlossary Glossary)
     : IUserAuthWorkflow
 {
@@ -43,7 +44,7 @@ internal sealed record UserAuthWorkflow(
         var inputText = currentInput.Details.Text.GetValueOrDefault();
         
         var tlgAgentInputHistory = 
-            await LogicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
+            await GeneralWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
         
         return DetermineCurrentState(tlgAgentInputHistory) switch
         {

@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -10,7 +11,7 @@ internal interface INewIssueReview<T> : IWorkflowState where T : ITrade;
 
 internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator,
         IIssueFactory Factory) 
     : INewIssueReview<T> where T : ITrade
@@ -19,7 +20,7 @@ internal sealed record NewIssueReview<T>(
         TlgInput currentInput, Option<int> editMessageId)
     {
         var issue = await Factory.CreateAsync(
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
         return new List<OutputDto>
         {

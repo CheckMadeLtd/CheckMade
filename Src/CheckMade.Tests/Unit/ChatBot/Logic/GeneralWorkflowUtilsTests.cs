@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
-public class LogicUtilsTests
+public sealed class GeneralWorkflowUtilsTests
 {
     private ServiceProvider? _services;
 
@@ -29,13 +29,13 @@ public class LogicUtilsTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
         
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId);
 
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
 
         Assert.Equal(
             historicInputs.Length + 1,
@@ -70,13 +70,13 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { expiredRoleBind },
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(2));
 
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
 
         Assert.Equal(
             2,
@@ -132,14 +132,14 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: expiredRoleBinds,
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId,
             dateTime: latestCutoffDate.AddHours(1));
         
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
 
         Assert.Single(result);
         Assert.True(
@@ -173,14 +173,14 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { expiredRoleBind },
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId,
             dateTime: cutoffDate.AddHours(-1));
         
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
 
         Assert.Empty(result);
     }
@@ -210,13 +210,13 @@ public class LogicUtilsTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings: new[] { roleBindWithNullDeactivation },
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId);
             
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
 
         Assert.Equal(
             historicInputs.Length + 1,
@@ -243,13 +243,13 @@ public class LogicUtilsTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgent.UserId, tlgAgent.ChatId);
             
         var result = 
-            await logicUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
         
         Assert.Equal(
             2, result.Count);
@@ -282,12 +282,12 @@ public class LogicUtilsTests
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
                 tlgAgent.UserId, tlgAgent.ChatId,
-                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
+                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
             // Decoy: wrong TlgAgent
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
                 tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId,
-                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes -1))),
+                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes -1))),
             // Decoy: not a LocationUpdate
             inputGenerator.GetValidTlgInputTextMessage(),
             
@@ -295,16 +295,16 @@ public class LogicUtilsTests
             inputGenerator.GetValidTlgInputLocationMessage(
                 expectedLocation,
                 tlgAgent.UserId, tlgAgent.ChatId,
-                DateTime.UtcNow.AddMinutes(-(ILogicUtils.RecentLocationHistoryTimeFrameInMinutes -1)))
+                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes -1)))
         };
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: historicInputs);
-        var logicUtils = services.GetRequiredService<ILogicUtils>();
+        var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
         
         var result = 
-            await logicUtils.GetRecentLocationHistory(tlgAgent);
+            await workflowUtils.GetRecentLocationHistory(tlgAgent);
         
         Assert.Single(result);
         Assert.Equivalent(

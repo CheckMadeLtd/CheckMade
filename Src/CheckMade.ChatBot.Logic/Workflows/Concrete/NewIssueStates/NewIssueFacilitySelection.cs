@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -13,7 +14,7 @@ internal interface INewIssueFacilitySelection<T> : IWorkflowState where T : ITra
 internal sealed record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
@@ -21,7 +22,7 @@ internal sealed record NewIssueFacilitySelection<T>(
         TlgInput currentInput, Option<int> editMessageId)
     {
         var currentSphere = NewIssueWorkflow.GetLastSelectedSphere(
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput),
             NewIssueWorkflow.GetAllTradeSpecificSpheres(
                 (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
                 new T()));

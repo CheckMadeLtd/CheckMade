@@ -5,9 +5,9 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Trades;
 
-namespace CheckMade.ChatBot.Logic;
+namespace CheckMade.ChatBot.Logic.Utils;
 
-internal interface ILogicUtils
+internal interface IGeneralWorkflowUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
     const int DistanceFromCurrentWhenRetrievingPreviousWorkflowState = 1;
@@ -18,16 +18,17 @@ internal interface ILogicUtils
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
+
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
 }
 
-internal record LogicUtils(
+internal sealed record GeneralWorkflowUtils(
         ITlgInputsRepository InputsRepo,
         ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
         IDomainGlossary Glossary)
-    : ILogicUtils
+    : IGeneralWorkflowUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery,
@@ -53,14 +54,14 @@ internal record LogicUtils(
         
         var allCurrentInteractive = 
             allInteractiveIncludingNewInput
-            .Where(i =>
-                i.Details.TlgDate.ToUniversalTime() >
-                cutOffDate.ToUniversalTime())
-            .ToList();
+                .Where(i =>
+                    i.Details.TlgDate.ToUniversalTime() >
+                    cutOffDate.ToUniversalTime())
+                .ToList();
 
         return 
             allCurrentInteractive
-            .ToImmutableReadOnlyCollection();
+                .ToImmutableReadOnlyCollection();
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> 
@@ -82,7 +83,7 @@ internal record LogicUtils(
             await InputsRepo.GetAllLocationAsync(
                 tlgAgent, 
                 DateTime.UtcNow
-                    .AddMinutes(-ILogicUtils.RecentLocationHistoryTimeFrameInMinutes));
+                    .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
     public async Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent)
@@ -109,7 +110,7 @@ internal record LogicUtils(
     }
 }
 
-internal static class LogicUtilsExtensions
+internal static class GeneralWorkflowUtilsExtensions
 {
     public static string GetTypeNameWithoutGenericParamSuffix(this string typeName) =>
         typeName.Split('`')[0];

@@ -1,4 +1,5 @@
-﻿using CheckMade.ChatBot.Logic.Workflows;
+﻿using CheckMade.ChatBot.Logic.Utils;
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -19,7 +20,7 @@ public interface IInputProcessor
 internal class InputProcessor(
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
-        ILogicUtils logicUtils,
+        IGeneralWorkflowUtils generalWorkflowUtils,
         IDomainGlossary glossary,
         ILogger<InputProcessor> logger)
     : IInputProcessor
@@ -54,7 +55,7 @@ internal class InputProcessor(
                 }
 
                 var activeWorkflowInputHistory = 
-                    await logicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+                    await generalWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
@@ -133,7 +134,7 @@ internal class InputProcessor(
             return false;
         
         var previousWorkflowInputHistory = 
-            (await logicUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
+            (await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))

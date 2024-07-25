@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -18,7 +19,7 @@ internal interface ILanguageSettingWorkflow : IWorkflow
 internal sealed record LanguageSettingWorkflow(
         IUsersRepository UsersRepo,
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IDomainGlossary Glossary) 
     : ILanguageSettingWorkflow
 {
@@ -35,7 +36,7 @@ internal sealed record LanguageSettingWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
         return DetermineCurrentState(workflowInputHistory) switch
         {
@@ -57,7 +58,7 @@ internal sealed record LanguageSettingWorkflow(
             
             Completed => 
                 new WorkflowResponse(
-                    new OutputDto  { Text = ILogicUtils.WorkflowWasCompleted },
+                    new OutputDto  { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
                     Glossary.GetId(Completed)),
             
             _ => Result<WorkflowResponse>.FromError(

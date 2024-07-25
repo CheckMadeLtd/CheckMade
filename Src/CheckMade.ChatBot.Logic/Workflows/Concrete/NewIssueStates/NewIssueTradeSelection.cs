@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -14,7 +15,7 @@ internal interface INewIssueTradeSelection : IWorkflowState;
 internal sealed record NewIssueTradeSelection(
         IDomainGlossary Glossary,
         ILiveEventsRepository LiveEventRepo,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator)
     : INewIssueTradeSelection
 {
@@ -44,7 +45,7 @@ internal sealed record NewIssueTradeSelection(
                 currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!)!; 
         
         var lastKnownLocation = 
-            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, LogicUtils);
+            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
 
         var liveEvent =
             (await LiveEventRepo.GetAsync(

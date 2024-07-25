@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -19,7 +20,7 @@ internal interface ILogoutWorkflow : IWorkflow
 
 internal sealed record LogoutWorkflow(
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        ILogicUtils LogicUtils,
+        IGeneralWorkflowUtils GeneralWorkflowUtils,
         IDomainGlossary Glossary) 
     : ILogoutWorkflow
 {
@@ -32,7 +33,7 @@ internal sealed record LogoutWorkflow(
         GetResponseAsync(TlgInput currentInput)
     {
         var workflowInputHistory = 
-            await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
             .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
