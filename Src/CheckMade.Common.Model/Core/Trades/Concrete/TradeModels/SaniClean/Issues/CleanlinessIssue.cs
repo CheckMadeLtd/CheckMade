@@ -16,6 +16,10 @@ public sealed record CleanlinessIssue(
 {
     public UiString GetSummary()
     {
-        throw new NotImplementedException();
+        // ToDo: Add new UiStrings to translations
+        return UiConcatenate(
+            Ui("Summary of {0}:\n", GetType().Name),
+            Ui("Reported by a: "),
+            UiNoTranslate(ReportedBy.RoleType.GetType().Name));
     }
 }

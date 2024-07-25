@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
@@ -26,7 +27,10 @@ internal sealed record NewIssueReview<T>(
         {
             new()
             {
-                Text = issue.GetSummary()
+                Text = UiConcatenate(
+                    Ui("Please review this issue draft.\n\n"),
+                    issue.GetSummary()),
+                ControlPromptsSelection = ControlPrompts.Submit
             }
         };
     }
