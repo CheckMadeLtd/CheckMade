@@ -1,5 +1,9 @@
+using System.Text;
 using CheckMade.ChatBot.Logic.Utils;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
+using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
@@ -18,7 +22,10 @@ internal interface IIssueFactory
     Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
 } 
 
-internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIssueFactory
+internal sealed record IssueFactory(
+        ILiveEventsRepository LiveEventsRepo,
+        IDomainGlossary Glossary) 
+    : IIssueFactory
 {
     public async Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {
@@ -116,8 +123,47 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
 
         IssueEvidence GetSubmittedEvidence()
         {
-            // concatenate multiple descriptions into a single string... 
+            var combinedDescriptionEvidence = new StringBuilder();
+
+            var submittedDescriptions = 
+                inputs
+                    .Where(i =>
+                        i.InputType == TlgInputType.TextMessage &&
+                        i.ResultantWorkflow.IsSome &&
+                        i.ResultantWorkflow.GetValueOrThrow().InStateId ==
+                        Glossary.GetId(typeof(INewIssueEvidenceEntry<ITrade>)))
+                    .Select(i => i.Details.Text.GetValueOrThrow())
+                    .ToImmutableReadOnlyCollection();
+
+            foreach (var text in submittedDescriptions)
+            {
+                combinedDescriptionEvidence.Append(text);
+            }
+
+            var submittedMedia =
+                inputs
+                    .Where(i =>
+                        i.InputType == TlgInputType.AttachmentMessage &&
+                        i.ResultantWorkflow.IsSome &&
+                        i.ResultantWorkflow.GetValueOrThrow().InStateId ==
+                        Glossary.GetId(typeof(INewIssueEvidenceEntry<ITrade>)))
+                    .ToImmutableReadOnlyCollection();
+
+            List<AttachmentDetails> mediaEvidence = [];
             
+            mediaEvidence
+                .AddRange(submittedMedia
+                    .Select(attachment => 
+                        new AttachmentDetails(
+                            attachment.Details.AttachmentInternalUri.GetValueOrThrow(),
+                            attachment.Details.AttachmentType.GetValueOrThrow(),
+                            attachment.Details.Text)));
+
+            return new IssueEvidence
+            {
+                Description = combinedDescriptionEvidence.ToString(),
+                Media = mediaEvidence
+            };
         }
         
         IFacility GetLastSelectedFacility()
@@ -129,11 +175,13 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
                     .Details.DomainTerm.GetValueOrThrow()
                     .TypeValue;
+
+            throw new NotImplementedException();
         }
 
         IReadOnlyCollection<ConsumablesIssue.Item> GetSelectedConsumablesItems()
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

@@ -104,7 +104,7 @@ internal static class OutputSender
                     var fileStream = new InputFileStream(blobData, fileName);
                     
                     var caption = details.Caption.Match(
-                        value => uiTranslator.Translate(value),
+                        value => value,
                         Option<string>.None);
 
                     var attachmentSendOutParams = new AttachmentSendOutParameters(

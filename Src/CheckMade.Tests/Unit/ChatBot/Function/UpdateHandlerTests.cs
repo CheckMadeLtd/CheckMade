@@ -22,7 +22,7 @@ using static CheckMade.Tests.Utils.TestUtils;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
-public class UpdateHandlerTests(ITestOutputHelper outputHelper)
+public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
@@ -392,13 +392,13 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, Option<UiString>.None()),
+                        TlgAttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, Option<UiString>.None()),
+                        TlgAttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri3.html"), 
-                        TlgAttachmentType.Voice, Option<UiString>.None()),
+                        TlgAttachmentType.Voice, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri4.html"), 
-                        TlgAttachmentType.Document, Option<UiString>.None())
+                        TlgAttachmentType.Document, Option<string>.None())
                 } 
             }
         ];
@@ -449,9 +449,9 @@ public class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, Ui("Random caption for Attachment 1")),
+                        TlgAttachmentType.Photo, "Random caption for Attachment 1"),
                     new(new Uri("http://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, Ui("Random caption for Attachment 2")),
+                        TlgAttachmentType.Photo, "Random caption for Attachment 2"),
                 }
             }
         ];

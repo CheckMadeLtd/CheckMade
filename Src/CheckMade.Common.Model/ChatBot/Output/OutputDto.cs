@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Common.Model.ChatBot.Output;
 
-public record OutputDto
+public sealed record OutputDto
 {
     public Option<LogicalPort> LogicalPort { get; init; } 
         = Option<LogicalPort>.None();
