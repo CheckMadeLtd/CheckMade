@@ -52,45 +52,45 @@ internal sealed record IssueFactory<T>(
                 {
                     nameof(CleanlinessIssue) =>
                         new CleanlinessIssue(
-                            Id: Guid.NewGuid(),
+                            Id: GetGuid(),
                             CreationDate: DateTime.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
-                            Status: IssueStatus.Drafting),
+                            Status: GetStatus()),
             
                     nameof(ConsumablesIssue) =>
                         new ConsumablesIssue(
-                            Id: Guid.NewGuid(),
+                            Id: GetGuid(),
                             CreationDate: DateTime.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             AffectedItems: GetSelectedConsumablesItems(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
-                            Status: IssueStatus.Drafting),
+                            Status: GetStatus()),
 
                     nameof(StaffIssue) =>
                         new StaffIssue(
-                            Id: Guid.NewGuid(),
+                            Id: GetGuid(),
                             CreationDate: DateTime.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
-                            Status: IssueStatus.Drafting),
+                            Status: GetStatus()),
 
                     nameof(TechnicalIssue) =>
                         new TechnicalIssue(
-                            Id: Guid.NewGuid(),
+                            Id: GetGuid(),
                             CreationDate: DateTime.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
-                            Status: IssueStatus.Drafting),
+                            Status: GetStatus()),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
@@ -102,13 +102,13 @@ internal sealed record IssueFactory<T>(
                 {
                     nameof(GeneralSiteCleanIssue) =>
                         new GeneralSiteCleanIssue(
-                            Id: Guid.NewGuid(), 
+                            Id: GetGuid(), 
                             CreationDate: DateTime.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(), 
-                            Status: IssueStatus.Drafting),
+                            Status: GetStatus()),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
@@ -120,6 +120,35 @@ internal sealed record IssueFactory<T>(
         };
 
         return tradeIssue;
+
+        Guid GetGuid() =>
+            inputs
+                .First(i => i.EntityGuid.IsSome)
+                .EntityGuid.GetValueOrThrow();
+        
+        IFacility GetLastSelectedFacility()
+        {
+            var lastFacilityType =
+                inputs.LastOrDefault(i =>
+                        i.Details.DomainTerm.IsSome &&
+                        i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                        i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
+                    .Details.DomainTerm.GetValueOrThrow()
+                    .TypeValue!;
+
+            try
+            {
+                return (IFacility)Activator.CreateInstance(lastFacilityType)!;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    $"Every subtype of {nameof(IFacility)} requires a parameterless constructor." +
+                    $"This allows for usage of '{nameof(Activator)}.{nameof(Activator.CreateInstance)}' " +
+                    $"instead of using a switch expression switching on the given {nameof(lastFacilityType)}. " +
+                    $"We thereby reduce maintenance when new subtypes are added", ex);
+            }
+        }
 
         IssueEvidence GetSubmittedEvidence()
         {
@@ -167,31 +196,22 @@ internal sealed record IssueFactory<T>(
                     : Option<IReadOnlyCollection<AttachmentDetails>>.None()
             };
         }
-        
-        IFacility GetLastSelectedFacility()
+
+        IssueStatus GetStatus()
         {
-            var lastFacilityType =
-                inputs.LastOrDefault(i =>
-                        i.Details.DomainTerm.IsSome &&
-                        i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                        i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
-                    .Details.DomainTerm.GetValueOrThrow()
-                    .TypeValue!;
+            // ToDo: Refactor to look for the highest/latest status and when found, return early
+            
+            var isSubmitted = 
+                inputs.Any(i =>
+                    i.ResultantWorkflow.IsSome &&
+                    i.ResultantWorkflow.GetValueOrThrow().InStateId == 
+                    Glossary.GetId(typeof(INewIssueSubmissionConfirmation<T>)));
 
-            try
-            {
-                return (IFacility)Activator.CreateInstance(lastFacilityType)!;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException(
-                    $"Every subtype of {nameof(IFacility)} requires a parameterless constructor." +
-                    $"This allows for usage of '{nameof(Activator)}.{nameof(Activator.CreateInstance)}' " +
-                    $"instead of using a switch expression switching on the given {nameof(lastFacilityType)}. " +
-                    $"We thereby reduce maintenance when new subtypes are added", ex);
-            }
+            return isSubmitted
+                ? IssueStatus.Reported
+                : IssueStatus.Drafting;
         }
-
+        
         IReadOnlyCollection<ConsumablesIssue.Item> GetSelectedConsumablesItems()
         {
             return Glossary.GetAll(typeof(ConsumablesIssue.Item))

@@ -42,58 +42,36 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #region Workflows
         
-        AddTerm(typeof(IUserAuthWorkflow), "DJIQPO", UiNoTranslate(nameof(UserAuthWorkflow)));
-        AddTerm(UserAuthWorkflow.States.Initial, "DTWLPM", 
-            UiNoTranslate(UserAuthWorkflow.States.Initial.ToString()));
-        AddTerm(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt, "DRGLYG", 
-            UiNoTranslate(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt.ToString()));
+        AddTerm(typeof(IUserAuthWorkflow), "DJIQPO");
+        AddTerm(UserAuthWorkflow.States.Initial, "DTWLPM");
+        AddTerm(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt, "DRGLYG");
         
-        AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3", UiNoTranslate(nameof(LanguageSettingWorkflow)));
-        AddTerm(LanguageSettingWorkflow.States.Initial, "DD4252",
-            UiNoTranslate(LanguageSettingWorkflow.States.Initial.ToString()));
-        AddTerm(LanguageSettingWorkflow.States.ReceivedLanguageSetting, "DGWJX8",
-            UiNoTranslate(LanguageSettingWorkflow.States.ReceivedLanguageSetting.ToString()));
-        AddTerm(LanguageSettingWorkflow.States.Completed, "DL32QX",
-            UiNoTranslate(LanguageSettingWorkflow.States.Completed.ToString()));
+        AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3");
+        AddTerm(LanguageSettingWorkflow.States.Initial, "DD4252");
+        AddTerm(LanguageSettingWorkflow.States.ReceivedLanguageSetting, "DGWJX8");
+        AddTerm(LanguageSettingWorkflow.States.Completed, "DL32QX");
         
         AddTerm(typeof(ILogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
-        AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4", 
-            UiNoTranslate(LogoutWorkflow.States.Initial.ToString()));
-        AddTerm(LogoutWorkflow.States.LogoutConfirmed, "DPXFZ8", 
-            UiNoTranslate(LogoutWorkflow.States.LogoutConfirmed.ToString()));
-        AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR", 
-            UiNoTranslate(LogoutWorkflow.States.LogoutAborted.ToString()));
+        AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4");
+        AddTerm(LogoutWorkflow.States.LogoutConfirmed, "DPXFZ8");
+        AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR");
         
-        AddTerm(typeof(INewIssueWorkflow), "D6SORL", 
-            UiNoTranslate(nameof(NewIssueWorkflow)));
-        AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD", 
-            UiNoTranslate(nameof(NewIssueTradeSelection)));
-        AddTerm(typeof(INewIssueSphereSelection<SaniCleanTrade>), "D8T63V",
-            UiNoTranslate(nameof(NewIssueSphereSelection<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL",
-            UiNoTranslate(nameof(NewIssueSphereSelection<SiteCleanTrade>)));
-        AddTerm(typeof(INewIssueSphereConfirmation<SaniCleanTrade>), "D45JQ1",
-            UiNoTranslate(nameof(NewIssueSphereConfirmation<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV",
-            UiNoTranslate(nameof(NewIssueSphereConfirmation<SiteCleanTrade>)));
-        AddTerm(typeof(INewIssueTypeSelection<SaniCleanTrade>), "DDQHWW",
-            UiNoTranslate(nameof(NewIssueTypeSelection<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2",
-            UiNoTranslate(nameof(NewIssueTypeSelection<SiteCleanTrade>)));
-        AddTerm(typeof(INewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV",
-            UiNoTranslate(nameof(NewIssueConsumablesSelection<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z",
-            UiNoTranslate(nameof(NewIssueEvidenceEntry<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44",
-            UiNoTranslate(nameof(NewIssueEvidenceEntry<SiteCleanTrade>)));
-        AddTerm(typeof(INewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L",
-            UiNoTranslate(nameof(NewIssueFacilitySelection<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7",
-            UiNoTranslate(nameof(NewIssueFacilitySelection<SiteCleanTrade>)));
-        AddTerm(typeof(INewIssueReview<SaniCleanTrade>), "DAH8TX",
-            UiNoTranslate(nameof(NewIssueReview<SaniCleanTrade>)));
-        AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY",
-            UiNoTranslate(nameof(NewIssueReview<SiteCleanTrade>)));
+        AddTerm(typeof(INewIssueWorkflow), "D6SORL");
+        AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");
+        AddTerm(typeof(INewIssueSphereSelection<SaniCleanTrade>), "D8T63V");
+        AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL");
+        AddTerm(typeof(INewIssueSphereConfirmation<SaniCleanTrade>), "D45JQ1");
+        AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV");
+        AddTerm(typeof(INewIssueTypeSelection<SaniCleanTrade>), "DDQHWW");
+        AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2");
+        AddTerm(typeof(INewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV");
+        AddTerm(typeof(INewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z");
+        AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44");
+        AddTerm(typeof(INewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L");
+        AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7");
+        AddTerm(typeof(INewIssueReview<SaniCleanTrade>), "DAH8TX");
+        AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY");
+        AddTerm(typeof(INewIssueSubmissionConfirmation<SaniCleanTrade>), "D8TGOV");
         
         #endregion
         
@@ -169,7 +147,7 @@ public sealed record DomainGlossary : IDomainGlossary
                 $"Given {nameof(dtId)} '{dtId}' not found in {nameof(DomainGlossary)}", 
                 nameof(dtId));
     }
-
+    
     private void AddTerm(object term, string idRaw, UiString uiString)
     {
         var callBackIdAndUi = (new CallbackId(idRaw), uiString);
@@ -188,4 +166,10 @@ public sealed record DomainGlossary : IDomainGlossary
                 throw new ArgumentException("Term needs to be either of type Type or of type Enum!");
         }
     }
+
+    private void AddTerm(Type typeTerm, string idRaw) =>
+        AddTerm(typeTerm, idRaw, UiNoTranslate(typeTerm.Name));
+    
+    private void AddTerm(Enum enumTerm, string idRaw) =>
+        AddTerm(enumTerm, idRaw, UiNoTranslate(enumTerm.ToString()));
 }
