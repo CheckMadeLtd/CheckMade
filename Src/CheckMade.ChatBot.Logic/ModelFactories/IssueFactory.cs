@@ -174,14 +174,28 @@ internal sealed record IssueFactory(
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
                     .Details.DomainTerm.GetValueOrThrow()
-                    .TypeValue;
+                    .TypeValue!;
 
-            throw new NotImplementedException();
+            try
+            {
+                return (IFacility)Activator.CreateInstance(lastFacilityType)!;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    $"Every subtype of {nameof(IFacility)} requires a parameterless constructor." +
+                    $"This allows for usage of '{nameof(Activator)}.{nameof(Activator.CreateInstance)}' " +
+                    $"instead of using a switch expression switching on the given {nameof(lastFacilityType)}. " +
+                    $"We thereby reduce maintenance when new subtypes are added", ex);
+            }
         }
 
         IReadOnlyCollection<ConsumablesIssue.Item> GetSelectedConsumablesItems()
         {
-            throw new NotImplementedException();
+            return Glossary.GetAll(typeof(ConsumablesIssue.Item))
+                .Where(dt => dt.IsToggleOn(inputs))
+                .Select(dt => (ConsumablesIssue.Item)dt.EnumValue!)
+                .ToImmutableReadOnlyCollection();
         }
     }
 }
