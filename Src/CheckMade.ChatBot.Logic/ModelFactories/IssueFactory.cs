@@ -17,24 +17,24 @@ using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 
-internal interface IIssueFactory
+internal interface IIssueFactory<T>
 {
     Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
 } 
 
-internal sealed record IssueFactory(
+internal sealed record IssueFactory<T>(
         ILiveEventsRepository LiveEventsRepo,
         IDomainGlossary Glossary) 
-    : IIssueFactory
+    : IIssueFactory<T> where T : ITrade, new()
 {
     public async Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {
+        var currentTrade = new T();
         var liveEvent = (await LiveEventsRepo.GetAsync(
             inputs.Last().LiveEventContext.GetValueOrThrow()))!;
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
-        var currentTrade = role.GetCurrentTrade(inputs);
         var allSpheres = 
-            GetAllTradeSpecificSpheres(liveEvent, currentTrade);
+            GetAllTradeSpecificSpheres(liveEvent, new T());
         
         var lastSelectedIssueType =
             inputs
@@ -93,7 +93,7 @@ internal sealed record IssueFactory(
                             Status: IssueStatus.Drafting),
                     
                     _ => throw new InvalidOperationException(
-                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(currentTrade)} " +
+                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
                         $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
                 },
             
@@ -111,7 +111,7 @@ internal sealed record IssueFactory(
                             Status: IssueStatus.Drafting),
                     
                     _ => throw new InvalidOperationException(
-                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(currentTrade)} " +
+                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
                         $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
                 },
             
@@ -131,13 +131,13 @@ internal sealed record IssueFactory(
                         i.InputType == TlgInputType.TextMessage &&
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewIssueEvidenceEntry<ITrade>)))
+                        Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .Select(i => i.Details.Text.GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
 
             foreach (var text in submittedDescriptions)
             {
-                combinedDescriptionEvidence.Append(text);
+                combinedDescriptionEvidence.Append($"> {text}\n");
             }
 
             var submittedMedia =
@@ -146,7 +146,7 @@ internal sealed record IssueFactory(
                         i.InputType == TlgInputType.AttachmentMessage &&
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewIssueEvidenceEntry<ITrade>)))
+                        Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .ToImmutableReadOnlyCollection();
 
             List<AttachmentDetails> mediaEvidence = [];
@@ -162,7 +162,9 @@ internal sealed record IssueFactory(
             return new IssueEvidence
             {
                 Description = combinedDescriptionEvidence.ToString(),
-                Media = mediaEvidence
+                Media = mediaEvidence.Count != 0 
+                    ? mediaEvidence
+                    : Option<IReadOnlyCollection<AttachmentDetails>>.None()
             };
         }
         

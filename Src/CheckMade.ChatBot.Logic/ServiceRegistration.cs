@@ -26,7 +26,8 @@ public static class ServiceRegistration
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
         services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
 
-        services.AddScoped<IIssueFactory, IssueFactory>();
+        services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
+        services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
 
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
         services.AddScoped<INewIssueConsumablesSelection<SaniCleanTrade>, NewIssueConsumablesSelection<SaniCleanTrade>>();

@@ -13,7 +13,7 @@ internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
         IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator,
-        IIssueFactory Factory) 
+        IIssueFactory<T> Factory) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
