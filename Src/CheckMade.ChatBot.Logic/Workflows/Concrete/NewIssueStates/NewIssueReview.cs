@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -11,13 +12,13 @@ internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
         ILogicUtils LogicUtils,
         IStateMediator Mediator,
-        INewIssueWorkflow NewIssueWorkflow) 
+        IIssueFactory Factory) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
-        var issue = await NewIssueWorkflow.ConstructIssueAsync(
+        var issue = await Factory.CreateAsync(
             await LogicUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
         return new List<OutputDto>

@@ -7,11 +7,12 @@ public sealed record TechnicalIssue(
         Guid Id,    
         DateTime CreationDate,
         ISphereOfAction Sphere,
+        IFacility Facility,
         IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
-        IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue
+        IssueStatus Status) 
+    : ITradeIssue, ITradeIssueInvolvingFacility, ITradeIssueWithEvidence
 {
     public UiString GetSummary()
     {

@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 
-public record IssueEvidence
+public sealed record IssueEvidence
 {
     public Option<string> Description { get; init; } = 
         Option<string>.None();

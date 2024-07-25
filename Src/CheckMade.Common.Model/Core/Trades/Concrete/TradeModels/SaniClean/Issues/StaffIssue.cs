@@ -10,8 +10,8 @@ public sealed record StaffIssue(
         IssueEvidence Evidence, 
         IRoleInfo ReportedBy, 
         Option<IRoleInfo> HandledBy, 
-        IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue
+        IssueStatus Status) 
+    : ITradeIssue, ITradeIssueWithEvidence
 {
     public UiString GetSummary()
     {

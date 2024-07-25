@@ -6,17 +6,13 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
 using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
 
-internal interface INewIssueWorkflow : IWorkflow
-{
-    Task<ITradeIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs);
-}
+internal interface INewIssueWorkflow : IWorkflow;
 
 internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
@@ -146,74 +142,6 @@ internal sealed record NewIssueWorkflow(
             .DivIntoSpheres
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .ToImmutableReadOnlyCollection();
-    
-    public async Task<ITradeIssue> ConstructIssueAsync(IReadOnlyCollection<TlgInput> inputs)
-    {
-        var role = inputs.Last().OriginatorRole.GetValueOrThrow();
-        var liveEventInfo = inputs.Last().LiveEventContext.GetValueOrThrow();
-        var liveEvent = (await LiveEventsRepo.GetAsync(liveEventInfo))!;
-        var trade = role.GetCurrentTrade(inputs);
-        var spheres = GetAllTradeSpecificSpheres(liveEvent, trade);
-        var guid = Guid.NewGuid();
-        
-        // var lastFacilityType =
-        //     inputs.LastOrDefault(i =>
-        //         i.Details.DomainTerm.IsSome &&
-        //         i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-        //         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
-        //         .Details.DomainTerm.GetValueOrThrow()
-        //         .TypeValue;
-
-        var evidence = new IssueEvidence();
-                
-        // ToDo: construct a new IssueEvidence based on submitted descriptions and media
-        // concatenate multiple descriptions into a single string... 
-        
-        var lastSelectedIssueType =
-            inputs
-                .Last(i => 
-                    i.Details.DomainTerm.IsSome &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITradeIssue)))
-                .Details.DomainTerm.GetValueOrThrow()
-                .TypeValue!;
-
-        // ITradeIssue tradeIssue = lastSelectedIssueType.Name switch
-        // {
-        //     nameof(CleanlinessIssue) =>
-        //         new CleanlinessIssue(
-        //             Id: guid,
-        //             CreationDate: DateTime.UtcNow, 
-        //             Sphere: GetLastSelectedSphere(),
-        //             Facility: lastSelectedFacility, // use a Func<inputs, IFacility<SaniCleanTrade>>
-        //             Evidence: evidence,
-        //             ReportedBy: role,
-        //             HandledBy: Option<IRoleInfo>.None()),
-        //     
-        //     nameof(TechnicalIssue) =>
-        //         new TechnicalIssue(
-        //             Id: guid,
-        //             CreationDate: DateTime.UtcNow, 
-        //             Sphere: GetLastSelectedSphere(),
-        //             Evidence: evidence,
-        //             ReportedBy: role,
-        //             HandledBy: Option<IRoleInfo>.None()),
-        //     
-        //     nameof(ConsumablesIssue) =>
-        //         new ConsumablesIssue(
-        //             Id: guid,
-        //             CreationDate: DateTime.UtcNow, 
-        //             Sphere: GetLastSelectedSphere(),
-        //             Facility: lastSelectedFacility, // use delegate, constitute facility incl. affected consumables from input history
-        //             Evidence: evidence,
-        //             ReportedBy: role,
-        //             HandledBy: Option<IRoleInfo>.None()),
-        // };
-        
-        // return new CleanlinessIssue();
-        throw new NotImplementedException();
-        
-    }
     
     internal static ISphereOfAction GetLastSelectedSphere(
         IReadOnlyCollection<TlgInput> inputs,

@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
 
 namespace CheckMade.Common.Model.Core.Trades;
 
@@ -9,7 +8,6 @@ public interface ITradeIssue
     Guid Id { get; }
     DateTime CreationDate { get; }
     ISphereOfAction Sphere { get; }
-    IssueEvidence Evidence { get; }
     IRoleInfo ReportedBy { get; }
     Option<IRoleInfo> HandledBy { get; }
     IssueStatus Status { get; }
@@ -19,6 +17,7 @@ public interface ITradeIssue
 
 public enum IssueStatus
 {
+    Drafting = 1,
     Reported = 10,
     HandlingInProgress = 20,
     HandledReviewRequired = 30,

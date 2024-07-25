@@ -3,23 +3,22 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 
+using static ConsumablesIssue;
+
 public sealed record ConsumablesIssue(
         Guid Id,
         DateTime CreationDate,
         ISphereOfAction Sphere,
-        IFacility Facility,
-        IssueEvidence Evidence,
+        IReadOnlyCollection<Item> AffectedItems,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
-        IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue, ITradeIssueInvolvingFacility
+        IssueStatus Status) 
+    : ITradeIssue
 {
     public UiString GetSummary()
     {
         throw new NotImplementedException();
     }
-    
-    public IReadOnlyCollection<Item> AffectedItems { get; init; } = [];
     
     public enum Item
     {

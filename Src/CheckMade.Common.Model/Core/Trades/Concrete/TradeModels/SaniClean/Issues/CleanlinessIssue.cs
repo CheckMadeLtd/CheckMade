@@ -11,8 +11,8 @@ public sealed record CleanlinessIssue(
         IssueEvidence Evidence,
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
-        IssueStatus Status = IssueStatus.Reported) 
-    : ITradeIssue, ITradeIssueInvolvingFacility
+        IssueStatus Status) 
+    : ITradeIssue, ITradeIssueInvolvingFacility, ITradeIssueWithEvidence
 {
     public UiString GetSummary()
     {

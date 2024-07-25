@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
 
-public sealed record GeneralIssue(
+public sealed record GeneralSiteCleanIssue(
         Guid Id, 
         DateTime CreationDate, 
         ISphereOfAction Sphere, 
@@ -11,7 +11,7 @@ public sealed record GeneralIssue(
         IRoleInfo ReportedBy, 
         Option<IRoleInfo> HandledBy, 
         IssueStatus Status) 
-    : ITradeIssue
+    : ITradeIssue, ITradeIssueWithEvidence
 {
     public UiString GetSummary()
     {

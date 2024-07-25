@@ -122,7 +122,7 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #region TradeModelSiteClean
         
-        AddTerm(typeof(GeneralIssue), "DVGI3N", Ui("General"));
+        AddTerm(typeof(GeneralSiteCleanIssue), "DVGI3N", Ui("General"));
         
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));
