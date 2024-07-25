@@ -7,6 +7,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -25,11 +26,11 @@ internal sealed record NewIssueConsumablesSelection<T>(
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
-        var currentSphere = NewIssueWorkflow.GetLastSelectedSphere(
-            interactiveHistory,
-            NewIssueWorkflow.GetAllTradeSpecificSpheres(
-                (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                new T()));
+        var currentSphere = 
+            GetLastSelectedSphere(interactiveHistory, 
+                GetAllTradeSpecificSpheres(
+                    (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
+                    new T()));
         
         return new List<OutputDto> 
         {

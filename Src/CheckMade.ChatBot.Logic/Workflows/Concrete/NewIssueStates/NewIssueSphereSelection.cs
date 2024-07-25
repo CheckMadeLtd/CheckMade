@@ -4,6 +4,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
+using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -68,7 +69,7 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
         ITrade trade, ILiveEventInfo liveEventInfo)
     {
         return _tradeSpecificSphereNamesCache ??= 
-            NewIssueWorkflow.GetAllTradeSpecificSpheres(
+            GetAllTradeSpecificSpheres(
                     (await _liveEventsRepo.GetAsync(liveEventInfo))!,
                     trade)
                 .Select(soa => soa.Name)

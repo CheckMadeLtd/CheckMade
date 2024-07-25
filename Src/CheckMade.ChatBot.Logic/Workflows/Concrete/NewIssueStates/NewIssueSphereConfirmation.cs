@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
+using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -25,10 +26,10 @@ internal sealed record NewIssueSphereConfirmation<T>(
             currentInput.LiveEventContext.GetValueOrThrow()))!;
         
         var lastKnownLocation = 
-            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+            await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
 
         var sphere = lastKnownLocation.IsSome
-            ? NewIssueWorkflow.SphereNearCurrentUser(
+            ? SphereNearCurrentUser(
                 liveEvent, lastKnownLocation.GetValueOrThrow(), 
                 new T())
             : Option<ISphereOfAction>.None();

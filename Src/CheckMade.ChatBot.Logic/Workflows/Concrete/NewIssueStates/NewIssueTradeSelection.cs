@@ -7,6 +7,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
+using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
@@ -45,14 +46,14 @@ internal sealed record NewIssueTradeSelection(
                 currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!)!; 
         
         var lastKnownLocation = 
-            await NewIssueWorkflow.LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+            await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
 
         var liveEvent =
             (await LiveEventRepo.GetAsync(
                 currentInput.LiveEventContext.GetValueOrThrow()))!;
         
         var sphere = lastKnownLocation.IsSome
-            ? NewIssueWorkflow.SphereNearCurrentUser(
+            ? SphereNearCurrentUser(
                 liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
         

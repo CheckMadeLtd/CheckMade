@@ -1,5 +1,4 @@
 using CheckMade.ChatBot.Logic.Utils;
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
@@ -10,6 +9,7 @@ using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
 using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
+using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 
@@ -27,7 +27,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
         var role = inputs.Last().OriginatorRole.GetValueOrThrow();
         var currentTrade = role.GetCurrentTrade(inputs);
         var allSpheres = 
-            NewIssueWorkflow.GetAllTradeSpecificSpheres(liveEvent, currentTrade);
+            GetAllTradeSpecificSpheres(liveEvent, currentTrade);
         
         var lastSelectedIssueType =
             inputs
@@ -47,7 +47,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         new CleanlinessIssue(
                             Id: Guid.NewGuid(),
                             CreationDate: DateTime.UtcNow, 
-                            Sphere: NewIssueWorkflow.GetLastSelectedSphere(inputs, allSpheres),
+                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
@@ -58,7 +58,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         new ConsumablesIssue(
                             Id: Guid.NewGuid(),
                             CreationDate: DateTime.UtcNow, 
-                            Sphere: NewIssueWorkflow.GetLastSelectedSphere(inputs, allSpheres),
+                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             AffectedItems: GetSelectedConsumablesItems(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
@@ -68,7 +68,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         new StaffIssue(
                             Id: Guid.NewGuid(),
                             CreationDate: DateTime.UtcNow, 
-                            Sphere: NewIssueWorkflow.GetLastSelectedSphere(inputs, allSpheres),
+                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(),
@@ -78,7 +78,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         new TechnicalIssue(
                             Id: Guid.NewGuid(),
                             CreationDate: DateTime.UtcNow, 
-                            Sphere: NewIssueWorkflow.GetLastSelectedSphere(inputs, allSpheres),
+                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
@@ -97,7 +97,7 @@ internal sealed record IssueFactory(ILiveEventsRepository LiveEventsRepo) : IIss
                         new GeneralSiteCleanIssue(
                             Id: Guid.NewGuid(), 
                             CreationDate: DateTime.UtcNow, 
-                            Sphere: NewIssueWorkflow.GetLastSelectedSphere(inputs, allSpheres),
+                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
                             HandledBy: Option<IRoleInfo>.None(), 
