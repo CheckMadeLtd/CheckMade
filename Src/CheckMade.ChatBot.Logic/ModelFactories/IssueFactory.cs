@@ -121,10 +121,22 @@ internal sealed record IssueFactory<T>(
 
         return tradeIssue;
 
-        Guid GetGuid() =>
-            inputs
-                .First(i => i.EntityGuid.IsSome)
-                .EntityGuid.GetValueOrThrow();
+        Guid GetGuid()
+        {
+            var uniqueGuids =
+                inputs
+                    .Where(i => i.EntityGuid.IsSome)
+                    .Select(i => i.EntityGuid.GetValueOrThrow())
+                    .Distinct()
+                    .ToImmutableReadOnlyCollection();
+
+            return uniqueGuids.Count switch
+            {
+                0 => throw new InvalidOperationException("No Guid found in provided inputs, can't constitute entity."),
+                > 1 => throw new InvalidOperationException($"Found {uniqueGuids.Count} Guids, expected 1."),
+                _ => uniqueGuids.First()
+            };
+        }
         
         IFacility GetLastSelectedFacility()
         {
