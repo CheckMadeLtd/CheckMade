@@ -170,6 +170,32 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             i.Details.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
+    public Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
+    {
+        throw new NotImplementedException();
+        
+//         const string rawQuery = """
+//                                 UPDATE users 
+//
+//                                 SET language_setting = @newLanguage
+//
+//                                 WHERE mobile = @mobileNumber 
+//                                 AND status = @status
+//                                 """;
+//
+//         var normalParameters = new Dictionary<string, object>
+//         {
+//             ["@newLanguage"] = (int)newLanguage,
+//             ["@mobileNumber"] = user.Mobile.ToString(),
+//             ["@status"] = (int)user.Status
+//         };
+//
+//         var command = GenerateCommand(rawQuery, normalParameters);
+//
+//         await ExecuteTransactionAsync(new [] { command });
+//         EmptyCache();
+    }
+
     private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
     {
         if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))

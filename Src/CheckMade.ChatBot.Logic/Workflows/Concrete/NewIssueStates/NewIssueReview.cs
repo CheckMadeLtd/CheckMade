@@ -20,6 +20,11 @@ internal sealed record NewIssueReview<T>(
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)
     {
+        var interactiveHistory =
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+        
+        
+        
         var issue = await Factory.CreateAsync(
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
         
