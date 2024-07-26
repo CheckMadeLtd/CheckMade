@@ -1,5 +1,5 @@
 namespace CheckMade.Common.Model.ChatBot.Input;
 
-public record ResultantWorkflowInfo(
+public sealed record ResultantWorkflowInfo(
     string WorkflowId,
     string InStateId);

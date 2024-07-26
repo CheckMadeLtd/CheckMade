@@ -48,10 +48,10 @@ internal class InputProcessor(
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {
                     outputBuilder.Add(new OutputDto
-                        {
-                            Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
-                                      "successful submission.")
-                        });
+                    {
+                        Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                  "successful submission.")
+                    });
                 }
 
                 var activeWorkflowInputHistory = 
@@ -62,11 +62,13 @@ internal class InputProcessor(
                     await SaveCurrentInputToDbAsync(currentInput);
                     
                     return 
-                        [new OutputDto 
+                    [
+                        new OutputDto 
                         {
                             Text = Ui("The previous workflow was completed, " +
                                       "so your last message/action will be ignored.") 
-                        }];
+                        }
+                    ];
                 }
 
                 var activeWorkflow = 
@@ -169,10 +171,12 @@ internal class InputProcessor(
             () => 
                 Task.FromResult(Result<WorkflowResponse>
                     .FromSuccess(new WorkflowResponse
-                        ([new OutputDto 
+                    ([
+                        new OutputDto 
                         { 
                             Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
-                        }], Option<string>.None()))));
+                        }
+                    ], Option<string>.None()))));
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
