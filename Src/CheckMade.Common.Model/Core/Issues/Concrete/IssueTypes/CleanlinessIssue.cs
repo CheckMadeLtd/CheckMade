@@ -20,7 +20,7 @@ public sealed record CleanlinessIssue<T>(
     public UiString GetSummary()
     {
         return UiConcatenate(
-            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name),
+            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name), UiNoTranslate("\n"),
             Ui("Affected Facility: "), Glossary.GetUi(Facility.GetType()));
     }
 }
