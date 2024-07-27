@@ -1,5 +1,5 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Utils;

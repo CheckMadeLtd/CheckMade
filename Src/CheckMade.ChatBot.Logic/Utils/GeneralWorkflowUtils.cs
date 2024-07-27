@@ -1,9 +1,9 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Utils;
 

@@ -1,10 +1,10 @@
 ﻿using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;

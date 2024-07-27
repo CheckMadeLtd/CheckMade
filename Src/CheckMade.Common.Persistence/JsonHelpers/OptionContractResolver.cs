@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

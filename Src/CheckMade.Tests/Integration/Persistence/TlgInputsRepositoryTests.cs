@@ -1,10 +1,10 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;

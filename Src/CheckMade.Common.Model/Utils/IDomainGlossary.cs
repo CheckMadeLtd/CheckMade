@@ -1,7 +1,4 @@
-using CheckMade.Common.LangExt;
-using CheckMade.Common.Model.Utils;
-
-namespace CheckMade.Common.Interfaces.ChatBot.Logic;
+namespace CheckMade.Common.Model.Utils;
 
 public interface IDomainGlossary
 {
