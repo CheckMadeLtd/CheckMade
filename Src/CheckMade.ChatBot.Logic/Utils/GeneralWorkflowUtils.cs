@@ -35,6 +35,7 @@ internal sealed record GeneralWorkflowUtils(
         TlgInput newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
+        // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
         var lastExpiredRoleBind = (await TlgAgentRoleBindingsRepo.GetAllAsync())
             .Where(tarb =>
@@ -67,6 +68,8 @@ internal sealed record GeneralWorkflowUtils(
     public async Task<IReadOnlyCollection<TlgInput>> 
         GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput)
     {
+        // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
+        
         var currentRoleInputs = 
             await GetAllCurrentInteractiveAsync(
                 currentInput.TlgAgent,

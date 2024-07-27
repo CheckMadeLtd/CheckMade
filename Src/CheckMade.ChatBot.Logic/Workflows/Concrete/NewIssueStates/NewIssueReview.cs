@@ -1,6 +1,7 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -14,7 +15,8 @@ internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
         IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator,
-        IIssueFactory<T> Factory) 
+        IIssueFactory<T> Factory,
+        ITlgInputsRepository InputsRepo) 
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -22,11 +24,12 @@ internal sealed record NewIssueReview<T>(
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
-        
-        // ToDo: set the guid now
-        
-        var issue = await Factory.CreateAsync(
-            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));
+        await InputsRepo
+            .UpdateGuid(interactiveHistory, Guid.NewGuid());
+        var updatedHistoryWithGuid = 
+            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+        var issue = 
+            await Factory.CreateAsync(updatedHistoryWithGuid);
         
         return new List<OutputDto>
         {

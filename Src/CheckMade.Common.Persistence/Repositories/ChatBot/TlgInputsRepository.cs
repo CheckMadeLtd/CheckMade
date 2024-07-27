@@ -178,30 +178,37 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             i.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
-    public Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
+    public async Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
     {
-        throw new NotImplementedException();
+        const string rawQuery = """
+                                UPDATE tlg_inputs 
+
+                                SET entity_guid = @newGuid
+
+                                WHERE date = @tlgDate
+                                AND message_id = @tlgMessageId
+                                AND user_id = @userId 
+                                AND chat_id = @chatId
+                                AND interaction_mode = @mode
+                                """;
+
+        var commands = tlgInputs.Select(tlgInput =>
+        {
+            var normalParameters = new Dictionary<string, object>
+            {
+                ["@newGuid"] = newGuid,
+                ["@tlgDate"] = tlgInput.TlgDate,
+                ["@tlgMessageId"] = tlgInput.TlgMessageId,
+                ["@userId"] = tlgInput.TlgAgent.UserId.Id,
+                ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
+                ["@mode"] = (int)tlgInput.TlgAgent.Mode
+            };
+
+            return GenerateCommand(rawQuery, normalParameters);
+        }).ToImmutableReadOnlyCollection();
         
-//         const string rawQuery = """
-//                                 UPDATE users 
-//
-//                                 SET language_setting = @newLanguage
-//
-//                                 WHERE mobile = @mobileNumber 
-//                                 AND status = @status
-//                                 """;
-//
-//         var normalParameters = new Dictionary<string, object>
-//         {
-//             ["@newLanguage"] = (int)newLanguage,
-//             ["@mobileNumber"] = user.Mobile.ToString(),
-//             ["@status"] = (int)user.Status
-//         };
-//
-//         var command = GenerateCommand(rawQuery, normalParameters);
-//
-//         await ExecuteTransactionAsync(new [] { command });
-//         EmptyCache();
+        await ExecuteTransactionAsync(commands);
+        EmptyCache();
     }
 
     private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
@@ -287,7 +294,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         if (chatId != null)
             normalParameters.Add("@tlgChatId", chatId.Id);
         if (mode != null)
-            normalParameters.Add("@mode", (int) mode);
+            normalParameters.Add("@mode", (int)mode);
         if (liveEventName != null)
             normalParameters.Add("@liveEventName", liveEventName);
 
