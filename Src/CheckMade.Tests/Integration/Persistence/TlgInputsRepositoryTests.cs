@@ -45,7 +45,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             List<TlgInput> expectedRetrieval =
             [ 
-                new(input.TlgAgent, 
+                new(input.TlgDate,
+                    input.TlgMessageId,
+                    input.TlgAgent, 
                     input.InputType, 
                     input.OriginatorRole, 
                     input.LiveEventContext, 
@@ -58,7 +60,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.TlgAgent))
-                .OrderByDescending(x => x.Details.TlgDate)
+                .OrderByDescending(x => x.TlgDate)
                 .ToImmutableReadOnlyCollection();
             
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
@@ -172,8 +174,8 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     // [Theory(Skip = "Waiting to migrate the old DB data")]
-    [Theory(Skip = "Running tests from unknown IP / internet")]
-    // [Theory]
+    // [Theory(Skip = "Running tests from unknown IP / internet")]
+    [Theory]
     [InlineData(RealTestUser_DanielGorin_TelegramId, false)]
     [InlineData(RealTestUser_DanielGorin_TelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
@@ -270,14 +272,14 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 sinceParam);
         var retrievedDates =
             retrievedInputs
-                .Select(i => i.Details.TlgDate)
+                .Select(i => i.TlgDate)
                 .ToList();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
-        Assert.Contains(tlgInputExactlyAt.Details.TlgDate, retrievedDates);
-        Assert.Contains(tlgInputAfter.Details.TlgDate, retrievedDates);
-        Assert.DoesNotContain(tlgInputRightBefore.Details.TlgDate, retrievedDates);
-        Assert.DoesNotContain(tlgInputLongBefore.Details.TlgDate, retrievedDates);
+        Assert.Contains(tlgInputExactlyAt.TlgDate, retrievedDates);
+        Assert.Contains(tlgInputAfter.TlgDate, retrievedDates);
+        Assert.DoesNotContain(tlgInputRightBefore.TlgDate, retrievedDates);
+        Assert.DoesNotContain(tlgInputLongBefore.TlgDate, retrievedDates);
     }
 }

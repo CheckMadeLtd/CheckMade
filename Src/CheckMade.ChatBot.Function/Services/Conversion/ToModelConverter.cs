@@ -22,7 +22,7 @@ public interface IToModelConverter
     Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
-internal class ToModelConverter(
+internal sealed class ToModelConverter(
         ITelegramFilePathResolver filePathResolver,
         IBlobLoader blobLoader,
         IHttpDownloader downloader,
@@ -281,6 +281,8 @@ internal class ToModelConverter(
             : update.Message.Caption;
         
         return new TlgInput(
+            update.Message.Date,
+            update.Message.MessageId,
             new TlgAgent(userId, chatId, interactionMode), 
             tlgInputType,
             originatorRole.IsSome 
@@ -290,8 +292,6 @@ internal class ToModelConverter(
             Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             new TlgInputDetails(
-                update.Message.Date,
-                update.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 tlgAttachmentUri,
                 internalAttachmentUri,
@@ -308,7 +308,7 @@ internal class ToModelConverter(
             .Match(
                 path => Option<Uri>.Some(GetUriFromPath(path)), 
                 Attempt<Option<Uri>>.Fail
-        );
+            );
         
         async Task<Attempt<string>> GetPathAsync() =>
             await filePathResolver.GetTelegramFilePathAsync(fileId);

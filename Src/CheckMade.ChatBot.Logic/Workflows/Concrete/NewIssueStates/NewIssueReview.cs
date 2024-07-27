@@ -23,7 +23,7 @@ internal sealed record NewIssueReview<T>(
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         
-        
+        // ToDo: set the guid now
         
         var issue = await Factory.CreateAsync(
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput));

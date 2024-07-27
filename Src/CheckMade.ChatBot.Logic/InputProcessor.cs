@@ -17,7 +17,7 @@ public interface IInputProcessor
     public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> input);
 }
 
-internal class InputProcessor(
+internal sealed class InputProcessor(
         IWorkflowIdentifier workflowIdentifier,
         ITlgInputsRepository inputsRepo,
         IGeneralWorkflowUtils generalWorkflowUtils,
@@ -154,9 +154,9 @@ internal class InputProcessor(
         activeWorkflowInputHistory.GetLastBotCommand().Match(
             lastBotCommand => 
             {
-                var activeWorkflowStartMessageId = lastBotCommand.Details.TlgMessageId;
+                var activeWorkflowStartMessageId = lastBotCommand.TlgMessageId;
                 
-                return currentInput.Details.TlgMessageId < activeWorkflowStartMessageId;
+                return currentInput.TlgMessageId < activeWorkflowStartMessageId;
             },
             () => false);
 
@@ -201,7 +201,7 @@ internal class InputProcessor(
                                    this Error Result: '{error}'. Next, the corresponding input parameters.
                                    UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
                                    InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
-                                   Date: {currentInput.Details.TlgDate}; 
+                                   Date: {currentInput.TlgDate}; 
                                    For more details of input, check database!
                                    """);
                         

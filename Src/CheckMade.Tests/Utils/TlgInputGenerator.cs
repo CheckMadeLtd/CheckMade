@@ -72,6 +72,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new TlgInput(
+            dateTime ?? DateTime.UtcNow, 
+            1, 
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.TextMessage,
             originatorRole, 
@@ -79,8 +81,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.UtcNow, 
-                1, 
                 text));
     }
 
@@ -89,6 +89,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
+            DateTime.UtcNow,
+            1,
             new TlgAgent(Default_UserAndChatId_PrivateBotChat,
                 Default_UserAndChatId_PrivateBotChat,
                 Operations),
@@ -98,8 +100,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                DateTime.UtcNow,
-                1,
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
                 new Uri("https://www.gorin.de/fakeInternalUri1.html"),
@@ -113,6 +113,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
+            dateTime ?? DateTime.UtcNow, 
+            1,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.Location,
             GetInputContextInfo(roleSetting).originatorRole, 
@@ -120,8 +122,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.UtcNow, 
-                1,
                 geoCoordinates: location));
     }
 
@@ -136,6 +136,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new TlgInput(
+            DateTime.UtcNow,
+            messageId,
             new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
             originatorRole, 
@@ -143,8 +145,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                DateTime.UtcNow,
-                messageId,
                 botCommandEnumCode: botCommandEnumCode));
     }
 
@@ -155,6 +155,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
+            dateTime ?? DateTime.UtcNow,
+            messageId,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
@@ -162,8 +164,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.UtcNow,
-                messageId,
                 domainTerm: domainTerm));
     }
 
@@ -174,6 +174,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
+            dateTime ?? DateTime.UtcNow,
+            1,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
@@ -181,14 +183,10 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowInfo ?? Option<ResultantWorkflowInfo>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
-                dateTime ?? DateTime.UtcNow,
-                1,
                 controlPromptEnumCode: (long)prompts));
     }
 
     internal static TlgInputDetails CreateFromRelevantDetails(
-        DateTime tlgDate,
-        int tlgMessageId,
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
@@ -199,8 +197,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         long? controlPromptEnumCode = null)
     {
         return new TlgInputDetails(
-            tlgDate, 
-            tlgMessageId,
             text ?? Option<string>.None(),
             attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 

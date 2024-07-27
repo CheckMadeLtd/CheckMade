@@ -169,7 +169,7 @@ internal static class TestRepositoryUtils
                 inputs
                     .Where(i => 
                         i.TlgAgent.Equals(tlgAgent) && 
-                        i.Details.TlgDate >= dateTime &&
+                        i.TlgDate >= dateTime &&
                         i.InputType == TlgInputType.Location)
                     .ToImmutableReadOnlyCollection());
         
@@ -179,7 +179,7 @@ internal static class TestRepositoryUtils
         return serviceCollection.AddScoped<ITlgInputsRepository>(_ => stubTlgInputsRepo);
     }
 
-    internal record MockContainer
+    internal sealed record MockContainer
     {
         internal Dictionary<Type, object> Mocks { get; } = new();
     }

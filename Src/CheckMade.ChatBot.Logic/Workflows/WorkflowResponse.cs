@@ -25,7 +25,7 @@ public sealed record WorkflowResponse(
         TlgInput currentInput, IWorkflowState newState, bool editPreviousOutput = false) =>
         new(Output: await newState.GetPromptAsync(
                 currentInput, 
-                editPreviousOutput == false ? Option<int>.None() : currentInput.Details.TlgMessageId),
+                editPreviousOutput == false ? Option<int>.None() : currentInput.TlgMessageId),
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]));
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>

@@ -84,7 +84,7 @@ public sealed class GeneralWorkflowUtilsTests
         Assert.All(
             result,
             input => Assert.True(
-                input.Details.TlgDate > cutoffDate));
+                input.TlgDate > cutoffDate));
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public sealed class GeneralWorkflowUtilsTests
 
         Assert.Single(result);
         Assert.True(
-            result.Single().Details.TlgDate > latestCutoffDate);
+            result.Single().TlgDate > latestCutoffDate);
     }
 
     [Fact]

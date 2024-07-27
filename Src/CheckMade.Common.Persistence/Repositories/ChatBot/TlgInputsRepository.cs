@@ -28,6 +28,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                            dws.resultant_workflow AS input_workflow,
                                            dws.in_state AS input_wf_state,
 
+                                           inp.date AS input_date,
+                                           inp.message_id AS input_message_id,
                                            inp.user_id AS input_user_id, 
                                            inp.chat_id AS input_chat_id, 
                                            inp.interaction_mode AS input_mode, 
@@ -56,7 +58,9 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         const string baseQuery = """
                                  INSERT INTO tlg_inputs 
                                  
-                                 (user_id, 
+                                 (date,
+                                 message_id,
+                                 user_id, 
                                  chat_id, 
                                  details, 
                                  last_data_migration, 
@@ -66,7 +70,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                  live_event_id,
                                  entity_guid) 
                                  
-                                 VALUES (@tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                 VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @tlgChatId, @tlgMessageDetails, 
                                  @lastDataMig, @interactionMode, @tlgInputType, 
                                  (SELECT id FROM roles WHERE token = @token), 
                                  (SELECT id FROM live_events WHERE name = @liveEventName),
@@ -91,6 +95,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         {
             var normalParameters = new Dictionary<string, object>
             {
+                ["@tlgDate"] = tlgInput.TlgDate,
+                ["@tlgMessageId"] = tlgInput.TlgMessageId,
                 ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
                 ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
                 ["@lastDataMig"] = 0,
@@ -160,14 +166,14 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         (await GetAllAsync(tlgAgent))
         .Where(i => 
             i.InputType == TlgInputType.Location && 
-            i.Details.TlgDate >= since)
+            i.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(ILiveEventInfo liveEvent, DateTime since) =>
         (await GetAllAsync(liveEvent))
         .Where(i => 
             i.InputType == TlgInputType.Location &&
-            i.Details.TlgDate >= since)
+            i.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
     public Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
