@@ -22,6 +22,7 @@ internal interface IIssueFactory<T>
 
 internal sealed record IssueFactory<T>(
         ILiveEventsRepository LiveEventsRepo,
+        IRolesRepository RolesRepo,
         IDomainGlossary Glossary) 
     : IIssueFactory<T> where T : ITrade, new()
 {
@@ -30,7 +31,8 @@ internal sealed record IssueFactory<T>(
         var currentTrade = new T();
         var liveEvent = (await LiveEventsRepo.GetAsync(
             inputs.Last().LiveEventContext.GetValueOrThrow()))!;
-        var role = inputs.Last().OriginatorRole.GetValueOrThrow();
+        var role = (await RolesRepo.GetAsync(
+            inputs.Last().OriginatorRole.GetValueOrThrow()))!;
         var allSpheres = 
             GetAllTradeSpecificSpheres(liveEvent, new T());
         

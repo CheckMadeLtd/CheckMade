@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
@@ -10,7 +11,7 @@ public sealed record GeneralIssue<T>(
         DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
         IssueEvidence Evidence, 
-        IRoleInfo ReportedBy, 
+        Role ReportedBy, 
         Option<IRoleInfo> HandledBy, 
         IssueStatus Status,
         IDomainGlossary Glossary) 

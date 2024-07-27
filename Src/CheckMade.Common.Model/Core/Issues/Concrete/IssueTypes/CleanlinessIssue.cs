@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
@@ -11,7 +12,7 @@ public sealed record CleanlinessIssue<T>(
         ISphereOfAction Sphere,
         IFacility Facility,
         IssueEvidence Evidence,
-        IRoleInfo ReportedBy,
+        Role ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
@@ -26,12 +27,12 @@ public sealed record CleanlinessIssue<T>(
             UiNewLines(1),
             Ui("Description: "), Evidence.Description.IsSome 
                 ? UiNoTranslate(Evidence.Description.GetValueOrThrow())
-                : Ui(),
+                : UiNoTranslate("n/a"),
             UiNewLines(1),
             Ui("# Attachments: "), Evidence.Media.IsSome
                 ? UiIndirect(Evidence.Media.GetValueOrThrow().Count.ToString())
-                : UiNoTranslate("0"),
+                : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("Reported by: "));
+            Ui("Reported by: "), UiNoTranslate(ReportedBy.ByUser.FirstName));
     }
 }

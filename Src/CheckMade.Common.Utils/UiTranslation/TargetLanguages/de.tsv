@@ -16,7 +16,7 @@ CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
 CheckMade.Common.Model	💾 Save	💾 Speichern
 CheckMade.Common.Model	📤 Submit	📤 Abschicken
 CheckMade.Common.Model	📋 Review	📋 Überprüfen
-CheckMade.Common.Model	✏️ Edit details	✏️ Details bearbeiten
+CheckMade.Common.Model	✏️ Edit	✏️ Bearbeiten
 CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
 CheckMade.Common.Model	🚫 No	🚫 Nein
 CheckMade.Common.Model	✅ Yes	✅ Ja
@@ -85,3 +85,4 @@ CheckMade.Telegram.Logic	❗ General Issue	❗ Allgemeines Problem
 CheckMade.Telegram.Logic	Affected Facility: 	Betroffene Einrichtung: 
 CheckMade.Telegram.Logic	Description: 	Beschreibung: 
 CheckMade.Telegram.Logic	# Attachments: 	Anhänge: 
+CheckMade.Telegram.Logic	Reported by: 	Gemeldet von: 
