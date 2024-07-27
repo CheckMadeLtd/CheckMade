@@ -13,7 +13,7 @@ using InputValidator = CheckMade.Common.LangExt.InputValidator;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public class UserAuthWorkflowTests
+public sealed class UserAuthWorkflowTests
 {
     private ServiceProvider? _services;
 
@@ -121,8 +121,8 @@ public class UserAuthWorkflowTests
         var expectedTlgAgentRoleBindAdded = new TlgAgentRoleBind(
             roleForAuth,
             tlgAgent,
-            DateTime.UtcNow,
-            Option<DateTime>.None());
+            DateTimeOffset.UtcNow,
+            Option<DateTimeOffset>.None());
         
         List<TlgAgentRoleBind> actualTlgAgentRoleBindAdded = []; 
         mockRoleBindingsRepo
@@ -173,8 +173,8 @@ public class UserAuthWorkflowTests
             new TlgAgentRoleBind(
                 roleForAuth,
                 tlgAgent with { Mode = im },
-                DateTime.UtcNow,
-                Option<DateTime>.None()))
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()))
             .ToImmutableReadOnlyList();
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
@@ -230,14 +230,14 @@ public class UserAuthWorkflowTests
             // Adds missing bind for Operations Mode
             new(roleForAuth,
                 tlgAgent,
-                DateTime.UtcNow,
-                Option<DateTime>.None()),
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()),
 
             // Adds missing bind for Notifications Mode
             new(roleForAuth,
                 tlgAgent with { Mode = Notifications },
-                DateTime.UtcNow,
-                Option<DateTime>.None()),
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()),
         ];
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];

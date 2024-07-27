@@ -283,7 +283,7 @@ internal static class ModelReaders
         Option<ILiveEventInfo> liveEventInfo,
         IDomainGlossary glossary)
     {
-        var tlgDate = reader.GetFieldValue<DateTime>(reader.GetOrdinal("input_date"));
+        var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         var tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
@@ -336,8 +336,8 @@ internal static class ModelReaders
         var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
-            ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal))
-            : Option<DateTime>.None();
+            ? Option<DateTimeOffset>.Some(reader.GetDateTime(deactivationDateOrdinal))
+            : Option<DateTimeOffset>.None();
 
         var status = EnsureEnumValidityOrThrow(
             (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));

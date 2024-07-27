@@ -2,7 +2,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
-internal record DetailsUpdate(
+internal abstract record DetailsUpdate(
     TlgUserId UserId, 
-    DateTime TlgDate, 
+    DateTimeOffset TlgDate, 
     string NewDetails);

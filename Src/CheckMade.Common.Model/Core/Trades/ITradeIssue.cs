@@ -6,7 +6,7 @@ namespace CheckMade.Common.Model.Core.Trades;
 public interface ITradeIssue
 {
     Guid Id { get; }
-    DateTime CreationDate { get; }
+    DateTimeOffset CreationDate { get; }
     ISphereOfAction Sphere { get; }
     IRoleInfo ReportedBy { get; }
     Option<IRoleInfo> HandledBy { get; }

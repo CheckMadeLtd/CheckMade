@@ -13,7 +13,7 @@ using Moq;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public class LogoutWorkflowTests
+public sealed class LogoutWorkflowTests
 {
     private ServiceProvider? _services;
 
@@ -92,18 +92,18 @@ public class LogoutWorkflowTests
             {
                 // Relevant
                 new(boundRole, tlgAgentOperations,
-                    DateTime.UtcNow, Option<DateTime>.None()),
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 new(boundRole, tlgAgentComms,
-                    DateTime.UtcNow, Option<DateTime>.None()),
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 new(boundRole, tlgAgentNotif,
-                    DateTime.UtcNow, Option<DateTime>.None()),
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 // Decoys
                 new(boundRole, tlgAgentOperations,
-                    DateTime.UtcNow, Option<DateTime>.None(), DbRecordStatus.SoftDeleted),
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None(), DbRecordStatus.SoftDeleted),
                 new(SaniCleanCleanLead_DanielDe_X2024, tlgAgentOperations,
-                    DateTime.UtcNow, Option<DateTime>.None()),
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
-                    DateTime.UtcNow, Option<DateTime>.None())
+                    DateTimeOffset.UtcNow, Option<DateTimeOffset>.None())
             });
         var mockTlgAgentRoleBindingsForAllModes =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
@@ -127,7 +127,7 @@ public class LogoutWorkflowTests
                     actualTlgAgentRoleBindingsUpdated = tlgAgentRoleBinds
                         .Select(tarb => tarb with
                         {
-                            DeactivationDate = DateTime.UtcNow,
+                            DeactivationDate = DateTimeOffset.UtcNow,
                             Status = newStatus
                         })
                         .ToList();

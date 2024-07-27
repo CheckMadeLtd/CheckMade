@@ -5,8 +5,8 @@ namespace CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
 public sealed record LiveEventInfo(
         string Name,
-        DateTime StartDate,
-        DateTime EndDate,
+        DateTimeOffset StartDate,
+        DateTimeOffset EndDate,
         DbRecordStatus Status = DbRecordStatus.Active)
     : ILiveEventInfo
 {

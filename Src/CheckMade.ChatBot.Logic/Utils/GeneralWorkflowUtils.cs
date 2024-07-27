@@ -44,7 +44,7 @@ internal sealed record GeneralWorkflowUtils(
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
-            : DateTime.MinValue;
+            : DateTimeOffset.MinValue;
 
         var allInteractiveFromDb =
             await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
@@ -82,7 +82,7 @@ internal sealed record GeneralWorkflowUtils(
         return 
             await InputsRepo.GetAllLocationAsync(
                 tlgAgent, 
-                DateTime.UtcNow
+                DateTimeOffset.UtcNow
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 

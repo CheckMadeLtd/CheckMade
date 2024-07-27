@@ -115,7 +115,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         await inputRepo.AddAsync(tlgInput);
         
         var retrievedInput = 
-            (await inputRepo.GetAllLocationAsync(PrivateBotChat_Operations, DateTime.MinValue))
+            (await inputRepo.GetAllLocationAsync(PrivateBotChat_Operations, DateTimeOffset.MinValue))
             .First();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
@@ -240,10 +240,10 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
-        var sinceParam = new DateTime(2024, 07, 01, 12, 15, 00);
+        var sinceParam = new DateTime(2024, 07, 01, 12, 15, 00, DateTimeKind.Utc);
         
         var tlgInputLongBefore = inputGenerator.GetValidTlgInputLocationMessage(
-            new Geo( 13.4, 51.2, Option<double>.None()),
+            new Geo(13.4, 51.2, Option<double>.None()),
             dateTime: sinceParam.AddHours(-2));
         
         var tlgInputRightBefore = inputGenerator.GetValidTlgInputLocationMessage(

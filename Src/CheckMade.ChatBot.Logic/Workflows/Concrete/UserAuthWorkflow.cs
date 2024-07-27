@@ -107,8 +107,8 @@ internal sealed record UserAuthWorkflow(
         var newTlgAgentRoleBindForCurrentMode = new TlgAgentRoleBind(
             (await RolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
             tokenInputAttempt.TlgAgent with { Mode = currentMode },
-            DateTime.UtcNow,
-            Option<DateTime>.None());
+            DateTimeOffset.UtcNow,
+            Option<DateTimeOffset>.None());
         
         var preExistingRoleBindings = 
             (await RoleBindingsRepo.GetAllActiveAsync())
@@ -131,8 +131,8 @@ internal sealed record UserAuthWorkflow(
                        Warning: you were already authenticated with this token in another {0} chat.
                        This will be the new {0} chat where you receive messages at {1}, in your role as: 
                        """, 
-                    currentMode,
-                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
+                        currentMode,
+                        newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
                     roleTypeUiString)
             });
         }
@@ -141,8 +141,8 @@ internal sealed record UserAuthWorkflow(
         {
             Text = UiConcatenate(
                 Ui("{0}, you have successfully authenticated at live-event {1} in your role as: ", 
-                newTlgAgentRoleBindForCurrentMode.Role.ByUser.FirstName,
-                newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
+                    newTlgAgentRoleBindForCurrentMode.Role.ByUser.FirstName,
+                    newTlgAgentRoleBindForCurrentMode.Role.AtLiveEvent.Name),
                 roleTypeUiString)
         });
 
@@ -167,14 +167,14 @@ internal sealed record UserAuthWorkflow(
         return outputs;
         
         TlgAgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
-        preExistingRoleBindings.FirstOrDefault(tarb => 
-            tarb.Role.Token.Equals(inputText) &&
-            tarb.TlgAgent.Mode.Equals(mode));
+            preExistingRoleBindings.FirstOrDefault(tarb => 
+                tarb.Role.Token.Equals(inputText) &&
+                tarb.TlgAgent.Mode.Equals(mode));
 
         void AddTlgAgentRoleBindingsForOtherModes()
         {
             var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
-            var otherModes = allModes.Except(new [] { currentMode });
+            var otherModes = allModes.Except(new[] { currentMode });
 
             tlgAgentRoleBindingsToAdd.AddRange(
                 from mode in otherModes 
@@ -182,7 +182,7 @@ internal sealed record UserAuthWorkflow(
                 select newTlgAgentRoleBindForCurrentMode with
                 {
                     TlgAgent = newTlgAgentRoleBindForCurrentMode.TlgAgent with { Mode = mode },
-                    ActivationDate = DateTime.UtcNow
+                    ActivationDate = DateTimeOffset.UtcNow
                 });
         }
     }

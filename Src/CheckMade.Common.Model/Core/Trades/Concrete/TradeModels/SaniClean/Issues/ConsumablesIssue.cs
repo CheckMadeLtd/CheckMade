@@ -7,7 +7,7 @@ using static ConsumablesIssue;
 
 public sealed record ConsumablesIssue(
         Guid Id,
-        DateTime CreationDate,
+        DateTimeOffset CreationDate,
         ISphereOfAction Sphere,
         IReadOnlyCollection<Item> AffectedItems,
         IRoleInfo ReportedBy,

@@ -21,8 +21,8 @@ internal static class TestRepositoryUtils
         return new TlgAgentRoleBind(
             role,
             tlgAgent,
-            DateTime.UtcNow,
-            Option<DateTime>.None());
+            DateTimeOffset.UtcNow,
+            Option<DateTimeOffset>.None());
     }
 
     internal static (ServiceProvider sp, MockContainer container) ConfigureTestRepositories(
@@ -164,8 +164,8 @@ internal static class TestRepositoryUtils
             .Setup(repo =>
                 repo.GetAllLocationAsync(
                     It.IsAny<TlgAgent>(),
-                    It.IsAny<DateTime>()))
-            .ReturnsAsync((TlgAgent tlgAgent, DateTime dateTime) =>
+                    It.IsAny<DateTimeOffset>()))
+            .ReturnsAsync((TlgAgent tlgAgent, DateTimeOffset dateTime) =>
                 inputs
                     .Where(i => 
                         i.TlgAgent.Equals(tlgAgent) && 

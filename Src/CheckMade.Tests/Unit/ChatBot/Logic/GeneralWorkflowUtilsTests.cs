@@ -50,7 +50,7 @@ public sealed class GeneralWorkflowUtilsTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var cutoffDate = DateTime.UtcNow.AddDays(-1);
+        var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
         var expiredRoleBind = new TlgAgentRoleBind(
             SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
@@ -95,8 +95,8 @@ public sealed class GeneralWorkflowUtilsTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var oldestCutoffDate = DateTime.UtcNow.AddDays(-3);
-        var latestCutoffDate = DateTime.UtcNow.AddDays(-1);
+        var oldestCutoffDate = DateTimeOffset.UtcNow.AddDays(-3);
+        var latestCutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
 
         var expiredRoleBinds = new[]
         {
@@ -154,7 +154,7 @@ public sealed class GeneralWorkflowUtilsTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var cutoffDate = DateTime.UtcNow.AddDays(-1);
+        var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
         var expiredRoleBind = new TlgAgentRoleBind(
             SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
@@ -196,8 +196,8 @@ public sealed class GeneralWorkflowUtilsTests
         var roleBindWithNullDeactivation = new TlgAgentRoleBind(
             SaniCleanAdmin_DanielEn_X2024,
             tlgAgent,
-            DateTime.UtcNow.AddDays(-2),
-            Option<DateTime>.None(),
+            DateTimeOffset.UtcNow.AddDays(-2),
+            Option<DateTimeOffset>.None(),
             DbRecordStatus.Historic);
 
         var historicInputs = new[]
@@ -282,12 +282,12 @@ public sealed class GeneralWorkflowUtilsTests
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
                 tlgAgent.UserId, tlgAgent.ChatId,
-                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
+                DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
             // Decoy: wrong TlgAgent
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
                 tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId,
-                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes -1))),
+                DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1))),
             // Decoy: not a LocationUpdate
             inputGenerator.GetValidTlgInputTextMessage(),
             
@@ -295,7 +295,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputGenerator.GetValidTlgInputLocationMessage(
                 expectedLocation,
                 tlgAgent.UserId, tlgAgent.ChatId,
-                DateTime.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes -1)))
+                DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1)))
         };
         
         var serviceCollection = new UnitTestStartup().Services;

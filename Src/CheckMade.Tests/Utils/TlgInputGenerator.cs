@@ -15,7 +15,7 @@ internal interface ITlgInputGenerator
     TlgInput GetValidTlgInputTextMessage(
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
-        string text = "Hello World", DateTime? dateTime = null,
+        string text = "Hello World", DateTimeOffset? dateTime = null,
         TestOriginatorRoleSetting roleSetting = Default,
         Role? roleSpecified = null,
         ResultantWorkflowInfo? resultantWorkflowInfo = null);
@@ -28,7 +28,7 @@ internal interface ITlgInputGenerator
         Geo location, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
-        DateTime? dateTime = null, 
+        DateTimeOffset? dateTime = null, 
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowInfo? resultantWorkflowInfo = null);
     
@@ -45,7 +45,7 @@ internal interface ITlgInputGenerator
         DomainTerm domainTerm, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
-        DateTime? dateTime = null, int messageId = 1,
+        DateTimeOffset? dateTime = null, int messageId = 1,
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowInfo? resultantWorkflowInfo = null);
     
@@ -53,7 +53,7 @@ internal interface ITlgInputGenerator
         ControlPrompts prompts, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
-        DateTime? dateTime = null,
+        DateTimeOffset? dateTime = null,
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowInfo? resultantWorkflowInfo = null);
 }
@@ -63,7 +63,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
     public Randomizer Randomizer { get; } = randomizer;
     
     public TlgInput GetValidTlgInputTextMessage(
-        long userId, long chatId, string text, DateTime? dateTime,
+        long userId, long chatId, string text, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         Role? roleSpecified,
         ResultantWorkflowInfo? resultantWorkflowInfo)
@@ -72,7 +72,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new TlgInput(
-            dateTime ?? DateTime.UtcNow, 
+            dateTime ?? DateTimeOffset.UtcNow, 
             1, 
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.TextMessage,
@@ -89,7 +89,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow,
             1,
             new TlgAgent(Default_UserAndChatId_PrivateBotChat,
                 Default_UserAndChatId_PrivateBotChat,
@@ -108,12 +108,12 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
 
     public TlgInput GetValidTlgInputLocationMessage(
         Geo location,
-        long userId, long chatId, DateTime? dateTime,
+        long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
-            dateTime ?? DateTime.UtcNow, 
+            dateTime ?? DateTimeOffset.UtcNow, 
             1,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.Location,
@@ -136,7 +136,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new TlgInput(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow,
             messageId,
             new TlgAgent(userId, chatId, interactionMode),
             TlgInputType.CommandMessage,
@@ -150,12 +150,12 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
 
     public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm,
-        long userId, long chatId, DateTime? dateTime, int messageId,
+        long userId, long chatId, DateTimeOffset? dateTime, int messageId,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
-            dateTime ?? DateTime.UtcNow,
+            dateTime ?? DateTimeOffset.UtcNow,
             messageId,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,
@@ -169,12 +169,12 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts,
-        long userId, long chatId, DateTime? dateTime,
+        long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowInfo? resultantWorkflowInfo)
     {
         return new TlgInput(
-            dateTime ?? DateTime.UtcNow,
+            dateTime ?? DateTimeOffset.UtcNow,
             1,
             new TlgAgent(userId, chatId, Operations),
             TlgInputType.CallbackQuery,

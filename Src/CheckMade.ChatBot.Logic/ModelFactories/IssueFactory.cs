@@ -53,7 +53,7 @@ internal sealed record IssueFactory<T>(
                     nameof(CleanlinessIssue) =>
                         new CleanlinessIssue(
                             Id: GetGuid(),
-                            CreationDate: DateTime.UtcNow, 
+                            CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
@@ -64,7 +64,7 @@ internal sealed record IssueFactory<T>(
                     nameof(ConsumablesIssue) =>
                         new ConsumablesIssue(
                             Id: GetGuid(),
-                            CreationDate: DateTime.UtcNow, 
+                            CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             AffectedItems: GetSelectedConsumablesItems(),
                             ReportedBy: role,
@@ -74,7 +74,7 @@ internal sealed record IssueFactory<T>(
                     nameof(StaffIssue) =>
                         new StaffIssue(
                             Id: GetGuid(),
-                            CreationDate: DateTime.UtcNow, 
+                            CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,
@@ -84,7 +84,7 @@ internal sealed record IssueFactory<T>(
                     nameof(TechnicalIssue) =>
                         new TechnicalIssue(
                             Id: GetGuid(),
-                            CreationDate: DateTime.UtcNow, 
+                            CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Facility: GetLastSelectedFacility(),
                             Evidence: GetSubmittedEvidence(),
@@ -103,7 +103,7 @@ internal sealed record IssueFactory<T>(
                     nameof(GeneralSiteCleanIssue) =>
                         new GeneralSiteCleanIssue(
                             Id: GetGuid(), 
-                            CreationDate: DateTime.UtcNow, 
+                            CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),
                             Evidence: GetSubmittedEvidence(),
                             ReportedBy: role,

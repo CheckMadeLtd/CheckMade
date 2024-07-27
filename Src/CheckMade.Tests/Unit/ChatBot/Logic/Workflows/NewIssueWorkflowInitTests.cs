@@ -59,7 +59,7 @@ public class NewIssueWorkflowInitTests
         List<TlgInput> recentLocationHistory = [
             basics.inputGenerator.GetValidTlgInputLocationMessage(
                 GetLocationFarFromAnySaniCleanSphere(),
-                dateTime: DateTime.UtcNow.AddSeconds(-10)),
+                dateTime: DateTimeOffset.UtcNow.AddSeconds(-10)),
             basics.inputGenerator.GetValidTlgInputLocationMessage(
                 GetLocationNearSaniCleanSphere())];
         
@@ -106,7 +106,7 @@ public class NewIssueWorkflowInitTests
             recentLocationHistory.Add(
                 basics.inputGenerator.GetValidTlgInputLocationMessage(
                     GetLocationFarFromAnySaniCleanSphere(),
-                    dateTime: DateTime.UtcNow));
+                    dateTime: DateTimeOffset.UtcNow));
         }
         
         var serviceCollection = new UnitTestStartup().Services;

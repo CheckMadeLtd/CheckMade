@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class TlgAgentRoleBindingsRepositoryTests
+public sealed class TlgAgentRoleBindingsRepositoryTests
 {
     private ServiceProvider? _services;
 

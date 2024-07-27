@@ -85,7 +85,7 @@ public sealed class ToModelConverterTests
                     SaniCleanInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),
-                    new DateTime(2021, 01, 05),
+                    Option<DateTimeOffset>.Some(new DateTime(2021, 01, 05)),
                     DbRecordStatus.Historic)
             });
         var basics = GetBasicTestingServices(services);

@@ -5,7 +5,7 @@ namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issu
 
 public sealed record GeneralSiteCleanIssue(
         Guid Id, 
-        DateTime CreationDate, 
+        DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
         IssueEvidence Evidence, 
         IRoleInfo ReportedBy, 

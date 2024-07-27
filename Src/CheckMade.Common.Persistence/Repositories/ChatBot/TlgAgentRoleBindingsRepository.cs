@@ -13,7 +13,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync(new [] { tlgAgentRoleBind });
+        await AddAsync(new[] { tlgAgentRoleBind });
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
@@ -162,7 +162,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             };
 
             if (newStatus != DbRecordStatus.Active)
-                normalParameters.Add("@deactivationDate", DateTime.UtcNow);
+                normalParameters.Add("@deactivationDate", DateTimeOffset.UtcNow);
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
         
