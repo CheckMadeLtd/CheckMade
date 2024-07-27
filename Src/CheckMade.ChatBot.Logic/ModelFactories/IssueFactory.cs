@@ -99,8 +99,8 @@ internal sealed record IssueFactory<T>(
             SiteCleanTrade =>
                 lastSelectedIssueType.Name switch
                 {
-                    nameof(GeneralSiteCleanIssue) =>
-                        new GeneralSiteCleanIssue(
+                    nameof(GeneralIssue) =>
+                        new GeneralIssue(
                             Id: GetGuid(), 
                             CreationDate: DateTimeOffset.UtcNow, 
                             Sphere: GetLastSelectedSphere(inputs, allSpheres),

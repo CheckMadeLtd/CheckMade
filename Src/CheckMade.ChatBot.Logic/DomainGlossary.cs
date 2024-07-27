@@ -25,9 +25,6 @@ public sealed record DomainGlossary : IDomainGlossary
     
     public DomainGlossary()
     {
-        AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
-        AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
-        
         AddTerm(LanguageCode.en, "DCQ4ME", Ui("🇬🇧 English"));
         AddTerm(LanguageCode.de, "DFVN7W", Ui("🇩🇪 German"));
 
@@ -73,8 +70,9 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #endregion
         
-        #region TradeModelSaniClean
+        #region Issues
 
+        AddTerm(typeof(GeneralIssue), "DVGI3N", Ui("General"));
         AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
         AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
         AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
@@ -83,22 +81,27 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(ConsumablesIssue.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
         AddTerm(ConsumablesIssue.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
         AddTerm(ConsumablesIssue.Item.Soap, "D79AMO", Ui("🧴 Soap"));
-
+        
+        #endregion
+        
+        #region Facilities
+        
         AddTerm(typeof(Toilet), "D1540N", Ui("🚽 Toilet"));
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(GeneralMisc), "D55BLT", Ui("General/Misc"));
-        
+
+        #endregion
+
+        #region RoleTypes
+
+        AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
+        AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
+
         AddTerm(typeof(TradeAdmin<SaniCleanTrade>), "DLE960", Ui("SaniClean-Admin"));
         AddTerm(typeof(TradeInspector<SaniCleanTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
         AddTerm(typeof(TradeEngineer<SaniCleanTrade>), "D2PC58", Ui("SaniClean-Engineer"));
         AddTerm(typeof(TradeTeamLead<SaniCleanTrade>), "DE4E59", Ui("SaniClean-CleanLead"));
         AddTerm(typeof(TradeObserver<SaniCleanTrade>), "DH4QH5", Ui("SaniClean-Observer"));
-        
-        #endregion
-        
-        #region TradeModelSiteClean
-        
-        AddTerm(typeof(GeneralSiteCleanIssue), "DVGI3N", Ui("General"));
         
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));

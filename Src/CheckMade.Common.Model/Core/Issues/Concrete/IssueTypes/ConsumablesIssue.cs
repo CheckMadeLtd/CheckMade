@@ -20,6 +20,7 @@ public sealed record ConsumablesIssue(
         throw new NotImplementedException();
     }
     
+    // This will become a trade-agnostic list of consumable items i.e. not limited to SaniClean anymore
     public enum Item
     {
         ToiletPaper,

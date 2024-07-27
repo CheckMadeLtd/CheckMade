@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 
-public sealed record GeneralSiteCleanIssue(
+public sealed record GeneralIssue(
         Guid Id, 
         DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
