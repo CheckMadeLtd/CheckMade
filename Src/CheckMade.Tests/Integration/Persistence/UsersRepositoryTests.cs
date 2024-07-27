@@ -46,18 +46,18 @@ public sealed class UsersRepositoryTests
         var users = 
             (await usersRepo.GetAllAsync())
             .ToList();
+
+        var danielEn = users.First(u => u.Mobile.Equals(DanielEn.Mobile));
+        var lukasDe = users.First(u => u.Mobile.Equals(LukasDe.Mobile));
         
-        Assert.Equal(
-            DanielEn.FirstName,
-            users[0].FirstName);
-        Assert.Equal(
-            LukasDe.FirstName,
-            users[1].FirstName);
-        Assert.Equal(
+        Assert.Equal(DanielEn.FirstName, danielEn.FirstName);
+        Assert.Equal(LukasDe.FirstName, lukasDe.FirstName);
+        
+        Assert.Contains(
             SaniCleanAdmin_DanielEn_X2024.Token,
-            users[0].HasRoles.First().Token);
-        Assert.Equal(
+            danielEn.HasRoles.Select(r => r.Token));
+        Assert.Contains(
             SaniCleanEngineer_DanielEn_Y2024.Token,
-            users[0].HasRoles.Last().Token);
+            danielEn.HasRoles.Select(r => r.Token));
     }
 }
