@@ -13,4 +13,3 @@ public sealed record TlgInput(
     Option<ResultantWorkflowInfo> ResultantWorkflow,
     Option<Guid> EntityGuid,
     TlgInputDetails Details);
-     

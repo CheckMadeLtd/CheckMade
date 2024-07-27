@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
-public class WorkflowIdentifierTests
+public sealed class WorkflowIdentifierTests
 {
     private ServiceProvider? _services;
 
