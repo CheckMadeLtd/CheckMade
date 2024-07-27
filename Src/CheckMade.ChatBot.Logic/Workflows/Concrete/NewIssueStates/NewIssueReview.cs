@@ -36,8 +36,11 @@ internal sealed record NewIssueReview<T>(
             new()
             {
                 Text = UiConcatenate(
-                    Ui("Please review all details before submitting.\n\n"),
-                    issue.GetSummary()),
+                    Ui("Please review all details before submitting."),
+                    UiNewLines(1),
+                    UiNoTranslate("-------------------------------"),
+                    UiNewLines(1),
+                    issue.FormatDetails()),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit
             }
         };

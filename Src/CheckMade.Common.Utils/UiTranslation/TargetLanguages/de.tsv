@@ -62,7 +62,7 @@ CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
 CheckMade.Telegram.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
 CheckMade.Telegram.Logic	Please select a Trade:	Bitte wählen Sie ein Gewerk aus:
 CheckMade.Telegram.Logic	Please confirm: are you at '{0}'?	Bitte bestätigen: Sind Sie bei/in '{0}'?
-CheckMade.Telegram.Logic	⛺ Sanitary Camp	⛺ Sanitärcamp
+CheckMade.Telegram.Logic	Sanitary Camp ⛺	Sanitärcamp ⛺
 CheckMade.Telegram.Logic	Zone	Zone
 CheckMade.Telegram.Logic	Please select a 	Bitte wählen Sie ein(e) 
 CheckMade.Telegram.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
@@ -80,5 +80,8 @@ CheckMade.Telegram.Logic	✅📄 Document received. You can send more attachment
 CheckMade.Telegram.Logic	❗🎙 Voice messages are not yet supported. You can send photos/documents, add a description or continue to the next step.	❗🎙 Audionachrichten werden noch nicht unterstützt. Sie können Fotos/Dokumente schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
 CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
-CheckMade.Telegram.Logic	Please review all details before submitting.\n\n	Bitte vor Absenden der Meldung alle Details prüfen.\n\n
+CheckMade.Telegram.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
 CheckMade.Telegram.Logic	❗ General Issue	❗ Allgemeines Problem
+CheckMade.Telegram.Logic	Affected Facility: 	Betroffene Einrichtung: 
+CheckMade.Telegram.Logic	Description: 	Beschreibung: 
+CheckMade.Telegram.Logic	# Attachments: 	Anhänge: 

@@ -18,6 +18,9 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
     
     // Only use this for names/labels etc. but not for strings (like "n/a") which are similar between languages. 
     public static UiString UiNoTranslate(string uiString) => Ui("{0}", uiString);
+
+    public static UiString UiNewLines(int newLineCount) => 
+        UiConcatenate(Enumerable.Repeat(UiNoTranslate("\n"), newLineCount).ToArray());
     
     public static UiString UiConcatenate(params UiString?[] uiStrings) => 
         UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());

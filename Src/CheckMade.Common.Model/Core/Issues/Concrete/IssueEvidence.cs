@@ -7,4 +7,6 @@ public sealed record IssueEvidence
     
     public Option<IReadOnlyCollection<AttachmentDetails>> Media { get; init; } =
         Option<IReadOnlyCollection<AttachmentDetails>>.None();
+    
+    
 }

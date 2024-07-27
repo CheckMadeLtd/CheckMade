@@ -17,10 +17,21 @@ public sealed record CleanlinessIssue<T>(
         IDomainGlossary Glossary) 
     : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade, new()
 {
-    public UiString GetSummary()
+    public UiString FormatDetails()
     {
         return UiConcatenate(
-            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name), UiNoTranslate("\n"),
-            Ui("Affected Facility: "), Glossary.GetUi(Facility.GetType()));
+            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name), 
+            UiNewLines(1),
+            Ui("Affected Facility: "), Glossary.GetUi(Facility.GetType()),
+            UiNewLines(1),
+            Ui("Description: "), Evidence.Description.IsSome 
+                ? UiNoTranslate(Evidence.Description.GetValueOrThrow())
+                : Ui(),
+            UiNewLines(1),
+            Ui("# Attachments: "), Evidence.Media.IsSome
+                ? UiIndirect(Evidence.Media.GetValueOrThrow().Count.ToString())
+                : UiNoTranslate("0"),
+            UiNewLines(1),
+            Ui("Reported by: "));
     }
 }
