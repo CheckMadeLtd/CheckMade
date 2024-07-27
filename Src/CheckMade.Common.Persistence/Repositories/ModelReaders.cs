@@ -152,8 +152,8 @@ internal static class ModelReaders
         
         return new LiveEventInfo(
             reader.GetString(reader.GetOrdinal("live_event_name")),
-            reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
-            reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
+            reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("live_event_start_date")),
+            reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("live_event_end_date")),
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
@@ -331,12 +331,12 @@ internal static class ModelReaders
 
     private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
-        var activationDate = reader.GetDateTime(reader.GetOrdinal("tarb_activation_date"));
+        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("tarb_activation_date"));
 
         var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
-            ? Option<DateTimeOffset>.Some(reader.GetDateTime(deactivationDateOrdinal))
+            ? Option<DateTimeOffset>.Some(reader.GetFieldValue<DateTimeOffset>(deactivationDateOrdinal))
             : Option<DateTimeOffset>.None();
 
         var status = EnsureEnumValidityOrThrow(
