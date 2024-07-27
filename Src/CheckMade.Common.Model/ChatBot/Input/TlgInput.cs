@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 namespace CheckMade.Common.Model.ChatBot.Input;
 
 public sealed record TlgInput(
-    DateTimeOffset TlgDate,
+    DateTime TlgDate,
     int TlgMessageId, 
     TlgAgent TlgAgent,
     TlgInputType InputType,

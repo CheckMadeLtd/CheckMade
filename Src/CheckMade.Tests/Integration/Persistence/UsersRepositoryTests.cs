@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class UsersRepositoryTests
+public sealed class UsersRepositoryTests
 {
     private IServiceProvider? _services;
 
