@@ -4,7 +4,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
@@ -38,7 +38,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
             {
                 Text = Ui("Choose affected consumables:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                    Glossary.GetAll(typeof(ConsumablesIssue.Item))
+                    Glossary.GetAll(typeof(ConsumablesItem))
                         .Where(dt => ((SaniCampDetails)currentSphere.Details).AvailableConsumables.Contains(dt))
                         .Select(dt => 
                             dt.IsToggleOn(interactiveHistory) 

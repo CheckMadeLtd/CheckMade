@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -177,9 +177,9 @@ internal static class TestData
                 }.ToImmutableReadOnlyCollection(),
                 new List<DomainTerm>
                 {
-                    Dt(ConsumablesIssue.Item.ToiletPaper),
-                    Dt(ConsumablesIssue.Item.PaperTowels),
-                    Dt(ConsumablesIssue.Item.Soap)
+                    Dt(ConsumablesItem.ToiletPaper),
+                    Dt(ConsumablesItem.PaperTowels),
+                    Dt(ConsumablesItem.Soap)
                 }));
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
@@ -193,7 +193,7 @@ internal static class TestData
                     .ToImmutableReadOnlyCollection(),
                 new List<DomainTerm>
                 {
-                    Dt(ConsumablesIssue.Item.ToiletPaper)
+                    Dt(ConsumablesItem.ToiletPaper)
                 }));
     
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =

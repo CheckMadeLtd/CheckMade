@@ -1,6 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Tests.Startup;
@@ -102,9 +102,9 @@ public sealed class LiveEventsRepositoryTests
 
         List<DomainTerm> expectedConsumableItemsAtX2024Sphere1 = 
         [
-            Dt(ConsumablesIssue.Item.ToiletPaper),
-            Dt(ConsumablesIssue.Item.PaperTowels),
-            Dt(ConsumablesIssue.Item.Soap)
+            Dt(ConsumablesItem.ToiletPaper),
+            Dt(ConsumablesItem.PaperTowels),
+            Dt(ConsumablesItem.Soap)
         ];
 
         var actualConsumableItemsAtX2024Sphere1 = 
@@ -124,8 +124,8 @@ public sealed class LiveEventsRepositoryTests
                 .Details)
             .AvailableConsumables;
         
-        Assert.Contains(Dt(ConsumablesIssue.Item.ToiletPaper), actualConsumableItemsAtX2024Sphere2);
-        Assert.DoesNotContain(Dt(ConsumablesIssue.Item.PaperTowels), actualConsumableItemsAtX2024Sphere2);
-        Assert.DoesNotContain(Dt(ConsumablesIssue.Item.Soap), actualConsumableItemsAtX2024Sphere2);
+        Assert.Contains(Dt(ConsumablesItem.ToiletPaper), actualConsumableItemsAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(ConsumablesItem.PaperTowels), actualConsumableItemsAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(ConsumablesItem.Soap), actualConsumableItemsAtX2024Sphere2);
     }
 }

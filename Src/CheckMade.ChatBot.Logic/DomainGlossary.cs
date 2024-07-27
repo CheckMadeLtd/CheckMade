@@ -4,6 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -53,34 +54,51 @@ public sealed record DomainGlossary : IDomainGlossary
         
         AddTerm(typeof(INewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");
+        
         AddTerm(typeof(INewIssueSphereSelection<SaniCleanTrade>), "D8T63V");
         AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL");
+        
         AddTerm(typeof(INewIssueSphereConfirmation<SaniCleanTrade>), "D45JQ1");
         AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV");
+        
         AddTerm(typeof(INewIssueTypeSelection<SaniCleanTrade>), "DDQHWW");
         AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2");
+        
         AddTerm(typeof(INewIssueConsumablesSelection<SaniCleanTrade>), "DWBYSV");
+        
         AddTerm(typeof(INewIssueEvidenceEntry<SaniCleanTrade>), "DKUR0Z");
         AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44");
+        
         AddTerm(typeof(INewIssueFacilitySelection<SaniCleanTrade>), "DWIY4L");
         AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7");
+        
         AddTerm(typeof(INewIssueReview<SaniCleanTrade>), "DAH8TX");
         AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY");
+        
         AddTerm(typeof(INewIssueSubmissionConfirmation<SaniCleanTrade>), "D8TGOV");
+        AddTerm(typeof(INewIssueSubmissionConfirmation<SiteCleanTrade>), "DM3PCW");
         
         #endregion
         
         #region Issues
 
-        AddTerm(typeof(GeneralIssue), "DVGI3N", Ui("General"));
-        AddTerm(typeof(CleanlinessIssue), "DAWYZP", Ui("🪣 Cleanliness"));
-        AddTerm(typeof(TechnicalIssue), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(typeof(ConsumablesIssue), "D582QJ", Ui("🗄 Consumables"));
-        AddTerm(typeof(StaffIssue), "D9MRJ9", Ui("🙋 Staff"));
+        AddTerm(typeof(GeneralIssue<SaniCleanTrade>), "DVGI3N", Ui("General"));
+        AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("General"));
+        
+        AddTerm(typeof(CleanlinessIssue<SaniCleanTrade>), "DAWYZP", Ui("🪣 Cleanliness"));
+        AddTerm(typeof(CleanlinessIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleanliness"));
+        
+        AddTerm(typeof(TechnicalIssue<SaniCleanTrade>), "DM46NG", Ui("🔧 Technical"));
+        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical"));
+        
+        AddTerm(typeof(ConsumablesIssue<SaniCleanTrade>), "D582QJ", Ui("🗄 Consumables"));
+        
+        AddTerm(typeof(StaffIssue<SaniCleanTrade>), "D9MRJ9", Ui("🙋 Staff"));
+        AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
 
-        AddTerm(ConsumablesIssue.Item.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(ConsumablesIssue.Item.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(ConsumablesIssue.Item.Soap, "D79AMO", Ui("🧴 Soap"));
+        AddTerm(ConsumablesItem.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
+        AddTerm(ConsumablesItem.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
+        AddTerm(ConsumablesItem.Soap, "D79AMO", Ui("🧴 Soap"));
         
         #endregion
         

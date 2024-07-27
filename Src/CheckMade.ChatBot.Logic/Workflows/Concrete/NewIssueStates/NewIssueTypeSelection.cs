@@ -26,7 +26,7 @@ internal sealed record NewIssueTypeSelection<T>(
                     Text = Ui("Please select the type of issue:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary
-                            .GetAll(typeof(IIssue))
+                            .GetAll(typeof(ITradeIssue<T>))
                             .ToImmutableReadOnlyCollection()),
                     EditPreviousOutputMessageId = editMessageId,
                     ControlPromptsSelection = ControlPrompts.Back
@@ -46,17 +46,17 @@ internal sealed record NewIssueTypeSelection<T>(
         
             return issueTypeName switch
             {
-                nameof(CleanlinessIssue) or nameof(TechnicalIssue) => 
+                nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
                         true),
             
-                nameof(ConsumablesIssue) => 
+                nameof(ConsumablesIssue<T>) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
                         true),
             
-                nameof(StaffIssue) => 
+                nameof(StaffIssue<T>) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
                         true),

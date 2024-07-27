@@ -1,9 +1,10 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 
-public sealed record CleanlinessIssue(
+public sealed record CleanlinessIssue<T>(
         Guid Id,
         DateTimeOffset CreationDate,
         ISphereOfAction Sphere,
@@ -12,7 +13,7 @@ public sealed record CleanlinessIssue(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 
-    : IIssue, IIssueInvolvingFacility, IIssueWithEvidence
+    : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade
 {
     public UiString GetSummary()
     {

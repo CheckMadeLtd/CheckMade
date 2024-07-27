@@ -11,7 +11,6 @@ using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete;
 using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
@@ -43,79 +42,64 @@ internal sealed record IssueFactory<T>(
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
-        
-        IIssue issue = currentTrade switch
+
+        IIssue issue = lastSelectedIssueType.Name switch
         {
-            SaniCleanTrade =>
-                lastSelectedIssueType.Name switch
-                {
-                    nameof(CleanlinessIssue) =>
-                        new CleanlinessIssue(
-                            Id: GetGuid(),
-                            CreationDate: DateTimeOffset.UtcNow, 
-                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
-                            Facility: GetLastSelectedFacility(),
-                            Evidence: GetSubmittedEvidence(),
-                            ReportedBy: role,
-                            HandledBy: Option<IRoleInfo>.None(),
-                            Status: GetStatus()),
-            
-                    nameof(ConsumablesIssue) =>
-                        new ConsumablesIssue(
-                            Id: GetGuid(),
-                            CreationDate: DateTimeOffset.UtcNow, 
-                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
-                            AffectedItems: GetSelectedConsumablesItems(),
-                            ReportedBy: role,
-                            HandledBy: Option<IRoleInfo>.None(),
-                            Status: GetStatus()),
+            nameof(GeneralIssue<T>) =>
+                new GeneralIssue<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Evidence: GetSubmittedEvidence(),
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None(),
+                    Status: GetStatus()),
 
-                    nameof(StaffIssue) =>
-                        new StaffIssue(
-                            Id: GetGuid(),
-                            CreationDate: DateTimeOffset.UtcNow, 
-                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
-                            Evidence: GetSubmittedEvidence(),
-                            ReportedBy: role,
-                            HandledBy: Option<IRoleInfo>.None(),
-                            Status: GetStatus()),
+            nameof(CleanlinessIssue<T>) =>
+                new CleanlinessIssue<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Facility: GetLastSelectedFacility(),
+                    Evidence: GetSubmittedEvidence(),
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None(),
+                    Status: GetStatus()),
 
-                    nameof(TechnicalIssue) =>
-                        new TechnicalIssue(
-                            Id: GetGuid(),
-                            CreationDate: DateTimeOffset.UtcNow, 
-                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
-                            Facility: GetLastSelectedFacility(),
-                            Evidence: GetSubmittedEvidence(),
-                            ReportedBy: role,
-                            HandledBy: Option<IRoleInfo>.None(),
-                            Status: GetStatus()),
-                    
-                    _ => throw new InvalidOperationException(
-                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
-                        $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
-                },
-            
-            SiteCleanTrade =>
-                lastSelectedIssueType.Name switch
-                {
-                    nameof(GeneralIssue) =>
-                        new GeneralIssue(
-                            Id: GetGuid(), 
-                            CreationDate: DateTimeOffset.UtcNow, 
-                            Sphere: GetLastSelectedSphere(inputs, allSpheres),
-                            Evidence: GetSubmittedEvidence(),
-                            ReportedBy: role,
-                            HandledBy: Option<IRoleInfo>.None(), 
-                            Status: GetStatus()),
-                    
-                    _ => throw new InvalidOperationException(
-                        $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
-                        $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
-                },
-            
+            nameof(ConsumablesIssue<T>) =>
+                new ConsumablesIssue<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    AffectedItems: GetSelectedConsumablesItems(),
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None(),
+                    Status: GetStatus()),
+
+            nameof(StaffIssue<T>) =>
+                new StaffIssue<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Evidence: GetSubmittedEvidence(),
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None(),
+                    Status: GetStatus()),
+
+            nameof(TechnicalIssue<T>) =>
+                new TechnicalIssue<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Facility: GetLastSelectedFacility(),
+                    Evidence: GetSubmittedEvidence(),
+                    ReportedBy: role,
+                    HandledBy: Option<IRoleInfo>.None(),
+                    Status: GetStatus()),
+
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(currentTrade)}: '{currentTrade.GetType().Name}'")
+                $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
+                $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
         };
 
         return issue;
@@ -223,11 +207,11 @@ internal sealed record IssueFactory<T>(
                 : IssueStatus.Drafting;
         }
         
-        IReadOnlyCollection<ConsumablesIssue.Item> GetSelectedConsumablesItems()
+        IReadOnlyCollection<ConsumablesItem> GetSelectedConsumablesItems()
         {
-            return Glossary.GetAll(typeof(ConsumablesIssue.Item))
+            return Glossary.GetAll(typeof(ConsumablesItem))
                 .Where(dt => dt.IsToggleOn(inputs))
-                .Select(dt => (ConsumablesIssue.Item)dt.EnumValue!)
+                .Select(dt => (ConsumablesItem)dt.EnumValue!)
                 .ToImmutableReadOnlyCollection();
         }
     }
