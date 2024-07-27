@@ -20,19 +20,6 @@ public sealed record CleanlinessIssue<T>(
 {
     public UiString FormatDetails()
     {
-        return UiConcatenate(
-            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name), 
-            UiNewLines(1),
-            Ui("Affected Facility: "), Glossary.GetUi(Facility.GetType()),
-            UiNewLines(1),
-            Ui("Description: "), Evidence.Description.IsSome 
-                ? UiNoTranslate(Evidence.Description.GetValueOrThrow())
-                : UiNoTranslate("n/a"),
-            UiNewLines(1),
-            Ui("# Attachments: "), Evidence.Media.IsSome
-                ? UiIndirect(Evidence.Media.GetValueOrThrow().Count.ToString())
-                : UiNoTranslate("n/a"),
-            UiNewLines(1),
-            Ui("Reported by: "), UiNoTranslate(ReportedBy.ByUser.FirstName));
+        
     }
 }
