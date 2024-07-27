@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -42,7 +43,9 @@ internal sealed record NewIssueTypeSelection<T>(
         if (currentInput.Details.DomainTerm.IsSome)
         {
             var issueTypeName = 
-                currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!.Name;
+                currentInput.Details.DomainTerm.GetValueOrThrow()
+                    .TypeValue!.Name
+                    .GetTypeNameWithoutGenericParamSuffix();
         
             return issueTypeName switch
             {

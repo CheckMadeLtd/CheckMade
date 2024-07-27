@@ -34,16 +34,18 @@ internal sealed record IssueFactory<T>(
         var allSpheres = 
             GetAllTradeSpecificSpheres(liveEvent, new T());
         
-        var lastSelectedIssueType =
+        var lastSelectedIssueTypeName =
             inputs
                 .Last(i => 
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
                 .Details.DomainTerm.GetValueOrThrow()
-                .TypeValue!;
+                .TypeValue!
+                .Name
+                .GetTypeNameWithoutGenericParamSuffix();
 
-        IIssue issue = lastSelectedIssueType.Name switch
+        IIssue issue = lastSelectedIssueTypeName switch
         {
             nameof(GeneralIssue<T>) =>
                 new GeneralIssue<T>(
@@ -98,8 +100,8 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus()),
 
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(lastSelectedIssueType)} for {nameof(ITrade)} " +
-                $"'{currentTrade.GetType().Name}': '{lastSelectedIssueType.Name}'")
+                $"Unhandled {nameof(lastSelectedIssueTypeName)} for {nameof(ITrade)} " +
+                $"'{currentTrade.GetType().Name}': '{lastSelectedIssueTypeName}'")
         };
 
         return issue;
