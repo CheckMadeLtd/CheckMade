@@ -1,8 +1,8 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

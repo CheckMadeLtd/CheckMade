@@ -6,13 +6,12 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Issues;
+using CheckMade.Common.Model.Core.Issues.Concrete;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;

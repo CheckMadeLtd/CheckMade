@@ -1,10 +1,10 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
+namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 
-public sealed record GeneralSiteCleanIssue(
-        Guid Id, 
+public sealed record StaffIssue(
+        Guid Id,
         DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
         IssueEvidence Evidence, 

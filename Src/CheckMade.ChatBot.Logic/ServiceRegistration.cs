@@ -4,8 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.ChatBot.Logic;

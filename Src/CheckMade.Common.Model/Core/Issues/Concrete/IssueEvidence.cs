@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels;
+namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
 public sealed record IssueEvidence
 {

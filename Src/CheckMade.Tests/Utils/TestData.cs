@@ -4,14 +4,13 @@ using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming

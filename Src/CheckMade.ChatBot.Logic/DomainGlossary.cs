@@ -4,11 +4,9 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean.Issues;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic;

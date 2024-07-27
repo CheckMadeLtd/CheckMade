@@ -1,10 +1,10 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean.Issues;
+namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 
-public sealed record TechnicalIssue(
-        Guid Id,    
+public sealed record CleanlinessIssue(
+        Guid Id,
         DateTimeOffset CreationDate,
         ISphereOfAction Sphere,
         IFacility Facility,
@@ -16,6 +16,10 @@ public sealed record TechnicalIssue(
 {
     public UiString GetSummary()
     {
-        throw new NotImplementedException();
+        // ToDo: Add new UiStrings to translations
+        return UiConcatenate(
+            Ui("Summary of {0}:\n", GetType().Name),
+            Ui("Reported by a: "),
+            UiNoTranslate(ReportedBy.RoleType.GetType().Name));
     }
 }

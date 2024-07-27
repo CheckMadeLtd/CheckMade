@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
+namespace CheckMade.Common.Model.Core.Trades.Concrete;
 
 public sealed record SaniCleanTrade : ITrade
 {

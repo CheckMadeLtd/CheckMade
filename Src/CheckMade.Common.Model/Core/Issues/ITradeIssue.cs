@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Model.Core.Trades;
+namespace CheckMade.Common.Model.Core.Issues;
 
 public interface ITradeIssue
 {

@@ -4,8 +4,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SaniClean;
-using CheckMade.Common.Model.Core.Trades.Concrete.TradeModels.SiteClean;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
