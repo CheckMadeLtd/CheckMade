@@ -11,7 +11,7 @@ public sealed record GeneralIssue(
         IRoleInfo ReportedBy, 
         Option<IRoleInfo> HandledBy, 
         IssueStatus Status) 
-    : ITradeIssue, ITradeIssueWithEvidence
+    : IIssue, IIssueWithEvidence
 {
     public UiString GetSummary()
     {

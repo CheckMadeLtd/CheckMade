@@ -2,7 +2,7 @@ using CheckMade.Common.Model.Core.Issues.Concrete;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
-public interface ITradeIssueWithEvidence
+internal interface IIssueWithEvidence
 {
     IssueEvidence Evidence { get; }
 }

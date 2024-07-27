@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
-public interface ITradeIssue
+public interface IIssue
 {
     Guid Id { get; }
     DateTimeOffset CreationDate { get; }

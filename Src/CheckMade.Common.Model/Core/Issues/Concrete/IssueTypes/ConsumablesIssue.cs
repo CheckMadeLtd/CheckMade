@@ -13,7 +13,7 @@ public sealed record ConsumablesIssue(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 
-    : ITradeIssue
+    : IIssue
 {
     public UiString GetSummary()
     {

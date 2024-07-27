@@ -18,7 +18,7 @@ namespace CheckMade.ChatBot.Logic.ModelFactories;
 
 internal interface IIssueFactory<T>
 {
-    Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
+    Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
 } 
 
 internal sealed record IssueFactory<T>(
@@ -26,7 +26,7 @@ internal sealed record IssueFactory<T>(
         IDomainGlossary Glossary) 
     : IIssueFactory<T> where T : ITrade, new()
 {
-    public async Task<ITradeIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var currentTrade = new T();
         var liveEvent = (await LiveEventsRepo.GetAsync(
@@ -40,11 +40,11 @@ internal sealed record IssueFactory<T>(
                 .Last(i => 
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITradeIssue)))
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
         
-        ITradeIssue tradeIssue = currentTrade switch
+        IIssue issue = currentTrade switch
         {
             SaniCleanTrade =>
                 lastSelectedIssueType.Name switch
@@ -118,7 +118,7 @@ internal sealed record IssueFactory<T>(
                 $"Unhandled {nameof(currentTrade)}: '{currentTrade.GetType().Name}'")
         };
 
-        return tradeIssue;
+        return issue;
 
         Guid GetGuid()
         {

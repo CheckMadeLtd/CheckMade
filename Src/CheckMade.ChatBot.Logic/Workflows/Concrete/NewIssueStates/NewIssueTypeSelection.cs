@@ -26,7 +26,7 @@ internal sealed record NewIssueTypeSelection<T>(
                     Text = Ui("Please select the type of issue:"),
                     DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                         Glossary
-                            .GetAll(typeof(ITradeIssue))
+                            .GetAll(typeof(IIssue))
                             .ToImmutableReadOnlyCollection()),
                     EditPreviousOutputMessageId = editMessageId,
                     ControlPromptsSelection = ControlPrompts.Back

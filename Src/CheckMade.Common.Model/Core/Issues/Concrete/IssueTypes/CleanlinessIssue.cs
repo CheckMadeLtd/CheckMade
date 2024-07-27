@@ -12,7 +12,7 @@ public sealed record CleanlinessIssue(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 
-    : ITradeIssue, ITradeIssueInvolvingFacility, ITradeIssueWithEvidence
+    : IIssue, IIssueInvolvingFacility, IIssueWithEvidence
 {
     public UiString GetSummary()
     {
