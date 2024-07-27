@@ -14,7 +14,7 @@ public interface IIssue
     IssueStatus Status { get; }
     IDomainGlossary Glossary { get; }
     
-    UiString GetSummary();
+    UiString FormatDetails();
 }
 
 public enum IssueStatus

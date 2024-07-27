@@ -16,7 +16,7 @@ public sealed record ConsumablesIssue<T>(
         IDomainGlossary Glossary) 
     : ITradeIssue<T> where T : ITrade
 {
-    public UiString GetSummary()
+    public UiString FormatDetails()
     {
         throw new NotImplementedException();
     }
