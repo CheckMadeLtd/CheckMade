@@ -81,6 +81,8 @@ public sealed record DomainGlossary : IDomainGlossary
         #endregion
         
         #region Issues
+        
+        // Below, presence/absence determines availability of IssueTypes per TradeType, also in the Workflow!
 
         AddTerm(typeof(GeneralIssue<SaniCleanTrade>), "DVGI3N", Ui("General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("General"));
