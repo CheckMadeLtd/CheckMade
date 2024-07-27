@@ -14,7 +14,7 @@ internal interface INewIssueTypeSelection<T> : IWorkflowState where T : ITrade;
 internal sealed record NewIssueTypeSelection<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator) 
-    : INewIssueTypeSelection<T> where T : ITrade
+    : INewIssueTypeSelection<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, Option<int> editMessageId)

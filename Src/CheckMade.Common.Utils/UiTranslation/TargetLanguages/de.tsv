@@ -29,15 +29,15 @@ CheckMade.Common.Model	SaniClean-Inspector	Sanitärreinigung-Inspektor
 CheckMade.Common.Model	SaniClean-Engineer	Sanitärreinigung-Installateur
 CheckMade.Common.Model	SaniClean-CleanLead	Sanitärreinigung-Reinigungsvorarbeiter
 CheckMade.Common.Model	SaniClean-Observer	Sanitärreinigung-Beobachter
-CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
-CheckMade.Common.Model	🔧 Technical	🔧 Technik
-CheckMade.Common.Model	🗄 Consumables	🗄 Verbrauchsmaterial
+CheckMade.Common.Model	🪣 Cleanliness Issue	🪣 Sauberkeitsproblem
+CheckMade.Common.Model	🔧 Technical Issue	🔧 Technik-Problem
+CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlendes Verbrauchsmaterial
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
 CheckMade.Common.Model	🧴 Soap	🧴 Seife
 CheckMade.Common.Model	🚽 Toilet	🚽 Toilette
 CheckMade.Common.Model	🚿 Shower	🚿 Dusche
-CheckMade.Common.Model	🙋 Staff	🙋 Personal
+CheckMade.Common.Model	🙋 Staff Issue	🙋 Personalproblem
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.Telegram.Function	Please choose:	Bitte wählen:
@@ -62,7 +62,7 @@ CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
 CheckMade.Telegram.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
 CheckMade.Telegram.Logic	Please select a Trade:	Bitte wählen Sie ein Gewerk aus:
 CheckMade.Telegram.Logic	Please confirm: are you at '{0}'?	Bitte bestätigen: Sind Sie bei/in '{0}'?
-CheckMade.Telegram.Logic	sanitary camp	Sanitärcamp
+CheckMade.Telegram.Logic	⛺ Sanitary Camp	⛺ Sanitärcamp
 CheckMade.Telegram.Logic	zone	Zone
 CheckMade.Telegram.Logic	Please select a 	Bitte wählen Sie ein(e) 
 CheckMade.Telegram.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
@@ -80,3 +80,5 @@ CheckMade.Telegram.Logic	✅📄 Document received. You can send more attachment
 CheckMade.Telegram.Logic	❗🎙 Voice messages are not yet supported. You can send photos/documents, add a description or continue to the next step.	❗🎙 Audionachrichten werden noch nicht unterstützt. Sie können Fotos/Dokumente schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
 CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
+CheckMade.Telegram.Logic	Please review all details before submitting.\n\n	Bitte vor Absenden der Meldung alle Details prüfen.\n\n
+CheckMade.Telegram.Logic	❗ General Issue	❗ Allgemeines Problem

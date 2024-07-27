@@ -36,9 +36,9 @@ internal sealed record NewIssueReview<T>(
             new()
             {
                 Text = UiConcatenate(
-                    Ui("Please review this issue draft.\n\n"),
+                    Ui("Please review all details before submitting.\n\n"),
                     issue.GetSummary()),
-                ControlPromptsSelection = ControlPrompts.Submit
+                ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit
             }
         };
     }

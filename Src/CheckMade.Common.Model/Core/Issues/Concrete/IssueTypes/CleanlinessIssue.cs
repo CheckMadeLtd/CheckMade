@@ -13,14 +13,12 @@ public sealed record CleanlinessIssue<T>(
         IRoleInfo ReportedBy,
         Option<IRoleInfo> HandledBy,
         IssueStatus Status) 
-    : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade
+    : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade, new()
 {
     public UiString GetSummary()
     {
-        // ToDo: Add new UiStrings to translations
         return UiConcatenate(
-            Ui("Summary of {0}:\n", GetType().Name),
-            Ui("Reported by a: "),
-            UiNoTranslate(ReportedBy.RoleType.GetType().Name));
+            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiNoTranslate(Sphere.Name),
+            Ui("Affected Facility: "));
     }
 }
