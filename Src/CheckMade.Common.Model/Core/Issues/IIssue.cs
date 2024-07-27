@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
@@ -11,6 +12,7 @@ public interface IIssue
     IRoleInfo ReportedBy { get; }
     Option<IRoleInfo> HandledBy { get; }
     IssueStatus Status { get; }
+    IDomainGlossary Glossary { get; }
     
     UiString GetSummary();
 }

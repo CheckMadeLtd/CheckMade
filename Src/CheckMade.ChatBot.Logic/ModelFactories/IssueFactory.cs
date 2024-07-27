@@ -55,7 +55,8 @@ internal sealed record IssueFactory<T>(
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<IRoleInfo>.None(),
-                    Status: GetStatus()),
+                    Status: GetStatus(),
+                    Glossary),
 
             nameof(CleanlinessIssue<T>) =>
                 new CleanlinessIssue<T>(
@@ -66,7 +67,8 @@ internal sealed record IssueFactory<T>(
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<IRoleInfo>.None(),
-                    Status: GetStatus()),
+                    Status: GetStatus(),
+                    Glossary),
 
             nameof(ConsumablesIssue<T>) =>
                 new ConsumablesIssue<T>(
@@ -76,7 +78,8 @@ internal sealed record IssueFactory<T>(
                     AffectedItems: GetSelectedConsumablesItems(),
                     ReportedBy: role,
                     HandledBy: Option<IRoleInfo>.None(),
-                    Status: GetStatus()),
+                    Status: GetStatus(),
+                    Glossary),
 
             nameof(StaffIssue<T>) =>
                 new StaffIssue<T>(
@@ -86,7 +89,8 @@ internal sealed record IssueFactory<T>(
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<IRoleInfo>.None(),
-                    Status: GetStatus()),
+                    Status: GetStatus(),
+                    Glossary),
 
             nameof(TechnicalIssue<T>) =>
                 new TechnicalIssue<T>(
@@ -97,7 +101,8 @@ internal sealed record IssueFactory<T>(
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<IRoleInfo>.None(),
-                    Status: GetStatus()),
+                    Status: GetStatus(),
+                    Glossary),
 
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(lastSelectedIssueTypeName)} for {nameof(ITrade)} " +
