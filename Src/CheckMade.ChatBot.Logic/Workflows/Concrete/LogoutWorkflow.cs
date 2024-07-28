@@ -52,7 +52,7 @@ internal sealed record LogoutWorkflow(
                                 Are you sure you want to log out from this chat for {0}?
                                 FYI: You will also be logged out from other non-group bot chats in this role.
                                 """, 
-                            currentRoleBind.Role.AtLiveEvent.Name)),
+                                currentRoleBind.Role.AtLiveEvent.Name)),
                         
                         ControlPromptsSelection = ControlPrompts.YesNo 
                     }, 
@@ -68,8 +68,8 @@ internal sealed record LogoutWorkflow(
                     new OutputDto 
                     { 
                         Text = UiConcatenate(
-                        Ui("Logout aborted.\n"),
-                        IInputProcessor.SeeValidBotCommandsInstruction) 
+                            Ui("Logout aborted.\n"),
+                            IInputProcessor.SeeValidBotCommandsInstruction) 
                     },
                     Glossary.GetId(LogoutAborted)),
             
@@ -114,17 +114,20 @@ internal sealed record LogoutWorkflow(
                 roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat, 
                 DbRecordStatus.Historic);
         
-        return [new OutputDto 
-        {
-            Text = Ui("💨 Logged out.")
-        }];
+        return
+        [
+            new OutputDto 
+            {
+                Text = Ui("💨 Logged out.")
+            }
+        ];
     }
 
     [Flags]
     internal enum States
     {
         Initial = 1,
-        LogoutConfirmed = 1<<1,
-        LogoutAborted = 1<<2
+        LogoutConfirmed = 1 << 1,
+        LogoutAborted = 1 << 2
     }
 }

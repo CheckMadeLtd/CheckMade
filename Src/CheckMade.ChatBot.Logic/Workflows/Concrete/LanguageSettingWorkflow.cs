@@ -46,8 +46,8 @@ internal sealed record LanguageSettingWorkflow(
                     { 
                         Text = Ui("🌎 Please select your preferred language:"), 
                         DomainTermSelection = new List<DomainTerm>(
-                        Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                            .Select(lc => Dt(lc))) 
+                            Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
+                                .Select(lc => Dt(lc))) 
                     },
                     Glossary.GetId(Initial)),
             
@@ -119,7 +119,7 @@ internal sealed record LanguageSettingWorkflow(
     internal enum States
     {
         Initial = 1,
-        ReceivedLanguageSetting = 1<<1,
-        Completed = 1<<2
+        ReceivedLanguageSetting = 1 << 1,
+        Completed = 1 << 2
     }
 }

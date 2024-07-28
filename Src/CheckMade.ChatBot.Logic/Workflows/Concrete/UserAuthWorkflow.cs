@@ -190,6 +190,6 @@ internal sealed record UserAuthWorkflow(
     internal enum States
     {
         Initial = 1,
-        ReceivedTokenSubmissionAttempt = 1<<1
+        ReceivedTokenSubmissionAttempt = 1 << 1
     }
 }
