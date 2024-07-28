@@ -4,6 +4,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
@@ -30,6 +31,13 @@ internal sealed record NewIssueReview<T>(
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
         var issue = 
             await Factory.CreateAsync(updatedHistoryWithGuid);
+        var summary = 
+            issue.GetSummary();
+        
+        const IssueSummaryCategories summaryFilter = IssueSummaryCategories.CommonBasics | 
+                                                     IssueSummaryCategories.FacilityInfo |
+                                                     IssueSummaryCategories.EvidenceInfo |
+                                                     IssueSummaryCategories.IssueSpecificInfo;
         
         return new List<OutputDto>
         {
@@ -38,9 +46,13 @@ internal sealed record NewIssueReview<T>(
                 Text = UiConcatenate(
                     Ui("Please review all details before submitting."),
                     UiNewLines(1),
-                    UiNoTranslate("-------------------------------"),
+                    UiNoTranslate("- - - - - -"),
                     UiNewLines(1),
-                    issue.FormatDetails()),
+                    UiConcatenate(
+                        summary
+                            .Where(kvp => (summaryFilter & kvp.Key) != 0)
+                            .Select(kvp => kvp.Value)
+                            .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit
             }
         };

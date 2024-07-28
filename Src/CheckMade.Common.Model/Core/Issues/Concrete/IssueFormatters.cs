@@ -9,7 +9,8 @@ internal static class IssueFormatters
         where T : ITrade, new()
     {
         return UiConcatenate(
-            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name));
+            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name),
+            UiNewLines(1));
     }
 
     public static UiString FormatMetaInfo<T>(ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
@@ -28,22 +29,27 @@ internal static class IssueFormatters
                     Ui("in their role as "), glossary.GetUi(issue.HandledBy.GetValueOrThrow().RoleType.GetType()))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("Current status: {0}", issue.Status.ToString()));
+            Ui("Current status: {0}", issue.Status.ToString()),
+            UiNewLines(1));
     }
 
     public static UiString FormatFacilityInfo<T>(ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) 
         where T : ITrade
     {
         return UiConcatenate(
-            Ui("Affected Facility: "), glossary.GetUi(issue.Facility.GetType()));
+            Ui("Affected facility: "), glossary.GetUi(issue.Facility.GetType()),
+            UiNewLines(1));
+    }
+
+    public static UiString FormatEvidenceInfo<T>(ITradeIssueWithEvidence<T> issue) where T : ITrade
+    {
+        return UiConcatenate(
+            Ui("Description: "), issue.Evidence.Description.IsSome 
+                ? UiIndirect(issue.Evidence.Description.GetValueOrThrow())
+                : UiNoTranslate("n/a"),
+            UiNewLines(1),
+            Ui("# Attachments: "), issue.Evidence.Media.IsSome
+                ? UiIndirect(issue.Evidence.Media.GetValueOrThrow().Count.ToString())
+                : UiNoTranslate("n/a"));
     }
 }
-
-
-// Ui("Description: "), issue.Evidence.Description.IsSome 
-//     ? UiNoTranslate(issue.Evidence.Description.GetValueOrThrow())
-//     : UiNoTranslate("n/a"),
-// UiNewLines(1),
-// Ui("# Attachments: "), Evidence.Media.IsSome
-//     ? UiIndirect(Evidence.Media.GetValueOrThrow().Count.ToString())
-//     : UiNoTranslate("n/a"),

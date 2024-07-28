@@ -16,7 +16,7 @@ public sealed record StaffIssue<T>(
         IDomainGlossary Glossary) 
     : ITradeIssue<T>, ITradeIssueWithEvidence<T> where T : ITrade
 {
-    public UiString FormatDetails()
+    public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {
         throw new NotImplementedException();
     }

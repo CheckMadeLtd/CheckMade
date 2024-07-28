@@ -16,8 +16,19 @@ public sealed record ConsumablesIssue<T>(
         IDomainGlossary Glossary) 
     : ITradeIssue<T> where T : ITrade
 {
-    public UiString FormatDetails()
+    public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {
         throw new NotImplementedException();
+    }
+
+    private UiString FormatConsumableItems()
+    {
+        return UiConcatenate(
+            Ui("Affected consumables: "),
+            UiConcatenate(
+                AffectedItems
+                    .Select(item => UiConcatenate(
+                        Glossary.GetUi(item), UiNoTranslate("; ")))
+                    .ToArray()));
     }
 }

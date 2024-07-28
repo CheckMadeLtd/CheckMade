@@ -168,9 +168,14 @@ internal sealed record IssueFactory<T>(
                     .Select(i => i.Details.Text.GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
 
+            var lastDescription = submittedDescriptions.LastOrDefault();
+            
             foreach (var text in submittedDescriptions)
             {
-                combinedDescriptionEvidence.Append($"> {text}\n");
+                combinedDescriptionEvidence.Append($"> {text}");
+
+                if (text != lastDescription)
+                    combinedDescriptionEvidence.Append('\n');
             }
 
             var submittedMedia =

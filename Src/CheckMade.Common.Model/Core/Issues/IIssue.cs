@@ -1,4 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
 
@@ -14,15 +15,5 @@ public interface IIssue
     IssueStatus Status { get; }
     IDomainGlossary Glossary { get; }
     
-    UiString FormatDetails();
-}
-
-public enum IssueStatus
-{
-    Drafting = 1,
-    Reported = 10,
-    HandlingInProgress = 20,
-    HandledReviewRequired = 30,
-    ReviewedAndRejected = 40,
-    Closed = 90
+    IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary();
 }
