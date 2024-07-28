@@ -35,7 +35,7 @@ internal sealed record NewIssueReview<T>(
             issue.GetSummary();
         
         const IssueSummaryCategories summaryFilter = IssueSummaryCategories.CommonBasics |
-                                                     // IssueSummaryCategories.MetaInfo |
+                                                     IssueSummaryCategories.MetaInfo |
                                                      IssueSummaryCategories.FacilityInfo |
                                                      IssueSummaryCategories.EvidenceInfo |
                                                      IssueSummaryCategories.IssueSpecificInfo;
