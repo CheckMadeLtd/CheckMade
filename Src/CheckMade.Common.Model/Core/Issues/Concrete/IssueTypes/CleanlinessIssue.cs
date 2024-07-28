@@ -15,7 +15,7 @@ public sealed record CleanlinessIssue<T>(
         Option<Role> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
-    : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade, new()
+    : ITradeIssue<T>, ITradeIssueInvolvingFacility<T>, ITradeIssueWithEvidence<T> where T : ITrade, new()
 {
     public UiString FormatDetails()
     {

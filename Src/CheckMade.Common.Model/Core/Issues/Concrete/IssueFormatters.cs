@@ -3,9 +3,9 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
-public static class IssueFormatters
+internal static class IssueFormatters
 {
-    public static UiString FormatBasics<T>(ITradeIssue<T> issue)
+    public static UiString FormatCommonBasics<T>(ITradeIssue<T> issue)
         where T : ITrade, new()
     {
         return UiConcatenate(
@@ -30,10 +30,15 @@ public static class IssueFormatters
             UiNewLines(1),
             Ui("Current status: {0}", issue.Status.ToString()));
     }
+
+    public static UiString FormatFacilityInfo<T>(ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) 
+        where T : ITrade
+    {
+        return UiConcatenate(
+            Ui("Affected Facility: "), glossary.GetUi(issue.Facility.GetType()));
+    }
 }
 
-
-// Ui("Affected Facility: "), Glossary.GetUi(issue.Facility.GetType()),
 
 // Ui("Description: "), issue.Evidence.Description.IsSome 
 //     ? UiNoTranslate(issue.Evidence.Description.GetValueOrThrow())

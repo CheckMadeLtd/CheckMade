@@ -15,7 +15,7 @@ public sealed record TechnicalIssue<T>(
         Option<Role> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
-    : ITradeIssue<T>, IIssueInvolvingFacility, IIssueWithEvidence where T : ITrade
+    : ITradeIssue<T>, ITradeIssueInvolvingFacility<T>, ITradeIssueWithEvidence<T> where T : ITrade
 {
     public UiString FormatDetails()
     {
