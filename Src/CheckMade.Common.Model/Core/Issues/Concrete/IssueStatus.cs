@@ -4,8 +4,8 @@ public enum IssueStatus
 {
     Drafting = 10,
     Reported = 20,
-    HandlingInProgress = 30,
-    HandledReviewRequired = 40,
-    ReviewedAndRejected = 50,
+    InProgress = 30,
+    ReviewRequired = 40,
+    ReviewNotPassed = 50,
     Closed = 90
 }

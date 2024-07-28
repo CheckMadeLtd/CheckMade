@@ -29,7 +29,7 @@ internal static class IssueFormatters
                     Ui("in their role as "), glossary.GetUi(issue.HandledBy.GetValueOrThrow().RoleType.GetType()))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("Current status: {0}", issue.Status.ToString()),
+            Ui("Current status: "), glossary.GetUi(issue.Status),
             UiNewLines(1));
     }
 

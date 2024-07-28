@@ -10,7 +10,7 @@ CheckMade.ChatBot.Logic	Tap on the menu button or type '/' to see available BotC
 CheckMade.ChatBot.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
 CheckMade.ChatBot.Logic	What type of issue?	Welche Art von Problem?
-CheckMade.Common.Model	⬅️ Back	⬅️ Zurück
+CheckMade.ChatBot.Logic	⬅️ Back	⬅️ Zurück
 CheckMade.Common.Model	❌ Cancel	❌ Abbrechen
 CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
 CheckMade.Common.Model	💾 Save	💾 Speichern
@@ -89,5 +89,10 @@ CheckMade.ChatBot.Logic	Reported by: {0} 	Gemeldet von: {0}
 CheckMade.ChatBot.Logic	Created: {0}	Erstellt: {0}
 CheckMade.ChatBot.Logic	Currently handled by: 	Aktuell bearbeitet von: 
 CheckMade.ChatBot.Logic	in their role as 	in der Rolle 
-CheckMade.ChatBot.Logic	Current status: {0}	Aktueller Status: {0}
+CheckMade.ChatBot.Logic	Current status: 	Aktueller Status: 
 CheckMade.ChatBot.Logic	Affected consumables: 	Betroffene Verbrauchsartikel: 
+CheckMade.ChatBot.Logic	✏️ Drafting	✏️ Entwurf
+CheckMade.ChatBot.Logic	📤️ Reported	📤️ Gemeldet
+CheckMade.ChatBot.Logic	⏳ In Progress	⏳ In Bearbeitung
+CheckMade.ChatBot.Logic	📋 Review Required	📋 Revision Erforderlich
+CheckMade.ChatBot.Logic	❌ Review Not Passed	❌ Revision Nicht Bestanden
