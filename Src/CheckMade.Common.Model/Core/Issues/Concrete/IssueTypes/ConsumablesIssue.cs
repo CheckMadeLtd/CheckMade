@@ -1,4 +1,3 @@
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
@@ -12,7 +11,7 @@ public sealed record ConsumablesIssue<T>(
         ISphereOfAction Sphere,
         IReadOnlyCollection<ConsumablesItem> AffectedItems,
         Role ReportedBy,
-        Option<IRoleInfo> HandledBy,
+        Option<Role> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
     : ITradeIssue<T> where T : ITrade

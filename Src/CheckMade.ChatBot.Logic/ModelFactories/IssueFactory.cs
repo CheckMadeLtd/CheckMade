@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
@@ -56,7 +56,7 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None(),
+                    HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
 
@@ -68,7 +68,7 @@ internal sealed record IssueFactory<T>(
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None(),
+                    HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
 
@@ -79,7 +79,7 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere(inputs, allSpheres),
                     AffectedItems: GetSelectedConsumablesItems(),
                     ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None(),
+                    HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
 
@@ -90,7 +90,7 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None(),
+                    HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
 
@@ -102,7 +102,7 @@ internal sealed record IssueFactory<T>(
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<IRoleInfo>.None(),
+                    HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
 

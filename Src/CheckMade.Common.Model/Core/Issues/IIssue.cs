@@ -1,4 +1,3 @@
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
@@ -11,7 +10,7 @@ public interface IIssue
     DateTimeOffset CreationDate { get; }
     ISphereOfAction Sphere { get; }
     Role ReportedBy { get; }
-    Option<IRoleInfo> HandledBy { get; }
+    Option<Role> HandledBy { get; }
     IssueStatus Status { get; }
     IDomainGlossary Glossary { get; }
     
