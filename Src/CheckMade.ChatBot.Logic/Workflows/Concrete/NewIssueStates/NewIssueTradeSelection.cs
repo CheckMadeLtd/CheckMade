@@ -29,7 +29,8 @@ internal sealed record NewIssueTradeSelection(
                 {
                     Text = Ui("Please select a Trade:"),
                     DomainTermSelection = 
-                        Option<IReadOnlyCollection<DomainTerm>>.Some(Glossary.GetAll(typeof(ITrade))),
+                        Option<IReadOnlyCollection<DomainTerm>>.Some(
+                            Glossary.GetAll(typeof(ITrade))),
                     EditPreviousOutputMessageId = editMessageId
                 }
             });

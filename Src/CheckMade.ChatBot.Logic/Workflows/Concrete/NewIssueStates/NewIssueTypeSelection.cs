@@ -59,11 +59,11 @@ internal sealed record NewIssueTypeSelection<T>(
                         currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
                         true),
             
-                nameof(StaffIssue<T>) => 
+                nameof(StaffIssue<T>) or nameof(GeneralIssue<T>) => 
                     await WorkflowResponse.CreateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
                         true),
-            
+                
                 _ => throw new InvalidOperationException(
                     $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")
             };
