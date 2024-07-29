@@ -7,6 +7,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.UiTranslation;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -21,128 +22,132 @@ internal static class OutputSender
             IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
-            IBlobLoader blobLoader)
+            IBlobLoader blobLoader,
+            ILogger<UpdateHandler> logger)
     {
         Func<IReadOnlyCollection<OutputDto>, Task> sendOutputsInSeriesAndOriginalOrder 
             = async outputsPerPort =>
-        {
-            foreach (var output in outputsPerPort)
             {
-                /*
-                 * LogicalPort will typically not be set explicitly in these cases:
-                 * a) For an update from a User who hasn't done the UserAuth workflow yet i.e. is unknown
-                 * b) For outputs aimed at the originator of the last input i.e. the default case
-                 * => LogicalPorts therefore mostly only used to send e.g. notifications to other users
-                 */
+                foreach (var output in outputsPerPort)
+                {
+                    /*
+                     * LogicalPort will typically not be set explicitly in these cases:
+                     * a) For an update from a User who hasn't done the UserAuth workflow yet i.e. is unknown
+                     * b) For outputs aimed at the originator of the last input i.e. the default case
+                     * => LogicalPorts therefore mostly only used to send e.g. notifications to other users
+                     */
                 
-                var outputMode = output.LogicalPort.Match(
-                    logicalPort => logicalPort.InteractionMode,
-                    () => currentlyReceivingInteractionMode);
+                    var outputMode = output.LogicalPort.Match(
+                        logicalPort => logicalPort.InteractionMode,
+                        () => currentlyReceivingInteractionMode);
 
-                var outputBotClient = botClientByMode[outputMode];
+                    var outputBotClient = botClientByMode[outputMode];
 
-                /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
-                 broken that the business logic only sets a LogicalPort for a role & mode that is, at the time, 
-                 mapped to a TlgAgent !! */
-                var outputChatId = output.LogicalPort.Match(
-                    logicalPort => activeRoleBindings
-                        .First(tarb => 
-                            tarb.Role == logicalPort.Role &&
-                            tarb.TlgAgent.Mode == outputMode)
-                        .TlgAgent.ChatId.Id,
-                    () => currentlyReceivingChatId);
-                    
-                switch (output)
-                {
-                    case { Text.IsSome: true, Attachments.IsSome: false, 
-                        Location.IsSome: false, EditPreviousOutputMessageId.IsSome: false }: 
-                        await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
-                        break;
+                    /* .First() instead of .FirstOrDefault() b/c I want it to crash 'fast & hard' if my assumption is
+                     broken that the business logic only sets a LogicalPort for a role & mode that is, at the time,
+                     mapped to a TlgAgent  */
+                    var outputChatId = output.LogicalPort.Match(
+                        logicalPort => activeRoleBindings
+                            .First(tarb => 
+                                tarb.Role.Equals(logicalPort.Role) &&
+                                tarb.TlgAgent.Mode == outputMode)
+                            .TlgAgent.ChatId.Id,
+                        () => currentlyReceivingChatId);
 
-                    case { Text.IsSome: true, EditPreviousOutputMessageId.IsSome: true }:
-                        await InvokeEditTextMessageAsync(output);
-                        break;
-                    
-                    case { Attachments.IsSome: true }:
-                        if (output.Text.IsSome)
-                            await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
-                        foreach (var attachment in output.Attachments.GetValueOrThrow())
-                            await InvokeSendAttachmentAsync(attachment);
-                        break;
-
-                    case { Location.IsSome: true }:
-                        await InvokeSendLocationAsync(output.Location.GetValueOrThrow());
-                        break;
-                }
-
-                continue;
-
-                async Task InvokeSendTextMessageAsync(UiString outputText)
-                {
-                    await outputBotClient
-                        .SendTextMessageAsync(
-                            outputChatId,
-                            uiTranslator.Translate(Ui("Please choose:")),
-                            uiTranslator.Translate(outputText),
-                            converter.GetReplyMarkup(output));
-                }
-
-                async Task InvokeEditTextMessageAsync(OutputDto outputWithUpdatedMessage)
-                {
-                    await outputBotClient
-                        .EditTextMessageAsync(
-                            outputChatId,
-                            uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow()),
-                            outputWithUpdatedMessage.EditPreviousOutputMessageId.GetValueOrThrow(),
-                            converter.GetReplyMarkup(outputWithUpdatedMessage));
-                }
-                
-                async Task InvokeSendAttachmentAsync(AttachmentDetails details)
-                {
-                    var (blobData, fileName) =
-                        await blobLoader.DownloadBlobAsync(details.AttachmentUri);
-                    var fileStream = new InputFileStream(blobData, fileName);
-                    
-                    var caption = details.Caption.Match(
-                        value => value,
-                        Option<string>.None);
-
-                    var attachmentSendOutParams = new AttachmentSendOutParameters(
-                        outputChatId,
-                        fileStream,
-                        caption,
-                        converter.GetReplyMarkup(output)
-                    );
-
-                    switch (details.AttachmentType)
+                    switch (output)
                     {
-                        case TlgAttachmentType.Document:
-                            await outputBotClient.SendDocumentAsync(attachmentSendOutParams);
+                        case
+                        {
+                            Text.IsSome: true, Attachments.IsSome: false, 
+                            Location.IsSome: false, EditPreviousOutputMessageId.IsSome: false
+                        }: 
+                            await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                             break;
 
-                        case TlgAttachmentType.Photo:
-                            await outputBotClient.SendPhotoAsync(attachmentSendOutParams);
+                        case { Text.IsSome: true, EditPreviousOutputMessageId.IsSome: true }:
+                            await InvokeEditTextMessageAsync(output);
+                            break;
+                    
+                        case { Attachments.IsSome: true }:
+                            if (output.Text.IsSome)
+                                await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
+                            foreach (var attachment in output.Attachments.GetValueOrThrow())
+                                await InvokeSendAttachmentAsync(attachment);
                             break;
 
-                        case TlgAttachmentType.Voice:
-                            await outputBotClient.SendVoiceAsync(attachmentSendOutParams);
+                        case { Location.IsSome: true }:
+                            await InvokeSendLocationAsync(output.Location.GetValueOrThrow());
                             break;
+                    }
 
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
+                    continue;
+
+                    async Task InvokeSendTextMessageAsync(UiString outputText)
+                    {
+                        await outputBotClient
+                            .SendTextMessageAsync(
+                                outputChatId,
+                                uiTranslator.Translate(Ui("Please choose:")),
+                                uiTranslator.Translate(outputText),
+                                converter.GetReplyMarkup(output));
+                    }
+
+                    async Task InvokeEditTextMessageAsync(OutputDto outputWithUpdatedMessage)
+                    {
+                        await outputBotClient
+                            .EditTextMessageAsync(
+                                outputChatId,
+                                uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow()),
+                                outputWithUpdatedMessage.EditPreviousOutputMessageId.GetValueOrThrow(),
+                                converter.GetReplyMarkup(outputWithUpdatedMessage));
+                    }
+                
+                    async Task InvokeSendAttachmentAsync(AttachmentDetails details)
+                    {
+                        var (blobData, fileName) =
+                            await blobLoader.DownloadBlobAsync(details.AttachmentUri);
+                        var fileStream = new InputFileStream(blobData, fileName);
+                    
+                        var caption = details.Caption.Match(
+                            value => value,
+                            Option<string>.None);
+
+                        var attachmentSendOutParams = new AttachmentSendOutParameters(
+                            outputChatId,
+                            fileStream,
+                            caption,
+                            converter.GetReplyMarkup(output)
+                        );
+
+                        switch (details.AttachmentType)
+                        {
+                            case TlgAttachmentType.Document:
+                                await outputBotClient.SendDocumentAsync(attachmentSendOutParams);
+                                break;
+
+                            case TlgAttachmentType.Photo:
+                                await outputBotClient.SendPhotoAsync(attachmentSendOutParams);
+                                break;
+
+                            case TlgAttachmentType.Voice:
+                                await outputBotClient.SendVoiceAsync(attachmentSendOutParams);
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(details.AttachmentType));
+                        }
+                    }
+
+                    async Task InvokeSendLocationAsync(Geo location)
+                    {
+                        await outputBotClient
+                            .SendLocationAsync(
+                                outputChatId,
+                                location,
+                                converter.GetReplyMarkup(output));
                     }
                 }
-
-                async Task InvokeSendLocationAsync(Geo location)
-                {
-                    await outputBotClient
-                        .SendLocationAsync(
-                            outputChatId,
-                            location,
-                            converter.GetReplyMarkup(output));
-                }
-            }
-        };
+            };
 
         var outputGroups = outputs.GroupBy(o => o.LogicalPort);
 
