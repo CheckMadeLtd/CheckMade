@@ -57,7 +57,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
+                        }, this),
 
                     TlgAttachmentType.Document => new WorkflowResponse(
                         new OutputDto
@@ -65,7 +65,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
+                        }, this),
 
                     TlgAttachmentType.Voice => new WorkflowResponse(
                         new OutputDto
@@ -73,7 +73,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
                                       "add a description or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, Glossary.GetId(GetType().GetInterfaces()[0])),
+                        }, this),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.AttachmentType)}: '{currentAttachmentType}'")
