@@ -29,17 +29,10 @@ internal sealed record NewIssueReview<T>(
             .UpdateGuid(interactiveHistory, Guid.NewGuid());
         var updatedHistoryWithGuid = 
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
-        var issue = 
-            await Factory.CreateAsync(updatedHistoryWithGuid);
-        var summary = 
-            issue.GetSummary();
         
-        const IssueSummaryCategories summaryFilter = IssueSummaryCategories.CommonBasics |
-                                                     IssueSummaryCategories.MetaInfo |
-                                                     IssueSummaryCategories.FacilityInfo |
-                                                     IssueSummaryCategories.EvidenceInfo |
-                                                     IssueSummaryCategories.IssueSpecificInfo;
-        
+        var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
+        var summary = issue.GetSummary();
+
         return new List<OutputDto>
         {
             new()
@@ -51,7 +44,8 @@ internal sealed record NewIssueReview<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp => (summaryFilter & kvp.Key) != 0)
+                            .Where(kvp => 
+                                (IssueSummaryCategories.AllExceptMetaInfo & kvp.Key) != 0)
                             .Select(kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit

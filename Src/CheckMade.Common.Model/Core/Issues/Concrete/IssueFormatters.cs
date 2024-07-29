@@ -16,7 +16,7 @@ internal static class IssueFormatters
     public static UiString FormatMetaInfo<T>(ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
-            Ui("Created: {0}", issue.CreationDate.ToString()),
+            Ui("Created: {0}", issue.CreationDate.ToString("u")),
             UiNewLines(1),
             Ui("Reported by: {0} ",
                 $"{issue.ReportedBy.ByUser.FirstName} {issue.ReportedBy.ByUser.LastName}"),
