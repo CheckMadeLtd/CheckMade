@@ -81,10 +81,10 @@ internal sealed record NewIssueEvidenceEntry<T>(
             
             default:
             {
-                var selectedControlPrompt = 
+                var selectedControl = 
                     currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
 
-                return selectedControlPrompt switch
+                return selectedControl switch
                 {
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
                         await WorkflowResponse.CreateAsync(
@@ -96,7 +96,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             true),
                     
                     _ => throw new InvalidOperationException(
-                        $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
+                        $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
                 };
             }
         }

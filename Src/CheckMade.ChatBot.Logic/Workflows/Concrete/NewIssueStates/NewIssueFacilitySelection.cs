@@ -57,16 +57,16 @@ internal sealed record NewIssueFacilitySelection<T>(
                 true);
         }
 
-        var selectedControlPrompt = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
+        var selectedControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
         
-        return selectedControlPrompt switch
+        return selectedControl switch
         {
             (long)ControlPrompts.Back => await WorkflowResponse.CreateAsync(
                 currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)),
                 true),
             
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
+                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
         };
     }
 }

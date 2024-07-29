@@ -60,10 +60,10 @@ internal sealed record NewIssueConsumablesSelection<T>(
             return await WorkflowResponse.CreateAsync(
                 currentInput, this, true);
 
-        var selectedControlPrompt = 
+        var selectedControl = 
             currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
         
-        return selectedControlPrompt switch
+        return selectedControl switch
         {
             (long)ControlPrompts.Save =>
                 await WorkflowResponse.CreateAsync(
@@ -75,7 +75,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                     true),
             
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControlPrompt}'")
+                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
         };
     }
 }
