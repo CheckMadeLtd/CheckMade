@@ -36,22 +36,22 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
         var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = issue.GetSummary();
         
-        return new List<OutputDto>
-        {
-            new()
-            {
-                Text = Ui("Success!")
-            },
-            new()
-            {
-                Text = UiConcatenate(
-                    summary.Where(kvp => 
-                        (IssueSummaryCategories.All & kvp.Key) != 0)
-                        .Select(kvp => kvp.Value)
-                        .ToArray()),
-                LogicalPort = new LogicalPort()
-            }
-        };
+        // return new List<OutputDto>
+        // {
+        //     new()
+        //     {
+        //         Text = Ui("Success!")
+        //     },
+        //     new()
+        //     {
+        //         Text = UiConcatenate(
+        //             summary.Where(kvp => 
+        //                 (IssueSummaryCategories.All & kvp.Key) != 0)
+        //                 .Select(kvp => kvp.Value)
+        //                 .ToArray()),
+        //         LogicalPort = new LogicalPort()
+        //     }
+        // };
         
         throw new NotImplementedException();
     }
