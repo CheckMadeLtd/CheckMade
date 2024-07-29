@@ -9,19 +9,19 @@ public sealed record WorkflowResponse(
 {
     internal WorkflowResponse(OutputDto singleOutput, Option<string> newStateId) 
         : this(
-            Output: new List<OutputDto>{ singleOutput }, 
+            Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newStateId)
     {
     }
     
     internal WorkflowResponse(OutputDto singleOutput, IWorkflowState newState) 
         : this(
-            Output: new List<OutputDto>{ singleOutput }, 
+            Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]))
     {
     }
 
-    internal static async Task<WorkflowResponse> CreateAsync(
+    internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
         TlgInput currentInput, IWorkflowState newState, bool editPreviousOutput = false) =>
         new(Output: await newState.GetPromptAsync(
                 currentInput, 

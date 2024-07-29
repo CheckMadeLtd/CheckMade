@@ -61,7 +61,7 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
                 this, await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo));
         }
 
-        return await WorkflowResponse.CreateAsync(
+        return await WorkflowResponse.CreateFromNextStateAsync(
             currentInput, _mediator.Next(typeof(INewIssueTypeSelection<T>)));
     }
 

@@ -52,7 +52,7 @@ internal sealed record NewIssueFacilitySelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
         {
-            return await WorkflowResponse.CreateAsync(
+            return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
                 true);
         }
@@ -61,7 +61,7 @@ internal sealed record NewIssueFacilitySelection<T>(
         
         return selectedControl switch
         {
-            (long)ControlPrompts.Back => await WorkflowResponse.CreateAsync(
+            (long)ControlPrompts.Back => await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)),
                 true),
             

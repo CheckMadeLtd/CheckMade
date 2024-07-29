@@ -61,11 +61,11 @@ internal sealed record NewIssueSphereConfirmation<T>(
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
         {
             (int)ControlPrompts.Yes => 
-                await WorkflowResponse.CreateAsync(
+                await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
             
             (int)ControlPrompts.No => 
-                await WorkflowResponse.CreateAsync(
+                await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereSelection<T>))),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))

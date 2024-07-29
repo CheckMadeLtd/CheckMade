@@ -54,7 +54,7 @@ internal sealed record NewIssueWorkflow(
     {
         if (!currentRole.IsCurrentRoleTradeSpecific())
         {
-            return await WorkflowResponse.CreateAsync(
+            return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, Mediator.Next(typeof(INewIssueTradeSelection)));
         }
 
@@ -72,17 +72,17 @@ internal sealed record NewIssueWorkflow(
         return await sphere.Match(
             _ => trade switch
             {
-                SaniCleanTrade => WorkflowResponse.CreateAsync(
+                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
-                SiteCleanTrade => WorkflowResponse.CreateAsync(
+                SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
                 _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
             },
             () => trade switch
             {
-                SaniCleanTrade => WorkflowResponse.CreateAsync(
+                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
-                SiteCleanTrade => WorkflowResponse.CreateAsync(
+                SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
                 _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
             });

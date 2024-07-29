@@ -87,11 +87,11 @@ internal sealed record NewIssueEvidenceEntry<T>(
                 return selectedControl switch
                 {
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
-                        await WorkflowResponse.CreateAsync(
+                        await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, Mediator.Next(typeof(INewIssueReview<T>))),
             
                     (long)ControlPrompts.Back => 
-                        await WorkflowResponse.CreateAsync(
+                        await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
                             true),
                     

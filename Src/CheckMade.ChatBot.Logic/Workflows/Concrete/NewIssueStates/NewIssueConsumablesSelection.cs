@@ -57,7 +57,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         if (currentInput.Details.DomainTerm.IsSome)
-            return await WorkflowResponse.CreateAsync(
+            return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, this, true);
 
         var selectedControl = 
@@ -66,11 +66,11 @@ internal sealed record NewIssueConsumablesSelection<T>(
         return selectedControl switch
         {
             (long)ControlPrompts.Save =>
-                await WorkflowResponse.CreateAsync(
+                await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueReview<T>))),
             
             (long)ControlPrompts.Back => 
-                await WorkflowResponse.CreateAsync(
+                await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
                     true),
             

@@ -50,17 +50,17 @@ internal sealed record NewIssueTypeSelection<T>(
             return issueTypeName switch
             {
                 nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
-                    await WorkflowResponse.CreateAsync(
+                    await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
                         true),
             
                 nameof(ConsumablesIssue<T>) => 
-                    await WorkflowResponse.CreateAsync(
+                    await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
                         true),
             
                 nameof(StaffIssue<T>) or nameof(GeneralIssue<T>) => 
-                    await WorkflowResponse.CreateAsync(
+                    await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
                         true),
                 
@@ -69,7 +69,7 @@ internal sealed record NewIssueTypeSelection<T>(
             };
         }
 
-        return await WorkflowResponse.CreateAsync(
+        return await WorkflowResponse.CreateFromNextStateAsync(
             currentInput, Mediator.Next(typeof(INewIssueSphereSelection<T>)));
     }
 }
