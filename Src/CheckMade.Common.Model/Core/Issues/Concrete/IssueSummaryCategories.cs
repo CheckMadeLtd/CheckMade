@@ -9,5 +9,6 @@ public enum IssueSummaryCategories
     EvidenceInfo = 1 << 3,
     IssueSpecificInfo = 1 << 4,
     
-    AllExceptMetaInfo = CommonBasics | FacilityInfo | EvidenceInfo | IssueSpecificInfo
+    AllExceptMetaInfo = CommonBasics | FacilityInfo | EvidenceInfo | IssueSpecificInfo,
+    All = CommonBasics | MetaInfo | FacilityInfo | EvidenceInfo | IssueSpecificInfo
 }

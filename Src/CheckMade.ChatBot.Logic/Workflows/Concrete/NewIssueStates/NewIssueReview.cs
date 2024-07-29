@@ -53,8 +53,20 @@ internal sealed record NewIssueReview<T>(
         };
     }
 
-    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
+        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+            return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
+
+        var selectedControl = 
+            currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
+
+        if (selectedControl == (long)ControlPrompts.Submit)
+        {
+            return await WorkflowResponse.CreateFromNextStateAsync(
+                currentInput, Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)));
+        }
+        
         throw new NotImplementedException();
     }
 }
