@@ -7,7 +7,6 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.UiTranslation;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -22,8 +21,7 @@ internal static class OutputSender
             IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
-            IBlobLoader blobLoader,
-            ILogger<UpdateHandler> logger)
+            IBlobLoader blobLoader)
     {
         Func<IReadOnlyCollection<OutputDto>, Task> sendOutputsInSeriesAndOriginalOrder 
             = async outputsPerPort =>
