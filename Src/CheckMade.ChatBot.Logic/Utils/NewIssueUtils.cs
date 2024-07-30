@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
@@ -76,5 +77,17 @@ internal static class NewIssueUtils
             spheres
                 .First(s => 
                     s.Name.Equals(lastSelectedSphereName));
+    }
+
+    internal static Type GetLastIssueType(IReadOnlyCollection<TlgInput> inputs)
+    {
+        return 
+            inputs
+                .Last(i =>
+                    i.Details.DomainTerm.IsSome &&
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
+                .Details.DomainTerm.GetValueOrThrow()
+                .TypeValue!;
     }
 }
