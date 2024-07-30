@@ -107,18 +107,19 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
                     LiveEventObserver)
                 .ToArray();
         
-        var currentIssue = 
-            (ITradeIssue<T>)Activator.CreateInstance(
-                NewIssueUtils.GetLastIssueType(interactiveHistory))!;
+        var currentIssueTypeName =
+            NewIssueUtils.GetLastIssueType(interactiveHistory)
+                .Name
+                .GetTypeNameWithoutGenericParamSuffix();
 
-        var allRelevantSpecialist = currentIssue switch
+        var allRelevantSpecialist = currentIssueTypeName switch
         {
-            CleanlinessIssue<T> =>
+            nameof(CleanlinessIssue<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),
             
-            TechnicalIssue<T> =>
+            nameof(TechnicalIssue<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(r => r.RoleType is TradeEngineer<T>)
                     .ToArray(),

@@ -35,13 +35,15 @@ internal sealed record IssueFactory<T>(
             inputs.Last().OriginatorRole.GetValueOrThrow()))!;
         var allSpheres = 
             GetAllTradeSpecificSpheres(liveEvent, new T());
-
-        var lastSelectedIssue = 
-            (IIssue)Activator.CreateInstance(GetLastIssueType(inputs))!;
         
-        IIssue issue = lastSelectedIssue switch
+        var lastSelectedIssueTypeName =
+            GetLastIssueType(inputs)
+                .Name
+                .GetTypeNameWithoutGenericParamSuffix();
+
+        IIssue issue = lastSelectedIssueTypeName switch
         {
-            GeneralIssue<T> =>
+            nameof(GeneralIssue<T>) =>
                 new GeneralIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
@@ -52,7 +54,7 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus(),
                     Glossary),
 
-            CleanlinessIssue<T> =>
+            nameof(CleanlinessIssue<T>) =>
                 new CleanlinessIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
@@ -64,7 +66,7 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus(),
                     Glossary),
 
-            ConsumablesIssue<T> =>
+            nameof(ConsumablesIssue<T>) =>
                 new ConsumablesIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
@@ -75,7 +77,7 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus(),
                     Glossary),
 
-            StaffIssue<T> =>
+            nameof(StaffIssue<T>) =>
                 new StaffIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
@@ -86,7 +88,7 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus(),
                     Glossary),
 
-            TechnicalIssue<T> =>
+            nameof(TechnicalIssue<T>) =>
                 new TechnicalIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
@@ -99,8 +101,8 @@ internal sealed record IssueFactory<T>(
                     Glossary),
 
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(lastSelectedIssue)} for {nameof(ITrade)} " +
-                $"'{currentTrade.GetType().Name}': '{lastSelectedIssue.GetType().Name}'")
+                $"Unhandled {nameof(lastSelectedIssueTypeName)} for {nameof(ITrade)} " +
+                $"'{currentTrade.GetType().Name}': '{lastSelectedIssueTypeName}'")
         };
 
         return issue;
