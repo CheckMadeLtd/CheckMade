@@ -39,7 +39,7 @@ internal sealed record NewIssueWorkflow(
             return await NewIssueWorkflowInitAsync(currentInput, currentRole);
 
         var currentStateType = 
-            await GeneralWorkflowUtils.GetPreviousStateTypeAsync(
+            await GeneralWorkflowUtils.GetPreviousResultantStateTypeAsync(
                 currentInput, 
                 IGeneralWorkflowUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
 

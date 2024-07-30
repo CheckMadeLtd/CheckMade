@@ -21,7 +21,7 @@ internal interface IGeneralWorkflowUtils
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
+    Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
 }
 
 internal sealed record GeneralWorkflowUtils(
@@ -89,7 +89,7 @@ internal sealed record GeneralWorkflowUtils(
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public async Task<Type> GetPreviousStateTypeAsync(TlgInput currentInput, int indexFromCurrent)
+    public async Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput, int indexFromCurrent)
     {
         var interactiveHistory =
             await GetInteractiveSinceLastBotCommandAsync(currentInput);
