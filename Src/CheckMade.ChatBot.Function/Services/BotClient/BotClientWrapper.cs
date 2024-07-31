@@ -87,7 +87,7 @@ public sealed class BotClientWrapper(
                 chatId,
                 messageId,
                 text,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Html,
                 replyMarkup: updatedInlineKeyboard,
                 cancellationToken: cancellationToken));
 
@@ -101,8 +101,8 @@ public sealed class BotClientWrapper(
             await botClient.SendDocumentAsync(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
-                caption: documentSendOutParams.Caption.GetValueOrDefault(),
-                parseMode: ParseMode.MarkdownV2,
+                caption: documentSendOutParams.Caption.GetValueOrThrow(),
+                parseMode: ParseMode.Html,
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
         );
@@ -133,8 +133,8 @@ public sealed class BotClientWrapper(
             await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
-                caption: photoSendOutParams.Caption.GetValueOrDefault(),
-                parseMode: ParseMode.MarkdownV2,
+                caption: photoSendOutParams.Caption.GetValueOrThrow(),
+                parseMode: ParseMode.Html,
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
         );
@@ -164,11 +164,11 @@ public sealed class BotClientWrapper(
             //         replyMarkup: new ReplyKeyboardRemove(),
             //         cancellationToken: cancellationToken);
             // }
-            
+
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: text,
-                parseMode: ParseMode.MarkdownV2,
+                parseMode: ParseMode.Html,
                 replyMarkup: replyMarkup.IsSome 
                     ? replyMarkup.GetValueOrThrow()
                     : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
@@ -191,7 +191,7 @@ public sealed class BotClientWrapper(
             await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
-                caption: voiceSendOutParams.Caption.GetValueOrDefault(),
+                caption: voiceSendOutParams.Caption.GetValueOrThrow(),
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
