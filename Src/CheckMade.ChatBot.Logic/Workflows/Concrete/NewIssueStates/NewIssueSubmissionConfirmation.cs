@@ -129,8 +129,11 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
             _ => []
         };
 
+        var currentRole = interactiveHistory.First().OriginatorRole.GetValueOrThrow();
+        
         var recipients = new List<LogicalPort>(
             allAdminAndObservers.Concat(allRelevantSpecialist)
+                .Where(r => !r.Equals(currentRole))
                 .Select(r => new LogicalPort(
                     r,
                     InteractionMode.Notifications)));
