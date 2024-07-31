@@ -82,14 +82,14 @@ CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
 CheckMade.ChatBot.Logic	❗ General Issue	❗ Allgemeines Problem
-CheckMade.ChatBot.Logic	Affected facility: 	Betroffene Einrichtung: 
-CheckMade.ChatBot.Logic	Description: 	Beschreibung: 
-CheckMade.ChatBot.Logic	# Attachments: 	Anhänge: 
-CheckMade.ChatBot.Logic	Reported by: {0} 	Gemeldet von: {0} 
-CheckMade.ChatBot.Logic	Created: {0}	Erstellt: {0}
-CheckMade.ChatBot.Logic	Currently handled by: 	Aktuell bearbeitet von: 
+CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
+CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
+CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
+CheckMade.ChatBot.Logic	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
+CheckMade.ChatBot.Logic	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
+CheckMade.ChatBot.Logic	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
 CheckMade.ChatBot.Logic	in their role as 	in der Rolle 
-CheckMade.ChatBot.Logic	Current status: 	Aktueller Status: 
+CheckMade.ChatBot.Logic	<b>Current status:</b> 	<b>Aktueller Status:</b> 
 CheckMade.ChatBot.Logic	Affected consumables: 	Betroffene Verbrauchsartikel: 
 CheckMade.ChatBot.Logic	✏️ Drafting	✏️ Entwurf
 CheckMade.ChatBot.Logic	📤️ Reported	📤️ Gemeldet
@@ -98,5 +98,5 @@ CheckMade.ChatBot.Logic	📋 Review Required	📋 Revision Erforderlich
 CheckMade.ChatBot.Logic	❌ Review Not Passed	❌ Revision Nicht Bestanden
 CheckMade.ChatBot.Logic	✅ Submission succeeded!	✅ Meldung erfolgt!
 CheckMade.ChatBot.Logic	New issue submission:	Neue Problemmeldung:
-CheckMade.ChatBot.Logic	Trade: 	Gewerk: 
-CheckMade.ChatBot.Logic	Issue type: 	Problemtyp: 
+CheckMade.ChatBot.Logic	<b>Trade:</b> 	<b>Gewerk:</b> 
+CheckMade.ChatBot.Logic	<b>Issue type:</b> 	<b>Problemtyp:</b> 

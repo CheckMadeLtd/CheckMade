@@ -9,9 +9,9 @@ internal static class IssueFormatters
         ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade, new()
     {
         return UiConcatenate(
-            Ui("Trade: "), glossary.GetUi(typeof(T)),
+            Ui("<b>Trade:</b> "), glossary.GetUi(typeof(T)),
             UiNewLines(1),
-            Ui("Issue type: "), glossary.GetUi(issue.GetType()),
+            Ui("<b>Issue type:</b> "), glossary.GetUi(issue.GetType()),
             UiNewLines(1),
             new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name),
             UiNewLines(1));
@@ -21,20 +21,20 @@ internal static class IssueFormatters
         ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
-            Ui("Created: {0}", issue.CreationDate.ToString("u")),
+            Ui("<b>Created:</b> {0}", issue.CreationDate.ToString("u")),
             UiNewLines(1),
-            Ui("Reported by: {0} ",
+            Ui("<b>Reported by:</b> {0} ",
                 $"{issue.ReportedBy.ByUser.FirstName} {issue.ReportedBy.ByUser.LastName}"),
             Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()),
             UiNewLines(1),
-            Ui("Currently handled by: "), issue.HandledBy.IsSome 
+            Ui("<b>Currently handled by:</b> "), issue.HandledBy.IsSome 
                 ? UiConcatenate(UiIndirect(
                         $"{issue.HandledBy.GetValueOrThrow().ByUser.FirstName} " +
                         $"{issue.HandledBy.GetValueOrThrow().ByUser.LastName} "),
                     Ui("in their role as "), glossary.GetUi(issue.HandledBy.GetValueOrThrow().RoleType.GetType()))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("Current status: "), glossary.GetUi(issue.Status),
+            Ui("<b>Current status:</b> "), glossary.GetUi(issue.Status),
             UiNewLines(1));
     }
 
@@ -42,7 +42,7 @@ internal static class IssueFormatters
         ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
-            Ui("Affected facility: "), glossary.GetUi(issue.Facility.GetType()),
+            Ui("<b>Affected facility:</b> "), glossary.GetUi(issue.Facility.GetType()),
             UiNewLines(1));
     }
 
@@ -63,13 +63,13 @@ internal static class IssueFormatters
             : [];
         
         return UiConcatenate(
-            Ui("Description: "), issue.Evidence.Description.IsSome 
+            Ui("<b>Description:</b> "), issue.Evidence.Description.IsSome 
                 ? UiConcatenate(
                     UiIndirect(issue.Evidence.Description.GetValueOrThrow()),
                     UiConcatenate(mediaCaptions))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("# Attachments: "), media != null
+            Ui("<b># Attachments:</b> "), media != null
                 ? UiIndirect(media.Count.ToString())
                 : UiNoTranslate("n/a"));
     }
