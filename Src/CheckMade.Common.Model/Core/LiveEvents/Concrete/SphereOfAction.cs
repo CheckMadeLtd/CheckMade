@@ -16,7 +16,6 @@ public sealed record SphereOfAction<T>(
     {
         return other is not null &&
                Name.Equals(other.Name) &&
-               // Details == other.Details &&
                Details.GeoCoordinates == other.Details.GeoCoordinates &&
                Status.Equals(other.Status);
     }

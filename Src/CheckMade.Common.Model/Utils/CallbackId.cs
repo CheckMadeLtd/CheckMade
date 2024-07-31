@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Utils;
 
-public record CallbackId
+public sealed record CallbackId
 {
     public string Id { get; }
 

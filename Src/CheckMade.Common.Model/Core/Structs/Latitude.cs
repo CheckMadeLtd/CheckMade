@@ -16,7 +16,7 @@ public readonly struct Latitude
         Value = coordinate;
     }
 
-    public double Value { get; }  // don't add init; to avoid circumventing validation!
+    public double Value { get; } // don't add init; to avoid circumventing validation!
 
     public static implicit operator Latitude(double coordinate) => new(coordinate);
     public static implicit operator double(Latitude latitude) => latitude.Value;

@@ -32,15 +32,16 @@ public sealed record LiveEvent : ILiveEventInfo
         IReadOnlyCollection<IRoleInfo> roles,
         LiveEventVenue venue,
         IReadOnlyCollection<ISphereOfAction> spheres)
-    : this(
-        liveEventInfo.Name,
-        liveEventInfo.StartDate,
-        liveEventInfo.EndDate,
-        roles,
-        venue,
-        spheres,
-        liveEventInfo.Status)
-    {}
+        : this(
+            liveEventInfo.Name,
+            liveEventInfo.StartDate,
+            liveEventInfo.EndDate,
+            roles,
+            venue,
+            spheres,
+            liveEventInfo.Status)
+    {
+    }
 
     public string Name { get; init; }
     public DateTimeOffset StartDate { get; init; }
