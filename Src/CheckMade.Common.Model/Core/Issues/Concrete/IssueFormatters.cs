@@ -49,13 +49,28 @@ internal static class IssueFormatters
     public static UiString FormatEvidenceInfo<T>(
         ITradeIssueWithEvidence<T> issue) where T : ITrade
     {
+        var media = issue.Evidence.Media.IsSome
+            ? issue.Evidence.Media.GetValueOrThrow()
+            : null;
+
+        var mediaCaptions = media != null
+            ? media
+                .Where(m => m.Caption.IsSome)
+                .Select(m => UiConcatenate(
+                    UiNewLines(1),
+                    UiIndirect($"> {m.Caption.GetValueOrThrow()}")))
+                .ToImmutableReadOnlyCollection()
+            : [];
+        
         return UiConcatenate(
             Ui("Description: "), issue.Evidence.Description.IsSome 
-                ? UiIndirect(issue.Evidence.Description.GetValueOrThrow())
+                ? UiConcatenate(
+                    UiIndirect(issue.Evidence.Description.GetValueOrThrow()),
+                    UiConcatenate(mediaCaptions))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("# Attachments: "), issue.Evidence.Media.IsSome
-                ? UiIndirect(issue.Evidence.Media.GetValueOrThrow().Count.ToString())
+            Ui("# Attachments: "), media != null
+                ? UiIndirect(media.Count.ToString())
                 : UiNoTranslate("n/a"));
     }
 }

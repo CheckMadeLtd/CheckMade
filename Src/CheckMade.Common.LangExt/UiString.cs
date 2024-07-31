@@ -28,7 +28,7 @@ public sealed record UiString(
     public static UiString UiConcatenate(params UiString?[] uiStrings) => 
         UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());
 
-    private static UiString UiConcatenate(IReadOnlyCollection<UiString?> uiStrings) => 
+    public static UiString UiConcatenate(IReadOnlyCollection<UiString?> uiStrings) => 
         new(uiStrings.ToImmutableReadOnlyCollection(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)
