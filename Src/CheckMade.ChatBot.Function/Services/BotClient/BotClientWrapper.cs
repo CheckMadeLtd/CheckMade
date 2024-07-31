@@ -23,6 +23,11 @@ public interface IBotClientWrapper
     
     Task<File> GetFileAsync(string fileId);
 
+    Task<Unit> DeleteMessageAsync(
+        ChatId chatId,
+        int messageId,
+        CancellationToken cancellationToken = default);
+    
     Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
         string text,
@@ -70,6 +75,20 @@ public sealed class BotClientWrapper(
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    
+    public async Task<Unit> DeleteMessageAsync(
+        ChatId chatId, 
+        int messageId, 
+        CancellationToken cancellationToken = default)
+    {
+        await retryPolicy.ExecuteAsync(async () =>
+            await botClient.DeleteMessageAsync(
+                chatId,
+                messageId,
+                cancellationToken));
+
+        return Unit.Value;
+    }
 
     public async Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
