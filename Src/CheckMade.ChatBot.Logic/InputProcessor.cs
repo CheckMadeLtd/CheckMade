@@ -32,7 +32,7 @@ internal sealed class InputProcessor(
             {
                 if (currentInput.InputType == TlgInputType.Location)
                 {
-                    await SaveCurrentInputToDbAsync(currentInput);
+                    await SaveCurrentInputToDbAsync(currentInput, Option<Guid>.None());
                     
                     return [];
                 }
@@ -59,7 +59,7 @@ internal sealed class InputProcessor(
                 
                 if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
                 {
-                    await SaveCurrentInputToDbAsync(currentInput);
+                    await SaveCurrentInputToDbAsync(currentInput, Option<Guid>.None());
                     
                     return 
                     [
@@ -79,6 +79,7 @@ internal sealed class InputProcessor(
                 
                 await SaveCurrentInputToDbAsync(
                     currentInput,
+                    GetEntityGuid(responseResult),
                     GetResultantWorkflowInfo(responseResult, activeWorkflow));
 
                 return ResolveResponseResultIntoOutputs(
@@ -116,14 +117,21 @@ internal sealed class InputProcessor(
 
         return workflowInfo;
     }
+
+    private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
+        response.Match(
+            r => r.EntityGuid,
+            _ => Option<Guid>.None());
     
     private async Task SaveCurrentInputToDbAsync(
         TlgInput currentInput,
+        Option<Guid> entityGuid,
         ResultantWorkflowInfo? workflowInfo = null)
     {
         await inputsRepo.AddAsync(currentInput with
         {
-            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowInfo>.None()
+            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowInfo>.None(),
+            EntityGuid = entityGuid
         });
     }
     
