@@ -1,5 +1,3 @@
-using CheckMade.Common.Model.Core.Issues.Concrete;
-
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 
 public sealed record SaniCampDetails : ISphereOfActionDetails
@@ -12,7 +10,7 @@ public sealed record SaniCampDetails : ISphereOfActionDetails
 
         AvailableFacilities.ValidateFacilityDomainTerms();        
         this.AvailableFacilities = AvailableFacilities;
-        
+        AvailableConsumables.ValidateConsumablesDomainTerms();
         this.AvailableConsumables = AvailableConsumables;
     }
 
