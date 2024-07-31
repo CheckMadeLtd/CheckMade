@@ -4,11 +4,11 @@ namespace CheckMade.Common.Model.Core.Issues.Concrete;
 public enum IssueSummaryCategories
 {
     CommonBasics = 1,
-    MetaInfo = 1 << 1,
+    OperationalInfo = 1 << 1,
     FacilityInfo = 1 << 2,
     EvidenceInfo = 1 << 3,
     IssueSpecificInfo = 1 << 4,
     
-    AllExceptMetaInfo = CommonBasics | FacilityInfo | EvidenceInfo | IssueSpecificInfo,
-    All = CommonBasics | MetaInfo | FacilityInfo | EvidenceInfo | IssueSpecificInfo
+    AllExceptOperationalInfo = CommonBasics | FacilityInfo | EvidenceInfo | IssueSpecificInfo,
+    All = CommonBasics | OperationalInfo | FacilityInfo | EvidenceInfo | IssueSpecificInfo
 }

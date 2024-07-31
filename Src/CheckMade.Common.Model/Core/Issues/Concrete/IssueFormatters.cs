@@ -13,7 +13,9 @@ internal static class IssueFormatters
             UiNewLines(1));
     }
 
-    public static UiString FormatMetaInfo<T>(ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
+    public static UiString FormatOperationalInfo<T>(
+        ITradeIssue<T> issue, IDomainGlossary glossary) 
+        where T : ITrade
     {
         return UiConcatenate(
             Ui("Created: {0}", issue.CreationDate.ToString("u")),
@@ -33,7 +35,8 @@ internal static class IssueFormatters
             UiNewLines(1));
     }
 
-    public static UiString FormatFacilityInfo<T>(ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) 
+    public static UiString FormatFacilityInfo<T>(
+        ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) 
         where T : ITrade
     {
         return UiConcatenate(

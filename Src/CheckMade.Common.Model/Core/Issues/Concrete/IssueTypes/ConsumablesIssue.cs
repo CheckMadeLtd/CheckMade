@@ -22,7 +22,7 @@ public sealed record ConsumablesIssue<T>(
         return new Dictionary<IssueSummaryCategories, UiString>
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this),
-            [MetaInfo] = IssueFormatters.FormatMetaInfo(this, Glossary),
+            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [IssueSpecificInfo] = FormatConsumableItems()
         }.ToImmutableReadOnlyDictionary();
     }

@@ -23,7 +23,7 @@ public sealed record CleanlinessIssue<T>(
         return new Dictionary<IssueSummaryCategories, UiString>
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this),
-            [MetaInfo] = IssueFormatters.FormatMetaInfo(this, Glossary),
+            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
         }.ToImmutableReadOnlyDictionary();

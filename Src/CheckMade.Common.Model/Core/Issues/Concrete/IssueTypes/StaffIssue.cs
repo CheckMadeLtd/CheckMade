@@ -22,7 +22,7 @@ public sealed record StaffIssue<T>(
         return new Dictionary<IssueSummaryCategories, UiString>
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this),
-            [MetaInfo] = IssueFormatters.FormatMetaInfo(this, Glossary),
+            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
         };
     }

@@ -45,7 +45,7 @@ internal sealed record NewIssueReview<T>(
                     UiConcatenate(
                         summary
                             .Where(kvp => 
-                                (IssueSummaryCategories.AllExceptMetaInfo & kvp.Key) != 0)
+                                (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
                             .Select(kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit
