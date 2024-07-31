@@ -17,10 +17,6 @@ public sealed record OutputDto
     public Option<ControlPrompts> ControlPromptsSelection { get; init; } 
         = Option<ControlPrompts>.None();
     
-    // Probably an example where a detail of the Telegram.Bot API leaks into our logic :-(
-    public Option<int> EditPreviousOutputMessageId { get; init; }
-        = Option<int>.None();
-    
     public Option<IReadOnlyCollection<string>> PredefinedChoices { get; init; } 
         = Option<IReadOnlyCollection<string>>.None();
     
@@ -29,4 +25,11 @@ public sealed record OutputDto
     
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();
+    
+    // Probably an example where a detail of the Telegram.Bot API leaks into our logic :-(
+    public Option<int> EditPreviousOutputMessageId { get; init; }
+        = Option<int>.None();
+    
+    public Option<int> DeletePreviousOutputMessageId { get; init; }
+        = Option<int>.None();
 }
