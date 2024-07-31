@@ -43,8 +43,8 @@ internal record WorkflowIdentifier(
                             Option<IWorkflow>.Some(LogoutWorkflow),
                         _ => 
                             throw new ArgumentOutOfRangeException(nameof(lastBotCommandCode), 
-                            $"An unhandled BotCommand must not exist above the " +
-                            $"'{nameof(BotCommandMenus.SameBotCommandSemanticsThreshold_90)}'")
+                                $"An unhandled BotCommand must not exist above the " +
+                                $"'{nameof(BotCommandMenus.SameBotCommandSemanticsThreshold_90)}'")
                     };
                 }
                 

@@ -161,7 +161,7 @@ internal static class ModelReaders
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
 
-        var trade = GetTradeType();
+        var trade = GetTrade();
 
         const string invalidTradeTypeException = $"""
                                                   This is not an existing '{nameof(trade)}' or we forgot to
@@ -170,12 +170,12 @@ internal static class ModelReaders
 
         var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
         
-        ISphereOfActionDetails details = trade.Name switch
+        ISphereOfActionDetails details = trade switch
         {
-            nameof(SaniCleanTrade) => 
+            SaniCleanTrade => 
                 JsonHelper.DeserializeFromJsonStrict<SaniCampDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SaniCampDetails)}'!"),
-            nameof(SiteCleanTrade) => 
+            SiteCleanTrade => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
@@ -184,11 +184,11 @@ internal static class ModelReaders
         
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
 
-        ISphereOfAction sphere = trade.Name switch
+        ISphereOfAction sphere = trade switch
         {
-            nameof(SaniCleanTrade) => 
+            SaniCleanTrade => 
                 new SphereOfAction<SaniCleanTrade>(sphereName, details),
-            nameof(SiteCleanTrade) => 
+            SiteCleanTrade => 
                 new SphereOfAction<SiteCleanTrade>(sphereName, details),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
@@ -196,7 +196,7 @@ internal static class ModelReaders
         
         return Option<ISphereOfAction>.Some(sphere);
 
-        Type GetTradeType()
+        ITrade GetTrade()
         {
             var tradeId = new CallbackId(reader.GetString(reader.GetOrdinal("sphere_trade")));
             var tradeType = glossary.TermById[tradeId].TypeValue;
@@ -208,7 +208,7 @@ internal static class ModelReaders
                                                $"can't be determined.");
             }
 
-            return tradeType;
+            return (ITrade)Activator.CreateInstance(tradeType)!;
         }
     }
     
