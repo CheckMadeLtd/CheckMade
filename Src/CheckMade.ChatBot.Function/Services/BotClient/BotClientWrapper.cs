@@ -57,7 +57,7 @@ public interface IBotClientWrapper
     Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu);
 }
 
-public class BotClientWrapper(
+public sealed class BotClientWrapper(
         ITelegramBotClient botClient,
         INetworkRetryPolicy retryPolicy,
         InteractionMode interactionMode,
@@ -81,8 +81,7 @@ public class BotClientWrapper(
             ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
             : null;
         
-        await retryPolicy.ExecuteAsync(async () => 
-            
+        await retryPolicy.ExecuteAsync(async () =>
             await botClient.EditMessageTextAsync(
                 chatId,
                 messageId,
@@ -97,14 +96,13 @@ public class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-            
             await botClient.SendDocumentAsync(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
                 caption: documentSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
         
         return Unit.Value;
     }
@@ -114,14 +112,13 @@ public class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-            
             await botClient.SendLocationAsync(
                 chatId: chatId,
                 latitude: location.Latitude,
                 longitude: location.Longitude,
                 replyMarkup: replyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
 
         return Unit.Value;
     }
@@ -130,14 +127,13 @@ public class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-            
             await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
         
         return Unit.Value;
     }
@@ -181,12 +177,11 @@ public class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-        
             /* This will throw 'Telegram.Bot.Exceptions.ApiRequestException: Bad Request: VOICE_MESSAGES_FORBIDDEN'
              for Telegram Premium users that in their privacy settings have the default setting that Voice messages
              are only allowed for 'My Contacts'. These exceptions will show up in our Error Logs alongside the User's
              Telegram ID. For now, we need to manually inform them that they need to change their settings to enable
-             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list). 
+             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list).
              */ 
             await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
@@ -194,7 +189,7 @@ public class BotClientWrapper(
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
         
         return Unit.Value;
     }
@@ -216,15 +211,14 @@ public class BotClientWrapper(
                 _ => throw new ArgumentOutOfRangeException(nameof(MyInteractionMode))
             };
 
-            await retryPolicy.ExecuteAsync(async () =>
-                
+            await retryPolicy.ExecuteAsync(async () => 
                 await botClient.SetMyCommandsAsync(
                     telegramBotCommands,
                     scope: null,
                     languageCode: language != LanguageCode.en
                         ? language.ToString()
                         : null) // The English BotCommands are the global default
-                ); 
+            ); 
 
             logger.LogDebug($"Added to bot {MyInteractionMode} for language {language} " +
                             $"the following BotCommands: " +
