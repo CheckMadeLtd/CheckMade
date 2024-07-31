@@ -21,7 +21,7 @@ public sealed record ConsumablesIssue<T>(
     {
         return new Dictionary<IssueSummaryCategories, UiString>
         {
-            [CommonBasics] = IssueFormatters.FormatCommonBasics(this),
+            [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [IssueSpecificInfo] = FormatConsumableItems()
         }.ToImmutableReadOnlyDictionary();

@@ -21,7 +21,7 @@ public sealed record GeneralIssue<T>(
     {
         return new Dictionary<IssueSummaryCategories, UiString>
         {
-            [CommonBasics] = IssueFormatters.FormatCommonBasics(this),
+            [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
         };

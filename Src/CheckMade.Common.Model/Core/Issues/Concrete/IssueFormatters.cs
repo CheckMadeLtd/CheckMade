@@ -5,17 +5,20 @@ namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
 internal static class IssueFormatters
 {
-    public static UiString FormatCommonBasics<T>(ITradeIssue<T> issue)
-        where T : ITrade, new()
+    public static UiString FormatCommonBasics<T>(
+        ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade, new()
     {
         return UiConcatenate(
+            Ui("Trade: "), glossary.GetUi(typeof(T)),
+            UiNewLines(1),
+            Ui("Issue type: "), glossary.GetUi(issue.GetType()),
+            UiNewLines(1),
             new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name),
             UiNewLines(1));
     }
 
     public static UiString FormatOperationalInfo<T>(
-        ITradeIssue<T> issue, IDomainGlossary glossary) 
-        where T : ITrade
+        ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
             Ui("Created: {0}", issue.CreationDate.ToString("u")),
@@ -36,15 +39,15 @@ internal static class IssueFormatters
     }
 
     public static UiString FormatFacilityInfo<T>(
-        ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) 
-        where T : ITrade
+        ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
             Ui("Affected facility: "), glossary.GetUi(issue.Facility.GetType()),
             UiNewLines(1));
     }
 
-    public static UiString FormatEvidenceInfo<T>(ITradeIssueWithEvidence<T> issue) where T : ITrade
+    public static UiString FormatEvidenceInfo<T>(
+        ITradeIssueWithEvidence<T> issue) where T : ITrade
     {
         return UiConcatenate(
             Ui("Description: "), issue.Evidence.Description.IsSome 
