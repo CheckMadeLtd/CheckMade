@@ -6,6 +6,7 @@ using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
@@ -86,6 +87,7 @@ public sealed class BotClientWrapper(
                 chatId,
                 messageId,
                 text,
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: updatedInlineKeyboard,
                 cancellationToken: cancellationToken));
 
@@ -100,6 +102,7 @@ public sealed class BotClientWrapper(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
                 caption: documentSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
         );
@@ -131,6 +134,7 @@ public sealed class BotClientWrapper(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
         );
@@ -164,6 +168,7 @@ public sealed class BotClientWrapper(
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: text,
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: replyMarkup.IsSome 
                     ? replyMarkup.GetValueOrThrow()
                     : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
@@ -187,6 +192,7 @@ public sealed class BotClientWrapper(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
         );
