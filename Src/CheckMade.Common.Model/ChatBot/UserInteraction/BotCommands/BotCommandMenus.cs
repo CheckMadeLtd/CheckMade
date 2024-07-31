@@ -5,7 +5,7 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 
-public record BotCommandMenus
+public sealed record BotCommandMenus
 {
     public const int SameBotCommandSemanticsThreshold_90 = 90;
     
