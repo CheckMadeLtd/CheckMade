@@ -63,8 +63,19 @@ internal sealed record NewIssueReview<T>(
 
         if (selectedControl == (long)ControlPrompts.Submit)
         {
+            var interactiveHistory =
+                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            
+            var lastGuid = interactiveHistory
+                .Select(i => i.EntityGuid)
+                .Last(g => g.IsSome)
+                .GetValueOrThrow();
+            
             return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)));
+                currentInput, 
+                Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
+                false, 
+                lastGuid);
         }
         
         throw new NotImplementedException();
