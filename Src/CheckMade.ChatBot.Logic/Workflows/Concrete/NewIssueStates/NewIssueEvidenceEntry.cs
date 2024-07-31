@@ -35,14 +35,15 @@ internal sealed record NewIssueEvidenceEntry<T>(
         switch (currentInput.InputType)
         {
             case TlgInputType.TextMessage:
-                
+
                 return new WorkflowResponse(
                     new OutputDto
                     {
-                        Text = Ui("✅📝 Description received. You can send more text, add photos/documents " + 
+                        Text = Ui("✅📝 Description received. You can send more text, add photos/documents " +
                                   "or continue to the next step."),
                         ControlPromptsSelection = ControlPrompts.Continue
-                    }, Glossary.GetId(GetType().GetInterfaces()[0]));
+                    }, Glossary.GetId(GetType().GetInterfaces()[0]), 
+                    Option<Guid>.None());
             
             case TlgInputType.AttachmentMessage:
 
@@ -57,7 +58,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this),
+                        }, this, Option<Guid>.None()),
 
                     TlgAttachmentType.Document => new WorkflowResponse(
                         new OutputDto
@@ -65,7 +66,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this),
+                        }, this, Option<Guid>.None()),
 
                     TlgAttachmentType.Voice => new WorkflowResponse(
                         new OutputDto
@@ -73,7 +74,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
                                       "add a description or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this),
+                        }, this, Option<Guid>.None()),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.AttachmentType)}: '{currentAttachmentType}'")

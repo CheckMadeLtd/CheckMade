@@ -56,12 +56,14 @@ internal sealed record LogoutWorkflow(
                         
                         ControlPromptsSelection = ControlPrompts.YesNo 
                     }, 
-                    Glossary.GetId(Initial)),
+                    Glossary.GetId(Initial),
+                    Option<Guid>.None()),
             
             LogoutConfirmed => 
                 new WorkflowResponse(
                     await PerformLogoutAsync(currentRoleBind),
-                    Glossary.GetId(LogoutConfirmed)),
+                    Glossary.GetId(LogoutConfirmed),
+                    Option<Guid>.None()),
             
             LogoutAborted => 
                 new WorkflowResponse(
@@ -71,7 +73,8 @@ internal sealed record LogoutWorkflow(
                             Ui("Logout aborted.\n"),
                             IInputProcessor.SeeValidBotCommandsInstruction) 
                     },
-                    Glossary.GetId(LogoutAborted)),
+                    Glossary.GetId(LogoutAborted),
+                    Option<Guid>.None()),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))

@@ -176,7 +176,7 @@ internal sealed class InputProcessor(
                         { 
                             Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
                         }
-                    ], Option<string>.None()))));
+                    ], Option<string>.None(), Option<Guid>.None()))));
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(

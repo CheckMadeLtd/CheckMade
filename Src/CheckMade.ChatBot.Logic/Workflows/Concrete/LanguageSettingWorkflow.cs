@@ -49,17 +49,20 @@ internal sealed record LanguageSettingWorkflow(
                             Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
                                 .Select(lc => Dt(lc))) 
                     },
-                    Glossary.GetId(Initial)),
+                    Glossary.GetId(Initial),
+                    Option<Guid>.None()),
             
             ReceivedLanguageSetting => 
                 new WorkflowResponse(
                     await SetNewLanguageAsync(currentInput), 
-                    Glossary.GetId(ReceivedLanguageSetting)),
+                    Glossary.GetId(ReceivedLanguageSetting),
+                    Option<Guid>.None()),
             
             Completed => 
                 new WorkflowResponse(
                     new OutputDto  { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
-                    Glossary.GetId(Completed)),
+                    Glossary.GetId(Completed),
+                    Option<Guid>.None()),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))

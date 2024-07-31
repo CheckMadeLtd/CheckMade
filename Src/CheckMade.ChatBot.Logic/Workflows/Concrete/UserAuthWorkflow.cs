@@ -50,7 +50,8 @@ internal sealed record UserAuthWorkflow(
             Initial => 
                 new WorkflowResponse(
                     EnterTokenPrompt,
-                    Glossary.GetId(Initial)),
+                    Glossary.GetId(Initial),
+                    Option<Guid>.None()),
             
             ReceivedTokenSubmissionAttempt => 
                 new WorkflowResponse(
@@ -72,7 +73,8 @@ internal sealed record UserAuthWorkflow(
                             },
                             EnterTokenPrompt] 
                     }, 
-                    Glossary.GetId(ReceivedTokenSubmissionAttempt)),
+                    Glossary.GetId(ReceivedTokenSubmissionAttempt),
+                    Option<Guid>.None()),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(UserAuthWorkflow)}"))
