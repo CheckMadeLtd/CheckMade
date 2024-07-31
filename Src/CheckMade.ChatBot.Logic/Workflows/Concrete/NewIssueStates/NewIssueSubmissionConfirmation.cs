@@ -64,15 +64,18 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
             .Last(g => g.IsSome)
             .GetValueOrThrow();
         
-        var historyWithLastGuidAppliedToCurrentInput = 
+        var historyWithUpdatedCurrentInput = 
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(
                 currentInput with
                 {
-                    EntityGuid = lastGuid
+                    EntityGuid = lastGuid,
+                    ResultantWorkflow = new ResultantWorkflowInfo(
+                        Glossary.GetId(typeof(INewIssueWorkflow)),
+                        Glossary.GetId(GetType().GetInterfaces()[0]))
                 });
         
         var summary = 
-            (await Factory.CreateAsync(historyWithLastGuidAppliedToCurrentInput))
+            (await Factory.CreateAsync(historyWithUpdatedCurrentInput))
             .GetSummary();
         
         return 
