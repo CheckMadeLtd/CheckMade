@@ -4,7 +4,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Utils;
 
-public sealed record WorkflowResponse(
+internal sealed record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
     Option<string> NewStateId,
     Option<Guid> EntityGuid)
@@ -27,11 +27,38 @@ public sealed record WorkflowResponse(
     {
     }
 
-    internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
-        TlgInput currentInput,
-        IWorkflowState newState,
-        PromptTransition? promptTransition = null,
-        Guid? entityGuid = null)
+    internal static WorkflowResponse Create(
+        TlgInput currentInput, 
+        OutputDto singleOutput, 
+        IWorkflowState newState, 
+        Guid? entityGuid = null,
+        PromptTransition? promptTransition = null)
+    {
+        var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
+            ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
+
+        List<OutputDto> outputs = 
+        [
+            singleOutput with
+            {
+                UpdateExistingOutputMessageId = nextPromptInPlaceUpdateMessageId
+            }
+        ]; 
+        
+        if (currentPromptFinalizer.IsSome)
+            outputs.Add(currentPromptFinalizer.GetValueOrThrow());
+
+        return new WorkflowResponse(
+            Output: outputs,
+            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
+            EntityGuid: entityGuid ?? Option<Guid>.None()
+        );
+    }
+    
+    private static (Option<int> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
+        ResolvePromptTransitionIntoComponents(
+            PromptTransition? promptTransition, 
+            TlgInput currentInput)
     {
         var nextPromptInPlaceUpdateMessageId = promptTransition != null
             ? promptTransition.IsNextPromptInPlaceUpdate
@@ -42,8 +69,21 @@ public sealed record WorkflowResponse(
         var currentPromptFinalizer = promptTransition != null
             ? promptTransition.CurrentPromptFinalizer
             : Option<OutputDto>.None();
+
+        return (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer);
+    }
+
+    internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
+        TlgInput currentInput,
+        IWorkflowState newState,
+        PromptTransition? promptTransition = null,
+        Guid? entityGuid = null)
+    {
+        var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
+            ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
         
-        return new(Output: await newState.GetPromptAsync(
+        return new WorkflowResponse(
+            Output: await newState.GetPromptAsync(
                 currentInput,
                 nextPromptInPlaceUpdateMessageId,
                 currentPromptFinalizer),
