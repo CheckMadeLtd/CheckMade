@@ -1,7 +1,8 @@
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
-namespace CheckMade.ChatBot.Logic.Workflows;
+namespace CheckMade.ChatBot.Logic.Utils;
 
 public sealed record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
@@ -27,15 +28,28 @@ public sealed record WorkflowResponse(
     }
 
     internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
-        TlgInput currentInput, 
+        TlgInput currentInput,
         IWorkflowState newState,
-        bool editPreviousOutput = false,
-        Guid? entityGuid = null) =>
-        new(Output: await newState.GetPromptAsync(
-                currentInput, 
-                editPreviousOutput == false ? Option<int>.None() : currentInput.TlgMessageId),
+        PromptTransition? promptTransition = null,
+        Guid? entityGuid = null)
+    {
+        var nextPromptInPlaceUpdateMessageId = promptTransition != null
+            ? promptTransition.IsNextPromptInPlaceUpdate
+                ? currentInput.TlgMessageId
+                : Option<int>.None()
+            : Option<int>.None();
+
+        var currentPromptFinalizer = promptTransition != null
+            ? promptTransition.CurrentPromptFinalizer
+            : Option<OutputDto>.None();
+        
+        return new(Output: await newState.GetPromptAsync(
+                currentInput,
+                nextPromptInPlaceUpdateMessageId,
+                currentPromptFinalizer),
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
             EntityGuid: entityGuid ?? Option<Guid>.None());
+    }
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>
         new(Output: new List<OutputDto>

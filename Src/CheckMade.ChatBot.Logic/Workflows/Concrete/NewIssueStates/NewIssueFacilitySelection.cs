@@ -20,7 +20,9 @@ internal sealed record NewIssueFacilitySelection<T>(
     : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         var currentSphere = 
             GetLastSelectedSphere(
@@ -40,7 +42,7 @@ internal sealed record NewIssueFacilitySelection<T>(
                         .Where(dt => currentSphere.Details.AvailableFacilities.Contains(dt))
                         .ToImmutableReadOnlyCollection()),
                 ControlPromptsSelection = ControlPrompts.Back,
-                EditPreviousOutputMessageId = editMessageId
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         };
     }
@@ -53,8 +55,7 @@ internal sealed record NewIssueFacilitySelection<T>(
         if (currentInput.Details.DomainTerm.IsSome)
         {
             return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
-                true);
+                currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)));
         }
 
         var selectedControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
@@ -62,8 +63,7 @@ internal sealed record NewIssueFacilitySelection<T>(
         return selectedControl switch
         {
             (long)ControlPrompts.Back => await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)),
-                true),
+                currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")

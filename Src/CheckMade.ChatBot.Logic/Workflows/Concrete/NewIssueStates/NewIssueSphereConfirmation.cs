@@ -20,7 +20,9 @@ internal sealed record NewIssueSphereConfirmation<T>(
     : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput,
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         var liveEvent = (await LiveEventsRepo.GetAsync(
             currentInput.LiveEventContext.GetValueOrThrow()))!;
@@ -48,7 +50,7 @@ internal sealed record NewIssueSphereConfirmation<T>(
                 {
                     Text = Ui("Please confirm: are you at '{0}'?", sphere.GetValueOrThrow().Name),
                     ControlPromptsSelection = ControlPrompts.YesNo,
-                    EditPreviousOutputMessageId = editMessageId
+                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
                 }
             };
     }

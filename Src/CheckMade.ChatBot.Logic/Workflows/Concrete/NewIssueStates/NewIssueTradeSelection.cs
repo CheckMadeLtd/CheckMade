@@ -20,7 +20,9 @@ internal sealed record NewIssueTradeSelection(
     : INewIssueTradeSelection
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -31,7 +33,7 @@ internal sealed record NewIssueTradeSelection(
                     DomainTermSelection = 
                         Option<IReadOnlyCollection<DomainTerm>>.Some(
                             Glossary.GetAll(typeof(ITrade))),
-                    EditPreviousOutputMessageId = editMessageId
+                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
                 }
             });
     }

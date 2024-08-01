@@ -1,12 +1,16 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-public interface IWorkflowState
+internal interface IWorkflowState
 {
-    Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(TlgInput currentInput, Option<int> editMessageId);
+    Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer);
     Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
     IDomainGlossary Glossary { get; }
 }

@@ -21,7 +21,9 @@ internal sealed record NewIssueConsumablesSelection<T>(
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
@@ -46,7 +48,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                                 : dt with { Toggle = false })
                         .ToImmutableReadOnlyCollection()),
                 ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
-                EditPreviousOutputMessageId = editMessageId
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         };
     }
@@ -58,7 +60,8 @@ internal sealed record NewIssueConsumablesSelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
             return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, this, true);
+                currentInput, 
+                this);
 
         var selectedControl = 
             currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
@@ -71,8 +74,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
-                    true),
+                    currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")

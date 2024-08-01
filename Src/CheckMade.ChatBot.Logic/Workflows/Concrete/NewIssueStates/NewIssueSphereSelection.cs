@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -33,7 +34,9 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
     public IDomainGlossary Glossary { get; }
     
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput,
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
         
@@ -44,7 +47,8 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
                 Text = UiConcatenate(
                     Ui("Please select a "), _trade.GetSphereOfActionLabel, UiNoTranslate(":")),
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
-                    await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo))
+                    await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo)),
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         };
     }

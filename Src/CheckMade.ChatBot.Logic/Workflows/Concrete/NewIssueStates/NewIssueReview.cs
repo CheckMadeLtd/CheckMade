@@ -21,7 +21,9 @@ internal sealed record NewIssueReview<T>(
     : INewIssueReview<T> where T : ITrade
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
@@ -48,7 +50,8 @@ internal sealed record NewIssueReview<T>(
                                 (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
                             .Select(kvp => kvp.Value)
                             .ToArray())),
-                ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit
+                ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit,
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         };
     }
@@ -74,8 +77,7 @@ internal sealed record NewIssueReview<T>(
             return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
                 Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
-                false, 
-                lastGuid);
+                entityGuid: lastGuid);
         }
         
         throw new NotImplementedException();

@@ -24,13 +24,16 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
     : INewIssueSubmissionConfirmation<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
         [
             new()
             {
-                Text = Ui("✅ Submission succeeded!")
+                Text = Ui("✅ Submission succeeded!"),
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
 

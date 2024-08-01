@@ -17,7 +17,9 @@ internal sealed record NewIssueTypeSelection<T>(
     : INewIssueTypeSelection<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         return 
             Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
@@ -29,7 +31,7 @@ internal sealed record NewIssueTypeSelection<T>(
                         Glossary
                             .GetAll(typeof(ITradeIssue<T>))
                             .ToImmutableReadOnlyCollection()),
-                    EditPreviousOutputMessageId = editMessageId,
+                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                     ControlPromptsSelection = ControlPrompts.Back
                 }
             });
@@ -51,18 +53,15 @@ internal sealed record NewIssueTypeSelection<T>(
             {
                 nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
-                        true),
+                        currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>))),
             
                 nameof(ConsumablesIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
-                        true),
+                        currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>))),
             
                 nameof(StaffIssue<T>) or nameof(GeneralIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
-                        true),
+                        currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>))),
                 
                 _ => throw new InvalidOperationException(
                     $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")

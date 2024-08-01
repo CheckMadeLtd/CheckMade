@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -15,7 +16,9 @@ internal sealed record NewIssueEvidenceEntry<T>(
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, Option<int> editMessageId)
+        TlgInput currentInput, 
+        Option<int> inPlaceUpdateMessageId,
+        Option<OutputDto> previousPromptFinalizer)
     {
         return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             new List<OutputDto>
@@ -24,7 +27,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                 {
                     Text = Ui("Please (optionally) provide description and/or photos of the issue."),
                     ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
-                    EditPreviousOutputMessageId = editMessageId
+                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
                 }
             });
     }
@@ -93,8 +96,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(
-                            currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>)), 
-                            true),
+                            currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
