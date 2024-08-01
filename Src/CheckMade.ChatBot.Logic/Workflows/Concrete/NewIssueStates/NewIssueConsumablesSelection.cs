@@ -80,7 +80,9 @@ internal sealed record NewIssueConsumablesSelection<T>(
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                    new PromptTransition(true)),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
