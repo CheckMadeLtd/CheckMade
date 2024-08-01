@@ -56,14 +56,12 @@ internal sealed record LogoutWorkflow(
                         
                         ControlPromptsSelection = ControlPrompts.YesNo 
                     }, 
-                    Glossary.GetId(Initial),
-                    Option<Guid>.None()),
+                    Glossary.GetId(Initial)),
             
             LogoutConfirmed => 
                 new WorkflowResponse(
                     await PerformLogoutAsync(currentRoleBind),
-                    Glossary.GetId(LogoutConfirmed),
-                    Option<Guid>.None()),
+                    Glossary.GetId(LogoutConfirmed)),
             
             LogoutAborted => 
                 new WorkflowResponse(
@@ -73,8 +71,7 @@ internal sealed record LogoutWorkflow(
                             Ui("Logout aborted.\n"),
                             IInputProcessor.SeeValidBotCommandsInstruction) 
                     },
-                    Glossary.GetId(LogoutAborted),
-                    Option<Guid>.None()),
+                    Glossary.GetId(LogoutAborted)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LogoutWorkflow)}"))
@@ -102,7 +99,7 @@ internal sealed record LogoutWorkflow(
         return Initial;
     }
 
-    private async Task<List<OutputDto>> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)
+    private async Task<OutputDto> PerformLogoutAsync(TlgAgentRoleBind currentRoleBind)
     {
         var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
             (await RoleBindingsRepo.GetAllActiveAsync())
@@ -116,14 +113,12 @@ internal sealed record LogoutWorkflow(
             .UpdateStatusAsync(
                 roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat, 
                 DbRecordStatus.Historic);
-        
+
         return
-        [
-            new OutputDto 
+            new OutputDto
             {
                 Text = Ui("💨 Logged out.")
-            }
-        ];
+            };
     }
 
     [Flags]

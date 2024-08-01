@@ -45,8 +45,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
                         Text = Ui("✅📝 Description received. You can send more text, add photos/documents " +
                                   "or continue to the next step."),
                         ControlPromptsSelection = ControlPrompts.Continue
-                    }, Glossary.GetId(GetType().GetInterfaces()[0]), 
-                    Option<Guid>.None());
+                    }, 
+                    this);
             
             case TlgInputType.AttachmentMessage:
 
@@ -61,7 +61,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this, Option<Guid>.None()),
+                        }, 
+                        this),
 
                     TlgAttachmentType.Document => new WorkflowResponse(
                         new OutputDto
@@ -69,7 +70,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this, Option<Guid>.None()),
+                        }, 
+                        this),
 
                     TlgAttachmentType.Voice => new WorkflowResponse(
                         new OutputDto
@@ -77,7 +79,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
                                       "add a description or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
-                        }, this, Option<Guid>.None()),
+                        }, 
+                        this),
                     
                     _ => throw new InvalidOperationException(
                         $"Unhandled {nameof(currentInput.Details.AttachmentType)}: '{currentAttachmentType}'")

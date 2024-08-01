@@ -49,20 +49,17 @@ internal sealed record LanguageSettingWorkflow(
                             Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
                                 .Select(lc => Dt(lc))) 
                     },
-                    Glossary.GetId(Initial),
-                    Option<Guid>.None()),
+                    Glossary.GetId(Initial)),
             
             ReceivedLanguageSetting => 
                 new WorkflowResponse(
                     await SetNewLanguageAsync(currentInput), 
-                    Glossary.GetId(ReceivedLanguageSetting),
-                    Option<Guid>.None()),
+                    Glossary.GetId(ReceivedLanguageSetting)),
             
             Completed => 
                 new WorkflowResponse(
-                    new OutputDto  { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
-                    Glossary.GetId(Completed),
-                    Option<Guid>.None()),
+                    new OutputDto { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
+                    Glossary.GetId(Completed)),
             
             _ => Result<WorkflowResponse>.FromError(
                 UiNoTranslate($"Can't determine State in {nameof(LanguageSettingWorkflow)}"))
@@ -95,7 +92,7 @@ internal sealed record LanguageSettingWorkflow(
         preCurrentInputHistory.Any(x => 
             x.InputType.Equals(TlgInputType.CallbackQuery));
 
-    private async Task<List<OutputDto>> SetNewLanguageAsync(TlgInput newLanguageChoice)
+    private async Task<OutputDto> SetNewLanguageAsync(TlgInput newLanguageChoice)
     {
         var domainGlossary = new DomainGlossary();
         var newLanguage = newLanguageChoice.Details.DomainTerm.GetValueOrThrow();
@@ -109,13 +106,14 @@ internal sealed record LanguageSettingWorkflow(
             .Role.ByUser;
 
         await UsersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
-        
-        return [new OutputDto 
-        {
-            Text = UiConcatenate(
-                Ui("New language: "), 
-                domainGlossary.GetUi(newLanguage))
-        }];
+
+        return
+            new OutputDto
+            {
+                Text = UiConcatenate(
+                    Ui("New language: "),
+                    domainGlossary.GetUi(newLanguage))
+            };
     }
     
     [Flags]

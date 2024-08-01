@@ -50,8 +50,7 @@ internal sealed record UserAuthWorkflow(
             Initial => 
                 new WorkflowResponse(
                     EnterTokenPrompt,
-                    Glossary.GetId(Initial),
-                    Option<Guid>.None()),
+                    Glossary.GetId(Initial)),
             
             ReceivedTokenSubmissionAttempt => 
                 new WorkflowResponse(
@@ -61,17 +60,23 @@ internal sealed record UserAuthWorkflow(
                         {
                             true => await AuthenticateUserAsync(currentInput),
                             
-                            false => [new OutputDto 
+                            false =>
+                            [
+                                new OutputDto 
                                 {
                                     Text = Ui("This is an unknown token. Try again...")
                                 },
-                                EnterTokenPrompt]
+                                EnterTokenPrompt
+                            ]
                         },
-                        false => [new OutputDto
+                        false => 
+                        [
+                            new OutputDto
                             {
                                 Text = Ui("Bad token format! Try again...")
                             },
-                            EnterTokenPrompt] 
+                            EnterTokenPrompt
+                        ] 
                     }, 
                     Glossary.GetId(ReceivedTokenSubmissionAttempt),
                     Option<Guid>.None()),

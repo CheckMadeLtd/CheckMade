@@ -10,20 +10,20 @@ public sealed record WorkflowResponse(
     Option<Guid> EntityGuid)
 {
     internal WorkflowResponse(
-        OutputDto singleOutput, Option<string> newStateId, Option<Guid> entityGuid) 
+        OutputDto singleOutput, Option<string> newStateId, Guid? entityGuid = null) 
         : this(
             Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newStateId,
-            EntityGuid: entityGuid)
+            EntityGuid: entityGuid ?? Option<Guid>.None())
     {
     }
     
     internal WorkflowResponse(
-        OutputDto singleOutput, IWorkflowState newState, Option<Guid> entityGuid) 
+        OutputDto singleOutput, IWorkflowState newState, Guid? entityGuid = null) 
         : this(
             Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
-            EntityGuid: entityGuid)
+            EntityGuid: entityGuid ?? Option<Guid>.None())
     {
     }
 
