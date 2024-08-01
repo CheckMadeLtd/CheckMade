@@ -19,6 +19,8 @@ internal sealed record NewIssueFacilitySelection<T>(
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
+    private readonly UiString _promptText = Ui("Choose affected facility:");
+    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -31,11 +33,11 @@ internal sealed record NewIssueFacilitySelection<T>(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
                     new T()));
         
-        return new List<OutputDto>
-        {
+        List<OutputDto> outputs =
+        [
             new()
             {
-                Text = Ui("Choose affected facility:"),
+                Text = _promptText,
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(IFacility))
@@ -44,7 +46,15 @@ internal sealed record NewIssueFacilitySelection<T>(
                 ControlPromptsSelection = ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
-        };
+        ];
+        
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -55,7 +65,17 @@ internal sealed record NewIssueFacilitySelection<T>(
         if (currentInput.Details.DomainTerm.IsSome)
         {
             return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>)));
+                currentInput, 
+                Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                new PromptTransition(
+                    new OutputDto
+                    {
+                        Text = UiConcatenate(
+                            _promptText,
+                            UiNoTranslate(" "),
+                            Glossary.GetUi(currentInput.Details.DomainTerm.GetValueOrThrow())),
+                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    }));
         }
 
         var selectedControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
@@ -63,7 +83,9 @@ internal sealed record NewIssueFacilitySelection<T>(
         return selectedControl switch
         {
             (long)ControlPrompts.Back => await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
+                currentInput, 
+                Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                new PromptTransition(true)),
             
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
