@@ -31,8 +31,8 @@ internal sealed record NewIssueConsumablesSelection<T>(
         var availableConsumables = 
             await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
         
-        return new List<OutputDto> 
-        {
+        List<OutputDto> outputs = 
+        [
             new()
             {
                 Text = _promptText,
@@ -47,7 +47,15 @@ internal sealed record NewIssueConsumablesSelection<T>(
                 ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
-        };
+        ];
+        
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

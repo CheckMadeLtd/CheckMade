@@ -23,16 +23,24 @@ internal sealed record NewIssueEvidenceEntry<T>(
         Option<int> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
-            new List<OutputDto>
+        List<OutputDto> outputs =
+        [
+            new()
             {
-                new()
+                Text = _promptText,
+                ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
+            }
+        ];
+    
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+            previousPromptFinalizer.Match(
+                ppf =>
                 {
-                    Text = _promptText,
-                    ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
-                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
-                }
-            });
+                    outputs.Add(ppf);
+                    return outputs;
+                },
+                () => outputs));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
