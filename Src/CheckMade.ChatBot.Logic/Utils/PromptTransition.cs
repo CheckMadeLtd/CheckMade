@@ -15,6 +15,20 @@ internal sealed record PromptTransition
         IsNextPromptInPlaceUpdate = false;
         CurrentPromptFinalizer = currentPromptFinalizer;
     }
+
+    internal PromptTransition(int currentMessageId, bool applyToPreviousInsteadOfCurrentInput = false)
+    {
+        IsNextPromptInPlaceUpdate = false;
+
+        var updateMessageId = applyToPreviousInsteadOfCurrentInput
+            ? currentMessageId - 1
+            : currentMessageId;
+
+        CurrentPromptFinalizer = new OutputDto
+        {
+            UpdateExistingOutputMessageId = updateMessageId
+        };
+    }
     
     internal bool IsNextPromptInPlaceUpdate { get; }
     internal Option<OutputDto> CurrentPromptFinalizer { get; }

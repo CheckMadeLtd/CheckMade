@@ -85,11 +85,7 @@ internal sealed record NewIssueReview<T>(
             return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
                 Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
-                new PromptTransition(
-                    new OutputDto
-                    {
-                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
-                    }),
+                new PromptTransition(currentInput.TlgMessageId),
                 lastGuid);
         }
         

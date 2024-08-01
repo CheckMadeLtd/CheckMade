@@ -15,7 +15,6 @@ internal sealed record NewIssueEvidenceEntry<T>(
         IStateMediator Mediator) 
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
-    
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -43,11 +42,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        // -1 necessary here because the 'current input' is the evidence entry, not the previous prompt 
-        // whose buttons we want to remove.
-        var originalPromptMessageId = currentInput.TlgMessageId - 1;
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
-            new OutputDto { UpdateExistingOutputMessageId = originalPromptMessageId });
+            currentInput.TlgMessageId, true);
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
@@ -120,8 +116,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                         await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, 
                             Mediator.Next(typeof(INewIssueReview<T>)),
-                            new PromptTransition(
-                                new OutputDto { UpdateExistingOutputMessageId = currentInput.TlgMessageId })),
+                            new PromptTransition(currentInput.TlgMessageId)),
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(
