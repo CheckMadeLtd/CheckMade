@@ -100,7 +100,7 @@ new_live_event_X2024 AS (
             DO UPDATE SET status = live_events.status
         RETURNING id
 ),
-
+ 
 new_sphere1_sanitary_ops_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
        VALUES ('Camp1',
@@ -125,16 +125,16 @@ new_sphere1_sanitary_ops_at_X2024 AS (
 
 new_sphere2_sanitary_ops_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
-        VALUES ('Camp2',
+        VALUES ('Camp2-4cc',
                 'DX3KFI',
                 (SELECT id FROM new_live_event_X2024),
                 '{
                     "GeoCoordinates": {
                       "Latitude": {
-                        "Value": 51.60893
+                        "Value": 51.240118
                       }, 
                       "Longitude": {
-                        "Value": 6.13328
+                        "Value": -0.789397
                       }, 
                       "UncertaintyRadiusInMeters": null
                     },

@@ -157,12 +157,12 @@ internal static class TestData
     #region LiveEventSetup #############################################################################################
     
     // 2024 LiveEvents
-
+    
     internal static readonly Geo Sphere1_Location = 
         new(51.60955, 6.13004, Option<double>.None());
     
     internal static readonly Geo Sphere2_Location =
-        new Geo(51.60893, 6.13328, Option<double>.None());
+        new Geo(51.240118, -0.789397, Option<double>.None());
 
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
         new("Camp1",
@@ -182,7 +182,7 @@ internal static class TestData
                 }));
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
-        new("Camp2",
+        new("Camp2-4cc",
             new SaniCampDetails(
                 Sphere2_Location,
                 new List<DomainTerm>

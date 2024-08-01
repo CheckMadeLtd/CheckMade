@@ -43,32 +43,62 @@ internal sealed record NewIssueSphereConfirmation<T>(
             // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
         }
         
-        return 
-            new List<OutputDto> 
+        List<OutputDto> outputs = 
+        [
+            new()
             {
-                new()
-                {
-                    Text = Ui("Please confirm: are you at '{0}'?", sphere.GetValueOrThrow().Name),
-                    ControlPromptsSelection = ControlPrompts.YesNo,
-                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
-                }
-            };
+                Text = Ui("Please confirm: are you at '{0}'?", sphere.GetValueOrThrow().Name),
+                ControlPromptsSelection = ControlPrompts.YesNo,
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
+            }
+        ];
+
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
+
+        var controlPromptsGlossary = new ControlPromptsGlossary();
+        var originalPrompt = UiIndirect(currentInput.Details.Text.GetValueOrThrow());
         
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
         {
-            (int)ControlPrompts.Yes => 
+            (long)ControlPrompts.Yes => 
                 await WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueTypeSelection<T>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                    new PromptTransition(
+                        new OutputDto
+                        {
+                            Text = UiConcatenate(
+                                originalPrompt,
+                                UiNoTranslate(" "),
+                                controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.Yes)]),
+                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        })),
             
-            (int)ControlPrompts.No => 
+            (long)ControlPrompts.No => 
                 await WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<T>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueSphereSelection<T>)),
+                    new PromptTransition(
+                        new OutputDto
+                        {
+                            Text = UiConcatenate(
+                                originalPrompt,
+                                UiNoTranslate(" "),
+                                controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
+                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        })),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))
         };

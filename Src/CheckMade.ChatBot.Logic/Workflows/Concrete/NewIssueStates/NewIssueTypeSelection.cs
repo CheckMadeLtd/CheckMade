@@ -21,20 +21,28 @@ internal sealed record NewIssueTypeSelection<T>(
         Option<int> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
-        return 
-            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
+        List<OutputDto> outputs =
+        [
+            new()
             {
-                new()
+                Text = Ui("Please select the type of issue:"),
+                DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
+                    Glossary
+                        .GetAll(typeof(ITradeIssue<T>))
+                        .ToImmutableReadOnlyCollection()),
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
+                ControlPromptsSelection = ControlPrompts.Back
+            }
+        ];
+        
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>( 
+            previousPromptFinalizer.Match(
+                ppf =>
                 {
-                    Text = Ui("Please select the type of issue:"),
-                    DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
-                        Glossary
-                            .GetAll(typeof(ITradeIssue<T>))
-                            .ToImmutableReadOnlyCollection()),
-                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
-                    ControlPromptsSelection = ControlPrompts.Back
-                }
-            });
+                    outputs.Add(ppf);
+                    return outputs;
+                },
+                () => outputs));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

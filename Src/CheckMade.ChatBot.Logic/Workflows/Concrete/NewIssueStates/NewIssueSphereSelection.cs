@@ -40,8 +40,8 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
     {
         var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
         
-        return new List<OutputDto>
-        {
+        List<OutputDto> outputs =
+        [
             new()
             {
                 Text = UiConcatenate(
@@ -50,7 +50,15 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
                     await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo)),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
-        };
+        ];
+        
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
