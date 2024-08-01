@@ -19,6 +19,8 @@ internal sealed record NewIssueConsumablesSelection<T>(
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
 {
+    private readonly UiString _promptText = Ui("Choose affected consumables:");
+    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -26,25 +28,21 @@ internal sealed record NewIssueConsumablesSelection<T>(
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
-        
-        var currentSphere = 
-            GetLastSelectedSphere(interactiveHistory, 
-                GetAllTradeSpecificSpheres(
-                    (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                    new T()));
+        var availableConsumables = 
+            await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
         
         return new List<OutputDto> 
         {
             new()
             {
-                Text = Ui("Choose affected consumables:"),
+                Text = _promptText,
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(ConsumablesItem))
-                        .Where(dt => ((SaniCampDetails)currentSphere.Details).AvailableConsumables.Contains(dt))
-                        .Select(dt => 
-                            dt.IsToggleOn(interactiveHistory) 
-                                ? dt with { Toggle = true } 
-                                : dt with { Toggle = false })
+                        .Where(item => availableConsumables.Contains(item))
+                        .Select(item => 
+                            item.IsToggleOn(interactiveHistory) 
+                                ? item with { Toggle = true } 
+                                : item with { Toggle = false })
                         .ToImmutableReadOnlyCollection()),
                 ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -60,7 +58,8 @@ internal sealed record NewIssueConsumablesSelection<T>(
         if (currentInput.Details.DomainTerm.IsSome)
             return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
-                this);
+                this,
+                new PromptTransition(true));
 
         var selectedControl = 
             currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
@@ -69,7 +68,15 @@ internal sealed record NewIssueConsumablesSelection<T>(
         {
             (long)ControlPrompts.Save =>
                 await WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueReview<T>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueReview<T>)),
+                    new PromptTransition(new OutputDto
+                    {
+                        Text = UiConcatenate(
+                            _promptText,
+                            await GetSelectedConsumablesAsync()),
+                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    })),
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateFromNextStateAsync(
@@ -78,5 +85,32 @@ internal sealed record NewIssueConsumablesSelection<T>(
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
         };
+
+        async Task<UiString> GetSelectedConsumablesAsync()
+        {
+            var interactiveHistory =
+                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            var availableConsumables =
+                await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
+            
+            return Glossary.GetUi(
+                availableConsumables
+                    .Where(item =>
+                        item.IsToggleOn(interactiveHistory))
+                    .ToImmutableReadOnlyCollection());
+        }
+    }
+
+    private async Task<IReadOnlyCollection<DomainTerm>> GetAvailableConsumablesAsync(
+        IReadOnlyCollection<TlgInput> interactiveHistory,
+        TlgInput currentInput)
+    {
+        var currentSphere = 
+            GetLastSelectedSphere(interactiveHistory, 
+                GetAllTradeSpecificSpheres(
+                    (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
+                    new T()));
+
+        return currentSphere.Details.AvailableConsumables;
     }
 }

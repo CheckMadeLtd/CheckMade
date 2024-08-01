@@ -199,6 +199,7 @@ internal static class TestData
         new("Zone1",
             new SiteCleaningZoneDetails(
                 Option<Geo>.None(),
+                new List<DomainTerm>().ToImmutableReadOnlyCollection(),
                 new List<DomainTerm>().ToImmutableReadOnlyCollection()));
     
     internal static readonly LiveEvent X2024 = new(

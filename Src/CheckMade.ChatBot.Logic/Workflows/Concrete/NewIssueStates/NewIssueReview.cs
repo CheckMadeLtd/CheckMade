@@ -35,8 +35,8 @@ internal sealed record NewIssueReview<T>(
         var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = issue.GetSummary();
 
-        return new List<OutputDto>
-        {
+        List<OutputDto> outputs =
+        [
             new()
             {
                 Text = UiConcatenate(
@@ -46,14 +46,22 @@ internal sealed record NewIssueReview<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp => 
+                            .Where(kvp =>
                                 (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
                             .Select(kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
-        };
+        ];
+
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

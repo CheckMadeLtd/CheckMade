@@ -165,6 +165,20 @@ public sealed record DomainGlossary : IDomainGlossary
     public UiString GetUi(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].uiString;
     public UiString GetUi(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].uiString;
     
+    public UiString GetUi(IReadOnlyCollection<Enum> dtEnums) =>
+        UiConcatenate(
+            dtEnums
+                .Select(item => UiConcatenate(
+                    GetUi(item), UiNoTranslate("; ")))
+                .ToArray());
+    
+    public UiString GetUi(IReadOnlyCollection<DomainTerm> domainTerms) =>
+        UiConcatenate(
+            domainTerms
+                .Select(item => UiConcatenate(
+                    GetUi(item), UiNoTranslate("; ")))
+                .ToArray());
+
     public Type GetDtType(string dtId)
     {
         var dtType = TermById[new CallbackId(dtId)].TypeValue;

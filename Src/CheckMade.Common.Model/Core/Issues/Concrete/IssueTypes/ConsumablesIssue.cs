@@ -32,10 +32,8 @@ public sealed record ConsumablesIssue<T>(
     {
         return UiConcatenate(
             Ui("Affected consumables: "),
-            UiConcatenate(
-                AffectedItems
-                    .Select(item => UiConcatenate(
-                        Glossary.GetUi(item), UiNoTranslate("; ")))
-                    .ToArray()));
+            Glossary.GetUi(AffectedItems
+                .Select(ai => (Enum)ai)
+                .ToImmutableReadOnlyCollection()));
     }
 }

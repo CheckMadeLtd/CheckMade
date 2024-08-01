@@ -152,7 +152,8 @@ new_sphere3_site_cleaning_at_X2024 AS (
                 (SELECT id FROM new_live_event_X2024),
                 '{
                     "GeoCoordinates": null,
-                    "AvailableFacilities": ["D55BLT"]
+                    "AvailableFacilities": ["D55BLT"],
+                    "AvailableConsumables": []
                  }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
