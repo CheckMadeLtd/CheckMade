@@ -42,6 +42,7 @@ internal static class NewIssueUtils
         var nearSphere =
             allSpheres
                 .Where(soa =>
+                    soa.Details.GeoCoordinates.IsSome &&
                     DistanceFromLastKnownLocation(soa) < tradeSpecificNearnessThreshold)
                 .MinBy(DistanceFromLastKnownLocation);
 
