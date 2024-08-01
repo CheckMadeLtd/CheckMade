@@ -1,5 +1,6 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;

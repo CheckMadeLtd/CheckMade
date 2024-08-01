@@ -9,6 +9,7 @@ using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;

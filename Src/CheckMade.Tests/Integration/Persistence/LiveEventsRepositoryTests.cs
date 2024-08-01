@@ -1,6 +1,5 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Tests.Startup;

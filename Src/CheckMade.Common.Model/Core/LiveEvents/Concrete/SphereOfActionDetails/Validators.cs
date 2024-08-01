@@ -1,5 +1,3 @@
-using CheckMade.Common.Model.Core.Issues.Concrete;
-
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 
 internal static class Validators
