@@ -37,7 +37,13 @@ internal sealed record WorkflowResponse(
         var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
             ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
 
-        List<OutputDto> outputs = [singleOutput]; 
+        List<OutputDto> outputs = 
+        [
+            singleOutput with
+            {
+                UpdateExistingOutputMessageId = nextPromptInPlaceUpdateMessageId
+            }
+        ]; 
         
         if (currentPromptFinalizer.IsSome)
             outputs.Add(currentPromptFinalizer.GetValueOrThrow());
