@@ -24,18 +24,26 @@ internal sealed record NewIssueTradeSelection(
         Option<int> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
-        return 
-            Task.FromResult<IReadOnlyCollection<OutputDto>>(new List<OutputDto>
+        List<OutputDto> outputs =
+        [
+            new()
             {
-                new()
+                Text = Ui("Please select a Trade:"),
+                DomainTermSelection = 
+                    Option<IReadOnlyCollection<DomainTerm>>.Some(
+                        Glossary.GetAll(typeof(ITrade))),
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
+            }
+        ];
+        
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+            previousPromptFinalizer.Match(
+                ppf =>
                 {
-                    Text = Ui("Please select a Trade:"),
-                    DomainTermSelection = 
-                        Option<IReadOnlyCollection<DomainTerm>>.Some(
-                            Glossary.GetAll(typeof(ITrade))),
-                    UpdateExistingOutputMessageId = inPlaceUpdateMessageId
-                }
-            });
+                    outputs.Add(ppf);
+                    return outputs;
+                },
+                () => outputs));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -43,9 +51,8 @@ internal sealed record NewIssueTradeSelection(
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
-        var selectedTrade = 
-            (ITrade)Activator.CreateInstance(
-                currentInput.Details.DomainTerm.GetValueOrThrow().TypeValue!)!; 
+        var selectedTradeDt = currentInput.Details.DomainTerm.GetValueOrThrow(); 
+        var selectedTrade = (ITrade)Activator.CreateInstance(selectedTradeDt.TypeValue!)!; 
         
         var lastKnownLocation = 
             await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
@@ -58,15 +65,30 @@ internal sealed record NewIssueTradeSelection(
             ? SphereNearCurrentUser(
                 liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
             : Option<ISphereOfAction>.None();
+
+        var promptTransition =
+            new PromptTransition(
+                new OutputDto
+                {
+                    Text = UiConcatenate(
+                        UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
+                        UiNoTranslate(" "),
+                        Glossary.GetUi(selectedTradeDt)),
+                    UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                });
         
         return await sphere.Match(
             _ => selectedTrade switch 
             { 
                 SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>)),
+                    promptTransition),
                 
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>)),
+                    promptTransition),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +
                                                          $"'{selectedTrade.GetType()}'")
@@ -74,10 +96,14 @@ internal sealed record NewIssueTradeSelection(
             () => selectedTrade switch
             {
                 SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>)),
+                    promptTransition),
                 
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>)),
+                    promptTransition),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +
                                                          $"'{selectedTrade.GetType()}'")
