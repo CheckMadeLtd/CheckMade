@@ -62,7 +62,7 @@ internal static class OutputSender
                             await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                             break;
 
-                        case { Text.IsSome: true, UpdateExistingOutputMessageId.IsSome: true }:
+                        case { UpdateExistingOutputMessageId.IsSome: true }:
                             await InvokeEditTextMessageAsync(output);
                             break;
                     
@@ -95,7 +95,9 @@ internal static class OutputSender
                         await outputBotClient
                             .EditTextMessageAsync(
                                 outputChatId,
-                                uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow()),
+                                outputWithUpdatedMessage.Text.IsSome
+                                    ? uiTranslator.Translate(outputWithUpdatedMessage.Text.GetValueOrThrow())
+                                    : Option<string>.None(),
                                 outputWithUpdatedMessage.UpdateExistingOutputMessageId.GetValueOrThrow(),
                                 converter.GetReplyMarkup(outputWithUpdatedMessage));
                     }

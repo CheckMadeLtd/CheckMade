@@ -30,7 +30,7 @@ public interface IBotClientWrapper
     
     Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
-        string text,
+        Option<string> text,
         int messageId,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
@@ -92,7 +92,7 @@ public sealed class BotClientWrapper(
 
     public async Task<Unit> EditTextMessageAsync(
         ChatId chatId, 
-        string text, 
+        Option<string> text, 
         int messageId, 
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
@@ -100,15 +100,27 @@ public sealed class BotClientWrapper(
         var updatedInlineKeyboard = replyMarkup.IsSome
             ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
             : null;
-        
-        await retryPolicy.ExecuteAsync(async () =>
-            await botClient.EditMessageTextAsync(
-                chatId,
-                messageId,
-                text,
-                parseMode: ParseMode.Html,
-                replyMarkup: updatedInlineKeyboard,
-                cancellationToken: cancellationToken));
+
+        if (text.IsSome)
+        {
+            await retryPolicy.ExecuteAsync(async () =>
+                await botClient.EditMessageTextAsync(
+                    chatId,
+                    messageId,
+                    text.GetValueOrThrow(),
+                    parseMode: ParseMode.Html,
+                    replyMarkup: updatedInlineKeyboard,
+                    cancellationToken: cancellationToken));
+        }
+        else
+        {
+            await retryPolicy.ExecuteAsync(async () =>
+                await botClient.EditMessageReplyMarkupAsync(
+                    chatId,
+                    messageId,
+                    updatedInlineKeyboard,
+                    cancellationToken: cancellationToken));
+        }
 
         return Unit.Value;
     }

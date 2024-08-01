@@ -85,7 +85,12 @@ internal sealed record NewIssueReview<T>(
             return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
                 Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
-                entityGuid: lastGuid);
+                new PromptTransition(
+                    new OutputDto
+                    {
+                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    }),
+                lastGuid);
         }
         
         throw new NotImplementedException();

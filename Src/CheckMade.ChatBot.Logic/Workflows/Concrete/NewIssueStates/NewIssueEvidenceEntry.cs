@@ -15,8 +15,6 @@ internal sealed record NewIssueEvidenceEntry<T>(
         IStateMediator Mediator) 
     : INewIssueEvidenceEntry<T> where T : ITrade
 {
-    private readonly UiString _promptText = 
-        Ui("Please (optionally) provide description and/or photos of the issue.");
     
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
@@ -27,7 +25,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
         [
             new()
             {
-                Text = _promptText,
+                Text = Ui("Please (optionally) provide description and/or photos of the issue."),
                 ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
@@ -48,13 +46,8 @@ internal sealed record NewIssueEvidenceEntry<T>(
         // -1 necessary here because the 'current input' is the evidence entry, not the previous prompt 
         // whose buttons we want to remove.
         var originalPromptMessageId = currentInput.TlgMessageId - 1;
-        var promptTransitionAfterEvidenceEntry =
-            new PromptTransition(
-                new OutputDto
-                {
-                    Text = UiConcatenate(_promptText),
-                    UpdateExistingOutputMessageId = originalPromptMessageId
-                });
+        var promptTransitionAfterEvidenceEntry = new PromptTransition(
+            new OutputDto { UpdateExistingOutputMessageId = originalPromptMessageId });
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
@@ -128,11 +121,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                             currentInput, 
                             Mediator.Next(typeof(INewIssueReview<T>)),
                             new PromptTransition(
-                                new OutputDto
-                                {
-                                    Text = UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
-                                    UpdateExistingOutputMessageId = currentInput.TlgMessageId
-                                })),
+                                new OutputDto { UpdateExistingOutputMessageId = currentInput.TlgMessageId })),
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(

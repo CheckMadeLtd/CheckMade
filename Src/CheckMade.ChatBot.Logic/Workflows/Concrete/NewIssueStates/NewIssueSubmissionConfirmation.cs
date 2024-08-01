@@ -51,7 +51,13 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
                     LogicalPort = recipient
                 }));
 
-        return outputs;
+        return previousPromptFinalizer.Match(
+            ppf =>
+            {
+                outputs.Add(ppf);
+                return outputs;
+            },
+            () => outputs);
     }
 
     public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

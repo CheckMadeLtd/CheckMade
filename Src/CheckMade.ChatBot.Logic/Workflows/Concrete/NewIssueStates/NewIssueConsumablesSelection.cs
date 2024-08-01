@@ -83,6 +83,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                         {
                             Text = UiConcatenate(
                                 _promptText,
+                                UiNoTranslate(" "),
                                 await GetSelectedConsumablesAsync()),
                             UpdateExistingOutputMessageId = currentInput.TlgMessageId
                         })),
