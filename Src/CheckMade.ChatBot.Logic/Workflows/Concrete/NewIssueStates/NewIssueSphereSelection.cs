@@ -74,7 +74,8 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
         }
 
         return await WorkflowResponse.CreateFromNextStateAsync(
-            currentInput, _mediator.Next(typeof(INewIssueTypeSelection<T>)));
+            currentInput, 
+            _mediator.Next(typeof(INewIssueTypeSelection<T>)));
     }
 
     private async Task<IReadOnlyCollection<string>> GetTradeSpecificSphereNamesAsync(
