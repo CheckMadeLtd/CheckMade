@@ -19,8 +19,6 @@ internal sealed record NewIssueConsumablesSelection<T>(
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
 {
-    private readonly UiString _promptText = Ui("Choose affected consumables:");
-    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -35,7 +33,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         [
             new()
             {
-                Text = _promptText,
+                Text = Ui("Choose affected consumables:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(ConsumablesItem))
                         .Where(item => availableConsumables.Contains(item))
@@ -82,7 +80,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                         new OutputDto
                         {
                             Text = UiConcatenate(
-                                _promptText,
+                                UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                                 UiNoTranslate(" "),
                                 await GetSelectedConsumablesAsync()),
                             UpdateExistingOutputMessageId = currentInput.TlgMessageId

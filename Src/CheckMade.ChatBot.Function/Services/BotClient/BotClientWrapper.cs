@@ -97,29 +97,50 @@ public sealed class BotClientWrapper(
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
-        var updatedInlineKeyboard = replyMarkup.IsSome
-            ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
-            : null;
-
-        if (text.IsSome)
+        // EditMessageXAsync only supports updates to/with InlineKeyboardMarkup!
+        if (replyMarkup.GetValueOrDefault() is not ReplyKeyboardMarkup)
         {
-            await retryPolicy.ExecuteAsync(async () =>
-                await botClient.EditMessageTextAsync(
-                    chatId,
-                    messageId,
-                    text.GetValueOrThrow(),
-                    parseMode: ParseMode.Html,
-                    replyMarkup: updatedInlineKeyboard,
-                    cancellationToken: cancellationToken));
+            var updatedInlineKeyboard = replyMarkup.IsSome
+                ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
+                : null;
+
+            if (text.IsSome)
+            {
+                await retryPolicy.ExecuteAsync(async () =>
+                    await botClient.EditMessageTextAsync(
+                        chatId,
+                        messageId,
+                        text.GetValueOrThrow(),
+                        parseMode: ParseMode.Html,
+                        replyMarkup: updatedInlineKeyboard,
+                        cancellationToken: cancellationToken));
+            }
+            else
+            {
+                await retryPolicy.ExecuteAsync(async () =>
+                    await botClient.EditMessageReplyMarkupAsync(
+                        chatId,
+                        messageId,
+                        updatedInlineKeyboard,
+                        cancellationToken: cancellationToken));
+            }
         }
         else
         {
             await retryPolicy.ExecuteAsync(async () =>
-                await botClient.EditMessageReplyMarkupAsync(
+            {
+                await DeleteMessageAsync(
                     chatId,
                     messageId,
-                    updatedInlineKeyboard,
-                    cancellationToken: cancellationToken));
+                    cancellationToken);
+
+                await SendTextMessageAsync(
+                    chatId,
+                    string.Empty,
+                    text.IsSome ? text.GetValueOrThrow() : string.Empty,
+                    replyMarkup,
+                    cancellationToken);
+            });
         }
 
         return Unit.Value;
@@ -277,4 +298,3 @@ public sealed class BotClientWrapper(
                 Description = kvp.Value.Description
             }).ToImmutableReadOnlyCollection();
 }
-

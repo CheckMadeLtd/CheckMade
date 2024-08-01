@@ -19,8 +19,6 @@ internal sealed record NewIssueFacilitySelection<T>(
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
-    private readonly UiString _promptText = Ui("Choose affected facility:");
-    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -37,7 +35,7 @@ internal sealed record NewIssueFacilitySelection<T>(
         [
             new()
             {
-                Text = _promptText,
+                Text = Ui("Choose affected facility:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(IFacility))
@@ -71,7 +69,7 @@ internal sealed record NewIssueFacilitySelection<T>(
                     new OutputDto
                     {
                         Text = UiConcatenate(
-                            _promptText,
+                            UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                             UiNoTranslate(" "),
                             Glossary.GetUi(currentInput.Details.DomainTerm.GetValueOrThrow())),
                         UpdateExistingOutputMessageId = currentInput.TlgMessageId
