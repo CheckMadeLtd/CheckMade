@@ -56,20 +56,37 @@ internal sealed record NewIssueTypeSelection<T>(
                 currentInput.Details.DomainTerm.GetValueOrThrow()
                     .TypeValue!.Name
                     .GetTypeNameWithoutGenericParamSuffix();
-        
+
+            var promptTransition =
+                new PromptTransition(
+                    new OutputDto
+                    {
+                        Text = UiConcatenate(
+                            UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
+                            UiNoTranslate(" "),
+                            Glossary.GetUi(currentInput.Details.DomainTerm.GetValueOrThrow())),
+                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    });
+            
             return issueTypeName switch
             {
                 nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueFacilitySelection<T>))),
+                        currentInput, 
+                        Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
+                        promptTransition),
             
                 nameof(ConsumablesIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueConsumablesSelection<T>))),
+                        currentInput, 
+                        Mediator.Next(typeof(INewIssueConsumablesSelection<T>)),
+                        promptTransition),
             
                 nameof(StaffIssue<T>) or nameof(GeneralIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
-                        currentInput, Mediator.Next(typeof(INewIssueEvidenceEntry<T>))),
+                        currentInput, 
+                        Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                        promptTransition),
                 
                 _ => throw new InvalidOperationException(
                     $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")
@@ -77,6 +94,8 @@ internal sealed record NewIssueTypeSelection<T>(
         }
 
         return await WorkflowResponse.CreateFromNextStateAsync(
-            currentInput, Mediator.Next(typeof(INewIssueSphereSelection<T>)));
+            currentInput, 
+            Mediator.Next(typeof(INewIssueSphereSelection<T>)),
+            new PromptTransition(true));
     }
 }
