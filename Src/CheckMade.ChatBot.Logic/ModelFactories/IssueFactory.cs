@@ -192,9 +192,13 @@ internal sealed record IssueFactory<T>(
                             attachment.Details.AttachmentType.GetValueOrThrow(),
                             attachment.Details.Text)));
 
+            var combinedDescription = combinedDescriptionEvidence.ToString();
+            
             return new IssueEvidence
             {
-                Description = combinedDescriptionEvidence.ToString(),
+                Description = !string.IsNullOrWhiteSpace(combinedDescription)
+                    ? combinedDescription
+                    : Option<string>.None(),
                 Media = mediaEvidence.Count != 0 
                     ? mediaEvidence
                     : Option<IReadOnlyCollection<AttachmentDetails>>.None()

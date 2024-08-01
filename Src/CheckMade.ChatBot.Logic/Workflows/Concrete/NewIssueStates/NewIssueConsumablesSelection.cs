@@ -70,13 +70,14 @@ internal sealed record NewIssueConsumablesSelection<T>(
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
                     Mediator.Next(typeof(INewIssueReview<T>)),
-                    new PromptTransition(new OutputDto
-                    {
-                        Text = UiConcatenate(
-                            _promptText,
-                            await GetSelectedConsumablesAsync()),
-                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
-                    })),
+                    new PromptTransition(
+                        new OutputDto
+                        {
+                            Text = UiConcatenate(
+                                _promptText,
+                                await GetSelectedConsumablesAsync()),
+                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        })),
             
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateFromNextStateAsync(
