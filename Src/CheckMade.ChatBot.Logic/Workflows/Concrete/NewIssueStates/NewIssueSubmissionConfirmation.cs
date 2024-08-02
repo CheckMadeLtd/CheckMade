@@ -62,7 +62,7 @@ internal sealed record NewIssueSubmissionConfirmation<T>(
 
     public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        throw new InvalidOperationException("Control flow should never end up here");
+        throw new InvalidOperationException("End of workflow: control flow should never end up here!");
     }
 
     private async Task<UiString> GetNotificationOutput(

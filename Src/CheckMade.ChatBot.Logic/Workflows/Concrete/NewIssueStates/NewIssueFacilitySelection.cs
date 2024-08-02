@@ -76,17 +76,10 @@ internal sealed record NewIssueFacilitySelection<T>(
                     }));
         }
 
-        var selectedControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
-        
-        return selectedControl switch
-        {
-            (long)ControlPrompts.Back => await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, 
+        return // on ControlPrompts.Back
+            await WorkflowResponse.CreateFromNextStateAsync(
+                currentInput,
                 Mediator.Next(typeof(INewIssueTypeSelection<T>)),
-                new PromptTransition(true)),
-            
-            _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(currentInput.Details.ControlPromptEnumCode)}: '{selectedControl}'")
-        };
+                new PromptTransition(true));
     }
 }

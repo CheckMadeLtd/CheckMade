@@ -70,7 +70,8 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
             return WorkflowResponse.CreateWarningChooseReplyKeyboardOptions(
-                this, await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo));
+                this, 
+                await GetTradeSpecificSphereNamesAsync(_trade, liveEventInfo));
         }
 
         return await WorkflowResponse.CreateFromNextStateAsync(

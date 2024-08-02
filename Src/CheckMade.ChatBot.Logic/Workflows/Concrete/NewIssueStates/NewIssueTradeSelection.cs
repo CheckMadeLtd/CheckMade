@@ -54,18 +54,6 @@ internal sealed record NewIssueTradeSelection(
         var selectedTradeDt = currentInput.Details.DomainTerm.GetValueOrThrow(); 
         var selectedTrade = (ITrade)Activator.CreateInstance(selectedTradeDt.TypeValue!)!; 
         
-        var lastKnownLocation = 
-            await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
-
-        var liveEvent =
-            (await LiveEventRepo.GetAsync(
-                currentInput.LiveEventContext.GetValueOrThrow()))!;
-        
-        var sphere = lastKnownLocation.IsSome
-            ? SphereNearCurrentUser(
-                liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
-            : Option<ISphereOfAction>.None();
-
         var promptTransition =
             new PromptTransition(
                 new OutputDto
@@ -77,7 +65,7 @@ internal sealed record NewIssueTradeSelection(
                     UpdateExistingOutputMessageId = currentInput.TlgMessageId
                 });
         
-        return await sphere.Match(
+        return await (await GetSphereNearUserAsync()).Match(
             _ => selectedTrade switch 
             { 
                 SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
@@ -108,5 +96,20 @@ internal sealed record NewIssueTradeSelection(
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +
                                                          $"'{selectedTrade.GetType()}'")
             });
+
+        async Task<Option<ISphereOfAction>> GetSphereNearUserAsync()
+        {
+            var lastKnownLocation = 
+                await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+
+            var liveEvent =
+                (await LiveEventRepo.GetAsync(
+                    currentInput.LiveEventContext.GetValueOrThrow()))!;
+        
+            return lastKnownLocation.IsSome
+                ? SphereNearCurrentUser(
+                    liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
+                : Option<ISphereOfAction>.None();
+        }
     }
 }
