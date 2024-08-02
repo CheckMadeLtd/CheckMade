@@ -78,6 +78,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueSubmissionConfirmation<SaniCleanTrade>), "D8TGOV");
         AddTerm(typeof(INewIssueSubmissionConfirmation<SiteCleanTrade>), "DM3PCW");
         
+        AddTerm(typeof(INewIssueEditMenu<SaniCleanTrade>), "D8ABBA");
+        AddTerm(typeof(INewIssueEditMenu<SiteCleanTrade>), "DHZY2B");
+        
         #endregion
         
         #region Issues

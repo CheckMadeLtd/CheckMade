@@ -72,23 +72,33 @@ internal sealed record NewIssueReview<T>(
         var selectedControl = 
             currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
 
-        if (selectedControl == (long)ControlPrompts.Submit)
+        return selectedControl switch
+        {
+            (long)ControlPrompts.Submit =>
+                await WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput,
+                    Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
+                    new PromptTransition(currentInput.TlgMessageId), 
+                    await GetLastGuidAsync()),
+            
+            (long)ControlPrompts.Edit => 
+                await WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput,
+                    Mediator.Next(typeof(INewIssueEditMenu<T>)), 
+                    new PromptTransition(currentInput.TlgMessageId)),
+            
+            _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
+        };
+
+        async Task<Guid> GetLastGuidAsync()
         {
             var interactiveHistory =
                 await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
             
-            var lastGuid = interactiveHistory
+            return interactiveHistory
                 .Select(i => i.EntityGuid)
                 .Last(g => g.IsSome)
                 .GetValueOrThrow();
-            
-            return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, 
-                Mediator.Next(typeof(INewIssueSubmissionConfirmation<T>)),
-                new PromptTransition(currentInput.TlgMessageId),
-                lastGuid);
         }
-        
-        throw new NotImplementedException();
     }
 }
