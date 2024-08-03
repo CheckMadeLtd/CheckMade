@@ -19,7 +19,7 @@ internal sealed record WorkflowResponse(
     }
     
     internal WorkflowResponse(
-        OutputDto singleOutput, IWorkflowStateActive newState, Guid? entityGuid = null) 
+        OutputDto singleOutput, IWorkflowStateNormal newState, Guid? entityGuid = null) 
         : this(
             Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
@@ -79,7 +79,7 @@ internal sealed record WorkflowResponse(
 
     internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
         TlgInput currentInput,
-        IWorkflowStateActive newState,
+        IWorkflowStateNormal newState,
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)
     {
@@ -95,7 +95,7 @@ internal sealed record WorkflowResponse(
             EntityGuid: entityGuid ?? Option<Guid>.None());
     }
 
-    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowStateActive currentState) =>
+    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowStateNormal currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()
@@ -108,7 +108,7 @@ internal sealed record WorkflowResponse(
 
     internal static WorkflowResponse
         CreateWarningChooseReplyKeyboardOptions(
-            IWorkflowStateActive currentState, IReadOnlyCollection<string> choices) => 
+            IWorkflowStateNormal currentState, IReadOnlyCollection<string> choices) => 
         new(Output: new List<OutputDto> 
             {
                 new()
@@ -120,7 +120,7 @@ internal sealed record WorkflowResponse(
             NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
             EntityGuid: Option<Guid>.None());
 
-    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowStateActive currentState) =>
+    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowStateNormal currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()

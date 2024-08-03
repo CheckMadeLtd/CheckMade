@@ -13,7 +13,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 
-internal interface INewIssueReview<T> : IWorkflowStateActive where T : ITrade, new();
+internal interface INewIssueReview<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,

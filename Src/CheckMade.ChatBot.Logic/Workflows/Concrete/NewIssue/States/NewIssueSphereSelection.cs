@@ -9,7 +9,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 
-internal interface INewIssueSphereSelection<T> : IWorkflowStateActive where T : ITrade;
+internal interface INewIssueSphereSelection<T> : IWorkflowStateNormal where T : ITrade;
 
 internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T : ITrade, new()
 {

@@ -4,7 +4,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-internal interface IWorkflowStateActive : IWorkflowState
+internal interface IWorkflowStateNormal : IWorkflowState
 {
     Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 

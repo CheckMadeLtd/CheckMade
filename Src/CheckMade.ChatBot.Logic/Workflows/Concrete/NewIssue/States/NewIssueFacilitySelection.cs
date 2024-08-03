@@ -10,7 +10,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 
-internal interface INewIssueFacilitySelection<T> : IWorkflowStateActive where T : ITrade; 
+internal interface INewIssueFacilitySelection<T> : IWorkflowStateNormal where T : ITrade; 
 
 internal sealed record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,

@@ -5,15 +5,15 @@ namespace CheckMade.ChatBot.Logic.Utils;
 
 internal interface IStateMediator
 {
-    IWorkflowStateActive Next(Type nextStateType);
+    IWorkflowStateNormal Next(Type nextStateType);
     IWorkflowStateTerminator Terminate(Type nextStateTerminatorType);
 }
 
 internal sealed record StateMediator(IServiceProvider Sp) : IStateMediator
 {
-    public IWorkflowStateActive Next(Type nextStateType)
+    public IWorkflowStateNormal Next(Type nextStateType)
     {
-        return (IWorkflowStateActive)Sp.GetRequiredService(nextStateType);
+        return (IWorkflowStateNormal)Sp.GetRequiredService(nextStateType);
     }
 
     public IWorkflowStateTerminator Terminate(Type nextStateTerminatorType)
