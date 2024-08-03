@@ -33,6 +33,7 @@ internal sealed record NewIssueEditMenu<T>(
             editMenu.Add(Dt(typeof(INewIssueConsumablesSelection<T>)));
         }
         
+        // ReSharper disable once UnusedVariable
         List<OutputDto> outputs = 
         [
             new OutputDto

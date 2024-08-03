@@ -106,7 +106,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.InProgress, "D15NQR", Ui("⏳ In Progress"));
         AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
-        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed")); ;
+        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
         #endregion
         
