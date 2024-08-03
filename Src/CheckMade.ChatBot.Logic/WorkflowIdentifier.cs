@@ -14,7 +14,7 @@ internal interface IWorkflowIdentifier
     Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
-internal record WorkflowIdentifier(
+internal sealed record WorkflowIdentifier(
         IUserAuthWorkflow UserAuthWorkflow,
         INewIssueWorkflow NewIssueWorkflow,
         ILanguageSettingWorkflow LanguageSettingWorkflow,

@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -43,6 +44,14 @@ internal sealed record NewIssueWorkflow(
                 currentInput, 
                 IGeneralWorkflowUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
 
+        if (currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator)))
+        {
+            return WorkflowResponse.Create(
+                currentInput,
+                new OutputDto { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
+                newState: Mediator.Terminate(currentStateType));
+        }
+        
         var currentState = Mediator.Next(currentStateType); 
         
         return await currentState.GetWorkflowResponseAsync(currentInput);        
