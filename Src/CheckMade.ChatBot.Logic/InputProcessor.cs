@@ -196,7 +196,7 @@ internal sealed class InputProcessor(
         return responseResult.Match(
             r => 
             {
-                outputBuilder.AddRange(r.Output);
+                outputBuilder.AddRange(r.Output.Reverse());
                         
                 return 
                     outputBuilder
