@@ -213,7 +213,7 @@ internal sealed record IssueFactory<T>(
                 inputs.Any(i =>
                     i.ResultantWorkflow.IsSome &&
                     i.ResultantWorkflow.GetValueOrThrow().InStateId == 
-                    Glossary.GetId(typeof(INewIssueSubmissionConfirmation<T>)));
+                    Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)));
 
             return isSubmitted
                 ? IssueStatus.Reported

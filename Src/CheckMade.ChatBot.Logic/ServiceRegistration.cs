@@ -46,7 +46,7 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueSphereSelection<SiteCleanTrade>, NewIssueSphereSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueTypeSelection<SaniCleanTrade>, NewIssueTypeSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionConfirmation<SaniCleanTrade>, INewIssueSubmissionConfirmation<SaniCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionConfirmation<SiteCleanTrade>, INewIssueSubmissionConfirmation<SiteCleanTrade>>();
+        services.AddScoped<INewIssueSubmissionSucceeded<SaniCleanTrade>, INewIssueSubmissionSucceeded<SaniCleanTrade>>();
+        services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, INewIssueSubmissionSucceeded<SiteCleanTrade>>();
     }
 }
