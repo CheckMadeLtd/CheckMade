@@ -28,6 +28,8 @@ public static class ServiceRegistration
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
 
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
+        services.AddScoped<INewIssueCancelConfirmation<SaniCleanTrade>, NewIssueCancelConfirmation<SaniCleanTrade>>();
+        services.AddScoped<INewIssueCancelConfirmation<SiteCleanTrade>, NewIssueCancelConfirmation<SiteCleanTrade>>();
         services.AddScoped<INewIssueConsumablesSelection<SaniCleanTrade>, NewIssueConsumablesSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueConsumablesSelection<SiteCleanTrade>, NewIssueConsumablesSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueEditMenu<SaniCleanTrade>, NewIssueEditMenu<SaniCleanTrade>>();
@@ -42,9 +44,9 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueSphereConfirmation<SiteCleanTrade>, NewIssueSphereConfirmation<SiteCleanTrade>>();
         services.AddScoped<INewIssueSphereSelection<SaniCleanTrade>, NewIssueSphereSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueSphereSelection<SiteCleanTrade>, NewIssueSphereSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionConfirmation<SaniCleanTrade>, NewIssueSubmissionConfirmation<SaniCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionConfirmation<SiteCleanTrade>, NewIssueSubmissionConfirmation<SiteCleanTrade>>();
         services.AddScoped<INewIssueTypeSelection<SaniCleanTrade>, NewIssueTypeSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
+        services.AddScoped<INewIssueSubmissionConfirmation<SaniCleanTrade>, INewIssueSubmissionConfirmation<SaniCleanTrade>>();
+        services.AddScoped<INewIssueSubmissionConfirmation<SiteCleanTrade>, INewIssueSubmissionConfirmation<SiteCleanTrade>>();
     }
 }

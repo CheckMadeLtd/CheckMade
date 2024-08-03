@@ -81,10 +81,10 @@ internal sealed record NewIssueReview<T>(
                     new PromptTransition(currentInput.TlgMessageId), 
                     await GetLastGuidAsync()),
             
-            (long)ControlPrompts.Edit => 
+            (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
-                    Mediator.Next(typeof(INewIssueEditMenu<T>)), 
+                    Mediator.Next(typeof(INewIssueCancelConfirmation<T>)), 
                     new PromptTransition(currentInput.TlgMessageId)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")

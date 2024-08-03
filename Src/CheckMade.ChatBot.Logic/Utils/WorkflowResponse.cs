@@ -30,7 +30,7 @@ internal sealed record WorkflowResponse(
     internal static WorkflowResponse Create(
         TlgInput currentInput, 
         OutputDto singleOutput, 
-        IWorkflowState newState, 
+        IWorkflowState? newState = null, 
         Guid? entityGuid = null,
         PromptTransition? promptTransition = null)
     {
@@ -50,7 +50,7 @@ internal sealed record WorkflowResponse(
 
         return new WorkflowResponse(
             Output: outputs,
-            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
+            NewStateId: newState?.Glossary.GetId(newState.GetType().GetInterfaces()[0]) ?? Option<string>.None(), 
             EntityGuid: entityGuid ?? Option<Guid>.None()
         );
     }

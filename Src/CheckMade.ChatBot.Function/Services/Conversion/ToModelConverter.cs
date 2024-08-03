@@ -124,7 +124,7 @@ internal sealed class ToModelConverter(
         };
     }
 
-    private record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
+    private sealed record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
