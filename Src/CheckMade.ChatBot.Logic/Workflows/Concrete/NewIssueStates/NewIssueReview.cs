@@ -87,7 +87,7 @@ internal sealed record NewIssueReview<T>(
                         Text = Ui("✅ Submission succeeded!")
                     },
                     await GetStakeholderNotificationsAsync(),
-                    Mediator.Next(typeof(INewIssueSubmissionSucceeded<T>)),
+                    Mediator.Terminate(typeof(INewIssueSubmissionSucceeded<T>)),
                     promptTransition: new PromptTransition(currentInput.TlgMessageId),
                     entityGuid: await GetLastGuidAsync()),
             

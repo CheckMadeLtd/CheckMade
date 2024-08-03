@@ -31,7 +31,7 @@ internal sealed record WorkflowResponse(
         TlgInput currentInput, 
         OutputDto singleOutput, 
         IReadOnlyCollection<OutputDto>? additionalOutputs = null,
-        IWorkflowStateActive? newState = null, 
+        IWorkflowState? newState = null, 
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)
     {
