@@ -53,6 +53,7 @@ internal sealed record NewIssueCancelConfirmation<T>(
                     {
                         Text = Ui("Cancelled.")
                     },
+                    newState: Mediator.Terminate(typeof(INewIssueCancelled<T>)),
                     promptTransition: new PromptTransition(currentInput.TlgMessageId)),
             
             (long)ControlPrompts.No =>

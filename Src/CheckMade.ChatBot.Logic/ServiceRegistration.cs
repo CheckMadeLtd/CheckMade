@@ -30,6 +30,8 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
         services.AddScoped<INewIssueCancelConfirmation<SaniCleanTrade>, NewIssueCancelConfirmation<SaniCleanTrade>>();
         services.AddScoped<INewIssueCancelConfirmation<SiteCleanTrade>, NewIssueCancelConfirmation<SiteCleanTrade>>();
+        services.AddScoped<INewIssueCancelled<SaniCleanTrade>, NewIssueCancelled<SaniCleanTrade>>();
+        services.AddScoped<INewIssueCancelled<SiteCleanTrade>, NewIssueCancelled<SiteCleanTrade>>();
         services.AddScoped<INewIssueConsumablesSelection<SaniCleanTrade>, NewIssueConsumablesSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueConsumablesSelection<SiteCleanTrade>, NewIssueConsumablesSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueEditMenu<SaniCleanTrade>, NewIssueEditMenu<SaniCleanTrade>>();

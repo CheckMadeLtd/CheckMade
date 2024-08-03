@@ -84,6 +84,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueCancelConfirmation<SaniCleanTrade>), "DL69OL");
         AddTerm(typeof(INewIssueCancelConfirmation<SiteCleanTrade>), "DNLJMN");
         
+        AddTerm(typeof(INewIssueCancelled<SaniCleanTrade>), "DN1KAK");
+        AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");
+        
         #endregion
         
         #region Issues
