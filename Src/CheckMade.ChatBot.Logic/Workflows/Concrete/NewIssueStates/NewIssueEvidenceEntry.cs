@@ -8,12 +8,12 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade; 
+internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade, new(); 
 
 internal sealed record NewIssueEvidenceEntry<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator) 
-    : INewIssueEvidenceEntry<T> where T : ITrade
+    : INewIssueEvidenceEntry<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
@@ -58,7 +58,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                                   "or continue to the next step."),
                         ControlPromptsSelection = ControlPrompts.Continue
                     }, 
-                    this,
+                    newState: this,
                     promptTransition: promptTransitionAfterEvidenceEntry);
             
             case TlgInputType.AttachmentMessage:
@@ -76,7 +76,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
                         }, 
-                        this,
+                        newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
                     TlgAttachmentType.Document => WorkflowResponse.Create(
@@ -87,7 +87,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                                       "or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
                         }, 
-                        this,
+                        newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
                     TlgAttachmentType.Voice => WorkflowResponse.Create(
@@ -98,7 +98,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                                       "add a description or continue to the next step."),
                             ControlPromptsSelection = ControlPrompts.Continue
                         }, 
-                        this,
+                        newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
                     
                     _ => throw new InvalidOperationException(

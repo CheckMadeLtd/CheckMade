@@ -30,9 +30,10 @@ internal sealed record WorkflowResponse(
     internal static WorkflowResponse Create(
         TlgInput currentInput, 
         OutputDto singleOutput, 
+        IReadOnlyCollection<OutputDto>? additionalOutputs = null,
         IWorkflowState? newState = null, 
-        Guid? entityGuid = null,
-        PromptTransition? promptTransition = null)
+        PromptTransition? promptTransition = null,
+        Guid? entityGuid = null)
     {
         var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
             ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
@@ -48,6 +49,9 @@ internal sealed record WorkflowResponse(
         if (currentPromptFinalizer.IsSome)
             outputs.Add(currentPromptFinalizer.GetValueOrThrow());
 
+        if (additionalOutputs != null)
+            outputs.AddRange(additionalOutputs);
+        
         return new WorkflowResponse(
             Output: outputs,
             NewStateId: newState?.Glossary.GetId(newState.GetType().GetInterfaces()[0]) ?? Option<string>.None(), 

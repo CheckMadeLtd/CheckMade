@@ -7,12 +7,12 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueCancelConfirmation<T> : IWorkflowState where T : ITrade;
+internal interface INewIssueCancelConfirmation<T> : IWorkflowState where T : ITrade, new();
 
 internal sealed record NewIssueCancelConfirmation<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator) 
-    : INewIssueCancelConfirmation<T> where T : ITrade
+    : INewIssueCancelConfirmation<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
