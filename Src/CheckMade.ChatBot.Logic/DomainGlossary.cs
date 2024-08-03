@@ -101,16 +101,12 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(StaffIssue<SaniCleanTrade>), "D9MRJ9", Ui("🙋 Staff Issue"));
         AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff Issue"));
 
-        AddTerm(ConsumablesItem.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
-        AddTerm(ConsumablesItem.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
-        AddTerm(ConsumablesItem.Soap, "D79AMO", Ui("🧴 Soap"));
-        
         AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
         AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
         AddTerm(IssueStatus.InProgress, "D15NQR", Ui("⏳ In Progress"));
         AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
-        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
+        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed")); ;
         
         #endregion
         
@@ -120,6 +116,10 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(Shower), "D4W2GW", Ui("🚿 Shower"));
         AddTerm(typeof(GeneralMisc), "D55BLT", Ui("General/Misc"));
 
+        AddTerm(ConsumablesItem.ToiletPaper, "DSTP1N", Ui("🧻 Toilet Paper"));
+        AddTerm(ConsumablesItem.PaperTowels, "DOJH85", Ui("🌫️ Paper Towels"));
+        AddTerm(ConsumablesItem.Soap, "D79AMO", Ui("🧴 Soap"));
+        
         #endregion
 
         #region RoleTypes
