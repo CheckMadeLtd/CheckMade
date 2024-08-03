@@ -6,9 +6,9 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 
 internal interface INewIssueSphereConfirmation<T> : IWorkflowStateActive where T : ITrade;
 

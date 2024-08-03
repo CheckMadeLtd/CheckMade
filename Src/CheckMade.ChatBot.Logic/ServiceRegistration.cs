@@ -1,7 +1,8 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.DependencyInjection;

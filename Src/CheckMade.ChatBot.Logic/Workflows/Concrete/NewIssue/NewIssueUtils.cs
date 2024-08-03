@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Issues;
@@ -7,7 +8,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Utils.GIS;
 
-namespace CheckMade.ChatBot.Logic.Utils;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
 
 internal static class NewIssueUtils
 {

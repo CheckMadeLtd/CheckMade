@@ -1,6 +1,6 @@
 using System.Text;
 using CheckMade.ChatBot.Logic.Utils;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -12,7 +12,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 

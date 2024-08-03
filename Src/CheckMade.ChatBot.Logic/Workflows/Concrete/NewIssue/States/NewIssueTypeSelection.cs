@@ -7,7 +7,7 @@ using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
 
 internal interface INewIssueTypeSelection<T> : IWorkflowStateActive where T : ITrade; 
 
