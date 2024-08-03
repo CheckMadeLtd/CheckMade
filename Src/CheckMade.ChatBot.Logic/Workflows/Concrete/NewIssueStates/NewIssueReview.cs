@@ -50,7 +50,7 @@ internal sealed record NewIssueReview<T>(
                                 (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
                             .Select(kvp => kvp.Value)
                             .ToArray())),
-                ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Edit,
+                ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
