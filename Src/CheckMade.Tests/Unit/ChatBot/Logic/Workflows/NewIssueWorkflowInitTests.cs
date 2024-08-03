@@ -1,6 +1,6 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;

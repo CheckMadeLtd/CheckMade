@@ -8,7 +8,7 @@ using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.A_Init;
 
 internal interface INewIssueTradeSelection : IWorkflowStateNormal;
 

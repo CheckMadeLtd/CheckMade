@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.Utils;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.C_Review;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -8,7 +9,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
 
 internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade;
 

@@ -1,6 +1,7 @@
 using System.Text;
 using CheckMade.ChatBot.Logic.Utils;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;

@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.Utils;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.C_Review;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -6,7 +7,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
 
 internal interface INewIssueEvidenceEntry<T> : IWorkflowStateNormal where T : ITrade, new(); 
 

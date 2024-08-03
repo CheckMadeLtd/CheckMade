@@ -1,7 +1,10 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.C_Review;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues.Concrete;
