@@ -88,6 +88,7 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
                     (await _liveEventsRepo.GetAsync(liveEventInfo))!,
                     trade)
                 .Select(soa => soa.Name)
+                .OrderBy(name => name)
                 .ToImmutableReadOnlyCollection();
     }
 }
