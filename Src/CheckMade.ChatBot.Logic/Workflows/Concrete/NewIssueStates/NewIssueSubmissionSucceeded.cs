@@ -6,7 +6,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueSubmissionSucceeded<T> : IWorkflowState;
+internal interface INewIssueSubmissionSucceeded<T> : IWorkflowStateActive;
 
 internal sealed record NewIssueSubmissionSucceeded<T>(IDomainGlossary Glossary) 
     : INewIssueSubmissionSucceeded<T> where T : ITrade, new()

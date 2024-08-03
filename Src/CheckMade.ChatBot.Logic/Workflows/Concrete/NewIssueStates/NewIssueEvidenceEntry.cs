@@ -8,7 +8,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueEvidenceEntry<T> : IWorkflowState where T : ITrade, new(); 
+internal interface INewIssueEvidenceEntry<T> : IWorkflowStateActive where T : ITrade, new(); 
 
 internal sealed record NewIssueEvidenceEntry<T>(
         IDomainGlossary Glossary,

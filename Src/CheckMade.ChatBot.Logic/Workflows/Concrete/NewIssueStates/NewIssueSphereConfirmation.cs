@@ -10,7 +10,7 @@ using static CheckMade.ChatBot.Logic.Utils.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueSphereConfirmation<T> : IWorkflowState where T : ITrade;
+internal interface INewIssueSphereConfirmation<T> : IWorkflowStateActive where T : ITrade;
 
 internal sealed record NewIssueSphereConfirmation<T>(
         ILiveEventsRepository LiveEventsRepo,    

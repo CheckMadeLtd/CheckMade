@@ -19,7 +19,7 @@ internal sealed record WorkflowResponse(
     }
     
     internal WorkflowResponse(
-        OutputDto singleOutput, IWorkflowState newState, Guid? entityGuid = null) 
+        OutputDto singleOutput, IWorkflowStateActive newState, Guid? entityGuid = null) 
         : this(
             Output: new List<OutputDto> { singleOutput }, 
             NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
@@ -31,7 +31,7 @@ internal sealed record WorkflowResponse(
         TlgInput currentInput, 
         OutputDto singleOutput, 
         IReadOnlyCollection<OutputDto>? additionalOutputs = null,
-        IWorkflowState? newState = null, 
+        IWorkflowStateActive? newState = null, 
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)
     {
@@ -79,7 +79,7 @@ internal sealed record WorkflowResponse(
 
     internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
         TlgInput currentInput,
-        IWorkflowState newState,
+        IWorkflowStateActive newState,
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)
     {
@@ -95,7 +95,7 @@ internal sealed record WorkflowResponse(
             EntityGuid: entityGuid ?? Option<Guid>.None());
     }
 
-    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowState currentState) =>
+    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowStateActive currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()
@@ -108,7 +108,7 @@ internal sealed record WorkflowResponse(
 
     internal static WorkflowResponse
         CreateWarningChooseReplyKeyboardOptions(
-            IWorkflowState currentState, IReadOnlyCollection<string> choices) => 
+            IWorkflowStateActive currentState, IReadOnlyCollection<string> choices) => 
         new(Output: new List<OutputDto> 
             {
                 new()
@@ -120,7 +120,7 @@ internal sealed record WorkflowResponse(
             NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
             EntityGuid: Option<Guid>.None());
 
-    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowState currentState) =>
+    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowStateActive currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()

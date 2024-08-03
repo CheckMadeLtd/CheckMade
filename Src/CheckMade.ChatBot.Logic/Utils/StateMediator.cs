@@ -5,13 +5,13 @@ namespace CheckMade.ChatBot.Logic.Utils;
 
 internal interface IStateMediator
 {
-    IWorkflowState Next(Type nextStateType);
+    IWorkflowStateActive Next(Type nextStateType);
 }
 
 internal sealed record StateMediator(IServiceProvider Sp) : IStateMediator
 {
-    public IWorkflowState Next(Type nextStateType)
+    public IWorkflowStateActive Next(Type nextStateType)
     {
-        return (IWorkflowState)Sp.GetRequiredService(nextStateType);
+        return (IWorkflowStateActive)Sp.GetRequiredService(nextStateType);
     }
 }

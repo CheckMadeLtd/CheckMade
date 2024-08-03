@@ -6,7 +6,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueEditMenu<T> : IWorkflowState where T : ITrade;
+internal interface INewIssueEditMenu<T> : IWorkflowStateActive where T : ITrade;
 
 internal sealed record NewIssueEditMenu<T>(
         IDomainGlossary Glossary,

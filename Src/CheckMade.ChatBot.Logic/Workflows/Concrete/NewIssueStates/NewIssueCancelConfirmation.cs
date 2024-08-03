@@ -7,7 +7,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
-internal interface INewIssueCancelConfirmation<T> : IWorkflowState where T : ITrade, new();
+internal interface INewIssueCancelConfirmation<T> : IWorkflowStateActive where T : ITrade, new();
 
 internal sealed record NewIssueCancelConfirmation<T>(
         IDomainGlossary Glossary,
