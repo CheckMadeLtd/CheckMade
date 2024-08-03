@@ -8,16 +8,40 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssueStates;
 
 internal interface INewIssueEditMenu<T> : IWorkflowState where T : ITrade;
 
-internal sealed record NewIssueEditMenu<T>(IDomainGlossary Glossary) : INewIssueEditMenu<T> where T : ITrade
+internal sealed record NewIssueEditMenu<T>(
+        IDomainGlossary Glossary,
+        IGeneralWorkflowUtils GeneralUtils) 
+    : INewIssueEditMenu<T> where T : ITrade
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+        TlgInput currentInput,
         Option<int> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
-        // Show a menu of editable items (evidence, facility, etc.) based on what's part of the history
-        // i.e. not always all options
-         
+        var workflowStateHistory =
+            (await GeneralUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+            .Select(i => i.ResultantWorkflow)
+            .Where(rw => rw.IsSome)
+            .Select(rw => rw.GetValueOrThrow().InStateId)
+            .ToImmutableReadOnlyCollection();
+
+        List<DomainTerm> editMenu = [];
+
+        if (workflowStateHistory
+            .Contains(Glossary.GetId(typeof(INewIssueConsumablesSelection<T>))))
+        {
+            editMenu.Add(Dt(typeof(INewIssueConsumablesSelection<T>)));
+        }
+        
+        List<OutputDto> outputs = 
+        [
+            new OutputDto
+            {
+                Text = Ui("Choose item to edit:"), 
+                DomainTermSelection = editMenu,
+                UpdateExistingOutputMessageId = inPlaceUpdateMessageId
+            }
+        ];
         
         throw new NotImplementedException();
     }
@@ -29,6 +53,9 @@ internal sealed record NewIssueEditMenu<T>(IDomainGlossary Glossary) : INewIssue
         // needs to go straight to review i.e. it needs to check whether there is an 'edit click' input
         // since the last review in the interactive history.
         // The logic to determine this shall be in the GeneralWorkflowUtils.  
+        
+        // But there is potential complications if what the user changed requires new further input.
+        // Delay to post MVP.
         
         throw new NotImplementedException();
     }
