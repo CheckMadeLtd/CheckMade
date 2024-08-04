@@ -1,14 +1,13 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
+using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
@@ -23,7 +22,8 @@ internal sealed record NewIssueReview<T>(
         IIssueFactory<T> Factory,
         ITlgInputsRepository InputsRepo,
         IRolesRepository RoleRepo,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
+        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+        IStakeholderReporter Reporter) 
     : INewIssueReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
@@ -111,9 +111,14 @@ internal sealed record NewIssueReview<T>(
                 await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
             var notificationOutput = 
                 await GetNotificationOutputAsync();
-        
+            var currentIssueTypeName =
+                NewIssueUtils.GetLastIssueType(interactiveHistory)
+                    .Name
+                    .GetTypeNameWithoutGenericParamSuffix();
+
             outputs.AddRange(
-                (await GetNotificationRecipientsAsync())
+                (await Reporter.GetNewIssueNotificationRecipientsAsync<T>(
+                    interactiveHistory, currentIssueTypeName))
                 .Select(recipient => 
                     new OutputDto
                     {
@@ -150,62 +155,6 @@ internal sealed record NewIssueReview<T>(
                                     (IssueSummaryCategories.All & kvp.Key) != 0)
                                 .Select(kvp => kvp.Value)
                                 .ToArray()));
-            }
-
-            async Task<IReadOnlyCollection<LogicalPort>> GetNotificationRecipientsAsync()
-            {
-                var allRolesAtCurrentLiveEvent = 
-                    (await RoleRepo.GetAllAsync())
-                    .Where(r => r.AtLiveEvent.Equals(
-                        interactiveHistory.Last().LiveEventContext.GetValueOrThrow()))
-                    .ToArray(); 
-        
-                var allAdminAndObservers =
-                    allRolesAtCurrentLiveEvent
-                        .Where(r => r.RoleType is 
-                            TradeAdmin<T> or 
-                            TradeObserver<T> or 
-                            LiveEventAdmin or
-                            LiveEventObserver)
-                        .ToArray();
-        
-                var currentIssueTypeName =
-                    NewIssueUtils.GetLastIssueType(interactiveHistory)
-                        .Name
-                        .GetTypeNameWithoutGenericParamSuffix();
-
-                var allRelevantSpecialist = currentIssueTypeName switch
-                {
-                    nameof(CleanlinessIssue<T>) =>
-                        allRolesAtCurrentLiveEvent
-                            .Where(r => r.RoleType is TradeTeamLead<T>)
-                            .ToArray(),
-            
-                    nameof(TechnicalIssue<T>) =>
-                        allRolesAtCurrentLiveEvent
-                            .Where(r => r.RoleType is TradeEngineer<T>)
-                            .ToArray(),
-            
-                    _ => []
-                };
-
-                var currentRole = interactiveHistory.First().OriginatorRole.GetValueOrThrow();
-        
-                var recipients = new List<LogicalPort>(
-                    allAdminAndObservers.Concat(allRelevantSpecialist)
-                        .Where(r => !r.Equals(currentRole))
-                        .Select(r => new LogicalPort(
-                            r,
-                            InteractionMode.Notifications)));
-
-                var allActiveRoleBindings = 
-                    await RoleBindingsRepo.GetAllActiveAsync();
-        
-                return recipients
-                    .Where(lp => 
-                        allActiveRoleBindings.Select(tarb => tarb.Role)
-                            .Contains(lp.Role))
-                    .ToImmutableReadOnlyCollection();
             }
         }
         
