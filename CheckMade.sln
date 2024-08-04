@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.LangExt", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.ExternalServices", "Src\CheckMade.Common.ExternalServices\CheckMade.Common.ExternalServices.csproj", "{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.BusinessLogic", "Src\CheckMade.Common.BusinessLogic\CheckMade.Common.BusinessLogic.csproj", "{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_BackendOnly|Any CPU = Debug_BackendOnly|Any CPU
@@ -211,6 +213,20 @@ Global
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_All|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_All|Any CPU.Build.0 = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.No_Build|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.No_Build|Any CPU.Build.0 = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_DevOps|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_DevOps|Any CPU.Build.0 = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_ChatBot|Any CPU.ActiveCfg = Debug|Any CPU
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}.Debug_ChatBot|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
@@ -224,5 +240,6 @@ Global
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE} = {E5835236-896A-4576-8A1F-EBF20213872E}
+		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7} = {E5835236-896A-4576-8A1F-EBF20213872E}
 	EndGlobalSection
 EndGlobal
