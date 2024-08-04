@@ -26,6 +26,8 @@ internal sealed record NewIssueReview<T>(
         ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
     : INewIssueReview<T> where T : ITrade, new()
 {
+    private Guid _lastGuidCache = Guid.Empty;
+    
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,
@@ -123,16 +125,11 @@ internal sealed record NewIssueReview<T>(
             
             async Task<UiString> GetNotificationOutputAsync()
             {
-                var lastGuid = interactiveHistory
-                    .Select(i => i.EntityGuid)
-                    .Last(g => g.IsSome)
-                    .GetValueOrThrow();
-        
                 var historyWithUpdatedCurrentInput = 
                     await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(
                         currentInput with
                         {
-                            EntityGuid = lastGuid,
+                            EntityGuid = await GetLastGuidAsync(),
                             ResultantWorkflow = new ResultantWorkflowInfo(
                                 Glossary.GetId(typeof(INewIssueWorkflow)),
                                 Glossary.GetId(GetType().GetInterfaces()[0]))
@@ -214,13 +211,18 @@ internal sealed record NewIssueReview<T>(
         
         async Task<Guid> GetLastGuidAsync()
         {
-            var interactiveHistory =
-                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            if (_lastGuidCache == Guid.Empty)
+            {
+                var interactiveHistory =
+                    await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
             
-            return interactiveHistory
-                .Select(i => i.EntityGuid)
-                .Last(g => g.IsSome)
-                .GetValueOrThrow();
+                _lastGuidCache = interactiveHistory
+                    .Select(i => i.EntityGuid)
+                    .Last(g => g.IsSome)
+                    .GetValueOrThrow();
+            }
+
+            return _lastGuidCache;
         }
     }
 }
