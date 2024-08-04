@@ -52,6 +52,7 @@ var host = new HostBuilder()
         services.RegisterChatBotFunctionConversionServices();
         services.RegisterChatBotLogicServices();
         
+        services.RegisterCommonBusinessLogicServices();
         services.RegisterCommonPersistenceServices(config, hostingEnvironment);
         services.RegisterCommonUtilsServices();
         services.RegisterCommonExternalServices(config);
