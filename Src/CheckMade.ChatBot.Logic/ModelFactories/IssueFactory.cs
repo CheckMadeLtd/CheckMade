@@ -208,7 +208,8 @@ internal sealed record IssueFactory<T>(
 
         IssueStatus GetStatus()
         {
-            // ToDo: Refactor to look for the highest/latest status and when found, return early
+            // ToDo: Once we go beyond these two,
+            // refactor to look for the highest/latest status and when found, return early
             
             var isSubmitted = 
                 inputs.Any(i =>
