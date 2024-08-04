@@ -1,11 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Configurations>Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_DevOps;Debug_ChatBot</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
     </ItemGroup>
