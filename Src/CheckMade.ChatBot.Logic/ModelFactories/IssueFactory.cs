@@ -2,6 +2,7 @@ using System.Text;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
+using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -16,11 +17,6 @@ using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
-
-internal interface IIssueFactory<T>
-{
-    Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
-} 
 
 internal sealed record IssueFactory<T>(
         ILiveEventsRepository LiveEventsRepo,

@@ -4,9 +4,9 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Interfaces.BusinessLogic;
 
-public interface IStakeholderReporter
+public interface IStakeholderReporter<T> where T : ITrade, new()
 {
-    Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync<T>(
+    Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory,
-        string currentIssueTypeName) where T : ITrade, new();
+        string currentIssueTypeName);
 }

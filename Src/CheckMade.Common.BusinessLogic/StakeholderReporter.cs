@@ -1,4 +1,5 @@
 ﻿using CheckMade.Common.Interfaces.BusinessLogic;
+using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt;
@@ -11,13 +12,20 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.BusinessLogic;
 
-public sealed record StakeholderReporter(
+public sealed record StakeholderReporter<T>(
         IRolesRepository RoleRepo,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
-    : IStakeholderReporter
+        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+        IIssueFactory<T> IssueFactory) 
+    : IStakeholderReporter<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync<T>(IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName) where T : ITrade, new()
+    public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
+        IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
+        var completeIssueSummary = 
+            (await IssueFactory.CreateAsync(inputHistory))
+            .GetSummary();
+
+        
         // For every type of stakeholder, potentially different details and control outputs!
         
         // outputs.AddRange(
@@ -33,9 +41,6 @@ public sealed record StakeholderReporter(
         
         // async Task<UiString> GetNotificationOutputAsync()
         // {
-        //     var summary = 
-        //         (await Factory.CreateAsync(historyWithUpdatedCurrentInput))
-        //         .GetSummary();
         //         
         //     return 
         //         UiConcatenate(
@@ -53,9 +58,9 @@ public sealed record StakeholderReporter(
         throw new NotImplementedException();
     }
 
-    private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync<T>(
+    private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, 
-        string currentIssueTypeName) where T : ITrade, new()
+        string currentIssueTypeName)
     {
         var allRolesAtCurrentLiveEvent = 
             (await RoleRepo.GetAllAsync())

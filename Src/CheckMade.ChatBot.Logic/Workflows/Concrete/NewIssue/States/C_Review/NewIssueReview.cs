@@ -1,9 +1,8 @@
-using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
 using CheckMade.Common.Interfaces.BusinessLogic;
+using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -21,9 +20,7 @@ internal sealed record NewIssueReview<T>(
         IStateMediator Mediator,
         IIssueFactory<T> Factory,
         ITlgInputsRepository InputsRepo,
-        IRolesRepository RoleRepo,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        IStakeholderReporter Reporter) 
+        IStakeholderReporter<T> Reporter) 
     : INewIssueReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
@@ -120,7 +117,7 @@ internal sealed record NewIssueReview<T>(
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
 
-            return await Reporter.GetNewIssueNotificationsAsync<T>(
+            return await Reporter.GetNewIssueNotificationsAsync(
                 historyWithUpdatedCurrentInput, currentIssueTypeName);
         }
         
