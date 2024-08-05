@@ -152,6 +152,12 @@ internal static class TestData
             new UserInfo(DanielEn),
             Y2024Info);
     
+    internal static readonly Role SiteCleanEngineer_DanielEn_X2024 = 
+        new("RMWC16",
+            new TradeEngineer<SiteCleanTrade>(),
+            new UserInfo(DanielEn),
+            X2024Info);
+    
     #endregion
 
     #region LiveEventSetup #############################################################################################
@@ -209,7 +215,8 @@ internal static class TestData
             SaniCleanInspector_LukasDe_X2024,
             SaniCleanAdmin_DanielEn_X2024,
             LiveEventAdmin_DanielEn_X2024,
-            SaniCleanEngineer_DanielEn_X2024
+            SaniCleanEngineer_DanielEn_X2024,
+            SiteCleanEngineer_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>
