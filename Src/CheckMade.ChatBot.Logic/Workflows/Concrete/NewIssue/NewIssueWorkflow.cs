@@ -18,11 +18,8 @@ internal sealed record NewIssueWorkflow(
         IStateMediator Mediator)
     : INewIssueWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
-    {
-        // ToDo: implement correctly once we have entire workflow.
-        return false;
-    }
+    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory) =>
+        GeneralWorkflowUtils.IsWorkflowTerminated(inputHistory);
 
     public async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {

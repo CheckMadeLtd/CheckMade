@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -22,6 +23,7 @@ internal interface IGeneralWorkflowUtils
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
+    bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
 internal sealed record GeneralWorkflowUtils(
@@ -110,6 +112,16 @@ internal sealed record GeneralWorkflowUtils(
                 lastInput
                     .ResultantWorkflow.GetValueOrThrow()
                     .InStateId);
+    }
+
+    public bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
+    {
+        return
+            inputHistory.Any(i =>
+                i.ResultantWorkflow.IsSome &&
+                Glossary.GetDtType(
+                        i.ResultantWorkflow.GetValueOrThrow().InStateId)
+                    .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 }
 
