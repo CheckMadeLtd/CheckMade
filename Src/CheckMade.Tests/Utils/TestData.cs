@@ -129,7 +129,7 @@ internal static class TestData
             X2024Info);
     
     internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
-        new("RP4XPK",
+        new("RGR37T",
             new TradeEngineer<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
@@ -208,7 +208,8 @@ internal static class TestData
         {
             SaniCleanInspector_LukasDe_X2024,
             SaniCleanAdmin_DanielEn_X2024,
-            LiveEventAdmin_DanielEn_X2024
+            LiveEventAdmin_DanielEn_X2024,
+            SaniCleanEngineer_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>

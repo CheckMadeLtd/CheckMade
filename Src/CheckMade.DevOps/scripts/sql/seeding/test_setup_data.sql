@@ -207,6 +207,14 @@ new_role_for_daniel_en_x2024_as_liveevent_admin AS (
         ON CONFLICT (token) DO NOTHING    
 ),
 
+new_role_for_daniel_en_x2024_as_saniclean_engineer AS (
+     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+         VALUES ('RGR37T', 'D2PC58', 1,
+                 (SELECT id FROM user_daniel_en),
+                 (SELECT id FROM new_live_event_X2024))
+         ON CONFLICT (token) DO NOTHING
+),
+    
 new_role_for_daniel_en_y2024_as_saniclean_engineer AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
         VALUES ('RS0BSU', 'D2PC58', 1,
