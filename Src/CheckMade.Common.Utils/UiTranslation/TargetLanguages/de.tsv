@@ -62,8 +62,8 @@ CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
 CheckMade.ChatBot.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
 CheckMade.ChatBot.Logic	Please select a Trade:	Bitte wählen Sie ein Gewerk aus:
 CheckMade.ChatBot.Logic	Please confirm: are you at '{0}'?	Bitte bestätigen: Sind Sie bei/in '{0}'?
-CheckMade.ChatBot.Logic	Sanitary Camp	Sanitärcamp
-CheckMade.ChatBot.Logic	Zone	Zone
+CheckMade.ChatBot.Logic	<b>Sanitary Camp</b>	<b>Sanitärcamp</b>
+CheckMade.ChatBot.Logic	<b>Zone</b>	<b>Zone</b>
 CheckMade.ChatBot.Logic	Please select a 	Bitte wählen Sie ein(e) 
 CheckMade.ChatBot.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
 CheckMade.ChatBot.Logic	Expected a simple text! Please try again entering a 	Ein einfacher Text war erwartet. Bitte erneut versuchen - 
