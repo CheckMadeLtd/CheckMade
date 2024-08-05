@@ -74,7 +74,7 @@ CheckMade.ChatBot.Logic	Please (optionally) provide description and/or photos of
 CheckMade.ChatBot.Logic	❗️Invalid input! Please choose from the options shown below.	❗Ungültige Eingabe! Bitte wählen Sie eine der unten angezeigten Optionen.
 CheckMade.ChatBot.Logic	Choose affected consumables:	Betroffene Verbrauchsartikel auswählen:
 CheckMade.ChatBot.Logic	✅📝 Description received. You can send more text, add photos/documents or continue to the next step.	✅📝 Beschreibung erhalten. Sie können einen weiteren Text schicken, Fotos/Dokumente hinzufügen oder weiter zum nächsten Schritt.
-CheckMade.ChatBot.Logic	❗️Invalid input! Please enter a text message or a photo/file attachment only.	❗️Ungültige Eingabe! Bitte nur Text oder Photo/Datei Anhang schicken.  
+CheckMade.ChatBot.Logic	❗️Invalid input! Please enter a text message or a photo/file attachment 📎 only.	❗️Ungültige Eingabe! Bitte nur Text oder Photo/Datei Anhang 📎 schicken.  
 CheckMade.ChatBot.Logic	✅📷 Photo received. You can send more attachments, add a description or continue to the next step.	✅📷 Foto erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
 CheckMade.ChatBot.Logic	✅📄 Document received. You can send more attachments, add a description or continue to the next step.	✅📄 Dokument erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
 CheckMade.ChatBot.Logic	❗🎙 Voice messages are not yet supported. You can send photos/documents, add a description or continue to the next step.	❗🎙 Audionachrichten werden noch nicht unterstützt. Sie können Fotos/Dokumente schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
@@ -102,3 +102,4 @@ CheckMade.ChatBot.Logic	<b>Trade:</b> 	<b>Gewerk:</b>
 CheckMade.ChatBot.Logic	<b>Issue type:</b> 	<b>Problemtyp:</b> 
 CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?	Möchten Sie sicher das Erstellen des neuen Problems abbrechen?
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
+CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen

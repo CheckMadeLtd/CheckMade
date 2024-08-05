@@ -48,7 +48,8 @@ public sealed record StakeholderReporter<T>(
                     {
                         Text = GetNotificationOutput(kvp =>
                             (summaryCategoriesByRoleType[recipient.Role.RoleType] & kvp.Key) != 0),
-                        LogicalPort = recipient
+                        LogicalPort = recipient,
+                        ControlPromptsSelection = ControlPrompts.ViewAttachments
                     })
                 .ToImmutableReadOnlyCollection();
         

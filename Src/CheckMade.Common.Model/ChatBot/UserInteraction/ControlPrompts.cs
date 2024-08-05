@@ -31,4 +31,5 @@ public enum ControlPrompts : long
     // Placeholder << 22
     // Placeholder << 23
     
+    ViewAttachments = 1L << 24
 }

@@ -29,6 +29,8 @@ public sealed record ControlPromptsGlossary
         AddPrompt(ControlPrompts.Bad, Ui("👎 Bad"));
         AddPrompt(ControlPrompts.Ok, Ui("😐 Ok"));
         AddPrompt(ControlPrompts.Good, Ui("👍 Good"));
+        
+        AddPrompt(ControlPrompts.ViewAttachments, Ui("📎 View Attachments"));
 
         UiByCallbackId = _promptsBuilder.ToImmutable();
     }
