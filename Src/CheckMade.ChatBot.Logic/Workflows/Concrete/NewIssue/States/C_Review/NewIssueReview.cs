@@ -105,57 +105,23 @@ internal sealed record NewIssueReview<T>(
 
         async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
         {
-            List<OutputDto> outputs = [];
+            var historyWithUpdatedCurrentInput = 
+                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(
+                    currentInput with
+                    {
+                        EntityGuid = await GetLastGuidAsync(),
+                        ResultantWorkflow = new ResultantWorkflowInfo(
+                            Glossary.GetId(typeof(INewIssueWorkflow)),
+                            Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)))
+                    });
             
-            var interactiveHistory =
-                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
-            var notificationOutput = 
-                await GetNotificationOutputAsync();
             var currentIssueTypeName =
-                NewIssueUtils.GetLastIssueType(interactiveHistory)
+                NewIssueUtils.GetLastIssueType(historyWithUpdatedCurrentInput)
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
 
-            outputs.AddRange(
-                (await Reporter.GetNewIssueNotificationRecipientsAsync<T>(
-                    interactiveHistory, currentIssueTypeName))
-                .Select(recipient => 
-                    new OutputDto
-                    {
-                        Text = notificationOutput, 
-                        LogicalPort = recipient
-                    }));
-
-            return outputs;
-            
-            async Task<UiString> GetNotificationOutputAsync()
-            {
-                var historyWithUpdatedCurrentInput = 
-                    await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(
-                        currentInput with
-                        {
-                            EntityGuid = await GetLastGuidAsync(),
-                            ResultantWorkflow = new ResultantWorkflowInfo(
-                                Glossary.GetId(typeof(INewIssueWorkflow)),
-                                Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)))
-                        });
-        
-                var summary = 
-                    (await Factory.CreateAsync(historyWithUpdatedCurrentInput))
-                    .GetSummary();
-        
-                return 
-                    UiConcatenate(
-                        Ui("New issue submission:"),
-                        UiNewLines(1),
-                        UiNoTranslate("- - - - - -"),
-                        UiNewLines(1),
-                        UiConcatenate(
-                            summary.Where(kvp =>
-                                    (IssueSummaryCategories.All & kvp.Key) != 0)
-                                .Select(kvp => kvp.Value)
-                                .ToArray()));
-            }
+            return await Reporter.GetNewIssueNotificationsAsync<T>(
+                historyWithUpdatedCurrentInput, currentIssueTypeName);
         }
         
         async Task<Guid> GetLastGuidAsync()

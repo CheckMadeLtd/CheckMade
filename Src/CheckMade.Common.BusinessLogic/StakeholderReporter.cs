@@ -16,15 +16,52 @@ public sealed record StakeholderReporter(
         ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
     : IStakeholderReporter
 {
-    public async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync<T>(
-        IReadOnlyCollection<TlgInput> interactiveHistory, 
+    public Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync<T>(IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName) where T : ITrade, new()
+    {
+        // For every type of stakeholder, potentially different details and control outputs!
+        
+        // outputs.AddRange(
+        //     (await Reporter.GetNewIssueNotificationRecipientsAsync<T>(
+        //         interactiveHistory, currentIssueTypeName))
+        //     .Select(recipient => 
+        //         new OutputDto
+        //         {
+        //             Text = notificationOutput, 
+        //             LogicalPort = recipient
+        //         }));
+        //
+        
+        // async Task<UiString> GetNotificationOutputAsync()
+        // {
+        //     var summary = 
+        //         (await Factory.CreateAsync(historyWithUpdatedCurrentInput))
+        //         .GetSummary();
+        //         
+        //     return 
+        //         UiConcatenate(
+        //             Ui("New issue submission:"),
+        //             UiNewLines(1),
+        //             UiNoTranslate("- - - - - -"),
+        //             UiNewLines(1),
+        //             UiConcatenate(
+        //                 summary.Where(kvp =>
+        //                         (IssueSummaryCategories.All & kvp.Key) != 0)
+        //                     .Select(kvp => kvp.Value)
+        //                     .ToArray()));
+        // }
+
+        throw new NotImplementedException();
+    }
+
+    private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync<T>(
+        IReadOnlyCollection<TlgInput> inputHistory, 
         string currentIssueTypeName) where T : ITrade, new()
     {
         var allRolesAtCurrentLiveEvent = 
-                    (await RoleRepo.GetAllAsync())
-                    .Where(r => r.AtLiveEvent.Equals(
-                        interactiveHistory.Last().LiveEventContext.GetValueOrThrow()))
-                    .ToArray(); 
+            (await RoleRepo.GetAllAsync())
+            .Where(r => r.AtLiveEvent.Equals(
+                inputHistory.Last().LiveEventContext.GetValueOrThrow()))
+            .ToArray(); 
         
         var allAdminAndObservers =
             allRolesAtCurrentLiveEvent
@@ -50,7 +87,7 @@ public sealed record StakeholderReporter(
             _ => []
         };
 
-        var currentRole = interactiveHistory.First().OriginatorRole.GetValueOrThrow();
+        var currentRole = inputHistory.First().OriginatorRole.GetValueOrThrow();
         
         var recipients = new List<LogicalPort>(
             allAdminAndObservers.Concat(allRelevantSpecialist)
