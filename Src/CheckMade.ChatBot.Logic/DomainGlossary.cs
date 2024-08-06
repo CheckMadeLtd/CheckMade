@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.B_Details;
@@ -55,6 +56,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4");
         AddTerm(LogoutWorkflow.States.LogoutConfirmed, "DPXFZ8");
         AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR");
+        
+        AddTerm(typeof(IViewAttachmentsWorkflow), "D3TC83");
         
         AddTerm(typeof(INewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");

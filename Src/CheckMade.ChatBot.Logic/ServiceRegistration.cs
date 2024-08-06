@@ -1,6 +1,7 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.B_Details;
@@ -28,6 +29,7 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
         services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
         services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
+        services.AddScoped<IViewAttachmentsWorkflow, ViewAttachmentsWorkflow>();
 
         services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
