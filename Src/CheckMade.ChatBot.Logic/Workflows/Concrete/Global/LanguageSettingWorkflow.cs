@@ -6,7 +6,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
 
 using static LanguageSettingWorkflow.States;
 

@@ -1,12 +1,12 @@
 using CheckMade.ChatBot.Logic.Utils;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.D_Terminators;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.C_Review;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
 
 internal interface INewIssueCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 

@@ -8,7 +8,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Utils.GIS;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 
 internal static class NewIssueUtils
 {

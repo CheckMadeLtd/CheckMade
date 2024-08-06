@@ -6,9 +6,9 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.B_Details;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.B_Details;
 
 internal interface INewIssueFacilitySelection<T> : IWorkflowStateNormal where T : ITrade; 
 

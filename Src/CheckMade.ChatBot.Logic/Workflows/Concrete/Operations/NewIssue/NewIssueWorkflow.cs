@@ -1,14 +1,14 @@
 using CheckMade.ChatBot.Logic.Utils;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.NewIssue;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 
 internal interface INewIssueWorkflow : IWorkflow;
 

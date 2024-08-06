@@ -34,4 +34,9 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Workflows\Concrete\Notifications\" />
+      <Folder Include="Workflows\Concrete\Operations\" />
+    </ItemGroup>
+
 </Project>

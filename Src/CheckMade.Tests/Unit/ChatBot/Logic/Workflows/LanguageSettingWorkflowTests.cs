@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -8,7 +8,7 @@ using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.LanguageSettingWorkflow;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSettingWorkflow;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
