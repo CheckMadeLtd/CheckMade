@@ -59,10 +59,10 @@ internal sealed class InputProcessor(
                         });
                 }
 
-                var activeWorkflowInputHistory = 
-                    await generalWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+                var inputHistory = 
+                    await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
                 
-                if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, activeWorkflowInputHistory))
+                if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, inputHistory))
                 {
                     await SaveCurrentInputToDbAsync(currentInput, Option<Guid>.None());
                     
@@ -77,7 +77,7 @@ internal sealed class InputProcessor(
                 }
 
                 var activeWorkflow = 
-                    workflowIdentifier.Identify(activeWorkflowInputHistory);
+                    workflowIdentifier.Identify(inputHistory);
                 
                 var responseResult = 
                     await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
@@ -187,7 +187,10 @@ internal sealed class InputProcessor(
                     ([
                         new OutputDto 
                         { 
-                            Text = Ui("My placeholder answer for lack of a workflow handling your input."), 
+                            Text = UiConcatenate(
+                                Ui("Your input can't be processed."),
+                                UiNewLines(1),
+                                IInputProcessor.SeeValidBotCommandsInstruction)
                         }
                     ], Option<string>.None(), Option<Guid>.None()))));
     }
