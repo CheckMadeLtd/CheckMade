@@ -5,7 +5,6 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete;
@@ -23,23 +22,10 @@ public sealed record StakeholderReporter<T>(
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
-        var newIssue = await IssueFactory.CreateAsync(inputHistory); 
-        
+        var newIssue = 
+            await IssueFactory.CreateAsync(inputHistory); 
         var completeIssueSummary = 
             newIssue.GetSummary();
-
-        var summaryCategoriesByRoleType = 
-            new Dictionary<IRoleType, IssueSummaryCategories>
-            {
-                [new LiveEventAdmin()] = IssueSummaryCategories.CommonBasics,
-                [new LiveEventObserver()] = IssueSummaryCategories.CommonBasics,
-                [new TradeAdmin<T>()] = IssueSummaryCategories.All,
-                [new TradeEngineer<T>()] = IssueSummaryCategories.AllExceptOperationalInfo,
-                [new TradeInspector<T>()] = IssueSummaryCategories.None,
-                [new TradeObserver<T>()] = IssueSummaryCategories.All,
-                [new TradeTeamLead<T>()] = IssueSummaryCategories.AllExceptOperationalInfo
-            };
-        
         var recipients = 
             await GetNewIssueNotificationRecipientsAsync(inputHistory, currentIssueTypeName);
         
@@ -49,7 +35,7 @@ public sealed record StakeholderReporter<T>(
                     new OutputDto
                     {
                         Text = GetNotificationOutput(kvp =>
-                            (summaryCategoriesByRoleType[recipient.Role.RoleType] & kvp.Key) != 0),
+                            (recipient.Role.RoleType.GetIssueSummaryCategoriesForNotifications() & kvp.Key) != 0),
                         LogicalPort = recipient,
                         ControlPromptsSelection = HasEvidenceWithAttachments() 
                             ? ControlPrompts.ViewAttachments 
