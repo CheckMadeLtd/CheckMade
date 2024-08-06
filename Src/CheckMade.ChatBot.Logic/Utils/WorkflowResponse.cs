@@ -47,7 +47,7 @@ internal sealed record WorkflowResponse(
         ]; 
         
         if (currentPromptFinalizer.IsSome)
-            outputs.Add(currentPromptFinalizer.GetValueOrThrow());
+            outputs = outputs.Prepend(currentPromptFinalizer.GetValueOrThrow()).ToList();
 
         if (additionalOutputs != null)
             outputs.AddRange(additionalOutputs);

@@ -47,12 +47,8 @@ internal sealed record NewIssueFacilitySelection<T>(
         ];
         
         return previousPromptFinalizer.Match(
-            ppf =>
-            {
-                outputs.Add(ppf);
-                return outputs;
-            },
-            () => outputs);
+            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
+            () => outputs.ToImmutableReadOnlyCollection());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

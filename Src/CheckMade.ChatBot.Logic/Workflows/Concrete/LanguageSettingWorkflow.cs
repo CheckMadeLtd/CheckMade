@@ -42,7 +42,7 @@ internal sealed record LanguageSettingWorkflow(
         {
             Initial => 
                 new WorkflowResponse(
-                    new OutputDto() 
+                    new OutputDto 
                     { 
                         Text = Ui("🌎 Please select your preferred language:"), 
                         DomainTermSelection = new List<DomainTerm>(
