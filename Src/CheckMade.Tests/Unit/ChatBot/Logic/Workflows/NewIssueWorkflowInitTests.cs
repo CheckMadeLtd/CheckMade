@@ -147,7 +147,7 @@ public class NewIssueWorkflowInitTests
             basics.inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
                 (int)OperationsBotCommands.NewIssue,
-                resultantWorkflowInfo: new ResultantWorkflowInfo(
+                resultantWorkflowState: new ResultantWorkflowState(
                     basics.glossary.GetId(typeof(INewIssueWorkflow)),
                     basics.glossary.GetId(typeof(INewIssueSphereSelection<SaniCleanTrade>))))];
         

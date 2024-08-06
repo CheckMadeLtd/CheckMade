@@ -84,7 +84,7 @@ internal sealed class InputProcessor(
                 await SaveCurrentInputToDbAsync(
                     currentInput,
                     GetEntityGuid(responseResult),
-                    GetResultantWorkflowInfo(responseResult, activeWorkflow));
+                    GetResultantWorkflowState(responseResult, activeWorkflow));
 
                 return ResolveResponseResultIntoOutputs(
                     responseResult,
@@ -102,11 +102,11 @@ internal sealed class InputProcessor(
         currentInput.InputType.Equals(TlgInputType.CommandMessage)
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
-    private ResultantWorkflowInfo? GetResultantWorkflowInfo(
+    private ResultantWorkflowState? GetResultantWorkflowState(
         Result<WorkflowResponse> response,
         Option<IWorkflow> activeWorkflow)
     {
-        ResultantWorkflowInfo? workflowInfo = null;
+        ResultantWorkflowState? workflowInfo = null;
                 
         var newState = response.Match(
             r => r.NewStateId,
@@ -114,7 +114,7 @@ internal sealed class InputProcessor(
                 
         if (activeWorkflow.IsSome && newState.IsSome)
         {
-            workflowInfo = new ResultantWorkflowInfo(
+            workflowInfo = new ResultantWorkflowState(
                 glossary.GetId(activeWorkflow.GetValueOrThrow().GetType().GetInterfaces()[0]),
                 newState.GetValueOrThrow());
         }
@@ -130,11 +130,11 @@ internal sealed class InputProcessor(
     private async Task SaveCurrentInputToDbAsync(
         TlgInput currentInput,
         Option<Guid> entityGuid,
-        ResultantWorkflowInfo? workflowInfo = null)
+        ResultantWorkflowState? workflowInfo = null)
     {
         await inputsRepo.AddAsync(currentInput with
         {
-            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowInfo>.None(),
+            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowState>.None(),
             EntityGuid = entityGuid
         });
     }

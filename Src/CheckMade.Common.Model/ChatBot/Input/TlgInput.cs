@@ -10,6 +10,6 @@ public sealed record TlgInput(
     TlgInputType InputType,
     Option<IRoleInfo> OriginatorRole,
     Option<ILiveEventInfo> LiveEventContext,
-    Option<ResultantWorkflowInfo> ResultantWorkflow,
+    Option<ResultantWorkflowState> ResultantWorkflow,
     Option<Guid> EntityGuid,
     TlgInputDetails Details);

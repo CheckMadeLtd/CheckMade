@@ -53,7 +53,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             new TlgInputDetails(
                 Option<string>.None(),

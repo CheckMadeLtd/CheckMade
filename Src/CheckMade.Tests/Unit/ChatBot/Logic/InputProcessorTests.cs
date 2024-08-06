@@ -39,7 +39,7 @@ public class InputProcessorTests
         var expectedTlgInputSavedToDb = 
             startCommand with
             {
-                ResultantWorkflow = new ResultantWorkflowInfo(
+                ResultantWorkflow = new ResultantWorkflowState(
                     glossary.GetId(typeof(IUserAuthWorkflow)),
                     glossary.GetId(UserAuthWorkflow.States.Initial))
             };
@@ -97,13 +97,13 @@ public class InputProcessorTests
             });
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = outOfScopeCallbackQuery;
+        var expectedTlgInputSavedToDbWithoutResultantWorkflowState = outOfScopeCallbackQuery;
         
         var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
         mockInputRepo
             .Setup(repo => 
                 repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
+                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowState))))
             .Verifiable();
         
         const string expectedWarningOutput = 
@@ -212,13 +212,13 @@ public class InputProcessorTests
         var (services, container) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = locationUpdate;
+        var expectedTlgInputSavedToDbWithoutResultantWorkflowState = locationUpdate;
 
         var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
         mockInputRepo
             .Setup(repo => 
                 repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
+                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowState))))
             .Verifiable();
         
         var actualOutput =

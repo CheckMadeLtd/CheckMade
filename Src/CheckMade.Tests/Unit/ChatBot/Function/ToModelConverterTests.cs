@@ -49,7 +49,7 @@ public sealed class ToModelConverterTests
             TlgInputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
-            Option<ResultantWorkflowInfo>.None(),
+            Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
@@ -97,7 +97,7 @@ public sealed class ToModelConverterTests
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
@@ -144,7 +144,7 @@ public sealed class ToModelConverterTests
             TlgInputType.AttachmentMessage,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Caption,
@@ -187,7 +187,7 @@ public sealed class ToModelConverterTests
             TlgInputType.Location,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 geoCoordinates: expectedGeoCoordinates));
@@ -225,7 +225,7 @@ public sealed class ToModelConverterTests
             TlgInputType.CommandMessage,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
@@ -263,7 +263,7 @@ public sealed class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
@@ -301,7 +301,7 @@ public sealed class ToModelConverterTests
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
@@ -338,7 +338,7 @@ public sealed class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(),
+            Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
@@ -372,7 +372,7 @@ public sealed class ToModelConverterTests
             TlgInputType.CallbackQuery,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",

@@ -289,7 +289,7 @@ internal sealed class ToModelConverter(
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
                 : Option<IRoleInfo>.None(),
             liveEventContext,
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             new TlgInputDetails(
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 

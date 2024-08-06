@@ -307,12 +307,12 @@ internal static class ModelReaders
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 
-        Option<ResultantWorkflowInfo> GetWorkflowInfo()
+        Option<ResultantWorkflowState> GetWorkflowInfo()
         {
             if (reader.IsDBNull(reader.GetOrdinal("input_workflow")))
-                return Option<ResultantWorkflowInfo>.None();
+                return Option<ResultantWorkflowState>.None();
             
-            return new ResultantWorkflowInfo(
+            return new ResultantWorkflowState(
                 reader.GetString(reader.GetOrdinal("input_workflow")),
                 reader.GetString(reader.GetOrdinal("input_wf_state")));
         }
