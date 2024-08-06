@@ -7,6 +7,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
@@ -22,9 +23,10 @@ public sealed record StakeholderReporter<T>(
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
+        var newIssue = await IssueFactory.CreateAsync(inputHistory); 
+        
         var completeIssueSummary = 
-            (await IssueFactory.CreateAsync(inputHistory))
-            .GetSummary();
+            newIssue.GetSummary();
 
         var summaryCategoriesByRoleType = 
             new Dictionary<IRoleType, IssueSummaryCategories>
@@ -40,10 +42,6 @@ public sealed record StakeholderReporter<T>(
         
         var recipients = 
             await GetNewIssueNotificationRecipientsAsync(inputHistory, currentIssueTypeName);
-
-        var hasAttachments = 
-            completeIssueSummary[IssueSummaryCategories.EvidenceInfo]
-                .
         
         return 
             recipients
@@ -53,9 +51,14 @@ public sealed record StakeholderReporter<T>(
                         Text = GetNotificationOutput(kvp =>
                             (summaryCategoriesByRoleType[recipient.Role.RoleType] & kvp.Key) != 0),
                         LogicalPort = recipient,
-                        ControlPromptsSelection = ControlPrompts.ViewAttachments
+                        ControlPromptsSelection = HasEvidenceWithAttachments() 
+                            ? ControlPrompts.ViewAttachments 
+                            : Option<ControlPrompts>.None()
                     })
                 .ToImmutableReadOnlyCollection();
+
+        bool HasEvidenceWithAttachments() =>
+            (newIssue as ITradeIssueWithEvidence<T>) is { Evidence.Attachments.IsSome: true };
         
         UiString GetNotificationOutput(Func<KeyValuePair<IssueSummaryCategories, UiString>, bool> summaryFilter)
         {
