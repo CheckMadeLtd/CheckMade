@@ -41,21 +41,22 @@ internal sealed class InputProcessor(
 
                 if (IsStartCommand(currentInput))
                 {
-                    outputBuilder.Add(new OutputDto{ Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
-                                                               "I shall follow your command!") });
+                    outputBuilder.Add(new OutputDto
+                    { 
+                        Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
+                                  "I shall follow your command!")
+                    });
                 }
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {
                     outputBuilder.Add(
-                        new PromptTransition(
-                                new OutputDto
-                                {
-                                    Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
-                                              "successful submission."),
-                                    UpdateExistingOutputMessageId = currentInput.TlgMessageId - 1
-                                })
-                            .CurrentPromptFinalizer.GetValueOrThrow());
+                        new OutputDto
+                        {
+                            Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                      "successful submission."),
+                            UpdateExistingOutputMessageId = currentInput.TlgMessageId - 1
+                        });
                 }
 
                 var activeWorkflowInputHistory = 
