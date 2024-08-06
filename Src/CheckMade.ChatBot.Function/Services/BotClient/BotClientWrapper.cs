@@ -5,6 +5,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -104,28 +105,43 @@ public sealed class BotClientWrapper(
                 ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
                 : null;
 
-            if (text.IsSome)
+            try
             {
-                await retryPolicy.ExecuteAsync(async () =>
-                    await botClient.EditMessageTextAsync(
-                        chatId,
-                        messageId,
-                        text.GetValueOrThrow(),
-                        parseMode: ParseMode.Html,
-                        replyMarkup: updatedInlineKeyboard,
-                        cancellationToken: cancellationToken));
+                if (text.IsSome)
+                {
+                    await retryPolicy.ExecuteAsync(async () =>
+                        await botClient.EditMessageTextAsync(
+                            chatId,
+                            messageId,
+                            text.GetValueOrThrow(),
+                            parseMode: ParseMode.Html,
+                            replyMarkup: updatedInlineKeyboard,
+                            cancellationToken: cancellationToken));
+                }
+                else
+                {
+                    await retryPolicy.ExecuteAsync(async () =>
+                        await botClient.EditMessageReplyMarkupAsync(
+                            chatId,
+                            messageId,
+                            updatedInlineKeyboard,
+                            cancellationToken: cancellationToken));
+                }
             }
-            else
+            catch (ApiRequestException)
             {
-                await retryPolicy.ExecuteAsync(async () =>
-                    await botClient.EditMessageReplyMarkupAsync(
-                        chatId,
-                        messageId,
-                        updatedInlineKeyboard,
-                        cancellationToken: cancellationToken));
+                // Gets thrown for "Bad Request: message can't be edited", in which case we delete and update
+                await DeleteAndNewAsync();
             }
         }
         else
+        {
+            await DeleteAndNewAsync();
+        }
+
+        return Unit.Value;
+
+        async Task DeleteAndNewAsync()
         {
             await retryPolicy.ExecuteAsync(async () =>
             {
@@ -142,8 +158,6 @@ public sealed class BotClientWrapper(
                     cancellationToken);
             });
         }
-
-        return Unit.Value;
     }
 
     public async Task<Unit> SendDocumentAsync(AttachmentSendOutParameters documentSendOutParams,

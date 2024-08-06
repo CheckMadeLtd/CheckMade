@@ -47,11 +47,15 @@ internal sealed class InputProcessor(
                 
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {
-                    outputBuilder.Add(new OutputDto
-                    {
-                        Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
-                                  "successful submission.")
-                    });
+                    outputBuilder.Add(
+                        new PromptTransition(
+                                new OutputDto
+                                {
+                                    Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
+                                              "successful submission."),
+                                    UpdateExistingOutputMessageId = currentInput.TlgMessageId - 1
+                                })
+                            .CurrentPromptFinalizer.GetValueOrThrow());
                 }
 
                 var activeWorkflowInputHistory = 
