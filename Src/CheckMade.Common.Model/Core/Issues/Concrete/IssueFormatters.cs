@@ -49,12 +49,12 @@ internal static class IssueFormatters
     public static UiString FormatEvidenceInfo<T>(
         ITradeIssueWithEvidence<T> issue) where T : ITrade
     {
-        var media = issue.Evidence.Media.IsSome
-            ? issue.Evidence.Media.GetValueOrThrow()
+        var attachments = issue.Evidence.Attachments.IsSome
+            ? issue.Evidence.Attachments.GetValueOrThrow()
             : null;
 
-        var mediaCaptions = media != null
-            ? media
+        var captions = attachments != null
+            ? attachments
                 .Where(m => m.Caption.IsSome)
                 .Select(m => UiConcatenate(
                     UiNewLines(1),
@@ -66,11 +66,11 @@ internal static class IssueFormatters
             Ui("<b>Description:</b> "), issue.Evidence.Description.IsSome 
                 ? UiConcatenate(
                     UiIndirect(issue.Evidence.Description.GetValueOrThrow()),
-                    UiConcatenate(mediaCaptions))
+                    UiConcatenate(captions))
                 : UiNoTranslate("n/a"),
             UiNewLines(1),
-            Ui("<b># Attachments:</b> "), media != null
-                ? UiIndirect(media.Count.ToString())
+            Ui("<b># Attachments:</b> "), attachments != null
+                ? UiIndirect(attachments.Count.ToString())
                 : UiNoTranslate("n/a"));
     }
 }

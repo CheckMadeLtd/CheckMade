@@ -41,6 +41,10 @@ public sealed record StakeholderReporter<T>(
         var recipients = 
             await GetNewIssueNotificationRecipientsAsync(inputHistory, currentIssueTypeName);
 
+        var hasAttachments = 
+            completeIssueSummary[IssueSummaryCategories.EvidenceInfo]
+                .
+        
         return 
             recipients
                 .Select(recipient =>

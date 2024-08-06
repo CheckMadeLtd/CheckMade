@@ -170,7 +170,7 @@ internal sealed record IssueFactory<T>(
                     combinedDescriptionEvidence.Append('\n');
             }
 
-            var submittedMedia =
+            var submittedAttachments =
                 inputs
                     .Where(i =>
                         i.InputType == TlgInputType.AttachmentMessage &&
@@ -179,10 +179,10 @@ internal sealed record IssueFactory<T>(
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .ToImmutableReadOnlyCollection();
 
-            List<AttachmentDetails> mediaEvidence = [];
+            List<AttachmentDetails> attachments = [];
             
-            mediaEvidence
-                .AddRange(submittedMedia
+            attachments
+                .AddRange(submittedAttachments
                     .Select(attachment => 
                         new AttachmentDetails(
                             attachment.Details.AttachmentInternalUri.GetValueOrThrow(),
@@ -196,8 +196,8 @@ internal sealed record IssueFactory<T>(
                 Description = !string.IsNullOrWhiteSpace(combinedDescription)
                     ? combinedDescription
                     : Option<string>.None(),
-                Media = mediaEvidence.Count != 0 
-                    ? mediaEvidence
+                Attachments = attachments.Count != 0 
+                    ? attachments
                     : Option<IReadOnlyCollection<AttachmentDetails>>.None()
             };
         }

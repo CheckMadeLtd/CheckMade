@@ -5,6 +5,6 @@ public sealed record IssueEvidence
     public Option<string> Description { get; init; } = 
         Option<string>.None();
     
-    public Option<IReadOnlyCollection<AttachmentDetails>> Media { get; init; } =
+    public Option<IReadOnlyCollection<AttachmentDetails>> Attachments { get; init; } =
         Option<IReadOnlyCollection<AttachmentDetails>>.None();
 }
