@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.Common.Model.ChatBot.Input;
