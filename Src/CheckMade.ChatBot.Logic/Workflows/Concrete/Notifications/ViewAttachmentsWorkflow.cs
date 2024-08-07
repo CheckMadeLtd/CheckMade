@@ -6,12 +6,12 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 internal interface IViewAttachmentsWorkflow : IWorkflow;
 
 internal sealed record ViewAttachmentsWorkflow(
-        IStateMediator Mediator,
-        IGeneralWorkflowUtils GeneralWorkflowUtils) 
-    : IViewAttachmentsWorkflow
+    IGeneralWorkflowUtils GeneralWorkflowUtils,   
+    IStateMediator Mediator) 
+    : WorkflowBase(GeneralWorkflowUtils, Mediator), IViewAttachmentsWorkflow
 {
-    public Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
+    protected override Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {
-        throw new NotImplementedException("ViewAttachments hahaha");
+        throw new NotImplementedException();
     }
 }
