@@ -43,7 +43,7 @@ internal sealed record WorkflowIdentifier(
         
         Option<IWorkflow> IdentifyOperationsWorkflow()
         {
-            return GetLastBotCommandOfActiveWorkflow().Match(
+            return GetBotCommandOfLastActiveWorkflow().Match(
                 cmd =>
                 {
                     var lastBotCommandCode = cmd.Details.BotCommandEnumCode.GetValueOrThrow();
@@ -62,30 +62,32 @@ internal sealed record WorkflowIdentifier(
                 Option<IWorkflow>.None);
         }
 
-        Option<TlgInput> GetLastBotCommandOfActiveWorkflow()
+        Option<TlgInput> GetBotCommandOfLastActiveWorkflow()
         {
-            var lastBotCommand = inputHistory.GetLastBotCommand();
+            var botCommand = inputHistory.GetLastBotCommand();
 
-            if (lastBotCommand.IsNone)
+            if (botCommand.IsNone)
                 return Option<TlgInput>.None();
             
             // ToDo: replace with `i == lastBotCommand.GetValueOrThrow()` once I overloaded equals and == for TlgInput 
-            var resultantStatesInLastWorkflow =
+            var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
-                    i.TlgMessageId == lastBotCommand.GetValueOrThrow().TlgMessageId &&
-                    i.TlgDate == lastBotCommand.GetValueOrThrow().TlgDate);
-
+                    i.TlgMessageId == botCommand.GetValueOrThrow().TlgMessageId &&
+                    i.TlgDate == botCommand.GetValueOrThrow().TlgDate);
+            
             // ToDo: until complete refactor of old simple Workflows, this needs to handle Enum states as well. 
-            var isLastBotCommandWorkflowActive =
-                !resultantStatesInLastWorkflow
+            // or, turn the Enum states into type states while keeping everything in a single Workflow for 
+            // Logout, LangSett, UserAuth. Then this code here can stay the way it is.
+            var isWorkflowActive =
+                !lastWorkflowHistory
                     .Any(i =>
                         i.ResultantWorkflow.IsSome &&
                         Glossary.GetDtType(i.ResultantWorkflow.GetValueOrThrow().InStateId)
                             .IsAssignableTo(typeof(IWorkflowStateTerminator)));
 
-            return isLastBotCommandWorkflowActive switch
+            return isWorkflowActive switch
             {
-                true => lastBotCommand,
+                true => botCommand,
                 _ => Option<TlgInput>.None()
             };
         }
@@ -128,7 +130,7 @@ internal sealed record WorkflowIdentifier(
                 };
             }
             
-            return GetLastBotCommandOfActiveWorkflow().Match(
+            return GetBotCommandOfLastActiveWorkflow().Match(
                 cmd => 
                     GetGlobalMenuWorkflow(cmd.Details.BotCommandEnumCode.GetValueOrThrow()),
                 Option<IWorkflow>.None);
