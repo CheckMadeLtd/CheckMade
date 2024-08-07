@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
@@ -55,9 +56,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILanguageSettingSet), "DL32QX");
         
         AddTerm(typeof(ILogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
-        AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4");
-        AddTerm(LogoutWorkflow.States.LogoutConfirmed, "DPXFZ8");
-        AddTerm(LogoutWorkflow.States.LogoutAborted, "D1T2AR");
+        AddTerm(typeof(ILogoutWorkflowConfirm), "DZF3Z4");
+        AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
+        AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
         
         AddTerm(typeof(IViewAttachmentsWorkflow), "D3TC83");
         

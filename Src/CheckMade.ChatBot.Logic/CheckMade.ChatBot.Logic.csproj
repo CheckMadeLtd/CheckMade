@@ -35,7 +35,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Workflows\Concrete\Global\Logout\States\" />
       <Folder Include="Workflows\Concrete\Operations\" />
     </ItemGroup>
 

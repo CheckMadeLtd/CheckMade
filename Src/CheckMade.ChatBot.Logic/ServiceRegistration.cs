@@ -4,6 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
@@ -39,6 +40,10 @@ public static class ServiceRegistration
 
         services.AddScoped<ILanguageSettingSelect, LanguageSettingSelect>();
         services.AddScoped<ILanguageSettingSet, LanguageSettingSet>();
+
+        services.AddScoped<ILogoutWorkflowConfirm, LogoutWorkflowConfirm>();
+        services.AddScoped<ILogoutWorkflowLoggedOut, LogoutWorkflowLoggedOut>();
+        services.AddScoped<ILogoutWorkflowAborted, LogoutWorkflowAborted>();
 
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
         services.AddScoped<INewIssueCancelConfirmation<SaniCleanTrade>, NewIssueCancelConfirmation<SaniCleanTrade>>();
