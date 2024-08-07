@@ -5,7 +5,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 
 internal interface IViewAttachmentsWorkflow : IWorkflow;
 
-internal sealed record ViewAttachmentsWorkflow : IViewAttachmentsWorkflow
+internal sealed record ViewAttachmentsWorkflow(
+        IStateMediator Mediator,
+        IGeneralWorkflowUtils GeneralWorkflowUtils) 
+    : IViewAttachmentsWorkflow
 {
     public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
     {

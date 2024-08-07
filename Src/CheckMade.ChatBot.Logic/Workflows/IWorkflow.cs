@@ -7,4 +7,7 @@ internal interface IWorkflow
 {
     bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory);
     Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput);
+    
+    IStateMediator Mediator { get; }
+    IGeneralWorkflowUtils GeneralWorkflowUtils { get; }
 }
