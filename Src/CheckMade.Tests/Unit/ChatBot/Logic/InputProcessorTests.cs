@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -14,7 +15,7 @@ using Moq;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
-public class InputProcessorTests
+public sealed class InputProcessorTests
 {
     private ServiceProvider? _services;
  
@@ -41,7 +42,7 @@ public class InputProcessorTests
             {
                 ResultantWorkflow = new ResultantWorkflowState(
                     glossary.GetId(typeof(IUserAuthWorkflow)),
-                    glossary.GetId(UserAuthWorkflow.States.Initial))
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry)))
             };
         
         var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];

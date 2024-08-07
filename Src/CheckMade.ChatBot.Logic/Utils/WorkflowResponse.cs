@@ -120,12 +120,12 @@ internal sealed record WorkflowResponse(
             NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
             EntityGuid: Option<Guid>.None());
 
-    internal static WorkflowResponse CreateWarningEnterTextOrAttachmentsOnly(IWorkflowStateNormal currentState) =>
+    internal static WorkflowResponse CreateWarningEnterTextOnly(IWorkflowStateNormal currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()
                 {
-                    Text = Ui("❗️Invalid input! Please enter a text message or a photo/file attachment only.")
+                    Text = Ui("❗️Invalid input! Please only enter a text message.")
                 }
             },
             NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),

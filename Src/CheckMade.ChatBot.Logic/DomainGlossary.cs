@@ -4,6 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
@@ -48,8 +49,8 @@ public sealed record DomainGlossary : IDomainGlossary
         #region Workflows
         
         AddTerm(typeof(IUserAuthWorkflow), "DJIQPO");
-        AddTerm(UserAuthWorkflow.States.Initial, "DTWLPM");
-        AddTerm(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt, "DRGLYG");
+        AddTerm(typeof(IUserAuthWorkflowTokenEntry), "DTWLPM");
+        AddTerm(typeof(IUserAuthWorkflowAuthenticated), "DRGLYG");
         
         AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3");
         AddTerm(typeof(ILanguageSettingSelect), "DD4252");
@@ -230,7 +231,4 @@ public sealed record DomainGlossary : IDomainGlossary
 
     private void AddTerm(Type typeTerm, string idRaw) =>
         AddTerm(typeTerm, idRaw, UiNoTranslate(typeTerm.Name));
-    
-    private void AddTerm(Enum enumTerm, string idRaw) =>
-        AddTerm(enumTerm, idRaw, UiNoTranslate(enumTerm.ToString()));
 }

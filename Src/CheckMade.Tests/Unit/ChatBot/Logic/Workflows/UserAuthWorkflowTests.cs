@@ -1,14 +1,12 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.UserAuthWorkflow.States;
 using InputValidator = CheckMade.Common.LangExt.InputValidator;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
@@ -17,22 +15,22 @@ public sealed class UserAuthWorkflowTests
 {
     private ServiceProvider? _services;
 
-    [Fact]
-    public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        List<TlgInput> inputHistory = [inputGenerator.GetValidTlgInputTextMessage()];
-        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
-        
-        var actualState = 
-            workflow.DetermineCurrentState(inputHistory);
-        
-        Assert.Equal(
-            ReceivedTokenSubmissionAttempt,
-            actualState);
-    }
+    // [Fact]
+    // public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+    //     List<TlgInput> inputHistory = [inputGenerator.GetValidTlgInputTextMessage()];
+    //     var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
+    //     
+    //     var actualState = 
+    //         workflow.DetermineCurrentState(inputHistory);
+    //     
+    //     Assert.Equal(
+    //         ReceivedTokenSubmissionAttempt,
+    //         actualState);
+    // }
 
     [Fact]
     public async Task GetResponseAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
