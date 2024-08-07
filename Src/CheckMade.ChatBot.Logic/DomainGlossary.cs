@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
@@ -48,9 +50,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(UserAuthWorkflow.States.ReceivedTokenSubmissionAttempt, "DRGLYG");
         
         AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3");
-        AddTerm(LanguageSettingWorkflow.States.Initial, "DD4252");
-        AddTerm(LanguageSettingWorkflow.States.ReceivedLanguageSetting, "DGWJX8");
-        AddTerm(LanguageSettingWorkflow.States.Completed, "DL32QX");
+        AddTerm(typeof(ILanguageSettingSelect), "DD4252");
+        AddTerm(typeof(ILanguageSettingSet), "DL32QX");
         
         AddTerm(typeof(ILogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
         AddTerm(LogoutWorkflow.States.Initial, "DZF3Z4");

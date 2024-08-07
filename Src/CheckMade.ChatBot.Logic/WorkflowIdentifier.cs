@@ -2,6 +2,7 @@ using System.ComponentModel;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -75,9 +76,6 @@ internal sealed record WorkflowIdentifier(
                     i.TlgMessageId == botCommand.GetValueOrThrow().TlgMessageId &&
                     i.TlgDate == botCommand.GetValueOrThrow().TlgDate);
             
-            // ToDo: until complete refactor of old simple Workflows, this needs to handle Enum states as well. 
-            // or, turn the Enum states into type states while keeping everything in a single Workflow for 
-            // Logout, LangSett, UserAuth. Then this code here can stay the way it is.
             var isWorkflowActive =
                 !lastWorkflowHistory
                     .Any(i =>

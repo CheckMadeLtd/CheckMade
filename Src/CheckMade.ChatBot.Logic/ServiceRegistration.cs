@@ -1,6 +1,8 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
@@ -33,6 +35,9 @@ public static class ServiceRegistration
 
         services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
+
+        services.AddScoped<ILanguageSettingSelect, LanguageSettingSelect>();
+        services.AddScoped<ILanguageSettingSet, LanguageSettingSet>();
 
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
         services.AddScoped<INewIssueCancelConfirmation<SaniCleanTrade>, NewIssueCancelConfirmation<SaniCleanTrade>>();
