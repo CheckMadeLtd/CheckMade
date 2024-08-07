@@ -68,60 +68,6 @@ public sealed class InputProcessorTests
     }
     
     [Fact]
-    public async Task ProcessInputAsync_ReturnsWarning_AndSavesToDb_ForOutOfScopeCallbackQuery()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-
-        // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
-        var outOfScopeCallbackQuery =
-            inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), 
-                messageId: 4);
-
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
-                inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
-                    (int)OperationsBotCommands.Settings,
-                    messageId: 2),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                    Dt(LanguageCode.de),
-                    messageId: 4),
-                inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
-                    (int)OperationsBotCommands.NewIssue,
-                    messageId: 6)
-            });
-        var inputProcessor = services.GetRequiredService<IInputProcessor>();
-
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowState = outOfScopeCallbackQuery;
-        
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowState))))
-            .Verifiable();
-        
-        const string expectedWarningOutput = 
-            "The previous workflow was completed, so your last message/action will be ignored.";
-        
-        var actualOutput = 
-            await inputProcessor
-                .ProcessInputAsync(outOfScopeCallbackQuery);
-        
-        Assert.Equal(
-            expectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
-        
-        mockInputRepo.Verify();
-    }
-
-    [Fact]
     public async Task ProcessInputAsync_PrefixesWarning_WhenUserInterruptedPreviousWorkflow_WithNewBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();

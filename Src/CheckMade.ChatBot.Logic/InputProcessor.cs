@@ -62,20 +62,6 @@ internal sealed class InputProcessor(
                 var inputHistory = 
                     await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
                 
-                if (IsCurrentInputFromOutOfScopeWorkflow(currentInput, inputHistory))
-                {
-                    await SaveCurrentInputToDbAsync(currentInput, Option<Guid>.None());
-                    
-                    return 
-                    [
-                        new OutputDto 
-                        {
-                            Text = Ui("The previous workflow was completed, " +
-                                      "so your last message/action will be ignored.") 
-                        }
-                    ];
-                }
-
                 var activeWorkflow = 
                     workflowIdentifier.Identify(inputHistory);
                 
@@ -161,17 +147,6 @@ internal sealed class InputProcessor(
                previousWorkflow.IsSome && 
                !previousWorkflow.GetValueOrThrow().IsCompleted(previousWorkflowInputHistory);
     }
-
-    private static bool IsCurrentInputFromOutOfScopeWorkflow(
-        TlgInput currentInput, IReadOnlyCollection<TlgInput> activeWorkflowInputHistory) => 
-        activeWorkflowInputHistory.GetLastBotCommand().Match(
-            lastBotCommand => 
-            {
-                var activeWorkflowStartMessageId = lastBotCommand.TlgMessageId;
-                
-                return currentInput.TlgMessageId < activeWorkflowStartMessageId;
-            },
-            () => false);
 
     private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
