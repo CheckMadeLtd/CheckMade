@@ -22,7 +22,7 @@ internal sealed record WorkflowResponse(
         OutputDto singleOutput, IWorkflowStateNormal newState, Guid? entityGuid = null) 
         : this(
             Output: new List<OutputDto> { singleOutput }, 
-            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
+            NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
             EntityGuid: entityGuid ?? Option<Guid>.None())
     {
     }
@@ -54,7 +54,8 @@ internal sealed record WorkflowResponse(
         
         return new WorkflowResponse(
             Output: outputs,
-            NewStateId: newState?.Glossary.GetId(newState.GetType().GetInterfaces()[0]) ?? Option<string>.None(), 
+            NewStateId: newState?.Glossary.GetIdForEquallyNamedInterface(newState.GetType()) 
+                        ?? Option<string>.None(), 
             EntityGuid: entityGuid ?? Option<Guid>.None()
         );
     }
@@ -91,11 +92,12 @@ internal sealed record WorkflowResponse(
                 currentInput,
                 nextPromptInPlaceUpdateMessageId,
                 currentPromptFinalizer),
-            NewStateId: newState.Glossary.GetId(newState.GetType().GetInterfaces()[0]),
+            NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
             EntityGuid: entityGuid ?? Option<Guid>.None());
     }
 
-    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(IWorkflowStateNormal currentState) =>
+    internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(
+        IWorkflowStateNormal currentState) =>
         new(Output: new List<OutputDto>
             {
                 new()
@@ -103,7 +105,7 @@ internal sealed record WorkflowResponse(
                     Text = Ui("❗️Invalid input! Please answer only using the buttons above.")
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
+            NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
             EntityGuid: Option<Guid>.None());
 
     internal static WorkflowResponse
@@ -117,7 +119,7 @@ internal sealed record WorkflowResponse(
                     PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(choices)
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
+            NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
             EntityGuid: Option<Guid>.None());
 
     internal static WorkflowResponse CreateWarningEnterTextOnly(IWorkflowStateNormal currentState) =>
@@ -128,6 +130,6 @@ internal sealed record WorkflowResponse(
                     Text = Ui("❗️Invalid input! Please only enter a text message.")
                 }
             },
-            NewStateId: currentState.Glossary.GetId(currentState.GetType().GetInterfaces()[0]),
+            NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
             EntityGuid: Option<Guid>.None());
 }

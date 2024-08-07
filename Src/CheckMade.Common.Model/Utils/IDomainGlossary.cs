@@ -9,6 +9,7 @@ public interface IDomainGlossary
     string GetId(Type dtType);
     string GetId(Enum dtEnum);
     string GetId(DomainTerm domainTerm);
+    string GetIdForEquallyNamedInterface(Type dtType);
     
     UiString GetUi(Type dtType);
     UiString GetUi(Enum dtEnum);

@@ -63,7 +63,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                             Ui("This is an unknown token. Try again..."),
                             UiNewLines(1), EnterTokenPrompt)
                     },
-                    newState: Mediator.Next(GetType().GetInterfaces()[0]))
+                    newState: this)
             },
 
             _ => WorkflowResponse.Create(
@@ -72,7 +72,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                 {
                     Text = Ui("Bad token format! Try again...")
                 },
-                newState: Mediator.Next(GetType().GetInterfaces()[0]))
+                newState: this)
         };
 
         async Task<bool> TokenExistsAsync() =>

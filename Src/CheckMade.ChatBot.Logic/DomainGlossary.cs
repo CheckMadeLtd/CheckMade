@@ -181,6 +181,11 @@ public sealed record DomainGlossary : IDomainGlossary
     public string GetId(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].callbackId;
     public string GetId(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].callbackId;
 
+    public string GetIdForEquallyNamedInterface(Type dtType) =>
+        GetId(dtType
+            .GetInterfaces()
+            .First(i => i.Name.Contains(dtType.Name)));
+    
     public UiString GetUi(Type dtType) => IdAndUiByTerm[Dt(dtType)].uiString;
     public UiString GetUi(Enum dtEnum) => IdAndUiByTerm[Dt(dtEnum)].uiString;
     public UiString GetUi(DomainTerm domainTerm) => IdAndUiByTerm[domainTerm].uiString;
