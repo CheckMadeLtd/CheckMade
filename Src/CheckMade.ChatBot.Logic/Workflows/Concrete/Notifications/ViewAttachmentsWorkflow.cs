@@ -10,11 +10,6 @@ internal sealed record ViewAttachmentsWorkflow(
         IGeneralWorkflowUtils GeneralWorkflowUtils) 
     : IViewAttachmentsWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         throw new NotImplementedException("ViewAttachments hahaha");

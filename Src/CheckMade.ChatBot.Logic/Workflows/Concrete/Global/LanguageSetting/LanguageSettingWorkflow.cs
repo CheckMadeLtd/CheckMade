@@ -12,9 +12,6 @@ internal sealed record LanguageSettingWorkflow(
         IStateMediator Mediator) 
     : ILanguageSettingWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory) =>
-        GeneralWorkflowUtils.IsWorkflowTerminated(inputHistory);
-
     public async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         var interactiveHistory =

@@ -141,11 +141,8 @@ internal sealed class InputProcessor(
                 input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
 
-        var previousWorkflow = workflowIdentifier.Identify(previousWorkflowInputHistory);
-
         return previousWorkflowInputHistory.Count > 0 && 
-               previousWorkflow.IsSome && 
-               !previousWorkflow.GetValueOrThrow().IsCompleted(previousWorkflowInputHistory);
+               !generalWorkflowUtils.IsWorkflowTerminated(previousWorkflowInputHistory);
     }
 
     private static async Task<Result<WorkflowResponse>>

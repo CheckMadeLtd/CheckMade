@@ -18,9 +18,6 @@ internal sealed record UserAuthWorkflow(
         Text = Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample())
     };
 
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory) =>
-        GeneralWorkflowUtils.IsWorkflowTerminated(inputHistory);
-
     public async Task<Result<WorkflowResponse>> 
         GetResponseAsync(TlgInput currentInput)
     {

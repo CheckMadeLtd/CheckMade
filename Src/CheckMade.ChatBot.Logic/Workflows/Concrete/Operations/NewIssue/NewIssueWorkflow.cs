@@ -18,9 +18,6 @@ internal sealed record NewIssueWorkflow(
         IStateMediator Mediator)
     : INewIssueWorkflow
 {
-    public bool IsCompleted(IReadOnlyCollection<TlgInput> inputHistory) =>
-        GeneralWorkflowUtils.IsWorkflowTerminated(inputHistory);
-
     public async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
