@@ -6,6 +6,8 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal interface IWorkflowStateNormal : IWorkflowState
 {
+    IStateMediator Mediator { get; }
+    
     Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
         Option<int> inPlaceUpdateMessageId,

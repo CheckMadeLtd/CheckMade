@@ -11,6 +11,7 @@ internal interface INewIssueEditMenu<T> : IWorkflowStateNormal where T : ITrade;
 
 internal sealed record NewIssueEditMenu<T>(
         IDomainGlossary Glossary,
+        IStateMediator Mediator,
         IGeneralWorkflowUtils GeneralUtils) 
     : INewIssueEditMenu<T> where T : ITrade
 {
