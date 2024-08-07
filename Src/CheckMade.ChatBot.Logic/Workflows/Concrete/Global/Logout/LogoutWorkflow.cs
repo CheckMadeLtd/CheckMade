@@ -6,7 +6,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 
 using static LogoutWorkflow.States;
 
