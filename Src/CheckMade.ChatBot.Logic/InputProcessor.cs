@@ -102,7 +102,7 @@ internal sealed class InputProcessor(
         if (activeWorkflow.IsSome && newState.IsSome)
         {
             workflowInfo = new ResultantWorkflowState(
-                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType().GetInterfaces()[0]),
+                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType().GetInterfaces()[2]),
                 newState.GetValueOrThrow());
         }
 

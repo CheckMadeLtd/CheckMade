@@ -54,7 +54,7 @@ public sealed class InputProcessorTests
         
         List<OutputDto> expectedOutputs = [
             new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
-            new(){ Text = UserAuthWorkflow.EnterTokenPrompt.Text.GetValueOrThrow() }];
+            new(){ Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }];
         
         var actualOutput = 
             await inputProcessor

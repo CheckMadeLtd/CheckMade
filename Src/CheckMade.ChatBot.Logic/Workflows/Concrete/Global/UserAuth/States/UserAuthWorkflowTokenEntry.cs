@@ -19,7 +19,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
         ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
     : IUserAuthWorkflowTokenEntry
 {
-    private static readonly UiString EnterTokenPrompt = 
+    internal static readonly UiString EnterTokenPrompt = 
         Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample());
     
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(

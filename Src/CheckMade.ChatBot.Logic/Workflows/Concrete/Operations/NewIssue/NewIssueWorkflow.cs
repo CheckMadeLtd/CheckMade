@@ -3,7 +3,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_In
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewIssueUtils;
@@ -20,8 +19,6 @@ internal sealed record NewIssueWorkflow(
 {
     public async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
-        var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
-        
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
 
@@ -31,7 +28,7 @@ internal sealed record NewIssueWorkflow(
                 .LastOrDefault();
 
         if (lastInput is null)
-            return await NewIssueWorkflowInitAsync(currentInput, currentRole);
+            return await NewIssueWorkflowInitAsync(currentInput);
 
         var currentStateType = 
             await GeneralWorkflowUtils.GetPreviousResultantStateTypeAsync(
@@ -51,10 +48,10 @@ internal sealed record NewIssueWorkflow(
         return await currentState.GetWorkflowResponseAsync(currentInput);        
     }
 
-    private async Task<Result<WorkflowResponse>> NewIssueWorkflowInitAsync(
-        TlgInput currentInput, 
-        IRoleInfo currentRole)
+    private async Task<Result<WorkflowResponse>> NewIssueWorkflowInitAsync(TlgInput currentInput)
     {
+        var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
+        
         if (!currentRole.IsCurrentRoleTradeSpecific())
         {
             return await WorkflowResponse.CreateFromNextStateAsync(

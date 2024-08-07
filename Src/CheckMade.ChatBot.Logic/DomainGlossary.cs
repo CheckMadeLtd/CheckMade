@@ -56,7 +56,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILanguageSettingSelect), "DD4252");
         AddTerm(typeof(ILanguageSettingSet), "DL32QX");
         
-        AddTerm(typeof(ILogoutWorkflow), "DPAWEY", UiNoTranslate(nameof(LogoutWorkflow)));
+        AddTerm(typeof(ILogoutWorkflow), "DPAWEY");
         AddTerm(typeof(ILogoutWorkflowConfirm), "DZF3Z4");
         AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");

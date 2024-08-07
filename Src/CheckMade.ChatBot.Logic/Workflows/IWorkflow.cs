@@ -6,6 +6,6 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 internal interface IWorkflow
 {
     Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput);
-    IStateMediator Mediator { get; }
     IGeneralWorkflowUtils GeneralWorkflowUtils { get; }
+    IStateMediator Mediator { get; }
 }
