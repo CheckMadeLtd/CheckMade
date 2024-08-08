@@ -14,6 +14,93 @@ public sealed class LanguageSettingWorkflowTests
 {
     private ServiceProvider? _services;
     
+    // [Theory]
+    // // Establishes that 'Settings' is always the same int for all InteractionModes / Bots.
+    // [InlineData((int)OperationsBotCommands.Settings)]
+    // [InlineData((int)CommunicationsBotCommands.Settings)]
+    // [InlineData((int)NotificationsBotCommands.Settings)]
+    // [SuppressMessage("Usage", "xUnit1025:InlineData should be unique within the Theory it belongs to")]
+    // public void DetermineCurrentState_ReturnsInitial_WhenLastInputWasBotCommand(int botCommand)
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+    //     var tlgAgent = PrivateBotChat_Operations;
+    //
+    //     List<TlgInput> inputHistory = [
+    //         inputGenerator.GetValidTlgInputTextMessage(),
+    //         inputGenerator.GetValidTlgInputCommandMessage(
+    //             tlgAgent.Mode, botCommand)];
+    //     
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     var (services, _) = serviceCollection.ConfigureTestRepositories(
+    //         inputs: inputHistory);
+    //     var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
+    //     
+    //     var actualState = 
+    //         workflow.DetermineCurrentState(inputHistory);
+    //     
+    //     Assert.Equal(
+    //         States.Initial, 
+    //         actualState);
+    // }
+    //
+    // [Fact]
+    // public void DetermineCurrentState_ReturnsReceived_WhenLastInputWasCallbackQuery()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+    //     var tlgAgent = PrivateBotChat_Operations;
+    //
+    //     List<TlgInput> inputHistory = [ 
+    //         inputGenerator.GetValidTlgInputTextMessage(),
+    //         inputGenerator.GetValidTlgInputCommandMessage(
+    //             tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+    //         inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+    //             Dt(LanguageCode.de))];
+    //     
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     var (services, _) = serviceCollection.ConfigureTestRepositories(
+    //         inputs: inputHistory);
+    //     var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
+    //     
+    //     var actualState = 
+    //         workflow.DetermineCurrentState(inputHistory);
+    //     
+    //     Assert.Equal(
+    //         States.ReceivedLanguageSetting,
+    //         actualState);
+    // }
+    //
+    // [Fact]
+    // public void DetermineCurrentState_ReturnsCompleted_WhenLastInputIsAfterCallbackQueryInput()
+    // {
+    //     _services = new UnitTestStartup().Services.BuildServiceProvider();
+    //     
+    //     var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+    //     var tlgAgent = PrivateBotChat_Operations;
+    //
+    //     List<TlgInput> inputHistory = [
+    //         inputGenerator.GetValidTlgInputCommandMessage(
+    //             tlgAgent.Mode, (int)OperationsBotCommands.Settings),
+    //         inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+    //             Dt(LanguageCode.de)),
+    //         inputGenerator.GetValidTlgInputTextMessage()]; 
+    //     
+    //     var serviceCollection = new UnitTestStartup().Services;
+    //     var (services, _) = serviceCollection.ConfigureTestRepositories(
+    //         inputs: inputHistory);
+    //     var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
+    //     
+    //     var actualState = 
+    //         workflow.DetermineCurrentState(inputHistory);
+    //     
+    //     Assert.Equal(
+    //         States.Completed,
+    //         actualState);
+    // }
+    
     [Fact]
     public async Task GetResponseAsync_ShowsLanguageSelectionMenu_InInitialState()
     {

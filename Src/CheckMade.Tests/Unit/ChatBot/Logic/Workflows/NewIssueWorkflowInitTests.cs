@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public class NewIssueWorkflowInitTests
+public sealed class NewIssueWorkflowInitTests
 {
     private ServiceProvider? _services;
     
