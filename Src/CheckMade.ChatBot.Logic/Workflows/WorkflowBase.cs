@@ -10,23 +10,13 @@ internal abstract record WorkflowBase(
 {
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
-        var interactiveHistory =
-            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
-
-        var lastInput =
-            interactiveHistory
-                .SkipLast(1) // skip currentInput
-                .LastOrDefault();
-
-        if (lastInput is null)
+        if (await IsVirginWorkflowAsync())
             return await InitializeAsync(currentInput);
-     
+        
         var currentStateType = 
-            await GeneralWorkflowUtils.GetPreviousResultantStateTypeAsync(
-                currentInput, 
-                IGeneralWorkflowUtils.DistanceFromCurrentWhenRetrievingPreviousWorkflowState);
+            await GeneralWorkflowUtils.GetPreviousResultantStateTypeAsync(currentInput);
 
-        if (currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator)))
+        if (IsTerminatedWorkflow())
         {
             return WorkflowResponse.Create(
                 currentInput,
@@ -36,7 +26,14 @@ internal abstract record WorkflowBase(
         
         var currentState = Mediator.Next(currentStateType); 
         
-        return await currentState.GetWorkflowResponseAsync(currentInput);        
+        return await currentState.GetWorkflowResponseAsync(currentInput);
+
+        async Task<bool> IsVirginWorkflowAsync() =>
+                (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+                .Count == 1; // 1 because currentInput is already included
+
+        bool IsTerminatedWorkflow() =>
+            currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator));
     }
 
     protected abstract Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput);

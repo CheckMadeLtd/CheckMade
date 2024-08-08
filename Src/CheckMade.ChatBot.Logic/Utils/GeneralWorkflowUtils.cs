@@ -11,7 +11,6 @@ namespace CheckMade.ChatBot.Logic.Utils;
 internal interface IGeneralWorkflowUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
-    const int DistanceFromCurrentWhenRetrievingPreviousWorkflowState = 1;
     
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),
@@ -22,7 +21,7 @@ internal interface IGeneralWorkflowUtils
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput, int indexFromCurrent);
+    Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
@@ -91,17 +90,17 @@ internal sealed record GeneralWorkflowUtils(
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public async Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput, int indexFromCurrent)
+    public async Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
     {
         var interactiveHistory =
             await GetInteractiveSinceLastBotCommandAsync(currentInput);
 
-        if (interactiveHistory.Count <= indexFromCurrent)
+        if (interactiveHistory.Count <= 1)
             throw new InvalidOperationException("Interactive History is too short for this function");
 
         var lastInput =
             interactiveHistory
-                .SkipLast(indexFromCurrent)
+                .SkipLast(1)
                 .Last();
 
         if (lastInput.ResultantWorkflow.IsNone)
