@@ -1,4 +1,6 @@
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
@@ -120,8 +122,9 @@ public sealed class InputProcessorTests
         var notInterruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewAssessment); 
+                (int)OperationsBotCommands.NewAssessment);
 
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: new[]
@@ -130,7 +133,10 @@ public sealed class InputProcessorTests
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                    Dt(LanguageCode.de))});
+                    Dt(LanguageCode.de),
+                    resultantWorkflowState: new ResultantWorkflowState(
+                        glossary.GetId(typeof(LanguageSettingWorkflow)),
+                        glossary.GetId(typeof(ILanguageSettingSet))))});
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string notExpectedWarningOutput = 
