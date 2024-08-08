@@ -41,7 +41,7 @@ public sealed class InputProcessorTests
             startCommand with
             {
                 ResultantWorkflow = new ResultantWorkflowState(
-                    glossary.GetId(typeof(IUserAuthWorkflow)),
+                    glossary.GetId(typeof(UserAuthWorkflow)),
                     glossary.GetId(typeof(IUserAuthWorkflowTokenEntry)))
             };
         

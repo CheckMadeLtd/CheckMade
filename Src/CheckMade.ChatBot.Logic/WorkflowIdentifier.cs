@@ -16,22 +16,22 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory);
+    Option<WorkflowBase> Identify(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
 internal sealed record WorkflowIdentifier(
-        IUserAuthWorkflow UserAuthWorkflow,
-        INewIssueWorkflow NewIssueWorkflow,
-        ILanguageSettingWorkflow LanguageSettingWorkflow,
-        ILogoutWorkflow LogoutWorkflow,
-        IViewAttachmentsWorkflow ViewAttachmentsWorkflow,
+        UserAuthWorkflow UserAuthWorkflow,
+        NewIssueWorkflow NewIssueWorkflow,
+        LanguageSettingWorkflow LanguageSettingWorkflow,
+        LogoutWorkflow LogoutWorkflow,
+        ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
         IDomainGlossary Glossary) 
     : IWorkflowIdentifier
 {
-    public Option<IWorkflow> Identify(IReadOnlyCollection<TlgInput> inputHistory)
+    public Option<WorkflowBase> Identify(IReadOnlyCollection<TlgInput> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
-            return Option<IWorkflow>.Some(UserAuthWorkflow);
+            return Option<WorkflowBase>.Some(UserAuthWorkflow);
 
         var currentMode = inputHistory.Last().TlgAgent.Mode;
 
@@ -43,7 +43,7 @@ internal sealed record WorkflowIdentifier(
             _ => throw new InvalidEnumArgumentException($"Unhandled {nameof(currentMode)}")
         };
         
-        Option<IWorkflow> IdentifyOperationsWorkflow()
+        Option<WorkflowBase> IdentifyOperationsWorkflow()
         {
             return GetBotCommandOfLastActiveWorkflow().Match(
                 cmd =>
@@ -57,11 +57,11 @@ internal sealed record WorkflowIdentifier(
 
                     return lastBotCommandCode switch
                     {
-                        (int)OperationsBotCommands.NewIssue => Option<IWorkflow>.Some(NewIssueWorkflow),
-                        _ => Option<IWorkflow>.None()
+                        (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
+                        _ => Option<WorkflowBase>.None()
                     };
                 },
-                Option<IWorkflow>.None);
+                Option<WorkflowBase>.None);
         }
 
         Option<TlgInput> GetBotCommandOfLastActiveWorkflow()
@@ -91,14 +91,14 @@ internal sealed record WorkflowIdentifier(
             };
         }
         
-        Option<IWorkflow> GetGlobalMenuWorkflow(int lastBotCommandCode)
+        Option<WorkflowBase> GetGlobalMenuWorkflow(int lastBotCommandCode)
         {
             return lastBotCommandCode switch
             {
                 (int)OperationsBotCommands.Settings => 
-                    Option<IWorkflow>.Some(LanguageSettingWorkflow),
+                    Option<WorkflowBase>.Some(LanguageSettingWorkflow),
                 (int)OperationsBotCommands.Logout => 
-                    Option<IWorkflow>.Some(LogoutWorkflow),
+                    Option<WorkflowBase>.Some(LogoutWorkflow),
                 _ => 
                     throw new ArgumentOutOfRangeException(nameof(lastBotCommandCode), 
                         $"An unhandled BotCommand must not exist above the " +
@@ -106,12 +106,12 @@ internal sealed record WorkflowIdentifier(
             };
         }
         
-        Option<IWorkflow> IdentifyCommunicationsWorkflow()
+        Option<WorkflowBase> IdentifyCommunicationsWorkflow()
         {
             throw new NotImplementedException();
         }
 
-        Option<IWorkflow> IdentifyNotificationsWorkflow()
+        Option<WorkflowBase> IdentifyNotificationsWorkflow()
         {
             var currentInput = inputHistory.Last();
 
@@ -122,7 +122,7 @@ internal sealed record WorkflowIdentifier(
                 return currentControl switch
                 {
                     (long)ControlPrompts.ViewAttachments => 
-                        Option<IWorkflow>.Some(ViewAttachmentsWorkflow),
+                        Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
                     _ => 
                         throw new InvalidOperationException(
                             $"Unhandled {nameof(currentControl)}: '{currentControl}'.")
@@ -132,7 +132,7 @@ internal sealed record WorkflowIdentifier(
             return GetBotCommandOfLastActiveWorkflow().Match(
                 cmd => 
                     GetGlobalMenuWorkflow(cmd.Details.BotCommandEnumCode.GetValueOrThrow()),
-                Option<IWorkflow>.None);
+                Option<WorkflowBase>.None);
         }
     }
 

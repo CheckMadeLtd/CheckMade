@@ -4,12 +4,10 @@ using CheckMade.Common.Model.ChatBot.Input;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 
-internal interface ILogoutWorkflow : IWorkflow;
-
 internal sealed record LogoutWorkflow(
         IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator) 
-    : WorkflowBase(GeneralWorkflowUtils, Mediator), ILogoutWorkflow
+    : WorkflowBase(GeneralWorkflowUtils, Mediator)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

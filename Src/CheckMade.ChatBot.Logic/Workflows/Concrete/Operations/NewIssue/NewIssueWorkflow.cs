@@ -8,13 +8,11 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewI
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 
-internal interface INewIssueWorkflow : IWorkflow;
-
 internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
         IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator)
-    : WorkflowBase(GeneralWorkflowUtils, Mediator), INewIssueWorkflow
+    : WorkflowBase(GeneralWorkflowUtils, Mediator)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

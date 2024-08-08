@@ -118,7 +118,7 @@ public sealed class LanguageSettingWorkflowTests
                 inputGenerator.GetValidTlgInputTextMessage(
                     text: "random decoy irrelevant to workflow")
             });
-        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<LanguageSettingWorkflow>();
 
         var actualResponse = 
             await workflow.GetResponseAsync(inputSettingsCommand);
@@ -160,7 +160,7 @@ public sealed class LanguageSettingWorkflowTests
             roles: new []{ roleBind.Role },
             roleBindings: new []{ roleBind });
         var mockUserRepo = (Mock<IUsersRepository>)container.Mocks[typeof(IUsersRepository)];
-        var workflow = services.GetRequiredService<ILanguageSettingWorkflow>();
+        var workflow = services.GetRequiredService<LanguageSettingWorkflow>();
 
         var actualResponse = await workflow.GetResponseAsync(languageSettingInput);
         

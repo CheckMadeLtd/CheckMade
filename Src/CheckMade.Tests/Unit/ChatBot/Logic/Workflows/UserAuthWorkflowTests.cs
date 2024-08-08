@@ -41,7 +41,7 @@ public sealed class UserAuthWorkflowTests
         var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
             text: InputValidator.GetTokenFormatExample());
         
-        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = _services.GetRequiredService<UserAuthWorkflow>();
     
         var actualResponses = 
             await workflow
@@ -72,7 +72,7 @@ public sealed class UserAuthWorkflowTests
             roleBindings: new[] { preExistingActiveTlgAgentRoleBind });
         var mockTlgAgentRoleBindingsRepo = 
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat.
@@ -112,7 +112,7 @@ public sealed class UserAuthWorkflowTests
             roles: new []{ SaniCleanEngineer_DanielEn_X2024 });
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         const string expectedConfirmation = "{0}, you have successfully authenticated at live-event {1} in your role as: ";
         
@@ -164,7 +164,7 @@ public sealed class UserAuthWorkflowTests
             roles: new []{ SaniCleanInspector_DanielDe_X2024 });
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         var expectedTlgAgentRoleBindingsAdded = allModes.Select(im => 
@@ -245,7 +245,7 @@ public sealed class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
         
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
 
         await workflow.GetResponseAsync(inputValidToken);
         
@@ -278,7 +278,7 @@ public sealed class UserAuthWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);
         
-        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = _services.GetRequiredService<UserAuthWorkflow>();
     
         var actualResponses = await workflow.GetResponseAsync(badTokenInput);
         

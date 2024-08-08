@@ -49,7 +49,7 @@ public sealed class LogoutWorkflowTests
             roleBindings: new []{ boundRole } );
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<LogoutWorkflow>();
         
         const string expectedMessage = "💨 Logged out.";
         
@@ -107,7 +107,7 @@ public sealed class LogoutWorkflowTests
             });
         var mockTlgAgentRoleBindingsForAllModes =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<LogoutWorkflow>();
         
         var expectedBindingsUpdated = 
             (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
@@ -172,7 +172,7 @@ public sealed class LogoutWorkflowTests
                     Operations,
                     (int)OperationsBotCommands.Logout)
             });
-        var workflow = services.GetRequiredService<ILogoutWorkflow>();
+        var workflow = services.GetRequiredService<LogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
         
         var actualResponse = 

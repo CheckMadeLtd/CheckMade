@@ -91,7 +91,7 @@ internal sealed class InputProcessor(
     
     private ResultantWorkflowState? GetResultantWorkflowState(
         Result<WorkflowResponse> response,
-        Option<IWorkflow> activeWorkflow)
+        Option<WorkflowBase> activeWorkflow)
     {
         ResultantWorkflowState? workflowInfo = null;
                 
@@ -102,7 +102,7 @@ internal sealed class InputProcessor(
         if (activeWorkflow.IsSome && newState.IsSome)
         {
             workflowInfo = new ResultantWorkflowState(
-                glossary.GetIdForEquallyNamedInterface(activeWorkflow.GetValueOrThrow().GetType()),
+                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType()),
                 newState.GetValueOrThrow());
         }
 
@@ -147,7 +147,7 @@ internal sealed class InputProcessor(
 
     private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
-            Option<IWorkflow> activeWorkflow,
+            Option<WorkflowBase> activeWorkflow,
             TlgInput currentInput)
     {
         return await activeWorkflow.Match(
@@ -170,7 +170,7 @@ internal sealed class InputProcessor(
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
         Result<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
-        Option<IWorkflow> activeWorkflow,
+        Option<WorkflowBase> activeWorkflow,
         TlgInput currentInput)
     {
         return responseResult.Match(

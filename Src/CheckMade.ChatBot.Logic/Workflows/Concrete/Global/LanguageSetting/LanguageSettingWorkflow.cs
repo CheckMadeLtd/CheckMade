@@ -4,12 +4,10 @@ using CheckMade.Common.Model.ChatBot.Input;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 
-internal interface ILanguageSettingWorkflow : IWorkflow;
-
 internal sealed record LanguageSettingWorkflow(
         IGeneralWorkflowUtils GeneralWorkflowUtils,
         IStateMediator Mediator) 
-    : WorkflowBase(GeneralWorkflowUtils, Mediator), ILanguageSettingWorkflow
+    : WorkflowBase(GeneralWorkflowUtils, Mediator)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

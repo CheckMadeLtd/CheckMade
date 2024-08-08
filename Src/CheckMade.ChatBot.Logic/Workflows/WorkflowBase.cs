@@ -8,7 +8,7 @@ internal abstract record WorkflowBase(
         IGeneralWorkflowUtils GeneralWorkflowUtils,    
         IStateMediator Mediator) 
 {
-    protected async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
+    protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);

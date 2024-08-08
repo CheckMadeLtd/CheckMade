@@ -48,22 +48,22 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #region Workflows
         
-        AddTerm(typeof(IUserAuthWorkflow), "DJIQPO");
+        AddTerm(typeof(UserAuthWorkflow), "DJIQPO");
         AddTerm(typeof(IUserAuthWorkflowTokenEntry), "DTWLPM");
         AddTerm(typeof(IUserAuthWorkflowAuthenticated), "DRGLYG");
         
-        AddTerm(typeof(ILanguageSettingWorkflow), "DDI3H3");
+        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3");
         AddTerm(typeof(ILanguageSettingSelect), "DD4252");
         AddTerm(typeof(ILanguageSettingSet), "DL32QX");
         
-        AddTerm(typeof(ILogoutWorkflow), "DPAWEY");
+        AddTerm(typeof(LogoutWorkflow), "DPAWEY");
         AddTerm(typeof(ILogoutWorkflowConfirm), "DZF3Z4");
         AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
         
-        AddTerm(typeof(IViewAttachmentsWorkflow), "D3TC83");
+        AddTerm(typeof(ViewAttachmentsWorkflow), "D3TC83");
         
-        AddTerm(typeof(INewIssueWorkflow), "D6SORL");
+        AddTerm(typeof(NewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");
         
         AddTerm(typeof(INewIssueSphereSelection<SaniCleanTrade>), "D8T63V");

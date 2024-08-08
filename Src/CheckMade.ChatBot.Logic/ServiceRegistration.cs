@@ -30,11 +30,11 @@ public static class ServiceRegistration
         services.AddScoped<IGeneralWorkflowUtils, GeneralWorkflowUtils>();
         services.AddScoped<IStateMediator, StateMediator>();
 
-        services.AddScoped<IUserAuthWorkflow, UserAuthWorkflow>();
-        services.AddScoped<INewIssueWorkflow, NewIssueWorkflow>();
-        services.AddScoped<ILanguageSettingWorkflow, LanguageSettingWorkflow>();
-        services.AddScoped<ILogoutWorkflow, LogoutWorkflow>();
-        services.AddScoped<IViewAttachmentsWorkflow, ViewAttachmentsWorkflow>();
+        services.AddScoped<UserAuthWorkflow>();
+        services.AddScoped<NewIssueWorkflow>();
+        services.AddScoped<LanguageSettingWorkflow>();
+        services.AddScoped<LogoutWorkflow>();
+        services.AddScoped<ViewAttachmentsWorkflow>();
 
         services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
