@@ -25,30 +25,19 @@ internal sealed record NewIssueSphereConfirmation<T>(
         Option<int> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
-        var liveEvent = (await LiveEventsRepo.GetAsync(
-            currentInput.LiveEventContext.GetValueOrThrow()))!;
-        
-        var lastKnownLocation = 
-            await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+        var nearSphere = await GetNearSphere();
 
-        var sphere = lastKnownLocation.IsSome
-            ? SphereNearCurrentUser(
-                liveEvent, lastKnownLocation.GetValueOrThrow(), 
-                new T())
-            : Option<ISphereOfAction>.None();
-
-        if (sphere.IsNone)
+        if (nearSphere.IsNone)
         {
             // ToDo: break? Handle case where user has moved away since confirming Sphere in last step! 
-            // It's an edge case. I think should lead back to SphereUnknown state.
-            // Or maybe pass Option<ISphereOfAction> to the constructor and handle it there? 
+            // It's an edge case. I think should simply reroute to SphereSelection state/prompt.
         }
         
         List<OutputDto> outputs = 
         [
             new()
             {
-                Text = Ui("Please confirm: are you at '{0}'?", sphere.GetValueOrThrow().Name),
+                Text = Ui("Please confirm: are you at '{0}'?", nearSphere.GetValueOrThrow().Name),
                 ControlPromptsSelection = ControlPrompts.YesNo,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
@@ -57,6 +46,21 @@ internal sealed record NewIssueSphereConfirmation<T>(
         return previousPromptFinalizer.Match(
             ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
             () => outputs.ToImmutableReadOnlyCollection());
+
+        async Task<Option<ISphereOfAction>> GetNearSphere()
+        {
+            var liveEvent = (await LiveEventsRepo.GetAsync(
+                currentInput.LiveEventContext.GetValueOrThrow()))!;
+        
+            var lastKnownLocation = 
+                await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+
+            return lastKnownLocation.IsSome
+                ? SphereNearCurrentUser(
+                    liveEvent, lastKnownLocation.GetValueOrThrow(), 
+                    new T())
+                : Option<ISphereOfAction>.None();
+        }
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
