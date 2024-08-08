@@ -7,9 +7,8 @@ namespace CheckMade.ChatBot.Logic.Workflows;
 internal abstract record WorkflowBase(
         IGeneralWorkflowUtils GeneralWorkflowUtils,    
         IStateMediator Mediator) 
-    : IWorkflow
 {
-    public virtual async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
+    protected async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         var interactiveHistory =
             await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
