@@ -1,5 +1,4 @@
 using CheckMade.ChatBot.Logic.ModelFactories;
-using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
@@ -12,6 +11,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_In
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
+using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;

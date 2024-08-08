@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.ChatBot.Output;
 
-namespace CheckMade.ChatBot.Logic.Utils;
+namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
 internal sealed record PromptTransition
 {

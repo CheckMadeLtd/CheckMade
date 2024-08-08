@@ -1,5 +1,5 @@
-using CheckMade.ChatBot.Logic.Utils;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
+using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;

@@ -1,7 +1,6 @@
-using CheckMade.ChatBot.Logic.Workflows;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.ChatBot.Logic.Utils;
+namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
 internal interface IStateMediator
 {

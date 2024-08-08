@@ -1,8 +1,7 @@
-using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
-namespace CheckMade.ChatBot.Logic.Utils;
+namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
 internal sealed record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
