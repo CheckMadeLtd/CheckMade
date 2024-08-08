@@ -15,7 +15,8 @@ internal interface ITlgInputGenerator
     TlgInput GetValidTlgInputTextMessage(
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
-        string text = "Hello World", DateTimeOffset? dateTime = null,
+        string text = "Hello World", 
+        DateTimeOffset? dateTime = null,
         TestOriginatorRoleSetting roleSetting = Default,
         Role? roleSpecified = null,
         ResultantWorkflowState? resultantWorkflowState = null);
@@ -51,6 +52,7 @@ internal interface ITlgInputGenerator
     
     TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
+        string text = "Default fake prompt",
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
         DateTimeOffset? dateTime = null,
@@ -168,7 +170,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
     }
 
     public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
-        ControlPrompts prompts,
+        ControlPrompts prompts, string text,
         long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
@@ -183,6 +185,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             CreateFromRelevantDetails(
+                text: text,
                 controlPromptEnumCode: (long)prompts));
     }
 

@@ -22,6 +22,35 @@ internal static class TestUtils
             : text.RawEnglishText;
     }
 
+    internal static string GetAllRawEnglish(IReadOnlyCollection<OutputDto> actualOutput)
+    {
+        var combinedRawEnglish = string.Empty;
+
+        foreach (var output in actualOutput)
+        {
+            var uiString = output.Text;
+
+            if (uiString.IsSome)
+            {
+                var concatenations = uiString.GetValueOrThrow().Concatenations;
+                
+                if (concatenations.Count > 0)
+                {
+                    combinedRawEnglish = $"{combinedRawEnglish}; " +
+                                         $"{string.Join("; ", 
+                                             concatenations.Select(c => c!.RawEnglishText))}";
+                }
+                else
+                {
+                    combinedRawEnglish = $"{combinedRawEnglish}; " +
+                                         $"{uiString.GetValueOrThrow().RawEnglishText}";
+                }
+            }
+        }
+
+        return combinedRawEnglish;
+    }
+
     internal static (ITlgInputGenerator inputGenerator, IDomainGlossary glossary)
         GetBasicWorkflowTestingServices(IServiceProvider services)
     {

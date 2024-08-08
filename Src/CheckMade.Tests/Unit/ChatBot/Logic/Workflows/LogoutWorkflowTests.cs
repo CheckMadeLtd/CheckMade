@@ -1,7 +1,9 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
+using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
@@ -17,12 +19,13 @@ public sealed class LogoutWorkflowTests
 {
     private ServiceProvider? _services;
 
-    [Fact(Skip = "Needs fixing")]
+    [Fact]
     public async Task GetResponseAsync_LogsOutAndReturnsConfirmation_AfterUserConfirmsLogoutIntention()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
 
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
@@ -44,7 +47,10 @@ public sealed class LogoutWorkflowTests
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout)
+                    (int)OperationsBotCommands.Logout,
+                    resultantWorkflowState: new ResultantWorkflowState(
+                        glossary.GetId(typeof(LogoutWorkflow)),
+                        glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             },
             roleBindings: new []{ boundRole } );
         var mockRoleBindingsRepo =
@@ -57,7 +63,7 @@ public sealed class LogoutWorkflowTests
         
         Assert.Equal(
             expectedMessage, 
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.Last().Text.GetValueOrThrow().RawEnglishText);
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -66,11 +72,12 @@ public sealed class LogoutWorkflowTests
             Times.Once());
     }
 
-    [Fact(Skip = "Needs fixing")]
+    [Fact]
     public async Task GetResponseAsync_LogsOutFromAllModes_WhenLoggingOutInPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
         
         var tlgAgentOperations = PrivateBotChat_Operations;
         var tlgAgentComms = PrivateBotChat_Communications;
@@ -86,7 +93,10 @@ public sealed class LogoutWorkflowTests
             {
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout)
+                    (int)OperationsBotCommands.Logout,
+                    resultantWorkflowState: new ResultantWorkflowState(
+                        glossary.GetId(typeof(LogoutWorkflow)),
+                        glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             },
             roleBindings: new List<TlgAgentRoleBind>
             {
@@ -143,17 +153,19 @@ public sealed class LogoutWorkflowTests
             Assert.Equivalent(
                 expectedBindingsUpdated[i].Role,
                 actualTlgAgentRoleBindingsUpdated[i].Role);
-            Assert.True(
-                actualTlgAgentRoleBindingsUpdated[i].Status == DbRecordStatus.Historic);
+            Assert.Equal(
+                DbRecordStatus.Historic, 
+                actualTlgAgentRoleBindingsUpdated[i].Status);
         }
     }
 
-    [Fact(Skip = "Needs fixing")]
+    [Fact]
     public async Task GetResponseAsync_ConfirmsAbortion_AfterUserAbortsLogout()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
         var abortLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
             ControlPrompts.No);
 
@@ -170,7 +182,10 @@ public sealed class LogoutWorkflowTests
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
-                    (int)OperationsBotCommands.Logout)
+                    (int)OperationsBotCommands.Logout,
+                    resultantWorkflowState: new ResultantWorkflowState(
+                        glossary.GetId(typeof(LogoutWorkflow)),
+                        glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             });
         var workflow = services.GetRequiredService<LogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted.\n"; 
@@ -178,19 +193,12 @@ public sealed class LogoutWorkflowTests
         var actualResponse = 
             await workflow.GetResponseAsync(abortLogoutCommand);
         
-        Assert.Equal(
+        Assert.Contains(
             expectedMessage1,
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
-        Assert.Equivalent(
+            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+        
+        Assert.Contains(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            actualResponse
-                .GetValueOrThrow()
-                .Output
-                .First()
-                .Text
-                .GetValueOrThrow()
-                .Concatenations
-                .Last()!
-                .RawEnglishText);
+            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
     }
 }
