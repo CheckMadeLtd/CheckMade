@@ -7,13 +7,13 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
 
-internal interface INewIssueEditMenu<T> : IWorkflowStateNormal where T : ITrade;
+internal interface INewIssueEditMenu<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueEditMenu<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator,
         IGeneralWorkflowUtils GeneralUtils) 
-    : INewIssueEditMenu<T> where T : ITrade
+    : INewIssueEditMenu<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,

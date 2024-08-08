@@ -11,7 +11,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewI
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.B_Details;
 
-internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade;
+internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
