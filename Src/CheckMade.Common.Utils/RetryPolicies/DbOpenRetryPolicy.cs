@@ -9,7 +9,7 @@ public interface IDbOpenRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbOpenRetryPolicy : RetryPolicyBase, IDbOpenRetryPolicy
+public sealed class DbOpenRetryPolicy : RetryPolicyBase, IDbOpenRetryPolicy
 {
     public DbOpenRetryPolicy(ILogger<RetryPolicyBase> logger) : base("Open Database Connection", logger)
     {

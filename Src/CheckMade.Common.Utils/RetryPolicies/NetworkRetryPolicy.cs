@@ -10,21 +10,38 @@ public interface INetworkRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class NetworkRetryPolicy : RetryPolicyBase, INetworkRetryPolicy
+public sealed class NetworkRetryPolicy : RetryPolicyBase, INetworkRetryPolicy
 {
+    private static readonly Type[] ExceptionTypesToHandle =
+    [
+        typeof(HttpRequestException),
+        typeof(TimeoutException),
+        typeof(IOException),
+        typeof(OperationCanceledException),
+        typeof(WebException),
+        typeof(SocketException)
+    ];
+    
     public NetworkRetryPolicy(ILogger<RetryPolicyBase> logger) : base("Network", logger)
     {
         const int retryCount = 5;
 
         Policy = Polly.Policy
-            .Handle<HttpRequestException>()
-            .Or<TimeoutException>()
-            .Or<IOException>()
-            .Or<OperationCanceledException>()
-            .Or<WebException>()
-            .Or<SocketException>()
+            .Handle<Exception>(ex => 
+                IsTargetExceptionOrHasTargetInnerException(ex, ExceptionTypesToHandle))
             .WaitAndRetryAsync(retryCount,
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timeSpan, retryAttempt, _) => LogError(exception, timeSpan, retryAttempt));
+    }
+    
+    private static bool IsTargetExceptionOrHasTargetInnerException(
+        Exception? ex, IReadOnlyCollection<Type> targetTypes)
+    {
+        if (ex == null)
+            return false;
+
+        return 
+            targetTypes.Any(type => type.IsInstanceOfType(ex)) || 
+            IsTargetExceptionOrHasTargetInnerException(ex.InnerException, targetTypes);
     }
 }

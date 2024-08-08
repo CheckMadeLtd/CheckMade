@@ -9,7 +9,7 @@ public interface IDbCommandRetryPolicy
     Task ExecuteAsync(Func<Task> action);
 }
 
-public class DbCommandRetryPolicy : RetryPolicyBase, IDbCommandRetryPolicy
+public sealed class DbCommandRetryPolicy : RetryPolicyBase, IDbCommandRetryPolicy
 {
     public DbCommandRetryPolicy(ILogger<RetryPolicyBase> logger) : base("Execute Database Command", logger)
     {
