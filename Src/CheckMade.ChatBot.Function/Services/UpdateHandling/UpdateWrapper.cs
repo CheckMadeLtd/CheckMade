@@ -3,7 +3,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
-public record UpdateWrapper
+public sealed record UpdateWrapper
 {
     internal Update Update { get; }
     internal Message Message { get; }
