@@ -51,7 +51,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
     
     public async Task AddAsync(TlgInput tlgInput) =>
-        await AddAsync(new [] { tlgInput });
+        await AddAsync(new[] { tlgInput });
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
     {
