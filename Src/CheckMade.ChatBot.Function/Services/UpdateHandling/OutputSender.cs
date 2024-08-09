@@ -62,6 +62,8 @@ internal static class OutputSender
                             await InvokeSendTextMessageAsync(output.Text.GetValueOrThrow());
                             break;
 
+                        // For Outputs with the sole purpose of updating a previous message (e.g., removing buttons)
+                        // By definition, they wouldn't need to have Attachments, Locations, etc.
                         case { UpdateExistingOutputMessageId.IsSome: true }:
                             await InvokeEditTextMessageAsync(output);
                             break;
