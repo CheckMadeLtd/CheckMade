@@ -174,9 +174,9 @@ internal sealed class InputProcessor(
         TlgInput currentInput)
     {
         return responseResult.Match(
-            r => 
+            wr => 
             {
-                outputBuilder.AddRange(r.Output);
+                outputBuilder.AddRange(wr.Output);
                         
                 return 
                     outputBuilder

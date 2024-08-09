@@ -344,7 +344,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsToCurrentlyReceivingChatId_WhenOutputDtoHasNoLogicalPort(
+    public async Task HandleUpdateAsync_SendsToCurrentChatId_WhenOutputDtoHasNoLogicalPort(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;

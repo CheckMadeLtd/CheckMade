@@ -18,10 +18,10 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentInteractionMode);
 }
 
-public class UpdateHandler(
+public sealed class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessor inputProcessor,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
@@ -35,16 +35,16 @@ public class UpdateHandler(
 {
     public async Task<Attempt<Unit>> HandleUpdateAsync(
         UpdateWrapper update,
-        InteractionMode currentlyReceivingInteractionMode)
+        InteractionMode currentInteractionMode)
     {
-        var currentlyReceivingUserId = update.Message.From?.Id;
-        ChatId currentlyReceivingChatId = update.Message.Chat.Id;
+        var currentUserId = update.Message.From?.Id;
+        ChatId currentChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
                         "with Message from UserId/ChatId: {userId}/{chatId}", 
-            currentlyReceivingInteractionMode, 
+            currentInteractionMode, 
             update.Message.From?.Id ?? 0,
-            currentlyReceivingChatId);
+            currentChatId);
 
         var handledMessageTypes = new[]
         {
@@ -74,10 +74,10 @@ public class UpdateHandler(
             (from toModelConverter
                     in Attempt<IToModelConverter>.Run(() => 
                         toModelConverterFactory.Create(
-                            new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode])))
+                            new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
                 from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
-                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
+                        toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from outputs
                     in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(tlgInput))
@@ -89,16 +89,16 @@ public class UpdateHandler(
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
                             activeRoleBindings,
-                            currentlyReceivingUserId,
-                            currentlyReceivingChatId,
-                            currentlyReceivingInteractionMode)))
+                            currentUserId,
+                            currentChatId,
+                            currentInteractionMode)))
                 from replyMarkupConverter
                     in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
                 from unit
                   in Attempt<Unit>.RunAsync(() => 
                       OutputSender.SendOutputsAsync(
-                          outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
+                          outputs, botClientByMode, currentInteractionMode, currentChatId,
                           activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader)) 
                 select unit);
         
@@ -113,7 +113,7 @@ public class UpdateHandler(
                                     "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
                     ex.Message, 
-                    currentlyReceivingInteractionMode, 
+                    currentInteractionMode, 
                     update.Message.From!.Id,
                     update.Message.Date,
                     update.Message.Text);

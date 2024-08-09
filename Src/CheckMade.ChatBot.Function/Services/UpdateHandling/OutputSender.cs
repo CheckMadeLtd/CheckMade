@@ -16,8 +16,8 @@ internal static class OutputSender
         internal static async Task<Unit> SendOutputsAsync(
             IReadOnlyCollection<OutputDto> outputs,
             IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
-            InteractionMode currentlyReceivingInteractionMode,
-            ChatId currentlyReceivingChatId,
+            InteractionMode currentInteractionMode,
+            ChatId currentChatId,
             IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
             IUiTranslator uiTranslator,
             IOutputToReplyMarkupConverter converter,
@@ -37,7 +37,7 @@ internal static class OutputSender
                 
                     var outputMode = output.LogicalPort.Match(
                         logicalPort => logicalPort.InteractionMode,
-                        () => currentlyReceivingInteractionMode);
+                        () => currentInteractionMode);
 
                     var outputBotClient = botClientByMode[outputMode];
 
@@ -50,7 +50,7 @@ internal static class OutputSender
                                 tarb.Role.Equals(logicalPort.Role) &&
                                 tarb.TlgAgent.Mode == outputMode)
                             .TlgAgent.ChatId.Id,
-                        () => currentlyReceivingChatId);
+                        () => currentChatId);
 
                     switch (output)
                     {
