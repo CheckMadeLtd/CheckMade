@@ -1,12 +1,13 @@
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
 public interface ITlgInputsRepository
 {
-    Task AddAsync(TlgInput tlgInput);
+    Task AddAsync(TlgInput tlgInput, IReadOnlyCollection<(TlgAgent tlgAgent, int messageId)> bridgeDestinations);
     Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs);
     Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent);
     Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent);

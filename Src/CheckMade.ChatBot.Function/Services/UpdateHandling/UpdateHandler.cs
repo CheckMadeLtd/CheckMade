@@ -30,6 +30,7 @@ public sealed class UpdateHandler(
         IUiTranslatorFactory translatorFactory,
         IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
         IBlobLoader blobLoader,
+        ITlgInputsRepository inputsRepo,
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
@@ -70,7 +71,7 @@ public sealed class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        var sendOutputsAttempt = await
+        var handleUpdateAttempt = await
             (from toModelConverter
                     in Attempt<IToModelConverter>.Run(() => 
                         toModelConverterFactory.Create(
@@ -78,8 +79,9 @@ public sealed class UpdateHandler(
                 from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
-                from outputs
-                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                from result
+                    in Attempt<(Option<TlgInput> EnrichedOriginalInput, 
+                        IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(tlgInput))
                 from activeRoleBindings
                     in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
@@ -95,14 +97,17 @@ public sealed class UpdateHandler(
                 from replyMarkupConverter
                     in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
-                from unit
-                  in Attempt<Unit>.RunAsync(() => 
-                      OutputSender.SendOutputsAsync(
-                          outputs, botClientByMode, currentInteractionMode, currentChatId,
-                          activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader)) 
+                from enrichedOutputs
+                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                        OutputSender.SendOutputsAsync(
+                            result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
+                            activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader))
+                from unit 
+                    in Attempt<Unit>.RunAsync(() =>
+                        SaveToDbAsync(result.EnrichedOriginalInput, enrichedOutputs))
                 select unit);
         
-        return sendOutputsAttempt.Match(
+        return handleUpdateAttempt.Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
@@ -137,5 +142,22 @@ public sealed class UpdateHandler(
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;
+    }
+
+    private async Task<Unit> SaveToDbAsync(
+        Option<TlgInput> enrichedInput, IReadOnlyCollection<OutputDto> enrichedOutputs)
+    {
+        if (enrichedInput.IsNone)
+            return Unit.Value;
+        
+        List<(TlgAgent tlgAgent, int messageId)> bridgeDestinations = [];
+        
+        // ToDo: some logic to choose the relevant enrichedOutputs, e.g. notifications for a new issue. 
+        
+        await inputsRepo.AddAsync(
+            enrichedInput.GetValueOrThrow(), 
+            bridgeDestinations.ToImmutableReadOnlyCollection());
+        
+        return Unit.Value;
     }
 }

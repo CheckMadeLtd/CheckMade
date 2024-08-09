@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
@@ -50,7 +51,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     private Dictionary<TlgAgent, List<TlgInput>> _cacheInputsByTlgAgent = new();
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
     
-    public async Task AddAsync(TlgInput tlgInput) =>
+    public async Task AddAsync(
+        TlgInput tlgInput, IReadOnlyCollection<(TlgAgent tlgAgent, int messageId)> bridgeDestinations) =>
         await AddAsync(new[] { tlgInput });
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
