@@ -58,13 +58,13 @@ public sealed class InputProcessorTests
             new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
             new(){ Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }];
         
-        var actualOutput = 
+        var result = 
             await inputProcessor
                 .ProcessInputAsync(startCommand);
 
         Assert.Equivalent(
             expectedOutputs,
-            actualOutput);
+            result.ResultingOutputs);
         
         mockInputRepo.Verify();
     }
@@ -102,13 +102,13 @@ public sealed class InputProcessorTests
         const string expectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         
-        var actualOutput =
+        var result =
             await inputProcessor
                 .ProcessInputAsync(interruptingBotCommandInput);
         
-        Assert.Equal(
+        Assert.Contains(
             expectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
     }
     
     [Fact]
@@ -142,17 +142,17 @@ public sealed class InputProcessorTests
         const string notExpectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         
-        var actualOutput = 
+        var result = 
             await inputProcessor
                 .ProcessInputAsync(notInterruptingBotCommandInput);
         
-        Assert.NotEqual(
+        Assert.DoesNotContain(
             notExpectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
     }
 
     [Fact]
-    public async Task ProcessInputAsync_ReturnsEmptyOutput_AndSavesToDb_ForLocationUpdate()
+    public async Task ProcessInputAsync_ReturnsEmptyOutput_ForLocationUpdate()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -162,23 +162,15 @@ public sealed class InputProcessorTests
                 new Geo(17, -22, Option<double>.None()));
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories();
+        var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
         var expectedTlgInputSavedToDbWithoutResultantWorkflowState = locationUpdate;
 
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowState))))
-            .Verifiable();
-        
-        var actualOutput =
+        var result =
             await inputProcessor
                 .ProcessInputAsync(locationUpdate);
         
-        Assert.Empty(actualOutput);
-        mockInputRepo.Verify();
+        Assert.Empty(result.ResultingOutputs);
     }
 }

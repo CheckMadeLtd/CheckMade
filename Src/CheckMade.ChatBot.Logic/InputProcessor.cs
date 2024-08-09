@@ -14,7 +14,8 @@ public interface IInputProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> input);
+    public Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+        ProcessInputAsync(Result<TlgInput> input);
 }
 
 internal sealed class InputProcessor(
@@ -25,16 +26,15 @@ internal sealed class InputProcessor(
         ILogger<InputProcessor> logger)
     : IInputProcessor
 {
-    public async Task<IReadOnlyCollection<OutputDto>> ProcessInputAsync(Result<TlgInput> input)
+    public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+        ProcessInputAsync(Result<TlgInput> input)
     {
         return await input.Match(
             async currentInput =>
             {
                 if (currentInput.InputType == TlgInputType.Location)
                 {
-                    await SaveCurrentInputToDbAsync(currentInput, Option<Guid>.None());
-                    
-                    return [];
+                    return (Option<TlgInput>.None(), new List<OutputDto>().ToImmutableReadOnlyCollection());
                 }
                 
                 List<OutputDto> outputBuilder = [];
@@ -67,22 +67,28 @@ internal sealed class InputProcessor(
                 
                 var responseResult = 
                     await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
-                
-                await SaveCurrentInputToDbAsync(
-                    currentInput,
-                    GetEntityGuid(responseResult),
-                    GetResultantWorkflowState(responseResult, activeWorkflow));
 
-                return ResolveResponseResultIntoOutputs(
-                    responseResult,
-                    outputBuilder,
-                    activeWorkflow,
-                    currentInput);
+                var enrichedCurrentInput = currentInput with
+                {
+                    ResultantWorkflow = GetResultantWorkflowState(responseResult, activeWorkflow)
+                                        ?? Option<ResultantWorkflowState>.None(),
+                    EntityGuid = GetEntityGuid(responseResult)
+                };
+                
+                return (
+                    Option<TlgInput>.Some(enrichedCurrentInput), 
+                    ResolveResponseResultIntoOutputs(
+                        responseResult,
+                        outputBuilder,
+                        activeWorkflow,
+                        currentInput));
             },
             // This error was already logged at its source, in ToModelConverter
             error => 
-                Task.FromResult<IReadOnlyCollection<OutputDto>>(
-                    [new OutputDto { Text = error }]));
+                Task.FromResult<(Option<TlgInput> EnrichedOriginalInput, 
+                    IReadOnlyCollection<OutputDto> ResultingOutputs)>((
+                    Option<TlgInput>.None(), [new OutputDto { Text = error }]
+                )));
     }
 
     private static bool IsStartCommand(TlgInput currentInput) =>
@@ -113,18 +119,6 @@ internal sealed class InputProcessor(
         response.Match(
             r => r.EntityGuid,
             _ => Option<Guid>.None());
-    
-    private async Task SaveCurrentInputToDbAsync(
-        TlgInput currentInput,
-        Option<Guid> entityGuid,
-        ResultantWorkflowState? workflowInfo = null)
-    {
-        await inputsRepo.AddAsync(currentInput with
-        {
-            ResultantWorkflow = workflowInfo ?? Option<ResultantWorkflowState>.None(),
-            EntityGuid = entityGuid
-        });
-    }
     
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
     {

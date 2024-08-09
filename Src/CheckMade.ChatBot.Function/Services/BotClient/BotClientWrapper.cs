@@ -231,7 +231,7 @@ public sealed class BotClientWrapper(
             //         cancellationToken: cancellationToken);
             // }
 
-            await botClient.SendTextMessageAsync(
+            var sentMessage = await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: text,
                 parseMode: ParseMode.Html,
