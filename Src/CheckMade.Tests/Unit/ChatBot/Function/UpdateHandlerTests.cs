@@ -521,12 +521,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator)
         GetBasicTestingServices(IServiceProvider sp) => 
-            (sp.GetRequiredService<ITelegramUpdateGenerator>(), 
-                sp.GetRequiredService<Mock<IBotClientWrapper>>(),
-                sp.GetRequiredService<IUpdateHandler>(),
-                sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
-                new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
-                    sp.GetRequiredService<ILogger<UiTranslator>>()));
+        (sp.GetRequiredService<ITelegramUpdateGenerator>(), 
+            sp.GetRequiredService<Mock<IBotClientWrapper>>(),
+            sp.GetRequiredService<IUpdateHandler>(),
+            sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
+            new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
+                sp.GetRequiredService<ILogger<UiTranslator>>()));
 
     private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returnValue)
     {
@@ -538,5 +538,4 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 
         return mockInputProcessor.Object;
     }
-    
 }

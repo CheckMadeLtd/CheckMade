@@ -1,6 +1,5 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -20,7 +19,6 @@ public interface IInputProcessor
 
 internal sealed class InputProcessor(
         IWorkflowIdentifier workflowIdentifier,
-        ITlgInputsRepository inputsRepo,
         IGeneralWorkflowUtils generalWorkflowUtils,
         IDomainGlossary glossary,
         ILogger<InputProcessor> logger)
