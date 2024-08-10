@@ -1,3 +1,3 @@
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-internal interface IWorkflowStateTerminator : IWorkflowState;
+public interface IWorkflowStateTerminator : IWorkflowState;

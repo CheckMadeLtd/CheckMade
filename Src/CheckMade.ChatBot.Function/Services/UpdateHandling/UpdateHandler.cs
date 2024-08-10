@@ -4,12 +4,14 @@ using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -31,6 +33,7 @@ public sealed class UpdateHandler(
         IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
         IBlobLoader blobLoader,
         ITlgInputsRepository inputsRepo,
+        IDomainGlossary glossary,
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
@@ -97,14 +100,14 @@ public sealed class UpdateHandler(
                 from replyMarkupConverter
                     in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
-                from enrichedOutputs
+                from sentOutputs
                     in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
                             activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader))
                 from unit 
                     in Attempt<Unit>.RunAsync(() =>
-                        SaveToDbAsync(result.EnrichedOriginalInput, enrichedOutputs))
+                        SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))
                 select unit);
         
         return handleUpdateAttempt.Match(
@@ -145,19 +148,37 @@ public sealed class UpdateHandler(
     }
 
     private async Task<Unit> SaveToDbAsync(
-        Option<TlgInput> enrichedInput, IReadOnlyCollection<OutputDto> enrichedOutputs)
+        Option<TlgInput> enrichedInput, IReadOnlyCollection<OutputDto> sentOutputs)
     {
         if (enrichedInput.IsNone)
             return Unit.Value;
         
-        List<(TlgAgent tlgAgent, int messageId)> bridgeDestinations = [];
-        
-        // ToDo: some logic to choose the relevant enrichedOutputs, e.g. notifications for a new issue. 
-        
         await inputsRepo.AddAsync(
             enrichedInput.GetValueOrThrow(), 
-            bridgeDestinations.ToImmutableReadOnlyCollection());
+            GetDestinationInfoForWorkflowBridges());
         
         return Unit.Value;
+
+        Option<IReadOnlyCollection<ActualSendOutParams>> GetDestinationInfoForWorkflowBridges()
+        {
+            var resultantWorkflowState = 
+                enrichedInput.GetValueOrThrow().ResultantWorkflow; 
+        
+            var isWorkflowTerminatingInput =
+                resultantWorkflowState.IsSome &&
+                glossary.GetDtType(resultantWorkflowState.GetValueOrThrow().InStateId)
+                    .IsAssignableTo(typeof(IWorkflowStateTerminator));
+
+            if (!isWorkflowTerminatingInput)
+                return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
+            
+            Func<OutputDto, bool> isOtherRecipientThanOriginatingRole = dto => dto.LogicalPort.IsSome;
+
+            return Option<IReadOnlyCollection<ActualSendOutParams>>.Some(
+                sentOutputs
+                    .Where(isOtherRecipientThanOriginatingRole)
+                    .Select(o => o.ActualSendOutParams!.Value)
+                    .ToImmutableReadOnlyCollection());
+        }
     }
 }

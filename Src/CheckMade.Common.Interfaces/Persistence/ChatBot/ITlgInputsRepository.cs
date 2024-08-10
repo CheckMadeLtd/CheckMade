@@ -7,7 +7,7 @@ namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
 
 public interface ITlgInputsRepository
 {
-    Task AddAsync(TlgInput tlgInput, IReadOnlyCollection<(TlgAgent tlgAgent, int messageId)> bridgeDestinations);
+    Task AddAsync(TlgInput tlgInput, Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations);
     Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs);
     Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent);
     Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent);

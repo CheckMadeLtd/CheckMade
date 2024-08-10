@@ -26,7 +26,8 @@ public sealed record OutputDto
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();
     
-    // Probably an example where a detail of the Telegram.Bot API leaks into our logic :-(
     public Option<int> UpdateExistingOutputMessageId { get; init; }
         = Option<int>.None();
+
+    public ActualSendOutParams? ActualSendOutParams { get; init; } = null;
 }

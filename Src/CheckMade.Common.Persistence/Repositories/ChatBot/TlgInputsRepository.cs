@@ -52,7 +52,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
     
     public async Task AddAsync(
-        TlgInput tlgInput, IReadOnlyCollection<(TlgAgent tlgAgent, int messageId)> bridgeDestinations) =>
+        TlgInput tlgInput, 
+        Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations) =>
         await AddAsync(new[] { tlgInput });
 
     public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
