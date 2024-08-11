@@ -30,14 +30,16 @@ public static class ServiceRegistration
         services.AddScoped<IGeneralWorkflowUtils, GeneralWorkflowUtils>();
         services.AddScoped<IStateMediator, StateMediator>();
 
+        services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
+        services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
+
         services.AddScoped<UserAuthWorkflow>();
         services.AddScoped<NewIssueWorkflow>();
         services.AddScoped<LanguageSettingWorkflow>();
         services.AddScoped<LogoutWorkflow>();
         services.AddScoped<ViewAttachmentsWorkflow>();
-
-        services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
-        services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
+        
+        services.AddScoped<IOneStepWorkflowInitAndTerminator, OneStepWorkflowInitAndTerminator>();
 
         services.AddScoped<ILanguageSettingSelect, LanguageSettingSelect>();
         services.AddScoped<ILanguageSettingSet, LanguageSettingSet>();
@@ -71,6 +73,6 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueTypeSelection<SaniCleanTrade>, NewIssueTypeSelection<SaniCleanTrade>>();
         services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SaniCleanTrade>, NewIssueSubmissionSucceeded<SaniCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, NewIssueSubmissionSucceeded<SiteCleanTrade>>();        
+        services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, NewIssueSubmissionSucceeded<SiteCleanTrade>>();
     }
 }

@@ -62,6 +62,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
         
         AddTerm(typeof(ViewAttachmentsWorkflow), "D3TC83");
+        AddTerm(typeof(IOneStepWorkflowInitAndTerminator), "DT8SQ7");
         
         AddTerm(typeof(NewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");

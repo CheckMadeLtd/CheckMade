@@ -63,6 +63,9 @@ internal sealed record ViewAttachmentsWorkflow(
                 issue.Evidence.Attachments.GetValueOrThrow())
         };
 
-        return new WorkflowResponse(attachmentsOutput, Option<string>.None());
+        return WorkflowResponse.Create(
+            currentInput,
+            attachmentsOutput,
+            newState: Mediator.Terminate(typeof(IOneStepWorkflowInitAndTerminator)));
     }
 }
