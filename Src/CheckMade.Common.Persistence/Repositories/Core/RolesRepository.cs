@@ -56,7 +56,9 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     _cache = Option<IReadOnlyCollection<Role>>.Some(
-                        new List<Role>(await ExecuteReaderOneToOneAsync(command, ModelReaders.ReadRole))
+                        new List<Role>(await ExecuteReaderOneToOneAsync(
+                                command, 
+                                ModelReaders.ReadRole))
                             .ToImmutableReadOnlyCollection());
                 }
             }

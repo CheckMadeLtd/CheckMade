@@ -53,6 +53,14 @@ internal static class ModelReaders
         (reader, _) => 
             ConstituteVendor(reader).GetValueOrThrow();
 
+    internal static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> ReadWorkflowBridge =
+        (reader, glossary) =>
+        {
+            var sourceInput = ReadTlgInput(reader, glossary);
+
+            return ConstituteWorkflowBridge(reader, sourceInput);
+        };
+
     internal static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, User> initializeModel,
@@ -341,6 +349,14 @@ internal static class ModelReaders
             (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));
 
         return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+    }
+
+    private static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
+    {
+        var destinationChatId = reader.GetInt64(reader.GetOrdinal("bridge_chat_id"));
+        var destinationMessageId = reader.GetInt32(reader.GetOrdinal("bridge_message_id"));
+
+        return new WorkflowBridge(sourceInput, destinationChatId, destinationMessageId);
     }
     
     private static Option<T> GetOption<T>(DbDataReader reader, int ordinal)

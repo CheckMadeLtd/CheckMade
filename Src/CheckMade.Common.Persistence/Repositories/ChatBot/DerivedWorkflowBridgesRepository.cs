@@ -13,6 +13,15 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         const string rawQuery = """
                                 SELECT
                                 
+                                r.token AS role_token, 
+                                r.role_type AS role_type, 
+                                r.status AS role_status, 
+                                    
+                                le.name AS live_event_name, 
+                                le.start_date AS live_event_start_date, 
+                                le.end_date AS live_event_end_date, 
+                                le.status AS live_event_status, 
+                                    
                                 dws.resultant_workflow AS input_workflow,
                                 dws.in_state AS input_wf_state,
                                 
@@ -30,10 +39,19 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                 
                                 FROM derived_workflow_bridges dwb
                                 INNER JOIN tlg_inputs inp on dwb.src_input_id = inp.id
+                                LEFT JOIN roles r on inp.role_id = r.id
+                                LEFT JOIN live_events le on inp.live_event_id = le.id
                                 LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
+                                WHERE dwb.dst_chat_id = @dstChatId AND dwb.dst_message_id = @dstMessageId
                                 """;
+
+        var normalParameters = new Dictionary<string, object>
+        {
+            ["@dstChatId"] = dstChatId.Id,
+            ["@dstMessageId"] = dstMessageId.Id
+        };
         
-        var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+        var command = GenerateCommand(rawQuery, normalParameters);
 
         return 
             (await ExecuteReaderOneToOneAsync(
