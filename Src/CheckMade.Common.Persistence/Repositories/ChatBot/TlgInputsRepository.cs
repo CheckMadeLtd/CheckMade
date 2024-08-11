@@ -159,21 +159,24 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                 Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
             });
 
+        // Suppressing warning due to Npgsql library design:
+        // NpgsqlDbType supports bitwise operations for array types, but is not marked as [Flags]
+        // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
         if (bridgeDestinations.IsSome)
         {
             var destinations = bridgeDestinations.GetValueOrThrow();
 
             command.Parameters.Add(new NpgsqlParameter("@dstChatIds", NpgsqlDbType.Array | NpgsqlDbType.Bigint)
             {
-                Value = destinations.Select(d => d.ChatId)
+                Value = destinations.Select(d => d.ChatId).ToArray()
             });
             
             command.Parameters.Add(new NpgsqlParameter("@dstMessageIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
             {
-                Value = destinations.Select(d => d.TlgMessageId)
+                Value = destinations.Select(d => d.TlgMessageId).ToArray()
             });
         }
-        
+
         await ExecuteTransactionAsync(new List<NpgsqlCommand>
         {
             command
