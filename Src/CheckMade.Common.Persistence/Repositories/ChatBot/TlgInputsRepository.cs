@@ -77,20 +77,33 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                  @guid)
                                  """;
 
-        const string queryWithWorkflowInfo = $"""
-                                              WITH inserted_input AS (
-                                                {baseQuery}
-                                                RETURNING id
-                                              )
-                                              INSERT INTO derived_workflow_states
-                                              (tlg_inputs_id,
-                                              resultant_workflow,
-                                              in_state)
-
-                                              SELECT id, @workflowId, @workflowState
-                                              FROM inserted_input
-                                              """;
+        const string derivedRecordsQueryStub = $"""
+                                                WITH inserted_input AS (
+                                                  {baseQuery}
+                                                  RETURNING id
+                                                )
+                                                """;
         
+        const string derivedWorkflowInfoQuery = $"""
+                                                 INSERT INTO derived_workflow_states
+                                                 (tlg_inputs_id,
+                                                 resultant_workflow,
+                                                 in_state)
+
+                                                 SELECT id, @workflowId, @workflowState
+                                                 FROM inserted_input
+                                                 """;
+
+        const string derivedWorkflowBridgesInfoQuery = $"""
+                                                        INSERT INTO derived_workflow_bridges
+                                                        (src_input_id,
+                                                         dst_chat_id,
+                                                         dst_message_id)
+                                                        
+                                                        SELECT id, unnest(@dstChatIds), unnest(@dstMessageIds)
+                                                        FROM inserted_input
+                                                        """;
+
         var normalParameters = new Dictionary<string, object>
         {
             ["@tlgDate"] = tlgInput.TlgDate,
@@ -116,18 +129,55 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                 guid => guid,
                 () => DBNull.Value)
         };
-            
-        var command = GenerateCommand(tlgInput.ResultantWorkflow.IsSome 
-                ? queryWithWorkflowInfo 
-                : baseQuery, 
-            normalParameters);
 
-        command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
+        var command = (tlgInput.ResultantWorkflow.IsSome, bridgeDestinations.IsSome) switch
         {
-            Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
-        });
+            (false, false) => 
+                GenerateCommand(baseQuery, normalParameters),
+            
+            (true, false) => 
+                GenerateCommand(
+                    derivedRecordsQueryStub.Concat(derivedWorkflowInfoQuery).ToString()!,
+                    normalParameters),
+            
+            (false, true) =>
+                GenerateCommand(
+                    derivedRecordsQueryStub.Concat(derivedWorkflowBridgesInfoQuery).ToString()!,
+                    normalParameters),
+            
+            _ =>
+                GenerateCommand(derivedRecordsQueryStub
+                        .Concat(derivedWorkflowInfoQuery)
+                        .Concat(derivedWorkflowBridgesInfoQuery)
+                        .ToString()!,
+                    normalParameters)
+        };     
+        
+        command.Parameters.Add(
+            new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
+            {
+                Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
+            });
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        if (bridgeDestinations.IsSome)
+        {
+            var destinations = bridgeDestinations.GetValueOrThrow();
+
+            command.Parameters.Add(new NpgsqlParameter("@dstChatIds", NpgsqlDbType.Array | NpgsqlDbType.Bigint)
+            {
+                Value = destinations.Select(d => d.ChatId)
+            });
+            
+            command.Parameters.Add(new NpgsqlParameter("@dstMessageIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
+            {
+                Value = destinations.Select(d => d.TlgMessageId)
+            });
+        }
+        
+        await ExecuteTransactionAsync(new List<NpgsqlCommand>
+        {
+            command
+        });
         
         if (_cacheInputsByTlgAgent.TryGetValue(tlgInput.TlgAgent, out var cacheForTlgInput))
         {
