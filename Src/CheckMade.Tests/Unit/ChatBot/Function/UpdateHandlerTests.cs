@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -125,13 +126,17 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
-            GetStubInputProcessor(new List<OutputDto> { 
-                new() { Text = EnglishUiStringForTests }
-        }));
+            GetStubInputProcessor( 
+                new List<OutputDto>
+                {
+                    new() { Text = EnglishUiStringForTests }
+                }));
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var updateFromEnglishUser = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
+        
+        var updateFromEnglishUser = 
+            basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
         
         await basics.handler.HandleUpdateAsync(
             updateFromEnglishUser,
@@ -152,10 +157,11 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
-            GetStubInputProcessor(new List<OutputDto>
-            {
-                new() { Text = EnglishUiStringForTests }
-            }));
+            GetStubInputProcessor(
+                new List<OutputDto>
+                {
+                    new() { Text = EnglishUiStringForTests }
+                }));
         
         var tlgAgent = UserId02_ChatId04_Operations;
         
@@ -169,10 +175,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         _services = repoServices;
         var basics = GetBasicTestingServices(_services);
-        var updateFromGermanUser = basics.updateGenerator.GetValidTelegramTextMessage(
-            "random valid text",
-            tlgAgent.UserId,
-            tlgAgent.ChatId);
+        
+        var updateFromGermanUser = 
+            basics.updateGenerator.GetValidTelegramTextMessage(
+                "any valid text",
+                tlgAgent.UserId,
+                tlgAgent.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
@@ -196,19 +204,21 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputWithPrompts = [ 
-            new ()
+        List<OutputDto> outputWithPrompts = 
+        [ 
+            new()
             {
-              Text = EnglishUiStringForTests,
-              ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
-            }];
+                Text = EnglishUiStringForTests,
+                ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
+            }
+        ];
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputWithPrompts));
-
+    
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
+        var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
@@ -227,12 +237,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             );
         
         await basics.handler.HandleUpdateAsync(textUpdate, mode);
-
+    
         Assert.Equivalent(
             expectedReplyMarkup, 
             actualMarkup);
     }
-
+    
     [Theory]
     [InlineData(Operations)]
     [InlineData(Communications)]
@@ -241,7 +251,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsMultiple = [
+        List<OutputDto> outputsMultiple = 
+        [
             new OutputDto { Text = UiNoTranslate("Output1") },
             new OutputDto { Text = UiNoTranslate("Output2") }
         ];
@@ -251,8 +262,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
-        
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
+
         await basics.handler.HandleUpdateAsync(update, mode);
         
         basics.mockBotClient.Verify(
@@ -264,7 +275,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()),
             Times.Exactly(outputsMultiple.Count));
     }
-
+    
     [Theory]
     [InlineData(Operations)]
     [InlineData(Communications)]
@@ -274,7 +285,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsWithLogicalPort = [
+        List<OutputDto> outputsWithLogicalPort = 
+        [
             new OutputDto
             { 
                 LogicalPort = new LogicalPort(
@@ -300,7 +312,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputsWithLogicalPort));
-
+    
         List<TlgAgentRoleBind> activeRoleBindings = [ 
             TestRepositoryUtils.GetNewRoleBind(SaniCleanInspector_DanielEn_X2024, PrivateBotChat_Operations),
             TestRepositoryUtils.GetNewRoleBind(SaniCleanCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
@@ -311,7 +323,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         _services = repoServices;
         var basics = GetBasicTestingServices(_services);
-        var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
+        var update = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
         
         var expectedSendParamSets = outputsWithLogicalPort
             .Select(output => new 
@@ -324,9 +336,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                         tarb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
                     .TlgAgent.ChatId.Id
             }).ToList();
-
+    
         await basics.handler.HandleUpdateAsync(update, mode);
-
+    
         foreach (var expectedParamSet in expectedSendParamSets)
         {
             basics.mockBotClient.Verify(
@@ -339,7 +351,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Times.Once);
         }
     }
-
+    
     [Theory]
     [InlineData(Operations)]
     [InlineData(Communications)]
@@ -350,16 +362,16 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         const string expectedOutputMessage = "Output without logical port";
         List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(expectedOutputMessage) }];
-
+    
         serviceCollection.AddScoped<IInputProcessor>(_ => 
-            GetStubInputProcessor(outputWithoutPort));
+            GetStubInputProcessor((outputWithoutPort)));
         
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         
         const long expectedChatId = ChatId04;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(
-            "random valid text",
+            "any valid text",
             UserId02,
             expectedChatId);
     
@@ -376,7 +388,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         // Cannot test for correct botClient.MyInteractionMode because mockBotClient is not (yet) Mode-specific!
     }
-
+    
     [Theory]
     [InlineData(Operations)]
     [InlineData(Communications)]
@@ -409,15 +421,15 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
-
+    
         await basics.handler.HandleUpdateAsync(update, mode);
-
+    
         basics.mockBotClient.Verify(
             x => x.SendPhotoAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
-                Times.Exactly(2));
-
+            Times.Exactly(2));
+    
         basics.mockBotClient.Verify(
             x => x.SendVoiceAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
@@ -430,7 +442,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
     }
-
+    
     [Theory]
     [InlineData(Operations)]
     [InlineData(Communications)]
@@ -458,7 +470,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputWithTextAndCaptions));
-
+    
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
@@ -499,11 +511,11 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputWithLocation));
-
+    
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var update = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
-
+    
         await basics.handler.HandleUpdateAsync(update, mode);
         
         basics.mockBotClient.Verify(
@@ -514,27 +526,48 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
-    
+
     private static (ITelegramUpdateGenerator updateGenerator,
+        ITlgInputGenerator inputGenerator,
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
         IUiTranslator emptyTranslator)
-        GetBasicTestingServices(IServiceProvider sp) => 
-        (sp.GetRequiredService<ITelegramUpdateGenerator>(), 
-            sp.GetRequiredService<Mock<IBotClientWrapper>>(),
+        GetBasicTestingServices(IServiceProvider sp)
+    {
+        var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
+        
+        mockBotClient
+            .Setup(x => x.SendTextMessageAsync(
+                It.IsAny<ChatId>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new TlgMessageId(1));
+        
+        return (sp.GetRequiredService<ITelegramUpdateGenerator>(),
+            sp.GetRequiredService<ITlgInputGenerator>(),
+            mockBotClient,
             sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
             new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
                 sp.GetRequiredService<ILogger<UiTranslator>>()));
-
-    private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returnValue)
+    } 
+    
+    private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returningOutputs)
     {
+        var sp = new UnitTestStartup().Services.BuildServiceProvider();
+        var inputGenerator = sp.GetRequiredService<ITlgInputGenerator>();
+        var validInput = inputGenerator.GetValidTlgInputTextMessage();
+        
         var mockInputProcessor = new Mock<IInputProcessor>();
+        
         mockInputProcessor
-            .Setup<Task<IReadOnlyCollection<OutputDto>>>(ip =>
-                ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
-            .ReturnsAsync(returnValue);
+            .Setup<Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
+                ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .ReturnsAsync((validInput, returningOutputs));
 
         return mockInputProcessor.Object;
     }
