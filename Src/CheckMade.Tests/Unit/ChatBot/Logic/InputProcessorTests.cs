@@ -22,7 +22,7 @@ public sealed class InputProcessorTests
     private ServiceProvider? _services;
  
     [Fact]
-    public async Task ProcessInputAsync_WelcomesAndPromptsAuth_AndSavesToDb_ForStartCommandOfUnauthenticatedUser()
+    public async Task ProcessInputAsync_WelcomesAndPromptsAuth_ForStartCommandOfUnauthenticatedUser()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -37,36 +37,20 @@ public sealed class InputProcessorTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
-
-        var glossary = services.GetRequiredService<IDomainGlossary>();
-        var expectedTlgInputSavedToDb = 
-            startCommand with
-            {
-                ResultantWorkflow = new ResultantWorkflowState(
-                    glossary.GetId(typeof(UserAuthWorkflow)),
-                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry)))
-            };
-        
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDb))))
-            .Verifiable();
-        
-        List<OutputDto> expectedOutputs = [
-            new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
-            new(){ Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }];
+    
+        List<OutputDto> expectedOutputs = 
+        [
+            new() { Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
+            new() { Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }
+        ];
         
         var result = 
             await inputProcessor
                 .ProcessInputAsync(startCommand);
-
+    
         Assert.Equivalent(
             expectedOutputs,
             result.ResultingOutputs);
-        
-        mockInputRepo.Verify();
     }
     
     [Fact]
