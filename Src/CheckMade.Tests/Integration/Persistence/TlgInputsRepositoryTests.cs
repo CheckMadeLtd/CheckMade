@@ -4,6 +4,7 @@ using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence;
@@ -57,7 +58,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                     input.Details)
             ];
         
-            await inputRepo.AddAsync(input);
+            await inputRepo.AddAsync(
+                input,
+                Option<IReadOnlyCollection<ActualSendOutParams>>.None());
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.TlgAgent))
@@ -71,7 +74,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 retrievedInputs.First());
         }
     }
-
+    
     [Fact]
     public async Task SavesAndRetrieves_DomainTerm_ViaCustomJsonSerialization_WhenInputHasValidDomainTerm()
     {
@@ -84,7 +87,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             roleSetting: Default);
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
-        await inputRepo.AddAsync(tlgInput);
+        await inputRepo.AddAsync(
+            tlgInput,
+            Option<IReadOnlyCollection<ActualSendOutParams>>.None());
         
         var retrievedInput = 
             (await inputRepo.GetAllInteractiveAsync(PrivateBotChat_Operations))
@@ -113,7 +118,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             expectedGeo,
             roleSetting: Default);
         
-        await inputRepo.AddAsync(tlgInput);
+        await inputRepo.AddAsync(
+            tlgInput,
+            Option<IReadOnlyCollection<ActualSendOutParams>>.None());
         
         var retrievedInput = 
             (await inputRepo.GetAllLocationAsync(PrivateBotChat_Operations, DateTimeOffset.MinValue))
@@ -125,7 +132,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             expectedGeo,
             retrievedInput.Details.GeoCoordinates.GetValueOrThrow());
     }
-
+    
     [Fact]
     public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturnsInBulk_MultipleValidInputs()
     {

@@ -1,9 +1,7 @@
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -13,7 +11,6 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
@@ -35,7 +32,7 @@ public sealed class InputProcessorTests
             roleSetting: TestOriginatorRoleSetting.None);
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories();
+        var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
     
         List<OutputDto> expectedOutputs = 
@@ -148,8 +145,6 @@ public sealed class InputProcessorTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
-
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowState = locationUpdate;
 
         var result =
             await inputProcessor
