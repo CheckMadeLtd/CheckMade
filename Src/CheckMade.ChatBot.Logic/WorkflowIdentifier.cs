@@ -118,6 +118,10 @@ internal sealed record WorkflowIdentifier(
             // ToDo: I think for Workflows started by ControlPrompts, I also need to check whether they are still active
             // or have been terminated! The current code, it seems, would always return 'active'.
             // but just like with BotCommand-triggered-workflow, it should return None if terminated?!!
+            
+            // the next problem: this if clause gets entered when I simply confirm 'yes' for wanting to logout,
+            // i.e. being in the middle of a BotCommand-triggered workflow. This probably relates to the above comment. 
+            
             if (currentInput.InputType == TlgInputType.CallbackQuery)
             {
                 var currentControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();

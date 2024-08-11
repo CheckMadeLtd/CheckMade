@@ -114,7 +114,8 @@ internal sealed record NewIssueReview<T>(
                     .GetTypeNameWithoutGenericParamSuffix();
 
             return await Reporter.GetNewIssueNotificationsAsync(
-                historyWithUpdatedCurrentInput, currentIssueTypeName);
+                historyWithUpdatedCurrentInput, 
+                currentIssueTypeName);
         }
         
         async Task<Guid> GetLastGuidAsync()
