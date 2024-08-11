@@ -6,6 +6,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -16,19 +17,20 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Option<WorkflowBase> Identify(IReadOnlyCollection<TlgInput> inputHistory);
+    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory);
 }
 
 internal sealed record WorkflowIdentifier(
-        UserAuthWorkflow UserAuthWorkflow,
-        NewIssueWorkflow NewIssueWorkflow,
-        LanguageSettingWorkflow LanguageSettingWorkflow,
-        LogoutWorkflow LogoutWorkflow,
-        ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
-        IDomainGlossary Glossary) 
+    UserAuthWorkflow UserAuthWorkflow,
+    NewIssueWorkflow NewIssueWorkflow,
+    LanguageSettingWorkflow LanguageSettingWorkflow,
+    LogoutWorkflow LogoutWorkflow,
+    ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
+    IDerivedWorkflowBridgesRepository BridgesRepo,
+    IDomainGlossary Glossary) 
     : IWorkflowIdentifier
 {
-    public Option<WorkflowBase> Identify(IReadOnlyCollection<TlgInput> inputHistory)
+    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
@@ -39,7 +41,7 @@ internal sealed record WorkflowIdentifier(
         {
             InteractionMode.Operations => IdentifyOperationsWorkflow(),
             InteractionMode.Communications => IdentifyCommunicationsWorkflow(),
-            InteractionMode.Notifications => IdentifyNotificationsWorkflow(),
+            InteractionMode.Notifications => await IdentifyNotificationsWorkflowAsync(),
             _ => throw new InvalidEnumArgumentException($"Unhandled {nameof(currentMode)}")
         };
         
@@ -111,21 +113,22 @@ internal sealed record WorkflowIdentifier(
             throw new NotImplementedException();
         }
 
-        Option<WorkflowBase> IdentifyNotificationsWorkflow()
+        async Task<Option<WorkflowBase>> IdentifyNotificationsWorkflowAsync()
         {
             var currentInput = inputHistory.Last();
 
-            // ToDo: I think for Workflows started by ControlPrompts, I also need to check whether they are still active
-            // or have been terminated! The current code, it seems, would always return 'active'.
-            // but just like with BotCommand-triggered-workflow, it should return None if terminated?!!
+            var workflowBridge = 
+                await BridgesRepo.GetAsync(currentInput.TlgAgent.ChatId, currentInput.TlgMessageId); 
             
-            // the next problem: this if clause gets entered when I simply confirm 'yes' for wanting to logout,
-            // i.e. being in the middle of a BotCommand-triggered workflow. This probably relates to the above comment. 
-            
-            if (currentInput.InputType == TlgInputType.CallbackQuery)
+            if (currentInput.InputType == TlgInputType.CallbackQuery && workflowBridge != null)
             {
                 var currentControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
 
+                // In the future I may have to look up what the SourceInput in the WorkflowBridge was, in order 
+                // to determine which Workflow to identify here. E.g. I might ask: Do you want to accept this task?
+                // With Yes/No ControlPrompts, and just clicking 'yes' on its own would not give enough context 
+                // for the below identification. 
+                
                 return currentControl switch
                 {
                     (long)ControlPrompts.ViewAttachments => 

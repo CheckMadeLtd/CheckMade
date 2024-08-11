@@ -16,7 +16,7 @@ public sealed class WorkflowIdentifierTests
     private ServiceProvider? _services;
 
     [Fact]
-    public void Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
+    public async Task Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -28,8 +28,8 @@ public sealed class WorkflowIdentifierTests
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
     
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputFromUnauthenticatedUser }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputFromUnauthenticatedUser }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
@@ -37,7 +37,7 @@ public sealed class WorkflowIdentifierTests
     }
 
     [Fact]
-    public void Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
+    public async Task Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -48,8 +48,8 @@ public sealed class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.Settings);
         
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputWithSettingsBotCommand }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputWithSettingsBotCommand }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
@@ -57,7 +57,7 @@ public sealed class WorkflowIdentifierTests
     }
 
     [Fact]
-    public void Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
+    public async Task Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -68,8 +68,8 @@ public sealed class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.NewIssue);
         
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputWithNewIssueBotCommand }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputWithNewIssueBotCommand }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
@@ -77,15 +77,15 @@ public sealed class WorkflowIdentifierTests
     }
     
     [Fact]
-    public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public async Task Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = workflowIdentifier
-            .Identify(new []
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[]
             {
                 inputGenerator.GetValidTlgInputTextMessage(),
                 inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),

@@ -63,7 +63,7 @@ internal sealed class InputProcessor(
                     await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
                 
                 var activeWorkflow = 
-                    workflowIdentifier.Identify(inputHistory);
+                    await workflowIdentifier.IdentifyAsync(inputHistory);
                 
                 var responseResult = 
                     await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
