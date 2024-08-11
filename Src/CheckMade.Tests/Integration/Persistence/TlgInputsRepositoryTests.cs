@@ -134,33 +134,6 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     }
     
     [Fact]
-    public async Task AddAsync_And_GetAllAsync_CorrectlyAddAndReturnsInBulk_MultipleValidInputs()
-    {
-        _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
-        
-        var tlgInputs = new[]
-        {
-            inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: None),
-            inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: Default),
-            inputGenerator.GetValidTlgInputTextMessage(
-                roleSetting: Default)
-        };
-        
-        await inputRepo.AddAsync(tlgInputs);
-        var retrievedInputs = 
-            await inputRepo.GetAllInteractiveAsync(PrivateBotChat_Operations);
-        await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
-
-        Assert.Equivalent(
-            tlgInputs,
-            retrievedInputs);
-    }
-    
-    [Fact]
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
@@ -182,8 +155,8 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     // [Theory(Skip = "Waiting to migrate the old DB data")]
-    [Theory(Skip = "Running tests from unknown IP / internet")]
-    // [Theory]
+    // [Theory(Skip = "Running tests from unknown IP / internet")]
+    [Theory]
     [InlineData(RealTestUser_DanielGorin_TelegramId, false)]
     [InlineData(RealTestUser_DanielGorin_TelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
@@ -226,7 +199,8 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 roleSpecified: SaniCleanEngineer_DanielEn_Y2024)
         };
 
-        await inputRepo.AddAsync(inputsY2024.ToArray());
+        foreach (var i in inputsY2024)
+            await AddActionAsync(i, inputRepo);
         
         var retrievedInputsY2024 = 
             (await inputRepo.GetAllInteractiveAsync(Y2024))
@@ -266,13 +240,16 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             new Geo(11.5, 47.6, Option<double>.None()),
             dateTime: sinceParam.AddSeconds(1));
 
-        await inputRepo.AddAsync(new List<TlgInput>
-        {
+        List<TlgInput> allInputs = 
+        [
             tlgInputLongBefore,
             tlgInputRightBefore,
             tlgInputExactlyAt,
             tlgInputAfter
-        });
+        ];
+
+        foreach (var i in allInputs)
+            await AddActionAsync(i, inputRepo);
         
         var retrievedInputs = 
             await inputRepo.GetAllLocationAsync(
@@ -290,4 +267,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         Assert.DoesNotContain(tlgInputRightBefore.TlgDate, retrievedDates);
         Assert.DoesNotContain(tlgInputLongBefore.TlgDate, retrievedDates);
     }
+
+    private static async Task AddActionAsync(TlgInput i, ITlgInputsRepository inputRepo) => 
+        await inputRepo.AddAsync(
+            i,
+            Option<IReadOnlyCollection<ActualSendOutParams>>.None());
 }

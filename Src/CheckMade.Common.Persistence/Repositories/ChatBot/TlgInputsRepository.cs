@@ -50,17 +50,14 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     
     private Dictionary<TlgAgent, List<TlgInput>> _cacheInputsByTlgAgent = new();
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
-    
-    public async Task AddAsync(
-        TlgInput tlgInput, 
-        Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations) =>
-        await AddAsync(new[] { tlgInput });
 
-    public async Task AddAsync(IReadOnlyCollection<TlgInput> tlgInputs)
+    public async Task AddAsync(
+        TlgInput tlgInput,
+        Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations)
     {
         const string baseQuery = """
                                  INSERT INTO tlg_inputs 
-                                 
+
                                  (date,
                                  message_id,
                                  user_id, 
@@ -72,7 +69,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                  role_id, 
                                  live_event_id,
                                  entity_guid) 
-                                 
+
                                  VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @tlgChatId, @tlgMessageDetails, 
                                  @lastDataMig, @interactionMode, @tlgInputType, 
                                  (SELECT id FROM roles WHERE token = @token), 
@@ -93,64 +90,56 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                               SELECT id, @workflowId, @workflowState
                                               FROM inserted_input
                                               """;
-         
-        var commands = tlgInputs.Select(tlgInput =>
+        
+        var normalParameters = new Dictionary<string, object>
         {
-            var normalParameters = new Dictionary<string, object>
-            {
-                ["@tlgDate"] = tlgInput.TlgDate,
-                ["@tlgMessageId"] = tlgInput.TlgMessageId,
-                ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
-                ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
-                ["@lastDataMig"] = 0,
-                ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
-                ["@tlgInputType"] = (int)tlgInput.InputType,
-                ["@token"] = tlgInput.OriginatorRole.Match<object>(  
-                    r => r.Token, 
-                    () => DBNull.Value),  
-                ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
-                    le => le.Name, 
-                    () => DBNull.Value),  
-                ["@workflowId"] = tlgInput.ResultantWorkflow.Match<object>(  
-                    w => w.WorkflowId, 
-                    () => DBNull.Value),  
-                ["@workflowState"] = tlgInput.ResultantWorkflow.Match<object>(  
-                    w => w.InStateId,  
-                    () => DBNull.Value),
-                ["@guid"] = tlgInput.EntityGuid.Match<object>(
-                    guid => guid,
-                    () => DBNull.Value)
-            };
+            ["@tlgDate"] = tlgInput.TlgDate,
+            ["@tlgMessageId"] = tlgInput.TlgMessageId,
+            ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
+            ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
+            ["@lastDataMig"] = 0,
+            ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
+            ["@tlgInputType"] = (int)tlgInput.InputType,
+            ["@token"] = tlgInput.OriginatorRole.Match<object>(  
+                r => r.Token, 
+                () => DBNull.Value),  
+            ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
+                le => le.Name, 
+                () => DBNull.Value),  
+            ["@workflowId"] = tlgInput.ResultantWorkflow.Match<object>(  
+                w => w.WorkflowId, 
+                () => DBNull.Value),  
+            ["@workflowState"] = tlgInput.ResultantWorkflow.Match<object>(  
+                w => w.InStateId,  
+                () => DBNull.Value),
+            ["@guid"] = tlgInput.EntityGuid.Match<object>(
+                guid => guid,
+                () => DBNull.Value)
+        };
             
-            var command = GenerateCommand(tlgInput.ResultantWorkflow.IsSome 
-                    ? queryWithWorkflowInfo 
-                    : baseQuery, 
-                normalParameters);
+        var command = GenerateCommand(tlgInput.ResultantWorkflow.IsSome 
+                ? queryWithWorkflowInfo 
+                : baseQuery, 
+            normalParameters);
 
-            command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
-            {
-                Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
-            });
-
-            return command;
-        }).ToImmutableReadOnlyCollection();
-
-        await ExecuteTransactionAsync(commands);
-
-        foreach (var input in tlgInputs)
+        command.Parameters.Add(new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
         {
-            if (_cacheInputsByTlgAgent.TryGetValue(input.TlgAgent, out var cacheForTlgInput))
-            {
-                cacheForTlgInput.Add(input);
-            }
+            Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
+        });
 
-            if (input.LiveEventContext.IsSome)
+        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
+        
+        if (_cacheInputsByTlgAgent.TryGetValue(tlgInput.TlgAgent, out var cacheForTlgInput))
+        {
+            cacheForTlgInput.Add(tlgInput);
+        }
+
+        if (tlgInput.LiveEventContext.IsSome)
+        {
+            if (_cacheInputsByLiveEvent.TryGetValue(tlgInput.LiveEventContext.GetValueOrDefault(), 
+                    out var cacheForLiveEvent))
             {
-                if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
-                        out var cacheForLiveEvent))
-                {
-                    cacheForLiveEvent.Add(input);
-                }
+                cacheForLiveEvent.Add(tlgInput);
             }
         }
     }
