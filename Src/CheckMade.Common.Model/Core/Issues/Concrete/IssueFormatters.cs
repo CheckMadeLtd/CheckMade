@@ -63,11 +63,14 @@ internal static class IssueFormatters
             : [];
         
         return UiConcatenate(
-            Ui("<b>Description:</b> "), issue.Evidence.Description.IsSome 
+            Ui("<b>Description:</b> "), 
+            issue.Evidence.Description.IsSome 
                 ? UiConcatenate(
                     UiIndirect(issue.Evidence.Description.GetValueOrThrow()),
                     UiConcatenate(captions))
-                : UiNoTranslate("n/a"),
+                : captions.Count > 0 
+                    ? UiConcatenate(captions)
+                    : UiNoTranslate("n/a"),
             UiNewLines(1),
             Ui("<b># Attachments:</b> "), attachments != null
                 ? UiIndirect(attachments.Count.ToString())
