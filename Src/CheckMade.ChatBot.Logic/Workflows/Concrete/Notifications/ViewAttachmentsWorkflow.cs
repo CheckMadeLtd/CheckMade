@@ -1,7 +1,9 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -32,29 +34,35 @@ internal sealed record ViewAttachmentsWorkflow(
 
         var issueGuid = workflowBridge.SourceInput.EntityGuid.GetValueOrThrow();
         var issueHistory = await InputsRepo.GetEntityHistoryAsync(issueGuid);
-        
+
         var sourceTrade = (ITrade)Activator.CreateInstance(
             Glossary.GetDtType(
                 workflowBridge
                     .SourceInput.ResultantWorkflow.GetValueOrThrow()
                     .InStateId))!;
-        
+
         var issue = sourceTrade switch
         {
-            SaniCleanTrade => 
-                (ITradeIssueWithEvidence<SaniCleanTrade>)
+            SaniCleanTrade =>
+                (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SaniCleanTrade>>()
                     .CreateAsync(issueHistory),
-            
-            SiteCleanTrade => 
-                (ITradeIssueWithEvidence<SiteCleanTrade>)
+
+            SiteCleanTrade =>
+                (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SiteCleanTrade>>()
                     .CreateAsync(issueHistory),
-            
+
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(sourceTrade)} while attempting to resolve {nameof(IIssueFactory<ITrade>)}")
         };
-        
-        
+
+        var attachmentsOutput = new OutputDto
+        {
+            Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
+                issue.Evidence.Attachments.GetValueOrThrow())
+        };
+
+        return new WorkflowResponse(attachmentsOutput, Option<string>.None());
     }
 }
