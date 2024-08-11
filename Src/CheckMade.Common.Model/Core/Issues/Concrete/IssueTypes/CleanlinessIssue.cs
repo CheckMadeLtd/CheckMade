@@ -16,7 +16,7 @@ public sealed record CleanlinessIssue<T>(
         Option<Role> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
-    : ITradeIssue<T>, ITradeIssueInvolvingFacility<T>, ITradeIssueWithEvidence<T> where T : ITrade, new()
+    : ITradeIssue<T>, ITradeIssueInvolvingFacility<T>, ITradeIssueWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {

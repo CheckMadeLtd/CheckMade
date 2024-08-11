@@ -44,7 +44,7 @@ public sealed record StakeholderReporter<T>(
                 .ToImmutableReadOnlyCollection();
 
         bool HasEvidenceWithAttachments() =>
-            (newIssue as ITradeIssueWithEvidence<T>) is { Evidence.Attachments.IsSome: true };
+            (newIssue as ITradeIssueWithEvidence) is { Evidence.Attachments.IsSome: true };
         
         UiString GetNotificationOutput(Func<KeyValuePair<IssueSummaryCategories, UiString>, bool> summaryFilter)
         {
