@@ -55,35 +55,28 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         TlgInput tlgInput,
         Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations)
     {
-        const string baseQuery = """
-                                 INSERT INTO tlg_inputs 
+        const string addInputQuery = """
+                                     INSERT INTO tlg_inputs 
 
-                                 (date,
-                                 message_id,
-                                 user_id, 
-                                 chat_id, 
-                                 details, 
-                                 last_data_migration, 
-                                 interaction_mode, 
-                                 input_type, 
-                                 role_id, 
-                                 live_event_id,
-                                 entity_guid) 
+                                     (date,
+                                     message_id,
+                                     user_id, 
+                                     chat_id, 
+                                     details, 
+                                     last_data_migration, 
+                                     interaction_mode, 
+                                     input_type, 
+                                     role_id, 
+                                     live_event_id,
+                                     entity_guid) 
 
-                                 VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @tlgChatId, @tlgMessageDetails, 
-                                 @lastDataMig, @interactionMode, @tlgInputType, 
-                                 (SELECT id FROM roles WHERE token = @token), 
-                                 (SELECT id FROM live_events WHERE name = @liveEventName),
-                                 @guid)
-                                 """;
+                                     VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                     @lastDataMig, @interactionMode, @tlgInputType, 
+                                     (SELECT id FROM roles WHERE token = @token), 
+                                     (SELECT id FROM live_events WHERE name = @liveEventName),
+                                     @guid)
+                                     """;
 
-        const string derivedRecordsQueryStub = $"""
-                                                WITH inserted_input AS (
-                                                  {baseQuery}
-                                                  RETURNING id
-                                                )
-                                                """;
-        
         const string derivedWorkflowInfoQuery = $"""
                                                  INSERT INTO derived_workflow_states
                                                  (tlg_inputs_id,
@@ -99,11 +92,24 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                                         (src_input_id,
                                                          dst_chat_id,
                                                          dst_message_id)
-                                                        
+                                                         
                                                         SELECT id, unnest(@dstChatIds), unnest(@dstMessageIds)
                                                         FROM inserted_input
                                                         """;
 
+        const string cteAddInputWith = $"""
+                                        WITH inserted_input AS (
+                                            {addInputQuery}
+                                            RETURNING id
+                                        )
+                                        """;
+
+        const string cteWorkflowAs = $"""
+                                      derived_workflow AS (
+                                          {derivedWorkflowInfoQuery}
+                                      )
+                                      """;
+        
         var normalParameters = new Dictionary<string, object>
         {
             ["@tlgDate"] = tlgInput.TlgDate,
@@ -133,24 +139,21 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         var command = (tlgInput.ResultantWorkflow.IsSome, bridgeDestinations.IsSome) switch
         {
             (false, false) => 
-                GenerateCommand(baseQuery, normalParameters),
+                GenerateCommand(addInputQuery, 
+                    normalParameters),
             
             (true, false) => 
-                GenerateCommand(
-                    derivedRecordsQueryStub.Concat(derivedWorkflowInfoQuery).ToString()!,
+                GenerateCommand($"{cteAddInputWith}\n{derivedWorkflowInfoQuery};",
                     normalParameters),
             
-            (false, true) =>
-                GenerateCommand(
-                    derivedRecordsQueryStub.Concat(derivedWorkflowBridgesInfoQuery).ToString()!,
+            (true, true) =>
+                GenerateCommand($"{cteAddInputWith},\n{cteWorkflowAs}\n{derivedWorkflowBridgesInfoQuery};", 
                     normalParameters),
             
-            _ =>
-                GenerateCommand(derivedRecordsQueryStub
-                        .Concat(derivedWorkflowInfoQuery)
-                        .Concat(derivedWorkflowBridgesInfoQuery)
-                        .ToString()!,
-                    normalParameters)
+            _ => throw new InvalidOperationException(
+                $"Saving a {nameof(tlgInput)} to DB with {nameof(bridgeDestinations)} but WITHOUT any " +
+                $"{nameof(tlgInput.ResultantWorkflow)} should never be attempted, as it contradicts our fundamental " +
+                $"ChatBot interaction logic.")
         };     
         
         command.Parameters.Add(
@@ -168,19 +171,16 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
             command.Parameters.Add(new NpgsqlParameter("@dstChatIds", NpgsqlDbType.Array | NpgsqlDbType.Bigint)
             {
-                Value = destinations.Select(d => d.ChatId).ToArray()
+                Value = destinations.Select(d => d.ChatId.Id).ToArray()
             });
             
             command.Parameters.Add(new NpgsqlParameter("@dstMessageIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
             {
-                Value = destinations.Select(d => d.TlgMessageId).ToArray()
+                Value = destinations.Select(d => d.TlgMessageId.Id).ToArray()
             });
         }
 
-        await ExecuteTransactionAsync(new List<NpgsqlCommand>
-        {
-            command
-        });
+        await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
         
         if (_cacheInputsByTlgAgent.TryGetValue(tlgInput.TlgAgent, out var cacheForTlgInput))
         {

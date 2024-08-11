@@ -4,6 +4,7 @@
 -- Thanks to CASCADE only need to specify the tables at the top of the FK dependency chain.
 
 TRUNCATE derived_workflow_states CASCADE;
+TRUNCATE derived_workflow_bridges CASCADE;
 TRUNCATE live_event_venues CASCADE;
 TRUNCATE live_event_series CASCADE;
 TRUNCATE users_employment_history CASCADE;
