@@ -50,34 +50,35 @@ internal sealed record WorkflowIdentifier(
         
         return activeWorkflowLauncher switch
         {
-            { InputType: CommandMessage } proactiveLauncher 
-                when proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() >= 
-                     BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => GetGlobalMenuWorkflow(proactiveLauncher),
+            { InputType: CommandMessage } 
+                when activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() >= 
+                     BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => 
+                GetGlobalMenuWorkflow(activeWorkflowLauncher),
             
-            { InputType: CommandMessage, TlgAgent.Mode: Operations } proactiveLauncher => 
-                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
+            { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
+                activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             
-            { InputType: CommandMessage, TlgAgent.Mode: Notifications } proactiveLauncher => 
-                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
+            { InputType: CommandMessage, TlgAgent.Mode: Notifications } => 
+                activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()
                 },
 
-            { InputType: CommandMessage, TlgAgent.Mode: Communications } proactiveLauncher => 
-                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
+            { InputType: CommandMessage, TlgAgent.Mode: Communications } => 
+                activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()
                 },
             
-            { InputType: CallbackQuery, TlgAgent.Mode: Notifications } reactiveLauncher =>
-                GetReactiveWorkflowInNotificationsMode(reactiveLauncher),
+            { InputType: CallbackQuery, TlgAgent.Mode: Notifications } =>
+                GetReactiveWorkflowInNotificationsMode(activeWorkflowLauncher),
                 
-            { InputType: CallbackQuery, TlgAgent.Mode: Communications } reactiveLauncher =>
-                GetReactiveWorkflowInCommunicationsMode(reactiveLauncher),
+            { InputType: CallbackQuery, TlgAgent.Mode: Communications } =>
+                GetReactiveWorkflowInCommunicationsMode(activeWorkflowLauncher),
             
             _ => throw new InvalidOperationException(
                 $"An input with these properties must not be an {nameof(activeWorkflowLauncher)}.")

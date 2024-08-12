@@ -114,12 +114,19 @@ internal static class GeneralWorkflowUtilsExtensions
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
-    
+
     public static bool IsWorkflowLauncher(
-        this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges) =>
-        input.InputType == CommandMessage ||
-        input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
-        allBridges.Any(b =>
-            b.DestinationChatId == input.TlgAgent.ChatId &&
-            b.DestinationMessageId == input.TlgMessageId);
+        this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges)
+    {
+        var isProactiveWorkflowLauncher = 
+            input.InputType == CommandMessage;
+            
+        var isReactiveWorkflowLauncher = 
+            input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
+            allBridges.Any(b =>
+                b.DestinationChatId == input.TlgAgent.ChatId &&
+                b.DestinationMessageId == input.TlgMessageId);
+
+        return isProactiveWorkflowLauncher || isReactiveWorkflowLauncher;
+    }
 }
