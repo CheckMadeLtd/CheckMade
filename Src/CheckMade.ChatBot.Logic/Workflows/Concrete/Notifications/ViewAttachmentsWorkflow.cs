@@ -20,7 +20,7 @@ internal sealed record ViewAttachmentsWorkflow(
     ITlgInputsRepository InputsRepo,
     IServiceProvider Services,
     IDomainGlossary Glossary) 
-    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo)
+    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

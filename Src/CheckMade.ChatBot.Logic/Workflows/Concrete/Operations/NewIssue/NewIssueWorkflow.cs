@@ -5,6 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
+using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.NewIssueUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
@@ -13,8 +14,9 @@ internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
         IGeneralWorkflowUtils WorkflowUtils,
         IStateMediator Mediator,
-        IDerivedWorkflowBridgesRepository BridgesRepo)
-    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo)
+        IDerivedWorkflowBridgesRepository BridgesRepo,
+        IDomainGlossary Glossary)
+    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

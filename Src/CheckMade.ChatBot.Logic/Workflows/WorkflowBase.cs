@@ -2,13 +2,15 @@ using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal abstract record WorkflowBase(
     IGeneralWorkflowUtils WorkflowUtils,    
     IStateMediator Mediator,
-    IDerivedWorkflowBridgesRepository BridgesRepo) 
+    IDerivedWorkflowBridgesRepository BridgesRepo,
+    IDomainGlossary Glossary) 
 {
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
@@ -19,7 +21,7 @@ internal abstract record WorkflowBase(
             return await InitializeAsync(currentInput);
         
         var currentStateTypeOption = 
-            await WorkflowUtils.GetPreviousResultantStateTypeAsync(currentInput);
+            await GetPreviousResultantStateTypeAsync(currentInput);
 
         if (currentStateTypeOption.IsNone)
         {
@@ -50,4 +52,27 @@ internal abstract record WorkflowBase(
     }
 
     protected abstract Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput);
+    
+    private async Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
+    {
+        var interactiveHistory =
+            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+
+        if (interactiveHistory.Count <= 1)
+            return Option<Type>.None();
+
+        var lastInput =
+            interactiveHistory
+                .SkipLast(1)
+                .Last();
+
+        if (lastInput.ResultantWorkflow.IsNone)
+            return Option<Type>.None();
+
+        return
+            Glossary.GetDtType(
+                lastInput
+                    .ResultantWorkflow.GetValueOrThrow()
+                    .InStateId);
+    }
 }

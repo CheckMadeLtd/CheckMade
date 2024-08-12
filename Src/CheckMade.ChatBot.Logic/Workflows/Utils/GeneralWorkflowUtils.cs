@@ -22,7 +22,6 @@ internal interface IGeneralWorkflowUtils
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
@@ -93,29 +92,6 @@ internal sealed record GeneralWorkflowUtils(
                 tlgAgent, 
                 DateTimeOffset.UtcNow
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
-    }
-
-    public async Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
-    {
-        var interactiveHistory =
-            await GetInteractiveWorkflowHistoryAsync(currentInput);
-
-        if (interactiveHistory.Count <= 1)
-            return Option<Type>.None();
-
-        var lastInput =
-            interactiveHistory
-                .SkipLast(1)
-                .Last();
-
-        if (lastInput.ResultantWorkflow.IsNone)
-            return Option<Type>.None();
-
-        return
-            Glossary.GetDtType(
-                lastInput
-                    .ResultantWorkflow.GetValueOrThrow()
-                    .InStateId);
     }
 
     public bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
