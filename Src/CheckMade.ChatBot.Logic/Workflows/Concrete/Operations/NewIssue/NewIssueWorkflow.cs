@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;
@@ -10,9 +11,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 
 internal sealed record NewIssueWorkflow(
         ILiveEventsRepository LiveEventsRepo,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
-        IStateMediator Mediator)
-    : WorkflowBase(GeneralWorkflowUtils, Mediator)
+        IGeneralWorkflowUtils WorkflowUtils,
+        IStateMediator Mediator,
+        IDerivedWorkflowBridgesRepository BridgesRepo)
+    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {
@@ -29,7 +31,7 @@ internal sealed record NewIssueWorkflow(
         var liveEvent = (await LiveEventsRepo.GetAsync(
             currentInput.LiveEventContext.GetValueOrThrow()))!;
         
-        var lastKnownLocation = await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+        var lastKnownLocation = await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
         var sphere = lastKnownLocation.IsSome
             ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)

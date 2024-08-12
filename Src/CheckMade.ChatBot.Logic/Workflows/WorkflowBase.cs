@@ -1,20 +1,25 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal abstract record WorkflowBase(
-    IGeneralWorkflowUtils GeneralWorkflowUtils,    
-    IStateMediator Mediator) 
+    IGeneralWorkflowUtils WorkflowUtils,    
+    IStateMediator Mediator,
+    IDerivedWorkflowBridgesRepository BridgesRepo) 
 {
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
-        if (await GeneralWorkflowUtils.IsWorkflowLauncherAsync(currentInput))
+        var allBridges = 
+            await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(currentInput.LiveEventContext);
+        
+        if (currentInput.IsWorkflowLauncher(allBridges))
             return await InitializeAsync(currentInput);
         
         var currentStateType = 
-            await GeneralWorkflowUtils.GetPreviousResultantStateTypeAsync(currentInput);
+            await WorkflowUtils.GetPreviousResultantStateTypeAsync(currentInput);
 
         if (IsTerminatedWorkflow())
         {

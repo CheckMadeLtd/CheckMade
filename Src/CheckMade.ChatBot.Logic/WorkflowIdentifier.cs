@@ -30,15 +30,16 @@ internal sealed record WorkflowIdentifier(
     ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
     IDerivedWorkflowBridgesRepository BridgesRepo,
     IStateMediator Mediator,
+    IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
 {
     public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
-
-        var currentLiveEvent = inputHistory.Last().LiveEventContext.GetValueOrThrow();
-        var allBridges = await BridgesRepo.GetAllAsync(currentLiveEvent);
+        
+        var allBridges = 
+            await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(inputHistory.First().LiveEventContext);
         
         var activeWorkflowLauncherOption = GetWorkflowLauncherOfLastActiveWorkflow();
 
@@ -84,7 +85,8 @@ internal sealed record WorkflowIdentifier(
 
         Option<TlgInput> GetWorkflowLauncherOfLastActiveWorkflow()
         {
-            var lastLauncher = GetLastWorkflowLauncher();
+            var lastLauncher = 
+                inputHistory.LastOrDefault(i => i.IsWorkflowLauncher(allBridges));
             
             if (lastLauncher is null)
                 return Option<TlgInput>.None();
@@ -108,15 +110,6 @@ internal sealed record WorkflowIdentifier(
                 _ => Option<TlgInput>.None()
             };
         }
-
-        TlgInput? GetLastWorkflowLauncher() =>
-            inputHistory
-                .LastOrDefault(i =>
-                    i.InputType == CommandMessage || 
-                    i is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
-                    allBridges.Any(b =>
-                        b.DestinationChatId == i.TlgAgent.ChatId &&
-                        b.DestinationMessageId == i.TlgMessageId));
         
         Option<WorkflowBase> GetGlobalMenuWorkflow(TlgInput inputWithGlobalBotCommand)
         {

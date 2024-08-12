@@ -14,13 +14,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 
 internal sealed record ViewAttachmentsWorkflow(
-    IGeneralWorkflowUtils GeneralWorkflowUtils,   
+    IGeneralWorkflowUtils WorkflowUtils,   
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,
     ITlgInputsRepository InputsRepo,
     IServiceProvider Services,
     IDomainGlossary Glossary) 
-    : WorkflowBase(GeneralWorkflowUtils, Mediator)
+    : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {

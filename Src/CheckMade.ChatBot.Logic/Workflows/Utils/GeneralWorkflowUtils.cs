@@ -2,6 +2,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
@@ -23,7 +24,7 @@ internal interface IGeneralWorkflowUtils
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
-    Task<bool> IsWorkflowLauncherAsync(TlgInput input);
+    Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
 internal sealed record GeneralWorkflowUtils(
@@ -77,22 +78,12 @@ internal sealed record GeneralWorkflowUtils(
                 currentInput.TlgAgent,
                 currentInput);
 
-        var allBridges = currentInput.LiveEventContext.IsSome
-            ? await BridgesRepo.GetAllAsync(currentInput.LiveEventContext.GetValueOrThrow())
-            : [];
+        var allBridges = 
+            await GetWorkflowBridgesOrNoneAsync(currentInput.LiveEventContext);
         
         return currentRoleInputs
-            .GetLatestRecordsUpTo(IsWorkflowLauncher)
+            .GetLatestRecordsUpTo(input => input.IsWorkflowLauncher(allBridges))
             .ToImmutableReadOnlyCollection();
-
-        bool IsWorkflowLauncher(TlgInput input)
-        {
-            return input.InputType == CommandMessage ||
-                   input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
-                   allBridges.Any(b =>
-                       b.DestinationChatId == input.TlgAgent.ChatId &&
-                       b.DestinationMessageId == input.TlgMessageId);
-        }
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
@@ -137,16 +128,10 @@ internal sealed record GeneralWorkflowUtils(
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 
-    public async Task<bool> IsWorkflowLauncherAsync(TlgInput input)
-    {
-        return input.InputType == CommandMessage || 
-               input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
-               await IsDestinationOfWorkflowBridgeAsync();
-
-        async Task<bool> IsDestinationOfWorkflowBridgeAsync() =>
-            await BridgesRepo.GetAsync(input.TlgAgent.ChatId, input.TlgMessageId) 
-                is not null;
-    }
+    public async Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo) =>
+        liveEventInfo.IsSome
+            ? await BridgesRepo.GetAllAsync(liveEventInfo.GetValueOrThrow())
+            : [];
 }
 
 internal static class GeneralWorkflowUtilsExtensions
@@ -168,4 +153,11 @@ internal static class GeneralWorkflowUtilsExtensions
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
+    
+    public static bool IsWorkflowLauncher(this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges) =>
+        input.InputType == CommandMessage ||
+        input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
+        allBridges.Any(b =>
+            b.DestinationChatId == input.TlgAgent.ChatId &&
+            b.DestinationMessageId == input.TlgMessageId);
 }
