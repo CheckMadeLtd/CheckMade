@@ -21,8 +21,13 @@ internal abstract record WorkflowBase(
             return await InitializeAsync(currentInput);
         
         var currentStateTypeOption = 
-            await GetPreviousResultantStateTypeAsync(currentInput);
+            await GetPreviousResultantStateTypeAsync();
 
+        /* The main scenario where this can happen is text entry after Logout, because of the unique combi of 3 factors:
+         * 1. Lack of usual 'WorkflowLauncher' like botCommand and thus not launching InitializeAsync here
+         * 2. There naturally is no ResultnatWorkflowState yet
+         * 3. But the WorkflowIdentifier still returns UserAuthWorkflow because user is not authenticated
+         */ 
         if (currentStateTypeOption.IsNone)
         {
             return new WorkflowResponse(
@@ -49,30 +54,30 @@ internal abstract record WorkflowBase(
 
         bool IsTerminatedWorkflow() =>
             currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator));
+        
+        async Task<Option<Type>> GetPreviousResultantStateTypeAsync()
+        {
+            var interactiveHistory =
+                await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+
+            if (interactiveHistory.Count <= 1)
+                return Option<Type>.None();
+
+            var lastInput =
+                interactiveHistory
+                    .SkipLast(1)
+                    .Last();
+
+            if (lastInput.ResultantWorkflow.IsNone)
+                return Option<Type>.None();
+
+            return
+                Glossary.GetDtType(
+                    lastInput
+                        .ResultantWorkflow.GetValueOrThrow()
+                        .InStateId);
+        }
     }
 
     protected abstract Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput);
-    
-    private async Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
-    {
-        var interactiveHistory =
-            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
-
-        if (interactiveHistory.Count <= 1)
-            return Option<Type>.None();
-
-        var lastInput =
-            interactiveHistory
-                .SkipLast(1)
-                .Last();
-
-        if (lastInput.ResultantWorkflow.IsNone)
-            return Option<Type>.None();
-
-        return
-            Glossary.GetDtType(
-                lastInput
-                    .ResultantWorkflow.GetValueOrThrow()
-                    .InStateId);
-    }
 }
