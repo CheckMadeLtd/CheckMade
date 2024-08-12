@@ -9,7 +9,12 @@ namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
-    public async Task<WorkflowBridge?> GetAsync(TlgChatId dstChatId, TlgMessageId dstMessageId)
+    public Task<WorkflowBridge?> GetAsync(TlgChatId dstChatId, TlgMessageId dstMessageId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent)
     {
         const string rawQuery = """
                                 SELECT
@@ -43,26 +48,18 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                 LEFT JOIN roles r on inp.role_id = r.id
                                 LEFT JOIN live_events le on inp.live_event_id = le.id
                                 LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
-                                WHERE dwb.dst_chat_id = @dstChatId AND dwb.dst_message_id = @dstMessageId
+                                WHERE le.name = @liveEventName
                                 """;
 
         var normalParameters = new Dictionary<string, object>
         {
-            ["@dstChatId"] = dstChatId.Id,
-            ["@dstMessageId"] = dstMessageId.Id
+            ["@liveEventName"] = liveEvent
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return 
-            (await ExecuteReaderOneToOneAsync(
-                command, 
-                ModelReaders.ReadWorkflowBridge))
-            .FirstOrDefault();
-    }
-
-    public Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent)
-    {
-        throw new NotImplementedException();
+        return await ExecuteReaderOneToOneAsync(
+            command, 
+            ModelReaders.ReadWorkflowBridge);
     }
 }

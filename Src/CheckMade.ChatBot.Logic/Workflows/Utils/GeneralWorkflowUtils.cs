@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Utils;
 
@@ -21,6 +22,7 @@ internal interface IGeneralWorkflowUtils
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
+    Task<bool> IsWorkflowLauncherAsync(TlgInput input);
 }
 
 internal sealed record GeneralWorkflowUtils(
@@ -128,6 +130,7 @@ internal sealed record GeneralWorkflowUtils(
             return true;
 
         return input.InputType == TlgInputType.CallbackQuery && 
+               input.TlgAgent.Mode is InteractionMode.Notifications or InteractionMode.Communications &&
                await IsDestinationOfWorkflowBridgeAsync();
 
         async Task<bool> IsDestinationOfWorkflowBridgeAsync()

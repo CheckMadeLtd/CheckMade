@@ -1,17 +1,19 @@
-using System.ComponentModel;
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
 
 namespace CheckMade.ChatBot.Logic;
 
@@ -27,57 +29,71 @@ internal sealed record WorkflowIdentifier(
     LogoutWorkflow LogoutWorkflow,
     ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
     IDerivedWorkflowBridgesRepository BridgesRepo,
-    IDomainGlossary Glossary) 
-    : IWorkflowIdentifier
+    IStateMediator Mediator,
+    IDomainGlossary Glossary) : IWorkflowIdentifier
 {
     public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
 
-        var currentMode = inputHistory.Last().TlgAgent.Mode;
-
-        return currentMode switch
-        {
-            InteractionMode.Operations => IdentifyOperationsWorkflow(),
-            InteractionMode.Communications => IdentifyCommunicationsWorkflow(),
-            InteractionMode.Notifications => await IdentifyNotificationsWorkflowAsync(),
-            _ => throw new InvalidEnumArgumentException($"Unhandled {nameof(currentMode)}")
-        };
+        var currentLiveEvent = inputHistory.Last().LiveEventContext.GetValueOrThrow();
+        var allBridges = await BridgesRepo.GetAllAsync(currentLiveEvent);
         
-        Option<WorkflowBase> IdentifyOperationsWorkflow()
+        var activeWorkflowLauncherOption = GetWorkflowLauncherOfLastActiveWorkflow();
+
+        if (activeWorkflowLauncherOption.IsNone)
+            return Option<WorkflowBase>.None();
+
+        var activeWorkflowLauncher = activeWorkflowLauncherOption.GetValueOrThrow();
+        
+        return activeWorkflowLauncher switch
         {
-            return GetBotCommandOfLastActiveWorkflow().Match(
-                cmd =>
+            { InputType: CommandMessage } proactiveLauncher 
+                when proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() >= 
+                     BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => GetGlobalMenuWorkflow(proactiveLauncher),
+            
+            { InputType: CommandMessage, TlgAgent.Mode: Operations } proactiveLauncher => 
+                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    var lastBotCommandCode = cmd.Details.BotCommandEnumCode.GetValueOrThrow();
-
-                    if (lastBotCommandCode >= BotCommandMenus.GlobalBotCommandsCodeThreshold_90)
-                    {
-                        return GetGlobalMenuWorkflow(lastBotCommandCode);
-                    }
-
-                    return lastBotCommandCode switch
-                    {
-                        (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
-                        _ => Option<WorkflowBase>.None()
-                    };
+                    (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
+                    _ => Option<WorkflowBase>.None()
                 },
-                Option<WorkflowBase>.None);
-        }
+            
+            { InputType: CommandMessage, TlgAgent.Mode: Notifications } proactiveLauncher => 
+                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
+                {
+                    _ => Option<WorkflowBase>.None()
+                },
 
-        Option<TlgInput> GetBotCommandOfLastActiveWorkflow()
+            { InputType: CommandMessage, TlgAgent.Mode: Communications } proactiveLauncher => 
+                proactiveLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
+                {
+                    _ => Option<WorkflowBase>.None()
+                },
+            
+            { InputType: CallbackQuery, TlgAgent.Mode: Notifications } reactiveLauncher =>
+                GetReactiveWorkflowInNotificationsMode(reactiveLauncher),
+                
+            { InputType: CallbackQuery, TlgAgent.Mode: Communications } reactiveLauncher =>
+                GetReactiveWorkflowInCommunicationsMode(reactiveLauncher),
+            
+            _ => throw new InvalidOperationException(
+                $"An input with these properties must not be an {nameof(activeWorkflowLauncher)}.")
+        };
+
+        Option<TlgInput> GetWorkflowLauncherOfLastActiveWorkflow()
         {
-            var botCommand = inputHistory.GetLastBotCommand();
-
-            if (botCommand.IsNone)
+            var lastLauncher = GetAllWorkflowLaunchers().LastOrDefault();
+            
+            if (lastLauncher is null)
                 return Option<TlgInput>.None();
             
-            // ToDo: replace with `i == lastBotCommand.GetValueOrThrow()` once I overloaded equals and == for TlgInput 
+            // ToDo: replace with `i == lastBotCommand.GetValueOrThrow()` once I overloaded equals and == for TlgInput
             var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
-                    i.TlgMessageId == botCommand.GetValueOrThrow().TlgMessageId &&
-                    i.TlgDate == botCommand.GetValueOrThrow().TlgDate);
+                    i.TlgMessageId == lastLauncher.TlgMessageId &&
+                    i.TlgDate == lastLauncher.TlgDate);
             
             var isWorkflowActive =
                 !lastWorkflowHistory
@@ -85,16 +101,31 @@ internal sealed record WorkflowIdentifier(
                         i.ResultantWorkflow.IsSome &&
                         Glossary.GetDtType(i.ResultantWorkflow.GetValueOrThrow().InStateId)
                             .IsAssignableTo(typeof(IWorkflowStateTerminator)));
-
+            
             return isWorkflowActive switch
             {
-                true => botCommand,
+                true => lastLauncher,
                 _ => Option<TlgInput>.None()
             };
         }
-        
-        Option<WorkflowBase> GetGlobalMenuWorkflow(int lastBotCommandCode)
+
+        IReadOnlyCollection<TlgInput> GetAllWorkflowLaunchers()
         {
+            return inputHistory
+                .Where(i =>
+                    i.InputType == CommandMessage ||
+                    i.InputType == CallbackQuery &&
+                    i.TlgAgent.Mode is Notifications or Communications &&
+                    allBridges.Any(b =>
+                        b.DestinationChatId == i.TlgAgent.ChatId &&
+                        b.DestinationMessageId == i.TlgMessageId))
+                .ToImmutableReadOnlyCollection();
+        }
+        
+        Option<WorkflowBase> GetGlobalMenuWorkflow(TlgInput inputWithGlobalBotCommand)
+        {
+            var lastBotCommandCode = inputWithGlobalBotCommand.Details.BotCommandEnumCode.GetValueOrThrow();
+            
             return lastBotCommandCode switch
             {
                 (int)OperationsBotCommands.Settings => 
@@ -107,42 +138,34 @@ internal sealed record WorkflowIdentifier(
                         $"'{nameof(BotCommandMenus.GlobalBotCommandsCodeThreshold_90)}'")
             };
         }
-        
-        Option<WorkflowBase> IdentifyCommunicationsWorkflow()
-        {
-            throw new NotImplementedException();
-        }
 
-        async Task<Option<WorkflowBase>> IdentifyNotificationsWorkflowAsync()
+        Option<WorkflowBase> GetReactiveWorkflowInNotificationsMode(TlgInput reactiveLauncher)
         {
-            var currentInput = inputHistory.Last();
+            var sourceInput =
+                allBridges.First(b =>
+                        b.DestinationChatId == reactiveLauncher.TlgAgent.ChatId &&
+                        b.DestinationMessageId == reactiveLauncher.TlgMessageId)
+                    .SourceInput;
 
-            var workflowBridge = 
-                await BridgesRepo.GetAsync(currentInput.TlgAgent.ChatId, currentInput.TlgMessageId); 
-            
-            if (currentInput.InputType == TlgInputType.CallbackQuery && workflowBridge != null)
+            var sourceWorkflowState = Mediator.Next(
+                Glossary.GetDtType(
+                    sourceInput.ResultantWorkflow.GetValueOrThrow().InStateId));
+
+            return sourceWorkflowState switch
             {
-                var currentControl = currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
+                INewIssueReview<SaniCleanTrade> or INewIssueReview<SiteCleanTrade> =>
+                    Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
 
-                // In the future I may have to look up what the SourceInput in the WorkflowBridge was, in order 
-                // to determine which Workflow to identify here. E.g. I might ask: Do you want to accept this task?
-                // With Yes/No ControlPrompts, and just clicking 'yes' on its own would not give enough context 
-                // for the below identification. I need to understand what the 'yes' was an answer to.  
-                
-                return currentControl switch
-                {
-                    (long)ControlPrompts.ViewAttachments => 
-                        Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
-                    _ => 
-                        throw new InvalidOperationException(
-                            $"Unhandled {nameof(currentControl)}: '{currentControl}'.")
-                };
-            }
-            
-            return GetBotCommandOfLastActiveWorkflow().Match(
-                cmd => 
-                    GetGlobalMenuWorkflow(cmd.Details.BotCommandEnumCode.GetValueOrThrow()),
-                Option<WorkflowBase>.None);
+                _ => throw new InvalidOperationException(
+                    $"Unhandled {nameof(sourceWorkflowState)} while trying to identify reactive Workflow in" +
+                    $"{nameof(Notifications)} mode")
+            };
+        }
+        
+        // ReSharper disable once UnusedParameter.Local
+        Option<WorkflowBase> GetReactiveWorkflowInCommunicationsMode(TlgInput reactiveLauncher)
+        {
+            return Option<WorkflowBase>.None();
         }
     }
 
