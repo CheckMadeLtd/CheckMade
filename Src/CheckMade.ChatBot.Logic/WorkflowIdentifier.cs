@@ -84,7 +84,7 @@ internal sealed record WorkflowIdentifier(
 
         Option<TlgInput> GetWorkflowLauncherOfLastActiveWorkflow()
         {
-            var lastLauncher = GetAllWorkflowLaunchers().LastOrDefault();
+            var lastLauncher = GetLastWorkflowLauncher();
             
             if (lastLauncher is null)
                 return Option<TlgInput>.None();
@@ -109,18 +109,14 @@ internal sealed record WorkflowIdentifier(
             };
         }
 
-        IReadOnlyCollection<TlgInput> GetAllWorkflowLaunchers()
-        {
-            return inputHistory
-                .Where(i =>
-                    i.InputType == CommandMessage ||
-                    i.InputType == CallbackQuery &&
-                    i.TlgAgent.Mode is Notifications or Communications &&
+        TlgInput? GetLastWorkflowLauncher() =>
+            inputHistory
+                .LastOrDefault(i =>
+                    i.InputType == CommandMessage || 
+                    i is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
                     allBridges.Any(b =>
                         b.DestinationChatId == i.TlgAgent.ChatId &&
-                        b.DestinationMessageId == i.TlgMessageId))
-                .ToImmutableReadOnlyCollection();
-        }
+                        b.DestinationMessageId == i.TlgMessageId));
         
         Option<WorkflowBase> GetGlobalMenuWorkflow(TlgInput inputWithGlobalBotCommand)
         {

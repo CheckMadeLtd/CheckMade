@@ -4,6 +4,8 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
@@ -78,7 +80,7 @@ internal sealed record GeneralWorkflowUtils(
                 currentInput);
         
         return currentRoleInputs
-            .GetLatestRecordsUpTo(input => input.InputType.Equals(TlgInputType.CommandMessage))
+            .GetLatestRecordsUpTo(input => input.InputType.Equals(CommandMessage))
             .ToImmutableReadOnlyCollection();
     }
 
@@ -126,25 +128,13 @@ internal sealed record GeneralWorkflowUtils(
 
     public async Task<bool> IsWorkflowLauncherAsync(TlgInput input)
     {
-        if (input.InputType == TlgInputType.CommandMessage)
-            return true;
-
-        return input.InputType == TlgInputType.CallbackQuery && 
-               input.TlgAgent.Mode is InteractionMode.Notifications or InteractionMode.Communications &&
+        return input.InputType == CommandMessage || 
+               input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
                await IsDestinationOfWorkflowBridgeAsync();
 
-        async Task<bool> IsDestinationOfWorkflowBridgeAsync()
-        {
-            if (input.LiveEventContext.IsNone)
-                return false;
-            
-            var allBridges = 
-                await BridgesRepo.GetAllAsync(input.LiveEventContext.GetValueOrThrow());
-
-            return allBridges.Any(b =>
-                b.DestinationChatId == input.TlgAgent.ChatId &&
-                b.DestinationMessageId == input.TlgMessageId);
-        }
+        async Task<bool> IsDestinationOfWorkflowBridgeAsync() =>
+            await BridgesRepo.GetAsync(input.TlgAgent.ChatId, input.TlgMessageId) 
+                is not null;
     }
 }
 

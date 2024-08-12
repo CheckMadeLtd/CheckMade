@@ -10,7 +10,7 @@ internal abstract record WorkflowBase(
 {
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
-        if (await IsVirginWorkflowAsync())
+        if (await GeneralWorkflowUtils.IsWorkflowLauncherAsync(currentInput))
             return await InitializeAsync(currentInput);
         
         var currentStateType = 
@@ -27,14 +27,6 @@ internal abstract record WorkflowBase(
         var currentState = Mediator.Next(currentStateType); 
         
         return await currentState.GetWorkflowResponseAsync(currentInput);
-
-        async Task<bool> IsVirginWorkflowAsync()
-        {
-            return await GeneralWorkflowUtils.IsWorkflowLauncherAsync(currentInput);
-
-            // return (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
-            //     .Count == 1; // 1 because currentInput is already included
-        }
 
         bool IsTerminatedWorkflow() =>
             currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator));

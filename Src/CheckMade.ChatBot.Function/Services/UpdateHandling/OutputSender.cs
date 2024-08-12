@@ -72,6 +72,7 @@ internal static class OutputSender
                             
                             if (output.Text.IsSome)
                                 messageId = await InvokeSendTextMessageAsync();
+                            
                             foreach (var attachment in output.Attachments.GetValueOrThrow())
                                 messageId = await InvokeSendAttachmentAsync(attachment);
                             

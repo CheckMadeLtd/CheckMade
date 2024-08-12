@@ -3,7 +3,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
-public record AttachmentSendOutParameters(
+public sealed record AttachmentSendOutParameters(
     ChatId ChatId,
     InputFileStream FileStream,
     Option<string> Caption, 

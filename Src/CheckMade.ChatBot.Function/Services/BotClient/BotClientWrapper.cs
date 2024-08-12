@@ -171,7 +171,7 @@ public sealed class BotClientWrapper(
             await botClient.SendDocumentAsync(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
-                caption: documentSendOutParams.Caption.GetValueOrThrow(),
+                caption: documentSendOutParams.Caption.GetValueOrDefault(),
                 parseMode: ParseMode.Html,
                 replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
@@ -216,7 +216,7 @@ public sealed class BotClientWrapper(
             await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
-                caption: photoSendOutParams.Caption.GetValueOrThrow(),
+                caption: photoSendOutParams.Caption.GetValueOrDefault(),
                 parseMode: ParseMode.Html,
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
@@ -286,7 +286,7 @@ public sealed class BotClientWrapper(
             await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
-                caption: voiceSendOutParams.Caption.GetValueOrThrow(),
+                caption: voiceSendOutParams.Caption.GetValueOrDefault(),
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
