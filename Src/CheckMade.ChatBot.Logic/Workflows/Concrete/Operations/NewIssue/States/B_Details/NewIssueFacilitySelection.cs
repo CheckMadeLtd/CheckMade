@@ -16,7 +16,7 @@ internal interface INewIssueFacilitySelection<T> : IWorkflowStateNormal where T 
 internal sealed record NewIssueFacilitySelection<T>(
         IDomainGlossary Glossary,
         IStateMediator Mediator,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
+        IGeneralWorkflowUtils WorkflowUtils,
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueFacilitySelection<T> where T : ITrade, new()
 {
@@ -27,7 +27,7 @@ internal sealed record NewIssueFacilitySelection<T>(
     {
         var currentSphere = 
             GetLastSelectedSphere(
-                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput), 
+                await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput), 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
                     new T()));

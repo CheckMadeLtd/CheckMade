@@ -16,7 +16,7 @@ internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where
 
 internal sealed record NewIssueConsumablesSelection<T>(
         IDomainGlossary Glossary,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
+        IGeneralWorkflowUtils WorkflowUtils,
         IStateMediator Mediator,
         ILiveEventsRepository LiveEventsRepo) 
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
@@ -27,7 +27,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
-            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         var availableConsumables = 
             await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
         
@@ -97,7 +97,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         async Task<UiString> GetSelectedConsumablesAsync()
         {
             var interactiveHistory =
-                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+                await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             var availableConsumables =
                 await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
             

@@ -20,7 +20,7 @@ public interface IInputProcessor
 
 internal sealed class InputProcessor(
         IWorkflowIdentifier workflowIdentifier,
-        IGeneralWorkflowUtils generalWorkflowUtils,
+        IGeneralWorkflowUtils workflowUtils,
         IDomainGlossary glossary,
         ILogger<InputProcessor> logger)
     : IInputProcessor
@@ -61,7 +61,7 @@ internal sealed class InputProcessor(
                 }
 
                 var inputHistory = 
-                    await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
+                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
                 
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
@@ -130,14 +130,14 @@ internal sealed class InputProcessor(
             return false;
         
         var previousWorkflowInputHistory = 
-            (await generalWorkflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
+            (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
 
         return previousWorkflowInputHistory.Count > 0 && 
-               !generalWorkflowUtils.IsWorkflowTerminated(previousWorkflowInputHistory);
+               !workflowUtils.IsWorkflowTerminated(previousWorkflowInputHistory);
     }
 
     private static async Task<Result<WorkflowResponse>>

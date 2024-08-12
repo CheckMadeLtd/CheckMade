@@ -13,10 +13,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 internal static class NewIssueUtils
 {
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
-        TlgInput currentInput, IGeneralWorkflowUtils generalWorkflowUtils)
+        TlgInput currentInput, IGeneralWorkflowUtils workflowUtils)
     {
         var lastKnownLocationInput =
-            (await generalWorkflowUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await workflowUtils.GetRecentLocationHistory(currentInput.TlgAgent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 

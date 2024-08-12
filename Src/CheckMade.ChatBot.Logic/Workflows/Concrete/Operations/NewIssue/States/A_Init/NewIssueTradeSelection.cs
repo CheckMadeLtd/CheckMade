@@ -16,7 +16,7 @@ internal interface INewIssueTradeSelection : IWorkflowStateNormal;
 internal sealed record NewIssueTradeSelection(
         IDomainGlossary Glossary,
         ILiveEventsRepository LiveEventRepo,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
+        IGeneralWorkflowUtils WorkflowUtils,
         IStateMediator Mediator)
     : INewIssueTradeSelection
 {
@@ -97,7 +97,7 @@ internal sealed record NewIssueTradeSelection(
         async Task<Option<ISphereOfAction>> GetSphereNearUserAsync()
         {
             var lastKnownLocation = 
-                await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+                await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
             var liveEvent =
                 (await LiveEventRepo.GetAsync(

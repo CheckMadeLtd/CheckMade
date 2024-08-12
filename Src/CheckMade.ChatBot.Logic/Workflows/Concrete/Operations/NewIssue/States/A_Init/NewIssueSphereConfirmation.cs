@@ -17,7 +17,7 @@ internal interface INewIssueSphereConfirmation<T> : IWorkflowStateNormal where T
 internal sealed record NewIssueSphereConfirmation<T>(
         ILiveEventsRepository LiveEventsRepo,    
         IDomainGlossary Glossary,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
+        IGeneralWorkflowUtils WorkflowUtils,
         IStateMediator Mediator) 
     : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
@@ -54,7 +54,7 @@ internal sealed record NewIssueSphereConfirmation<T>(
                 currentInput.LiveEventContext.GetValueOrThrow()))!;
         
             var lastKnownLocation = 
-                await LastKnownLocationAsync(currentInput, GeneralWorkflowUtils);
+                await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
             return lastKnownLocation.IsSome
                 ? SphereNearCurrentUser(

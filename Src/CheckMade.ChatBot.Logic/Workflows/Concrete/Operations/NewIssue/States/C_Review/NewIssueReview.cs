@@ -17,7 +17,7 @@ internal interface INewIssueReview<T> : IWorkflowStateNormal where T : ITrade, n
 
 internal sealed record NewIssueReview<T>(
         IDomainGlossary Glossary,
-        IGeneralWorkflowUtils GeneralWorkflowUtils,
+        IGeneralWorkflowUtils WorkflowUtils,
         IStateMediator Mediator,
         IIssueFactory<T> Factory,
         ITlgInputsRepository InputsRepo,
@@ -32,11 +32,11 @@ internal sealed record NewIssueReview<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
-            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         await InputsRepo
             .UpdateGuid(interactiveHistory, Guid.NewGuid());
         var updatedHistoryWithGuid = 
-            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         
         var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = issue.GetSummary();
@@ -100,7 +100,7 @@ internal sealed record NewIssueReview<T>(
         async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
         {
             var historyWithUpdatedCurrentInput = 
-                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(
+                await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(
                     currentInput with
                     {
                         EntityGuid = await GetLastGuidAsync(),
@@ -124,7 +124,7 @@ internal sealed record NewIssueReview<T>(
             if (_lastGuidCache == Guid.Empty)
             {
                 var interactiveHistory =
-                    await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+                    await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
                     .Select(i => i.EntityGuid)
