@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
@@ -33,7 +34,7 @@ internal abstract record WorkflowBase(
             return new WorkflowResponse(
                 new OutputDto
                 {
-                    Text = Ui("Enter /start to begin.")
+                    Text = Ui("Enter {0} to begin.", TlgStart.Command)
                 },
                 Option<string>.None());
         }

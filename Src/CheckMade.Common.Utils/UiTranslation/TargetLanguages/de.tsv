@@ -103,4 +103,4 @@ CheckMade.ChatBot.Logic	<b>Issue type:</b> 	<b>Problemtyp:</b>
 CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?	Möchten Sie sicher das Erstellen des neuen Problems abbrechen?
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
-CheckMade.ChatBot.Logic	Enter /start to begin.	Bitte mit /start anfangen.
+CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
