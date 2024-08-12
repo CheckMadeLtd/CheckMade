@@ -35,7 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Workflows\Concrete\Operations\" />
+      <Folder Include="Workflows\Concrete\Proactive\" />
     </ItemGroup>
 
 </Project>

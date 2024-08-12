@@ -1,10 +1,10 @@
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;

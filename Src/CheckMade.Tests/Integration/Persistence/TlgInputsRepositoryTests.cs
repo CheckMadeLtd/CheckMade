@@ -1,5 +1,5 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
