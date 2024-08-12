@@ -39,7 +39,7 @@ internal sealed record WorkflowIdentifier(
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
         
         var allBridges = 
-            await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(inputHistory.First().LiveEventContext);
+            await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(inputHistory.Last().LiveEventContext);
         
         var activeWorkflowLauncherOption = GetWorkflowLauncherOfLastActiveWorkflow();
 

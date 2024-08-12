@@ -22,7 +22,7 @@ internal interface IGeneralWorkflowUtils
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
+    Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
@@ -95,13 +95,13 @@ internal sealed record GeneralWorkflowUtils(
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public async Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
+    public async Task<Option<Type>> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
     {
         var interactiveHistory =
             await GetInteractiveWorkflowHistoryAsync(currentInput);
 
         if (interactiveHistory.Count <= 1)
-            throw new InvalidOperationException("Interactive History is too short for this function");
+            return Option<Type>.None();
 
         var lastInput =
             interactiveHistory
@@ -109,7 +109,7 @@ internal sealed record GeneralWorkflowUtils(
                 .Last();
 
         if (lastInput.ResultantWorkflow.IsNone)
-            throw new InvalidOperationException($"The last input has no {nameof(lastInput.ResultantWorkflow)}");
+            return Option<Type>.None();
 
         return
             Glossary.GetDtType(
