@@ -39,7 +39,7 @@ public static class ServiceRegistration
         services.AddScoped<LogoutWorkflow>();
         services.AddScoped<ViewAttachmentsWorkflow>();
         
-        services.AddScoped<IOneStepWorkflowInitAndTerminator, OneStepWorkflowInitAndTerminator>();
+        services.AddScoped<IOneStepWorkflowTerminator, OneStepWorkflowTerminator>();
 
         services.AddScoped<ILanguageSettingSelect, LanguageSettingSelect>();
         services.AddScoped<ILanguageSettingSet, LanguageSettingSet>();
