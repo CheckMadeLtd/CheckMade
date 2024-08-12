@@ -137,7 +137,17 @@ internal sealed class InputProcessor(
             .ToImmutableReadOnlyCollection();
 
         return previousWorkflowInputHistory.Count > 0 && 
-               !workflowUtils.IsWorkflowTerminated(previousWorkflowInputHistory);
+               !IsWorkflowTerminated(previousWorkflowInputHistory);
+    }
+    
+    private bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
+    {
+        return
+            inputHistory.Any(i =>
+                i.ResultantWorkflow.IsSome &&
+                glossary.GetDtType(
+                        i.ResultantWorkflow.GetValueOrThrow().InStateId)
+                    .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 
     private static async Task<Result<WorkflowResponse>>

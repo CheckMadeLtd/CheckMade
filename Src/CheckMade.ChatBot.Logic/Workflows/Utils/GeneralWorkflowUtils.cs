@@ -3,7 +3,6 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
 
@@ -22,15 +21,13 @@ internal interface IGeneralWorkflowUtils
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
-    bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
 internal sealed record GeneralWorkflowUtils(
     ITlgInputsRepository InputsRepo,
     ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
-    IDerivedWorkflowBridgesRepository BridgesRepo,
-    IDomainGlossary Glossary)
+    IDerivedWorkflowBridgesRepository BridgesRepo)
     : IGeneralWorkflowUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
@@ -68,7 +65,8 @@ internal sealed record GeneralWorkflowUtils(
                 .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(
+        TlgInput currentInput)
     {
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
@@ -94,17 +92,8 @@ internal sealed record GeneralWorkflowUtils(
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
 
-    public bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
-    {
-        return
-            inputHistory.Any(i =>
-                i.ResultantWorkflow.IsSome &&
-                Glossary.GetDtType(
-                        i.ResultantWorkflow.GetValueOrThrow().InStateId)
-                    .IsAssignableTo(typeof(IWorkflowStateTerminator)));
-    }
-
-    public async Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo) =>
+    public async Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(
+        Option<ILiveEventInfo> liveEventInfo) =>
         liveEventInfo.IsSome
             ? await BridgesRepo.GetAllAsync(liveEventInfo.GetValueOrThrow())
             : [];
@@ -115,22 +104,19 @@ internal static class GeneralWorkflowUtilsExtensions
     public static string GetTypeNameWithoutGenericParamSuffix(this string typeName) =>
         typeName.Split('`')[0];
     
-    public static bool IsToggleOn(this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
+    public static bool IsToggleOn(
+        this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
         inputHistory
             .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
         % 2 != 0;
-    
-    public static Option<TlgInput> GetLastBotCommand(this IReadOnlyCollection<TlgInput> inputs) =>
-        inputs.LastOrDefault(i => 
-            i.Details.BotCommandEnumCode.IsSome) 
-        ?? Option<TlgInput>.None();
     
     public static bool IsCurrentRoleTradeSpecific(this IRoleInfo currentRole) =>
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
     
-    public static bool IsWorkflowLauncher(this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges) =>
+    public static bool IsWorkflowLauncher(
+        this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges) =>
         input.InputType == CommandMessage ||
         input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
         allBridges.Any(b =>
