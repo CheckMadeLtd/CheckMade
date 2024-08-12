@@ -4,7 +4,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
@@ -148,7 +147,7 @@ internal sealed record WorkflowIdentifier(
                         b.DestinationMessageId == reactiveLauncher.TlgMessageId)
                     .SourceInput;
 
-            var sourceWorkflowTerminator = Mediator.Terminate(
+            var sourceWorkflowTerminator = Mediator.GetTerminator(
                 Glossary.GetDtType(
                     sourceInput.ResultantWorkflow.GetValueOrThrow().InStateId));
 

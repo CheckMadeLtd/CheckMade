@@ -72,7 +72,7 @@ internal sealed record LogoutWorkflowConfirm(
                             Ui("Logout aborted.\n"),
                             IInputProcessor.SeeValidBotCommandsInstruction)
                     },
-                    newState: Mediator.Terminate(typeof(ILogoutWorkflowAborted)),
+                    newState: Mediator.GetTerminator(typeof(ILogoutWorkflowAborted)),
                     promptTransition: new PromptTransition(
                         new OutputDto
                         {
@@ -111,7 +111,7 @@ internal sealed record LogoutWorkflowConfirm(
                     {
                         Text = Ui("💨 Logged out.")
                     },
-                    newState: Mediator.Terminate(typeof(ILogoutWorkflowLoggedOut)),
+                    newState: Mediator.GetTerminator(typeof(ILogoutWorkflowLoggedOut)),
                     promptTransition: new PromptTransition(
                         new OutputDto
                         {

@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
@@ -32,29 +33,31 @@ internal sealed record ViewAttachmentsWorkflow(
                 $"It shouldn't be possible to enter the {nameof(ViewAttachmentsWorkflow)} " +
                 $"without a {nameof(workflowBridge)}");
 
-        var issueGuid = workflowBridge.SourceInput.EntityGuid.GetValueOrThrow();
-        var issueHistory = await InputsRepo.GetEntityHistoryAsync(issueGuid);
+        var issueHistory = 
+            await InputsRepo.GetEntityHistoryAsync(
+                currentInput.LiveEventContext.GetValueOrThrow(), 
+                workflowBridge.SourceInput.EntityGuid.GetValueOrThrow());
 
-        var sourceTrade = (ITrade)Activator.CreateInstance(
+        var sourceWorkflowTerminator = Mediator.GetTerminator(
             Glossary.GetDtType(
                 workflowBridge
                     .SourceInput.ResultantWorkflow.GetValueOrThrow()
-                    .InStateId))!;
+                    .InStateId));
 
-        var issue = sourceTrade switch
+        var issue = sourceWorkflowTerminator switch
         {
-            SaniCleanTrade =>
+            INewIssueSubmissionSucceeded<SaniCleanTrade> =>
                 (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SaniCleanTrade>>()
                     .CreateAsync(issueHistory),
 
-            SiteCleanTrade =>
+            INewIssueSubmissionSucceeded<SiteCleanTrade> =>
                 (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SiteCleanTrade>>()
                     .CreateAsync(issueHistory),
 
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(sourceTrade)} while attempting to resolve {nameof(IIssueFactory<ITrade>)}")
+                $"Unhandled {nameof(sourceWorkflowTerminator)} while attempting to resolve {nameof(IIssueFactory<ITrade>)}")
         };
 
         var attachmentsOutput = new OutputDto
@@ -66,6 +69,6 @@ internal sealed record ViewAttachmentsWorkflow(
         return WorkflowResponse.Create(
             currentInput,
             attachmentsOutput,
-            newState: Mediator.Terminate(typeof(IOneStepWorkflowTerminator)));
+            newState: Mediator.GetTerminator(typeof(IOneStepWorkflowTerminator)));
     }
 }

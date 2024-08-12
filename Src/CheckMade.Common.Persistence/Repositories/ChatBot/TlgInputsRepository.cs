@@ -223,11 +223,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             i.TlgDate >= since)
         .ToImmutableReadOnlyCollection();
 
-    public Task<IReadOnlyCollection<TlgInput>> GetEntityHistoryAsync(Guid entityGuid)
-    {
-        throw new NotImplementedException();
-    }
-
+    public async Task<IReadOnlyCollection<TlgInput>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
+        (await GetAllAsync(liveEvent))
+        .Where(i =>
+            i.EntityGuid.GetValueOrDefault() == entityGuid)
+        .ToImmutableReadOnlyCollection();
+    
     public async Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
     {
         const string rawQuery = """

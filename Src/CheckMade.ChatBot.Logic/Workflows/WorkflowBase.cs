@@ -21,7 +21,7 @@ internal abstract record WorkflowBase(
             return WorkflowResponse.Create(
                 currentInput,
                 new OutputDto { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
-                newState: Mediator.Terminate(currentStateType));
+                newState: Mediator.GetTerminator(currentStateType));
         }
         
         var currentState = Mediator.Next(currentStateType); 

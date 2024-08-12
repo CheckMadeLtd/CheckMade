@@ -62,7 +62,7 @@ internal sealed record LanguageSettingSelect(
                     Ui("New language: "),
                     Glossary.GetUi(newLanguage))
             },
-            newState: Mediator.Terminate(typeof(ILanguageSettingSet)),
+            newState: Mediator.GetTerminator(typeof(ILanguageSettingSet)),
             promptTransition: new PromptTransition(currentInput.TlgMessageId)
         );
     }
