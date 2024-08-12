@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -17,7 +18,7 @@ internal sealed record NewIssueCancelConfirmation<T>(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<int> inPlaceUpdateMessageId, 
+        Option<TlgMessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =

@@ -18,7 +18,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<int> inPlaceUpdateMessageId,
+        Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =

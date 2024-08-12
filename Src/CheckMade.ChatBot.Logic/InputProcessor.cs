@@ -1,5 +1,6 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -55,7 +56,7 @@ internal sealed class InputProcessor(
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission."),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId - 1
+                            UpdateExistingOutputMessageId = new TlgMessageId(currentInput.TlgMessageId - 1)
                         });
                 }
 

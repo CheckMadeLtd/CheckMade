@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 
@@ -59,7 +60,7 @@ internal sealed record WorkflowResponse(
         );
     }
     
-    private static (Option<int> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
+    private static (Option<TlgMessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
         ResolvePromptTransitionIntoComponents(
             PromptTransition? promptTransition, 
             TlgInput currentInput)
@@ -67,8 +68,8 @@ internal sealed record WorkflowResponse(
         var nextPromptInPlaceUpdateMessageId = promptTransition != null
             ? promptTransition.IsNextPromptInPlaceUpdate
                 ? currentInput.TlgMessageId
-                : Option<int>.None()
-            : Option<int>.None();
+                : Option<TlgMessageId>.None()
+            : Option<TlgMessageId>.None();
 
         var currentPromptFinalizer = promptTransition != null
             ? promptTransition.CurrentPromptFinalizer

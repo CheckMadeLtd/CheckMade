@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -27,7 +28,7 @@ internal sealed record NewIssueReview<T>(
     
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<int> inPlaceUpdateMessageId,
+        Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =

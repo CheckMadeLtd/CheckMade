@@ -1,5 +1,6 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -17,7 +18,7 @@ internal sealed record LogoutWorkflowConfirm(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<int> inPlaceUpdateMessageId,
+        Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())

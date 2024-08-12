@@ -26,8 +26,8 @@ public sealed record OutputDto
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();
     
-    public Option<int> UpdateExistingOutputMessageId { get; init; }
-        = Option<int>.None();
+    public Option<TlgMessageId> UpdateExistingOutputMessageId { get; init; }
+        = Option<TlgMessageId>.None();
 
     public ActualSendOutParams? ActualSendOutParams { get; init; } = null;
 }
