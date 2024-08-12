@@ -1,6 +1,7 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
@@ -58,5 +59,10 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                 command, 
                 ModelReaders.ReadWorkflowBridge))
             .FirstOrDefault();
+    }
+
+    public Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent)
+    {
+        throw new NotImplementedException();
     }
 }

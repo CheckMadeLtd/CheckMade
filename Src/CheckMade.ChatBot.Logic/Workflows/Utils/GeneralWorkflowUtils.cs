@@ -121,6 +121,28 @@ internal sealed record GeneralWorkflowUtils(
                         i.ResultantWorkflow.GetValueOrThrow().InStateId)
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
+
+    public async Task<bool> IsWorkflowLauncherAsync(TlgInput input)
+    {
+        if (input.InputType == TlgInputType.CommandMessage)
+            return true;
+
+        return input.InputType == TlgInputType.CallbackQuery && 
+               await IsDestinationOfWorkflowBridgeAsync();
+
+        async Task<bool> IsDestinationOfWorkflowBridgeAsync()
+        {
+            if (input.LiveEventContext.IsNone)
+                return false;
+            
+            var allBridges = 
+                await BridgesRepo.GetAllAsync(input.LiveEventContext.GetValueOrThrow());
+
+            return allBridges.Any(b =>
+                b.DestinationChatId == input.TlgAgent.ChatId &&
+                b.DestinationMessageId == input.TlgMessageId);
+        }
+    }
 }
 
 internal static class GeneralWorkflowUtilsExtensions
