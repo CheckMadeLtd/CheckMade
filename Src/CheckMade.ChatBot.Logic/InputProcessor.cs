@@ -149,16 +149,18 @@ internal sealed class InputProcessor(
                 wf.GetResponseAsync(currentInput),
             () => 
                 Task.FromResult(Result<WorkflowResponse>
-                    .FromSuccess(new WorkflowResponse
-                    ([
-                        new OutputDto 
-                        { 
-                            Text = UiConcatenate(
-                                Ui("Your input can't be processed."),
-                                UiNewLines(1),
-                                IInputProcessor.SeeValidBotCommandsInstruction)
-                        }
-                    ], Option<string>.None(), Option<Guid>.None()))));
+                    .FromSuccess(new WorkflowResponse(
+                        [
+                            new OutputDto 
+                            { 
+                                Text = UiConcatenate(
+                                    Ui("Your input can't be processed."),
+                                    UiNewLines(1),
+                                    IInputProcessor.SeeValidBotCommandsInstruction)
+                            }
+                        ], 
+                        Option<string>.None(),
+                        Option<Guid>.None()))));
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(

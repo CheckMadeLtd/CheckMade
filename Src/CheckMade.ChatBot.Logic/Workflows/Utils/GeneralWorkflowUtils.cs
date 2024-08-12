@@ -2,7 +2,6 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
@@ -25,9 +24,10 @@ internal interface IGeneralWorkflowUtils
 }
 
 internal sealed record GeneralWorkflowUtils(
-        ITlgInputsRepository InputsRepo,
-        ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
-        IDomainGlossary Glossary)
+    ITlgInputsRepository InputsRepo,
+    ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
+    IDerivedWorkflowBridgesRepository BridgesRepo,
+    IDomainGlossary Glossary)
     : IGeneralWorkflowUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
@@ -65,8 +65,8 @@ internal sealed record GeneralWorkflowUtils(
                 .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> 
-        GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(
+        TlgInput currentInput)
     {
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
@@ -138,29 +138,8 @@ internal static class GeneralWorkflowUtilsExtensions
             i.Details.BotCommandEnumCode.IsSome) 
         ?? Option<TlgInput>.None();
     
-    public static ITrade GetCurrentTrade(
-        this IRoleInfo currentRole, 
-        IReadOnlyCollection<TlgInput> interactiveHistory)
-    {
-        return currentRole.IsCurrentRoleTradeSpecific()
-            ? currentRole.RoleType.GetTradeInstance().GetValueOrThrow()
-            : interactiveHistory.GetLastUserProvidedTrade();
-    }
-    
     public static bool IsCurrentRoleTradeSpecific(this IRoleInfo currentRole) =>
         currentRole
             .RoleType
             .GetTradeInstance().IsSome;
-
-    private static ITrade GetLastUserProvidedTrade(this IReadOnlyCollection<TlgInput> interactiveHistory)
-    {
-        var tradeType = interactiveHistory
-            .Last(i =>
-                i.Details.DomainTerm.IsSome &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ITrade)))
-            .Details.DomainTerm.GetValueOrThrow().TypeValue!;
-
-        return (ITrade)Activator.CreateInstance(tradeType)!;
-    }
 }

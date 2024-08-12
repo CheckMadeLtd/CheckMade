@@ -28,9 +28,13 @@ internal abstract record WorkflowBase(
         
         return await currentState.GetWorkflowResponseAsync(currentInput);
 
-        async Task<bool> IsVirginWorkflowAsync() =>
-            (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
-            .Count == 1; // 1 because currentInput is already included
+        async Task<bool> IsVirginWorkflowAsync()
+        {
+            
+            
+            return (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+                .Count == 1; // 1 because currentInput is already included
+        }
 
         bool IsTerminatedWorkflow() =>
             currentStateType.IsAssignableTo(typeof(IWorkflowStateTerminator));

@@ -127,7 +127,7 @@ internal sealed record WorkflowIdentifier(
                 // In the future I may have to look up what the SourceInput in the WorkflowBridge was, in order 
                 // to determine which Workflow to identify here. E.g. I might ask: Do you want to accept this task?
                 // With Yes/No ControlPrompts, and just clicking 'yes' on its own would not give enough context 
-                // for the below identification. 
+                // for the below identification. I need to understand what the 'yes' was an answer to.  
                 
                 return currentControl switch
                 {
