@@ -32,11 +32,11 @@ internal sealed record NewIssueReview<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
-            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         await InputsRepo
             .UpdateGuid(interactiveHistory, Guid.NewGuid());
         var updatedHistoryWithGuid = 
-            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         
         var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = issue.GetSummary();
@@ -100,7 +100,7 @@ internal sealed record NewIssueReview<T>(
         async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
         {
             var historyWithUpdatedCurrentInput = 
-                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(
+                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(
                     currentInput with
                     {
                         EntityGuid = await GetLastGuidAsync(),
@@ -124,7 +124,7 @@ internal sealed record NewIssueReview<T>(
             if (_lastGuidCache == Guid.Empty)
             {
                 var interactiveHistory =
-                    await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+                    await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
                     .Select(i => i.EntityGuid)

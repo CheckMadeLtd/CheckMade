@@ -27,7 +27,7 @@ internal sealed record NewIssueFacilitySelection<T>(
     {
         var currentSphere = 
             GetLastSelectedSphere(
-                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput), 
+                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput), 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
                     new T()));

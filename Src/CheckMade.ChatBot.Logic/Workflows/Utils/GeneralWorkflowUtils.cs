@@ -1,7 +1,6 @@
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
@@ -20,7 +19,7 @@ internal interface IGeneralWorkflowUtils
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
         TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
 
-    Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(TlgInput currentInput);
+    Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
     Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
     Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput);
     bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory);
@@ -69,8 +68,7 @@ internal sealed record GeneralWorkflowUtils(
                 .ToImmutableReadOnlyCollection();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveSinceLastBotCommandAsync(
-        TlgInput currentInput)
+    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput)
     {
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
@@ -78,10 +76,23 @@ internal sealed record GeneralWorkflowUtils(
             await GetAllCurrentInteractiveAsync(
                 currentInput.TlgAgent,
                 currentInput);
+
+        var allBridges = currentInput.LiveEventContext.IsSome
+            ? await BridgesRepo.GetAllAsync(currentInput.LiveEventContext.GetValueOrThrow())
+            : [];
         
         return currentRoleInputs
-            .GetLatestRecordsUpTo(input => input.InputType.Equals(CommandMessage))
+            .GetLatestRecordsUpTo(IsWorkflowLauncher)
             .ToImmutableReadOnlyCollection();
+
+        bool IsWorkflowLauncher(TlgInput input)
+        {
+            return input.InputType == CommandMessage ||
+                   input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
+                   allBridges.Any(b =>
+                       b.DestinationChatId == input.TlgAgent.ChatId &&
+                       b.DestinationMessageId == input.TlgMessageId);
+        }
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
@@ -96,7 +107,7 @@ internal sealed record GeneralWorkflowUtils(
     public async Task<Type> GetPreviousResultantStateTypeAsync(TlgInput currentInput)
     {
         var interactiveHistory =
-            await GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GetInteractiveWorkflowHistoryAsync(currentInput);
 
         if (interactiveHistory.Count <= 1)
             throw new InvalidOperationException("Interactive History is too short for this function");

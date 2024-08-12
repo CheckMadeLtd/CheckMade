@@ -27,7 +27,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
-            await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+            await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         var availableConsumables = 
             await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
         
@@ -97,7 +97,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
         async Task<UiString> GetSelectedConsumablesAsync()
         {
             var interactiveHistory =
-                await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput);
+                await GeneralWorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             var availableConsumables =
                 await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
             

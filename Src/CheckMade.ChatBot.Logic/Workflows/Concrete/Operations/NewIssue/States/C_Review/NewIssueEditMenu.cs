@@ -22,7 +22,7 @@ internal sealed record NewIssueEditMenu<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var workflowStateHistory =
-            (await GeneralUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+            (await GeneralUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
             .Select(i => i.ResultantWorkflow)
             .Where(rw => rw.IsSome)
             .Select(rw => rw.GetValueOrThrow().InStateId)
