@@ -168,7 +168,7 @@ public sealed class BotClientWrapper(
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            await botClient.SendDocumentAsync(
+            sentMessage = await botClient.SendDocumentAsync(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
                 caption: documentSendOutParams.Caption.GetValueOrDefault(),
@@ -179,7 +179,7 @@ public sealed class BotClientWrapper(
         
         if (sentMessage is null)
             throw new InvalidOperationException(
-                $"No {nameof(sentMessage)} was returned by {nameof(SendTextMessageAsync)}");
+                $"No {nameof(sentMessage)} was returned by {nameof(SendDocumentAsync)}");
         
         return sentMessage.MessageId;
     }
@@ -191,7 +191,7 @@ public sealed class BotClientWrapper(
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            await botClient.SendLocationAsync(
+            sentMessage = await botClient.SendLocationAsync(
                 chatId: chatId,
                 latitude: location.Latitude,
                 longitude: location.Longitude,
@@ -201,7 +201,7 @@ public sealed class BotClientWrapper(
 
         if (sentMessage is null)
             throw new InvalidOperationException(
-                $"No {nameof(sentMessage)} was returned by {nameof(SendTextMessageAsync)}");
+                $"No {nameof(sentMessage)} was returned by {nameof(SendLocationAsync)}");
         
         return sentMessage.MessageId;
     }
@@ -213,7 +213,7 @@ public sealed class BotClientWrapper(
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            await botClient.SendPhotoAsync(
+            sentMessage = await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
@@ -224,7 +224,7 @@ public sealed class BotClientWrapper(
         
         if (sentMessage is null)
             throw new InvalidOperationException(
-                $"No {nameof(sentMessage)} was returned by {nameof(SendTextMessageAsync)}");
+                $"No {nameof(sentMessage)} was returned by {nameof(SendPhotoAsync)}");
         
         return sentMessage.MessageId;
     }
@@ -283,7 +283,7 @@ public sealed class BotClientWrapper(
              Telegram ID. For now, we need to manually inform them that they need to change their settings to enable
              receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list).
              */ 
-            await botClient.SendVoiceAsync(
+            sentMessage = await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
@@ -294,7 +294,7 @@ public sealed class BotClientWrapper(
         
         if (sentMessage is null)
             throw new InvalidOperationException(
-                $"No {nameof(sentMessage)} was returned by {nameof(SendTextMessageAsync)}");
+                $"No {nameof(sentMessage)} was returned by {nameof(SendVoiceAsync)}");
         
         return sentMessage.MessageId;
     }
