@@ -5,6 +5,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.C_Review;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -147,17 +148,18 @@ internal sealed record WorkflowIdentifier(
                         b.DestinationMessageId == reactiveLauncher.TlgMessageId)
                     .SourceInput;
 
-            var sourceWorkflowState = Mediator.Next(
+            var sourceWorkflowTerminator = Mediator.Terminate(
                 Glossary.GetDtType(
                     sourceInput.ResultantWorkflow.GetValueOrThrow().InStateId));
 
-            return sourceWorkflowState switch
+            return sourceWorkflowTerminator switch
             {
-                INewIssueReview<SaniCleanTrade> or INewIssueReview<SiteCleanTrade> =>
+                INewIssueSubmissionSucceeded<SaniCleanTrade> or 
+                    INewIssueSubmissionSucceeded<SiteCleanTrade> =>
                     Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
 
                 _ => throw new InvalidOperationException(
-                    $"Unhandled {nameof(sourceWorkflowState)} while trying to identify reactive Workflow in" +
+                    $"Unhandled {nameof(sourceWorkflowTerminator)} while trying to identify reactive Workflow in" +
                     $"{nameof(Notifications)} mode")
             };
         }

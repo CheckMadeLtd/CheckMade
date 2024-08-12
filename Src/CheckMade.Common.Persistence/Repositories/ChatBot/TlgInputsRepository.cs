@@ -113,7 +113,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         var normalParameters = new Dictionary<string, object>
         {
             ["@tlgDate"] = tlgInput.TlgDate,
-            ["@tlgMessageId"] = tlgInput.TlgMessageId,
+            ["@tlgMessageId"] = tlgInput.TlgMessageId.Id,
             ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
             ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
             ["@lastDataMig"] = 0,
@@ -248,7 +248,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             {
                 ["@newGuid"] = newGuid,
                 ["@tlgDate"] = tlgInput.TlgDate,
-                ["@tlgMessageId"] = tlgInput.TlgMessageId,
+                ["@tlgMessageId"] = tlgInput.TlgMessageId.Id,
                 ["@userId"] = tlgInput.TlgAgent.UserId.Id,
                 ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
                 ["@mode"] = (int)tlgInput.TlgAgent.Mode

@@ -290,7 +290,7 @@ internal static class ModelReaders
         IDomainGlossary glossary)
     {
         var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
-        var tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
+        TlgMessageId tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
         var interactionMode = EnsureEnumValidityOrThrow(

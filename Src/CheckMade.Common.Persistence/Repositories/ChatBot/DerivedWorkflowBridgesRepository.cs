@@ -53,7 +53,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
 
         var normalParameters = new Dictionary<string, object>
         {
-            ["@liveEventName"] = liveEvent
+            ["@liveEventName"] = liveEvent.Name
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

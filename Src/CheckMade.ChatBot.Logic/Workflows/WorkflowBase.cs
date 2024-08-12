@@ -5,8 +5,8 @@ using CheckMade.Common.Model.ChatBot.Output;
 namespace CheckMade.ChatBot.Logic.Workflows;
 
 internal abstract record WorkflowBase(
-        IGeneralWorkflowUtils GeneralWorkflowUtils,    
-        IStateMediator Mediator) 
+    IGeneralWorkflowUtils GeneralWorkflowUtils,    
+    IStateMediator Mediator) 
 {
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
@@ -30,10 +30,10 @@ internal abstract record WorkflowBase(
 
         async Task<bool> IsVirginWorkflowAsync()
         {
-            
-            
-            return (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
-                .Count == 1; // 1 because currentInput is already included
+            return await GeneralWorkflowUtils.IsWorkflowLauncherAsync(currentInput);
+
+            // return (await GeneralWorkflowUtils.GetInteractiveSinceLastBotCommandAsync(currentInput))
+            //     .Count == 1; // 1 because currentInput is already included
         }
 
         bool IsTerminatedWorkflow() =>
