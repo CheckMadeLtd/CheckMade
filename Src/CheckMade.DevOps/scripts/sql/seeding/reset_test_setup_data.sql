@@ -1,4 +1,7 @@
--- run from terminal with `psql -d cm_ops -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_test_setup_data.sql`
+-- run from terminal with
+--  for local: `psql -d cm_ops -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_test_setup_data.sql`
+--  for prd: `[psql conn string from psw manager] -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_test_setup_data.sql`
+
 -- Deleting all records from local DB
 -- Order of table matters due to FK constraints!
 -- Thanks to CASCADE only need to specify the tables at the top of the FK dependency chain.

@@ -101,7 +101,7 @@ new_live_event_X2024 AS (
         RETURNING id
 ),
  
-new_sphere1_sanitary_ops_at_X2024 AS (
+new_sphere1_saniclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
        VALUES ('Camp1',
                'DX3KFI',
@@ -123,7 +123,7 @@ new_sphere1_sanitary_ops_at_X2024 AS (
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
 
-new_sphere2_sanitary_ops_at_X2024 AS (
+new_sphere2_saniclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Camp2-4cc',
                 'DX3KFI',
@@ -145,7 +145,7 @@ new_sphere2_sanitary_ops_at_X2024 AS (
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
 
-new_sphere3_site_cleaning_at_X2024 AS (
+new_sphere3_siteclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Zone1',
                 'DSIL7M',
