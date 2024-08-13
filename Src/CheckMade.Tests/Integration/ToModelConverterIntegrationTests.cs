@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration;
 
-public class ToModelConverterIntegrationTests
+public sealed class ToModelConverterIntegrationTests
 {
     private IServiceProvider? _services;
     

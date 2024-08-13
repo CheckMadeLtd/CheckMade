@@ -118,7 +118,8 @@ internal static class OutputSender
                                     ? uiTranslator.Translate(output.Text.GetValueOrThrow())
                                     : Option<string>.None(),
                                 output.UpdateExistingOutputMessageId.GetValueOrThrow(),
-                                converter.GetReplyMarkup(output));
+                                converter.GetReplyMarkup(output),
+                                output.CallbackQueryId);
                     }
                 
                     async Task<TlgMessageId> InvokeSendAttachmentAsync(AttachmentDetails details)

@@ -28,6 +28,9 @@ public sealed record OutputDto
     
     public Option<TlgMessageId> UpdateExistingOutputMessageId { get; init; }
         = Option<TlgMessageId>.None();
+    
+    public Option<string> CallbackQueryId { get; init; }
+        = Option<string>.None();
 
     public ActualSendOutParams? ActualSendOutParams { get; init; } = null;
 }

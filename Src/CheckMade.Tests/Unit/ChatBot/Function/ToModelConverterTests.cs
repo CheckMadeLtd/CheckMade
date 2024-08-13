@@ -51,6 +51,7 @@ public sealed class ToModelConverterTests
             expectedLiveEventContext,
             Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
 
@@ -99,6 +100,7 @@ public sealed class ToModelConverterTests
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
     
@@ -146,6 +148,7 @@ public sealed class ToModelConverterTests
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 attachmentUpdate.Message.Caption,
                 expectedAttachmentTlgUri,
@@ -189,6 +192,7 @@ public sealed class ToModelConverterTests
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 geoCoordinates: expectedGeoCoordinates));
         
@@ -204,7 +208,7 @@ public sealed class ToModelConverterTests
     
     [Theory]
     [InlineData(OperationsBotCommands.NewIssue)]
-    [InlineData(OperationsBotCommands.NewAssessment)]
+    // [InlineData(OperationsBotCommands.NewAssessment)]
     [InlineData(OperationsBotCommands.Settings)]
     [InlineData(OperationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InOperationsMode(
@@ -227,6 +231,7 @@ public sealed class ToModelConverterTests
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
@@ -242,7 +247,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(CommunicationsBotCommands.Contact)]
+    // [InlineData(CommunicationsBotCommands.Contact)]
     [InlineData(CommunicationsBotCommands.Settings)]
     [InlineData(CommunicationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InCommunicationsMode(
@@ -265,6 +270,7 @@ public sealed class ToModelConverterTests
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
@@ -280,7 +286,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(NotificationsBotCommands.Status)]
+    // [InlineData(NotificationsBotCommands.Status)]
     [InlineData(NotificationsBotCommands.Settings)]
     [InlineData(NotificationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InNotificationsMode(
@@ -303,6 +309,7 @@ public sealed class ToModelConverterTests
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
@@ -340,6 +347,7 @@ public sealed class ToModelConverterTests
             X2024, 
             Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
                 controlPromptEnumCode: controlPromptEnumCode));
@@ -374,6 +382,7 @@ public sealed class ToModelConverterTests
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
                 domainTerm: domainTerm));

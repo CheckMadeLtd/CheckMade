@@ -23,11 +23,11 @@ public interface IToModelConverter
 }
 
 internal sealed class ToModelConverter(
-        ITelegramFilePathResolver filePathResolver,
-        IBlobLoader blobLoader,
-        IHttpDownloader downloader,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogger<ToModelConverter> logger) 
+    ITelegramFilePathResolver filePathResolver,
+    IBlobLoader blobLoader,
+    IHttpDownloader downloader,
+    ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
     public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
@@ -291,6 +291,7 @@ internal sealed class ToModelConverter(
             liveEventContext,
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            update.Update.CallbackQuery?.Id ?? Option<string>.None(), 
             new TlgInputDetails(
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 tlgAttachmentUri,

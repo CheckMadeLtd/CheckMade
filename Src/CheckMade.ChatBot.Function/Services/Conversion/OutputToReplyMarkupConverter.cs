@@ -14,7 +14,7 @@ public interface IOutputToReplyMarkupConverter
     Option<IReplyMarkup> GetReplyMarkup(OutputDto output);
 }
 
-internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputToReplyMarkupConverter
+internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputToReplyMarkupConverter
 {
     public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
     {
@@ -44,7 +44,7 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
         var combinedInlineKeyboardMarkup = 
             GenerateInlineKeyboardMarkup(
                 inlineKeyboardButtonsForDomainTerms,
-                    inlineKeyboardButtonsForControlPrompts);
+                inlineKeyboardButtonsForControlPrompts);
         
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,

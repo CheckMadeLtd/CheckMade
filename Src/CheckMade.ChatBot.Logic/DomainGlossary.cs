@@ -33,7 +33,7 @@ public sealed record DomainGlossary : IDomainGlossary
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
     
     public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
-    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[✔]");
+    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
     
     public DomainGlossary()
     {
@@ -155,7 +155,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));
         AddTerm(typeof(TradeEngineer<SiteCleanTrade>), "DWWD3W", Ui("SiteClean-Engineer"));
-        AddTerm(typeof(TradeTeamLead<SiteCleanTrade>), "DFIY82", Ui("SiteClean-CleanLead"));
+        AddTerm(typeof(TradeTeamLead<SiteCleanTrade>), "DFIY82", Ui("SiteClean-TeamLead"));
         AddTerm(typeof(TradeObserver<SiteCleanTrade>), "DOV3F2", Ui("SiteClean-Observer"));
         
         #endregion

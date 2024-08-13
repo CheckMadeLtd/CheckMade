@@ -48,7 +48,7 @@ internal sealed record NewIssueReview<T>(
                 Text = UiConcatenate(
                     Ui("Please review all details before submitting."),
                     UiNewLines(1),
-                    UiNoTranslate("- - - - - -"),
+                    UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),
                     UiConcatenate(
                         summary
