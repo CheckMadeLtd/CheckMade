@@ -33,7 +33,7 @@ public sealed record DomainGlossary : IDomainGlossary
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
     
     public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
-    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[✔]");
+    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
     
     public DomainGlossary()
     {
