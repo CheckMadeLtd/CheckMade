@@ -69,6 +69,7 @@ internal sealed record ViewAttachmentsWorkflow(
         return WorkflowResponse.Create(
             currentInput,
             attachmentsOutput,
-            newState: Mediator.GetTerminator(typeof(IOneStepWorkflowTerminator)));
+            newState: Mediator.GetTerminator(typeof(IOneStepWorkflowTerminator)),
+            promptTransition: new PromptTransition(currentInput.TlgMessageId));
     }
 }
