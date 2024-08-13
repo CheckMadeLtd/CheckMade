@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - tmp/3vcxi
 
 jobs:  
   tag_version:
@@ -120,7 +119,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-          nuget-config-file: nuget.config
 
       - name: Set up JDK 17
         if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
