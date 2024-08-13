@@ -34,7 +34,7 @@ internal sealed class InputProcessor(
                 if (currentInput.InputType == TlgInputType.Location)
                 {
                     return (
-                        Option<TlgInput>.None(), 
+                        currentInput, 
                         new List<OutputDto>().ToImmutableReadOnlyCollection());
                 }
                 
