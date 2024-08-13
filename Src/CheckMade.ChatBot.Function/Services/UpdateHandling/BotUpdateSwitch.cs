@@ -10,7 +10,7 @@ public interface IBotUpdateSwitch
     Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode);
 }
 
-public class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
+public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
 {
     internal static readonly UiString
         NoSpecialHandlingWarning = Ui("""

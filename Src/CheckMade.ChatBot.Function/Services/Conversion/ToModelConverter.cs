@@ -23,11 +23,11 @@ public interface IToModelConverter
 }
 
 internal sealed class ToModelConverter(
-        ITelegramFilePathResolver filePathResolver,
-        IBlobLoader blobLoader,
-        IHttpDownloader downloader,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogger<ToModelConverter> logger) 
+    ITelegramFilePathResolver filePathResolver,
+    IBlobLoader blobLoader,
+    IHttpDownloader downloader,
+    ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
     public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
