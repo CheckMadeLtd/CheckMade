@@ -204,7 +204,7 @@ public sealed class ToModelConverterTests
     
     [Theory]
     [InlineData(OperationsBotCommands.NewIssue)]
-    [InlineData(OperationsBotCommands.NewAssessment)]
+    // [InlineData(OperationsBotCommands.NewAssessment)]
     [InlineData(OperationsBotCommands.Settings)]
     [InlineData(OperationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InOperationsMode(
@@ -242,7 +242,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(CommunicationsBotCommands.Contact)]
+    // [InlineData(CommunicationsBotCommands.Contact)]
     [InlineData(CommunicationsBotCommands.Settings)]
     [InlineData(CommunicationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InCommunicationsMode(
@@ -280,7 +280,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(NotificationsBotCommands.Status)]
+    // [InlineData(NotificationsBotCommands.Status)]
     [InlineData(NotificationsBotCommands.Settings)]
     [InlineData(NotificationsBotCommands.Logout)]
     public async Task ConvertToModelAsync_ConvertsWithCorrectDetails_ForBotCommandMessage_InNotificationsMode(

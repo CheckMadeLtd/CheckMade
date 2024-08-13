@@ -5,7 +5,7 @@ namespace CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.Definitions
 public enum NotificationsBotCommands
 {
     // Code '1' is reserved for '/start' command, which is not part of the menu however
-    Status = 10,
+    // Status = 10,
     
     Settings = BotCommandMenus.GlobalBotCommandsCodeThreshold_90,
     Logout = OperationsBotCommands.Logout
