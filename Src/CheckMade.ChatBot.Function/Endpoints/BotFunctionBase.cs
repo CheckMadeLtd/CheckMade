@@ -4,8 +4,8 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
-using Telegram.Bot.Serialization;
 using System.Text.Json;
+using Telegram.Bot;
 
 namespace CheckMade.ChatBot.Function.Endpoints;
 
@@ -29,7 +29,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                        ?? throw new InvalidOperationException(
                            "The incoming HttpRequestData couldn't be serialized");
 
-            var update = JsonSerializer.Deserialize<Update>(body, JsonSerializerOptionsProvider.Options);
+            var update = JsonSerializer.Deserialize<Update>(body, JsonBotAPI.Options);
             
             if (update is null)
             {
