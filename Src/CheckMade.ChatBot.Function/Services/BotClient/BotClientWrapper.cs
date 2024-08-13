@@ -35,6 +35,7 @@ public interface IBotClientWrapper
         Option<string> text,
         int messageId,
         Option<IReplyMarkup> replyMarkup,
+        Option<string> callbackQueryId,
         CancellationToken cancellationToken = default);
     
     Task<TlgMessageId> SendDocumentAsync(
@@ -97,6 +98,7 @@ public sealed class BotClientWrapper(
         Option<string> text, 
         int messageId, 
         Option<IReplyMarkup> replyMarkup,
+        Option<string> callbackQueryId,
         CancellationToken cancellationToken = default)
     {
         // EditMessageXAsync only supports updates to/with InlineKeyboardMarkup!
@@ -108,12 +110,13 @@ public sealed class BotClientWrapper(
             
             try
             {
-                // ToDo: Add actual callbackqueryid
-                if (updatedInlineKeyboard != null)
+                // This limits the showing of 'Loading...' on top of Telegram client to the duration of processing
+                // rather than a few seconds longer.
+                if (callbackQueryId.IsSome)
                 {
                     await retryPolicy.ExecuteAsync(async () => 
                         await botClient.AnswerCallbackQueryAsync(
-                            "",
+                            callbackQueryId.GetValueOrThrow(),
                             cancellationToken: cancellationToken));
                 }
                 

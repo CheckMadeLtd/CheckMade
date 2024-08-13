@@ -42,7 +42,10 @@ internal sealed record WorkflowResponse(
         [
             singleOutput with
             {
-                UpdateExistingOutputMessageId = nextPromptInPlaceUpdateMessageId
+                UpdateExistingOutputMessageId = nextPromptInPlaceUpdateMessageId,
+                
+                // Allows controlling the CallbackQuery Feedback message
+                CallbackQueryId = currentInput.CallbackQueryId
             }
         ]; 
         
@@ -86,12 +89,20 @@ internal sealed record WorkflowResponse(
     {
         var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
             ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
+
+        // Allows controlling the CallbackQuery Feedback message
+        var promptFinalizerWithCallbackQueryId = currentPromptFinalizer.IsSome
+            ? currentPromptFinalizer.GetValueOrThrow() with
+            {
+                CallbackQueryId = currentInput.CallbackQueryId
+            }
+            : currentPromptFinalizer;
         
         return new WorkflowResponse(
             Output: await newState.GetPromptAsync(
                 currentInput,
                 nextPromptInPlaceUpdateMessageId,
-                currentPromptFinalizer),
+                promptFinalizerWithCallbackQueryId),
             NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
             EntityGuid: entityGuid ?? Option<Guid>.None());
     }
