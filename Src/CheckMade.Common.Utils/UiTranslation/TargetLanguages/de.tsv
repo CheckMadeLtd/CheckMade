@@ -56,7 +56,7 @@ CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?
 CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
 CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitärreinigung
-CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländeräumung
+CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländereinigung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
 CheckMade.ChatBot.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
