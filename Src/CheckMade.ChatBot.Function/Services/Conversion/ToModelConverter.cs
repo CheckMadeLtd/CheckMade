@@ -291,6 +291,7 @@ internal sealed class ToModelConverter(
             liveEventContext,
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            update.Update.CallbackQuery?.Id ?? Option<string>.None(), 
             new TlgInputDetails(
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 tlgAttachmentUri,

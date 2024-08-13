@@ -82,6 +82,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 text));
     }
@@ -101,6 +102,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetInputContextInfo(roleSetting).liveEvent, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
                 new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
@@ -123,6 +125,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 geoCoordinates: location));
     }
@@ -146,6 +149,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 botCommandEnumCode: botCommandEnumCode));
     }
@@ -165,6 +169,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 domainTerm: domainTerm));
     }
@@ -184,6 +189,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             CreateFromRelevantDetails(
                 text: text,
                 controlPromptEnumCode: (long)prompts));

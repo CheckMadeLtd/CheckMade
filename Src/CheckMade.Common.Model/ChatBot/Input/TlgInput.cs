@@ -12,4 +12,5 @@ public sealed record TlgInput(
     Option<ILiveEventInfo> LiveEventContext,
     Option<ResultantWorkflowState> ResultantWorkflow,
     Option<Guid> EntityGuid,
+    Option<string> CallbackQueryId,
     TlgInputDetails Details);

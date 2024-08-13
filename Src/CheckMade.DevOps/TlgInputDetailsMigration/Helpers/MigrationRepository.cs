@@ -55,6 +55,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
+            Option<string>.None(), 
             new TlgInputDetails(
                 Option<string>.None(),
                 Option<Uri>.None(),

@@ -312,6 +312,7 @@ internal static class ModelReaders
             liveEventInfo,
             resultantWorkflow,
             guid,
+            Option<string>.None(), 
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 
