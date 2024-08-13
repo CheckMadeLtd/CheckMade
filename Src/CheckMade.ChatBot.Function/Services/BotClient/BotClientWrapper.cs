@@ -105,9 +105,18 @@ public sealed class BotClientWrapper(
             var updatedInlineKeyboard = replyMarkup.IsSome
                 ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
                 : null;
-
+            
             try
             {
+                // ToDo: Add actual callbackqueryid
+                if (updatedInlineKeyboard != null)
+                {
+                    await retryPolicy.ExecuteAsync(async () => 
+                        await botClient.AnswerCallbackQueryAsync(
+                            "",
+                            cancellationToken: cancellationToken));
+                }
+                
                 if (text.IsSome)
                 {
                     await retryPolicy.ExecuteAsync(async () =>
