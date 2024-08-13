@@ -21,8 +21,8 @@ internal static class TestRepositoryUtils
         return new TlgAgentRoleBind(
             role,
             tlgAgent,
-            DateTime.UtcNow,
-            Option<DateTime>.None());
+            DateTimeOffset.UtcNow,
+            Option<DateTimeOffset>.None());
     }
 
     internal static (ServiceProvider sp, MockContainer container) ConfigureTestRepositories(
@@ -32,7 +32,8 @@ internal static class TestRepositoryUtils
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
         IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
-        IReadOnlyCollection<TlgInput>? inputs = null)
+        IReadOnlyCollection<TlgInput>? inputs = null,
+        IReadOnlyCollection<WorkflowBridge>? bridges = null)
     {
         var defaultLiveEvent = X2024;
         List<LiveEvent> defaultLiveEvents = [X2024, X2025];
@@ -41,6 +42,7 @@ internal static class TestRepositoryUtils
         List<TlgAgentRoleBind> defaultRoleBindings = 
             [GetNewRoleBind(SaniCleanAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
         List<TlgInput> defaultInputs = [];
+        List<WorkflowBridge> defaultBridges = [];
 
         var mockContainer = new MockContainer();
         
@@ -49,7 +51,8 @@ internal static class TestRepositoryUtils
             .ArrangeTestUsersRepo(users ?? defaultUsers, mockContainer)
             .ArrangeTestRolesRepo(roles ?? defaultRoles, mockContainer)
             .ArrangeTestRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
-            .ArrangeTestTlgInputsRepo(inputs ?? defaultInputs, mockContainer);
+            .ArrangeTestTlgInputsRepo(inputs ?? defaultInputs, mockContainer)
+            .ArrangeTestDerivedWorkflowBridgesRepo(bridges ?? defaultBridges, mockContainer);
 
         return (serviceCollection.BuildServiceProvider(), mockContainer);
     }
@@ -63,7 +66,8 @@ internal static class TestRepositoryUtils
         var mockLiveEventsRepo = new Mock<ILiveEventsRepository>();
 
         mockLiveEventsRepo
-            .Setup(repo => repo.GetAsync(liveEvent))
+            .Setup(repo => 
+                repo.GetAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync(liveEvent);
         
         mockLiveEventsRepo
@@ -140,24 +144,81 @@ internal static class TestRepositoryUtils
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync((TlgAgent tlgAgent) => inputs
-                .Where(i => i.TlgAgent.Equals(tlgAgent))
-                .ToImmutableReadOnlyCollection());
+            .Setup(repo => 
+                repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
+            .ReturnsAsync((TlgAgent tlgAgent) => 
+                inputs
+                    .Where(i => 
+                        i.TlgAgent.Equals(tlgAgent) &&
+                        i.InputType != TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
         
         mockTlgInputsRepo
-            .Setup(repo => repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
-            .ReturnsAsync((ILiveEventInfo liveEvent) => inputs
-                .Where(i => Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent))
-                .ToImmutableReadOnlyCollection());
+            .Setup(repo => 
+                repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
+            .ReturnsAsync((ILiveEventInfo liveEvent) => 
+                inputs
+                    .Where(i => 
+                        Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
+                        i.InputType != TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
 
+        mockTlgInputsRepo
+            .Setup(repo =>
+                repo.GetAllLocationAsync(
+                    It.IsAny<TlgAgent>(),
+                    It.IsAny<DateTimeOffset>()))
+            .ReturnsAsync((TlgAgent tlgAgent, DateTimeOffset dateTime) =>
+                inputs
+                    .Where(i => 
+                        i.TlgAgent.Equals(tlgAgent) && 
+                        i.TlgDate >= dateTime &&
+                        i.InputType == TlgInputType.Location)
+                    .ToImmutableReadOnlyCollection());
+
+        mockTlgInputsRepo
+            .Setup(repo =>
+                repo.GetEntityHistoryAsync(
+                    It.IsAny<ILiveEventInfo>(),
+                    It.IsAny<Guid>()))
+            .ReturnsAsync((ILiveEventInfo liveEvent, Guid entityGuid) =>
+                inputs
+                    .Where(i =>
+                        Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
+                        Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
+                    .ToImmutableReadOnlyCollection());
+        
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
         
         return serviceCollection.AddScoped<ITlgInputsRepository>(_ => stubTlgInputsRepo);
     }
 
-    internal record MockContainer
+    private static IServiceCollection ArrangeTestDerivedWorkflowBridgesRepo(
+        this IServiceCollection serviceCollection,
+        IReadOnlyCollection<WorkflowBridge> bridges,
+        MockContainer container)
+    {
+        var mockBridgesRepo = new Mock<IDerivedWorkflowBridgesRepository>();
+
+        mockBridgesRepo
+            .Setup(repo =>
+                repo.GetAllAsync(It.IsAny<ILiveEventInfo>()))
+            .ReturnsAsync((ILiveEventInfo liveEvent) =>
+                bridges
+                    .Where(b =>
+                        Equals(b.SourceInput.LiveEventContext.GetValueOrDefault(), liveEvent))
+                    .ToImmutableReadOnlyCollection());
+        
+        // ToDo: Implement also repo.GetAsync() if/when needed for testing? If not, remove ToDo!
+
+        container.Mocks[typeof(IDerivedWorkflowBridgesRepository)] = mockBridgesRepo;
+        var stubBridgesRepo = mockBridgesRepo.Object;
+
+        return serviceCollection.AddScoped<IDerivedWorkflowBridgesRepository>(_ => stubBridgesRepo);
+    }
+
+    internal sealed record MockContainer
     {
         internal Dictionary<Type, object> Mocks { get; } = new();
     }

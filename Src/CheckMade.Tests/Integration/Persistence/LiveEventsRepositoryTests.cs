@@ -1,11 +1,13 @@
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class LiveEventsRepositoryTests
+public sealed class LiveEventsRepositoryTests
 {
     private IServiceProvider? _services;
 
@@ -23,53 +25,106 @@ public class LiveEventsRepositoryTests
         
         Assert.Equal(X2024.Name, liveEventGraph.Name);
         Assert.Equivalent(Venue1, liveEventGraph.AtVenue);
+
+        var actualLiveEventRoleTokens = 
+            liveEventGraph.WithRoles
+                .Select(r => r.Token)
+                .ToImmutableReadOnlyCollection(); 
         
-        Assert.Equal(X2024.WithRoles.Count, liveEventGraph.WithRoles.Count);
-        Assert.Contains(
-            X2024.WithRoles.First().Token,
-            liveEventGraph.WithRoles.Select(r => r.Token));
-        Assert.Contains(
-            X2024.WithRoles.Last().Token,
-            liveEventGraph.WithRoles.Select(r => r.Token));
+        Assert.Equal(X2024.WithRoles.Count, actualLiveEventRoleTokens.Count);
+        Assert.Contains(X2024.WithRoles.First().Token, actualLiveEventRoleTokens);
+        Assert.Contains(X2024.WithRoles.Last().Token,actualLiveEventRoleTokens);
 
         Assert.Contains(Sphere1_AtX2024.Name, allSphereNames);
         Assert.Contains(Sphere2_AtX2024.Name, allSphereNames);
         Assert.Contains(Sphere3_AtX2024.Name, allSphereNames);
         
-        Assert.Equivalent(
-            Sphere1_AtX2024.Trade,
+        Assert.Equal(3, allSphereNames.Count);
+        
+        Assert.Equal(
+            Sphere1_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
-                .Trade);
-        
-        Assert.Equivalent(
-            Sphere2_AtX2024.Trade,
+                .GetTradeType());
+        Assert.Equal(
+            Sphere2_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
-                .Trade);
-        
-        Assert.Equivalent(
-            Sphere3_AtX2024.Trade,
+                .GetTradeType());
+        Assert.Equal(
+            Sphere3_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere3_AtX2024.Name)
-                .Trade);
+                .GetTradeType());
 
         Assert.Equivalent(
             Sphere1_Location,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
-        
         Assert.Equivalent(
             Sphere2_Location,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
-
         Assert.Equivalent(
             Option<Geo>.None(),
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere3_AtX2024.Name)
                 .Details.GeoCoordinates);
+
+        List<DomainTerm> expectedFacilitiesAtX2024Sphere1 =
+        [
+            Dt(typeof(GeneralMisc)),
+            Dt(typeof(Shower)),
+            Dt(typeof(Toilet))
+        ];
+
+        var actualFacilitiesAtX2024Sphere1 =
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details.AvailableFacilities;
+
+        foreach (var item in expectedFacilitiesAtX2024Sphere1)
+        {
+            Assert.Contains(item, actualFacilitiesAtX2024Sphere1);
+        }
+
+        var actualFacilitiesAtX2024Sphere2 =
+            liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details.AvailableFacilities; 
+        
+        Assert.Contains(Dt(typeof(GeneralMisc)), actualFacilitiesAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(typeof(Shower)), actualFacilitiesAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(typeof(Toilet)), actualFacilitiesAtX2024Sphere2);
+
+        List<DomainTerm> expectedConsumableItemsAtX2024Sphere1 = 
+        [
+            Dt(ConsumablesItem.ToiletPaper),
+            Dt(ConsumablesItem.PaperTowels),
+            Dt(ConsumablesItem.Soap)
+        ];
+
+        var actualConsumableItemsAtX2024Sphere1 = 
+            ((SaniCampDetails)liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .Details)
+            .AvailableConsumables;
+
+        foreach (var item in expectedConsumableItemsAtX2024Sphere1)
+        {
+            Assert.Contains(item, actualConsumableItemsAtX2024Sphere1);
+        }
+        
+        var actualConsumableItemsAtX2024Sphere2 = 
+            ((SaniCampDetails)liveEventGraph.DivIntoSpheres
+                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .Details)
+            .AvailableConsumables;
+        
+        Assert.Contains(Dt(ConsumablesItem.ToiletPaper), actualConsumableItemsAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(ConsumablesItem.PaperTowels), actualConsumableItemsAtX2024Sphere2);
+        Assert.DoesNotContain(Dt(ConsumablesItem.Soap), actualConsumableItemsAtX2024Sphere2);
     }
 }

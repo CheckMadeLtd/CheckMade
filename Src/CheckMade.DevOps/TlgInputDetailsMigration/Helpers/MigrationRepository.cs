@@ -13,7 +13,7 @@ using NpgsqlTypes;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
-public class MigrationRepository(IDbExecutionHelper dbHelper)
+public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
 {
     internal async Task<IReadOnlyCollection<OldFormatDetailsPair>> GetMessageOldFormatDetailsPairsAsync()
     {
@@ -47,13 +47,15 @@ public class MigrationRepository(IDbExecutionHelper dbHelper)
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
         var messageWithFakeEmptyDetails = new TlgInput(
+            DateTimeOffset.MinValue, 
+            0,
             new TlgAgent(tlgUserId, tlgChatId, InteractionMode.Operations),
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
-            new TlgInputDetails(DateTime.MinValue,
-                0,
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
+            new TlgInputDetails(
                 Option<string>.None(),
                 Option<Uri>.None(),
                 Option<Uri>.None(), 

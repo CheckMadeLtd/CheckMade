@@ -3,8 +3,9 @@ using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Telegram.Bot.Types;
+using Telegram.Bot.Serialization;
+using System.Text.Json;
 
 namespace CheckMade.ChatBot.Function.Endpoints;
 
@@ -28,16 +29,19 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                        ?? throw new InvalidOperationException(
                            "The incoming HttpRequestData couldn't be serialized");
 
-            var update = JsonConvert.DeserializeObject<Update>(body);
-
+            var update = JsonSerializer.Deserialize<Update>(body, JsonSerializerOptionsProvider.Options);
+            
             if (update is null)
             {
                 logger.LogError("Unable to deserialize Update object");
                 return defaultOkResponse;
             }
 
-            await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
-            return  defaultOkResponse;
+            var attempt = await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+
+            return attempt.Match(
+                _ => defaultOkResponse,
+                ex => throw new InvalidOperationException("Unhandled exception", ex));
         }
         catch (Exception ex)
         {

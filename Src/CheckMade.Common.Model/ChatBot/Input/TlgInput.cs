@@ -3,11 +3,13 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.ChatBot.Input;
 
-public record TlgInput(
-     TlgAgent TlgAgent,
-     TlgInputType InputType,
-     Option<IRoleInfo> OriginatorRole,
-     Option<ILiveEventInfo> LiveEventContext,
-     Option<ResultantWorkflowInfo> ResultantWorkflow,
-     TlgInputDetails Details);
-     
+public sealed record TlgInput(
+    DateTimeOffset TlgDate,
+    TlgMessageId TlgMessageId, 
+    TlgAgent TlgAgent,
+    TlgInputType InputType,
+    Option<IRoleInfo> OriginatorRole,
+    Option<ILiveEventInfo> LiveEventContext,
+    Option<ResultantWorkflowState> ResultantWorkflow,
+    Option<Guid> EntityGuid,
+    TlgInputDetails Details);

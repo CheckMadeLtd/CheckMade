@@ -3,9 +3,9 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.ChatBot;
 
-public record TlgAgentRoleBind(
+public sealed record TlgAgentRoleBind(
     Role Role,
     TlgAgent TlgAgent,
-    DateTime ActivationDate,
-    Option<DateTime> DeactivationDate,
+    DateTimeOffset ActivationDate,
+    Option<DateTimeOffset> DeactivationDate,
     DbRecordStatus Status = DbRecordStatus.Active);

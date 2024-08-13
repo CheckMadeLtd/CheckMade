@@ -1,12 +1,12 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Structs;
+using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
+internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
 {
     public override void WriteJson(JsonWriter writer, Option<T>? value, JsonSerializer serializer)
     {
@@ -15,8 +15,7 @@ internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<
             if (typeof(T) == typeof(DomainTerm))
             {
                 var domainTerm = value.GetValueOrThrow() as DomainTerm;
-                var callbackId = glossary.IdAndUiByTerm.First(kvp => 
-                    kvp.Key == domainTerm).Value.callbackId;
+                var callbackId = glossary.GetId(domainTerm!);
                     
                 writer.WriteValue(callbackId);
             }
@@ -71,8 +70,8 @@ internal class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<
         var uncertaintyRadiusRaw = geoObj[nameof(Geo.UncertaintyRadiusInMeters)]?.Value<float?>();
                 
         var uncertaintyRadius = uncertaintyRadiusRaw != null
-            ? Option<float>.Some(uncertaintyRadiusRaw.Value)
-            : Option<float>.None(); 
+            ? Option<double>.Some(uncertaintyRadiusRaw.Value)
+            : Option<double>.None(); 
 
         var latitudeSafe = new Latitude(latitudeRaw);
         var longitudeSafe = new Longitude(longitudeRaw);

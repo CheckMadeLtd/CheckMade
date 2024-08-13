@@ -9,7 +9,7 @@ public interface IUiTranslator
     string Translate(UiString uiString);
 }
 
-public partial class UiTranslator(
+public sealed partial class UiTranslator(
         Option<IReadOnlyDictionary<string, string>> translationByKey,
         ILogger<UiTranslator> logger) 
     : IUiTranslator

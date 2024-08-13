@@ -4,12 +4,14 @@ using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -18,10 +20,10 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentlyReceivingInteractionMode);
+    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentInteractionMode);
 }
 
-public class UpdateHandler(
+public sealed class UpdateHandler(
         IBotClientFactory botClientFactory,
         IInputProcessor inputProcessor,
         ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
@@ -30,21 +32,23 @@ public class UpdateHandler(
         IUiTranslatorFactory translatorFactory,
         IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
         IBlobLoader blobLoader,
+        ITlgInputsRepository inputsRepo,
+        IDomainGlossary glossary,
         ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
     public async Task<Attempt<Unit>> HandleUpdateAsync(
         UpdateWrapper update,
-        InteractionMode currentlyReceivingInteractionMode)
+        InteractionMode currentInteractionMode)
     {
-        var currentlyReceivingUserId = update.Message.From?.Id;
-        ChatId currentlyReceivingChatId = update.Message.Chat.Id;
+        var currentUserId = update.Message.From?.Id;
+        ChatId currentChatId = update.Message.Chat.Id;
         
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
                         "with Message from UserId/ChatId: {userId}/{chatId}", 
-            currentlyReceivingInteractionMode, 
+            currentInteractionMode, 
             update.Message.From?.Id ?? 0,
-            currentlyReceivingChatId);
+            currentChatId);
 
         var handledMessageTypes = new[]
         {
@@ -70,16 +74,17 @@ public class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        var sendOutputsAttempt = await
+        var handleUpdateAttempt = await
             (from toModelConverter
                     in Attempt<IToModelConverter>.Run(() => 
                         toModelConverterFactory.Create(
-                            new TelegramFilePathResolver(botClientByMode[currentlyReceivingInteractionMode])))
+                            new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
                 from tlgInput
                     in Attempt<Result<TlgInput>>.RunAsync(() => 
-                        toModelConverter.ConvertToModelAsync(update, currentlyReceivingInteractionMode))
-                from outputs
-                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                        toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
+                from result
+                    in Attempt<(Option<TlgInput> EnrichedOriginalInput, 
+                        IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(tlgInput))
                 from activeRoleBindings
                     in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
@@ -89,20 +94,23 @@ public class UpdateHandler(
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
                             activeRoleBindings,
-                            currentlyReceivingUserId,
-                            currentlyReceivingChatId,
-                            currentlyReceivingInteractionMode)))
+                            currentUserId,
+                            currentChatId,
+                            currentInteractionMode)))
                 from replyMarkupConverter
                     in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
-                from unit
-                  in Attempt<Unit>.RunAsync(() => 
-                      OutputSender.SendOutputsAsync(
-                          outputs, botClientByMode, currentlyReceivingInteractionMode, currentlyReceivingChatId,
-                          activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader)) 
+                from sentOutputs
+                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                        OutputSender.SendOutputsAsync(
+                            result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
+                            activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader))
+                from unit 
+                    in Attempt<Unit>.RunAsync(() =>
+                        SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))
                 select unit);
         
-        return sendOutputsAttempt.Match(
+        return handleUpdateAttempt.Match(
             
             _ => Attempt<Unit>.Succeed(Unit.Value),
 
@@ -113,7 +121,7 @@ public class UpdateHandler(
                                     "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                     "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
                     ex.Message, 
-                    currentlyReceivingInteractionMode, 
+                    currentInteractionMode, 
                     update.Message.From!.Id,
                     update.Message.Date,
                     update.Message.Text);
@@ -137,5 +145,40 @@ public class UpdateHandler(
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;
+    }
+
+    private async Task<Unit> SaveToDbAsync(
+        Option<TlgInput> enrichedInput, IReadOnlyCollection<OutputDto> sentOutputs)
+    {
+        if (enrichedInput.IsNone)
+            return Unit.Value;
+        
+        await inputsRepo.AddAsync(
+            enrichedInput.GetValueOrThrow(), 
+            GetDestinationInfoForWorkflowBridges());
+        
+        return Unit.Value;
+
+        Option<IReadOnlyCollection<ActualSendOutParams>> GetDestinationInfoForWorkflowBridges()
+        {
+            var resultantWorkflowState = 
+                enrichedInput.GetValueOrThrow().ResultantWorkflow; 
+        
+            var isWorkflowTerminatingInput =
+                resultantWorkflowState.IsSome &&
+                glossary.GetDtType(resultantWorkflowState.GetValueOrThrow().InStateId)
+                    .IsAssignableTo(typeof(IWorkflowStateTerminator));
+
+            if (!isWorkflowTerminatingInput)
+                return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
+            
+            Func<OutputDto, bool> isOtherRecipientThanOriginatingRole = dto => dto.LogicalPort.IsSome;
+
+            return Option<IReadOnlyCollection<ActualSendOutParams>>.Some(
+                sentOutputs
+                    .Where(isOtherRecipientThanOriginatingRole)
+                    .Select(o => o.ActualSendOutParams!.Value)
+                    .ToImmutableReadOnlyCollection());
+        }
     }
 }

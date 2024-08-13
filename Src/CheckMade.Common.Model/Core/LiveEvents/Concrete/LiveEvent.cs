@@ -8,8 +8,8 @@ public sealed record LiveEvent : ILiveEventInfo
 {
     public LiveEvent(
         string Name,
-        DateTime StartDate,
-        DateTime EndDate,
+        DateTimeOffset StartDate,
+        DateTimeOffset EndDate,
         IReadOnlyCollection<IRoleInfo> WithRoles,
         LiveEventVenue AtVenue,
         IReadOnlyCollection<ISphereOfAction> DivIntoSpheres,
@@ -32,19 +32,20 @@ public sealed record LiveEvent : ILiveEventInfo
         IReadOnlyCollection<IRoleInfo> roles,
         LiveEventVenue venue,
         IReadOnlyCollection<ISphereOfAction> spheres)
-    : this(
-        liveEventInfo.Name,
-        liveEventInfo.StartDate,
-        liveEventInfo.EndDate,
-        roles,
-        venue,
-        spheres,
-        liveEventInfo.Status)
-    {}
+        : this(
+            liveEventInfo.Name,
+            liveEventInfo.StartDate,
+            liveEventInfo.EndDate,
+            roles,
+            venue,
+            spheres,
+            liveEventInfo.Status)
+    {
+    }
 
     public string Name { get; init; }
-    public DateTime StartDate { get; init; }
-    public DateTime EndDate { get; init; }
+    public DateTimeOffset StartDate { get; init; }
+    public DateTimeOffset EndDate { get; init; }
     public IReadOnlyCollection<IRoleInfo> WithRoles { get; init; }
     public LiveEventVenue AtVenue { get; init; }
     public IReadOnlyCollection<ISphereOfAction> DivIntoSpheres { get; init; }

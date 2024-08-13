@@ -12,7 +12,7 @@ public class GeoTests
     public void GeoConstructor_Throws_ForOutOfBoundGeoCoordinates(double latitudeRaw, double longitudeRaw)
     {
         var invalidGeoCreator = 
-            () => new Geo(latitudeRaw, longitudeRaw, Option<float>.None());
+            () => new Geo(latitudeRaw, longitudeRaw, Option<double>.None());
 
         Assert.Throws<ArgumentException>(invalidGeoCreator);
     }

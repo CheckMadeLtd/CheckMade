@@ -59,6 +59,7 @@ public abstract class TestStartupBase
         Services.RegisterChatBotFunctionConversionServices();
         Services.RegisterChatBotLogicServices();
         
+        Services.RegisterCommonBusinessLogicServices();
         Services.RegisterCommonUtilsServices();
     }
 

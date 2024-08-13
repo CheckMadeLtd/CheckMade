@@ -1,11 +1,11 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IRolesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -56,7 +56,9 @@ public class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossa
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     _cache = Option<IReadOnlyCollection<Role>>.Some(
-                        new List<Role>(await ExecuteReaderOneToOneAsync(command, ModelReaders.ReadRole))
+                        new List<Role>(await ExecuteReaderOneToOneAsync(
+                                command, 
+                                ModelReaders.ReadRole))
                             .ToImmutableReadOnlyCollection());
                 }
             }

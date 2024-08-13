@@ -20,20 +20,37 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
     {
         if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");
-        
-        var textCallbackIdPairs = GetTextIdPairsForInlineKeyboardButtons(
-            output.DomainTermSelection,
-            output.ControlPromptsSelection,
-            translator);
-        
-        var inlineKeyboardMarkup = 
-            GenerateInlineKeyboardMarkup(textCallbackIdPairs.ToImmutableReadOnlyCollection());
 
+        var domainGlossary = new DomainGlossary();
+        
+        var textCallbackIdPairsForDomainTerms = 
+            GetTextIdPairsForDomainTerms(
+                output.DomainTermSelection, translator, domainGlossary);
+
+        var inlineKeyboardButtonsForDomainTerms = 
+            GenerateInlineKeyboardButtonsForDomainTerms(
+                textCallbackIdPairsForDomainTerms);
+
+        var promptsGlossary = new ControlPromptsGlossary();
+        
+        var textCallbackIdPairsForControlPrompts = 
+            GetTextIdPairsForControlPrompts(
+                output.ControlPromptsSelection, translator, promptsGlossary);
+        
+        var inlineKeyboardButtonsForControlPrompts = 
+            GenerateInlineKeyboardButtonsForControlPrompts(
+                textCallbackIdPairsForControlPrompts);
+
+        var combinedInlineKeyboardMarkup = 
+            GenerateInlineKeyboardMarkup(
+                inlineKeyboardButtonsForDomainTerms,
+                    inlineKeyboardButtonsForControlPrompts);
+        
         var replyKeyboardMarkup = output.PredefinedChoices.Match(
             GenerateReplyKeyboardMarkup,
             Option<ReplyKeyboardMarkup>.None);
 
-        return inlineKeyboardMarkup.Match(
+        return combinedInlineKeyboardMarkup.Match(
             markup => markup,
             () => replyKeyboardMarkup.Match(
                 markup => markup,
@@ -51,42 +68,62 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
 
         return allTrue;
     }
-    
-    private static IReadOnlyCollection<(string text, string id)> GetTextIdPairsForInlineKeyboardButtons(
+
+    private static IReadOnlyCollection<(string text, string id)> GetTextIdPairsForDomainTerms(
         Option<IReadOnlyCollection<DomainTerm>> domainTermSelection,
-        Option<ControlPrompts> promptSelection,
-        IUiTranslator translator)
+        IUiTranslator translator,
+        IDomainGlossary glossary)
     {
-        var promptsGlossary = new ControlPromptsGlossary();
-        var domainGlossary = new DomainGlossary();
-
-        List<(string text, string id)> allTextIdPairs = [];
-
-        allTextIdPairs.AddRange(domainTermSelection.Match(
+        return domainTermSelection.Match(
             terms =>
             {
                 return terms.Select(term => (
-                    text: translator.Translate(domainGlossary.IdAndUiByTerm[term].uiString),
-                    id: domainGlossary.IdAndUiByTerm[term].callbackId.Id
+                    text: translator.Translate(glossary.GetUi(term)) + 
+                          (term.Toggle.IsSome 
+                              ? term.Toggle.GetValueOrThrow() 
+                                  ? $" {DomainGlossary.ToggleOnSuffix.GetFormattedEnglish()}" 
+                                  : $" {DomainGlossary.ToggleOffSuffix.GetFormattedEnglish()}" 
+                              : string.Empty),
+                    id: glossary.GetId(term)
                 )).ToList();
             },
             () => []
-        ));
-        
-        // For uniformity, convert the combined flagged enum into an array.
-        var allControlPrompts = Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
-        var promptSelectionAsCollection = allControlPrompts
-            .Where(prompts => 
-                promptSelection.GetValueOrDefault().HasFlag(prompts) &&
-                 IsSingleFlag(prompts))
-            .ToImmutableReadOnlyCollection();
-        
-        allTextIdPairs.AddRange(promptSelectionAsCollection.Select(prompt =>
-            (text: translator.Translate(promptsGlossary.UiByCallbackId[
-                new CallbackId((long)prompt)]),
-                id: new CallbackId((long)prompt).Id)));
+        ).ToImmutableReadOnlyCollection();
+    }
+    
+    private static InlineKeyboardButton[][] GenerateInlineKeyboardButtonsForDomainTerms(
+        IReadOnlyCollection<(string text, string id)> textCallbackIdPairsForDomainTerms)
+    {
+        // Note the documented pitfall about medium length instructions problem!
+        const int inlineKeyboardNumberOfColumns = 1;
 
-        return allTextIdPairs.ToImmutableReadOnlyCollection();
+        return GetInlineKeyboardButtonsFromTextIdPairs(
+            inlineKeyboardNumberOfColumns,
+            textCallbackIdPairsForDomainTerms);
+    }
+    
+    private static IReadOnlyCollection<(string text, string id)> GetTextIdPairsForControlPrompts(
+        Option<ControlPrompts> promptSelection,
+        IUiTranslator translator,
+        ControlPromptsGlossary glossary)
+    {
+        // For uniformity, convert the combined flagged enum into an array.
+        
+        var allControlPrompts = 
+            Enum.GetValues(typeof(ControlPrompts)).Cast<ControlPrompts>();
+        
+        var promptSelectionAsCollection = 
+            allControlPrompts
+                .Where(prompts => 
+                    promptSelection.GetValueOrDefault().HasFlag(prompts) && 
+                    IsSingleFlag(prompts))
+                .ToImmutableReadOnlyCollection();
+        
+        return promptSelectionAsCollection.Select(prompt =>
+            (text: translator.Translate(glossary.UiByCallbackId[
+                    new CallbackId((long)prompt)]),
+                id: new CallbackId((long)prompt).Id))
+            .ToImmutableReadOnlyCollection();
         
         static bool IsSingleFlag(Enum value)
         {
@@ -95,27 +132,44 @@ internal class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputT
             return buffer != 0 && (buffer & (buffer - 1)) == 0;
         }
     }
-    
-    private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(
-        IReadOnlyCollection<(string text, string id)> textIdPairs)
+
+    private static InlineKeyboardButton[][] GenerateInlineKeyboardButtonsForControlPrompts(
+        IReadOnlyCollection<(string text, string id)> textCallbackIdPairsForControlPrompts)
     {
+        // Note the documented pitfall about medium length instructions problem!
         const int inlineKeyboardNumberOfColumns = 2;
 
-        return textIdPairs.Count switch
-        {
-            0 => Option<InlineKeyboardMarkup>.None(),
+        return GetInlineKeyboardButtonsFromTextIdPairs(
+            inlineKeyboardNumberOfColumns,
+            textCallbackIdPairsForControlPrompts);
+    }
+    
+    private static InlineKeyboardButton[][] GetInlineKeyboardButtonsFromTextIdPairs(
+        int inlineKeyboardNumberOfColumns,
+        IReadOnlyCollection<(string text, string id)> textIdPairs)
+    {
+        return textIdPairs
+            .Select((pair, index) => new { Index = index, Pair = pair })
+            .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
+            .Select(x =>
+                x.Select(p =>
+                        InlineKeyboardButton.WithCallbackData(
+                            p.Pair.text,
+                            p.Pair.id))
+                    .ToArray())
+            .ToArray();
+    }
+    
+    private static Option<InlineKeyboardMarkup> GenerateInlineKeyboardMarkup(
+        InlineKeyboardButton[][] domainTermButtons,
+        InlineKeyboardButton[][] controlPromptsButtons)
+    {
+        if (domainTermButtons.Length + controlPromptsButtons.Length == 0)
+            return Option<InlineKeyboardMarkup>.None();
 
-            _ => new InlineKeyboardMarkup(textIdPairs
-                .Select((pair, index) => new { Index = index, Pair = pair })
-                .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
-                .Select(x =>
-                    x.Select(p =>
-                            InlineKeyboardButton.WithCallbackData(
-                                p.Pair.text,
-                                p.Pair.id))
-                        .ToArray())
-                .ToArray())
-        };
+        return new InlineKeyboardMarkup(
+            domainTermButtons.Concat(
+                controlPromptsButtons));
     }
     
     private static Option<ReplyKeyboardMarkup> GenerateReplyKeyboardMarkup(IReadOnlyCollection<string> choices)

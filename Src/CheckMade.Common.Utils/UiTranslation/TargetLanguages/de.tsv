@@ -1,22 +1,22 @@
 assembly	en	de
-CheckMade.Telegram.Function	Telegram Message/Update of this type not yet supported. No special handling is taking place for it, but that doesn't mean that a Telegram-System-related update didn't work. You may assume it did.	Telegram-Nachricht/Update dieses Typs wird noch nicht unterstützt. Es findet keine spezielle Verarbeitung statt, aber das bedeutet nicht, dass ein Telegram-System-bezogenes Update nicht funktioniert hat. Sie können davon ausgehen, dass es funktioniert hat.
-CheckMade.Telegram.Function	Please contact technical support or your supervisor.	Bitte kontaktieren Sie den technischen Support oder Ihren Supervisor.
-CheckMade.Telegram.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
-CheckMade.Telegram.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
-CheckMade.Telegram.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
-CheckMade.Telegram.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
-CheckMade.Telegram.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
-CheckMade.Telegram.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klicken Sie auf den Menüknopf oder tippen Sie '/' um verfügbare Befehle zu sehen.
-CheckMade.Telegram.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
+CheckMade.ChatBot.Function	Telegram Message/Update of this type not yet supported. No special handling is taking place for it, but that doesn't mean that a Telegram-System-related update didn't work. You may assume it did.	Telegram-Nachricht/Update dieses Typs wird noch nicht unterstützt. Es findet keine spezielle Verarbeitung statt, aber das bedeutet nicht, dass ein Telegram-System-bezogenes Update nicht funktioniert hat. Sie können davon ausgehen, dass es funktioniert hat.
+CheckMade.ChatBot.Function	Please contact technical support or your supervisor.	Bitte kontaktieren Sie den technischen Support oder Ihren Supervisor.
+CheckMade.ChatBot.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
+CheckMade.ChatBot.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
+CheckMade.ChatBot.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
+CheckMade.ChatBot.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
+CheckMade.ChatBot.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
+CheckMade.ChatBot.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klicken Sie auf den Menüknopf oder tippen Sie '/' um verfügbare Befehle zu sehen.
+CheckMade.ChatBot.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
-CheckMade.Telegram.Logic	What type of issue?	Welche Art von Problem?
-CheckMade.Common.Model	🔙 Back	🔙 Zurück
+CheckMade.ChatBot.Logic	What type of issue?	Welche Art von Problem?
+CheckMade.ChatBot.Logic	⬅️ Back	⬅️ Zurück
 CheckMade.Common.Model	❌ Cancel	❌ Abbrechen
 CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
 CheckMade.Common.Model	💾 Save	💾 Speichern
 CheckMade.Common.Model	📤 Submit	📤 Abschicken
 CheckMade.Common.Model	📋 Review	📋 Überprüfen
-CheckMade.Common.Model	✏️ Edit details	✏️ Details bearbeiten
+CheckMade.Common.Model	✏️ Edit	✏️ Bearbeiten
 CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
 CheckMade.Common.Model	🚫 No	🚫 Nein
 CheckMade.Common.Model	✅ Yes	✅ Ja
@@ -29,34 +29,78 @@ CheckMade.Common.Model	SaniClean-Inspector	Sanitärreinigung-Inspektor
 CheckMade.Common.Model	SaniClean-Engineer	Sanitärreinigung-Installateur
 CheckMade.Common.Model	SaniClean-CleanLead	Sanitärreinigung-Reinigungsvorarbeiter
 CheckMade.Common.Model	SaniClean-Observer	Sanitärreinigung-Beobachter
-CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
-CheckMade.Common.Model	🔧 Technical	🔧 Technik
-CheckMade.Common.Model	🗄 Consumables	🗄 Verbrauchsmaterial
+CheckMade.Common.Model	🪣 Cleanliness Issue	🪣 Sauberkeitsproblem
+CheckMade.Common.Model	🔧 Technical Issue	🔧 Technik-Problem
+CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
 CheckMade.Common.Model	🧴 Soap	🧴 Seife
-CheckMade.Common.Model	🚽 Toilets	🚽 Toiletten
-CheckMade.Common.Model	🚿 Showers	🚿 Duschen
-CheckMade.Common.Model	🙋 Staff	🙋 Personal
+CheckMade.Common.Model	🚽 Toilet	🚽 Toilette
+CheckMade.Common.Model	🚿 Shower	🚿 Dusche
+CheckMade.Common.Model	🙋 Staff Issue	🙋 Personalproblem
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
-CheckMade.Telegram.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
-CheckMade.Telegram.Function	Please choose:	Bitte wählen:
-CheckMade.Telegram.Logic	🌀 Please enter your role token (format '{0}'): 	🌀 Bitte geben Sie Ihren Rollentoken ein (Format '{0}'): 
-CheckMade.Telegram.Logic	{0}, you have successfully authenticated at live-event {1} in your role as: 	{0}, Sie haben sich erfolgreich beim Live-Event {1} authentifiziert in Ihrer Rolle als: 
-CheckMade.Telegram.Logic	This is an unknown token. Try again...	Dieser Token ist unbekannt. Erneut versuchen...
-CheckMade.Telegram.Logic	Bad token format! Try again...	Falsches Tokenformat! Erneut versuchen...
-CheckMade.Telegram.Logic	Warning: you were already authenticated with this token in another {0} chat.\nThis will be the new {0} chat where you receive messages at {1}, in your role as: 	Warnung: Sie wurden bereits mit diesem Token in einem anderen {0}-Chat authentifiziert.\nDies wird der neue {0}-Chat sein, in dem Sie Nachrichten bei {1} erhalten, in Ihrer Rolle als: 
-CheckMade.Telegram.Logic	My placeholder answer for lack of a workflow handling your input.	Platzhatlerantwort bei nicht-existierendem Workflow.
-CheckMade.Telegram.Logic	🌎 Please select your preferred language:	🌎 Bitte wählen Sie Ihre bevorzugte Sprache:
-CheckMade.Telegram.Logic	The previous workflow was completed. You can continue with a new one... 	Der vorherige Workflow wurde abgeschlossen. Sie können nun einen neuen anfangen... 
-CheckMade.Telegram.Logic	The previous workflow was completed, so your last message/action will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht/Aktion wird deswegen ignoriert.
-CheckMade.Telegram.Logic	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.
-CheckMade.Telegram.Logic	💨 Logged out.	💨 Ausgeloggt.
-CheckMade.Telegram.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
-CheckMade.Telegram.Logic	Logout aborted.\n	Logout abgebrochen.\n
-CheckMade.Telegram.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
+CheckMade.ChatBot.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
+CheckMade.ChatBot.Function	Please choose:	Bitte wählen:
+CheckMade.ChatBot.Logic	🌀 Please enter your role token (format '{0}'): 	🌀 Bitte geben Sie Ihren Rollentoken ein (Format '{0}'): 
+CheckMade.ChatBot.Logic	{0}, you have successfully authenticated at live-event {1} in your role as: 	{0}, Sie haben sich erfolgreich beim Live-Event {1} authentifiziert in Ihrer Rolle als: 
+CheckMade.ChatBot.Logic	This is an unknown token. Try again...	Dieser Token ist unbekannt. Erneut versuchen...
+CheckMade.ChatBot.Logic	Bad token format! Try again...	Falsches Tokenformat! Erneut versuchen...
+CheckMade.ChatBot.Logic	Warning: you were already authenticated with this token in another {0} chat.\nThis will be the new {0} chat where you receive messages at {1}, in your role as: 	Warnung: Sie wurden bereits mit diesem Token in einem anderen {0}-Chat authentifiziert.\nDies wird der neue {0}-Chat sein, in dem Sie Nachrichten bei {1} erhalten, in Ihrer Rolle als: 
+CheckMade.ChatBot.Logic	Your input can't be processed.	Ihre Nachricht kann nicht verarbeitet werden.
+CheckMade.ChatBot.Logic	🌎 Please select your preferred language:	🌎 Bitte wählen Sie Ihre bevorzugte Sprache:
+CheckMade.ChatBot.Logic	The previous workflow was completed. You can continue with a new one... 	Der vorherige Workflow wurde abgeschlossen. Sie können nun einen neuen anfangen... 
+CheckMade.ChatBot.Logic	The previous workflow was completed, so your last message/action will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht/Aktion wird deswegen ignoriert.
+CheckMade.ChatBot.Logic	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.
+CheckMade.ChatBot.Logic	💨 Logged out.	💨 Ausgeloggt.
+CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
+CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
+CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
 CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitärreinigung
 CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländeräumung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
-CheckMade.Telegram.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
+CheckMade.ChatBot.Logic	{0}, your current role is: 	{0}, Ihre aktuelle Rolle ist: 
+CheckMade.ChatBot.Logic	Please select a Trade:	Bitte wählen Sie ein Gewerk aus:
+CheckMade.ChatBot.Logic	Please confirm: are you at '{0}'?	Bitte bestätigen: Sind Sie bei/in '{0}'?
+CheckMade.ChatBot.Logic	<b>Sanitary Camp</b>	<b>Sanitärcamp</b>
+CheckMade.ChatBot.Logic	<b>Zone</b>	<b>Zone</b>
+CheckMade.ChatBot.Logic	Please select a 	Bitte wählen Sie ein(e) 
+CheckMade.ChatBot.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
+CheckMade.ChatBot.Logic	Expected a simple text! Please try again entering a 	Ein einfacher Text war erwartet. Bitte erneut versuchen - 
+CheckMade.ChatBot.Logic	This is not a valid name. Please choose from the valid options for a 	Kein gültiger Name. Bitte eine gültige Option wählen für ein(e) 
+CheckMade.ChatBot.Logic	❗️Invalid input! Please answer only using the buttons above.	❗️Ungültige Eingabe! Bitte antworten Sie nur mit einem der oben angezeigten Knöpfe.
+CheckMade.ChatBot.Logic	Choose affected facility:	Wählen Sie die betroffene Einrichtung:
+CheckMade.ChatBot.Logic	Please (optionally) provide description and/or photos of the issue.	Bitte (optionale) Beschreibung und/oder Fotos des Problems eingeben.
+CheckMade.ChatBot.Logic	❗️Invalid input! Please choose from the options shown below.	❗Ungültige Eingabe! Bitte wählen Sie eine der unten angezeigten Optionen.
+CheckMade.ChatBot.Logic	Choose affected consumables:	Betroffene Verbrauchsartikel auswählen:
+CheckMade.ChatBot.Logic	✅📝 Description received. You can send more text, add photos/documents or continue to the next step.	✅📝 Beschreibung erhalten. Sie können einen weiteren Text schicken, Fotos/Dokumente hinzufügen oder weiter zum nächsten Schritt.
+CheckMade.ChatBot.Logic	❗️Invalid input! Please only enter a text message.	❗️Ungültige Eingabe! Bitte nur Text schicken.  
+CheckMade.ChatBot.Logic	✅📷 Photo received. You can send more attachments, add a description or continue to the next step.	✅📷 Foto erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
+CheckMade.ChatBot.Logic	✅📄 Document received. You can send more attachments, add a description or continue to the next step.	✅📄 Dokument erhalten. Sie können weitere Anhänge schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
+CheckMade.ChatBot.Logic	❗🎙 Voice messages are not yet supported. You can send photos/documents, add a description or continue to the next step.	❗🎙 Audionachrichten werden noch nicht unterstützt. Sie können Fotos/Dokumente schicken, eine Beschreibung hinzufügen, oder weiter zum nächsten Schritt.
+CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
+CheckMade.Common.Model	Continue ➡️	Weiter ➡️
+CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
+CheckMade.ChatBot.Logic	❗ General Issue	❗ Allgemeines Problem
+CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
+CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
+CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
+CheckMade.ChatBot.Logic	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
+CheckMade.ChatBot.Logic	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
+CheckMade.ChatBot.Logic	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
+CheckMade.ChatBot.Logic	in their role as 	in der Rolle 
+CheckMade.ChatBot.Logic	<b>Current status:</b> 	<b>Aktueller Status:</b> 
+CheckMade.ChatBot.Logic	Affected consumables: 	Betroffene Verbrauchsartikel: 
+CheckMade.ChatBot.Logic	✏️ Drafting	✏️ Entwurf
+CheckMade.ChatBot.Logic	📤️ Reported	📤️ Gemeldet
+CheckMade.ChatBot.Logic	⏳ In Progress	⏳ In Bearbeitung
+CheckMade.ChatBot.Logic	📋 Review Required	📋 Revision Erforderlich
+CheckMade.ChatBot.Logic	❌ Review Not Passed	❌ Revision Nicht Bestanden
+CheckMade.ChatBot.Logic	✅ Submission succeeded!	✅ Meldung erfolgt!
+CheckMade.ChatBot.Logic	New issue submission:	Neue Problemmeldung:
+CheckMade.ChatBot.Logic	<b>Trade:</b> 	<b>Gewerk:</b> 
+CheckMade.ChatBot.Logic	<b>Issue type:</b> 	<b>Problemtyp:</b> 
+CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?	Möchten Sie sicher das Erstellen des neuen Problems abbrechen?
+CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
+CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
+CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.

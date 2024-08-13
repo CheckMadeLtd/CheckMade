@@ -1,12 +1,12 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Actors.Concrete;
+using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
-public class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IUsersRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -93,9 +93,9 @@ public class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossa
 
         var normalParameters = new Dictionary<string, object>
         {
-            { "@newLanguage", (int)newLanguage },
-            { "@mobileNumber", user.Mobile.ToString() },
-            { "@status", (int)user.Status }
+            ["@newLanguage"] = (int)newLanguage,
+            ["@mobileNumber"] = user.Mobile.ToString(),
+            ["@status"] = (int)user.Status
         };
 
         var command = GenerateCommand(rawQuery, normalParameters);

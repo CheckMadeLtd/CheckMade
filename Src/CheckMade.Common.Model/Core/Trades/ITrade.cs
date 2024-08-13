@@ -1,3 +1,6 @@
 namespace CheckMade.Common.Model.Core.Trades;
 
-public interface ITrade;
+public interface ITrade
+{
+    UiString GetSphereOfActionLabel { get; }
+}

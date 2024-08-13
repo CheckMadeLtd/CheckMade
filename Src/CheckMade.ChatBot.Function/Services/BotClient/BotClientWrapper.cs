@@ -1,11 +1,14 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.File;
@@ -22,105 +25,220 @@ public interface IBotClientWrapper
     
     Task<File> GetFileAsync(string fileId);
 
-    Task<Unit> SendDocumentAsync(
+    Task<Unit> DeleteMessageAsync(
+        ChatId chatId,
+        int messageId,
+        CancellationToken cancellationToken = default);
+    
+    Task<Unit> EditTextMessageAsync(
+        ChatId chatId, 
+        Option<string> text,
+        int messageId,
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default);
+    
+    Task<TlgMessageId> SendDocumentAsync(
         AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default);
 
-    Task<Unit> SendLocationAsync(
+    Task<TlgMessageId> SendLocationAsync(
         ChatId chatId,
         Geo location,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SendPhotoAsync(
+    Task<TlgMessageId> SendPhotoAsync(
         AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> SendTextMessageAsync(
+    Task<TlgMessageId> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
-    Task<Unit> SendVoiceAsync(
+    Task<TlgMessageId> SendVoiceAsync(
         AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default);
     
     Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu);
 }
 
-public class BotClientWrapper(
-        ITelegramBotClient botClient,
-        INetworkRetryPolicy retryPolicy,
-        InteractionMode interactionMode,
-        string botToken,
-        ILogger<BotClientWrapper> logger) 
+public sealed class BotClientWrapper(
+    ITelegramBotClient botClient,
+    INetworkRetryPolicy retryPolicy,
+    InteractionMode interactionMode,
+    string botToken,
+    ILogger<BotClientWrapper> logger) 
     : IBotClientWrapper
 {
     public InteractionMode MyInteractionMode { get; } = interactionMode; 
     public string MyBotToken { get; } = botToken;
 
     public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
-
-    public async Task<Unit> SendDocumentAsync(AttachmentSendOutParameters documentSendOutParams,
+    
+    public async Task<Unit> DeleteMessageAsync(
+        ChatId chatId, 
+        int messageId, 
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-            
-            await botClient.SendDocumentAsync(
-                chatId: documentSendOutParams.ChatId,
-                document: documentSendOutParams.FileStream,
-                caption: documentSendOutParams.Caption.GetValueOrDefault(),
-                replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
-                cancellationToken: cancellationToken)
-            );
-        
+            await botClient.DeleteMessageAsync(
+                chatId,
+                messageId,
+                cancellationToken));
+
         return Unit.Value;
     }
 
-    public async Task<Unit> SendLocationAsync(
+    public async Task<Unit> EditTextMessageAsync(
+        ChatId chatId, 
+        Option<string> text, 
+        int messageId, 
+        Option<IReplyMarkup> replyMarkup,
+        CancellationToken cancellationToken = default)
+    {
+        // EditMessageXAsync only supports updates to/with InlineKeyboardMarkup!
+        if (replyMarkup.GetValueOrDefault() is not ReplyKeyboardMarkup)
+        {
+            var updatedInlineKeyboard = replyMarkup.IsSome
+                ? (InlineKeyboardMarkup)replyMarkup.GetValueOrDefault()
+                : null;
+
+            try
+            {
+                if (text.IsSome)
+                {
+                    await retryPolicy.ExecuteAsync(async () =>
+                        await botClient.EditMessageTextAsync(
+                            chatId,
+                            messageId,
+                            text.GetValueOrThrow(),
+                            parseMode: ParseMode.Html,
+                            replyMarkup: updatedInlineKeyboard,
+                            cancellationToken: cancellationToken));
+                }
+                else
+                {
+                    await retryPolicy.ExecuteAsync(async () =>
+                        await botClient.EditMessageReplyMarkupAsync(
+                            chatId,
+                            messageId,
+                            updatedInlineKeyboard,
+                            cancellationToken: cancellationToken));
+                }
+            }
+            catch (ApiRequestException)
+            {
+                // Gets thrown for "Bad Request: message can't be edited", in which case we delete and update
+                await DeleteAndNewAsync();
+            }
+        }
+        else
+        {
+            await DeleteAndNewAsync();
+        }
+
+        return Unit.Value;
+
+        async Task DeleteAndNewAsync()
+        {
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await DeleteMessageAsync(
+                    chatId,
+                    messageId,
+                    cancellationToken);
+
+                await SendTextMessageAsync(
+                    chatId,
+                    string.Empty,
+                    text.IsSome ? text.GetValueOrThrow() : string.Empty,
+                    replyMarkup,
+                    cancellationToken);
+            });
+        }
+    }
+
+    public async Task<TlgMessageId> SendDocumentAsync(
+        AttachmentSendOutParameters documentSendOutParams,
+        CancellationToken cancellationToken = default)
+    {
+        Message? sentMessage = null;
+        
+        await retryPolicy.ExecuteAsync(async () =>
+            sentMessage = await botClient.SendDocumentAsync(
+                chatId: documentSendOutParams.ChatId,
+                document: documentSendOutParams.FileStream,
+                caption: documentSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.Html,
+                replyMarkup: documentSendOutParams.ReplyMarkup.GetValueOrDefault(),
+                cancellationToken: cancellationToken)
+        );
+        
+        if (sentMessage is null)
+            throw new InvalidOperationException(
+                $"No {nameof(sentMessage)} was returned by {nameof(SendDocumentAsync)}");
+        
+        return sentMessage.MessageId;
+    }
+
+    public async Task<TlgMessageId> SendLocationAsync(
         ChatId chatId, Geo location, Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
+        Message? sentMessage = null;
+        
         await retryPolicy.ExecuteAsync(async () =>
-            
-            await botClient.SendLocationAsync(
+            sentMessage = await botClient.SendLocationAsync(
                 chatId: chatId,
                 latitude: location.Latitude,
                 longitude: location.Longitude,
                 replyMarkup: replyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
 
-        return Unit.Value;
+        if (sentMessage is null)
+            throw new InvalidOperationException(
+                $"No {nameof(sentMessage)} was returned by {nameof(SendLocationAsync)}");
+        
+        return sentMessage.MessageId;
     }
 
-    public async Task<Unit> SendPhotoAsync(AttachmentSendOutParameters photoSendOutParams,
+    public async Task<TlgMessageId> SendPhotoAsync(
+        AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default)
     {
+        Message? sentMessage = null;
+        
         await retryPolicy.ExecuteAsync(async () =>
-            
-            await botClient.SendPhotoAsync(
+            sentMessage = await botClient.SendPhotoAsync(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.Html,
                 replyMarkup: photoSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
         
-        return Unit.Value;
+        if (sentMessage is null)
+            throw new InvalidOperationException(
+                $"No {nameof(sentMessage)} was returned by {nameof(SendPhotoAsync)}");
+        
+        return sentMessage.MessageId;
     }
 
-    public async Task<Unit> SendTextMessageAsync(
+    public async Task<TlgMessageId> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
         Option<IReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
+        Message? sentMessage = null;
         /* Telegram Servers have queues and handle retrying for sending from itself to end user, but this doesn't
-        catch earlier network issues like from our Azure Function to the Telegram Servers! */
+        catch earlier network issues in the comms from our Azure Function to the Telegram Servers! */
         await retryPolicy.ExecuteAsync(async () =>
         {
             // This hack is necessary to ensure any previous ReplyKeyboard disappears with any new InlineKeyboard
@@ -128,45 +246,57 @@ public class BotClientWrapper(
             
             // if (replyMarkup.GetValueOrDefault() is InlineKeyboardMarkup)
             // {
-            //     await botClient.SendTextMessageAsync(
+            //     sentMessage = await botClient.SendTextMessageAsync(
             //         chatId: chatId,
             //         text: pleaseChooseText,
             //         replyMarkup: new ReplyKeyboardRemove(),
             //         cancellationToken: cancellationToken);
             // }
-            
-            await botClient.SendTextMessageAsync(
+
+            sentMessage = await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: text,
+                parseMode: ParseMode.Html,
                 replyMarkup: replyMarkup.IsSome 
                     ? replyMarkup.GetValueOrThrow()
                     : new ReplyKeyboardRemove(), // Ensures removal of previous ReplyKeyboard in all other cases 
                 cancellationToken: cancellationToken);
         });
+
+        if (sentMessage is null)
+            throw new InvalidOperationException(
+                $"No {nameof(sentMessage)} was returned by {nameof(SendTextMessageAsync)}");
         
-        return Unit.Value;
+        return sentMessage.MessageId;
     }
 
-    public async Task<Unit> SendVoiceAsync(AttachmentSendOutParameters voiceSendOutParams,
+    public async Task<TlgMessageId> SendVoiceAsync(
+        AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default)
     {
-        await retryPolicy.ExecuteAsync(async () =>
+        Message? sentMessage = null;
         
+        await retryPolicy.ExecuteAsync(async () =>
             /* This will throw 'Telegram.Bot.Exceptions.ApiRequestException: Bad Request: VOICE_MESSAGES_FORBIDDEN'
              for Telegram Premium users that in their privacy settings have the default setting that Voice messages
              are only allowed for 'My Contacts'. These exceptions will show up in our Error Logs alongside the User's
              Telegram ID. For now, we need to manually inform them that they need to change their settings to enable
-             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list). 
+             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list).
              */ 
-            await botClient.SendVoiceAsync(
+            sentMessage = await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
+                parseMode: ParseMode.MarkdownV2,
                 replyMarkup: voiceSendOutParams.ReplyMarkup.GetValueOrDefault(),
                 cancellationToken: cancellationToken)
-            );
+        );
         
-        return Unit.Value;
+        if (sentMessage is null)
+            throw new InvalidOperationException(
+                $"No {nameof(sentMessage)} was returned by {nameof(SendVoiceAsync)}");
+        
+        return sentMessage.MessageId;
     }
 
     public async Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu)
@@ -186,15 +316,14 @@ public class BotClientWrapper(
                 _ => throw new ArgumentOutOfRangeException(nameof(MyInteractionMode))
             };
 
-            await retryPolicy.ExecuteAsync(async () =>
-                
+            await retryPolicy.ExecuteAsync(async () => 
                 await botClient.SetMyCommandsAsync(
                     telegramBotCommands,
                     scope: null,
                     languageCode: language != LanguageCode.en
                         ? language.ToString()
                         : null) // The English BotCommands are the global default
-                ); 
+            ); 
 
             logger.LogDebug($"Added to bot {MyInteractionMode} for language {language} " +
                             $"the following BotCommands: " +
@@ -216,4 +345,3 @@ public class BotClientWrapper(
                 Description = kvp.Value.Description
             }).ToImmutableReadOnlyCollection();
 }
-

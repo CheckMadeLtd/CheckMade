@@ -3,11 +3,28 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
-public record SphereOfAction<T>(
+public sealed record SphereOfAction<T>(
         string Name,
         ISphereOfActionDetails Details,
         DbRecordStatus Status = DbRecordStatus.Active) 
-    : ISphereOfAction where T : ITrade
+    : ISphereOfAction where T : ITrade, new()
 {
-    public Type Trade => typeof(T);
+    public ITrade GetTradeInstance() => new T();
+    public Type GetTradeType() => typeof(T);
+
+    public bool Equals(SphereOfAction<T>? other)
+    {
+        return other is not null &&
+               Name.Equals(other.Name) &&
+               Details.GeoCoordinates == other.Details.GeoCoordinates &&
+               Status.Equals(other.Status);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            Name,
+            Details.GeoCoordinates,
+            Status);
+    }
 }

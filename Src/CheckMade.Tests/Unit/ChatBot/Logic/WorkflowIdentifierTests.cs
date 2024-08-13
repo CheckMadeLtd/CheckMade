@@ -1,5 +1,7 @@
 using CheckMade.ChatBot.Logic;
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
@@ -9,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
-public class WorkflowIdentifierTests
+public sealed class WorkflowIdentifierTests
 {
     private ServiceProvider? _services;
 
     [Fact]
-    public void Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
+    public async Task Identify_ReturnsUserAuthWorkflow_WhenUserNotAuthenticated()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -26,8 +28,8 @@ public class WorkflowIdentifierTests
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
     
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputFromUnauthenticatedUser }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputFromUnauthenticatedUser }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
@@ -35,7 +37,7 @@ public class WorkflowIdentifierTests
     }
 
     [Fact]
-    public void Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
+    public async Task Identify_ReturnsLanguageSettingWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -46,16 +48,16 @@ public class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.Settings);
         
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputWithSettingsBotCommand }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputWithSettingsBotCommand }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
             workflow.GetValueOrThrow() is LanguageSettingWorkflow);
     }
 
-    [Fact(Skip = "Temp fro 0.9.8 release")]
-    public void Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
+    [Fact]
+    public async Task Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -66,8 +68,8 @@ public class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.NewIssue);
         
-        var workflow = workflowIdentifier
-            .Identify(new [] { inputWithNewIssueBotCommand }
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[] { inputWithNewIssueBotCommand }
                 .ToImmutableReadOnlyCollection());
         
         Assert.True(
@@ -75,22 +77,22 @@ public class WorkflowIdentifierTests
     }
     
     [Fact]
-    public void Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public async Task Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = workflowIdentifier
-            .Identify(new []
-                {
-                    inputGenerator.GetValidTlgInputTextMessage(),
-                    inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
-                    // This could be in response to an out-of-scope message in the history e.g. in another Role!
-                    inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-                    inputGenerator.GetValidTlgInputTextMessage()
-                });
+        var workflow = await workflowIdentifier
+            .IdentifyAsync(new[]
+            {
+                inputGenerator.GetValidTlgInputTextMessage(),
+                inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
+                // This could be in response to an out-of-scope message in the history e.g. in another Role!
+                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                inputGenerator.GetValidTlgInputTextMessage()
+            });
         
         Assert.True(
             workflow.IsNone);

@@ -7,6 +7,6 @@ public enum CommunicationsBotCommands
     // Code '1' is reserved for '/start' command, which is not part of the menu however
     Contact = 10,
     
-    Settings = BotCommandMenus.SameBotCommandSemanticsThreshold_90,
+    Settings = BotCommandMenus.GlobalBotCommandsCodeThreshold_90,
     Logout = OperationsBotCommands.Logout
 }

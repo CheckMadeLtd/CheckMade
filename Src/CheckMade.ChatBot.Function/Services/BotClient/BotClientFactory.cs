@@ -11,7 +11,7 @@ public interface IBotClientFactory
     IBotClientWrapper CreateBotClient(InteractionMode interactionMode);
 }
 
-public class BotClientFactory(
+public sealed class BotClientFactory(
         IHttpClientFactory httpFactory,
         INetworkRetryPolicy retryPolicy,
         BotTokens botTokens,

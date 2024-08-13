@@ -3,7 +3,10 @@ using JetBrains.Annotations;
 
 namespace CheckMade.Common.LangExt;
 
-public record UiString(IReadOnlyCollection<UiString?> Concatenations, string RawEnglishText, object[] MessageParams)
+public sealed record UiString(
+    IReadOnlyCollection<UiString?> Concatenations,
+    string RawEnglishText,
+    object[] MessageParams)
 {
     [StringFormatMethod("uiString")]
     public static UiString Ui(string uiString, params object[] messageParams) 
@@ -18,10 +21,13 @@ public record UiString(IReadOnlyCollection<UiString?> Concatenations, string Raw
     
     // Only use this for names/labels etc. but not for strings (like "n/a") which are similar between languages. 
     public static UiString UiNoTranslate(string uiString) => Ui("{0}", uiString);
+
+    public static UiString UiNewLines(int newLineCount) => 
+        UiConcatenate(Enumerable.Repeat(UiNoTranslate("\n"), newLineCount).ToArray());
     
     public static UiString UiConcatenate(params UiString?[] uiStrings) => 
         UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());
-    
+
     public static UiString UiConcatenate(IReadOnlyCollection<UiString?> uiStrings) => 
         new(uiStrings.ToImmutableReadOnlyCollection(), string.Empty, []);
 

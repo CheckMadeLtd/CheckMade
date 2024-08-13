@@ -1,5 +1,13 @@
+using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 
-public class TradeTeamLead<T> : ITradeRoleType<T> where T : ITrade;
+public sealed record TradeTeamLead<T> : IRoleType where T : ITrade, new()
+{
+    public Option<ITrade> GetTradeInstance() => new T();
+    public Option<Type> GetTradeType() => typeof(T);
+
+    public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
+        IssueSummaryCategories.AllExceptOperationalInfo;
+}

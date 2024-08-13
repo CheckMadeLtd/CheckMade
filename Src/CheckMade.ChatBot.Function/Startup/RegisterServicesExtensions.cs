@@ -5,6 +5,7 @@ using CheckMade.Common.ExternalServices;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.BusinessLogic;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,6 +68,11 @@ internal static class RegisterServicesExtensions
     {
         services.Register_ChatBotLogic_Services();
     }
+
+    internal static void RegisterCommonBusinessLogicServices(this IServiceCollection services)
+    {
+        services.Register_CommonBusinessLogic_Services();
+    }
     
     internal static void RegisterCommonUtilsServices(this IServiceCollection services)
     {
@@ -96,7 +102,7 @@ internal static class RegisterServicesExtensions
         
         services.Register_OtherExternalFacingServices_Services();
     }
-
+    
     private static BotTokens PopulateBotTokens(IConfiguration config, string hostingEnvironment) => 
         hostingEnvironment switch
         {

@@ -3,12 +3,12 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
 
-public class LiveEventInfoEqualityTests
+public sealed class LiveEventInfoEqualityTests
 {
     /*
      * This region contains tests, the equivalents of which are not in this region for IRoleInfo.
@@ -16,6 +16,7 @@ public class LiveEventInfoEqualityTests
      * navigational properties for collections, here List<IRoleInfo>. For IRoleInfo this is not true because both
      * navigational properties are NOT collections but simple types. 
      */
+
     #region TestsThatPassOnlyThanksToCustomEqualityLogic
     
     [Fact]

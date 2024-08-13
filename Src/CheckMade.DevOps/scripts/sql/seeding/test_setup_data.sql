@@ -100,33 +100,61 @@ new_live_event_X2024 AS (
             DO UPDATE SET status = live_events.status
         RETURNING id
 ),
-
-new_sphere1_sanitary_ops_at_X2024 AS (
+ 
+new_sphere1_saniclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
        VALUES ('Camp1',
                'DX3KFI',
                (SELECT id FROM new_live_event_X2024),
-               '{"GeoCoordinates": {"Latitude": {"Value": 51.60955}, "Longitude": {"Value": 6.13004}, "UncertaintyRadiusInMeters": null}}', 
+                '{
+                    "GeoCoordinates": {
+                      "Latitude": {
+                        "Value": 51.60955
+                      }, 
+                      "Longitude": {
+                        "Value": 6.13004
+                      }, 
+                      "UncertaintyRadiusInMeters": null
+                    }, 
+                    "AvailableFacilities": ["D1540N", "D4W2GW", "D55BLT"],
+                    "AvailableConsumables": ["DSTP1N", "DOJH85", "D79AMO"]
+                }', 
                1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
 
-new_sphere2_sanitary_ops_at_X2024 AS (
+new_sphere2_saniclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
-        VALUES ('Camp2',
+        VALUES ('Camp2-4cc',
                 'DX3KFI',
                 (SELECT id FROM new_live_event_X2024),
-                '{"GeoCoordinates": {"Latitude": {"Value": 51.60893}, "Longitude": {"Value": 6.13328}, "UncertaintyRadiusInMeters": null}}',
+                '{
+                    "GeoCoordinates": {
+                      "Latitude": {
+                        "Value": 51.240118
+                      }, 
+                      "Longitude": {
+                        "Value": -0.789397
+                      }, 
+                      "UncertaintyRadiusInMeters": null
+                    },
+                    "AvailableFacilities": ["D55BLT"],
+                    "AvailableConsumables": ["DSTP1N"]
+                }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
 
-new_sphere3_site_cleaning_at_X2024 AS (
+new_sphere3_siteclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Zone1',
                 'DSIL7M',
                 (SELECT id FROM new_live_event_X2024),
-                '{"GeoCoordinates": null}',
+                '{
+                    "GeoCoordinates": null,
+                    "AvailableFacilities": ["D55BLT"],
+                    "AvailableConsumables": []
+                 }',
                 1)
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
@@ -155,7 +183,7 @@ new_live_event_Y2024 AS (
         RETURNING id
 ),
     
-new_role_for_lukas_de_without_email AS (
+new_role_for_lukas_de_without_email_as_saniclean_inspector AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
         VALUES ('R7UIP8', 'DYHG6E', 1, 
                 (SELECT id FROM new_user_lukas_de_without_email),
@@ -163,14 +191,47 @@ new_role_for_lukas_de_without_email AS (
         ON CONFLICT (token) DO NOTHING
 ),
 
-new_role_for_daniel_en_x2025 AS (
+new_role_for_daniel_en_x2025_as_saniclean_inspector AS (
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
         VALUES ('R9AAB5', 'DYHG6E', 1,
                 (SELECT id FROM user_daniel_en),
                 (SELECT id FROM new_live_event_X2025))
         ON CONFLICT (token) DO NOTHING
-)
+),
+    
+new_role_for_daniel_en_x2024_as_liveevent_admin AS (
+    INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+        VALUES ('R23QI6', 'DD6I1A', 1,
+                (SELECT id FROM user_daniel_en),
+                (SELECT id FROM new_live_event_X2024))
+        ON CONFLICT (token) DO NOTHING    
+),
 
+new_role_for_daniel_en_x2024_as_saniclean_engineer AS (
+     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+         VALUES ('RGR37T', 'D2PC58', 1,
+                 (SELECT id FROM user_daniel_en),
+                 (SELECT id FROM new_live_event_X2024))
+         ON CONFLICT (token) DO NOTHING
+),
+
+new_role_for_daniel_en_x2024_as_siteclean_engineer AS (
+    INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+        VALUES ('RMWC16', 'DWWD3W', 1,
+                (SELECT id FROM user_daniel_en),
+                (SELECT id FROM new_live_event_X2024))
+        ON CONFLICT (token) DO NOTHING
+),
+
+new_role_for_daniel_en_y2024_as_saniclean_engineer AS (
+    INSERT INTO roles (token, role_type, status, user_id, live_event_id)
+        VALUES ('RS0BSU', 'D2PC58', 1,
+                (SELECT id FROM user_daniel_en),
+                (SELECT id FROM new_live_event_Y2024))
+        ON CONFLICT (token) DO NOTHING
+)    
+
+-- RoleType: TradeAdmin<SaniCleanTrade>
 INSERT INTO roles (token, role_type, status, user_id, live_event_id) 
     VALUES ('RVB70T', 'DLE960', 1,
             (SELECT id FROM user_daniel_en),

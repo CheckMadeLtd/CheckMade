@@ -17,5 +17,11 @@
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Model\CheckMade.Common.Model.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
     
 </Project>

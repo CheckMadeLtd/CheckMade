@@ -1,97 +1,112 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.UserAuthWorkflow.States;
 using InputValidator = CheckMade.Common.LangExt.InputValidator;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public class UserAuthWorkflowTests
+public sealed class UserAuthWorkflowTests
 {
     private ServiceProvider? _services;
 
     [Fact]
-    public void DetermineCurrentState_ReturnsReceivedTokenSubmissionAttempt_AfterUserEnteredAnyText()
+    public async Task GetResponseAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        List<TlgInput> inputHistory = [inputGenerator.GetValidTlgInputTextMessage()];
-        var workflow = _services.GetRequiredService<IUserAuthWorkflow>();
-        
-        var actualState = 
-            workflow.DetermineCurrentState(inputHistory);
-        
-        Assert.Equal(
-            ReceivedTokenSubmissionAttempt,
-            actualState);
-    }
+        var tlgAgent = PrivateBotChat_Operations;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
 
-    [Fact]
-    public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenSubmittedTokenNotExists()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
-            text: InputValidator.GetTokenFormatExample());
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { nonExistingTokenInput });
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
-    
-        var actualOutputs = 
+            inputs: inputHistory,
+            roles: new []{ SaniCleanEngineer_DanielEn_X2024 });
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
+        
+        var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
+            text: InputValidator.GetTokenFormatExample());
+        
+        var actualResponses = 
             await workflow
                 .GetResponseAsync(nonExistingTokenInput);
         
         Assert.Equal(
             "This is an unknown token. Try again...",
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActiveTlgAgentRole()
+    public async Task GetResponseAsync_ReturnsWarning_AndDeactivatesPreExisting_WhenTokenAlreadyHasActiveTlgAgentRole()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputTokenWithPreExistingActiveTlgAgentRoleBind = 
-            inputGenerator.GetValidTlgInputTextMessage(
-                text: SaniCleanAdmin_DanielEn_X2024.Token);
+        var tlgAgent = PrivateBotChat_Operations;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
         
         var preExistingActiveTlgAgentRoleBind = 
             TestRepositoryUtils.GetNewRoleBind(
                 SaniCleanAdmin_DanielEn_X2024,
-                PrivateBotChat_Operations);
+                tlgAgent);
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[] { preExistingActiveTlgAgentRoleBind },
-            inputs: new[] { inputTokenWithPreExistingActiveTlgAgentRoleBind });
+            inputs: inputHistory,
+            roleBindings: new[] { preExistingActiveTlgAgentRoleBind });
         var mockTlgAgentRoleBindingsRepo = 
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
+        
+        var inputTokenWithPreExistingActiveTlgAgentRoleBind = 
+            inputGenerator.GetValidTlgInputTextMessage(
+                text: SaniCleanAdmin_DanielEn_X2024.Token);
         
         const string expectedWarning = """
                                        Warning: you were already authenticated with this token in another {0} chat.
                                        This will be the new {0} chat where you receive messages at {1}, in your role as: 
                                        """;
         
-        var actualOutputs = 
+        var actualResponses = 
             await workflow
                 .GetResponseAsync(inputTokenWithPreExistingActiveTlgAgentRoleBind);
         
         Assert.Equal(
             expectedWarning,
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
         
         mockTlgAgentRoleBindingsRepo.Verify(x => 
             x.UpdateStatusAsync(
@@ -100,34 +115,50 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesRoleBind_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
+    public async Task GetResponseAsync_CreatesRoleBind_WithConfirmation_WhenValidTokenSubmitted_FromChatGroup()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = UserId03_ChatId06_Operations;
         var roleForAuth = SaniCleanEngineer_DanielEn_X2024;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
 
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            inputs: inputHistory,
+            roles: new []{ SaniCleanEngineer_DanielEn_X2024 });
+        var mockRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
+        
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
-            text: roleForAuth.Token);
+            text: roleForAuth.Token,
+            resultantWorkflowState: new ResultantWorkflowState(
+                glossary.GetId(typeof(UserAuthWorkflow)),
+                glossary.GetId(typeof(IUserAuthWorkflowAuthenticated))));
 
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new []{ SaniCleanEngineer_DanielEn_X2024 },
-            inputs: new[] { inputValidToken });
-        var mockRoleBindingsRepo =
-            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
-        
         const string expectedConfirmation = "{0}, you have successfully authenticated at live-event {1} in your role as: ";
         
         var expectedTlgAgentRoleBindAdded = new TlgAgentRoleBind(
             roleForAuth,
             tlgAgent,
-            DateTime.UtcNow,
-            Option<DateTime>.None());
+            DateTimeOffset.UtcNow,
+            Option<DateTimeOffset>.None());
         
         List<TlgAgentRoleBind> actualTlgAgentRoleBindAdded = []; 
         mockRoleBindingsRepo
@@ -136,11 +167,11 @@ public class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
                 actualTlgAgentRoleBindAdded = tlgAgentRole.ToList());
         
-        var actualOutputs = await workflow.GetResponseAsync(inputValidToken);
+        var actualResponses = await workflow.GetResponseAsync(inputValidToken);
         
         Assert.Equal(
             expectedConfirmation,
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
         Assert.Equivalent(
             expectedTlgAgentRoleBindAdded.Role,
             actualTlgAgentRoleBindAdded[0].Role);
@@ -153,34 +184,47 @@ public class UserAuthWorkflowTests
     }
 
     [Fact]
-    public async Task GetNextOutputAsync_CreatesRoleBindingsForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetResponseAsync_CreatesRoleBindingsForAllModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
         var roleForAuth = SaniCleanInspector_DanielDe_X2024;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            inputs: inputHistory,
+            roles: new []{ SaniCleanInspector_DanielDe_X2024 });
+        var mockTlgAgentRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new []{ SaniCleanInspector_DanielDe_X2024 },
-            inputs: new[] { inputValidToken });
-        var mockTlgAgentRoleBindingsRepo =
-            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
-        
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         var expectedTlgAgentRoleBindingsAdded = allModes.Select(im => 
             new TlgAgentRoleBind(
                 roleForAuth,
                 tlgAgent with { Mode = im },
-                DateTime.UtcNow,
-                Option<DateTime>.None()))
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()))
             .ToImmutableReadOnlyList();
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
@@ -210,41 +254,54 @@ public class UserAuthWorkflowTests
     }
     
     [Fact]
-    public async Task GetNextOutputAsync_CreatesRoleBindingsForMissingModes_WhenValidTokenSubmitted_FromPrivateChat()
+    public async Task GetResponseAsync_CreatesRoleBindingsForMissingModes_WhenValidTokenSubmitted_FromPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
         var roleForAuth = SaniCleanEngineer_DanielEn_X2024;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
+        
+        var serviceCollection = new UnitTestStartup().Services;
+        var (services, container) = serviceCollection.ConfigureTestRepositories(
+            inputs: inputHistory,
+            roles: new[] { SaniCleanEngineer_DanielEn_X2024 },
+            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
+                SaniCleanEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) });
+        var mockTlgAgentRoleBindingsRepo =
+            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
 
         var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
             userId: tlgAgent.UserId,
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            roles: new[] { SaniCleanEngineer_DanielEn_X2024 },
-            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
-                SaniCleanEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) },
-            inputs: new[] { inputValidToken });
-        var mockTlgAgentRoleBindingsRepo =
-            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
-
         List<TlgAgentRoleBind> expectedTlgAgentRoleBindingsAdded = [ 
         
             // Adds missing bind for Operations Mode
             new(roleForAuth,
                 tlgAgent,
-                DateTime.UtcNow,
-                Option<DateTime>.None()),
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()),
 
             // Adds missing bind for Notifications Mode
             new(roleForAuth,
                 tlgAgent with { Mode = Notifications },
-                DateTime.UtcNow,
-                Option<DateTime>.None()),
+                DateTimeOffset.UtcNow,
+                Option<DateTimeOffset>.None()),
         ];
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
@@ -254,7 +311,7 @@ public class UserAuthWorkflowTests
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
         
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
 
         await workflow.GetResponseAsync(inputValidToken);
         
@@ -280,22 +337,40 @@ public class UserAuthWorkflowTests
     [InlineData(" ")]
     [InlineData(" some text with trailing spaces and \n line break ")]
     [InlineData("")]
-    public async Task GetNextOutputAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
+    public async Task GetResponseAsync_ReturnsCorrectErrorMessage_WhenBadFormatTokenEntered(string badToken)
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);
+        var tlgAgent = PrivateBotChat_Operations;
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
+        
+        List<TlgInput> inputHistory = 
+        [
+            inputGenerator.GetValidTlgInputCommandMessage(
+                tlgAgent.Mode,
+                TlgStart.CommandCode,
+                tlgAgent.UserId,
+                tlgAgent.ChatId,
+                resultantWorkflowState: new ResultantWorkflowState(
+                    glossary.GetId(typeof(UserAuthWorkflow)),
+                    glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
+        ];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { badTokenInput });
-        var workflow = services.GetRequiredService<IUserAuthWorkflow>();
-    
-        var actualOutputs = await workflow.GetResponseAsync(badTokenInput);
+            inputs: inputHistory,
+            roles: new[] { SaniCleanEngineer_DanielEn_X2024 },
+            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
+                SaniCleanEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) });
+        var workflow = services.GetRequiredService<UserAuthWorkflow>();
+        
+        var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);
+        
+        var actualResponses = await workflow.GetResponseAsync(badTokenInput);
         
         Assert.Equal(
             "Bad token format! Try again...",
-            TestUtils.GetFirstRawEnglish(actualOutputs.GetValueOrThrow().Output));
+            TestUtils.GetFirstRawEnglish(actualResponses.GetValueOrThrow().Output));
     }
 }

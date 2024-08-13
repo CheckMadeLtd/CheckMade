@@ -20,7 +20,7 @@ using User = Telegram.Bot.Types.User;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
-public class ToModelConverterTests
+public sealed class ToModelConverterTests
 {
     private ServiceProvider? _services;
 
@@ -43,14 +43,15 @@ public class ToModelConverterTests
             Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent); 
         
         var expectedTlgInput = new TlgInput(
+            update.Message.Date,
+            update.Message.MessageId,
             tlgAgent,
             TlgInputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(),
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                update.Message.Date,
-                update.Message.MessageId,
                 update.Message.Text));
 
         var actualTlgInput = 
@@ -84,20 +85,21 @@ public class ToModelConverterTests
                     SaniCleanInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),
-                    new DateTime(2021, 01, 05),
+                    Option<DateTimeOffset>.Some(new DateTime(2021, 01, 05)),
                     DbRecordStatus.Historic)
             });
         var basics = GetBasicTestingServices(services);
         
         var expectedTlgInput = new TlgInput(
+            update.Message.Date,
+            update.Message.MessageId,
             tlgAgent,
             TlgInputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                update.Message.Date,
-                update.Message.MessageId,
                 update.Message.Text));
     
         var actualTlgInput = 
@@ -136,14 +138,15 @@ public class ToModelConverterTests
             $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
     
         var expectedTlgInput = new TlgInput(
+            attachmentUpdate.Message.Date,
+            attachmentUpdate.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.AttachmentMessage,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                attachmentUpdate.Message.Date,
-                attachmentUpdate.Message.MessageId,
                 attachmentUpdate.Message.Caption,
                 expectedAttachmentTlgUri,
                 new Uri("https://www.gorin.de/fakeUri1.html"),
@@ -175,18 +178,19 @@ public class ToModelConverterTests
         var expectedGeoCoordinates = new Geo(
             location!.Latitude,
             location.Longitude,
-            horizontalAccuracy ?? Option<float>.None());
+            horizontalAccuracy ?? Option<double>.None());
         
         var expectedTlgInput = new TlgInput(
-                PrivateBotChat_Operations,
-                TlgInputType.Location,
-                SaniCleanAdmin_DanielEn_X2024, 
-                X2024, 
-                Option<ResultantWorkflowInfo>.None(), 
-                TlgInputGenerator.CreateFromRelevantDetails(
-                    locationUpdate.Message.Date,
-                    locationUpdate.Message.MessageId,
-                    geoCoordinates: expectedGeoCoordinates));
+            locationUpdate.Message.Date,
+            locationUpdate.Message.MessageId,
+            PrivateBotChat_Operations,
+            TlgInputType.Location,
+            SaniCleanAdmin_DanielEn_X2024, 
+            X2024, 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
+            TlgInputGenerator.CreateFromRelevantDetails(
+                geoCoordinates: expectedGeoCoordinates));
         
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
@@ -215,14 +219,15 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
+            commandUpdate.Message.Date,
+            commandUpdate.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CommandMessage,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                commandUpdate.Message.Date,
-                commandUpdate.Message.MessageId,
                 commandText,
                 botCommandEnumCode: (int)command));
     
@@ -252,14 +257,15 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
+            commandUpdate.Message.Date,
+            commandUpdate.Message.MessageId,
             PrivateBotChat_Communications,
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                commandUpdate.Message.Date,
-                commandUpdate.Message.MessageId,
                 commandText,
                 botCommandEnumCode: (int)command));
     
@@ -289,14 +295,15 @@ public class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedTlgInput = new TlgInput(
+            commandUpdate.Message.Date,
+            commandUpdate.Message.MessageId,
             PrivateBotChat_Notifications,
             TlgInputType.CommandMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                commandUpdate.Message.Date,
-                commandUpdate.Message.MessageId,
                 commandText,
                 botCommandEnumCode: (int)command));
     
@@ -325,14 +332,15 @@ public class ToModelConverterTests
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
         var expectedTlgInput = new TlgInput(
+            callbackQuery.Message.Date,
+            callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(),
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                callbackQuery.Message.Date,
-                callbackQuery.Message.MessageId,
                 "The bot's original prompt",
                 controlPromptEnumCode: controlPromptEnumCode));
     
@@ -354,18 +362,19 @@ public class ToModelConverterTests
         var basics = GetBasicTestingServices(_services);
         var domainGlossary = new DomainGlossary();
         var domainTerm = Dt(LanguageCode.de);
-        var callbackQueryData = new CallbackId(domainGlossary.IdAndUiByTerm[domainTerm].callbackId);
+        var callbackQueryData = new CallbackId(domainGlossary.GetId(domainTerm));
         var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedTlgInput = new TlgInput(
+            callbackQuery.Message.Date,
+            callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
             SaniCleanAdmin_DanielEn_X2024, 
             X2024, 
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             TlgInputGenerator.CreateFromRelevantDetails(
-                callbackQuery.Message.Date,
-                callbackQuery.Message.MessageId,
                 "The bot's original prompt",
                 domainTerm: domainTerm));
     
@@ -382,8 +391,8 @@ public class ToModelConverterTests
     [Fact]
     public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_InAnyMode()
     {
-         _services = new UnitTestStartup().Services.BuildServiceProvider();
-         var basics = GetBasicTestingServices(_services);
+        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var basics = GetBasicTestingServices(_services);
          
         var update = new UpdateWrapper(new Message
         {

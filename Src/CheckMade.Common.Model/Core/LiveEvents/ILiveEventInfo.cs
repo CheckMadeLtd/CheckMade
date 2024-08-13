@@ -5,8 +5,8 @@ namespace CheckMade.Common.Model.Core.LiveEvents;
 public interface ILiveEventInfo
 {
     string Name { get; }
-    DateTime StartDate { get; }
-    DateTime EndDate { get; }
+    DateTimeOffset StartDate { get; }
+    DateTimeOffset EndDate { get; }
     DbRecordStatus Status { get; }
     
     bool Equals(ILiveEventInfo? other);

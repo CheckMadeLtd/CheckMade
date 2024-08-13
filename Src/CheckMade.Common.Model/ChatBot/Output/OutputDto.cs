@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Common.Model.ChatBot.Output;
 
-public record OutputDto
+public sealed record OutputDto
 {
     public Option<LogicalPort> LogicalPort { get; init; } 
         = Option<LogicalPort>.None();
@@ -25,4 +25,9 @@ public record OutputDto
     
     public Option<Geo> Location { get; init; }
         = Option<Geo>.None();
+    
+    public Option<TlgMessageId> UpdateExistingOutputMessageId { get; init; }
+        = Option<TlgMessageId>.None();
+
+    public ActualSendOutParams? ActualSendOutParams { get; init; } = null;
 }

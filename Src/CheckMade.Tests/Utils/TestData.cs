@@ -7,8 +7,9 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
@@ -128,7 +129,7 @@ internal static class TestData
             X2024Info);
     
     internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
-        new("RP4XPK",
+        new("RGR37T",
             new TradeEngineer<SaniCleanTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
@@ -138,37 +139,84 @@ internal static class TestData
             new TradeTeamLead<SaniCleanTrade>(),
             new UserInfo(DanielEn), 
             X2024Info);
+
+    internal static readonly Role LiveEventAdmin_DanielEn_X2024 =
+        new("R23QI6",
+            new LiveEventAdmin(),
+            new UserInfo(DanielEn),
+            X2024Info);
+    
+    internal static readonly Role SaniCleanEngineer_DanielEn_Y2024 = 
+        new("RS0BSU",
+            new TradeEngineer<SaniCleanTrade>(),
+            new UserInfo(DanielEn),
+            Y2024Info);
+    
+    internal static readonly Role SiteCleanEngineer_DanielEn_X2024 = 
+        new("RMWC16",
+            new TradeEngineer<SiteCleanTrade>(),
+            new UserInfo(DanielEn),
+            X2024Info);
     
     #endregion
 
     #region LiveEventSetup #############################################################################################
     
     // 2024 LiveEvents
-
+    
     internal static readonly Geo Sphere1_Location = 
-        new(51.60955, 6.13004, Option<float>.None());
+        new(51.60955, 6.13004, Option<double>.None());
     
     internal static readonly Geo Sphere2_Location =
-        new Geo(51.60893, 6.13328, Option<float>.None());
+        new Geo(51.240118, -0.789397, Option<double>.None());
 
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
         new("Camp1",
-            new SanitaryCampDetails(Sphere1_Location));
+            new SaniCampDetails(
+                Sphere1_Location,
+                new List<DomainTerm>
+                {
+                    Dt(typeof(GeneralMisc)),
+                    Dt(typeof(Shower)),
+                    Dt(typeof(Toilet))
+                }.ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper),
+                    Dt(ConsumablesItem.PaperTowels),
+                    Dt(ConsumablesItem.Soap)
+                }));
     
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
-        new("Camp2",
-            new SanitaryCampDetails(Sphere2_Location));
+        new("Camp2-4cc",
+            new SaniCampDetails(
+                Sphere2_Location,
+                new List<DomainTerm>
+                    {
+                        Dt(typeof(GeneralMisc))
+                    }
+                    .ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper)
+                }));
     
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =
         new("Zone1",
-            new SiteCleaningZoneDetails(Option<Geo>.None()));
+            new SiteCleaningZoneDetails(
+                Option<Geo>.None(),
+                new List<DomainTerm>().ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>().ToImmutableReadOnlyCollection()));
     
     internal static readonly LiveEvent X2024 = new(
         X2024Info,
         new List<IRoleInfo>
         {
             SaniCleanInspector_LukasDe_X2024,
-            SaniCleanAdmin_DanielEn_X2024
+            SaniCleanAdmin_DanielEn_X2024,
+            LiveEventAdmin_DanielEn_X2024,
+            SaniCleanEngineer_DanielEn_X2024,
+            SiteCleanEngineer_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>

@@ -1,25 +1,25 @@
 using CheckMade.ChatBot.Logic;
-using CheckMade.ChatBot.Logic.Workflows.Concrete;
-using CheckMade.Common.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic;
 
-public class InputProcessorTests
+public sealed class InputProcessorTests
 {
     private ServiceProvider? _services;
  
     [Fact]
-    public async Task ProcessInputAsync_WelcomesAndPromptsAuth_AndSavesToDb_ForStartCommandOfUnauthenticatedUser()
+    public async Task ProcessInputAsync_WelcomesAndPromptsAuth_ForStartCommandOfUnauthenticatedUser()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -32,96 +32,24 @@ public class InputProcessorTests
             roleSetting: TestOriginatorRoleSetting.None);
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { startCommand });
+        var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
-
-        var glossary = services.GetRequiredService<IDomainGlossary>();
-        var expectedTlgInputSavedToDb = 
-            startCommand with
-            {
-                ResultantWorkflow = new ResultantWorkflowInfo(
-                    glossary.IdAndUiByTerm[Dt(typeof(UserAuthWorkflow))].callbackId,
-                    UserAuthWorkflow.States.Initial)
-            };
+    
+        List<OutputDto> expectedOutputs = 
+        [
+            new() { Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
+            new() { Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }
+        ];
         
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDb))))
-            .Verifiable();
-        
-        List<OutputDto> expectedOutputs = [
-            new(){ Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
-            new(){ Text = UserAuthWorkflow.EnterTokenPrompt.Text.GetValueOrThrow() }];
-        
-        var actualOutput = 
+        var result = 
             await inputProcessor
                 .ProcessInputAsync(startCommand);
-
+    
         Assert.Equivalent(
             expectedOutputs,
-            actualOutput);
-        
-        mockInputRepo.Verify();
+            result.ResultingOutputs);
     }
     
-    [Fact]
-    public async Task ProcessInputAsync_ReturnsWarning_AndSavesToDb_ForOutOfScopeCallbackQuery()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-
-        // Back to messageId: 4 because user clicked on button in chat history, but /settings now out-of-scope
-        var outOfScopeCallbackQuery =
-            inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.en), 
-                messageId: 4);
-
-        var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
-                inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
-                    (int)OperationsBotCommands.Settings,
-                    messageId: 2),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                    Dt(LanguageCode.de),
-                    messageId: 4),
-                inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
-                    (int)OperationsBotCommands.NewIssue,
-                    messageId: 6),
-                outOfScopeCallbackQuery
-            });
-        var inputProcessor = services.GetRequiredService<IInputProcessor>();
-
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = outOfScopeCallbackQuery;
-        
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
-            .Verifiable();
-        
-        const string expectedWarningOutput = 
-            "The previous workflow was completed, so your last message/action will be ignored.";
-        
-        var actualOutput = 
-            await inputProcessor
-                .ProcessInputAsync(outOfScopeCallbackQuery);
-        
-        Assert.Equal(
-            expectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
-        
-        mockInputRepo.Verify();
-    }
-
     [Fact]
     public async Task ProcessInputAsync_PrefixesWarning_WhenUserInterruptedPreviousWorkflow_WithNewBotCommand()
     {
@@ -155,13 +83,13 @@ public class InputProcessorTests
         const string expectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         
-        var actualOutput =
+        var result =
             await inputProcessor
                 .ProcessInputAsync(interruptingBotCommandInput);
         
-        Assert.Equal(
+        Assert.Contains(
             expectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
     }
     
     [Fact]
@@ -175,8 +103,9 @@ public class InputProcessorTests
         var notInterruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewAssessment); 
+                (int)OperationsBotCommands.NewAssessment);
 
+        var glossary = _services.GetRequiredService<IDomainGlossary>();
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: new[]
@@ -185,52 +114,42 @@ public class InputProcessorTests
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
-                    Dt(LanguageCode.de)),
-                notInterruptingBotCommandInput
-            });
+                    Dt(LanguageCode.de),
+                    resultantWorkflowState: new ResultantWorkflowState(
+                        glossary.GetId(typeof(LanguageSettingWorkflow)),
+                        glossary.GetId(typeof(ILanguageSettingSet))))});
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string notExpectedWarningOutput = 
             "FYI: you interrupted the previous workflow before its completion or successful submission.";
         
-        var actualOutput = 
+        var result = 
             await inputProcessor
                 .ProcessInputAsync(notInterruptingBotCommandInput);
         
-        Assert.NotEqual(
+        Assert.DoesNotContain(
             notExpectedWarningOutput,
-            TestUtils.GetFirstRawEnglish(actualOutput));
+            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
     }
 
     [Fact]
-    public async Task ProcessInputAsync_ReturnsEmptyOutput_AndSavesToDb_ForLocationUpdate()
+    public async Task ProcessInputAsync_ReturnsEmptyOutput_ForLocationUpdate()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var locationUpdate =
             inputGenerator.GetValidTlgInputLocationMessage(
-                17, -22, Option<float>.None());
+                new Geo(17, -22, Option<double>.None()));
         
         var serviceCollection = new UnitTestStartup().Services;
-        var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[] { locationUpdate });
+        var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
 
-        var expectedTlgInputSavedToDbWithoutResultantWorkflowInfo = locationUpdate;
-
-        var mockInputRepo = (Mock<ITlgInputsRepository>)container.Mocks[typeof(ITlgInputsRepository)];
-        mockInputRepo
-            .Setup(repo => 
-                repo.AddAsync(It.Is<TlgInput>(input => 
-                    input.Equals(expectedTlgInputSavedToDbWithoutResultantWorkflowInfo))))
-            .Verifiable();
-        
-        var actualOutput =
+        var result =
             await inputProcessor
                 .ProcessInputAsync(locationUpdate);
         
-        Assert.Empty(actualOutput);
-        mockInputRepo.Verify();
+        Assert.Empty(result.ResultingOutputs);
     }
 }

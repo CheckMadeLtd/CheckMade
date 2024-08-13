@@ -1,11 +1,10 @@
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), ITlgAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -13,7 +12,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync(new [] { tlgAgentRoleBind });
+        await AddAsync(new[] { tlgAgentRoleBind });
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
@@ -37,15 +36,15 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@token", tarb.Role.Token },
-                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
-                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
-                { "@activationDate", tarb.ActivationDate },
-                { "@status", (int)tarb.Status },
-                { "@mode", (int)tarb.TlgAgent.Mode },
-                { "@deactivationDate", tarb.DeactivationDate.Match<object>(
+                ["@token"] = tarb.Role.Token,
+                ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
+                ["@tlgChatId"] = (long)tarb.TlgAgent.ChatId,
+                ["@activationDate"] = tarb.ActivationDate,
+                ["@status"] = (int)tarb.Status,
+                ["@mode"] = (int)tarb.TlgAgent.Mode,
+                ["@deactivationDate"] = tarb.DeactivationDate.Match<object>(
                     date => date,
-                    () => DBNull.Value)}
+                    () => DBNull.Value)
             };
 
             return GenerateCommand(rawQuery, normalParameters);
@@ -53,7 +52,7 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
 
         await ExecuteTransactionAsync(
             commands
-            .ToImmutableReadOnlyCollection());
+                .ToImmutableReadOnlyCollection());
         
         _cache = _cache.Match(
             cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
@@ -153,16 +152,16 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
         {
             var normalParameters = new Dictionary<string, object>
             {
-                { "@newStatus", (int)newStatus },
-                { "@token", tarb.Role.Token },
-                { "@tlgUserId", (long)tarb.TlgAgent.UserId },
-                { "@tlgChatId", (long)tarb.TlgAgent.ChatId },
-                { "@mode", (int)tarb.TlgAgent.Mode },
-                { "@oldStatus", (int)tarb.Status }
+                ["@newStatus"] = (int)newStatus,
+                ["@token"] = tarb.Role.Token,
+                ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
+                ["@tlgChatId"] = (long)tarb.TlgAgent.ChatId,
+                ["@mode"] = (int)tarb.TlgAgent.Mode,
+                ["@oldStatus"] = (int)tarb.Status
             };
 
             if (newStatus != DbRecordStatus.Active)
-                normalParameters.Add("@deactivationDate", DateTime.UtcNow);
+                normalParameters.Add("@deactivationDate", DateTimeOffset.UtcNow);
             else
                 normalParameters.Add("@deactivationDate", DBNull.Value);
         
@@ -188,15 +187,15 @@ public class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomain
         
         var normalParameters = new Dictionary<string, object>
         {
-            { "@token", tlgAgentRoleBind.Role.Token },
-            { "tlgUserId", (long)tlgAgentRoleBind.TlgAgent.UserId },
-            { "tlgChatId", (long)tlgAgentRoleBind.TlgAgent.ChatId },
-            { "@mode", (int)tlgAgentRoleBind.TlgAgent.Mode }
+            ["@token"] = tlgAgentRoleBind.Role.Token,
+            ["tlgUserId"] = (long)tlgAgentRoleBind.TlgAgent.UserId,
+            ["tlgChatId"] = (long)tlgAgentRoleBind.TlgAgent.ChatId,
+            ["@mode"] = (int)tlgAgentRoleBind.TlgAgent.Mode
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new [] { command });
+        await ExecuteTransactionAsync(new[] { command });
         EmptyCache();
     }
 

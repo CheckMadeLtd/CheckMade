@@ -1,5 +1,4 @@
 using System.Data.Common;
-using CheckMade.Common.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -14,7 +13,7 @@ using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Structs;
 using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete.Types;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.Generic;
@@ -25,41 +24,48 @@ internal static class ModelReaders
 {
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
         (reader, glossary) =>
-    {
-        var userInfo = ConstituteUserInfo(reader);
-        var liveEventInfo = ConstituteLiveEventInfo(reader);
+        {
+            var userInfo = ConstituteUserInfo(reader);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
 
-        return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
-    };
+            return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
         (reader, glossary) =>
-    {
-        var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
-        var liveEventInfo = ConstituteLiveEventInfo(reader);
+        {
+            var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
         
-        return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
-    };
+            return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> ReadTlgAgentRoleBind = 
         (reader, glossary) =>
-    {
-        var role = ReadRole(reader, glossary);
-        var tlgAgent = ConstituteTlgAgent(reader);
+        {
+            var role = ReadRole(reader, glossary);
+            var tlgAgent = ConstituteTlgAgent(reader);
 
-        return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
-    };
+            return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+        };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, Vendor> ReadVendor = 
         (reader, _) => 
-        ConstituteVendor(reader).GetValueOrThrow();
+            ConstituteVendor(reader).GetValueOrThrow();
+
+    internal static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> ReadWorkflowBridge =
+        (reader, glossary) =>
+        {
+            var sourceInput = ReadTlgInput(reader, glossary);
+
+            return ConstituteWorkflowBridge(reader, sourceInput);
+        };
 
     internal static (
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, User> initializeModel,
         Action<User, DbDataReader> accumulateData,
-        Func<User, User> finalizeModel) 
-        
+        Func<User, User> finalizeModel)
         GetUserReader(IDomainGlossary glossary)
     {
         return (
@@ -83,8 +89,7 @@ internal static class ModelReaders
         Func<DbDataReader, int> getKey,
         Func<DbDataReader, LiveEvent> initializeModel,
         Action<LiveEvent, DbDataReader> accumulateData,
-        Func<LiveEvent, LiveEvent> finalizeModel) 
-        
+        Func<LiveEvent, LiveEvent> finalizeModel)
         GetLiveEventReader(IDomainGlossary glossary)
     {
         return (
@@ -153,8 +158,8 @@ internal static class ModelReaders
         
         return new LiveEventInfo(
             reader.GetString(reader.GetOrdinal("live_event_name")),
-            reader.GetDateTime(reader.GetOrdinal("live_event_start_date")),
-            reader.GetDateTime(reader.GetOrdinal("live_event_end_date")),
+            reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("live_event_start_date")),
+            reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("live_event_end_date")),
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
@@ -164,7 +169,7 @@ internal static class ModelReaders
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
 
-        var trade = GetTradeType();
+        var trade = GetTrade();
 
         const string invalidTradeTypeException = $"""
                                                   This is not an existing '{nameof(trade)}' or we forgot to
@@ -173,12 +178,12 @@ internal static class ModelReaders
 
         var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
         
-        ISphereOfActionDetails details = trade.Name switch
+        ISphereOfActionDetails details = trade switch
         {
-            nameof(SaniCleanTrade) => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
-            nameof(SiteCleanTrade) => 
+            SaniCleanTrade => 
+                JsonHelper.DeserializeFromJsonStrict<SaniCampDetails>(detailsJson, glossary) 
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SaniCampDetails)}'!"),
+            SiteCleanTrade => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
@@ -187,11 +192,11 @@ internal static class ModelReaders
         
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
 
-        ISphereOfAction sphere = trade.Name switch
+        ISphereOfAction sphere = trade switch
         {
-            nameof(SaniCleanTrade) => 
+            SaniCleanTrade => 
                 new SphereOfAction<SaniCleanTrade>(sphereName, details),
-            nameof(SiteCleanTrade) => 
+            SiteCleanTrade => 
                 new SphereOfAction<SiteCleanTrade>(sphereName, details),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
@@ -199,7 +204,7 @@ internal static class ModelReaders
         
         return Option<ISphereOfAction>.Some(sphere);
 
-        Type GetTradeType()
+        ITrade GetTrade()
         {
             var tradeId = new CallbackId(reader.GetString(reader.GetOrdinal("sphere_trade")));
             var tradeType = glossary.TermById[tradeId].TypeValue;
@@ -211,7 +216,7 @@ internal static class ModelReaders
                                                $"can't be determined.");
             }
 
-            return tradeType;
+            return (ITrade)Activator.CreateInstance(tradeType)!;
         }
     }
     
@@ -284,6 +289,8 @@ internal static class ModelReaders
         Option<ILiveEventInfo> liveEventInfo,
         IDomainGlossary glossary)
     {
+        var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
+        TlgMessageId tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
         var interactionMode = EnsureEnumValidityOrThrow(
@@ -291,25 +298,31 @@ internal static class ModelReaders
         var tlgInputType = EnsureEnumValidityOrThrow(
             (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
         var resultantWorkflow = GetWorkflowInfo();
+        var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
+            ? Option<Guid>.None()
+            : reader.GetGuid(reader.GetOrdinal("input_guid"));
         var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
         return new TlgInput(
+            tlgDate,
+            tlgMessageId,
             new TlgAgent(tlgUserId, tlgChatId, interactionMode),
             tlgInputType,
             roleInfo,
             liveEventInfo,
             resultantWorkflow,
+            guid,
             JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 
-        Option<ResultantWorkflowInfo> GetWorkflowInfo()
+        Option<ResultantWorkflowState> GetWorkflowInfo()
         {
             if (reader.IsDBNull(reader.GetOrdinal("input_workflow")))
-                return Option<ResultantWorkflowInfo>.None();
+                return Option<ResultantWorkflowState>.None();
             
-            return new ResultantWorkflowInfo(
+            return new ResultantWorkflowState(
                 reader.GetString(reader.GetOrdinal("input_workflow")),
-                reader.GetInt64(reader.GetOrdinal("input_wf_state")));
+                reader.GetString(reader.GetOrdinal("input_wf_state")));
         }
     }
 
@@ -324,18 +337,26 @@ internal static class ModelReaders
 
     private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
-        var activationDate = reader.GetDateTime(reader.GetOrdinal("tarb_activation_date"));
+        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("tarb_activation_date"));
 
         var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
-            ? Option<DateTime>.Some(reader.GetDateTime(deactivationDateOrdinal))
-            : Option<DateTime>.None();
+            ? Option<DateTimeOffset>.Some(reader.GetFieldValue<DateTimeOffset>(deactivationDateOrdinal))
+            : Option<DateTimeOffset>.None();
 
         var status = EnsureEnumValidityOrThrow(
             (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));
 
         return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+    }
+
+    private static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
+    {
+        var destinationChatId = reader.GetInt64(reader.GetOrdinal("bridge_chat_id"));
+        var destinationMessageId = reader.GetInt32(reader.GetOrdinal("bridge_message_id"));
+
+        return new WorkflowBridge(sourceInput, destinationChatId, destinationMessageId);
     }
     
     private static Option<T> GetOption<T>(DbDataReader reader, int ordinal)

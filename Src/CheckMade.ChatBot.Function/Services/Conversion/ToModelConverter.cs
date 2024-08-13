@@ -22,7 +22,7 @@ public interface IToModelConverter
     Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
-internal class ToModelConverter(
+internal sealed class ToModelConverter(
         ITelegramFilePathResolver filePathResolver,
         IBlobLoader blobLoader,
         IHttpDownloader downloader,
@@ -124,7 +124,7 @@ internal class ToModelConverter(
         };
     }
 
-    private record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
+    private sealed record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
@@ -132,7 +132,7 @@ internal class ToModelConverter(
             { } location => Option<Geo>.Some(new Geo(
                 location.Latitude,
                 location.Longitude,
-                location.HorizontalAccuracy ?? Option<float>.None())),
+                location.HorizontalAccuracy ?? Option<double>.None())),
             
             _ => Option<Geo>.None() 
         };
@@ -281,16 +281,17 @@ internal class ToModelConverter(
             : update.Message.Caption;
         
         return new TlgInput(
+            update.Message.Date,
+            update.Message.MessageId,
             new TlgAgent(userId, chatId, interactionMode), 
             tlgInputType,
             originatorRole.IsSome 
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
                 : Option<IRoleInfo>.None(),
             liveEventContext,
-            Option<ResultantWorkflowInfo>.None(), 
+            Option<ResultantWorkflowState>.None(), 
+            Option<Guid>.None(), 
             new TlgInputDetails(
-                update.Message.Date,
-                update.Message.MessageId,
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 tlgAttachmentUri,
                 internalAttachmentUri,
@@ -307,7 +308,7 @@ internal class ToModelConverter(
             .Match(
                 path => Option<Uri>.Some(GetUriFromPath(path)), 
                 Attempt<Option<Uri>>.Fail
-        );
+            );
         
         async Task<Attempt<string>> GetPathAsync() =>
             await filePathResolver.GetTelegramFilePathAsync(fileId);

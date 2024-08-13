@@ -8,6 +8,6 @@ public enum OperationsBotCommands
     NewIssue = 10,
     NewAssessment = 20,
     
-    Settings = BotCommandMenus.SameBotCommandSemanticsThreshold_90,
+    Settings = BotCommandMenus.GlobalBotCommandsCodeThreshold_90,
     Logout = 99
 }

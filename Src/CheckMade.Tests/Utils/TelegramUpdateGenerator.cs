@@ -41,19 +41,19 @@ internal interface ITelegramUpdateGenerator
         long chatId = Default_UserAndChatId_PrivateBotChat);
 }
 
-internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateGenerator
+internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateGenerator
 {
     public Randomizer Randomizer { get; } = randomizer;
     
     public UpdateWrapper GetValidTelegramTextMessage(string inputText, long userId, long chatId) => 
         new(new Message 
-            {
-                From = new TelegramUser { Id = userId },
-                Chat = new Chat { Id = chatId },
-                Date = DateTime.UtcNow,
-                MessageId = 123,
-                Text = inputText
-            });
+        {
+            From = new TelegramUser { Id = userId },
+            Chat = new Chat { Id = chatId },
+            Date = DateTime.UtcNow,
+            MessageId = 123,
+            Text = inputText
+        });
 
     public UpdateWrapper GetValidTelegramBotCommandMessage(string botCommand, long chatId) =>
         new(new Message
@@ -63,7 +63,8 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
             Date = DateTime.UtcNow,
             MessageId = 123,
             Text = botCommand,
-            Entities = [
+            Entities =
+            [
                 new MessageEntity
                 {
                     Length = botCommand.Length,
@@ -138,7 +139,7 @@ internal class TelegramUpdateGenerator(Randomizer randomizer) : ITelegramUpdateG
             Date = DateTime.UtcNow,
             MessageId = 123,
             Caption = "fakePhotoCaption",
-            Photo = [new PhotoSize{ Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
+            Photo = [new PhotoSize { Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
         });
 
     public UpdateWrapper GetValidTelegramVoiceMessage(long chatId) =>
