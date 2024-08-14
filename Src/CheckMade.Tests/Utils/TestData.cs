@@ -164,16 +164,16 @@ internal static class TestData
     
     // 2024 LiveEvents
     
-    internal static readonly Geo Sphere1_Location = 
-        new(51.60955, 6.13004, Option<double>.None());
+    internal static readonly Geo Location_Dassel = 
+        new(50.93140957842968, 6.932814116544934, Option<double>.None());
     
-    internal static readonly Geo Sphere2_Location =
+    internal static readonly Geo Location_4cc =
         new Geo(51.240118, -0.789397, Option<double>.None());
 
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
-        new("Camp1",
+        new("CampDassel",
             new SaniCampDetails(
-                Sphere1_Location,
+                Location_Dassel,
                 new List<DomainTerm>
                 {
                     Dt(typeof(GeneralMisc)),
@@ -190,7 +190,7 @@ internal static class TestData
     internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
         new("Camp2-4cc",
             new SaniCampDetails(
-                Sphere2_Location,
+                Location_4cc,
                 new List<DomainTerm>
                     {
                         Dt(typeof(GeneralMisc))

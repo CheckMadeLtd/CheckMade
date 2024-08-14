@@ -178,13 +178,13 @@ public sealed class NewIssueWorkflowInitTests
     
     private static Geo GetLocationNearSaniCleanSphere() =>
         new(
-            Sphere1_Location.Latitude + 0.00001, // ca. 1 meter off
-            Sphere1_Location.Longitude + 0.00001,
+            Location_Dassel.Latitude + 0.00001, // ca. 1 meter off
+            Location_Dassel.Longitude + 0.00001,
             Option<double>.None());
 
     private static Geo GetLocationFarFromAnySaniCleanSphere() =>
         new(
-            Sphere1_Location.Latitude + 1, // ca. 100km off
-            Sphere1_Location.Longitude,
+            Location_Dassel.Latitude + 1, // ca. 100km off
+            Location_Dassel.Longitude,
             Option<double>.None());
 }
