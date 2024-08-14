@@ -14,10 +14,10 @@ public class RolesRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var repo = _services.GetRequiredService<IRolesRepository>();
-        var role = await repo.GetAsync(SaniCleanInspector_LukasDe_X2024);
+        var role = await repo.GetAsync(SanitaryInspector_LukasDe_X2024);
 
         Assert.NotNull(role);
-        Assert.True(role.Equals(SaniCleanInspector_LukasDe_X2024));
+        Assert.True(role.Equals(SanitaryInspector_LukasDe_X2024));
     }
     
     [Fact]
@@ -29,7 +29,7 @@ public class RolesRepositoryTests
         var roles = await repo.GetAllAsync();
         
         Assert.Contains(
-            SaniCleanAdmin_DanielEn_X2024.Token,
+            SanitaryAdmin_DanielEn_X2024.Token,
             roles.Select(r => r.Token));
     }
 }

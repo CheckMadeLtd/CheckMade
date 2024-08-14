@@ -146,11 +146,11 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(LiveEventAdmin), "DD6I1A", Ui("LiveEvent-Admin"));
         AddTerm(typeof(LiveEventObserver), "D5Q5V2", Ui("LiveEvent-Observer"));
 
-        AddTerm(typeof(TradeAdmin<SanitaryTrade>), "DLE960", Ui("SaniClean-Admin"));
-        AddTerm(typeof(TradeInspector<SanitaryTrade>), "DYHG6E", Ui("SaniClean-Inspector"));
-        AddTerm(typeof(TradeEngineer<SanitaryTrade>), "D2PC58", Ui("SaniClean-Engineer"));
-        AddTerm(typeof(TradeTeamLead<SanitaryTrade>), "DE4E59", Ui("SaniClean-CleanLead"));
-        AddTerm(typeof(TradeObserver<SanitaryTrade>), "DH4QH5", Ui("SaniClean-Observer"));
+        AddTerm(typeof(TradeAdmin<SanitaryTrade>), "DLE960", Ui("Sanitary-Admin"));
+        AddTerm(typeof(TradeInspector<SanitaryTrade>), "DYHG6E", Ui("Sanitary-Inspector"));
+        AddTerm(typeof(TradeEngineer<SanitaryTrade>), "D2PC58", Ui("Sanitary-Engineer"));
+        AddTerm(typeof(TradeTeamLead<SanitaryTrade>), "DE4E59", Ui("Sanitary-CleanLead"));
+        AddTerm(typeof(TradeObserver<SanitaryTrade>), "DH4QH5", Ui("Sanitary-Observer"));
         
         AddTerm(typeof(TradeAdmin<SiteCleanTrade>), "DIV8LK", Ui("SiteClean-Admin"));
         AddTerm(typeof(TradeInspector<SiteCleanTrade>), "DBN6SZ", Ui("SiteClean-Inspector"));

@@ -194,10 +194,10 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for Y 2024 1",
-                roleSpecified: SaniCleanEngineer_DanielEn_Y2024),
+                roleSpecified: SanitaryEngineer_DanielEn_Y2024),
             inputGenerator.GetValidTlgInputTextMessage(
                 text: "Input for Y 2024 2",
-                roleSpecified: SaniCleanEngineer_DanielEn_Y2024)
+                roleSpecified: SanitaryEngineer_DanielEn_Y2024)
         };
 
         foreach (var i in inputsY2024)

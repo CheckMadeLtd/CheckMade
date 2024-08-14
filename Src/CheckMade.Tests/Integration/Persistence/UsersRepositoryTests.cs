@@ -54,10 +54,10 @@ public sealed class UsersRepositoryTests
         Assert.Equal(LukasDe.FirstName, lukasDe.FirstName);
         
         Assert.Contains(
-            SaniCleanAdmin_DanielEn_X2024.Token,
+            SanitaryAdmin_DanielEn_X2024.Token,
             danielEn.HasRoles.Select(r => r.Token));
         Assert.Contains(
-            SaniCleanEngineer_DanielEn_Y2024.Token,
+            SanitaryEngineer_DanielEn_Y2024.Token,
             danielEn.HasRoles.Select(r => r.Token));
     }
 }

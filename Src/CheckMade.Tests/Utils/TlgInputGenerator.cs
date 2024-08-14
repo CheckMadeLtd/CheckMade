@@ -248,8 +248,8 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                     Option<ILiveEventInfo>.None()),
             
             Default =>
-                (SaniCleanAdmin_DanielEn_X2024,
-                    Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent)),
+                (SanitaryAdmin_DanielEn_X2024,
+                    Option<ILiveEventInfo>.Some(SanitaryAdmin_DanielEn_X2024.AtLiveEvent)),
             
             _ => throw new ArgumentOutOfRangeException(nameof(roleSetting))
         };

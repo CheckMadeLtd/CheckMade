@@ -38,9 +38,9 @@ internal static class TestRepositoryUtils
         var defaultLiveEvent = X2024;
         List<LiveEvent> defaultLiveEvents = [X2024, X2025];
         List<User> defaultUsers = [DanielEn, DanielDe];
-        List<Role> defaultRoles = [SaniCleanAdmin_DanielEn_X2024];
+        List<Role> defaultRoles = [SanitaryAdmin_DanielEn_X2024];
         List<TlgAgentRoleBind> defaultRoleBindings = 
-            [GetNewRoleBind(SaniCleanAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
+            [GetNewRoleBind(SanitaryAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
         List<TlgInput> defaultInputs = [];
         List<WorkflowBridge> defaultBridges = [];
 

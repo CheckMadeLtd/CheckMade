@@ -86,55 +86,55 @@ internal static class TestData
     #region RoleSetup ##################################################################################################
     
     // Default for testing
-    internal static readonly Role SaniCleanAdmin_DanielEn_X2024 = 
+    internal static readonly Role SanitaryAdmin_DanielEn_X2024 = 
         new("RVB70T",
             new TradeAdmin<SanitaryTrade>(), 
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielEn_X2024 = 
+    internal static readonly Role SanitaryInspector_DanielEn_X2024 = 
         new("R3UDXW",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielEn_X2025 = 
+    internal static readonly Role SanitaryInspector_DanielEn_X2025 = 
         new("R9AAB5",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2025Info);
     
-    internal static readonly Role SaniCleanInspector_LukasDe_X2024 = 
+    internal static readonly Role SanitaryInspector_LukasDe_X2024 = 
         new("R7UIP8",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(LukasDe),
             X2024Info);
 
-    internal static readonly Role SaniCleanCleanLead_DanielDe_X2024 = 
+    internal static readonly Role SanitaryCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
 
-    internal static readonly Role SaniCleanObserver_DanielEn_X2024 = 
+    internal static readonly Role SanitaryObserver_DanielEn_X2024 = 
         new("RYEATF",
             new TradeObserver<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielDe_X2024 = 
+    internal static readonly Role SanitaryInspector_DanielDe_X2024 = 
         new("RMAM8S",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
     
-    internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
+    internal static readonly Role SanitaryEngineer_DanielEn_X2024 = 
         new("RGR37T",
             new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanCleanLead_DanielEn_X2024 = 
+    internal static readonly Role SanitaryCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielEn), 
@@ -146,7 +146,7 @@ internal static class TestData
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanEngineer_DanielEn_Y2024 = 
+    internal static readonly Role SanitaryEngineer_DanielEn_Y2024 = 
         new("RS0BSU",
             new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
@@ -212,10 +212,10 @@ internal static class TestData
         X2024Info,
         new List<IRoleInfo>
         {
-            SaniCleanInspector_LukasDe_X2024,
-            SaniCleanAdmin_DanielEn_X2024,
+            SanitaryInspector_LukasDe_X2024,
+            SanitaryAdmin_DanielEn_X2024,
             LiveEventAdmin_DanielEn_X2024,
-            SaniCleanEngineer_DanielEn_X2024,
+            SanitaryEngineer_DanielEn_X2024,
             SiteCleanEngineer_DanielEn_X2024
         },
         Venue1,
@@ -236,7 +236,7 @@ internal static class TestData
         X2025Info,
         new List<IRoleInfo>
         {
-            SaniCleanInspector_DanielEn_X2025
+            SanitaryInspector_DanielEn_X2025
         },
         Venue1,
         new List<ISphereOfAction>());

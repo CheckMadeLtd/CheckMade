@@ -65,7 +65,7 @@ public sealed class LanguageSettingWorkflowTests
             resultantWorkflowState: new ResultantWorkflowState("DDI3H3", "DL32QX"));
 
         var roleBind = TestRepositoryUtils.GetNewRoleBind(
-            SaniCleanEngineer_DanielEn_X2024,
+            SanitaryEngineer_DanielEn_X2024,
             PrivateBotChat_Operations);
         
         var serviceCollection = new UnitTestStartup().Services;

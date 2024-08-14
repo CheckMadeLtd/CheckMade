@@ -59,10 +59,10 @@ public sealed class NewIssueWorkflowInitTests
         
         List<TlgInput> recentLocationHistory = [
             basics.inputGenerator.GetValidTlgInputLocationMessage(
-                GetLocationFarFromAnySaniCleanSphere(),
+                GetLocationFarFromAnySanitarySphere(),
                 dateTime: DateTimeOffset.UtcNow.AddSeconds(-10)),
             basics.inputGenerator.GetValidTlgInputLocationMessage(
-                GetLocationNearSaniCleanSphere())];
+                GetLocationNearSanitarySphere())];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -106,7 +106,7 @@ public sealed class NewIssueWorkflowInitTests
         {
             recentLocationHistory.Add(
                 basics.inputGenerator.GetValidTlgInputLocationMessage(
-                    GetLocationFarFromAnySaniCleanSphere(),
+                    GetLocationFarFromAnySanitarySphere(),
                     dateTime: DateTimeOffset.UtcNow));
         }
         
@@ -176,13 +176,13 @@ public sealed class NewIssueWorkflowInitTests
             actualResponse.GetValueOrThrow().NewStateId.GetValueOrThrow());
     }
     
-    private static Geo GetLocationNearSaniCleanSphere() =>
+    private static Geo GetLocationNearSanitarySphere() =>
         new(
             Location_Dassel.Latitude + 0.00001, // ca. 1 meter off
             Location_Dassel.Longitude + 0.00001,
             Option<double>.None());
 
-    private static Geo GetLocationFarFromAnySaniCleanSphere() =>
+    private static Geo GetLocationFarFromAnySanitarySphere() =>
         new(
             Location_Dassel.Latitude + 1, // ca. 100km off
             Location_Dassel.Longitude,
