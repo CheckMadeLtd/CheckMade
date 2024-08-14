@@ -106,19 +106,19 @@ public sealed record DomainGlossary : IDomainGlossary
         
         // Below, presence/absence determines availability of IssueTypes per TradeType, also in the Workflow!
 
-        AddTerm(typeof(GeneralIssue<SaniCleanTrade>), "DVGI3N", Ui("❗ General Issue"));
-        AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General Issue"));
+        AddTerm(typeof(GeneralIssue<SaniCleanTrade>), "DVGI3N", Ui("❗ General"));
+        AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
         
-        AddTerm(typeof(CleanlinessIssue<SaniCleanTrade>), "DAWYZP", Ui("🪣 Cleanliness Issue"));
-        AddTerm(typeof(CleanlinessIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleanliness Issue"));
+        AddTerm(typeof(CleanlinessIssue<SaniCleanTrade>), "DAWYZP", Ui("🪣 Cleanliness"));
+        AddTerm(typeof(CleanlinessIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleanliness"));
         
-        AddTerm(typeof(TechnicalIssue<SaniCleanTrade>), "DM46NG", Ui("🔧 Technical Issue"));
-        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical Issue"));
+        AddTerm(typeof(TechnicalIssue<SaniCleanTrade>), "DM46NG", Ui("🔧 Technical"));
+        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical"));
         
         AddTerm(typeof(ConsumablesIssue<SaniCleanTrade>), "D582QJ", Ui("🗄 Missing Consumables"));
         
-        AddTerm(typeof(StaffIssue<SaniCleanTrade>), "D9MRJ9", Ui("🙋 Staff Issue"));
-        AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff Issue"));
+        AddTerm(typeof(StaffIssue<SaniCleanTrade>), "D9MRJ9", Ui("🙋 Staff"));
+        AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
 
         AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
         AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));

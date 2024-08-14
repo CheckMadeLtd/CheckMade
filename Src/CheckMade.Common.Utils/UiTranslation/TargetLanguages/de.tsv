@@ -29,15 +29,15 @@ CheckMade.Common.Model	SaniClean-Inspector	Sanitärreinigung-Inspektor
 CheckMade.Common.Model	SaniClean-Engineer	Sanitärreinigung-Installateur
 CheckMade.Common.Model	SaniClean-CleanLead	Sanitärreinigung-Reinigungsvorarbeiter
 CheckMade.Common.Model	SaniClean-Observer	Sanitärreinigung-Beobachter
-CheckMade.Common.Model	🪣 Cleanliness Issue	🪣 Sauberkeitsproblem
-CheckMade.Common.Model	🔧 Technical Issue	🔧 Technik-Problem
+CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
+CheckMade.Common.Model	🔧 Technical	🔧 Technik
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
 CheckMade.Common.Model	🧴 Soap	🧴 Seife
 CheckMade.Common.Model	🚽 Toilet	🚽 Toilette
 CheckMade.Common.Model	🚿 Shower	🚿 Dusche
-CheckMade.Common.Model	🙋 Staff Issue	🙋 Personalproblem
+CheckMade.Common.Model	🙋 Staff	🙋 Personal
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.ChatBot.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.ChatBot.Function	Please choose:	Bitte wählen:
@@ -81,7 +81,7 @@ CheckMade.ChatBot.Logic	❗🎙 Voice messages are not yet supported. You can se
 CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
-CheckMade.ChatBot.Logic	❗ General Issue	❗ Allgemeines Problem
+CheckMade.ChatBot.Logic	❗ General	❗ Allgemein
 CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
 CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
 CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
