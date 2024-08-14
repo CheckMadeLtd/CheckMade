@@ -58,12 +58,12 @@ public sealed class LiveEventsRepositoryTests
                 .GetTradeType());
 
         Assert.Equivalent(
-            Sphere1_Location,
+            Location_Dassel,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
         Assert.Equivalent(
-            Sphere2_Location,
+            Location_4cc,
             liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());

@@ -1,12 +1,16 @@
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
+using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.GIS;
+using static CheckMade.ChatBot.Logic.Workflows.Utils.IGeneralWorkflowUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 
@@ -64,21 +68,46 @@ internal static class NewIssueUtils
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .ToImmutableReadOnlyCollection();
 
-    internal static ISphereOfAction GetLastSelectedSphere(
+    internal static ISphereOfAction GetLastSelectedSphere<T>(
         IReadOnlyCollection<TlgInput> inputs,
-        IReadOnlyCollection<ISphereOfAction> spheres)
+        IReadOnlyCollection<ISphereOfAction> spheres,
+        IDomainGlossary glossary) where T : ITrade, new()
     {
-        var lastSelectedSphereName =
-            inputs.Last(i =>
-                    i.Details.Text.IsSome &&
-                    spheres.Select(s => s.Name)
-                        .Contains(i.Details.Text.GetValueOrThrow()))
-                .Details.Text.GetValueOrThrow();
+        var sphereNames = spheres.Select(s => s.Name).ToHashSet();
+        var idOfSphereSelectionState = glossary.GetId(typeof(INewIssueSphereSelection<T>));
+        Func<string, bool> containsSphereName = text => sphereNames.Any(text.Contains);
 
+        var lastSelectedSphereInput =
+            inputs.LastOrDefault(i =>
+                i.InputType == TlgInputType.TextMessage &&
+                containsSphereName(i.Details.Text.GetValueOrThrow()) &&
+                inputs.FirstOrDefault(prev =>
+                        prev.TlgMessageId == i.TlgMessageId.Id - TlgMessageIdDeltaPromptToTextResponse)?
+                    .ResultantWorkflow.GetValueOrThrow().InStateId == idOfSphereSelectionState);
+
+        var lastConfirmedSphereInput =
+            inputs.LastOrDefault(i =>
+                i.InputType == TlgInputType.CallbackQuery &&
+                i.Details.ControlPromptEnumCode.IsSome &&
+                i.Details.ControlPromptEnumCode.GetValueOrThrow() == (int)ControlPrompts.Yes &&
+                containsSphereName(i.Details.Text.GetValueOrThrow()));
+
+        var sphereNameByMessageId = new Dictionary<int, string>();
+
+        if (lastSelectedSphereInput != null)
+            sphereNameByMessageId[lastSelectedSphereInput.TlgMessageId] =
+                lastSelectedSphereInput.Details.Text.GetValueOrThrow();
+
+        if (lastConfirmedSphereInput != null)
+            sphereNameByMessageId[lastConfirmedSphereInput.TlgMessageId] =
+                sphereNames.First(sn =>
+                    lastConfirmedSphereInput.Details.Text.GetValueOrThrow().Contains(sn));  
+        
         return
-            spheres
-                .First(s => 
-                    s.Name.Equals(lastSelectedSphereName));
+            spheres.First(s => 
+                s.Name == sphereNameByMessageId
+                    .MaxBy(kvp => kvp.Key) // the later of the two, in case the user confirmed AND selected a sphere
+                    .Value);
     }
 
     internal static Type GetLastIssueType(IReadOnlyCollection<TlgInput> inputs)
