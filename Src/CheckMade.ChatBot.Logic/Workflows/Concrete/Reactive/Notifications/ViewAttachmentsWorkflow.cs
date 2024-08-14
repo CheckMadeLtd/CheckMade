@@ -5,7 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Issues;
+using CheckMade.Common.Model.Core.Submissions.Issues;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;

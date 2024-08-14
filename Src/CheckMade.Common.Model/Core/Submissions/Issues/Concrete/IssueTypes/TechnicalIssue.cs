@@ -2,20 +2,21 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;
+using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
-public sealed record GeneralIssue<T>(
-        Guid Id, 
-        DateTimeOffset CreationDate, 
-        ISphereOfAction Sphere, 
-        IssueEvidence Evidence, 
-        Role ReportedBy, 
-        Option<Role> HandledBy, 
+public sealed record TechnicalIssue<T>(
+        Guid Id,    
+        DateTimeOffset CreationDate,
+        ISphereOfAction Sphere,
+        IFacility Facility,
+        IssueEvidence Evidence,
+        Role ReportedBy,
+        Option<Role> HandledBy,
         IssueStatus Status,
         IDomainGlossary Glossary) 
-    : ITradeIssue<T>, ITradeIssueWithEvidence where T : ITrade, new()
+    : ITradeIssue<T>, ITradeIssueInvolvingFacility<T>, ITradeIssueWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {
@@ -23,6 +24,7 @@ public sealed record GeneralIssue<T>(
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
+            [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
         };
     }

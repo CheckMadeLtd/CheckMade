@@ -6,9 +6,9 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues;
-using CheckMade.Common.Model.Core.Issues.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Submissions.Issues;
+using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.BusinessLogic;

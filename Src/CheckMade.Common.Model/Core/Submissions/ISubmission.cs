@@ -1,19 +1,15 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 
-namespace CheckMade.Common.Model.Core.Issues;
+namespace CheckMade.Common.Model.Core.Submissions;
 
-public interface IIssue
+public interface ISubmission
 {
     Guid Id { get; }
     DateTimeOffset CreationDate { get; }
     ISphereOfAction Sphere { get; }
     Role ReportedBy { get; }
-    Option<Role> HandledBy { get; }
-    IssueStatus Status { get; }
-    IDomainGlossary Glossary { get; }
-    
+
     IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary();
 }

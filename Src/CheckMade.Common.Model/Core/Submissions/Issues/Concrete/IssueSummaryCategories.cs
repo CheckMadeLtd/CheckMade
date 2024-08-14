@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Issues.Concrete;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 
 [Flags]
 public enum IssueSummaryCategories

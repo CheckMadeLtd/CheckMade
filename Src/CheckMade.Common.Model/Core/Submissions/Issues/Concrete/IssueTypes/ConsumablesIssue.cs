@@ -3,9 +3,9 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;
+using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
 public sealed record ConsumablesIssue<T>(
         Guid Id,
