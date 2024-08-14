@@ -103,16 +103,16 @@ new_live_event_X2024 AS (
  
 new_sphere1_saniclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
-       VALUES ('Camp1',
+       VALUES ('CampDassel',
                'DX3KFI',
                (SELECT id FROM new_live_event_X2024),
                 '{
                     "GeoCoordinates": {
                       "Latitude": {
-                        "Value": 51.60955
+                        "Value": 50.93140957842968
                       }, 
                       "Longitude": {
-                        "Value": 6.13004
+                        "Value": 6.932814116544934
                       }, 
                       "UncertaintyRadiusInMeters": null
                     }, 
