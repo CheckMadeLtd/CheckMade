@@ -118,8 +118,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                 interactiveHistory, 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                    new T()),
-                Glossary);
+                    new T()));
 
         return currentSphere.Details.AvailableConsumables;
     }

@@ -1,4 +1,3 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -8,9 +7,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.GIS;
-using static CheckMade.ChatBot.Logic.Workflows.Utils.IGeneralWorkflowUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 
@@ -70,20 +67,15 @@ internal static class NewIssueUtils
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
         IReadOnlyCollection<TlgInput> inputs,
-        IReadOnlyCollection<ISphereOfAction> spheres,
-        IDomainGlossary glossary) where T : ITrade, new()
+        IReadOnlyCollection<ISphereOfAction> spheres) where T : ITrade, new()
     {
         var sphereNames = spheres.Select(s => s.Name).ToHashSet();
-        var idOfSphereSelectionState = glossary.GetId(typeof(INewIssueSphereSelection<T>));
         Func<string, bool> containsSphereName = text => sphereNames.Any(text.Contains);
 
         var lastSelectedSphereInput =
             inputs.LastOrDefault(i =>
                 i.InputType == TlgInputType.TextMessage &&
-                containsSphereName(i.Details.Text.GetValueOrThrow()) &&
-                inputs.FirstOrDefault(prev =>
-                        prev.TlgMessageId == i.TlgMessageId.Id - TlgMessageIdDeltaPromptToTextResponse)?
-                    .ResultantWorkflow.GetValueOrThrow().InStateId == idOfSphereSelectionState);
+                containsSphereName(i.Details.Text.GetValueOrThrow()));
 
         var lastConfirmedSphereInput =
             inputs.LastOrDefault(i =>
