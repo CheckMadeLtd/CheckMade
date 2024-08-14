@@ -9,5 +9,5 @@ public sealed record LiveEventAdmin : IRoleType
     public Option<Type> GetTradeType() => Option<Type>.None();
 
     public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
-        IssueSummaryCategories.CommonBasics;
+        IssueSummaryCategories.All;
 }

@@ -45,7 +45,7 @@ internal sealed record IssueFactory<T>(
                 new GeneralIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -56,7 +56,7 @@ internal sealed record IssueFactory<T>(
                 new CleanlinessIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
@@ -68,7 +68,7 @@ internal sealed record IssueFactory<T>(
                 new ConsumablesIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     AffectedItems: GetSelectedConsumablesItems(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -79,7 +79,7 @@ internal sealed record IssueFactory<T>(
                 new StaffIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -90,7 +90,7 @@ internal sealed record IssueFactory<T>(
                 new TechnicalIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,

@@ -11,7 +11,6 @@ namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 internal interface IGeneralWorkflowUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
-    const int TlgMessageIdDeltaPromptToTextResponse = 2;
     
     static readonly UiString WorkflowWasCompleted = UiConcatenate(
         Ui("The previous workflow was completed. You can continue with a new one... "),

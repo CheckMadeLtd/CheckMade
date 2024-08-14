@@ -30,8 +30,7 @@ internal sealed record NewIssueFacilitySelection<T>(
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput), 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                    new T()),
-                Glossary);
+                    new T()));
         
         List<OutputDto> outputs =
         [
