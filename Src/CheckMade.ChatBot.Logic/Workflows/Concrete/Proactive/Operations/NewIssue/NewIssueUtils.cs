@@ -32,7 +32,7 @@ internal static class NewIssueUtils
     {
         var tradeSpecificNearnessThreshold = trade switch
         {
-            SaniCleanTrade => SaniCleanTrade.SphereNearnessThresholdInMeters,
+            SanitaryTrade => SanitaryTrade.SphereNearnessThresholdInMeters,
             SiteCleanTrade => SiteCleanTrade.SphereNearnessThresholdInMeters,
             _ => throw new InvalidOperationException("Missing switch for ITrade type for nearness threshold")
         };

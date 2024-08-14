@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Trades.Concrete;
 
-public sealed record SaniCleanTrade : ITrade
+public sealed record SanitaryTrade : ITrade
 {
     public const int SphereNearnessThresholdInMeters = 20;
     

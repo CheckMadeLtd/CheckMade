@@ -180,9 +180,9 @@ internal static class ModelReaders
         
         ISphereOfActionDetails details = trade switch
         {
-            SaniCleanTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SaniCampDetails>(detailsJson, glossary) 
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SaniCampDetails)}'!"),
+            SanitaryTrade => 
+                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
             SiteCleanTrade => 
                 JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
@@ -194,8 +194,8 @@ internal static class ModelReaders
 
         ISphereOfAction sphere = trade switch
         {
-            SaniCleanTrade => 
-                new SphereOfAction<SaniCleanTrade>(sphereName, details),
+            SanitaryTrade => 
+                new SphereOfAction<SanitaryTrade>(sphereName, details),
             SiteCleanTrade => 
                 new SphereOfAction<SiteCleanTrade>(sphereName, details),
             _ => 
@@ -239,11 +239,11 @@ internal static class ModelReaders
             [typeof(LiveEventAdmin).FullName!] = () => new LiveEventAdmin(),
             [typeof(LiveEventObserver).FullName!] = () => new LiveEventObserver(),
             
-            [typeof(TradeAdmin<SaniCleanTrade>).FullName!] = () => new TradeAdmin<SaniCleanTrade>(),
-            [typeof(TradeInspector<SaniCleanTrade>).FullName!] = () => new TradeInspector<SaniCleanTrade>(),
-            [typeof(TradeEngineer<SaniCleanTrade>).FullName!] = () => new TradeEngineer<SaniCleanTrade>(),
-            [typeof(TradeTeamLead<SaniCleanTrade>).FullName!] = () => new TradeTeamLead<SaniCleanTrade>(),
-            [typeof(TradeObserver<SaniCleanTrade>).FullName!] = () => new TradeObserver<SaniCleanTrade>(),
+            [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
+            [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),
+            [typeof(TradeEngineer<SanitaryTrade>).FullName!] = () => new TradeEngineer<SanitaryTrade>(),
+            [typeof(TradeTeamLead<SanitaryTrade>).FullName!] = () => new TradeTeamLead<SanitaryTrade>(),
+            [typeof(TradeObserver<SanitaryTrade>).FullName!] = () => new TradeObserver<SanitaryTrade>(),
             
             [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
             [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),

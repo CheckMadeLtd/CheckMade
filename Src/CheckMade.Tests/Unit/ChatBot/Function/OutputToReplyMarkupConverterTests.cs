@@ -27,9 +27,9 @@ public sealed class OutputToReplyMarkupConverterTests
         
         List<DomainTerm> domainTermSelection = 
         [ 
-            Dt(typeof(CleanlinessIssue<SaniCleanTrade>)),
-            Dt(typeof(TechnicalIssue<SaniCleanTrade>)),
-            Dt(typeof(ConsumablesIssue<SaniCleanTrade>))
+            Dt(typeof(CleanlinessIssue<SanitaryTrade>)),
+            Dt(typeof(TechnicalIssue<SanitaryTrade>)),
+            Dt(typeof(ConsumablesIssue<SanitaryTrade>))
         ];
 
         var outputWithDomainTerms = new OutputDto
@@ -45,23 +45,23 @@ public sealed class OutputToReplyMarkupConverterTests
                 {
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(CleanlinessIssue<SaniCleanTrade>))
+                            .GetUi(typeof(CleanlinessIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(CleanlinessIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(CleanlinessIssue<SanitaryTrade>))), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(TechnicalIssue<SaniCleanTrade>))
+                            .GetUi(typeof(TechnicalIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(TechnicalIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(TechnicalIssue<SanitaryTrade>))), 
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(ConsumablesIssue<SaniCleanTrade>))
+                            .GetUi(typeof(ConsumablesIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(ConsumablesIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(ConsumablesIssue<SanitaryTrade>))), 
                 ]
             }));
 

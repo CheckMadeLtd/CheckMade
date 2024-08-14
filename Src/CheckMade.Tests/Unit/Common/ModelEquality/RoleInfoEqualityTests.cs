@@ -17,11 +17,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -41,13 +41,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielDe),
             new LiveEventInfo(Y2024));
 
@@ -67,11 +67,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         IRoleInfo role = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -87,11 +87,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         IRoleInfo role = new Role(
             "Token2",
-            new TradeInspector<SaniCleanTrade>(),
+            new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -111,7 +111,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         var roleInfo2 = roleInfo1;
 
@@ -127,7 +127,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -145,7 +145,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -163,7 +163,7 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         IRoleInfo? roleInfo2 = null;
 
@@ -179,11 +179,11 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo roleInfo1 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         IRoleInfo roleInfo2 = new RoleInfo(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>());
+            new TradeAdmin<SanitaryTrade>());
 
         var areEqual = roleInfo1.Equals(roleInfo2);
 
@@ -197,13 +197,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
@@ -219,13 +219,13 @@ public class RoleInfoEqualityTests
     {
         IRoleInfo role1 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024));
 
         IRoleInfo role2 = new Role(
             "Token1",
-            new TradeAdmin<SaniCleanTrade>(),
+            new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024),
             DbRecordStatus.Historic);

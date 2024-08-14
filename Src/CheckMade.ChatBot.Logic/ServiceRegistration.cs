@@ -31,7 +31,7 @@ public static class ServiceRegistration
         services.AddScoped<IGeneralWorkflowUtils, GeneralWorkflowUtils>();
         services.AddScoped<IStateMediator, StateMediator>();
 
-        services.AddScoped<IIssueFactory<SaniCleanTrade>, IssueFactory<SaniCleanTrade>>();
+        services.AddScoped<IIssueFactory<SanitaryTrade>, IssueFactory<SanitaryTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
 
         services.AddScoped<UserAuthWorkflow>();
@@ -53,27 +53,27 @@ public static class ServiceRegistration
         services.AddScoped<IUserAuthWorkflowAuthenticated, UserAuthWorkflowAuthenticated>();
 
         services.AddScoped<INewIssueTradeSelection, NewIssueTradeSelection>();
-        services.AddScoped<INewIssueCancelConfirmation<SaniCleanTrade>, NewIssueCancelConfirmation<SaniCleanTrade>>();
+        services.AddScoped<INewIssueCancelConfirmation<SanitaryTrade>, NewIssueCancelConfirmation<SanitaryTrade>>();
         services.AddScoped<INewIssueCancelConfirmation<SiteCleanTrade>, NewIssueCancelConfirmation<SiteCleanTrade>>();
-        services.AddScoped<INewIssueCancelled<SaniCleanTrade>, NewIssueCancelled<SaniCleanTrade>>();
+        services.AddScoped<INewIssueCancelled<SanitaryTrade>, NewIssueCancelled<SanitaryTrade>>();
         services.AddScoped<INewIssueCancelled<SiteCleanTrade>, NewIssueCancelled<SiteCleanTrade>>();
-        services.AddScoped<INewIssueConsumablesSelection<SaniCleanTrade>, NewIssueConsumablesSelection<SaniCleanTrade>>();
+        services.AddScoped<INewIssueConsumablesSelection<SanitaryTrade>, NewIssueConsumablesSelection<SanitaryTrade>>();
         services.AddScoped<INewIssueConsumablesSelection<SiteCleanTrade>, NewIssueConsumablesSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueEditMenu<SaniCleanTrade>, NewIssueEditMenu<SaniCleanTrade>>();
+        services.AddScoped<INewIssueEditMenu<SanitaryTrade>, NewIssueEditMenu<SanitaryTrade>>();
         services.AddScoped<INewIssueEditMenu<SiteCleanTrade>, NewIssueEditMenu<SiteCleanTrade>>();
-        services.AddScoped<INewIssueEvidenceEntry<SaniCleanTrade>, NewIssueEvidenceEntry<SaniCleanTrade>>();
+        services.AddScoped<INewIssueEvidenceEntry<SanitaryTrade>, NewIssueEvidenceEntry<SanitaryTrade>>();
         services.AddScoped<INewIssueEvidenceEntry<SiteCleanTrade>, NewIssueEvidenceEntry<SiteCleanTrade>>();
-        services.AddScoped<INewIssueFacilitySelection<SaniCleanTrade>, NewIssueFacilitySelection<SaniCleanTrade>>();
+        services.AddScoped<INewIssueFacilitySelection<SanitaryTrade>, NewIssueFacilitySelection<SanitaryTrade>>();
         services.AddScoped<INewIssueFacilitySelection<SiteCleanTrade>, NewIssueFacilitySelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueReview<SaniCleanTrade>, NewIssueReview<SaniCleanTrade>>();
+        services.AddScoped<INewIssueReview<SanitaryTrade>, NewIssueReview<SanitaryTrade>>();
         services.AddScoped<INewIssueReview<SiteCleanTrade>, NewIssueReview<SiteCleanTrade>>();
-        services.AddScoped<INewIssueSphereConfirmation<SaniCleanTrade>, NewIssueSphereConfirmation<SaniCleanTrade>>();
+        services.AddScoped<INewIssueSphereConfirmation<SanitaryTrade>, NewIssueSphereConfirmation<SanitaryTrade>>();
         services.AddScoped<INewIssueSphereConfirmation<SiteCleanTrade>, NewIssueSphereConfirmation<SiteCleanTrade>>();
-        services.AddScoped<INewIssueSphereSelection<SaniCleanTrade>, NewIssueSphereSelection<SaniCleanTrade>>();
+        services.AddScoped<INewIssueSphereSelection<SanitaryTrade>, NewIssueSphereSelection<SanitaryTrade>>();
         services.AddScoped<INewIssueSphereSelection<SiteCleanTrade>, NewIssueSphereSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueTypeSelection<SaniCleanTrade>, NewIssueTypeSelection<SaniCleanTrade>>();
+        services.AddScoped<INewIssueTypeSelection<SanitaryTrade>, NewIssueTypeSelection<SanitaryTrade>>();
         services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueSubmissionSucceeded<SaniCleanTrade>, NewIssueSubmissionSucceeded<SaniCleanTrade>>();
+        services.AddScoped<INewIssueSubmissionSucceeded<SanitaryTrade>, NewIssueSubmissionSucceeded<SanitaryTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, NewIssueSubmissionSucceeded<SiteCleanTrade>>();
     }
 }

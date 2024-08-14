@@ -8,7 +8,7 @@ public static class ServiceRegistration
 {
     public static void Register_CommonBusinessLogic_Services(this IServiceCollection services)
     {
-        services.AddScoped<IStakeholderReporter<SaniCleanTrade>, StakeholderReporter<SaniCleanTrade>>();
+        services.AddScoped<IStakeholderReporter<SanitaryTrade>, StakeholderReporter<SanitaryTrade>>();
         services.AddScoped<IStakeholderReporter<SiteCleanTrade>, StakeholderReporter<SiteCleanTrade>>();
     }
 }

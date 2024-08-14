@@ -42,16 +42,16 @@ internal sealed record NewIssueWorkflow(
         return await sphere.Match(
             _ => trade switch
             {
-                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>))),
+                SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SanitaryTrade>))),
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
                 _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
             },
             () => trade switch
             {
-                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>))),
+                SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SanitaryTrade>))),
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>))),
                 _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")

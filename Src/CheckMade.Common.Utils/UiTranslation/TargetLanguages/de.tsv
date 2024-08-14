@@ -24,11 +24,11 @@ CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
 CheckMade.Common.Model	👎 Bad	👎 Schlecht
 CheckMade.Common.Model	😐 Ok	😐 Ok
 CheckMade.Common.Model	👍 Good	👍 Gut
-CheckMade.Common.Model	SaniClean-Admin	Sanitärreinigung-Admin
-CheckMade.Common.Model	SaniClean-Inspector	Sanitärreinigung-Inspektor
-CheckMade.Common.Model	SaniClean-Engineer	Sanitärreinigung-Installateur
-CheckMade.Common.Model	SaniClean-CleanLead	Sanitärreinigung-Reinigungsvorarbeiter
-CheckMade.Common.Model	SaniClean-Observer	Sanitärreinigung-Beobachter
+CheckMade.Common.Model	Sanitary-Admin	Sanitär-Admin
+CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
+CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
+CheckMade.Common.Model	Sanitary-CleanLead	Sanitär-Reinigungsvorarbeiter
+CheckMade.Common.Model	Sanitary-Observer	Sanitär-Beobachter
 CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
 CheckMade.Common.Model	🔧 Technical	🔧 Technik
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
@@ -55,7 +55,7 @@ CheckMade.ChatBot.Logic	💨 Logged out.	💨 Ausgeloggt.
 CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
-CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitärreinigung
+CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitär
 CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländereinigung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter

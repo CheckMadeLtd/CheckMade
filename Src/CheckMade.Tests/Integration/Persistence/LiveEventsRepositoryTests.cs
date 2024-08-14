@@ -107,7 +107,7 @@ public sealed class LiveEventsRepositoryTests
         ];
 
         var actualConsumableItemsAtX2024Sphere1 = 
-            ((SaniCampDetails)liveEventGraph.DivIntoSpheres
+            ((SanitaryCampDetails)liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere1_AtX2024.Name)
                 .Details)
             .AvailableConsumables;
@@ -118,7 +118,7 @@ public sealed class LiveEventsRepositoryTests
         }
         
         var actualConsumableItemsAtX2024Sphere2 = 
-            ((SaniCampDetails)liveEventGraph.DivIntoSpheres
+            ((SanitaryCampDetails)liveEventGraph.DivIntoSpheres
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .Details)
             .AvailableConsumables;

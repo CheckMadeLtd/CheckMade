@@ -74,7 +74,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereConfirmation<SaniCleanTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereConfirmation<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =
@@ -120,7 +120,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please select a ";
-        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereSelection<SaniCleanTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereSelection<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =
@@ -149,7 +149,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowState: new ResultantWorkflowState(
                     basics.glossary.GetId(typeof(NewIssueWorkflow)),
-                    basics.glossary.GetId(typeof(INewIssueSphereSelection<SaniCleanTrade>))))];
+                    basics.glossary.GetId(typeof(INewIssueSphereSelection<SanitaryTrade>))))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -161,7 +161,7 @@ public sealed class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select the type of issue:";
         var expectedNewState = 
-            basics.glossary.GetId(typeof(INewIssueTypeSelection<SaniCleanTrade>));
+            basics.glossary.GetId(typeof(INewIssueTypeSelection<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =

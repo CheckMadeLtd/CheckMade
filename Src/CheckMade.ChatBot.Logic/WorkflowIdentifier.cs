@@ -143,7 +143,7 @@ internal sealed record WorkflowIdentifier(
 
             return sourceWorkflowTerminator switch
             {
-                INewIssueSubmissionSucceeded<SaniCleanTrade> or 
+                INewIssueSubmissionSucceeded<SanitaryTrade> or 
                     INewIssueSubmissionSucceeded<SiteCleanTrade> =>
                     Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
 
