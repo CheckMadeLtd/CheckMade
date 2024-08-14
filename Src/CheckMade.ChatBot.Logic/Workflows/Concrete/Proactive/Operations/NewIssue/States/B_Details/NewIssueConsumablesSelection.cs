@@ -15,10 +15,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIss
 internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueConsumablesSelection<T>(
-        IDomainGlossary Glossary,
-        IGeneralWorkflowUtils WorkflowUtils,
-        IStateMediator Mediator,
-        ILiveEventsRepository LiveEventsRepo) 
+    IDomainGlossary Glossary,
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator,
+    ILiveEventsRepository LiveEventsRepo) 
     : INewIssueConsumablesSelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -114,10 +114,12 @@ internal sealed record NewIssueConsumablesSelection<T>(
         TlgInput currentInput)
     {
         var currentSphere = 
-            GetLastSelectedSphere(interactiveHistory, 
+            GetLastSelectedSphere<T>(
+                interactiveHistory, 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                    new T()));
+                    new T()),
+                Glossary);
 
         return currentSphere.Details.AvailableConsumables;
     }

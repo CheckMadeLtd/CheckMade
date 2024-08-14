@@ -19,9 +19,9 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.New
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 
 internal sealed record IssueFactory<T>(
-        ILiveEventsRepository LiveEventsRepo,
-        IRolesRepository RolesRepo,
-        IDomainGlossary Glossary) 
+    ILiveEventsRepository LiveEventsRepo,
+    IRolesRepository RolesRepo,
+    IDomainGlossary Glossary) 
     : IIssueFactory<T> where T : ITrade, new()
 {
     public async Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
@@ -45,7 +45,7 @@ internal sealed record IssueFactory<T>(
                 new GeneralIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -56,7 +56,7 @@ internal sealed record IssueFactory<T>(
                 new CleanlinessIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
@@ -68,7 +68,7 @@ internal sealed record IssueFactory<T>(
                 new ConsumablesIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
                     AffectedItems: GetSelectedConsumablesItems(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -79,7 +79,7 @@ internal sealed record IssueFactory<T>(
                 new StaffIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
                     HandledBy: Option<Role>.None(),
@@ -90,7 +90,7 @@ internal sealed record IssueFactory<T>(
                 new TechnicalIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
-                    Sphere: GetLastSelectedSphere(inputs, allSpheres),
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres, Glossary),
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,

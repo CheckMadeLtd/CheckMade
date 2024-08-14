@@ -26,11 +26,12 @@ internal sealed record NewIssueFacilitySelection<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentSphere = 
-            GetLastSelectedSphere(
+            GetLastSelectedSphere<T>(
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput), 
                 GetAllTradeSpecificSpheres(
                     (await LiveEventsRepo.GetAsync(currentInput.LiveEventContext.GetValueOrThrow()))!,
-                    new T()));
+                    new T()),
+                Glossary);
         
         List<OutputDto> outputs =
         [
