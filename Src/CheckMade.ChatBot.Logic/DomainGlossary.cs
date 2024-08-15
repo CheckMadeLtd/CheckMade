@@ -111,6 +111,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewAssessmentEvidenceEntry), "DB4KLT");
         AddTerm(typeof(INewAssessmentReview), "D93MJE");
         AddTerm(typeof(INewAssessmentSubmissionSucceeded), "DF1IJA");
+        AddTerm(typeof(INewAssessmentCancelled), "DZQ2CK");
         
         #endregion
         

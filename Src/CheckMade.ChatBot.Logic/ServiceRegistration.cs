@@ -86,5 +86,6 @@ public static class ServiceRegistration
         services.AddScoped<INewAssessmentEvidenceEntry, NewAssessmentEvidenceEntry>();
         services.AddScoped<INewAssessmentReview, NewAssessmentReview>();
         services.AddScoped<INewAssessmentSubmissionSucceeded, NewAssessmentSubmissionSucceeded>();
+        services.AddScoped<INewAssessmentCancelled, NewAssessmentCancelled>();
     }
 }

@@ -19,6 +19,11 @@ public sealed record StakeholderReporter<T>(
         IIssueFactory<T> IssueFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
+    public Task<IReadOnlyCollection<OutputDto>> GetNewAssessmentNotificationsAsync(IReadOnlyCollection<TlgInput> inputHistory)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {

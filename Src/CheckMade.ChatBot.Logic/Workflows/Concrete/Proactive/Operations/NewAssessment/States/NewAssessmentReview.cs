@@ -65,8 +65,66 @@ internal sealed record NewAssessmentReview(
             () => outputs.ToImmutableReadOnlyCollection());
     }
 
-    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        throw new NotImplementedException();
+        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+            return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
+
+        var selectedControl = 
+            currentInput.Details.ControlPromptEnumCode.GetValueOrThrow();
+
+        return selectedControl switch
+        {
+            (long)ControlPrompts.Submit =>
+                WorkflowResponse.Create(
+                    currentInput,
+                    new OutputDto
+                    {
+                        Text = Ui("✅ Submission succeeded!")
+                    },
+                    await GetStakeholderNotificationsAsync(),
+                    Mediator.GetTerminator(typeof(INewAssessmentSubmissionSucceeded)),
+                    promptTransition: new PromptTransition(currentInput.TlgMessageId),
+                    entityGuid: await GetLastGuidAsync()),
+            
+            (long)ControlPrompts.Cancel => 
+                await WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput,
+                    Mediator.Next(typeof(INewAssessmentCancelled)), 
+                    new PromptTransition(currentInput.TlgMessageId)),
+            
+            _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
+        };
+
+        async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
+        {
+            var historyWithUpdatedCurrentInput = 
+                await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(
+                    currentInput with
+                    {
+                        EntityGuid = await GetLastGuidAsync(),
+                        ResultantWorkflow = new ResultantWorkflowState(
+                            Glossary.GetId(typeof(NewAssessmentWorkflow)),
+                            Glossary.GetId(typeof(INewAssessmentSubmissionSucceeded)))
+                    });
+            
+            return await Reporter.GetNewAssessmentNotificationsAsync(historyWithUpdatedCurrentInput);
+        }
+        
+        async Task<Guid> GetLastGuidAsync()
+        {
+            if (_lastGuidCache == Guid.Empty)
+            {
+                var interactiveHistory =
+                    await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
+            
+                _lastGuidCache = interactiveHistory
+                    .Select(i => i.EntityGuid)
+                    .Last(g => g.IsSome)
+                    .GetValueOrThrow();
+            }
+
+            return _lastGuidCache;
+        }
     }
 }
