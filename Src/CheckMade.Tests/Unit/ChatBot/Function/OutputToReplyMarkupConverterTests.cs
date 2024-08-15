@@ -27,7 +27,7 @@ public sealed class OutputToReplyMarkupConverterTests
         
         List<DomainTerm> domainTermSelection = 
         [ 
-            Dt(typeof(CleanlinessIssue<SanitaryTrade>)),
+            Dt(typeof(CleaningIssue<SanitaryTrade>)),
             Dt(typeof(TechnicalIssue<SanitaryTrade>)),
             Dt(typeof(ConsumablesIssue<SanitaryTrade>))
         ];
@@ -45,9 +45,9 @@ public sealed class OutputToReplyMarkupConverterTests
                 {
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(CleanlinessIssue<SanitaryTrade>))
+                            .GetUi(typeof(CleaningIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(CleanlinessIssue<SanitaryTrade>))), 
+                        basics.domainGlossary.GetId(typeof(CleaningIssue<SanitaryTrade>))), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(

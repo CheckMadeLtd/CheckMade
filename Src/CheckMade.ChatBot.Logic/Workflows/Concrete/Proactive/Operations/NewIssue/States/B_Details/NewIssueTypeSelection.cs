@@ -68,7 +68,7 @@ internal sealed record NewIssueTypeSelection<T>(
             
             return issueTypeName switch
             {
-                nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
+                nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
                         Mediator.Next(typeof(INewIssueFacilitySelection<T>)),

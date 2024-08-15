@@ -24,7 +24,7 @@ internal sealed record NewAssessmentRate(
         [
             new OutputDto
             {
-                Text = Ui("Provide cleanliness rating:"),
+                Text = Ui("Provide rating for cleaning:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(AssessmentRating))
                         .OrderBy(dt => dt.EnumValue).ToImmutableReadOnlyCollection()),

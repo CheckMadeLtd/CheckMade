@@ -6,7 +6,7 @@ using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummar
 
 namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
-public sealed record CleanlinessIssue<T>(
+public sealed record CleaningIssue<T>(
         Guid Id,
         DateTimeOffset CreationDate,
         ISphereOfAction Sphere,
