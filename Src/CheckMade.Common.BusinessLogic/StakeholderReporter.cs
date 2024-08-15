@@ -56,7 +56,7 @@ public sealed record StakeholderReporter<T>(
         {
             return 
                 UiConcatenate(
-                    Ui("New cleanliness assessment:"),
+                    Ui("New cleaning assessment:"),
                     UiNewLines(1),
                     UiNoTranslate("- - - - - -"),
                     UiNewLines(1),
@@ -130,7 +130,7 @@ public sealed record StakeholderReporter<T>(
         
         var allRelevantSpecialist = currentIssueTypeName switch
         {
-            nameof(CleanlinessIssue<T>) =>
+            nameof(CleaningIssue<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),

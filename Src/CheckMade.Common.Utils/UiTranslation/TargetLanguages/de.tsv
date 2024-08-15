@@ -29,7 +29,7 @@ CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
 CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
 CheckMade.Common.Model	Sanitary-CleanLead	Sanitär-Reinigungsvorarbeiter
 CheckMade.Common.Model	Sanitary-Observer	Sanitär-Beobachter
-CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
+CheckMade.Common.Model	🪣 Cleaning	🪣 Reinigung
 CheckMade.Common.Model	🔧 Technical	🔧 Technik
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
@@ -81,7 +81,7 @@ CheckMade.ChatBot.Logic	❗🎙 Voice messages are not yet supported. You can se
 CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
-CheckMade.ChatBot.Logic	❗ General	❗ Allgemein
+CheckMade.ChatBot.Logic	❗ General	❗ Sonstiges
 CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
 CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
 CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
@@ -105,6 +105,6 @@ CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
 CheckMade.ChatBot.Logic	<b>Rating:</b> 	<b>Bewertung:</b> 
-CheckMade.ChatBot.Logic	Provide cleanliness rating:	Bitte Sauberkeitsbewertung angeben:
+CheckMade.ChatBot.Logic	Provide rating for cleaning:	Bitte Reinigungsbewertung angeben:
 CheckMade.ChatBot.Logic	Please provide at least one photo, and optionally add a description.	Bitte mindestens ein Foto machen, und optional auch eine Beschreibung eingeben.
-CheckMade.ChatBot.Logic	New cleanliness assessment:	Neue Sauberkeitsbewertung:
+CheckMade.ChatBot.Logic	New cleaning assessment:	Neue Reinigungsbewertung:

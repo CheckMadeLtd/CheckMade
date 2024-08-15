@@ -31,6 +31,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
+                        .Where(dt => dt.TypeValue != typeof(GeneralIssue<T>))
                         .ToImmutableReadOnlyCollection()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back
@@ -68,7 +69,7 @@ internal sealed record NewIssueTypeSelection<T>(
             
             return issueTypeName switch
             {
-                nameof(CleanlinessIssue<T>) or nameof(TechnicalIssue<T>) => 
+                nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
                         Mediator.Next(typeof(INewIssueFacilitySelection<T>)),

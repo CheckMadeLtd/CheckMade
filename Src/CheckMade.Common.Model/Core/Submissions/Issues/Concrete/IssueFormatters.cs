@@ -25,17 +25,17 @@ internal static class IssueFormatters
             UiNewLines(1),
             Ui("<b>Reported by:</b> {0} ",
                 $"{issue.ReportedBy.ByUser.FirstName} {issue.ReportedBy.ByUser.LastName}"),
-            Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()),
-            UiNewLines(1),
-            Ui("<b>Currently handled by:</b> "), issue.HandledBy.IsSome 
-                ? UiConcatenate(UiIndirect(
-                        $"{issue.HandledBy.GetValueOrThrow().ByUser.FirstName} " +
-                        $"{issue.HandledBy.GetValueOrThrow().ByUser.LastName} "),
-                    Ui("in their role as "), glossary.GetUi(issue.HandledBy.GetValueOrThrow().RoleType.GetType()))
-                : UiNoTranslate("n/a"),
-            UiNewLines(1),
-            Ui("<b>Current status:</b> "), glossary.GetUi(issue.Status),
-            UiNewLines(1));
+            Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()));
+        // UiNewLines(1),
+        // Ui("<b>Currently handled by:</b> "), issue.HandledBy.IsSome 
+        //     ? UiConcatenate(UiIndirect(
+        //             $"{issue.HandledBy.GetValueOrThrow().ByUser.FirstName} " +
+        //             $"{issue.HandledBy.GetValueOrThrow().ByUser.LastName} "),
+        //         Ui("in their role as "), glossary.GetUi(issue.HandledBy.GetValueOrThrow().RoleType.GetType()))
+        //     : UiNoTranslate("n/a"),
+        // UiNewLines(1),
+        // Ui("<b>Current status:</b> "), glossary.GetUi(issue.Status),
+        // UiNewLines(1));
     }
 
     public static UiString FormatFacilityInfo<T>(

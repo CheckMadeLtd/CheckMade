@@ -122,8 +122,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(GeneralIssue<SanitaryTrade>), "DVGI3N", Ui("❗ General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
         
-        AddTerm(typeof(CleanlinessIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleanliness"));
-        AddTerm(typeof(CleanlinessIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleanliness"));
+        AddTerm(typeof(CleaningIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleaning"));
+        AddTerm(typeof(CleaningIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleaning"));
         
         AddTerm(typeof(TechnicalIssue<SanitaryTrade>), "DM46NG", Ui("🔧 Technical"));
         AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical"));

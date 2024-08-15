@@ -53,8 +53,8 @@ internal sealed record IssueFactory<T>(
                     Status: GetStatus(),
                     Glossary),
 
-            nameof(CleanlinessIssue<T>) =>
-                new CleanlinessIssue<T>(
+            nameof(CleaningIssue<T>) =>
+                new CleaningIssue<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
                     Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),

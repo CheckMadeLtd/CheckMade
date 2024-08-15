@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 
-public static class AssessmentFormatters
+internal static class AssessmentFormatters
 {
     public static UiString FormatCommonBasics(
         Assessment assessment, IDomainGlossary glossary)
