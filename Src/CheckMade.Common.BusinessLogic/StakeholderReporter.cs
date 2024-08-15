@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
@@ -16,12 +17,54 @@ namespace CheckMade.Common.BusinessLogic;
 public sealed record StakeholderReporter<T>(
         IRolesRepository RoleRepo,
         ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        IIssueFactory<T> IssueFactory) 
+        IIssueFactory<T> IssueFactory,
+        IAssessmentFactory AssessmentFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetNewAssessmentNotificationsAsync(IReadOnlyCollection<TlgInput> inputHistory)
+    public async Task<IReadOnlyCollection<OutputDto>> GetNewAssessmentNotificationsAsync(
+        IReadOnlyCollection<TlgInput> inputHistory)
     {
-        throw new NotImplementedException();
+        var newAssessment = 
+            await AssessmentFactory.CreateAsync(inputHistory); 
+        var completeIssueSummary = 
+            newAssessment.GetSummary();
+        // ToDo: Clean up this use of fake data
+        var recipients = 
+            await GetNewIssueNotificationRecipientsAsync(inputHistory, "fake issue type name");
+        
+        return 
+            recipients
+                .Select(recipient =>
+                    new OutputDto
+                    {
+                        Text = GetNotificationOutput(kvp =>
+                            (recipient.Role.RoleType.GetAssessmentSummaryCategoriesForNotifications() & kvp.Key) != 0),
+                        LogicalPort = recipient,
+                        ControlPromptsSelection = HasEvidenceWithAttachments() 
+                            ? ControlPrompts.ViewAttachments 
+                            : Option<ControlPrompts>.None()
+                    })
+                .ToImmutableReadOnlyCollection();
+
+        bool HasEvidenceWithAttachments()
+        {
+            return newAssessment.Evidence.IsSome && 
+                   newAssessment.Evidence.GetValueOrThrow().Attachments.IsSome;
+        }
+        
+        UiString GetNotificationOutput(Func<KeyValuePair<AssessmentSummaryCategories, UiString>, bool> summaryFilter)
+        {
+            return 
+                UiConcatenate(
+                    Ui("New issue submission:"),
+                    UiNewLines(1),
+                    UiNoTranslate("- - - - - -"),
+                    UiNewLines(1),
+                    UiConcatenate(
+                        completeIssueSummary.Where(summaryFilter)
+                            .Select(kvp => kvp.Value)
+                            .ToArray()));
+        }
     }
 
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(

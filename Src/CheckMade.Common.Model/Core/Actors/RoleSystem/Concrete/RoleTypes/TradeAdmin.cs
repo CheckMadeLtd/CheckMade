@@ -1,3 +1,4 @@
+using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
@@ -10,4 +11,7 @@ public sealed record TradeAdmin<T> : IRoleType where T : ITrade, new()
 
     public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
         IssueSummaryCategories.All;
+
+    public AssessmentSummaryCategories GetAssessmentSummaryCategoriesForNotifications() =>
+        AssessmentSummaryCategories.All;
 }
