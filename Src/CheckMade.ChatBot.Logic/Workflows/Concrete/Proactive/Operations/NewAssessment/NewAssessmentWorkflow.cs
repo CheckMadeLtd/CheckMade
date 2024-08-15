@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -12,8 +13,10 @@ internal sealed record NewAssessmentWorkflow(
     IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {
-        throw new NotImplementedException();
+        return await WorkflowResponse.CreateFromNextStateAsync(
+            currentInput,
+            Mediator.Next(typeof(INewAssessmentSphereSelection)));
     }
 }

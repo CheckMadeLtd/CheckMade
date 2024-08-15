@@ -5,6 +5,8 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
@@ -100,6 +102,12 @@ public sealed record DomainGlossary : IDomainGlossary
         
         AddTerm(typeof(INewIssueCancelled<SanitaryTrade>), "DN1KAK");
         AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");
+        
+        
+        AddTerm(typeof(NewAssessmentWorkflow), "DXFLZ2");
+        AddTerm(typeof(INewAssessmentSphereSelection), "DEFMTA");
+        AddTerm(typeof(INewAssessmentFacilitySelection), "D5SEWH");
+        AddTerm(typeof(INewAssessmentRate), "D1K6AS");
         
         #endregion
         
