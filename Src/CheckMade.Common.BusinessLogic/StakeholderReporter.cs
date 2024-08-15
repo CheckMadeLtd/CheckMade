@@ -21,6 +21,8 @@ public sealed record StakeholderReporter<T>(
         IAssessmentFactory AssessmentFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
+    private const string IssueTypeIsActuallyAssessment = "MagicStringForAssessment";
+    
     public async Task<IReadOnlyCollection<OutputDto>> GetNewAssessmentNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory)
     {
@@ -30,7 +32,7 @@ public sealed record StakeholderReporter<T>(
             newAssessment.GetSummary();
         // ToDo: Clean up this use of fake data
         var recipients = 
-            await GetNewIssueNotificationRecipientsAsync(inputHistory, "fake issue type name");
+            await GetNewIssueNotificationRecipientsAsync(inputHistory, IssueTypeIsActuallyAssessment);
         
         return 
             recipients
@@ -130,7 +132,7 @@ public sealed record StakeholderReporter<T>(
         
         var allRelevantSpecialist = currentIssueTypeName switch
         {
-            nameof(CleaningIssue<T>) =>
+            nameof(CleaningIssue<T>) or IssueTypeIsActuallyAssessment =>
                 allRolesAtCurrentLiveEvent
                     .Where(r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),
