@@ -9,6 +9,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.Submissions;
 using CheckMade.Common.Model.Core.Submissions.Issues;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
@@ -146,7 +147,7 @@ internal sealed record IssueFactory<T>(
             }
         }
 
-        IssueEvidence GetSubmittedEvidence()
+        SubmissionEvidence GetSubmittedEvidence()
         {
             var combinedDescriptionEvidence = new StringBuilder();
 
@@ -191,7 +192,7 @@ internal sealed record IssueFactory<T>(
 
             var combinedDescription = combinedDescriptionEvidence.ToString();
             
-            return new IssueEvidence
+            return new SubmissionEvidence
             {
                 Description = !string.IsNullOrWhiteSpace(combinedDescription)
                     ? combinedDescription

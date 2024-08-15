@@ -7,4 +7,6 @@ public interface IIssue : ISubmission
 {
     Option<Role> HandledBy { get; }
     IssueStatus Status { get; }
+    
+    IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary();
 }

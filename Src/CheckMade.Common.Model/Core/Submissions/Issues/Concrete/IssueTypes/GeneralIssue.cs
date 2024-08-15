@@ -10,7 +10,7 @@ public sealed record GeneralIssue<T>(
         Guid Id, 
         DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
-        IssueEvidence Evidence, 
+        SubmissionEvidence Evidence, 
         Role ReportedBy, 
         Option<Role> HandledBy, 
         IssueStatus Status,

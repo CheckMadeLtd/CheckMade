@@ -1,6 +1,5 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 
 namespace CheckMade.Common.Model.Core.Submissions;
 
@@ -10,6 +9,4 @@ public interface ISubmission
     DateTimeOffset CreationDate { get; }
     ISphereOfAction Sphere { get; }
     Role ReportedBy { get; }
-
-    IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary();
 }
