@@ -52,7 +52,7 @@ CheckMade.ChatBot.Logic	The previous workflow was completed. You can continue wi
 CheckMade.ChatBot.Logic	The previous workflow was completed, so your last message/action will be ignored.	Der vorherige Workflow ist abgeschlossen, deine letzte Nachricht/Aktion wird deswegen ignoriert.
 CheckMade.ChatBot.Logic	FYI: you interrupted the previous workflow before its completion or successful submission.	FYI: Sie haben den vorherigen Workflow unterbrochen, bevor er abgeschlossen bzw. abgeschickt wurde.
 CheckMade.ChatBot.Logic	💨 Logged out.	💨 Ausgeloggt.
-CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
+CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?
 CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
 CheckMade.Common.Model	🪠 Sanitary	🪠 Sanitär
