@@ -59,6 +59,8 @@ internal sealed record NewIssueFacilitySelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
         {
+            var selectedFacility = currentInput.Details.DomainTerm.GetValueOrThrow();
+            
             return await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
                 Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
@@ -68,7 +70,7 @@ internal sealed record NewIssueFacilitySelection<T>(
                         Text = UiConcatenate(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                             UiNoTranslate(" "),
-                            Glossary.GetUi(currentInput.Details.DomainTerm.GetValueOrThrow())),
+                            Glossary.GetUi(selectedFacility)),
                         UpdateExistingOutputMessageId = currentInput.TlgMessageId
                     }));
         }

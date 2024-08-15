@@ -109,6 +109,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewAssessmentFacilitySelection), "D5SEWH");
         AddTerm(typeof(INewAssessmentRate), "D1K6AS");
         AddTerm(typeof(INewAssessmentEvidenceEntry), "DB4KLT");
+        AddTerm(typeof(INewAssessmentReview), "D93MJE");
         AddTerm(typeof(INewAssessmentSubmissionSucceeded), "DF1IJA");
         
         #endregion
@@ -138,9 +139,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
-        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("😃(1)"));
-        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("😐(2)"));
-        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("😩(3)"));
+        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
         
         #endregion
         
