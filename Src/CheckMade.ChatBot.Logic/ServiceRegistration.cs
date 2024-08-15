@@ -35,6 +35,7 @@ public static class ServiceRegistration
 
         services.AddScoped<IIssueFactory<SanitaryTrade>, IssueFactory<SanitaryTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
+        services.AddScoped<IAssessmentFactory, AssessmentFactory>();
 
         services.AddScoped<UserAuthWorkflow>();
         services.AddScoped<NewIssueWorkflow>();

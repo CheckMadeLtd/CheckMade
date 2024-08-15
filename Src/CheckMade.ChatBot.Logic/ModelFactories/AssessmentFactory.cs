@@ -138,9 +138,11 @@ internal sealed record AssessmentFactory(
             };
         }
 
-        AssessmentRating GetRating()
-        {
-            throw new NotImplementedException();
-        }
+        AssessmentRating GetRating() =>
+            (AssessmentRating)inputs
+                .Last(i =>
+                    i.Details.DomainTerm.IsSome &&
+                    i.Details.DomainTerm.GetValueOrThrow().EnumType == typeof(AssessmentRating))
+                .Details.DomainTerm.GetValueOrThrow().EnumValue!;
     }
 }
