@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSettin
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
@@ -145,7 +146,8 @@ internal sealed record WorkflowIdentifier(
             return sourceWorkflowTerminator switch
             {
                 INewIssueSubmissionSucceeded<SanitaryTrade> or 
-                    INewIssueSubmissionSucceeded<SiteCleanTrade> =>
+                    INewIssueSubmissionSucceeded<SiteCleanTrade> or
+                    INewAssessmentSubmissionSucceeded =>
                     Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
 
                 _ => throw new InvalidOperationException(
