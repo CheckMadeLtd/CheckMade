@@ -2,6 +2,7 @@
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -42,17 +43,14 @@ public sealed record StakeholderReporter<T>(
                         Text = GetNotificationOutput(kvp =>
                             (recipient.Role.RoleType.GetAssessmentSummaryCategoriesForNotifications() & kvp.Key) != 0),
                         LogicalPort = recipient,
-                        ControlPromptsSelection = HasEvidenceWithAttachments() 
-                            ? ControlPrompts.ViewAttachments 
-                            : Option<ControlPrompts>.None()
+                        Attachments = GetAttachments(),
                     })
                 .ToImmutableReadOnlyCollection();
 
-        bool HasEvidenceWithAttachments()
-        {
-            return newAssessment.Evidence.IsSome && 
-                   newAssessment.Evidence.GetValueOrThrow().Attachments.IsSome;
-        }
+        Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
+            newAssessment.Evidence.IsSome 
+                ? newAssessment.Evidence.GetValueOrThrow().Attachments
+                : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
         UiString GetNotificationOutput(Func<KeyValuePair<AssessmentSummaryCategories, UiString>, bool> summaryFilter)
         {
@@ -87,14 +85,14 @@ public sealed record StakeholderReporter<T>(
                         Text = GetNotificationOutput(kvp =>
                             (recipient.Role.RoleType.GetIssueSummaryCategoriesForNotifications() & kvp.Key) != 0),
                         LogicalPort = recipient,
-                        ControlPromptsSelection = HasEvidenceWithAttachments() 
-                            ? ControlPrompts.ViewAttachments 
-                            : Option<ControlPrompts>.None()
+                        Attachments = GetAttachments()
                     })
                 .ToImmutableReadOnlyCollection();
 
-        bool HasEvidenceWithAttachments() =>
-            (newIssue as ITradeIssueWithEvidence) is { Evidence.Attachments.IsSome: true };
+        Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
+            newIssue is ITradeIssueWithEvidence issueWithEvidence 
+                ? issueWithEvidence.Evidence.Attachments 
+                : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
         UiString GetNotificationOutput(Func<KeyValuePair<IssueSummaryCategories, UiString>, bool> summaryFilter)
         {
