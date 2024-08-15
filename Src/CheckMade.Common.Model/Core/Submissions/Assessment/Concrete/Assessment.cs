@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 
 namespace CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 
-public record Assessment(
+public sealed record Assessment(
     Guid Id, 
     DateTimeOffset CreationDate, 
     ISphereOfAction Sphere, 

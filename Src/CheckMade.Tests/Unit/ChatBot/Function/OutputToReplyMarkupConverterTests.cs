@@ -83,9 +83,9 @@ public sealed class OutputToReplyMarkupConverterTests
         {
             (prompt: No, promptId: new CallbackId((long)No)),
             (prompt: Yes, promptId: new CallbackId((long)Yes)),
-            (prompt: Bad, promptId: new CallbackId((long)Bad)),
-            (prompt: Ok, promptId: new CallbackId((long)Ok)),
-            (prompt: Good, promptId: new CallbackId((long)Good))
+            (prompt: Maybe, promptId: new CallbackId((long)Maybe)),
+            (prompt: Back, promptId: new CallbackId((long)Back)),
+            (prompt: Cancel, promptId: new CallbackId((long)Cancel))
         };
         var outputWithPrompts = new OutputDto
         {
@@ -142,8 +142,8 @@ public sealed class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[] 
         {
-            (prompt: Good, promptId: new CallbackId((long)Good)),
-            (prompt: Bad, promptId: new CallbackId((long)Bad)),
+            (prompt: Yes, promptId: new CallbackId((long)Yes)),
+            (prompt: No, promptId: new CallbackId((long)No)),
         };
         
         var outputWithBoth = new OutputDto

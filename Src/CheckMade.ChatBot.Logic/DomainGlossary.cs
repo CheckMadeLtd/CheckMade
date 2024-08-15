@@ -16,6 +16,7 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -102,7 +103,7 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #endregion
         
-        #region Issues
+        #region Submissions
         
         // Below, presence/absence determines availability of IssueTypes per TradeType, also in the Workflow!
 
@@ -126,6 +127,10 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
+        
+        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("😃"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("😐"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("😩"));
         
         #endregion
         

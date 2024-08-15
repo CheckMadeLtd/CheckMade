@@ -325,7 +325,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData((long)ControlPrompts.Good)]
+    [InlineData((long)ControlPrompts.Yes)]
     [InlineData((long)ControlPrompts.Submit)]
     public async Task ConvertToModelAsync_ConvertsCorrectly_ForMessageWithCallbackQueryToControlPrompt_InAnyMode(
         long enumSourceOfCallbackQuery)

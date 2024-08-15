@@ -208,7 +208,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new()
             {
                 Text = EnglishUiStringForTests,
-                ControlPromptsSelection = ControlPrompts.Bad | ControlPrompts.Good 
+                ControlPromptsSelection = ControlPrompts.Yes | ControlPrompts.No 
             }
         ];
         
