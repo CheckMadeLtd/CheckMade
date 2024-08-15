@@ -33,10 +33,7 @@ internal sealed record LogoutWorkflowConfirm(
                         currentRoleBind.Role.ByUser.FirstName),
                     Glossary.GetUi(currentRoleBind.Role.RoleType.GetType()),
                     UiNoTranslate(".\n"),
-                    Ui("""
-                       Are you sure you want to log out from this chat for {0}?
-                       FYI: You will also be logged out from other non-group bot chats in this role.
-                       """, 
+                    Ui("Are you sure you want to log out from this chat for {0}?", 
                         currentRoleBind.Role.AtLiveEvent.Name)),
                         
                 ControlPromptsSelection = ControlPrompts.YesNo,
