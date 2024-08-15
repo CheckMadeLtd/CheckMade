@@ -31,6 +31,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
+                        .Where(dt => dt.TypeValue != typeof(GeneralIssue<T>))
                         .ToImmutableReadOnlyCollection()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back
