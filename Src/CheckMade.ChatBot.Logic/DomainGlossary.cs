@@ -108,6 +108,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewAssessmentSphereSelection), "DEFMTA");
         AddTerm(typeof(INewAssessmentFacilitySelection), "D5SEWH");
         AddTerm(typeof(INewAssessmentRate), "D1K6AS");
+        AddTerm(typeof(INewAssessmentEvidenceEntry), "DB4KLT");
         
         #endregion
         
