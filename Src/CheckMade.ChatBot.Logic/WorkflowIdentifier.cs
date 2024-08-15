@@ -6,7 +6,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
@@ -28,7 +27,6 @@ internal sealed record WorkflowIdentifier(
     LanguageSettingWorkflow LanguageSettingWorkflow,
     LogoutWorkflow LogoutWorkflow,
     ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
-    IDerivedWorkflowBridgesRepository BridgesRepo,
     IStateMediator Mediator,
     IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
