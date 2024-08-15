@@ -1,4 +1,5 @@
 using System.Text;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
