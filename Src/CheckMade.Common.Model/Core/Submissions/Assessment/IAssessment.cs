@@ -7,7 +7,7 @@ public interface IAssessment : ISubmission
 {
     AssessmentRating Rating { get; }
     IFacility Facility { get; }
-    SubmissionEvidence Evidence { get; }
+    Option<SubmissionEvidence> Evidence { get; }
     
     IReadOnlyDictionary<AssessmentSummaryCategories, UiString> GetSummary();
 }

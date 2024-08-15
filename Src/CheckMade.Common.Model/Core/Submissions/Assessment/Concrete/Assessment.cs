@@ -10,7 +10,7 @@ public sealed record Assessment(
     Role ReportedBy,
     AssessmentRating Rating, 
     IFacility Facility, 
-    SubmissionEvidence Evidence) 
+    Option<SubmissionEvidence> Evidence) 
     : IAssessment
 {
     public IReadOnlyDictionary<AssessmentSummaryCategories, UiString> GetSummary()
