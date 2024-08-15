@@ -43,7 +43,7 @@ public sealed record DomainGlossary : IDomainGlossary
 
         #region Trades
         
-        AddTerm(typeof(SanitaryTrade), "DX3KFI", Ui("🪠 Sanitary Cleaning"));
+        AddTerm(typeof(SanitaryTrade), "DX3KFI", Ui("🪠 Sanitary"));
         AddTerm(typeof(SiteCleanTrade), "DSIL7M", Ui("🧹 Site Cleaning"));
         
         #endregion
@@ -128,9 +128,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
-        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("😃"));
-        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("😐"));
-        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("😩"));
+        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("😃(1)"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("😐(2)"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("😩(3)"));
         
         #endregion
         

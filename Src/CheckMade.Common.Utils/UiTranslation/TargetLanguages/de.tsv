@@ -55,7 +55,7 @@ CheckMade.ChatBot.Logic	💨 Logged out.	💨 Ausgeloggt.
 CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
-CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitär
+CheckMade.Common.Model	🪠 Sanitary	🪠 Sanitär
 CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländereinigung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
@@ -104,3 +104,4 @@ CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
+CheckMade.ChatBot.Logic	<b>Rating:</b> 	<b>Bewertung:</b> 
