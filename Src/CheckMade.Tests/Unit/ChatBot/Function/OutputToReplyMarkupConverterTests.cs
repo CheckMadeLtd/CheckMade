@@ -81,11 +81,11 @@ public sealed class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[]
         {
-            (prompt: No, promptId: new CallbackId((long)No)),
-            (prompt: Yes, promptId: new CallbackId((long)Yes)),
-            (prompt: Maybe, promptId: new CallbackId((long)Maybe)),
             (prompt: Back, promptId: new CallbackId((long)Back)),
-            (prompt: Cancel, promptId: new CallbackId((long)Cancel))
+            (prompt: Cancel, promptId: new CallbackId((long)Cancel)),
+            (prompt: Skip, promptId: new CallbackId((long)Skip)),
+            (prompt: Continue, promptId: new CallbackId((long)Continue)),
+            (prompt: Yes, promptId: new CallbackId((long)Yes))
         };
         var outputWithPrompts = new OutputDto
         {
