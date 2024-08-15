@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Common.Model.Core.Issues.Concrete;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 
 internal static class IssueFormatters
 {

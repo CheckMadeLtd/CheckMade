@@ -1,8 +1,8 @@
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 
-public sealed record SaniCampDetails : ISphereOfActionDetails
+public sealed record SanitaryCampDetails : ISphereOfActionDetails
 {
-    public SaniCampDetails(Option<Geo> GeoCoordinates,
+    public SanitaryCampDetails(Option<Geo> GeoCoordinates,
         IReadOnlyCollection<DomainTerm> AvailableFacilities,
         IReadOnlyCollection<DomainTerm> AvailableConsumables)
     {

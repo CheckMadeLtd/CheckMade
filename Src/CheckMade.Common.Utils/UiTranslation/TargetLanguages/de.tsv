@@ -24,20 +24,20 @@ CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
 CheckMade.Common.Model	👎 Bad	👎 Schlecht
 CheckMade.Common.Model	😐 Ok	😐 Ok
 CheckMade.Common.Model	👍 Good	👍 Gut
-CheckMade.Common.Model	SaniClean-Admin	Sanitärreinigung-Admin
-CheckMade.Common.Model	SaniClean-Inspector	Sanitärreinigung-Inspektor
-CheckMade.Common.Model	SaniClean-Engineer	Sanitärreinigung-Installateur
-CheckMade.Common.Model	SaniClean-CleanLead	Sanitärreinigung-Reinigungsvorarbeiter
-CheckMade.Common.Model	SaniClean-Observer	Sanitärreinigung-Beobachter
-CheckMade.Common.Model	🪣 Cleanliness Issue	🪣 Sauberkeitsproblem
-CheckMade.Common.Model	🔧 Technical Issue	🔧 Technik-Problem
+CheckMade.Common.Model	Sanitary-Admin	Sanitär-Admin
+CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
+CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
+CheckMade.Common.Model	Sanitary-CleanLead	Sanitär-Reinigungsvorarbeiter
+CheckMade.Common.Model	Sanitary-Observer	Sanitär-Beobachter
+CheckMade.Common.Model	🪣 Cleanliness	🪣 Sauberkeit
+CheckMade.Common.Model	🔧 Technical	🔧 Technik
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
 CheckMade.Common.Model	🧴 Soap	🧴 Seife
 CheckMade.Common.Model	🚽 Toilet	🚽 Toilette
 CheckMade.Common.Model	🚿 Shower	🚿 Dusche
-CheckMade.Common.Model	🙋 Staff Issue	🙋 Personalproblem
+CheckMade.Common.Model	🙋 Staff	🙋 Personal
 CheckMade.Common.Model	Other Facility	Andere Einrichtung
 CheckMade.ChatBot.Logic	⛺ Please choose a camp.	⛺ Bitte ein camp auswählen.
 CheckMade.ChatBot.Function	Please choose:	Bitte wählen:
@@ -55,7 +55,7 @@ CheckMade.ChatBot.Logic	💨 Logged out.	💨 Ausgeloggt.
 CheckMade.ChatBot.Logic	Are you sure you want to log out from this chat for {0}?\nFYI: You will also be logged out from other non-group bot chats in this role.	Sind Sie sicher, dass Sie sich aus diesem Chat beim {0} abmelden möchten?\nFYI: Sie werden auch aus anderen Nicht-Gruppen-Bot-Chats in dieser Rolle abgemeldet.
 CheckMade.ChatBot.Logic	Logout aborted.\n	Logout abgebrochen.\n
 CheckMade.ChatBot.Logic	🫡 Welcome to the CheckMade ChatBot. I shall follow your command!	🫡 Willkommen zum CheckMade ChatBot. Ich stehe für Sie Gewehr bei Fuß!
-CheckMade.Common.Model	🪠 Sanitary Cleaning	🪠 Sanitärreinigung
+CheckMade.Common.Model	🪠 Sanitary	🪠 Sanitär
 CheckMade.Common.Model	🧹 Site Cleaning	🧹 Geländereinigung
 CheckMade.Common.Model	LiveEvent-Admin	LiveEvent-Admin
 CheckMade.Common.Model	LiveEvent-Observer	LiveEvent-Beobachter
@@ -81,7 +81,7 @@ CheckMade.ChatBot.Logic	❗🎙 Voice messages are not yet supported. You can se
 CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
-CheckMade.ChatBot.Logic	❗ General Issue	❗ Allgemeines Problem
+CheckMade.ChatBot.Logic	❗ General	❗ Allgemein
 CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
 CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
 CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
@@ -104,3 +104,6 @@ CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
+CheckMade.ChatBot.Logic	<b>Rating:</b> 	<b>Bewertung:</b> 
+CheckMade.ChatBot.Logic	Provide cleanliness rating:	Bitte Sauberkeitsbewertung angeben:
+CheckMade.ChatBot.Logic	Please provide at least one photo, and optionally add a description.	Bitte mindestens ein Foto machen, und optional auch eine Beschreibung eingeben.

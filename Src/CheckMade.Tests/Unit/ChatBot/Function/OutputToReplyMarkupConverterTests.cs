@@ -2,8 +2,8 @@ using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
@@ -27,9 +27,9 @@ public sealed class OutputToReplyMarkupConverterTests
         
         List<DomainTerm> domainTermSelection = 
         [ 
-            Dt(typeof(CleanlinessIssue<SaniCleanTrade>)),
-            Dt(typeof(TechnicalIssue<SaniCleanTrade>)),
-            Dt(typeof(ConsumablesIssue<SaniCleanTrade>))
+            Dt(typeof(CleanlinessIssue<SanitaryTrade>)),
+            Dt(typeof(TechnicalIssue<SanitaryTrade>)),
+            Dt(typeof(ConsumablesIssue<SanitaryTrade>))
         ];
 
         var outputWithDomainTerms = new OutputDto
@@ -45,23 +45,23 @@ public sealed class OutputToReplyMarkupConverterTests
                 {
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(CleanlinessIssue<SaniCleanTrade>))
+                            .GetUi(typeof(CleanlinessIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(CleanlinessIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(CleanlinessIssue<SanitaryTrade>))), 
                 },
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(TechnicalIssue<SaniCleanTrade>))
+                            .GetUi(typeof(TechnicalIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(TechnicalIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(TechnicalIssue<SanitaryTrade>))), 
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
-                            .GetUi(typeof(ConsumablesIssue<SaniCleanTrade>))
+                            .GetUi(typeof(ConsumablesIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(ConsumablesIssue<SaniCleanTrade>))), 
+                        basics.domainGlossary.GetId(typeof(ConsumablesIssue<SanitaryTrade>))), 
                 ]
             }));
 
@@ -81,11 +81,11 @@ public sealed class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[]
         {
-            (prompt: No, promptId: new CallbackId((long)No)),
-            (prompt: Yes, promptId: new CallbackId((long)Yes)),
-            (prompt: Bad, promptId: new CallbackId((long)Bad)),
-            (prompt: Ok, promptId: new CallbackId((long)Ok)),
-            (prompt: Good, promptId: new CallbackId((long)Good))
+            (prompt: Back, promptId: new CallbackId((long)Back)),
+            (prompt: Cancel, promptId: new CallbackId((long)Cancel)),
+            (prompt: Skip, promptId: new CallbackId((long)Skip)),
+            (prompt: Continue, promptId: new CallbackId((long)Continue)),
+            (prompt: Yes, promptId: new CallbackId((long)Yes))
         };
         var outputWithPrompts = new OutputDto
         {
@@ -142,8 +142,8 @@ public sealed class OutputToReplyMarkupConverterTests
         
         var promptSelection = new[] 
         {
-            (prompt: Good, promptId: new CallbackId((long)Good)),
-            (prompt: Bad, promptId: new CallbackId((long)Bad)),
+            (prompt: Yes, promptId: new CallbackId((long)Yes)),
+            (prompt: No, promptId: new CallbackId((long)No)),
         };
         
         var outputWithBoth = new OutputDto

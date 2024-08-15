@@ -2,9 +2,9 @@ using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Issues;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Utils.GIS;
@@ -32,7 +32,7 @@ internal static class NewIssueUtils
     {
         var tradeSpecificNearnessThreshold = trade switch
         {
-            SaniCleanTrade => SaniCleanTrade.SphereNearnessThresholdInMeters,
+            SanitaryTrade => SanitaryTrade.SphereNearnessThresholdInMeters,
             SiteCleanTrade => SiteCleanTrade.SphereNearnessThresholdInMeters,
             _ => throw new InvalidOperationException("Missing switch for ITrade type for nearness threshold")
         };

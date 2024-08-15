@@ -60,7 +60,7 @@ public class UserInfoEqualityTests
             new List<IRoleInfo>
             {
                 new RoleInfo("Token1",
-                    new TradeAdmin<SaniCleanTrade>())
+                    new TradeAdmin<SanitaryTrade>())
             },
             Option<Vendor>.None());
 
@@ -74,7 +74,7 @@ public class UserInfoEqualityTests
             new List<IRoleInfo>
             {
                 new RoleInfo("Token2", 
-                    new TradeInspector<SaniCleanTrade>())
+                    new TradeInspector<SanitaryTrade>())
             },
             Option<Vendor>.None());
 

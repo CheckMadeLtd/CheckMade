@@ -50,10 +50,10 @@ public sealed class EnumCheckerTests(ITestOutputHelper outputHelper)
     [Fact]
     public void ToggleEnum_WorksAsExpected()
     {
-        var combinedEnum = ControlPrompts.Good;
-        combinedEnum ^= ControlPrompts.Ok;
-        Assert.True((combinedEnum & ControlPrompts.Ok) != 0);
-        combinedEnum ^= ControlPrompts.Ok;
-        Assert.False((combinedEnum & ControlPrompts.Ok) != 0);
+        var combinedEnum = ControlPrompts.Yes;
+        combinedEnum ^= ControlPrompts.Maybe;
+        Assert.True((combinedEnum & ControlPrompts.Maybe) != 0);
+        combinedEnum ^= ControlPrompts.Maybe;
+        Assert.False((combinedEnum & ControlPrompts.Maybe) != 0);
     }
 }

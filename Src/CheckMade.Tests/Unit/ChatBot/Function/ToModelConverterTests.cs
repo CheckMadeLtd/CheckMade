@@ -38,9 +38,9 @@ public sealed class ToModelConverterTests
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         
         // based on defaultRoleBindings in TestRepositoryUtils
-        var expectedOriginatorRole = SaniCleanAdmin_DanielEn_X2024;
+        var expectedOriginatorRole = SanitaryAdmin_DanielEn_X2024;
         var expectedLiveEventContext = 
-            Option<ILiveEventInfo>.Some(SaniCleanAdmin_DanielEn_X2024.AtLiveEvent); 
+            Option<ILiveEventInfo>.Some(SanitaryAdmin_DanielEn_X2024.AtLiveEvent); 
         
         var expectedTlgInput = new TlgInput(
             update.Message.Date,
@@ -83,7 +83,7 @@ public sealed class ToModelConverterTests
             roleBindings: new[]
             {
                 new TlgAgentRoleBind(
-                    SaniCleanInspector_DanielEn_X2024,
+                    SanitaryInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),
                     Option<DateTimeOffset>.Some(new DateTime(2021, 01, 05)),
@@ -144,7 +144,7 @@ public sealed class ToModelConverterTests
             attachmentUpdate.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.AttachmentMessage,
-            SaniCleanAdmin_DanielEn_X2024, 
+            SanitaryAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
@@ -188,7 +188,7 @@ public sealed class ToModelConverterTests
             locationUpdate.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.Location,
-            SaniCleanAdmin_DanielEn_X2024, 
+            SanitaryAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
@@ -227,7 +227,7 @@ public sealed class ToModelConverterTests
             commandUpdate.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CommandMessage,
-            SaniCleanAdmin_DanielEn_X2024, 
+            SanitaryAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
@@ -325,7 +325,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData((long)ControlPrompts.Good)]
+    [InlineData((long)ControlPrompts.Yes)]
     [InlineData((long)ControlPrompts.Submit)]
     public async Task ConvertToModelAsync_ConvertsCorrectly_ForMessageWithCallbackQueryToControlPrompt_InAnyMode(
         long enumSourceOfCallbackQuery)
@@ -343,7 +343,7 @@ public sealed class ToModelConverterTests
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SaniCleanAdmin_DanielEn_X2024, 
+            SanitaryAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
@@ -378,7 +378,7 @@ public sealed class ToModelConverterTests
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
             TlgInputType.CallbackQuery,
-            SaniCleanAdmin_DanielEn_X2024, 
+            SanitaryAdmin_DanielEn_X2024, 
             X2024, 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 

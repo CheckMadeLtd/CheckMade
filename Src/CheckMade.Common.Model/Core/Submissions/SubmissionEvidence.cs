@@ -1,6 +1,6 @@
-namespace CheckMade.Common.Model.Core.Issues.Concrete;
+namespace CheckMade.Common.Model.Core.Submissions;
 
-public sealed record IssueEvidence
+public sealed record SubmissionEvidence
 {
     public Option<string> Description { get; init; } = 
         Option<string>.None();

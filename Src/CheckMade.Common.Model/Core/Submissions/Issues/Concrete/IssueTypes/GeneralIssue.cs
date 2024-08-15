@@ -2,15 +2,15 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;
+using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
-public sealed record StaffIssue<T>(
-        Guid Id,
+public sealed record GeneralIssue<T>(
+        Guid Id, 
         DateTimeOffset CreationDate, 
         ISphereOfAction Sphere, 
-        IssueEvidence Evidence, 
+        SubmissionEvidence Evidence, 
         Role ReportedBy, 
         Option<Role> HandledBy, 
         IssueStatus Status,

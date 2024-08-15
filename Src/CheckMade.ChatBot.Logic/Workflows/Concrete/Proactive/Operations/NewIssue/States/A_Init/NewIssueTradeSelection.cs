@@ -65,9 +65,9 @@ internal sealed record NewIssueTradeSelection(
         return await (await GetSphereNearUserAsync()).Match(
             _ => selectedTrade switch 
             { 
-                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
+                SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueSphereConfirmation<SaniCleanTrade>)),
+                    Mediator.Next(typeof(INewIssueSphereConfirmation<SanitaryTrade>)),
                     promptTransition),
                 
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
@@ -80,9 +80,9 @@ internal sealed record NewIssueTradeSelection(
             }, 
             () => selectedTrade switch
             {
-                SaniCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
+                SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueSphereSelection<SaniCleanTrade>)),
+                    Mediator.Next(typeof(INewIssueSphereSelection<SanitaryTrade>)),
                     promptTransition),
                 
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(

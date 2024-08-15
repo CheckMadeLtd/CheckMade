@@ -25,11 +25,5 @@ public enum ControlPrompts : long
     // Placeholder << 17
     // Placeholder << 18
     
-    Bad = 1L << 19,
-    Ok = 1L << 20,
-    Good = 1L << 21,
-    // Placeholder << 22
-    // Placeholder << 23
-    
-    ViewAttachments = 1L << 24
+    ViewAttachments = 1L << 19
 }

@@ -1,4 +1,5 @@
-using CheckMade.Common.Model.Core.Issues.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
@@ -10,4 +11,7 @@ public sealed record TradeInspector<T> : IRoleType where T : ITrade, new()
 
     public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
         IssueSummaryCategories.None;
+    
+    public AssessmentSummaryCategories GetAssessmentSummaryCategoriesForNotifications() =>
+        AssessmentSummaryCategories.None;
 }

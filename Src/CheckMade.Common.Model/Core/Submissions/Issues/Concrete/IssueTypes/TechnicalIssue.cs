@@ -2,16 +2,16 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;
+using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
-public sealed record CleanlinessIssue<T>(
-        Guid Id,
+public sealed record TechnicalIssue<T>(
+        Guid Id,    
         DateTimeOffset CreationDate,
         ISphereOfAction Sphere,
         IFacility Facility,
-        IssueEvidence Evidence,
+        SubmissionEvidence Evidence,
         Role ReportedBy,
         Option<Role> HandledBy,
         IssueStatus Status,
@@ -26,6 +26,6 @@ public sealed record CleanlinessIssue<T>(
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
-        }.ToImmutableReadOnlyDictionary();
+        };
     }
 }

@@ -86,57 +86,57 @@ internal static class TestData
     #region RoleSetup ##################################################################################################
     
     // Default for testing
-    internal static readonly Role SaniCleanAdmin_DanielEn_X2024 = 
+    internal static readonly Role SanitaryAdmin_DanielEn_X2024 = 
         new("RVB70T",
-            new TradeAdmin<SaniCleanTrade>(), 
+            new TradeAdmin<SanitaryTrade>(), 
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielEn_X2024 = 
+    internal static readonly Role SanitaryInspector_DanielEn_X2024 = 
         new("R3UDXW",
-            new TradeInspector<SaniCleanTrade>(),
+            new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielEn_X2025 = 
+    internal static readonly Role SanitaryInspector_DanielEn_X2025 = 
         new("R9AAB5",
-            new TradeInspector<SaniCleanTrade>(),
+            new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2025Info);
     
-    internal static readonly Role SaniCleanInspector_LukasDe_X2024 = 
+    internal static readonly Role SanitaryInspector_LukasDe_X2024 = 
         new("R7UIP8",
-            new TradeInspector<SaniCleanTrade>(),
+            new TradeInspector<SanitaryTrade>(),
             new UserInfo(LukasDe),
             X2024Info);
 
-    internal static readonly Role SaniCleanCleanLead_DanielDe_X2024 = 
+    internal static readonly Role SanitaryCleanLead_DanielDe_X2024 = 
         new("R2JXNM",
-            new TradeTeamLead<SaniCleanTrade>(),
+            new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
 
-    internal static readonly Role SaniCleanObserver_DanielEn_X2024 = 
+    internal static readonly Role SanitaryObserver_DanielEn_X2024 = 
         new("RYEATF",
-            new TradeObserver<SaniCleanTrade>(),
+            new TradeObserver<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanInspector_DanielDe_X2024 = 
+    internal static readonly Role SanitaryInspector_DanielDe_X2024 = 
         new("RMAM8S",
-            new TradeInspector<SaniCleanTrade>(),
+            new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielDe),
             X2024Info);
     
-    internal static readonly Role SaniCleanEngineer_DanielEn_X2024 = 
+    internal static readonly Role SanitaryEngineer_DanielEn_X2024 = 
         new("RGR37T",
-            new TradeEngineer<SaniCleanTrade>(),
+            new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanCleanLead_DanielEn_X2024 = 
+    internal static readonly Role SanitaryCleanLead_DanielEn_X2024 = 
         new("RI8MJ1",
-            new TradeTeamLead<SaniCleanTrade>(),
+            new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielEn), 
             X2024Info);
 
@@ -146,9 +146,9 @@ internal static class TestData
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SaniCleanEngineer_DanielEn_Y2024 = 
+    internal static readonly Role SanitaryEngineer_DanielEn_Y2024 = 
         new("RS0BSU",
-            new TradeEngineer<SaniCleanTrade>(),
+            new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
             Y2024Info);
     
@@ -170,9 +170,9 @@ internal static class TestData
     internal static readonly Geo Location_4cc =
         new Geo(51.240118, -0.789397, Option<double>.None());
 
-    internal static readonly SphereOfAction<SaniCleanTrade> Sphere1_AtX2024 =
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere1_AtX2024 =
         new("CampDassel",
-            new SaniCampDetails(
+            new SanitaryCampDetails(
                 Location_Dassel,
                 new List<DomainTerm>
                 {
@@ -187,9 +187,9 @@ internal static class TestData
                     Dt(ConsumablesItem.Soap)
                 }));
     
-    internal static readonly SphereOfAction<SaniCleanTrade> Sphere2_AtX2024 =
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere2_AtX2024 =
         new("Camp2-4cc",
-            new SaniCampDetails(
+            new SanitaryCampDetails(
                 Location_4cc,
                 new List<DomainTerm>
                     {
@@ -212,10 +212,10 @@ internal static class TestData
         X2024Info,
         new List<IRoleInfo>
         {
-            SaniCleanInspector_LukasDe_X2024,
-            SaniCleanAdmin_DanielEn_X2024,
+            SanitaryInspector_LukasDe_X2024,
+            SanitaryAdmin_DanielEn_X2024,
             LiveEventAdmin_DanielEn_X2024,
-            SaniCleanEngineer_DanielEn_X2024,
+            SanitaryEngineer_DanielEn_X2024,
             SiteCleanEngineer_DanielEn_X2024
         },
         Venue1,
@@ -236,7 +236,7 @@ internal static class TestData
         X2025Info,
         new List<IRoleInfo>
         {
-            SaniCleanInspector_DanielEn_X2025
+            SanitaryInspector_DanielEn_X2025
         },
         Venue1,
         new List<ISphereOfAction>());
