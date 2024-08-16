@@ -201,7 +201,21 @@ internal static class TestData
                     Dt(ConsumablesItem.ToiletPaper)
                 }));
     
-    internal static readonly SphereOfAction<SiteCleanTrade> Sphere3_AtX2024 =
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere3_AtX2024 =
+        new("Camp3-NoGeo",
+            new SanitaryCampDetails(
+                Option<Geo>.None(), 
+                new List<DomainTerm>
+                    {
+                        Dt(typeof(GeneralMisc))
+                    }
+                    .ToImmutableReadOnlyCollection(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper)
+                }));
+
+    internal static readonly SphereOfAction<SiteCleanTrade> Sphere4_AtX2024 =
         new("Zone1",
             new SiteCleaningZoneDetails(
                 Option<Geo>.None(),
@@ -221,7 +235,7 @@ internal static class TestData
         Venue1,
         new List<ISphereOfAction>
         {
-            Sphere1_AtX2024, Sphere2_AtX2024, Sphere3_AtX2024
+            Sphere1_AtX2024, Sphere2_AtX2024, Sphere4_AtX2024
         });
 
     internal static readonly LiveEvent Y2024 = new(
