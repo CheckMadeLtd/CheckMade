@@ -106,7 +106,10 @@ internal sealed record LogoutWorkflowConfirm(
                     currentInput,
                     new OutputDto
                     {
-                        Text = Ui("💨 Logged out.")
+                        Text = UiConcatenate(
+                            Ui("💨 Logged out."),
+                            UiNewLines(2),
+                            WorkflowBase.BeginWithStart)
                     },
                     newState: Mediator.GetTerminator(typeof(ILogoutWorkflowLoggedOut)),
                     promptTransition: new PromptTransition(

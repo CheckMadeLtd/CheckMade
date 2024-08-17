@@ -11,8 +11,10 @@ internal abstract record WorkflowBase(
     IGeneralWorkflowUtils WorkflowUtils,    
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,
-    IDomainGlossary Glossary) 
+    IDomainGlossary Glossary)
 {
+    internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", TlgStart.Command);
+    
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {
         var allBridges = 
@@ -34,7 +36,7 @@ internal abstract record WorkflowBase(
             return new WorkflowResponse(
                 new OutputDto
                 {
-                    Text = Ui("Enter {0} to begin.", TlgStart.Command)
+                    Text = BeginWithStart
                 },
                 Option<string>.None());
         }
