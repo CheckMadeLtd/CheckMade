@@ -37,7 +37,7 @@ internal class DbExecutionHelper(
                 await executeDbOperations(db, transaction);
                 stopwatch.Stop();
 
-                const int currentWarningThreshold = 500;
+                const int currentWarningThreshold = 750;
                 
                 if (stopwatch.ElapsedMilliseconds > currentWarningThreshold)
                 {

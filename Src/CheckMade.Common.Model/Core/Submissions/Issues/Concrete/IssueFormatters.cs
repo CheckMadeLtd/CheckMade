@@ -25,8 +25,8 @@ internal static class IssueFormatters
             UiNewLines(1),
             Ui("<b>Reported by:</b> {0} ",
                 $"{issue.ReportedBy.ByUser.FirstName} {issue.ReportedBy.ByUser.LastName}"),
-            Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()));
-        // UiNewLines(1),
+            Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()),
+            UiNewLines(1));
         // Ui("<b>Currently handled by:</b> "), issue.HandledBy.IsSome 
         //     ? UiConcatenate(UiIndirect(
         //             $"{issue.HandledBy.GetValueOrThrow().ByUser.FirstName} " +

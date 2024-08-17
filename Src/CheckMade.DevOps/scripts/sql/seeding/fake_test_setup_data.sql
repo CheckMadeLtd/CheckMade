@@ -145,7 +145,20 @@ new_sphere2_saniclean_at_X2024 AS (
         ON CONFLICT (live_event_id, name) DO NOTHING
 ),
 
-new_sphere3_siteclean_at_X2024 AS (
+ new_sphere3_saniclean_nogeo__at_X2024 AS (
+     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
+         VALUES ('Camp3-NoGeo',
+                 'DX3KFI',
+                 (SELECT id FROM new_live_event_X2024),
+                 '{
+                   "AvailableFacilities": ["D55BLT"],
+                   "AvailableConsumables": ["DSTP1N"]
+                 }',
+                 1)
+         ON CONFLICT (live_event_id, name) DO NOTHING
+ ),
+
+new_sphere4_siteclean_at_X2024 AS (
     INSERT INTO spheres_of_action (name, trade, live_event_id, details, status)
         VALUES ('Zone1',
                 'DSIL7M',

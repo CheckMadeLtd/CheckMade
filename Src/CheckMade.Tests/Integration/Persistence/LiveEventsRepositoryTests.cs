@@ -37,7 +37,7 @@ public sealed class LiveEventsRepositoryTests
 
         Assert.Contains(Sphere1_AtX2024.Name, allSphereNames);
         Assert.Contains(Sphere2_AtX2024.Name, allSphereNames);
-        Assert.Contains(Sphere3_AtX2024.Name, allSphereNames);
+        Assert.Contains(Sphere4_AtX2024.Name, allSphereNames);
         
         Assert.Equal(3, allSphereNames.Count);
         
@@ -52,9 +52,9 @@ public sealed class LiveEventsRepositoryTests
                 .First(s => s.Name == Sphere2_AtX2024.Name)
                 .GetTradeType());
         Assert.Equal(
-            Sphere3_AtX2024.GetTradeType(),
+            Sphere4_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere3_AtX2024.Name)
+                .First(s => s.Name == Sphere4_AtX2024.Name)
                 .GetTradeType());
 
         Assert.Equivalent(
@@ -70,7 +70,7 @@ public sealed class LiveEventsRepositoryTests
         Assert.Equivalent(
             Option<Geo>.None(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere3_AtX2024.Name)
+                .First(s => s.Name == Sphere4_AtX2024.Name)
                 .Details.GeoCoordinates);
 
         List<DomainTerm> expectedFacilitiesAtX2024Sphere1 =
