@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Structs;
 
-public readonly struct MobileNumber
+public readonly record struct MobileNumber
 {
     private readonly string _value;
 
