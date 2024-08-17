@@ -58,7 +58,7 @@ public sealed record StakeholderReporter<T>(
                 UiConcatenate(
                     Ui("New cleaning assessment:"),
                     UiNewLines(1),
-                    UiNoTranslate("- - - - - -"),
+                    UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),
                     UiConcatenate(
                         completeIssueSummary.Where(summaryFilter)
@@ -100,7 +100,7 @@ public sealed record StakeholderReporter<T>(
                 UiConcatenate(
                     Ui("New issue submission:"),
                     UiNewLines(1),
-                    UiNoTranslate("- - - - - -"),
+                    UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),
                     UiConcatenate(
                         completeIssueSummary.Where(summaryFilter)
