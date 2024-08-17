@@ -110,7 +110,7 @@ public sealed class LogoutWorkflowTests
                 // Decoys
                 new(boundRole, tlgAgentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None(), DbRecordStatus.SoftDeleted),
-                new(SanitaryCleanLead_DanielDe_X2024, tlgAgentOperations,
+                new(SanitaryTeamLead_DanielDe_X2024, tlgAgentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None())

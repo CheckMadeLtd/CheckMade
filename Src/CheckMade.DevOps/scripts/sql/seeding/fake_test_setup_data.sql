@@ -12,6 +12,14 @@ WITH user_daniel_en AS (
         RETURNING id 
 ),
 
+new_user_daniel_de AS (
+    INSERT INTO users (mobile, first_name, middle_name, last_name, status, language_setting, details)
+        VALUES ('+447777111888', '_Daniel', 'Test German', '_Gorin', 1, 1, '{}')
+        ON CONFLICT (mobile) WHERE status = 1
+            DO UPDATE SET status = users.status
+        RETURNING id
+),
+    
 new_vendor_evecon AS (
     INSERT INTO vendors (name, details, status)
         VALUES ('eveCon GmbH', '{}', 1)
@@ -238,7 +246,7 @@ new_role_for_daniel_en_x2024_as_siteclean_engineer AS (
 
 new_role_for_daniel_en_x2024_as_teamlead_sanitary AS(
     INSERT INTO roles (token, role_type, status, user_id, live_event_id)
-        VALUES ('RM6UW8', 'DE4E59', 1,
+        VALUES ('RI8MJ1', 'DE4E59', 1,
                 (SELECT id FROM user_daniel_en),
                 (SELECT id FROM new_live_event_X2024))
         ON CONFLICT (token) DO NOTHING

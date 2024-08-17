@@ -296,7 +296,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             new OutputDto
             {
                 LogicalPort = new LogicalPort(
-                    SanitaryCleanLead_DanielEn_X2024, 
+                    SanitaryTeamLead_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output2") 
             },
@@ -314,7 +314,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     
         List<TlgAgentRoleBind> activeRoleBindings = [ 
             TestRepositoryUtils.GetNewRoleBind(SanitaryInspector_DanielEn_X2024, PrivateBotChat_Operations),
-            TestRepositoryUtils.GetNewRoleBind(SanitaryCleanLead_DanielEn_X2024, PrivateBotChat_Notifications),
+            TestRepositoryUtils.GetNewRoleBind(SanitaryTeamLead_DanielEn_X2024, PrivateBotChat_Notifications),
             TestRepositoryUtils.GetNewRoleBind(SanitaryEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
