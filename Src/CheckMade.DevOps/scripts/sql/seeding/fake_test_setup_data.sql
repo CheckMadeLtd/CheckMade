@@ -159,6 +159,7 @@ new_sphere2_saniclean_at_X2024 AS (
                  'DX3KFI',
                  (SELECT id FROM new_live_event_X2024),
                  '{
+                   "GeoCoordinates": null,
                    "AvailableFacilities": ["D55BLT"],
                    "AvailableConsumables": ["DSTP1N"]
                  }',
