@@ -181,15 +181,17 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade switch
         {
             SanitaryTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
+                ValidateNonNullProperties(
+                    JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!")),
             SiteCleanTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
+                ValidateNonNullProperties(
+                    JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!")),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };
-        
+
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
 
         ISphereOfAction sphere = trade switch
@@ -313,8 +315,9 @@ internal static class ModelReaders
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
-            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
+            ValidateNonNullProperties(
+                JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!")));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {
