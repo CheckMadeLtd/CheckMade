@@ -40,8 +40,8 @@ internal static class NewIssueUtils
         var allSpheres = GetAllTradeSpecificSpheres(
             liveEvent ?? throw new InvalidOperationException("LiveEvent missing."),
             trade);
-
-        var nearSphere =
+        
+        var nearestSphere =
             allSpheres
                 .Where(soa =>
                     soa.Details.GeoCoordinates.IsSome &&
@@ -49,8 +49,8 @@ internal static class NewIssueUtils
                 .MinBy(DistanceFromLastKnownLocation);
 
         return
-            nearSphere != null
-                ? Option<ISphereOfAction>.Some(nearSphere)
+            nearestSphere != null
+                ? Option<ISphereOfAction>.Some(nearestSphere)
                 : Option<ISphereOfAction>.None();
 
         double DistanceFromLastKnownLocation(ISphereOfAction soa) =>
