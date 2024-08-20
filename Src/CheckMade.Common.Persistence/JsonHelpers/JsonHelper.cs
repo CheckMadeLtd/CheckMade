@@ -24,7 +24,9 @@ internal static class JsonHelper
         var jsonSettings = new JsonSerializerSettings
         {
             // Throws exception during deserialization when json data has a field that doesn't map to my model class
+            // But does NOT throw an exception when json data LACKS a field that the model expects (instead, uses default)
             MissingMemberHandling = MissingMemberHandling.Error,
+            
             ContractResolver = new OptionContractResolver(glossary),
             Converters = new List<JsonConverter>
             {
