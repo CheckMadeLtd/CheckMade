@@ -133,18 +133,7 @@ internal sealed record IssueFactory<T>(
                     .Details.DomainTerm.GetValueOrThrow()
                     .TypeValue!;
 
-            try
-            {
-                return (IFacility)Activator.CreateInstance(lastFacilityType)!;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException(
-                    $"Every subtype of {nameof(IFacility)} requires a parameterless constructor." +
-                    $"This allows for usage of '{nameof(Activator)}.{nameof(Activator.CreateInstance)}' " +
-                    $"instead of using a switch expression switching on the given {nameof(lastFacilityType)}. " +
-                    $"We thereby reduce maintenance when new subtypes are added", ex);
-            }
+            return (IFacility)Activator.CreateInstance(lastFacilityType)!;
         }
 
         SubmissionEvidence GetSubmittedEvidence()
