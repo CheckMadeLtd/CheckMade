@@ -181,13 +181,11 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade switch
         {
             SanitaryTrade => 
-                ValidateNoNullProperties(
-                    JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary)
-                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!")),
+                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary)
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
             SiteCleanTrade => 
-                ValidateNoNullProperties(
-                    JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary)
-                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!")),
+                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary)
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };
@@ -315,9 +313,8 @@ internal static class ModelReaders
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            ValidateNoNullProperties(
-                JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!")));
+            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
+            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {
@@ -385,30 +382,5 @@ internal static class ModelReaders
                                            $"Forgot to migrate data in db?");
         
         return uncheckedEnum;
-    }
-    
-    /// <summary>
-    /// Validates that any Null value in any json details in the DB is an explicit DBNull, in which case our custom
-    /// deserialization correctly translates it to an Option.None.
-    /// This prevents a documented pitfall:
-    /// https://github.com/CheckMadeOrga/CheckMade/wiki/Dev-Style-Guide-And-Pitfalls#serializer-assigns-default-values
-    /// </summary>
-    private static T ValidateNoNullProperties<T>(T obj)
-    {
-        ArgumentNullException.ThrowIfNull(obj);
-
-        var nullProperties = typeof(T).GetProperties()
-            .Where(p => p.GetValue(obj) == null)
-            .Select(p => p.Name)
-            .ToList();
-
-        if (nullProperties.Count != 0)
-        {
-            throw new InvalidDataException(
-                $"The following non-nullable properties in {typeof(T).Name} are null: " +
-                $"{string.Join(", ", nullProperties)}");
-        }
-
-        return obj;
     }
 }

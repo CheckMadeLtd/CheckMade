@@ -19,7 +19,7 @@ internal static class JsonHelper
         return JsonConvert.SerializeObject(obj, jsonSettings);
     }
 
-    public static T? DeserializeFromJsonStrict<T>(string json, IDomainGlossary glossary)
+    public static T DeserializeFromJsonStrict<T>(string json, IDomainGlossary glossary)
     {
         var jsonSettings = new JsonSerializerSettings
         {
@@ -34,6 +34,34 @@ internal static class JsonHelper
             }
         };
         
-        return JsonConvert.DeserializeObject<T>(json, jsonSettings);
+        var result = JsonConvert.DeserializeObject<T>(json, jsonSettings);
+        
+        if (result is null)
+            throw new JsonSerializationException($"Deserialization resulted in null for type {typeof(T).Name}");
+
+        return ValidateNoNullProperties(result);
+    }
+    
+    /// <summary>
+    /// Validates that any Null value in any json details in the DB is an explicit DBNull, in which case our custom
+    /// deserialization correctly translates it to an Option.None.
+    /// This prevents a documented pitfall:
+    /// https://github.com/CheckMadeOrga/CheckMade/wiki/Dev-Style-Guide-And-Pitfalls#serializer-assigns-default-values
+    /// </summary>
+    private static T ValidateNoNullProperties<T>(T obj)
+    {
+        var nullProperties = typeof(T).GetProperties()
+            .Where(p => p.GetValue(obj) == null)
+            .Select(p => p.Name)
+            .ToList();
+
+        if (nullProperties.Count != 0)
+        {
+            throw new InvalidDataException(
+                $"The following non-nullable properties in {typeof(T).Name} are null: " +
+                $"{string.Join(", ", nullProperties)}");
+        }
+
+        return obj;
     }
 }
