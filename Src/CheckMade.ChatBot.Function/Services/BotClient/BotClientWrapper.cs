@@ -288,13 +288,8 @@ public sealed class BotClientWrapper(
     {
         Message? sentMessage = null;
         
+        // See: https://github.com/CheckMadeOrga/CheckMade/issues/197
         await retryPolicy.ExecuteAsync(async () =>
-            /* This will throw 'Telegram.Bot.Exceptions.ApiRequestException: Bad Request: VOICE_MESSAGES_FORBIDDEN'
-             for Telegram Premium users that in their privacy settings have the default setting that Voice messages
-             are only allowed for 'My Contacts'. These exceptions will show up in our Error Logs alongside the User's
-             Telegram ID. For now, we need to manually inform them that they need to change their settings to enable
-             receiving Voice messages from the Bot (e.g. by adding the Bot to the 'Always Allowed' list).
-             */ 
             sentMessage = await botClient.SendVoiceAsync(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
