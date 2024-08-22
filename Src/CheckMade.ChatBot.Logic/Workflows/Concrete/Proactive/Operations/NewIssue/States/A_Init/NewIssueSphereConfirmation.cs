@@ -28,12 +28,6 @@ internal sealed record NewIssueSphereConfirmation<T>(
     {
         var nearSphere = await GetNearSphere();
 
-        if (nearSphere.IsNone)
-        {
-            // ToDo: break? Handle case where user has moved away since confirming Sphere in last step! 
-            // It's an edge case. I think should simply reroute to SphereSelection state/prompt.
-        }
-        
         List<OutputDto> outputs = 
         [
             new()
