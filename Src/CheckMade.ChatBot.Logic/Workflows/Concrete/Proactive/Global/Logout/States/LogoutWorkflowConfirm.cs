@@ -32,7 +32,7 @@ internal sealed record LogoutWorkflowConfirm(
                     Ui("{0}, your current role is: ", 
                         currentRoleBind.Role.ByUser.FirstName),
                     Glossary.GetUi(currentRoleBind.Role.RoleType.GetType()),
-                    UiNoTranslate(".\n"),
+                    UiNoTranslate("."), UiNewLines(1),
                     Ui("Are you sure you want to log out from this chat for {0}?", 
                         currentRoleBind.Role.AtLiveEvent.Name)),
                         
@@ -66,7 +66,7 @@ internal sealed record LogoutWorkflowConfirm(
                     new OutputDto
                     {
                         Text = UiConcatenate(
-                            Ui("Logout aborted.\n"),
+                            Ui("Logout aborted."), UiNewLines(1),
                             IInputProcessor.SeeValidBotCommandsInstruction)
                     },
                     newState: Mediator.GetTerminator(typeof(ILogoutWorkflowAborted)),
@@ -74,8 +74,7 @@ internal sealed record LogoutWorkflowConfirm(
                         new OutputDto
                         {
                             Text = UiConcatenate(
-                                originalPrompt,
-                                UiNoTranslate(" "),
+                                originalPrompt, UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
                             UpdateExistingOutputMessageId = currentInput.TlgMessageId
                         })),

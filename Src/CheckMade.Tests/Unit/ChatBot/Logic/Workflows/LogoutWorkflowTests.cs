@@ -188,7 +188,7 @@ public sealed class LogoutWorkflowTests
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             });
         var workflow = services.GetRequiredService<LogoutWorkflow>();
-        const string expectedMessage1 = "Logout aborted.\n"; 
+        const string expectedMessage1 = "Logout aborted."; 
         
         var actualResponse = 
             await workflow.GetResponseAsync(abortLogoutCommand);
