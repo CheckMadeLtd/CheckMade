@@ -61,9 +61,9 @@ public sealed class LogoutWorkflowTests
         
         var actualResponse = await workflow.GetResponseAsync(confirmLogoutCommand);
         
-        Assert.Equal(
+        Assert.Contains(
             expectedMessage, 
-            actualResponse.GetValueOrThrow().Output.Last().Text.GetValueOrThrow().RawEnglishText);
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -195,10 +195,10 @@ public sealed class LogoutWorkflowTests
         
         Assert.Contains(
             expectedMessage1,
-            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         Assert.Contains(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
     }
 }

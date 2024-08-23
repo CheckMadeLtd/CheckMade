@@ -94,7 +94,6 @@ internal sealed record WorkflowIdentifier(
             if (lastLauncher is null)
                 return Option<TlgInput>.None();
             
-            // ToDo: replace with `i == lastBotCommand.GetValueOrThrow()` once I overloaded equals and == for TlgInput
             var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
                     i.TlgMessageId == lastLauncher.TlgMessageId &&

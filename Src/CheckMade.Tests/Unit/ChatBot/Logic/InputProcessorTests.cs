@@ -89,7 +89,7 @@ public sealed class InputProcessorTests
         
         Assert.Contains(
             expectedWarningOutput,
-            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
+            result.ResultingOutputs.GetAllRawEnglish());
     }
     
     [Fact]
@@ -129,7 +129,7 @@ public sealed class InputProcessorTests
         
         Assert.DoesNotContain(
             notExpectedWarningOutput,
-            TestUtils.GetAllRawEnglish(result.ResultingOutputs));
+            result.ResultingOutputs.GetAllRawEnglish());
     }
 
     [Fact]
