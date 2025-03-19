@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
-using File = Telegram.Bot.Types.File;
+using File = Telegram.Bot.Types.TGFile;
 
 namespace CheckMade.ChatBot.Function.Services.BotClient;
 
@@ -34,7 +34,7 @@ public interface IBotClientWrapper
         ChatId chatId, 
         Option<string> text,
         int messageId,
-        Option<IReplyMarkup> replyMarkup,
+        Option<ReplyMarkup> replyMarkup,
         Option<string> callbackQueryId,
         CancellationToken cancellationToken = default);
     
@@ -45,7 +45,7 @@ public interface IBotClientWrapper
     Task<TlgMessageId> SendLocationAsync(
         ChatId chatId,
         Geo location,
-        Option<IReplyMarkup> replyMarkup,
+        Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
     Task<TlgMessageId> SendPhotoAsync(
@@ -56,7 +56,7 @@ public interface IBotClientWrapper
         ChatId chatId,
         string pleaseChooseText,
         string text,
-        Option<IReplyMarkup> replyMarkup,
+        Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
     Task<TlgMessageId> SendVoiceAsync(
@@ -77,7 +77,7 @@ public sealed class BotClientWrapper(
     public InteractionMode MyInteractionMode { get; } = interactionMode; 
     public string MyBotToken { get; } = botToken;
 
-    public async Task<File> GetFileAsync(string fileId) => await botClient.GetFileAsync(fileId);
+    public async Task<File> GetFileAsync(string fileId) => await botClient.GetFile(fileId);
     
     public async Task<Unit> DeleteMessageAsync(
         ChatId chatId, 
@@ -85,7 +85,7 @@ public sealed class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         await retryPolicy.ExecuteAsync(async () =>
-            await botClient.DeleteMessageAsync(
+            await botClient.DeleteMessage(
                 chatId,
                 messageId,
                 cancellationToken));
@@ -97,7 +97,7 @@ public sealed class BotClientWrapper(
         ChatId chatId, 
         Option<string> text, 
         int messageId, 
-        Option<IReplyMarkup> replyMarkup,
+        Option<ReplyMarkup> replyMarkup,
         Option<string> callbackQueryId,
         CancellationToken cancellationToken = default)
     {
@@ -115,7 +115,7 @@ public sealed class BotClientWrapper(
                 if (callbackQueryId.IsSome)
                 {
                     await retryPolicy.ExecuteAsync(async () => 
-                        await botClient.AnswerCallbackQueryAsync(
+                        await botClient.AnswerCallbackQuery(
                             callbackQueryId.GetValueOrThrow(),
                             cancellationToken: cancellationToken));
                 }
@@ -123,7 +123,7 @@ public sealed class BotClientWrapper(
                 if (text.IsSome)
                 {
                     await retryPolicy.ExecuteAsync(async () =>
-                        await botClient.EditMessageTextAsync(
+                        await botClient.EditMessageText(
                             chatId,
                             messageId,
                             text.GetValueOrThrow(),
@@ -134,7 +134,7 @@ public sealed class BotClientWrapper(
                 else
                 {
                     await retryPolicy.ExecuteAsync(async () =>
-                        await botClient.EditMessageReplyMarkupAsync(
+                        await botClient.EditMessageReplyMarkup(
                             chatId,
                             messageId,
                             updatedInlineKeyboard,
@@ -180,7 +180,7 @@ public sealed class BotClientWrapper(
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            sentMessage = await botClient.SendDocumentAsync(
+            sentMessage = await botClient.SendDocument(
                 chatId: documentSendOutParams.ChatId,
                 document: documentSendOutParams.FileStream,
                 caption: documentSendOutParams.Caption.GetValueOrDefault(),
@@ -197,13 +197,13 @@ public sealed class BotClientWrapper(
     }
 
     public async Task<TlgMessageId> SendLocationAsync(
-        ChatId chatId, Geo location, Option<IReplyMarkup> replyMarkup,
+        ChatId chatId, Geo location, Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            sentMessage = await botClient.SendLocationAsync(
+            sentMessage = await botClient.SendLocation(
                 chatId: chatId,
                 latitude: location.Latitude,
                 longitude: location.Longitude,
@@ -225,7 +225,7 @@ public sealed class BotClientWrapper(
         Message? sentMessage = null;
         
         await retryPolicy.ExecuteAsync(async () =>
-            sentMessage = await botClient.SendPhotoAsync(
+            sentMessage = await botClient.SendPhoto(
                 chatId: photoSendOutParams.ChatId,
                 photo: photoSendOutParams.FileStream,
                 caption: photoSendOutParams.Caption.GetValueOrDefault(),
@@ -245,7 +245,7 @@ public sealed class BotClientWrapper(
         ChatId chatId,
         string pleaseChooseText,
         string text,
-        Option<IReplyMarkup> replyMarkup,
+        Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
         Message? sentMessage = null;
@@ -265,7 +265,7 @@ public sealed class BotClientWrapper(
             //         cancellationToken: cancellationToken);
             // }
 
-            sentMessage = await botClient.SendTextMessageAsync(
+            sentMessage = await botClient.SendMessage(
                 chatId: chatId,
                 text: text,
                 parseMode: ParseMode.Html,
@@ -290,7 +290,7 @@ public sealed class BotClientWrapper(
         
         // See: https://github.com/CheckMadeOrga/CheckMade/issues/197
         await retryPolicy.ExecuteAsync(async () =>
-            sentMessage = await botClient.SendVoiceAsync(
+            sentMessage = await botClient.SendVoice(
                 chatId: voiceSendOutParams.ChatId,
                 voice: voiceSendOutParams.FileStream,
                 caption: voiceSendOutParams.Caption.GetValueOrDefault(),
@@ -308,7 +308,7 @@ public sealed class BotClientWrapper(
 
     public async Task<Unit> SetBotCommandMenuAsync(BotCommandMenus menu)
     {
-        await botClient.DeleteMyCommandsAsync();
+        await botClient.DeleteMyCommands();
 
         foreach (LanguageCode language in Enum.GetValues(typeof(LanguageCode)))
         {
@@ -324,7 +324,7 @@ public sealed class BotClientWrapper(
             };
 
             await retryPolicy.ExecuteAsync(async () => 
-                await botClient.SetMyCommandsAsync(
+                await botClient.SetMyCommands(
                     telegramBotCommands,
                     scope: null,
                     languageCode: language != LanguageCode.en

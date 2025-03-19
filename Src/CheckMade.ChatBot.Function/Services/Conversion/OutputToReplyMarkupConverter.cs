@@ -11,12 +11,12 @@ namespace CheckMade.ChatBot.Function.Services.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {
-    Option<IReplyMarkup> GetReplyMarkup(OutputDto output);
+    Option<ReplyMarkup> GetReplyMarkup(OutputDto output);
 }
 
 internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputToReplyMarkupConverter
 {
-    public Option<IReplyMarkup> GetReplyMarkup(OutputDto output)
+    public Option<ReplyMarkup> GetReplyMarkup(OutputDto output)
     {
         if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");
@@ -54,7 +54,7 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
             markup => markup,
             () => replyKeyboardMarkup.Match(
                 markup => markup,
-                Option<IReplyMarkup>.None));
+                Option<ReplyMarkup>.None));
     }
 
     private static bool AllEnumsAreDefined(

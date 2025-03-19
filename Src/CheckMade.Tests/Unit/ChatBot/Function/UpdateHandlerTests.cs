@@ -102,9 +102,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     invalidBotCommandUpdate.Message.Chat.Id,
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    Option<IReplyMarkup>.None(),
+                    Option<ReplyMarkup>.None(),
                     It.IsAny<CancellationToken>()))
-            .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
+            .Callback<ChatId, string, string, Option<ReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
                 outputHelper.WriteLine(msg));
         
         await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, Operations);
@@ -114,7 +114,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 invalidBotCommandUpdate.Message.Chat.Id,
                 It.IsAny<string>(),
                 It.Is<string>(msg => msg.Contains(expectedErrorCode)),
-                Option<IReplyMarkup>.None(),
+                Option<ReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
     }
@@ -146,7 +146,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 updateFromEnglishUser.Message.Chat.Id,
                 It.IsAny<string>(),
                 EnglishUiStringForTests.GetFormattedEnglish(), // untranslated English message expected
-                Option<IReplyMarkup>.None(),
+                Option<ReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
     }
     
@@ -190,7 +190,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 updateFromGermanUser.Message.Chat.Id,
                 It.IsAny<string>(),
                 GermanStringForTests, // German translation expected
-                Option<IReplyMarkup>.None(),
+                Option<ReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()));
     }
     
@@ -221,17 +221,17 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
-        var actualMarkup = Option<IReplyMarkup>.None();
+        var actualMarkup = Option<ReplyMarkup>.None();
         basics.mockBotClient
             .Setup(
                 x => x.SendTextMessageAsync(
                     It.IsAny<ChatId>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<Option<IReplyMarkup>>(),
+                    It.IsAny<Option<ReplyMarkup>>(),
                     It.IsAny<CancellationToken>())
             )
-            .Callback<ChatId, string, string, Option<IReplyMarkup>, CancellationToken>(
+            .Callback<ChatId, string, string, Option<ReplyMarkup>, CancellationToken>(
                 (_, _, _, markup, _) => actualMarkup = markup
             );
         
@@ -270,7 +270,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<ChatId>(), 
                 It.IsAny<string>(), 
                 It.IsAny<string>(),
-                It.IsAny<Option<IReplyMarkup>>(), 
+                It.IsAny<Option<ReplyMarkup>>(), 
                 It.IsAny<CancellationToken>()),
             Times.Exactly(outputsMultiple.Count));
     }
@@ -345,7 +345,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     expectedParamSet.TlgChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
-                    It.IsAny<Option<IReplyMarkup>>(),
+                    It.IsAny<Option<ReplyMarkup>>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -381,7 +381,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 expectedChatId,
                 It.IsAny<string>(),
                 expectedOutputMessage,
-                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<Option<ReplyMarkup>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
         
@@ -481,7 +481,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<ChatId>(), 
                 It.IsAny<string>(),
                 mainText,
-                It.IsAny<Option<IReplyMarkup>>(), 
+                It.IsAny<Option<ReplyMarkup>>(), 
                 It.IsAny<CancellationToken>()),
             Times.Once);
         
@@ -521,7 +521,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendLocationAsync(
                 It.IsAny<ChatId>(),
                 It.Is<Geo>(geo => geo == outputWithLocation[0].Location),
-                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<Option<ReplyMarkup>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -541,7 +541,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<ChatId>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<Option<IReplyMarkup>>(),
+                It.IsAny<Option<ReplyMarkup>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new TlgMessageId(1));
