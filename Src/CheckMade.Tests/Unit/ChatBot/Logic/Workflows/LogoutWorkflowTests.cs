@@ -61,9 +61,9 @@ public sealed class LogoutWorkflowTests
         
         var actualResponse = await workflow.GetResponseAsync(confirmLogoutCommand);
         
-        Assert.Equal(
+        Assert.Contains(
             expectedMessage, 
-            actualResponse.GetValueOrThrow().Output.Last().Text.GetValueOrThrow().RawEnglishText);
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
                 new [] { boundRole }
@@ -110,7 +110,7 @@ public sealed class LogoutWorkflowTests
                 // Decoys
                 new(boundRole, tlgAgentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None(), DbRecordStatus.SoftDeleted),
-                new(SanitaryCleanLead_DanielDe_X2024, tlgAgentOperations,
+                new(SanitaryTeamLead_DanielDe_X2024, tlgAgentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None())
@@ -188,17 +188,17 @@ public sealed class LogoutWorkflowTests
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             });
         var workflow = services.GetRequiredService<LogoutWorkflow>();
-        const string expectedMessage1 = "Logout aborted.\n"; 
+        const string expectedMessage1 = "Logout aborted."; 
         
         var actualResponse = 
             await workflow.GetResponseAsync(abortLogoutCommand);
         
         Assert.Contains(
             expectedMessage1,
-            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         Assert.Contains(
             IInputProcessor.SeeValidBotCommandsInstruction.RawEnglishText, 
-            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
     }
 }

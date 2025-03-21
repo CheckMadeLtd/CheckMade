@@ -38,7 +38,7 @@ public sealed class OutputToReplyMarkupConverterTests
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 1
-        var expectedReplyMarkup = Option<IReplyMarkup>.Some(
+        var expectedReplyMarkup = Option<ReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[]
             {
                 new[]
@@ -96,7 +96,7 @@ public sealed class OutputToReplyMarkupConverterTests
         };
 
         // Assumes inlineKeyboardNumberOfColumns = 2
-        var expectedReplyMarkup = Option<IReplyMarkup>.Some(
+        var expectedReplyMarkup = Option<ReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[] 
             { 
                 new [] 
@@ -157,7 +157,7 @@ public sealed class OutputToReplyMarkupConverterTests
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
-        var expectedReplyMarkup = Option<IReplyMarkup>.Some(
+        var expectedReplyMarkup = Option<ReplyMarkup>.Some(
             new InlineKeyboardMarkup(new[]
             {
                 new[]
@@ -201,7 +201,7 @@ public sealed class OutputToReplyMarkupConverterTests
         };
         
         // Assumes replyKeyboardNumberOfColumns = 3
-        var expectedReplyMarkup = Option<IReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
+        var expectedReplyMarkup = Option<ReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
         {
             new[] 
                 { new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3) },
@@ -231,7 +231,7 @@ public sealed class OutputToReplyMarkupConverterTests
             basics.converter.GetReplyMarkup(outputWithout);
         
         Assert.Equivalent(
-            Option<IReplyMarkup>.None(),
+            Option<ReplyMarkup>.None(),
             actualReplyMarkup);
     }
 

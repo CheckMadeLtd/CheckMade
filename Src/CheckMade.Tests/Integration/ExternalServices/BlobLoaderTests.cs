@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CheckMade.Tests.Integration.ExternalServices;
 
 // ProblematicTestsOutsideOfIDE
-public class BlobLoaderTests
+public sealed class BlobLoaderTests
 {
     private IServiceProvider? _services;
 

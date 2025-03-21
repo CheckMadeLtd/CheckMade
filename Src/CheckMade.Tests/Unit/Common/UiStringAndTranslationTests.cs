@@ -9,7 +9,7 @@ using Moq;
 
 namespace CheckMade.Tests.Unit.Common;
 
-public class UiStringAndTranslationTests
+public sealed class UiStringAndTranslationTests
 {
     private ServiceProvider? _services;
 

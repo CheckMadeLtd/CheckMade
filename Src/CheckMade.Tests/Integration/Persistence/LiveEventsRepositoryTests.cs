@@ -39,7 +39,7 @@ public sealed class LiveEventsRepositoryTests
         Assert.Contains(Sphere2_AtX2024.Name, allSphereNames);
         Assert.Contains(Sphere4_AtX2024.Name, allSphereNames);
         
-        Assert.Equal(3, allSphereNames.Count);
+        Assert.Equal(4, allSphereNames.Count);
         
         Assert.Equal(
             Sphere1_AtX2024.GetTradeType(),

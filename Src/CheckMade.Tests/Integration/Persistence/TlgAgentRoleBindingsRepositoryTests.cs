@@ -27,9 +27,9 @@ public sealed class TlgAgentRoleBindingsRepositoryTests
             .MaxBy(tarb => tarb.ActivationDate);
         await repo.HardDeleteAsync(newInputTlgAgentRoleBind);
         
-        Assert.Equivalent(
-            newInputTlgAgentRoleBind.Role,
-            retrieved!.Role);
+        Assert.Equal(
+            newInputTlgAgentRoleBind.Role.Token,
+            retrieved!.Role.Token);
         Assert.Equivalent(
             newInputTlgAgentRoleBind.TlgAgent,
             retrieved.TlgAgent);

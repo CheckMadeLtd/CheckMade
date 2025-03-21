@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Desktop;Debug_Backend_Only;Debug_All;No_Build;Release;Debug_DevOps;Debug_ChatBot</Configurations>
+        <Configurations>Debug_Desktop;Debug_Backend_Only;No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
     </ItemGroup>
 
     <ItemGroup>

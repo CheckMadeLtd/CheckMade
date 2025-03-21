@@ -36,93 +36,21 @@ fi
 
 echo "--------------------------------------------------------------------------"
 
-echo "Now running local Build & Tests for all Debug configurations contained in the *.sln file of this working dir," \
-"except those excluded via --options. This ensures integrity before attempted merge into main (especially in case the" \
-"current branch was rebased on a newer origin/main in the previous step)."
+# Once we add Desktop client, update this to a configuration that includes it.
+config="Debug_ChatBot"
 
-# Initialize flags for preventing ios or ios and android builds
-all_configs=false
-noios=false
-nomob=false
-
-# Process options
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --all)
-            echo "--all option active: all Debug configurations will be included."
-            all_configs=true
-            shift # Remove this option from processing (= SHIFT positional arguments to the left)
-            ;;
-        --noios)
-            echo "--noios option active: projects containing 'iOS' in their name will be skipped."
-            noios=true
-            shift
-            ;;
-        --nomob)
-            echo "--nomob option active: projects containing 'iOS' or 'Android' in their name will be skipped."
-            nomob=true
-            shift
-            ;;
-        *)
-            # Unknown option
-            echo "Unknown option: $1"
-            exit 1
-            ;;
-    esac
-done
-
-# Find the first .sln file in the current directory
-sln_file=$(find . -maxdepth 1 -name "*.sln" | head -n 1)
-
-if [ -z "$sln_file" ]; then
-    echo "Err: No .sln file found in the current directory."
-    exit 1
-fi
-
-# Extract configurations starting with 'Debug_' from the .sln file
-# We are building and testing selected 'Debug' builds here on the local dev machine, as recommended, for better
-# traceability etc. 
-# On the GitHub Action Runner / main workflow we then build and test the targeted 'Release' configuration for more 
-# realistic final tests. 
-configurations=$(ggrep -P '^\s*Debug_' "$sln_file" | awk -F'|' '{print $1}' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
-
-config_array=()
-
-shopt -s nocasematch  # Set shell option to ignore case in pattern matching
-
-while IFS= read -r line; do
-    if [[ "$all_configs" == true ]]; then
-        if [[ "$noios" == true && $line =~ ios ]]; then
-            echo "Skipping iOS build configuration: $line"
-        elif [[ "$nomob" == true && ($line =~ ios || $line =~ android) ]]; then
-            echo "Skipping mobile build configuration: $line"
-        elif [[ $line =~ _all ]]; then
-            echo "Skipping build configuration: $line"
-        else
-            config_array+=("$line")
-        fi
-    elif [[ $line =~ debug_chatbot ]]; then
-        config_array+=("$line")
-    fi
-done <<< "$configurations"
-
-shopt -u nocasematch  # Unset the nocasematch option to return to default behavior  
-
-echo "The following Debug configurations have been found in the local Solution:"
-for config in "${config_array[@]}"
-do
-    echo "$config"
-done
+echo "Now running local Build & Tests for the $config configuration." \
+"This ensures integrity before attempted merge into main (especially in case the" \
+"current branch was rebased on a newer origin/main in the previous step)." \
+"FYI: On the GitHub Action Runner / main workflow we will later build and test the targeted 'Release' configuration" \
+"for more realistic final tests."
 
 set -x # Tracing subsequent commands in the console output
 
-for config in "${config_array[@]}"
-do
-    dotnet restore /p:Configuration="$config"
-    dotnet build --configuration "$config" --no-restore --verbosity minimal
-#    Only unit tests due to mysterious fatal crashes of 'dotnet test' with some integration tests
-    dotnet test --no-build --configuration "$config" --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Unit
-done
+dotnet restore /p:Configuration="$config"
+dotnet build --configuration "$config" --no-restore --verbosity minimal
+# Only unit tests due to mysterious fatal crashes of 'dotnet test' with some integration tests
+dotnet test --no-build --configuration "$config" --verbosity minimal --filter FullyQualifiedName~CheckMade.Tests.Unit
 
 set +x # Stop tracing
 
@@ -142,17 +70,6 @@ while true; do
         echo "$new_version" > version.txt
         echo "The version.txt was updated with $new_version"
         
-        # Find the first csproj file with "android" in its name
-        csproj_file=$(find . -iname "*android*.csproj" | head -n 1)
-        if [ -n "$csproj_file" ]; then
-            perl -i -pe 's/(<ApplicationVersion>)(\d+)(<\/ApplicationVersion>)/"$1".($2+1)."$3"/ge' "$csproj_file"
-            echo "<ApplicationVersion> in the Android .csproj file was incremented by 1. This is the 'version code' \
-for Google Play which needs to be an integer."
-            perl -i -pe "s|<ApplicationDisplayVersion>.*</ApplicationDisplayVersion>|\
-            <ApplicationDisplayVersion>$new_version</ApplicationDisplayVersion>|g" "$csproj_file"
-            echo "<ApplicationDisplayVersion> in the Android .csproj was updated to $new_version"
-        fi
-
         git add .
         git commit -m "Script updates version to $new_version"
         break
@@ -199,4 +116,3 @@ while true; do
     exit 0
   fi 
 done
-

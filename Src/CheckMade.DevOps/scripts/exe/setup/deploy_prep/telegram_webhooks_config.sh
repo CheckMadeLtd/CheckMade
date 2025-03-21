@@ -77,11 +77,16 @@ while true; do
   fi
   
   echo "What would you like to do? Set WebHook (default behaviour, continue with 'Enter') or \
-  get current WebhookInfo (enter 'g')?"
+  get current WebhookInfo ('g') or delete current Webhook ('d')?"
   read -r bot_setup_task
   
   if [ "$bot_setup_task" == "g" ]; then
     curl --request POST --url https://api.telegram.org/bot"$bot_token"/getWebhookInfo
+    return 0
+  fi
+  
+  if [ "$bot_setup_task" == "d" ]; then
+    curl --request POST --url https://api.telegram.org/bot"$bot_token"/setWebhook?remove
     return 0
   fi
   

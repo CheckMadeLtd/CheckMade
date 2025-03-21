@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Structs;
 
-public readonly struct EmailAddress
+public readonly record struct EmailAddress
 {
     private readonly string _value;
 

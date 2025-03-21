@@ -31,6 +31,7 @@ jobs:
         run: |
           git push --force origin ${{ env.VERSION }}
   
+    
   build_test_and_deploy:
     needs: tag_version
     runs-on: ubuntu-latest
@@ -53,10 +54,10 @@ jobs:
       matrix:
         toplevel_project: [ "${{ vars.CHATBOT_TOPLEVEL_PROJECT }}" ]
 #                           "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}", 
-#                           "${{ vars.ANDROID_TOPLEVEL_PROJECT }}"]
 
     env:
-      # Reducing caching size: Some action runners already have huge libraries. This replaces OS-default of '~/.nuget/packages'
+      # Some action runners come with huge libraries preinstalled in the OS-default dir '~/.nuget/packages'
+      # To avoid caching/restoring unnecessary libraries, we set a clean, custom location here, for 'dotnet build' to use.
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
     steps:
@@ -74,21 +75,16 @@ jobs:
           GOOGLE_API_CREDENTIAL_FILE: ${{ vars.GOOGLE_API_CREDENTIAL_FILE }}
         run: |
             echo "$GOOGLE_API_CREDENTIAL_FILE_CONTENT" > ~/$GOOGLE_API_CREDENTIAL_FILE
-            
-# Setting up Caches ----------------------------
+                  
 
-      # NOT Caching dotnet SDK & Workloads at this point, see notes in 'parked_workflows.txt'
-      
-      # dotnet Nuget (solution_config specific) --------------
-      
+# Project-specific caching of NuGet packages
+
       - name: Generate hash for Nuget Cache (excluding irrelevant .csproj files)
         run: |
           if [[ "${{ matrix.toplevel_project }}" == "${{ vars.DESKTOP_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*chatbot*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
-          elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.ANDROID_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*ios*' ! -iname '*desktop*' ! -iname '*chatbot*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*chatbot*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           elif [[ "${{ matrix.toplevel_project }}" == "${{ vars.CHATBOT_TOPLEVEL_PROJECT }}" ]]; then
-            HASH=$(find . -iname '*.csproj' ! -iname '*mobile*' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
+            HASH=$(find . -iname '*.csproj' ! -iname '*desktop*' -exec cat {} + | shasum -a 256 | awk '{print $1}')
           else
             echo "Error: The current toplevel_project is not handled for hash generation."
             echo "CS_PROJ_HASH=error" >> $GITHUB_ENV
@@ -96,7 +92,7 @@ jobs:
           fi
           echo "CS_PROJ_HASH=$HASH" >> $GITHUB_ENV
         shell: bash
-      
+
       - name: Cache nuget dependencies
         id: cache-nuget
         uses: actions/cache@v4
@@ -109,34 +105,16 @@ jobs:
       - name: Check cache-nuget hit
         if: steps.cache-nuget.outputs.cache-hit == 'true'
         run: echo "There was a cache-hit for restoring nuget dependencies for ${{ matrix.toplevel_project }}."
-        
-      # NOT Caching Android SDK at this point, see notes in 'parked_workflows.txt'
+      
 
-# Installing SDKs and Frameworks ----------------------------
-
+# Frameworks and SDKs      
+      
       - name: Setup .NET Environment
         id: setup-dotnet
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-
-      - name: Set up JDK 17
-        if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Android SDK
-        if: matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT
-        uses: android-actions/setup-android@v3
       
-      # Installing all needed workloads irrespective of ANDROID vs. DESKTOP distinction:
-      # A single cache is used for 'dotnet' b/c it's too hard to specify workload-specific sub-paths for caching
-      - name: Install Workloads
-        if: ${{ matrix.toplevel_project == vars.ANDROID_TOPLEVEL_PROJECT || 
-          matrix.toplevel_project == vars.DESKTOP_TOPLEVEL_PROJECT }}
-        run: dotnet workload install wasm-tools android
         
 # Build & Test ----------------------------
 

@@ -33,14 +33,14 @@ internal static class TestData
         Option<Vendor>.None());
     
     internal static readonly User DanielDe = new(
-        new MobileNumber("+447777111999"),
+        new MobileNumber("+447777111888"),
         "_Daniel",
         "Test German",
         "_Gorin",
         Option<EmailAddress>.None(),
         LanguageCode.de,
         new List<IRoleInfo>(),
-        EveConGmbH);
+        Option<Vendor>.None());
     
     internal static readonly User LukasDe = new(
         new MobileNumber("+49111199999"),
@@ -110,7 +110,7 @@ internal static class TestData
             new UserInfo(LukasDe),
             X2024Info);
 
-    internal static readonly Role SanitaryCleanLead_DanielDe_X2024 = 
+    internal static readonly Role SanitaryTeamLead_DanielDe_X2024 = 
         new("R2JXNM",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielDe),
@@ -134,7 +134,7 @@ internal static class TestData
             new UserInfo(DanielEn),
             X2024Info);
     
-    internal static readonly Role SanitaryCleanLead_DanielEn_X2024 = 
+    internal static readonly Role SanitaryTeamLead_DanielEn_X2024 = 
         new("RI8MJ1",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielEn), 
@@ -230,7 +230,8 @@ internal static class TestData
             SanitaryAdmin_DanielEn_X2024,
             LiveEventAdmin_DanielEn_X2024,
             SanitaryEngineer_DanielEn_X2024,
-            SiteCleanEngineer_DanielEn_X2024
+            SiteCleanEngineer_DanielEn_X2024,
+            SanitaryTeamLead_DanielEn_X2024
         },
         Venue1,
         new List<ISphereOfAction>

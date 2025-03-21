@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Structs;
 
-public readonly struct Latitude
+public readonly record struct Latitude
 {
     private const double MaxLatitude = 90;
     private const double MinLatitude = -90;

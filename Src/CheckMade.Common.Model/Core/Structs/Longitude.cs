@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Structs;
 
-public readonly struct Longitude
+public readonly record struct Longitude
 {
     private const double MaxLongitude = 180;
     private const double MinLongitude = -180;

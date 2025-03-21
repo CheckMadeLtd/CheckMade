@@ -29,10 +29,10 @@ public sealed class UsersRepositoryTests
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
 
         var repo = _services.GetRequiredService<IUsersRepository>();
-        var user = await repo.GetAsync(DanielEn);
+        var user = await repo.GetAsync(DanielDe);
 
         Assert.NotNull(user);
-        Assert.True(user.Equals(DanielEn));
+        Assert.True(user.Equals(DanielDe));
         Assert.True(user.CurrentEmployer.IsNone);
     }
 

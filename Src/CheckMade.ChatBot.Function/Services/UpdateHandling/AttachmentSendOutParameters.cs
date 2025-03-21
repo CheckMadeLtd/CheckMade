@@ -7,4 +7,4 @@ public sealed record AttachmentSendOutParameters(
     ChatId ChatId,
     InputFileStream FileStream,
     Option<string> Caption, 
-    Option<IReplyMarkup> ReplyMarkup);
+    Option<ReplyMarkup> ReplyMarkup);

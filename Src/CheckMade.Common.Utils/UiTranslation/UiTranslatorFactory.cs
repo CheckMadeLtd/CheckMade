@@ -64,7 +64,12 @@ public class UiTranslatorFactory(
                     /* Why Replace()?
                      In the .tsv file any '\n' is a string literal, while in the resulting translation dictionary
                      we need them to become actual line-breaking control characters to ensure a match against any
-                     UiString.RawEnglishText in the Translate() method. */ 
+                     UiString.RawEnglishText in the Translate() method.
+                     
+                     Why support for \n needed at all?
+                     Despite having introduced UiNewLine(x) to add line breaks, which does away with the need for \n in
+                     the translation file, there are cases where I prefer to use """raw string literals""" to define 
+                     UiStrings, where actual line breaks translate to \n in translation file. */ 
                     var enKey = csv.GetField(1)!.Replace("\\n", "\n");
                     var translation = csv.GetField(2)!.Replace("\\n", "\n");
                     

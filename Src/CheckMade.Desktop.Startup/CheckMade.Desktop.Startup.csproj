@@ -4,7 +4,7 @@
         <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
         One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <Configurations>Debug_Desktop;Debug_All;No_Build;Release</Configurations>
+        <Configurations>Debug_Desktop;No_Build;Release;Debug_AllPrd</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -22,7 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>

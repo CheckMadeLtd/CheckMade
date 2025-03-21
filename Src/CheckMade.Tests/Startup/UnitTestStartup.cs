@@ -6,7 +6,7 @@ using CheckMade.Tests.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using File = Telegram.Bot.Types.File;
+using File = Telegram.Bot.Types.TGFile;
 
 namespace CheckMade.Tests.Startup;
 

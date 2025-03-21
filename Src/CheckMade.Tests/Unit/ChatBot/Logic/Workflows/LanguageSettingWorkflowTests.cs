@@ -40,7 +40,7 @@ public sealed class LanguageSettingWorkflowTests
         
         Assert.Equal(
             "🌎 Please select your preferred language:", 
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetFirstRawEnglish());
     }
     
     [Theory]
@@ -85,7 +85,7 @@ public sealed class LanguageSettingWorkflowTests
         
         Assert.Contains(
             "New language: ",
-            TestUtils.GetAllRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockUserRepo.Verify(x => x.UpdateLanguageSettingAsync(
             roleBind.Role.ByUser,

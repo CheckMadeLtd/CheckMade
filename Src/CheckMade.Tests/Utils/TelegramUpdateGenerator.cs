@@ -51,7 +51,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = userId },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Text = inputText
         });
 
@@ -61,7 +61,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Text = botCommand,
             Entities =
             [
@@ -88,7 +88,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
                     Text = "The bot's original prompt",
                     Date = DateTime.UtcNow,
                     Chat = new Chat { Id = chatId },
-                    MessageId = 123,
+                    Id = 123,
                 }
             }
         });
@@ -99,7 +99,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Caption = "fakeAudioCaption",
             Audio = new Audio { FileId = "fakeAudioFileId" }
         });
@@ -110,7 +110,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Caption = "fakeDocumentCaption",
             Document = new Document { FileId = fileId }
         });
@@ -122,7 +122,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Location = new Location
             {
                 Latitude = 20.0123,
@@ -137,7 +137,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Caption = "fakePhotoCaption",
             Photo = [new PhotoSize { Height = 1, Width = 1, FileSize = 100L, FileId = "fakePhotoFileId" }]
         });
@@ -148,7 +148,7 @@ internal sealed class TelegramUpdateGenerator(Randomizer randomizer) : ITelegram
             From = new TelegramUser { Id = Default_UserAndChatId_PrivateBotChat },
             Chat = new Chat { Id = chatId },
             Date = DateTime.UtcNow,
-            MessageId = 123,
+            Id = 123,
             Caption = "fakeVoiceCaption",
             Voice = new Voice { FileId = "fakeVoiceFileId" }
         });

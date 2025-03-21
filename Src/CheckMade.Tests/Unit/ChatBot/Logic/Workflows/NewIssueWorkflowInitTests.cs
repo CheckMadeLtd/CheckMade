@@ -42,7 +42,7 @@ public sealed class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetFirstRawEnglish());
         
         Assert.Equal(
             expectedNewState,
@@ -82,7 +82,7 @@ public sealed class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetFirstRawEnglish());
         
         Assert.Equal(
             expectedNewState,
@@ -128,7 +128,7 @@ public sealed class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetFirstRawEnglish());
         
         Assert.Equal(
             expectedNewState,
@@ -169,7 +169,7 @@ public sealed class NewIssueWorkflowInitTests
         
         Assert.Equal(
             expectedOutput,
-            TestUtils.GetFirstRawEnglish(actualResponse.GetValueOrThrow().Output));
+            actualResponse.GetValueOrThrow().Output.GetFirstRawEnglish());
         
         Assert.Equal(
             expectedNewState,

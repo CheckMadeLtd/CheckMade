@@ -13,7 +13,7 @@ internal static class TestUtils
     internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
         GetFirstRawEnglish(actualOutput.GetValueOrThrow());
 
-    internal static string GetFirstRawEnglish(IReadOnlyCollection<OutputDto> actualOutput)
+    internal static string GetFirstRawEnglish(this IReadOnlyCollection<OutputDto> actualOutput)
     {
         var text = actualOutput.First().Text.GetValueOrThrow();
 
@@ -22,7 +22,7 @@ internal static class TestUtils
             : text.RawEnglishText;
     }
 
-    internal static string GetAllRawEnglish(IReadOnlyCollection<OutputDto> actualOutput)
+    internal static string GetAllRawEnglish(this IReadOnlyCollection<OutputDto> actualOutput)
     {
         var combinedRawEnglish = string.Empty;
 

@@ -408,7 +408,7 @@ public sealed class ToModelConverterTests
             From = null,
             Text = "not empty",
             Chat = new Chat{ Id = 1 },
-            MessageId = 2,
+            Id = 2,
             Date = DateTime.UtcNow
         });
         
@@ -430,7 +430,7 @@ public sealed class ToModelConverterTests
         {
             From = new User { Id = 123L },
             Chat = new Chat{ Id = 1 },
-            MessageId = 2,
+            Id = 2,
             Date = DateTime.UtcNow
         });
         

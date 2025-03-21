@@ -181,15 +181,15 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade switch
         {
             SanitaryTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary) 
+                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary)
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
             SiteCleanTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary) 
+                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary)
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };
-        
+
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
 
         ISphereOfAction sphere = trade switch
@@ -383,5 +383,4 @@ internal static class ModelReaders
         
         return uncheckedEnum;
     }
-
 }
