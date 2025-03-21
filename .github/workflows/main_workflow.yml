@@ -38,7 +38,7 @@ jobs:
 
     services: 
       postgres:
-        image: postgres
+        image: postgres:16
         env:
           POSTGRES_USER: ${{ vars.PG_SUPER_USER }}
           POSTGRES_PASSWORD: ${{ secrets.PG_SUPER_USER_PSW }}
