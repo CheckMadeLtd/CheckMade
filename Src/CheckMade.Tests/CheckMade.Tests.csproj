@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <Configurations>Debug_All;No_Build;Release;Debug_DevOps;Debug_ChatBot</Configurations>
+        <Configurations>No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd;Debug_Desktop</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
