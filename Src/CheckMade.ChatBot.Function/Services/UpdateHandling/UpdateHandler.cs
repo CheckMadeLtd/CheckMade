@@ -69,7 +69,7 @@ public sealed class UpdateHandler(
 
         var botClientByMode = new Dictionary<InteractionMode, IBotClientWrapper>
         {
-            { InteractionMode.Operations,  botClientFactory.CreateBotClient(InteractionMode.Operations) },
+            { InteractionMode.Operations, botClientFactory.CreateBotClient(InteractionMode.Operations) },
             { InteractionMode.Communications, botClientFactory.CreateBotClient(InteractionMode.Communications) },
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
@@ -111,9 +111,7 @@ public sealed class UpdateHandler(
                 select unit);
         
         return handleUpdateAttempt.Match(
-            
-            _ => Attempt<Unit>.Succeed(Unit.Value),
-
+            static _ => Attempt<Unit>.Succeed(Unit.Value),
             ex =>
             {
                 logger.LogError(ex, "Exception with message '{exMessage}' was thrown. " +
