@@ -65,8 +65,8 @@ public sealed class InputProcessorTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
@@ -77,7 +77,7 @@ public sealed class InputProcessorTests
                 inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings)
-            });
+            ]);
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string expectedWarningOutput = 
@@ -108,8 +108,8 @@ public sealed class InputProcessorTests
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 inputGenerator.GetValidTlgInputCommandMessage(
                     tlgAgent.Mode,
                     (int)OperationsBotCommands.Settings),
@@ -117,7 +117,8 @@ public sealed class InputProcessorTests
                     Dt(LanguageCode.de),
                     resultantWorkflowState: new ResultantWorkflowState(
                         glossary.GetId(typeof(LanguageSettingWorkflow)),
-                        glossary.GetId(typeof(ILanguageSettingSet))))});
+                        glossary.GetId(typeof(ILanguageSettingSet))))
+            ]);
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
         
         const string notExpectedWarningOutput = 

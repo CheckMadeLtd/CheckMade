@@ -68,7 +68,7 @@ public sealed class GeneralWorkflowUtilsTests
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[] { expiredRoleBind },
+            roleBindings: [expiredRoleBind],
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
@@ -171,7 +171,7 @@ public sealed class GeneralWorkflowUtilsTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[] { expiredRoleBind },
+            roleBindings: [expiredRoleBind],
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
@@ -208,7 +208,7 @@ public sealed class GeneralWorkflowUtilsTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[] { roleBindWithNullDeactivation },
+            roleBindings: [roleBindWithNullDeactivation],
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 

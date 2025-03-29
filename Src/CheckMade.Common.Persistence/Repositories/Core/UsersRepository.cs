@@ -100,7 +100,7 @@ public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new [] { command });
+        await ExecuteTransactionAsync([command]);
         EmptyCache();
     }
 

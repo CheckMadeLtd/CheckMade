@@ -51,7 +51,7 @@ internal sealed record GeneralWorkflowUtils(
             await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
 
         var allInteractiveIncludingNewInput =
-            allInteractiveFromDb.Concat(new[] { newInputToAppend });
+            allInteractiveFromDb.Concat([newInputToAppend]);
         
         var allCurrentInteractive = 
             allInteractiveIncludingNewInput

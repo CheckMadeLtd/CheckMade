@@ -264,19 +264,17 @@ internal static class TestData
     
     // Series
     
-    internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
-        new [] 
-        {
-            X2024,
-            X2025
-        });
+    internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X",
+    [
+        X2024,
+        X2025
+    ]);
 
     internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
-        new []
-        {
-            Y2024,
-            Y2025
-        });
+    [
+        Y2024,
+        Y2025
+    ]);
     
     #endregion
     

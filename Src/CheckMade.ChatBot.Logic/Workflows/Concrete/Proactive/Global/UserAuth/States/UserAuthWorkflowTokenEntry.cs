@@ -147,10 +147,10 @@ internal sealed record UserAuthWorkflowTokenEntry(
             await RoleBindingsRepo.AddAsync(tlgAgentRoleBindingsToAdd);
 
             return new WorkflowResponse(
-                    outputs,
-                    Option<string>.Some(
-                        Glossary.GetId(typeof(IUserAuthWorkflowAuthenticated))),
-                    Option<Guid>.None());
+                outputs,
+                Option<string>.Some(
+                    Glossary.GetId(typeof(IUserAuthWorkflowAuthenticated))),
+                Option<Guid>.None());
 
             TlgAgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
                 preExistingRoleBindings.FirstOrDefault(tarb =>
@@ -160,7 +160,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
             void AddTlgAgentRoleBindingsForOtherModes()
             {
                 var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
-                var otherModes = allModes.Except(new[] { currentMode });
+                var otherModes = allModes.Except([currentMode]);
 
                 tlgAgentRoleBindingsToAdd.AddRange(
                     from mode in otherModes

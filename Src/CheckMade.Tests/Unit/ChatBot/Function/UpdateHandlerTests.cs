@@ -165,12 +165,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var tlgAgent = UserId02_ChatId04_Operations;
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new []
-            {
+            roleBindings:
+            [
                 TestRepositoryUtils.GetNewRoleBind(
                     SanitaryInspector_DanielDe_X2024,
                     tlgAgent)
-            }); 
+            ]); 
         
         _services = repoServices;
         var basics = GetBasicTestingServices(_services);

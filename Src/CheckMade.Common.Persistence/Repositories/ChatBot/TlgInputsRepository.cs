@@ -382,7 +382,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         };
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new [] { command });
+        await ExecuteTransactionAsync([command]);
         EmptyCache();
     }
 
