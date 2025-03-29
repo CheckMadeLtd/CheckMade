@@ -1,0 +1,133 @@
+erDiagram
+    users {
+        integer id PK
+        varchar mobile "NOT NULL, unique index when status=1"
+        varchar first_name "NOT NULL"
+        varchar middle_name
+        varchar last_name "NOT NULL"
+        varchar email
+        smallint status "NOT NULL"
+        smallint last_data_migration
+        smallint language_setting "NOT NULL, default 0"
+        jsonb details "NOT NULL"
+    }
+    
+    vendors {
+        integer id PK
+        varchar name "NOT NULL, UNIQUE"
+        jsonb details "NOT NULL"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    users_employment_history {
+        integer id PK
+        timestamptz start_date "NOT NULL"
+        timestamptz end_date "NULL when status=1"
+        integer user_id FK "NOT NULL"
+        integer vendor_id FK "NOT NULL"
+        jsonb details "NOT NULL"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    live_event_series {
+        integer id PK
+        varchar name "NOT NULL, UNIQUE"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    live_event_venues {
+        integer id PK
+        varchar name "NOT NULL, UNIQUE"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    live_events {
+        integer id PK
+        varchar name "NOT NULL, UNIQUE"
+        timestamptz start_date "NOT NULL"
+        timestamptz end_date "NOT NULL"
+        integer venue_id FK "NOT NULL"
+        integer live_event_series_id FK "NOT NULL"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    roles {
+        integer id PK
+        varchar token "NOT NULL, UNIQUE"
+        varchar role_type "NOT NULL"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+        integer user_id FK "NOT NULL"
+        integer live_event_id FK "NOT NULL"
+    }
+    
+    spheres_of_action {
+        integer id PK
+        varchar name "NOT NULL"
+        varchar trade "NOT NULL"
+        integer live_event_id FK "NOT NULL"
+        jsonb details "NOT NULL"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    tlg_agent_role_bindings {
+        integer id PK
+        integer role_id FK "NOT NULL"
+        bigint tlg_user_id "NOT NULL"
+        bigint tlg_chat_id "NOT NULL"
+        timestamptz activation_date "NOT NULL"
+        timestamptz deactivation_date "NULL when status=1"
+        smallint status "NOT NULL"
+        smallint last_data_migration
+        smallint interaction_mode "NOT NULL"
+    }
+    
+    tlg_inputs {
+        integer id PK
+        timestamptz date "NOT NULL"
+        bigint user_id "NOT NULL"
+        jsonb details "NOT NULL"
+        bigint chat_id "NOT NULL"
+        smallint last_data_migration
+        smallint interaction_mode "NOT NULL"
+        smallint input_type "NOT NULL"
+        integer role_id FK
+        integer live_event_id FK
+        uuid entity_guid
+        integer message_id "NOT NULL"
+    }
+    
+    derived_workflow_states {
+        integer id PK
+        varchar resultant_workflow "NOT NULL"
+        varchar in_state "NOT NULL"
+        smallint last_data_migration
+        integer tlg_inputs_id FK
+    }
+    
+    derived_workflow_bridges {
+        integer id PK
+        integer src_input_id FK "NOT NULL"
+        bigint dst_chat_id "NOT NULL"
+        integer dst_message_id "NOT NULL"
+        smallint last_data_migration
+    }
+    
+    users ||--o{ roles : "has"
+    roles ||--o{ tlg_agent_role_bindings : "bound to"
+    live_events ||--o{ roles : "assigned to"
+    live_event_venues ||--o{ live_events : "hosts"
+    live_event_series ||--o{ live_events : "contains"
+    live_events ||--o{ spheres_of_action : "defines"
+    users ||--o{ users_employment_history : "has"
+    vendors ||--o{ users_employment_history : "employs"
+    roles ||--o{ tlg_inputs : "referenced by"
+    live_events ||--o{ tlg_inputs : "referenced by" 
+    tlg_inputs ||--o{ derived_workflow_states : "produces"
+    tlg_inputs ||--o{ derived_workflow_bridges : "source for"

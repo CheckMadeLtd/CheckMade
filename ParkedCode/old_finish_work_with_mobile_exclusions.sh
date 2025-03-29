@@ -1,8 +1,17 @@
+# 21/03/2025 notes
 # This was the original finish work script with support for mobile projects 
 # (i.e. options to exclude mobile builds which can take a long time to build, and Android version incrementation etc.)
 # But, since no mobile apps for forseeable future, am archiving this for future reference and continue with much simpler
 # finish work script for easier maintainability. 
 
+# The following is corresp. explanation from the Wiki which I have outsourced to here now.
+
+# * Extracts all `Debug_*` configurations from the .sln file in the working directory. 
+#     * In case the script was run with option `--noios`, it ignores release configurations that contain the string 'ios'
+#     * In case the script was run with option `--nomob`, it ignores release configurations that contain either 'ios' or 'android'
+#     * These options were added because mobile builds can be very slow, and if we are sure we don't need to build/test them, this greatly accelerates execution of the script. Use with caution!
+
+#     * Increments by one the `<ApplicationVersion>` tag in any 'android' .csproj - this special version for Google Play needs to be an integer and doesn't follow the semantic versioning pattern.
 
 
 #!/usr/bin/env bash
