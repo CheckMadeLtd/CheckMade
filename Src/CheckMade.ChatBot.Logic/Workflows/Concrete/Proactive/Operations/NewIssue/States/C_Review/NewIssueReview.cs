@@ -16,12 +16,12 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIss
 internal interface INewIssueReview<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueReview<T>(
-        IDomainGlossary Glossary,
-        IGeneralWorkflowUtils WorkflowUtils,
-        IStateMediator Mediator,
-        IIssueFactory<T> Factory,
-        ITlgInputsRepository InputsRepo,
-        IStakeholderReporter<T> Reporter) 
+    IDomainGlossary Glossary,
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator,
+    IIssueFactory<T> Factory,
+    ITlgInputsRepository InputsRepo,
+    IStakeholderReporter<T> Reporter) 
     : INewIssueReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
@@ -52,9 +52,9 @@ internal sealed record NewIssueReview<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp =>
+                            .Where(static kvp =>
                                 (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -127,8 +127,8 @@ internal sealed record NewIssueReview<T>(
                     await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
-                    .Select(i => i.EntityGuid)
-                    .Last(g => g.IsSome)
+                    .Select(static i => i.EntityGuid)
+                    .Last(static g => g.IsSome)
                     .GetValueOrThrow();
             }
 

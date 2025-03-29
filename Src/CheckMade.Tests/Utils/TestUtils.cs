@@ -38,7 +38,7 @@ internal static class TestUtils
                 {
                     combinedRawEnglish = $"{combinedRawEnglish}; " +
                                          $"{string.Join("; ", 
-                                             concatenations.Select(c => c!.RawEnglishText))}";
+                                             concatenations.Select(static c => c!.RawEnglishText))}";
                 }
                 else
                 {

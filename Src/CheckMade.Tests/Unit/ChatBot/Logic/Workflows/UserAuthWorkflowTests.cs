@@ -42,7 +42,7 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roles: new []{ SanitaryEngineer_DanielEn_X2024 });
+            roles: [SanitaryEngineer_DanielEn_X2024]);
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
@@ -86,7 +86,7 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roleBindings: new[] { preExistingActiveTlgAgentRoleBind });
+            roleBindings: [preExistingActiveTlgAgentRoleBind]);
         var mockTlgAgentRoleBindingsRepo = 
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
@@ -139,7 +139,7 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roles: new []{ SanitaryEngineer_DanielEn_X2024 });
+            roles: [SanitaryEngineer_DanielEn_X2024]);
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
@@ -162,7 +162,7 @@ public sealed class UserAuthWorkflowTests
         
         List<TlgAgentRoleBind> actualTlgAgentRoleBindAdded = []; 
         mockRoleBindingsRepo
-            .Setup(x => 
+            .Setup(static x => 
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(tlgAgentRole => 
                 actualTlgAgentRoleBindAdded = tlgAgentRole.ToList());
@@ -208,7 +208,7 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roles: new []{ SanitaryInspector_DanielDe_X2024 });
+            roles: [SanitaryInspector_DanielDe_X2024]);
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
@@ -220,23 +220,23 @@ public sealed class UserAuthWorkflowTests
 
         var allModes = Enum.GetValues(typeof(InteractionMode)).Cast<InteractionMode>();
         var expectedTlgAgentRoleBindingsAdded = allModes.Select(im => 
-            new TlgAgentRoleBind(
-                roleForAuth,
-                tlgAgent with { Mode = im },
-                DateTimeOffset.UtcNow,
-                Option<DateTimeOffset>.None()))
+                new TlgAgentRoleBind(
+                    roleForAuth,
+                    tlgAgent with { Mode = im },
+                    DateTimeOffset.UtcNow,
+                    Option<DateTimeOffset>.None()))
             .ToImmutableReadOnlyList();
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
         mockTlgAgentRoleBindingsRepo
-            .Setup(x =>
+            .Setup(static x =>
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
 
         await workflow.GetResponseAsync(inputValidToken);
         
-        mockTlgAgentRoleBindingsRepo.Verify(x => x.AddAsync(
+        mockTlgAgentRoleBindingsRepo.Verify(static x => x.AddAsync(
             It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
 
         for (var i = 0; i < expectedTlgAgentRoleBindingsAdded.Count; i++)
@@ -278,9 +278,12 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roles: new[] { SanitaryEngineer_DanielEn_X2024 },
-            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
-                SanitaryEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) });
+            roles: [SanitaryEngineer_DanielEn_X2024],
+            roleBindings:
+            [
+                TestRepositoryUtils.GetNewRoleBind(
+                    SanitaryEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications })
+            ]);
         var mockTlgAgentRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
 
@@ -289,8 +292,8 @@ public sealed class UserAuthWorkflowTests
             chatId: tlgAgent.ChatId,
             text: roleForAuth.Token);
 
-        List<TlgAgentRoleBind> expectedTlgAgentRoleBindingsAdded = [ 
-        
+        List<TlgAgentRoleBind> expectedTlgAgentRoleBindingsAdded =
+        [
             // Adds missing bind for Operations Mode
             new(roleForAuth,
                 tlgAgent,
@@ -306,7 +309,7 @@ public sealed class UserAuthWorkflowTests
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
         mockTlgAgentRoleBindingsRepo
-            .Setup(x =>
+            .Setup(static x =>
                 x.AddAsync(It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>>(
                 tlgAgentRoles => actualTlgAgentRoleBindingsAdded = tlgAgentRoles.ToList());
@@ -315,7 +318,7 @@ public sealed class UserAuthWorkflowTests
 
         await workflow.GetResponseAsync(inputValidToken);
         
-        mockTlgAgentRoleBindingsRepo.Verify(x => x.AddAsync(
+        mockTlgAgentRoleBindingsRepo.Verify(static x => x.AddAsync(
             It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>()));
 
         for (var i = 0; i < expectedTlgAgentRoleBindingsAdded.Count; i++)
@@ -360,9 +363,12 @@ public sealed class UserAuthWorkflowTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs: inputHistory,
-            roles: new[] { SanitaryEngineer_DanielEn_X2024 },
-            roleBindings: new []{ TestRepositoryUtils.GetNewRoleBind(
-                SanitaryEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications }) });
+            roles: [SanitaryEngineer_DanielEn_X2024],
+            roleBindings:
+            [
+                TestRepositoryUtils.GetNewRoleBind(
+                    SanitaryEngineer_DanielEn_X2024, tlgAgent with { Mode = Communications })
+            ]);
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);

@@ -27,10 +27,10 @@ public sealed class NetworkRetryPolicy : RetryPolicyBase, INetworkRetryPolicy
         const int retryCount = 5;
 
         Policy = Polly.Policy
-            .Handle<Exception>(ex => 
+            .Handle<Exception>(static ex => 
                 IsTargetExceptionOrHasTargetInnerException(ex, ExceptionTypesToHandle))
             .WaitAndRetryAsync(retryCount,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
+                static retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timeSpan, retryAttempt, _) => LogError(exception, timeSpan, retryAttempt));
     }
     

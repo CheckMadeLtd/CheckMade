@@ -51,9 +51,9 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
             Option<ReplyKeyboardMarkup>.None);
 
         return combinedInlineKeyboardMarkup.Match(
-            markup => markup,
+            static markup => markup,
             () => replyKeyboardMarkup.Match(
-                markup => markup,
+                static markup => markup,
                 Option<ReplyMarkup>.None));
     }
 
@@ -63,8 +63,8 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
         var allTrue = true;
         
         allTrue &= promptsSelection.Match(
-            EnumChecker.IsDefined,
-            () => true);
+            EnumChecker.IsDefined, 
+            static () => true);
 
         return allTrue;
     }
@@ -86,8 +86,8 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
                               : string.Empty),
                     id: glossary.GetId(term)
                 )).ToList();
-            },
-            () => []
+            }, 
+            static () => []
         ).ToImmutableReadOnlyCollection();
     }
     
@@ -120,9 +120,9 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
                 .ToImmutableReadOnlyCollection();
         
         return promptSelectionAsCollection.Select(prompt =>
-            (text: translator.Translate(glossary.UiByCallbackId[
-                    new CallbackId((long)prompt)]),
-                id: new CallbackId((long)prompt).Id))
+                (text: translator.Translate(glossary.UiByCallbackId[
+                        new CallbackId((long)prompt)]),
+                    id: new CallbackId((long)prompt).Id))
             .ToImmutableReadOnlyCollection();
         
         static bool IsSingleFlag(Enum value)
@@ -149,10 +149,10 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
         IReadOnlyCollection<(string text, string id)> textIdPairs)
     {
         return textIdPairs
-            .Select((pair, index) => new { Index = index, Pair = pair })
+            .Select(static (pair, index) => new { Index = index, Pair = pair })
             .GroupBy(x => x.Index / inlineKeyboardNumberOfColumns)
-            .Select(x =>
-                x.Select(p =>
+            .Select(static x =>
+                x.Select(static p =>
                         InlineKeyboardButton.WithCallbackData(
                             p.Pair.text,
                             p.Pair.id))
@@ -177,10 +177,10 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
         const int replyKeyboardNumberOfColumns = 3;
 
         var replyKeyboardTable = choices
-            .Select((item, index) => new { Index = index, Choice = item })
-            .GroupBy(x => x.Index / replyKeyboardNumberOfColumns)
-            .Select(x =>
-                x.Select(c => new KeyboardButton(c.Choice)).ToArray())
+            .Select(static (item, index) => new { Index = index, Choice = item })
+            .GroupBy(static x => x.Index / replyKeyboardNumberOfColumns)
+            .Select(static x =>
+                x.Select(static c => new KeyboardButton(c.Choice)).ToArray())
             .ToArray();
         
         return new ReplyKeyboardMarkup(replyKeyboardTable)

@@ -16,10 +16,10 @@ using CheckMade.Common.Model.Core.Trades;
 namespace CheckMade.Common.BusinessLogic;
 
 public sealed record StakeholderReporter<T>(
-        IRolesRepository RoleRepo,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        IIssueFactory<T> IssueFactory,
-        IAssessmentFactory AssessmentFactory) 
+    IRolesRepository RoleRepo,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IIssueFactory<T> IssueFactory,
+    IAssessmentFactory AssessmentFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
     private const string IssueTypeIsActuallyAssessment = "MagicStringForAssessment";
@@ -62,7 +62,7 @@ public sealed record StakeholderReporter<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         completeIssueSummary.Where(summaryFilter)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray()));
         }
     }
@@ -104,7 +104,7 @@ public sealed record StakeholderReporter<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         completeIssueSummary.Where(summaryFilter)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray()));
         }
     }
@@ -121,7 +121,7 @@ public sealed record StakeholderReporter<T>(
         
         var allAdminAndObservers =
             allRolesAtCurrentLiveEvent
-                .Where(r => r.RoleType is 
+                .Where(static r => r.RoleType is 
                     TradeAdmin<T> or 
                     TradeObserver<T> or 
                     LiveEventAdmin or
@@ -132,12 +132,12 @@ public sealed record StakeholderReporter<T>(
         {
             nameof(CleaningIssue<T>) or IssueTypeIsActuallyAssessment =>
                 allRolesAtCurrentLiveEvent
-                    .Where(r => r.RoleType is TradeTeamLead<T>)
+                    .Where(static r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),
             
             nameof(TechnicalIssue<T>) =>
                 allRolesAtCurrentLiveEvent
-                    .Where(r => r.RoleType is TradeEngineer<T>)
+                    .Where(static r => r.RoleType is TradeEngineer<T>)
                     .ToArray(),
             
             _ => []
@@ -148,7 +148,7 @@ public sealed record StakeholderReporter<T>(
         var recipients = new List<LogicalPort>(
             allAdminAndObservers.Concat(allRelevantSpecialist)
                 .Where(r => !r.Equals(currentRole))
-                .Select(r => new LogicalPort(
+                .Select(static r => new LogicalPort(
                     r,
                     InteractionMode.Notifications)));
 
@@ -157,7 +157,7 @@ public sealed record StakeholderReporter<T>(
         
         return recipients
             .Where(lp => 
-                allActiveRoleBindings.Select(tarb => tarb.Role)
+                allActiveRoleBindings.Select(static tarb => tarb.Role)
                     .Contains(lp.Role))
             .ToImmutableReadOnlyCollection();
     }

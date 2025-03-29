@@ -12,10 +12,10 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSe
 internal interface ILanguageSettingSelect : IWorkflowStateNormal;
 
 internal sealed record LanguageSettingSelect(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        IUsersRepository UsersRepo) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IUsersRepository UsersRepo) 
     : ILanguageSettingSelect
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -30,7 +30,7 @@ internal sealed record LanguageSettingSelect(
                 Text = Ui("🌎 Please select your preferred language:"),
                 DomainTermSelection = new List<DomainTerm>(
                     Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                        .Select(lc => Dt(lc))),
+                        .Select(static lc => Dt(lc))),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];

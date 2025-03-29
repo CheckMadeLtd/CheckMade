@@ -39,16 +39,14 @@ public sealed class OutputToReplyMarkupConverterTests
         
         // Assumes inlineKeyboardNumberOfColumns = 1
         var expectedReplyMarkup = Option<ReplyMarkup>.Some(
-            new InlineKeyboardMarkup(new[]
-            {
-                new[]
-                {
+            new InlineKeyboardMarkup([
+                [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
                             .GetUi(typeof(CleaningIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(CleaningIssue<SanitaryTrade>))), 
-                },
+                        basics.domainGlossary.GetId(typeof(CleaningIssue<SanitaryTrade>)))
+                ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary
@@ -63,7 +61,7 @@ public sealed class OutputToReplyMarkupConverterTests
                             .GetFormattedEnglish(),
                         basics.domainGlossary.GetId(typeof(ConsumablesIssue<SanitaryTrade>))), 
                 ]
-            }));
+            ]));
 
         var actualReplyMarkup = 
             basics.converter.GetReplyMarkup(outputWithDomainTerms);
@@ -91,23 +89,21 @@ public sealed class OutputToReplyMarkupConverterTests
         {
             ControlPromptsSelection = 
                 promptSelection
-                    .Select(pair => pair.prompt)
-                    .Aggregate((current, next) => current | next)
+                    .Select(static pair => pair.prompt)
+                    .Aggregate(static (current, next) => current | next)
         };
 
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<ReplyMarkup>.Some(
-            new InlineKeyboardMarkup(new[] 
-            { 
-                new [] 
-                { 
+            new InlineKeyboardMarkup([
+                [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(), 
                         promptSelection[0].promptId), 
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[1].promptId].GetFormattedEnglish(), 
-                        promptSelection[1].promptId) 
-                },
+                        promptSelection[1].promptId)
+                ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[2].promptId].GetFormattedEnglish(), 
@@ -121,7 +117,7 @@ public sealed class OutputToReplyMarkupConverterTests
                         basics.uiByPromptId[promptSelection[4].promptId].GetFormattedEnglish(), 
                         promptSelection[4].promptId) 
                 ]
-            }));
+            ]));
         
         var actualReplyMarkup = 
             basics.converter.GetReplyMarkup(outputWithPrompts);
@@ -152,20 +148,18 @@ public sealed class OutputToReplyMarkupConverterTests
             
             ControlPromptsSelection = 
                 promptSelection
-                    .Select(pair => pair.prompt)
-                    .Aggregate((current, next) => current | next)
+                    .Select(static pair => pair.prompt)
+                    .Aggregate(static (current, next) => current | next)
         };
         
         // Assumes inlineKeyboardNumberOfColumns = 2
         var expectedReplyMarkup = Option<ReplyMarkup>.Some(
-            new InlineKeyboardMarkup(new[]
-            {
-                new[]
-                {
+            new InlineKeyboardMarkup([
+                [
                     InlineKeyboardButton.WithCallbackData(
                         basics.domainGlossary.GetUi(ConsumablesItem.PaperTowels).GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(ConsumablesItem.PaperTowels)), 
-                },
+                        basics.domainGlossary.GetId(ConsumablesItem.PaperTowels))
+                ],
                 [
                     InlineKeyboardButton.WithCallbackData(
                         basics.uiByPromptId[promptSelection[0].promptId].GetFormattedEnglish(),
@@ -174,7 +168,7 @@ public sealed class OutputToReplyMarkupConverterTests
                         basics.uiByPromptId[promptSelection[1].promptId].GetFormattedEnglish(),
                         promptSelection[1].promptId),
                 ]
-            }));
+            ]));
 
         var actualReplyMarkup = 
             basics.converter.GetReplyMarkup(outputWithBoth);
@@ -201,12 +195,10 @@ public sealed class OutputToReplyMarkupConverterTests
         };
         
         // Assumes replyKeyboardNumberOfColumns = 3
-        var expectedReplyMarkup = Option<ReplyMarkup>.Some(new ReplyKeyboardMarkup(new[]
-        {
-            new[] 
-                { new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3) },
+        var expectedReplyMarkup = Option<ReplyMarkup>.Some(new ReplyKeyboardMarkup([
+            [new KeyboardButton(choice1), new KeyboardButton(choice2), new KeyboardButton(choice3)],
             [new KeyboardButton(choice4), new KeyboardButton(choice5)]
-        })
+        ])
         {
             IsPersistent = false,
             OneTimeKeyboard = true,

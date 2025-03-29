@@ -334,7 +334,7 @@ public sealed class BotClientWrapper(
 
             logger.LogDebug($"Added to bot {MyInteractionMode} for language {language} " +
                             $"the following BotCommands: " +
-                            $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
+                            $"{string.Join("; ", telegramBotCommands.Select(static bc => bc.Command))}");
         }
         
         return Unit.Value;
@@ -344,9 +344,9 @@ public sealed class BotClientWrapper(
         IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
-            .SelectMany(kvp => kvp.Value)
+            .SelectMany(static kvp => kvp.Value)
             .Where(kvp => kvp.Key == language)
-            .Select(kvp => new BotCommand
+            .Select(static kvp => new BotCommand
             {
                 Command = kvp.Value.Command, 
                 Description = kvp.Value.Description

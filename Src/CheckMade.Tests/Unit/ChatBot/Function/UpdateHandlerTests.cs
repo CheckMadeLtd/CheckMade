@@ -64,7 +64,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var mockInputProcessor = new Mock<IInputProcessor>();
         mockInputProcessor
-            .Setup(opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .Setup(static opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .Throws<Exception>();
         serviceCollection.AddScoped<IInputProcessor>(_ => mockInputProcessor.Object);
         
@@ -77,7 +77,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         await basics.handler.HandleUpdateAsync(textUpdate, mode);
         
-        mockLogger.Verify(l => l.Log(
+        mockLogger.Verify(static l => l.Log(
             LogLevel.Error, 
             It.IsAny<EventId>(), 
             It.IsAny<It.IsAnyType>(), 
@@ -113,7 +113,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageAsync(
                 invalidBotCommandUpdate.Message.Chat.Id,
                 It.IsAny<string>(),
-                It.Is<string>(msg => msg.Contains(expectedErrorCode)),
+                It.Is<string>(static msg => msg.Contains(expectedErrorCode)),
                 Option<ReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);
@@ -124,7 +124,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        serviceCollection.AddScoped<IInputProcessor>(_ => 
+        serviceCollection.AddScoped<IInputProcessor>(static _ => 
             GetStubInputProcessor( 
                 new List<OutputDto>
                 {
@@ -155,7 +155,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        serviceCollection.AddScoped<IInputProcessor>(_ => 
+        serviceCollection.AddScoped<IInputProcessor>(static _ => 
             GetStubInputProcessor(
                 new List<OutputDto>
                 {
@@ -224,7 +224,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var actualMarkup = Option<ReplyMarkup>.None();
         basics.mockBotClient
             .Setup(
-                x => x.SendTextMessageAsync(
+                static x => x.SendTextMessageAsync(
                     It.IsAny<ChatId>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
@@ -266,7 +266,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, mode);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageAsync(
+            static x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(), 
                 It.IsAny<string>(), 
                 It.IsAny<string>(),
@@ -377,7 +377,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, mode);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageAsync(
+            static x => x.SendTextMessageAsync(
                 expectedChatId,
                 It.IsAny<string>(),
                 expectedOutputMessage,
@@ -424,19 +424,19 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, mode);
     
         basics.mockBotClient.Verify(
-            x => x.SendPhotoAsync(
+            static x => x.SendPhotoAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     
         basics.mockBotClient.Verify(
-            x => x.SendVoiceAsync(
+            static x => x.SendVoiceAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
         
         basics.mockBotClient.Verify(
-            x => x.SendDocumentAsync(
+            static x => x.SendDocumentAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(1));
@@ -477,7 +477,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         await basics.handler.HandleUpdateAsync(update, mode);
         
         basics.mockBotClient.Verify(
-            x => x.SendTextMessageAsync(
+            static x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(), 
                 It.IsAny<string>(),
                 mainText,
@@ -486,7 +486,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             Times.Once);
         
         basics.mockBotClient.Verify(
-            x => x.SendPhotoAsync(
+            static x => x.SendPhotoAsync(
                 It.IsAny<AttachmentSendOutParameters>(),
                 It.IsAny<CancellationToken>()),
             Times.Exactly(2));
@@ -537,7 +537,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
         
         mockBotClient
-            .Setup(x => x.SendTextMessageAsync(
+            .Setup(static x => x.SendTextMessageAsync(
                 It.IsAny<ChatId>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -565,7 +565,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         mockInputProcessor
             .Setup<Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
-                ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+                static ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
             .ReturnsAsync((validInput, returningOutputs));
 
         return mockInputProcessor.Object;

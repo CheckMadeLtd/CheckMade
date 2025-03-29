@@ -19,10 +19,10 @@ public interface IInputProcessor
 }
 
 internal sealed class InputProcessor(
-        IWorkflowIdentifier workflowIdentifier,
-        IGeneralWorkflowUtils workflowUtils,
-        IDomainGlossary glossary,
-        ILogger<InputProcessor> logger)
+    IWorkflowIdentifier workflowIdentifier,
+    IGeneralWorkflowUtils workflowUtils,
+    IDomainGlossary glossary,
+    ILogger<InputProcessor> logger)
     : IInputProcessor
 {
     public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
@@ -85,7 +85,7 @@ internal sealed class InputProcessor(
                         currentInput));
             },
             // This error was already logged at its source, in ToModelConverter
-            error => 
+            static error => 
                 Task.FromResult<(Option<TlgInput> EnrichedOriginalInput, 
                     IReadOnlyCollection<OutputDto> ResultingOutputs)>((
                     Option<TlgInput>.None(), [new OutputDto { Text = error }]
@@ -103,8 +103,8 @@ internal sealed class InputProcessor(
         ResultantWorkflowState? workflowInfo = null;
                 
         var newState = response.Match(
-            r => r.NewStateId,
-            _ => Option<string>.None());
+            static r => r.NewStateId,
+            static _ => Option<string>.None());
                 
         if (activeWorkflow.IsSome && newState.IsSome)
         {
@@ -118,8 +118,8 @@ internal sealed class InputProcessor(
 
     private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
         response.Match(
-            r => r.EntityGuid,
-            _ => Option<Guid>.None());
+            static r => r.EntityGuid,
+            static _ => Option<Guid>.None());
     
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
     {
@@ -132,7 +132,7 @@ internal sealed class InputProcessor(
         var previousWorkflowInputHistory = 
             (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
-            .GetLatestRecordsUpTo(input => 
+            .GetLatestRecordsUpTo(static input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))
             .ToImmutableReadOnlyCollection();
 
@@ -158,7 +158,7 @@ internal sealed class InputProcessor(
         return await activeWorkflow.Match(
             wf => 
                 wf.GetResponseAsync(currentInput),
-            () => 
+            static () => 
                 Task.FromResult(Result<WorkflowResponse>
                     .FromSuccess(new WorkflowResponse(
                         [

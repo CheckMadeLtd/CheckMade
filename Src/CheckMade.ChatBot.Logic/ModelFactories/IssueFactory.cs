@@ -110,8 +110,8 @@ internal sealed record IssueFactory<T>(
         {
             var uniqueGuids =
                 inputs
-                    .Where(i => i.EntityGuid.IsSome)
-                    .Select(i => i.EntityGuid.GetValueOrThrow())
+                    .Where(static i => i.EntityGuid.IsSome)
+                    .Select(static i => i.EntityGuid.GetValueOrThrow())
                     .Distinct()
                     .ToImmutableReadOnlyCollection();
 
@@ -126,7 +126,7 @@ internal sealed record IssueFactory<T>(
         IFacility GetLastSelectedFacility()
         {
             var lastFacilityType =
-                inputs.LastOrDefault(i =>
+                inputs.LastOrDefault(static i =>
                         i.Details.DomainTerm.IsSome &&
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
@@ -147,7 +147,7 @@ internal sealed record IssueFactory<T>(
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
-                    .Select(i => i.Details.Text.GetValueOrThrow())
+                    .Select(static i => i.Details.Text.GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
 
             var lastDescription = submittedDescriptions.LastOrDefault();
@@ -173,7 +173,7 @@ internal sealed record IssueFactory<T>(
             
             attachments
                 .AddRange(submittedAttachments
-                    .Select(attachment => 
+                    .Select(static attachment => 
                         new AttachmentDetails(
                             attachment.Details.AttachmentInternalUri.GetValueOrThrow(),
                             attachment.Details.AttachmentType.GetValueOrThrow(),
@@ -212,7 +212,7 @@ internal sealed record IssueFactory<T>(
         {
             return Glossary.GetAll(typeof(ConsumablesItem))
                 .Where(dt => dt.IsToggleOn(inputs))
-                .Select(dt => (ConsumablesItem)dt.EnumValue!)
+                .Select(static dt => (ConsumablesItem)dt.EnumValue!)
                 .ToImmutableReadOnlyCollection();
         }
     }

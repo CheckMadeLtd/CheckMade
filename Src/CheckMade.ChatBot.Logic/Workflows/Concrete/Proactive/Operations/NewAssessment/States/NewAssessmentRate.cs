@@ -27,7 +27,7 @@ internal sealed record NewAssessmentRate(
                 Text = Ui("Provide rating for cleaning:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(AssessmentRating))
-                        .OrderBy(dt => dt.EnumValue).ToImmutableReadOnlyCollection()),
+                        .OrderBy(static dt => dt.EnumValue).ToImmutableReadOnlyCollection()),
                 ControlPromptsSelection = ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }

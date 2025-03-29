@@ -16,7 +16,7 @@ public static class ServiceRegistration
         services.AddSingleton<IDbCommandRetryPolicy, DbCommandRetryPolicy>();
         services.AddSingleton<INetworkRetryPolicy, NetworkRetryPolicy>();
 
-        services.AddSingleton<IUiTranslatorFactory, UiTranslatorFactory>(sp => 
+        services.AddSingleton<IUiTranslatorFactory, UiTranslatorFactory>(static sp => 
             new UiTranslatorFactory(sp.GetRequiredService<ILogger<UiTranslatorFactory>>(),
                 sp.GetRequiredService<ILogger<UiTranslator>>()));
     }

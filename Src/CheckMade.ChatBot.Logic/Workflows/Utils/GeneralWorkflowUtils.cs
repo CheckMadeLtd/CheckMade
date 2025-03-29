@@ -41,7 +41,7 @@ internal sealed record GeneralWorkflowUtils(
             .Where(tarb =>
                 tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
                 tarb.DeactivationDate.IsSome)
-            .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
+            .MaxBy(static tarb => tarb.DeactivationDate.GetValueOrThrow());
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()

@@ -170,12 +170,12 @@ public sealed class UpdateHandler(
             if (!isWorkflowTerminatingInput)
                 return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
             
-            Func<OutputDto, bool> isOtherRecipientThanOriginatingRole = dto => dto.LogicalPort.IsSome;
+            Func<OutputDto, bool> isOtherRecipientThanOriginatingRole = static dto => dto.LogicalPort.IsSome;
 
             return Option<IReadOnlyCollection<ActualSendOutParams>>.Some(
                 sentOutputs
                     .Where(isOtherRecipientThanOriginatingRole)
-                    .Select(o => o.ActualSendOutParams!.Value)
+                    .Select(static o => o.ActualSendOutParams!.Value)
                     .ToImmutableReadOnlyCollection());
         }
     }

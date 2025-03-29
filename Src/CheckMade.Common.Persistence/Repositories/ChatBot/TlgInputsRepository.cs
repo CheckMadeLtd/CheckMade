@@ -120,20 +120,20 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
             ["@tlgInputType"] = (int)tlgInput.InputType,
             ["@token"] = tlgInput.OriginatorRole.Match<object>(  
-                r => r.Token, 
-                () => DBNull.Value),  
+                static r => r.Token, 
+                static () => DBNull.Value),  
             ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
-                le => le.Name, 
-                () => DBNull.Value),  
+                static le => le.Name, 
+                static () => DBNull.Value),  
             ["@workflowId"] = tlgInput.ResultantWorkflow.Match<object>(  
-                w => w.WorkflowId, 
-                () => DBNull.Value),  
+                static w => w.WorkflowId, 
+                static () => DBNull.Value),  
             ["@workflowState"] = tlgInput.ResultantWorkflow.Match<object>(  
-                w => w.InStateId,  
-                () => DBNull.Value),
+                static w => w.InStateId,  
+                static () => DBNull.Value),
             ["@guid"] = tlgInput.EntityGuid.Match<object>(
-                guid => guid,
-                () => DBNull.Value)
+                static guid => guid,
+                static () => DBNull.Value)
         };
 
         var command = (tlgInput.ResultantWorkflow.IsSome, bridgeDestinations.IsSome) switch
@@ -171,12 +171,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
             command.Parameters.Add(new NpgsqlParameter("@dstChatIds", NpgsqlDbType.Array | NpgsqlDbType.Bigint)
             {
-                Value = destinations.Select(d => d.ChatId.Id).ToArray()
+                Value = destinations.Select(static d => d.ChatId.Id).ToArray()
             });
             
             command.Parameters.Add(new NpgsqlParameter("@dstMessageIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
             {
-                Value = destinations.Select(d => d.TlgMessageId.Id).ToArray()
+                Value = destinations.Select(static d => d.TlgMessageId.Id).ToArray()
             });
         }
 
@@ -199,12 +199,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent) =>
         (await GetAllAsync(tlgAgent))
-        .Where(i => i.InputType != TlgInputType.Location)
+        .Where(static i => i.InputType != TlgInputType.Location)
         .ToImmutableReadOnlyCollection();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync(liveEvent))
-        .Where(i => i.InputType != TlgInputType.Location)
+        .Where(static i => i.InputType != TlgInputType.Location)
         .ToImmutableReadOnlyCollection();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(

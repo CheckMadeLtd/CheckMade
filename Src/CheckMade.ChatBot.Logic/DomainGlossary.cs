@@ -117,7 +117,7 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #region Submissions
         
-        // Below, presence/absence determines availability of IssueTypes per TradeType, also in the Workflow!
+        // Below, presence/absence determines the availability of IssueTypes per TradeType, also in the Workflow!
 
         AddTerm(typeof(GeneralIssue<SanitaryTrade>), "DVGI3N", Ui("❗ General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
@@ -180,19 +180,19 @@ public sealed record DomainGlossary : IDomainGlossary
         IdAndUiByTerm = _domainGlossaryBuilder.ToImmutable();
         
         TermById = IdAndUiByTerm.ToDictionary(
-            kvp => kvp.Value.callbackId,
-            kvp => kvp.Key);
+            static kvp => kvp.Value.callbackId,
+            static kvp => kvp.Key);
     }
 
     public IReadOnlyCollection<DomainTerm> GetAll(Type superType)
     {
         return
             IdAndUiByTerm
-                .Select(kvp => kvp.Key)
+                .Select(static kvp => kvp.Key)
                 .Where(dt => dt.TypeValue != null &&
                              superType.IsAssignableFrom(dt.TypeValue) ||
                              superType == dt.EnumType)
-                .OrderBy(dt => dt.ToString())
+                .OrderBy(static dt => dt.ToString())
                 .ToImmutableReadOnlyCollection();
     }
 

@@ -14,7 +14,7 @@ public static class ServiceRegistration
     public static void Register_CommonPersistence_Services(this IServiceCollection services, string dbConnectionString)
     {
         services.AddScoped<IDbConnectionProvider>(_ => new DbConnectionProvider(dbConnectionString));
-        services.AddScoped<IDbExecutionHelper>(sp =>
+        services.AddScoped<IDbExecutionHelper>(static sp =>
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
                 sp.GetRequiredService<IDbCommandRetryPolicy>(),

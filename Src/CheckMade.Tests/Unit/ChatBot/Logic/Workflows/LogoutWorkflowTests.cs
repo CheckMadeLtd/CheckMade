@@ -36,8 +36,8 @@ public sealed class LogoutWorkflowTests
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
@@ -51,8 +51,8 @@ public sealed class LogoutWorkflowTests
                     resultantWorkflowState: new ResultantWorkflowState(
                         glossary.GetId(typeof(LogoutWorkflow)),
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
-            },
-            roleBindings: new []{ boundRole } );
+            ],
+            roleBindings: [boundRole]);
         var mockRoleBindingsRepo =
             (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<LogoutWorkflow>();
@@ -89,15 +89,15 @@ public sealed class LogoutWorkflowTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Logout,
                     resultantWorkflowState: new ResultantWorkflowState(
                         glossary.GetId(typeof(LogoutWorkflow)),
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
-            },
+            ],
             roleBindings: new List<TlgAgentRoleBind>
             {
                 // Relevant
@@ -129,7 +129,7 @@ public sealed class LogoutWorkflowTests
         
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsUpdated = [];
         mockTlgAgentRoleBindingsForAllModes
-            .Setup(x => x.UpdateStatusAsync(
+            .Setup(static x => x.UpdateStatusAsync(
                 It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>(), DbRecordStatus.Historic))
             .Callback<IReadOnlyCollection<TlgAgentRoleBind>, DbRecordStatus>(
                 (tlgAgentRoleBinds, newStatus) => 
@@ -171,8 +171,8 @@ public sealed class LogoutWorkflowTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
                     Operations,
@@ -186,7 +186,7 @@ public sealed class LogoutWorkflowTests
                     resultantWorkflowState: new ResultantWorkflowState(
                         glossary.GetId(typeof(LogoutWorkflow)),
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
-            });
+            ]);
         var workflow = services.GetRequiredService<LogoutWorkflow>();
         const string expectedMessage1 = "Logout aborted."; 
         

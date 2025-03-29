@@ -45,8 +45,8 @@ internal sealed record AssessmentFactory(
         {
             var uniqueGuids =
                 inputs
-                    .Where(i => i.EntityGuid.IsSome)
-                    .Select(i => i.EntityGuid.GetValueOrThrow())
+                    .Where(static i => i.EntityGuid.IsSome)
+                    .Select(static i => i.EntityGuid.GetValueOrThrow())
                     .Distinct()
                     .ToImmutableReadOnlyCollection();
 
@@ -61,7 +61,7 @@ internal sealed record AssessmentFactory(
         IFacility GetLastSelectedFacility()
         {
             var lastFacilityType =
-                inputs.LastOrDefault(i =>
+                inputs.LastOrDefault(static i =>
                         i.Details.DomainTerm.IsSome &&
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
                         i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IFacility)))?
@@ -82,7 +82,7 @@ internal sealed record AssessmentFactory(
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewAssessmentEvidenceEntry)))
-                    .Select(i => i.Details.Text.GetValueOrThrow())
+                    .Select(static i => i.Details.Text.GetValueOrThrow())
                     .ToImmutableReadOnlyCollection();
 
             var lastDescription = submittedDescriptions.LastOrDefault();
@@ -108,7 +108,7 @@ internal sealed record AssessmentFactory(
             
             attachments
                 .AddRange(submittedAttachments
-                    .Select(attachment => 
+                    .Select(static attachment => 
                         new AttachmentDetails(
                             attachment.Details.AttachmentInternalUri.GetValueOrThrow(),
                             attachment.Details.AttachmentType.GetValueOrThrow(),
@@ -129,7 +129,7 @@ internal sealed record AssessmentFactory(
 
         AssessmentRating GetRating() =>
             (AssessmentRating)inputs
-                .Last(i =>
+                .Last(static i =>
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().EnumType == typeof(AssessmentRating))
                 .Details.DomainTerm.GetValueOrThrow().EnumValue!;

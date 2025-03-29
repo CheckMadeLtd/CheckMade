@@ -29,11 +29,11 @@ public class UnitTestStartup : TestStartupBase
 
     private void RegisterTestBotClient()
     {
-        Services.AddScoped<IBotClientFactory, StubBotClientFactory>(sp => 
+        Services.AddScoped<IBotClientFactory, StubBotClientFactory>(static sp => 
             new StubBotClientFactory(sp.GetRequiredService<Mock<IBotClientWrapper>>()));
 
         /* Adding Mock<IBotClientWrapper> into the D.I. container is necessary so that I can inject the same instance
-         in my tests that is also used by the StubBotClientFactory below. This way I can verify behavior on the
+         in my tests that is also used by the StubBotClientFactory below. This way I can verify behaviour on the
          mockBotClientWrapper without explicitly setting up the mock in the unit test itself.
 
          We choose 'AddScoped' because we want our dependencies scoped to the execution of each test method.
@@ -42,19 +42,19 @@ public class UnitTestStartup : TestStartupBase
          That prevents:
 
          a) interference between test runs e.g. because of shared state in some dependency (which could e.g.
-         falsify Moq's behavior 'verifications'
+         falsify Moq's behaviour 'verifications'
 
          b) having two instanced of e.g. mockBotClientWrapper within a single test-run, when only one is expected
         */ 
-        Services.AddScoped<Mock<IBotClientWrapper>>(_ =>
+        Services.AddScoped<Mock<IBotClientWrapper>>(static _ =>
         {
             var mockBotClientWrapper = new Mock<IBotClientWrapper>();
             
             mockBotClientWrapper
-                .Setup(x => x.GetFileAsync(It.IsNotNull<string>()))
+                .Setup(static x => x.GetFileAsync(It.IsNotNull<string>()))
                 .ReturnsAsync(new File { FilePath = "fakeFilePath" });
             mockBotClientWrapper
-                .Setup(x => x.MyBotToken)
+                .Setup(static x => x.MyBotToken)
                 .Returns("fakeToken");
             
             return mockBotClientWrapper;

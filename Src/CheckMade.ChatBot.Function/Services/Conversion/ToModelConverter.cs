@@ -110,7 +110,7 @@ internal sealed class ToModelConverter(
                 TlgAttachmentType.Document),
 
             MessageType.Photo => new TlgAttachmentDetails(
-                update.Message.Photo?.OrderBy(p => p.FileSize).Last().FileId
+                update.Message.Photo?.OrderBy(static p => p.FileSize).Last().FileId
                 ?? throw new InvalidOperationException(
                     string.Format(errorMessage, update.Message.Type)),
                 TlgAttachmentType.Photo),
@@ -140,7 +140,7 @@ internal sealed class ToModelConverter(
     private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, InteractionMode interactionMode)
     {
         var botCommandEntity = update.Message.Entities?
-            .FirstOrDefault(e => e.Type == MessageEntityType.BotCommand);
+            .FirstOrDefault(static e => e.Type == MessageEntityType.BotCommand);
 
         if (botCommandEntity == null)
             return Option<int>.None();
@@ -162,7 +162,7 @@ internal sealed class ToModelConverter(
         };
         
         var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
-            .SelectMany(kvp => kvp.Values)
+            .SelectMany(static kvp => kvp.Values)
             .FirstOrDefault(mbc => mbc.Command == isolatedBotCommand);
         
         if (tlgBotCommandFromTelegramUpdate == null)
@@ -262,19 +262,19 @@ internal sealed class ToModelConverter(
 
         var tlgAttachmentUriAttempt = await attachmentDetails.FileId.Match(
             GetTlgAttachmentUriAsync,
-            () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+            static () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
 
         var tlgAttachmentUri = tlgAttachmentUriAttempt.Match(
-            uri => uri,
-            ex => throw ex);
+            static uri => uri,
+            static ex => throw ex);
         
         var internalAttachmentUriAttempt = await tlgAttachmentUri.Match(
             UploadBlobAndGetInternalUriAsync,
-            () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+            static () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
         
         var internalAttachmentUri = internalAttachmentUriAttempt.Match(
-            uri => uri,
-            ex => throw ex);
+            static uri => uri,
+            static ex => throw ex);
         
         var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)
             ? update.Message.Text
@@ -307,7 +307,7 @@ internal sealed class ToModelConverter(
     {
         return (await GetPathAsync())
             .Match(
-                path => Option<Uri>.Some(GetUriFromPath(path)), 
+                static path => Option<Uri>.Some(GetUriFromPath(path)), 
                 Attempt<Option<Uri>>.Fail
             );
         

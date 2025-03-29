@@ -51,9 +51,9 @@ internal sealed record NewAssessmentReview(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp =>
+                            .Where(static kvp =>
                                 (AssessmentSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -119,8 +119,8 @@ internal sealed record NewAssessmentReview(
                     await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
-                    .Select(i => i.EntityGuid)
-                    .Last(g => g.IsSome)
+                    .Select(static i => i.EntityGuid)
+                    .Last(static g => g.IsSome)
                     .GetValueOrThrow();
             }
 

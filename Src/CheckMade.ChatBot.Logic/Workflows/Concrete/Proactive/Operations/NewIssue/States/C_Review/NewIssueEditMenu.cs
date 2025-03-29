@@ -11,9 +11,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIss
 internal interface INewIssueEditMenu<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueEditMenu<T>(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator,
-        IGeneralWorkflowUtils GeneralUtils) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator,
+    IGeneralWorkflowUtils GeneralUtils) 
     : INewIssueEditMenu<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -23,9 +23,9 @@ internal sealed record NewIssueEditMenu<T>(
     {
         var workflowStateHistory =
             (await GeneralUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
-            .Select(i => i.ResultantWorkflow)
-            .Where(rw => rw.IsSome)
-            .Select(rw => rw.GetValueOrThrow().InStateId)
+            .Select(static i => i.ResultantWorkflow)
+            .Where(static rw => rw.IsSome)
+            .Select(static rw => rw.GetValueOrThrow().InStateId)
             .ToImmutableReadOnlyCollection();
 
         List<DomainTerm> editMenu = [];
