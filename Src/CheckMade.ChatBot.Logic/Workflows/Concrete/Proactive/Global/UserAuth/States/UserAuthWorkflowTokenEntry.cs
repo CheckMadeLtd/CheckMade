@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -7,16 +8,17 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.LangExt.InputValidator;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
 
 internal interface IUserAuthWorkflowTokenEntry : IWorkflowStateNormal;
 
 internal sealed record UserAuthWorkflowTokenEntry(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator,
-        IRolesRepository RolesRepo,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator,
+    IRolesRepository RolesRepo,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
     : IUserAuthWorkflowTokenEntry
 {
     internal static readonly UiString EnterTokenPrompt = 
@@ -36,10 +38,10 @@ internal sealed record UserAuthWorkflowTokenEntry(
             }
         ];
         
-        return Task.FromResult(
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-                () => outputs.ToImmutableReadOnlyCollection()));
+                ppf => outputs.Prepend(ppf).ToImmutableArray(),
+                () => outputs.ToImmutableArray()));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -93,8 +95,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                 Option<DateTimeOffset>.None());
 
             var preExistingRoleBindings =
-                (await RoleBindingsRepo.GetAllActiveAsync())
-                .ToImmutableReadOnlyCollection();
+                (await RoleBindingsRepo.GetAllActiveAsync());
 
             var preExistingActiveRoleBind =
                 FirstOrDefaultPreExistingActiveRoleBind(currentMode);

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -60,7 +61,7 @@ internal sealed record GeneralWorkflowUtils(
 
         return 
             allCurrentInteractive
-                .ToImmutableReadOnlyCollection();
+                .ToImmutableArray();
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(
@@ -78,7 +79,7 @@ internal sealed record GeneralWorkflowUtils(
         
         return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.IsWorkflowLauncher(allBridges))
-            .ToImmutableReadOnlyCollection();
+            .ToImmutableArray();
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)

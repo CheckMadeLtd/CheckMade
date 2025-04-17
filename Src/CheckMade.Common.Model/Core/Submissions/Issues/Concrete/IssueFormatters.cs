@@ -58,7 +58,7 @@ internal static class IssueFormatters
                 .Select(static m => UiConcatenate(
                     UiNewLines(1),
                     UiIndirect($"> {m.Caption.GetValueOrThrow()}")))
-                .ToImmutableReadOnlyCollection()
+                .ToList()
             : [];
         
         return UiConcatenate(

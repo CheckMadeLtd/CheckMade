@@ -193,7 +193,7 @@ public sealed record DomainGlossary : IDomainGlossary
                              superType.IsAssignableFrom(dt.TypeValue) ||
                              superType == dt.EnumType)
                 .OrderBy(static dt => dt.ToString())
-                .ToImmutableReadOnlyCollection();
+                .ToImmutableArray();
     }
 
     public string GetId(Type dtType) => IdAndUiByTerm[Dt(dtType)].callbackId;

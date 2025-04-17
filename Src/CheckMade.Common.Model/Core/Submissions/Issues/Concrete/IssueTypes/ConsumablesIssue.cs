@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -25,7 +26,7 @@ public sealed record ConsumablesIssue<T>(
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [IssueSpecificInfo] = FormatConsumableItems()
-        }.ToImmutableReadOnlyDictionary();
+        }.ToImmutableDictionary();
     }
 
     private UiString FormatConsumableItems()
@@ -34,6 +35,6 @@ public sealed record ConsumablesIssue<T>(
             Ui("Affected consumables: "),
             Glossary.GetUi(AffectedItems
                 .Select(static ai => (Enum)ai)
-                .ToImmutableReadOnlyCollection()));
+                .ToImmutableArray()));
     }
 }

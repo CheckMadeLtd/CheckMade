@@ -24,17 +24,17 @@ public interface IUpdateHandler
 }
 
 public sealed class UpdateHandler(
-        IBotClientFactory botClientFactory,
-        IInputProcessor inputProcessor,
-        ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
-        IToModelConverterFactory toModelConverterFactory,
-        DefaultUiLanguageCodeProvider defaultUiLanguage,
-        IUiTranslatorFactory translatorFactory,
-        IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
-        IBlobLoader blobLoader,
-        ITlgInputsRepository inputsRepo,
-        IDomainGlossary glossary,
-        ILogger<UpdateHandler> logger)
+    IBotClientFactory botClientFactory,
+    IInputProcessor inputProcessor,
+    ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
+    IToModelConverterFactory toModelConverterFactory,
+    DefaultUiLanguageCodeProvider defaultUiLanguage,
+    IUiTranslatorFactory translatorFactory,
+    IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
+    IBlobLoader blobLoader,
+    ITlgInputsRepository inputsRepo,
+    IDomainGlossary glossary,
+    ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
     public async Task<Attempt<Unit>> HandleUpdateAsync(
@@ -89,7 +89,7 @@ public sealed class UpdateHandler(
                 from activeRoleBindings
                     in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
                         (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())
-                        .ToImmutableReadOnlyCollection())
+                        .ToArray())
                 from uiTranslator
                     in Attempt<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
@@ -176,7 +176,7 @@ public sealed class UpdateHandler(
                 sentOutputs
                     .Where(isOtherRecipientThanOriginatingRole)
                     .Select(static o => o.ActualSendOutParams!.Value)
-                    .ToImmutableReadOnlyCollection());
+                    .ToArray());
         }
     }
 }

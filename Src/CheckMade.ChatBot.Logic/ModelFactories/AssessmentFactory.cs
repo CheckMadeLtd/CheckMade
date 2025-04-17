@@ -48,7 +48,7 @@ internal sealed record AssessmentFactory(
                     .Where(static i => i.EntityGuid.IsSome)
                     .Select(static i => i.EntityGuid.GetValueOrThrow())
                     .Distinct()
-                    .ToImmutableReadOnlyCollection();
+                    .ToList();
 
             return uniqueGuids.Count switch
             {
@@ -83,7 +83,7 @@ internal sealed record AssessmentFactory(
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewAssessmentEvidenceEntry)))
                     .Select(static i => i.Details.Text.GetValueOrThrow())
-                    .ToImmutableReadOnlyCollection();
+                    .ToArray();
 
             var lastDescription = submittedDescriptions.LastOrDefault();
             
@@ -102,7 +102,7 @@ internal sealed record AssessmentFactory(
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewAssessmentEvidenceEntry)))
-                    .ToImmutableReadOnlyCollection();
+                    .ToArray();
 
             List<AttachmentDetails> attachments = [];
             

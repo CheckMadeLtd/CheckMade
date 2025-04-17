@@ -113,7 +113,7 @@ internal sealed record IssueFactory<T>(
                     .Where(static i => i.EntityGuid.IsSome)
                     .Select(static i => i.EntityGuid.GetValueOrThrow())
                     .Distinct()
-                    .ToImmutableReadOnlyCollection();
+                    .ToList();
 
             return uniqueGuids.Count switch
             {
@@ -148,7 +148,7 @@ internal sealed record IssueFactory<T>(
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .Select(static i => i.Details.Text.GetValueOrThrow())
-                    .ToImmutableReadOnlyCollection();
+                    .ToArray();
 
             var lastDescription = submittedDescriptions.LastOrDefault();
             
@@ -167,7 +167,7 @@ internal sealed record IssueFactory<T>(
                         i.ResultantWorkflow.IsSome &&
                         i.ResultantWorkflow.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
-                    .ToImmutableReadOnlyCollection();
+                    .ToArray();
 
             List<AttachmentDetails> attachments = [];
             
@@ -213,7 +213,7 @@ internal sealed record IssueFactory<T>(
             return Glossary.GetAll(typeof(ConsumablesItem))
                 .Where(dt => dt.IsToggleOn(inputs))
                 .Select(static dt => (ConsumablesItem)dt.EnumValue!)
-                .ToImmutableReadOnlyCollection();
+                .ToArray();
         }
     }
 }

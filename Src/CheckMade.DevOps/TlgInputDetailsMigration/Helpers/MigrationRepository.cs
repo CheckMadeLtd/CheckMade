@@ -88,7 +88,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             });
             
             return command;
-        }).ToImmutableReadOnlyCollection();
+        }).ToArray();
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {

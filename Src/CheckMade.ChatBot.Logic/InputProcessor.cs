@@ -33,9 +33,7 @@ internal sealed class InputProcessor(
             {
                 if (currentInput.InputType == TlgInputType.Location)
                 {
-                    return (
-                        currentInput, 
-                        new List<OutputDto>().ToImmutableReadOnlyCollection());
+                    return (currentInput, []);
                 }
                 
                 List<OutputDto> outputBuilder = [];
@@ -134,7 +132,7 @@ internal sealed class InputProcessor(
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(static input => 
                 input.InputType.Equals(TlgInputType.CommandMessage))
-            .ToImmutableReadOnlyCollection();
+            .ToList();
 
         return previousWorkflowInputHistory.Count > 0 && 
                !IsWorkflowTerminated(previousWorkflowInputHistory);
@@ -184,10 +182,7 @@ internal sealed class InputProcessor(
             wr => 
             {
                 outputBuilder.AddRange(wr.Output);
-                        
-                return 
-                    outputBuilder
-                        .ToImmutableReadOnlyCollection();
+                return outputBuilder;
             },
             error =>
             {

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
@@ -50,13 +51,11 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             return GenerateCommand(rawQuery, normalParameters);
         });
 
-        await ExecuteTransactionAsync(
-            commands
-                .ToImmutableReadOnlyCollection());
+        await ExecuteTransactionAsync(commands.ToArray());
         
         _cache = _cache.Match(
             cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
-                cache.Concat(tlgAgentRoleBindings).ToImmutableReadOnlyCollection()),
+                cache.Concat(tlgAgentRoleBindings).ToArray()),
             Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
     }
 
@@ -112,7 +111,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                             command, ModelReaders.ReadTlgAgentRoleBind));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
-                        fetchedBindings.ToImmutableReadOnlyCollection());
+                        fetchedBindings.ToArray());
                 }
             }
             finally
@@ -127,7 +126,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
     public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
         .Where(static tarb => tarb.Status.Equals(DbRecordStatus.Active))
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
         await UpdateStatusAsync([tlgAgentRoleBind], newStatus);
@@ -168,9 +167,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             return GenerateCommand(rawQuery, normalParameters);
         });
         
-        await ExecuteTransactionAsync(
-            commands
-                .ToImmutableReadOnlyCollection());
+        await ExecuteTransactionAsync(commands.ToArray());
         EmptyCache();
     }
 

@@ -26,7 +26,7 @@ internal sealed record NewIssueEditMenu<T>(
             .Select(static i => i.ResultantWorkflow)
             .Where(static rw => rw.IsSome)
             .Select(static rw => rw.GetValueOrThrow().InStateId)
-            .ToImmutableReadOnlyCollection();
+            .ToArray();
 
         List<DomainTerm> editMenu = [];
 
@@ -39,7 +39,7 @@ internal sealed record NewIssueEditMenu<T>(
         // ReSharper disable once UnusedVariable
         List<OutputDto> outputs = 
         [
-            new OutputDto
+            new()
             {
                 Text = Ui("Choose item to edit:"), 
                 DomainTermSelection = editMenu,

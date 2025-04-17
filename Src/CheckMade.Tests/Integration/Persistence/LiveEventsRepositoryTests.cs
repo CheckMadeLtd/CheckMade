@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -29,7 +30,7 @@ public sealed class LiveEventsRepositoryTests
         var actualLiveEventRoleTokens = 
             liveEventGraph.WithRoles
                 .Select(static r => r.Token)
-                .ToImmutableReadOnlyCollection(); 
+                .ToImmutableList(); 
         
         Assert.Equal(X2024.WithRoles.Count, actualLiveEventRoleTokens.Count);
         Assert.Contains(X2024.WithRoles.First().Token, actualLiveEventRoleTokens);

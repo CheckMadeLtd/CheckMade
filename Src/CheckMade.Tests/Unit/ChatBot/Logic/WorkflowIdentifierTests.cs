@@ -30,7 +30,7 @@ public sealed class WorkflowIdentifierTests
     
         var workflow = await workflowIdentifier
             .IdentifyAsync(new[] { inputFromUnauthenticatedUser }
-                .ToImmutableReadOnlyCollection());
+                .ToArray());
         
         Assert.True(
             workflow.GetValueOrThrow() is UserAuthWorkflow);
@@ -50,7 +50,7 @@ public sealed class WorkflowIdentifierTests
         
         var workflow = await workflowIdentifier
             .IdentifyAsync(new[] { inputWithSettingsBotCommand }
-                .ToImmutableReadOnlyCollection());
+                .ToArray());
         
         Assert.True(
             workflow.GetValueOrThrow() is LanguageSettingWorkflow);
@@ -70,7 +70,7 @@ public sealed class WorkflowIdentifierTests
         
         var workflow = await workflowIdentifier
             .IdentifyAsync(new[] { inputWithNewIssueBotCommand }
-                .ToImmutableReadOnlyCollection());
+                .ToArray());
         
         Assert.True(
             workflow.GetValueOrThrow() is NewIssueWorkflow);

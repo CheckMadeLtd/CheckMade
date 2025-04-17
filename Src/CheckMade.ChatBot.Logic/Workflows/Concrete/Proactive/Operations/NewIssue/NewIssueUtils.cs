@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -63,7 +64,7 @@ internal static class NewIssueUtils
         liveEvent
             .DivIntoSpheres
             .Where(soa => soa.GetTradeType() == trade.GetType())
-            .ToImmutableReadOnlyCollection();
+            .ToImmutableArray();
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
         IReadOnlyCollection<TlgInput> inputs,

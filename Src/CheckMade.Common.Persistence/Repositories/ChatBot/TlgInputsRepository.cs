@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -200,12 +201,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent) =>
         (await GetAllAsync(tlgAgent))
         .Where(static i => i.InputType != TlgInputType.Location)
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync(liveEvent))
         .Where(static i => i.InputType != TlgInputType.Location)
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
         TlgAgent tlgAgent, DateTimeOffset since) =>
@@ -213,7 +214,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         .Where(i => 
             i.InputType == TlgInputType.Location && 
             i.TlgDate >= since)
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
         ILiveEventInfo liveEvent, DateTimeOffset since) =>
@@ -221,13 +222,13 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         .Where(i => 
             i.InputType == TlgInputType.Location &&
             i.TlgDate >= since)
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
         (await GetAllAsync(liveEvent))
         .Where(i =>
             i.EntityGuid.GetValueOrDefault() == entityGuid)
-        .ToImmutableReadOnlyCollection();
+        .ToImmutableArray();
     
     public async Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
     {
@@ -256,7 +257,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             };
 
             return GenerateCommand(rawQuery, normalParameters);
-        }).ToImmutableReadOnlyCollection();
+        }).ToArray();
         
         await ExecuteTransactionAsync(commands);
         EmptyCache();
@@ -294,8 +295,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             }
         }
 
-        return _cacheInputsByTlgAgent[tlgAgent]
-            .ToImmutableReadOnlyCollection();
+        return _cacheInputsByTlgAgent[tlgAgent];
     }
 
     private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
@@ -327,8 +327,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             }
         }
 
-        return _cacheInputsByLiveEvent[liveEvent]
-            .ToImmutableReadOnlyCollection();
+        return _cacheInputsByLiveEvent[liveEvent];
     }
 
     private async Task<IReadOnlyCollection<TlgInput>> GetAllExecuteAsync(

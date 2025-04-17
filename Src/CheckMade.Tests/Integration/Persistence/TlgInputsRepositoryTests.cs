@@ -66,7 +66,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.TlgAgent))
                 .OrderByDescending(static x => x.TlgDate)
-                .ToImmutableReadOnlyCollection();
+                .ToArray();
             
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
@@ -205,7 +205,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var retrievedInputsY2024 = 
             (await inputRepo.GetAllInteractiveAsync(Y2024))
-            .ToImmutableReadOnlyCollection();
+            .ToList();
         
         await inputRepo.HardDeleteAllAsync(inputsY2024[0].TlgAgent);
         

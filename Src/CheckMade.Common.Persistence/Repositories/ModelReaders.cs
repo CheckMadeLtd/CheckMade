@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -81,7 +82,7 @@ internal static class ModelReaders
                 if (roleInfo.IsSome)
                     ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
             },
-            finalizeModel: static user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
+            finalizeModel: static user => user with { HasRoles = user.HasRoles.ToImmutableArray() }
         );
     }
     
@@ -112,8 +113,8 @@ internal static class ModelReaders
             },
             finalizeModel: static liveEvent => liveEvent with
             {
-                WithRoles = liveEvent.WithRoles.ToImmutableReadOnlyCollection(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableReadOnlyCollection()
+                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
+                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
             }
         );
     }

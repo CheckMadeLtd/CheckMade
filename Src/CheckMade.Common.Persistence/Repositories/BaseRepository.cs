@@ -76,6 +76,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                     {
                         builder.Add(finalizeModel(currentModel));
                     }
+
                     currentModel = initializeModel(reader);
                     currentKey = key;
                 }

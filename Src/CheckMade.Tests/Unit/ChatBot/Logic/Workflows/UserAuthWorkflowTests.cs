@@ -225,7 +225,7 @@ public sealed class UserAuthWorkflowTests
                     tlgAgent with { Mode = im },
                     DateTimeOffset.UtcNow,
                     Option<DateTimeOffset>.None()))
-            .ToImmutableReadOnlyList();
+            .ToList();
 
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsAdded = [];
         mockTlgAgentRoleBindingsRepo

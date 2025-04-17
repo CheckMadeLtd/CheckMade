@@ -66,8 +66,8 @@ public sealed class LogoutWorkflowTests
             actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
-                new [] { boundRole }
-                    .ToImmutableReadOnlyCollection(),
+                new[] { boundRole }
+                    .ToArray(),
                 DbRecordStatus.Historic),
             Times.Once());
     }
@@ -125,7 +125,7 @@ public sealed class LogoutWorkflowTests
                 tarb.TlgAgent.UserId.Equals(tlgAgentOperations.UserId) &&
                 tarb.TlgAgent.ChatId.Equals(tlgAgentOperations.ChatId) &&
                 tarb.Role.Equals(boundRole))
-            .ToImmutableReadOnlyList();
+            .ToList();
         
         List<TlgAgentRoleBind> actualTlgAgentRoleBindingsUpdated = [];
         mockTlgAgentRoleBindingsForAllModes

@@ -350,5 +350,5 @@ public sealed class BotClientWrapper(
             {
                 Command = kvp.Value.Command, 
                 Description = kvp.Value.Description
-            }).ToImmutableReadOnlyCollection();
+            }).ToArray();
 }

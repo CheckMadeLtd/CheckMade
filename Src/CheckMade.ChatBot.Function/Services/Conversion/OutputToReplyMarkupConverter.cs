@@ -88,7 +88,7 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
                 )).ToList();
             }, 
             static () => []
-        ).ToImmutableReadOnlyCollection();
+        ).ToArray();
     }
     
     private static InlineKeyboardButton[][] GenerateInlineKeyboardButtonsForDomainTerms(
@@ -117,13 +117,13 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
                 .Where(prompts => 
                     promptSelection.GetValueOrDefault().HasFlag(prompts) && 
                     IsSingleFlag(prompts))
-                .ToImmutableReadOnlyCollection();
+                .ToArray();
         
         return promptSelectionAsCollection.Select(prompt =>
                 (text: translator.Translate(glossary.UiByCallbackId[
                         new CallbackId((long)prompt)]),
                     id: new CallbackId((long)prompt).Id))
-            .ToImmutableReadOnlyCollection();
+            .ToArray();
         
         static bool IsSingleFlag(Enum value)
         {

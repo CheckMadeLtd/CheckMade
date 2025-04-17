@@ -1,4 +1,5 @@
-﻿using CheckMade.Common.Interfaces.BusinessLogic;
+﻿using System.Collections.Immutable;
+using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -45,7 +46,7 @@ public sealed record StakeholderReporter<T>(
                         LogicalPort = recipient,
                         Attachments = GetAttachments(),
                     })
-                .ToImmutableReadOnlyCollection();
+                .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
             newAssessment.Evidence.IsSome 
@@ -87,7 +88,7 @@ public sealed record StakeholderReporter<T>(
                         LogicalPort = recipient,
                         Attachments = GetAttachments()
                     })
-                .ToImmutableReadOnlyCollection();
+                .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
             newIssue is ITradeIssueWithEvidence issueWithEvidence 
@@ -159,6 +160,6 @@ public sealed record StakeholderReporter<T>(
             .Where(lp => 
                 allActiveRoleBindings.Select(static tarb => tarb.Role)
                     .Contains(lp.Role))
-            .ToImmutableReadOnlyCollection();
+            .ToArray();
     }
 }
