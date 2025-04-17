@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
@@ -26,7 +27,7 @@ public sealed record ConsumablesIssue<T>(
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [IssueSpecificInfo] = FormatConsumableItems()
-        }.ToImmutableDictionary();
+        }.ToFrozenDictionary();
     }
 
     private UiString FormatConsumableItems()

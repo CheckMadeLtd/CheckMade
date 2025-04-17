@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+using System.Collections.Frozen;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
@@ -25,6 +25,6 @@ public sealed record Assessment(
             [OperationalInfo] = AssessmentFormatters.FormatOperationalInfo(this, Glossary),
             [FacilityInfo] = AssessmentFormatters.FormatFacilityInfo(this, Glossary),
             [EvidenceInfo] = AssessmentFormatters.FormatEvidenceInfo(this)
-        }.ToImmutableDictionary();
+        }.ToFrozenDictionary();
     }
 }

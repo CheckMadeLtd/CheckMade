@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+using System.Collections.Frozen;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
@@ -27,6 +27,6 @@ public sealed record CleaningIssue<T>(
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
             [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
-        }.ToImmutableDictionary();
+        }.ToFrozenDictionary();
     }
 }
