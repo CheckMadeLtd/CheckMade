@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Function.Endpoints;
 
-public class OperationsBot(ILogger<OperationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
+public sealed class OperationsBot(ILogger<OperationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
     : BotFunctionBase(logger, botUpdateSwitch)
 {
     protected override InteractionMode InteractionMode => InteractionMode.Operations;

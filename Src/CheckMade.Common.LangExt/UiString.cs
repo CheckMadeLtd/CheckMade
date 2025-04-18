@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using JetBrains.Annotations;
 
@@ -26,10 +27,10 @@ public sealed record UiString(
         UiConcatenate(Enumerable.Repeat(UiNoTranslate("\n"), newLineCount).ToArray());
     
     public static UiString UiConcatenate(params UiString?[] uiStrings) => 
-        UiConcatenate(uiStrings.ToImmutableReadOnlyCollection());
+        UiConcatenate(uiStrings.ToImmutableArray());
 
     public static UiString UiConcatenate(IReadOnlyCollection<UiString?> uiStrings) => 
-        new(uiStrings.ToImmutableReadOnlyCollection(), string.Empty, []);
+        new(uiStrings.ToImmutableArray(), string.Empty, []);
 
     // For when I need to convert a UiString with Message Params back to a fully formatted string (see usage examples)
     public string GetFormattedEnglish()

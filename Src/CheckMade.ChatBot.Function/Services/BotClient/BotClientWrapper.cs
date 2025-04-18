@@ -16,7 +16,7 @@ using File = Telegram.Bot.Types.TGFile;
 namespace CheckMade.ChatBot.Function.Services.BotClient;
 
 /* The need for a Wrapper around ITelegramBotClient arises from the need to be able to mock it in unit tests
- and thereby allow verifications, to check that my code 'uses' this important external dependency correctly */
+ and thereby allow verifications to check that my code 'uses' this important external dependency correctly */
 
 public interface IBotClientWrapper
 {
@@ -324,17 +324,17 @@ public sealed class BotClientWrapper(
             };
 
             await retryPolicy.ExecuteAsync(async () => 
-                await botClient.SetMyCommands(
-                    telegramBotCommands,
-                    scope: null,
-                    languageCode: language != LanguageCode.en
-                        ? language.ToString()
-                        : null) // The English BotCommands are the global default
+                    await botClient.SetMyCommands(
+                        telegramBotCommands,
+                        scope: null,
+                        languageCode: language != LanguageCode.en
+                            ? language.ToString()
+                            : null) // The English BotCommands are the global default
             ); 
 
             logger.LogDebug($"Added to bot {MyInteractionMode} for language {language} " +
                             $"the following BotCommands: " +
-                            $"{string.Join("; ", telegramBotCommands.Select(bc => bc.Command))}");
+                            $"{string.Join("; ", telegramBotCommands.Select(static bc => bc.Command))}");
         }
         
         return Unit.Value;
@@ -344,11 +344,11 @@ public sealed class BotClientWrapper(
         IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
-            .SelectMany(kvp => kvp.Value)
+            .SelectMany(static kvp => kvp.Value)
             .Where(kvp => kvp.Key == language)
-            .Select(kvp => new BotCommand
+            .Select(static kvp => new BotCommand
             {
                 Command = kvp.Value.Command, 
                 Description = kvp.Value.Description
-            }).ToImmutableReadOnlyCollection();
+            }).ToArray();
 }

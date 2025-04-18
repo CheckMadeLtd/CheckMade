@@ -20,7 +20,7 @@ public abstract class TestStartupBase
         
         var configBuilder = new ConfigurationBuilder()
             .SetBasePath(projectRoot)
-            // If this file can't be found we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
+            // If this file can't be found, we assume the test runs on GitHub Actions Runner with corresp. env. variables! 
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
             // This config (the secrets.json of the main ChatBot project) gets ignored on the GitHub Actions Runner
             .AddUserSecrets("dd4f1069-ae94-4987-9751-690e8da6f3c0") 
@@ -31,7 +31,7 @@ public abstract class TestStartupBase
         // This is taken either from local.settings.json or from env variable set in GitHub Actions workflow!
         const string keyToHostEnv = "HOSTING_ENVIRONMENT";
         HostingEnvironment = Config.GetValue<string>(keyToHostEnv)
-            ?? throw new ConfigurationErrorsException($"Can't find {keyToHostEnv}");
+                             ?? throw new ConfigurationErrorsException($"Can't find {keyToHostEnv}");
     }
 
     protected void RegisterServices()
@@ -42,7 +42,7 @@ public abstract class TestStartupBase
 
     private void RegisterBaseServices()
     {
-        Services.AddLogging(loggingConfig =>
+        Services.AddLogging(static loggingConfig =>
         {
             loggingConfig.ClearProviders();
             loggingConfig.AddConsole(); 
@@ -53,7 +53,7 @@ public abstract class TestStartupBase
         Services.AddSingleton<ITlgInputGenerator, TlgInputGenerator>();
         
         
-        Services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
+        Services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         Services.RegisterChatBotFunctionUpdateHandlingServices();
         Services.RegisterChatBotFunctionConversionServices();

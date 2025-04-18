@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
@@ -8,6 +9,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.NewIssueUtils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 
@@ -55,8 +57,8 @@ internal sealed record NewAssessmentSphereSelection : INewAssessmentSphereSelect
         ];
         
         return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -84,8 +86,8 @@ internal sealed record NewAssessmentSphereSelection : INewAssessmentSphereSelect
             GetAllTradeSpecificSpheres(
                     (await _liveEventsRepo.GetAsync(liveEventInfo))!,
                     trade)
-                .Select(soa => soa.Name)
-                .OrderBy(name => name)
-                .ToImmutableReadOnlyCollection();
+                .Select(static soa => soa.Name)
+                .OrderBy(static name => name)
+                .ToArray();
     }
 }

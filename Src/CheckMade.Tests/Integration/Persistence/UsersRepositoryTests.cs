@@ -47,17 +47,17 @@ public sealed class UsersRepositoryTests
             (await usersRepo.GetAllAsync())
             .ToList();
 
-        var danielEn = users.First(u => u.Mobile.Equals(DanielEn.Mobile));
-        var lukasDe = users.First(u => u.Mobile.Equals(LukasDe.Mobile));
+        var danielEn = users.First(static u => u.Mobile.Equals(DanielEn.Mobile));
+        var lukasDe = users.First(static u => u.Mobile.Equals(LukasDe.Mobile));
         
         Assert.Equal(DanielEn.FirstName, danielEn.FirstName);
         Assert.Equal(LukasDe.FirstName, lukasDe.FirstName);
         
         Assert.Contains(
             SanitaryAdmin_DanielEn_X2024.Token,
-            danielEn.HasRoles.Select(r => r.Token));
+            danielEn.HasRoles.Select(static r => r.Token));
         Assert.Contains(
             SanitaryEngineer_DanielEn_Y2024.Token,
-            danielEn.HasRoles.Select(r => r.Token));
+            danielEn.HasRoles.Select(static r => r.Token));
     }
 }

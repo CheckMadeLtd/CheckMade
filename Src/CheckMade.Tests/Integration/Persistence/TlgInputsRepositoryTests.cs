@@ -65,8 +65,8 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.TlgAgent))
-                .OrderByDescending(x => x.TlgDate)
-                .ToImmutableReadOnlyCollection();
+                .OrderByDescending(static x => x.TlgDate)
+                .ToArray();
             
             await inputRepo.HardDeleteAllAsync(input.TlgAgent);
         
@@ -205,7 +205,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         var retrievedInputsY2024 = 
             (await inputRepo.GetAllInteractiveAsync(Y2024))
-            .ToImmutableReadOnlyCollection();
+            .ToList();
         
         await inputRepo.HardDeleteAllAsync(inputsY2024[0].TlgAgent);
         
@@ -214,7 +214,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             retrievedInputsY2024.Count);
         Assert.All(
             retrievedInputsY2024,
-            input => Assert.Equal("LiveEvent Y 2024", input.LiveEventContext.GetValueOrThrow().Name));
+            static input => Assert.Equal("LiveEvent Y 2024", input.LiveEventContext.GetValueOrThrow().Name));
     }
     
     [Fact]
@@ -258,7 +258,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 sinceParam);
         var retrievedDates =
             retrievedInputs
-                .Select(i => i.TlgDate)
+                .Select(static i => i.TlgDate)
                 .ToList();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);

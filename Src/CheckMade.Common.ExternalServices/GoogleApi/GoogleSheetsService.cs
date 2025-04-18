@@ -5,7 +5,7 @@ using Google.Apis.Sheets.v4;
 
 namespace CheckMade.Common.ExternalServices.GoogleApi;
 
-public class GoogleSheetsService(GoogleAuth googleAuth) : ISheetsService
+public sealed class GoogleSheetsService(GoogleAuth googleAuth) : ISheetsService
 {
     private const string SheetRangeForAllData = "A:ZZ";
     
@@ -29,8 +29,8 @@ public class GoogleSheetsService(GoogleAuth googleAuth) : ISheetsService
         
         return new SheetData(
             Cells: response
-                .Select(row => row.Select(cell => cell.ToString() 
-                                                  ?? string.Empty).ToArray()).ToArray());
+                .Select(static row => row.Select(static cell => cell.ToString() 
+                                                                ?? string.Empty).ToArray()).ToArray());
     }
 
     public async Task<SheetData> GetAllSpreadsheetDataAsync(string sheetId, string? sheetName = null) =>

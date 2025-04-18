@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -9,6 +10,7 @@ using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.NewIssueUtils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 
@@ -43,15 +45,15 @@ internal sealed record NewIssueConsumablesSelection<T>(
                             item.IsToggleOn(interactiveHistory) 
                                 ? item with { Toggle = true } 
                                 : item with { Toggle = false })
-                        .ToImmutableReadOnlyCollection()),
+                        .ToImmutableArray()),
                 ControlPromptsSelection = ControlPrompts.Save | ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
         
         return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -105,7 +107,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
                 availableConsumables
                     .Where(item =>
                         item.IsToggleOn(interactiveHistory))
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
         }
     }
 

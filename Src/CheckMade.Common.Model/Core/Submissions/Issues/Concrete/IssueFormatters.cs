@@ -54,11 +54,11 @@ internal static class IssueFormatters
 
         var captions = attachments != null
             ? attachments
-                .Where(m => m.Caption.IsSome)
-                .Select(m => UiConcatenate(
+                .Where(static m => m.Caption.IsSome)
+                .Select(static m => UiConcatenate(
                     UiNewLines(1),
                     UiIndirect($"> {m.Caption.GetValueOrThrow()}")))
-                .ToImmutableReadOnlyCollection()
+                .ToList()
             : [];
         
         return UiConcatenate(

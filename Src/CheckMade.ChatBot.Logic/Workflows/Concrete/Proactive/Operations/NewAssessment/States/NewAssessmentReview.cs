@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Interfaces.ChatBotLogic;
@@ -9,6 +10,7 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 
@@ -51,9 +53,9 @@ internal sealed record NewAssessmentReview(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp =>
+                            .Where(static kvp =>
                                 (AssessmentSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -61,8 +63,8 @@ internal sealed record NewAssessmentReview(
         ];
         
         return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -119,8 +121,8 @@ internal sealed record NewAssessmentReview(
                     await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
-                    .Select(i => i.EntityGuid)
-                    .Last(g => g.IsSome)
+                    .Select(static i => i.EntityGuid)
+                    .Last(static g => g.IsSome)
                     .GetValueOrThrow();
             }
 

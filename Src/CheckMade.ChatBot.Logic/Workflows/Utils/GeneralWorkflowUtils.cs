@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -41,7 +42,7 @@ internal sealed record GeneralWorkflowUtils(
             .Where(tarb =>
                 tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
                 tarb.DeactivationDate.IsSome)
-            .MaxBy(tarb => tarb.DeactivationDate.GetValueOrThrow());
+            .MaxBy(static tarb => tarb.DeactivationDate.GetValueOrThrow());
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
@@ -51,7 +52,7 @@ internal sealed record GeneralWorkflowUtils(
             await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
 
         var allInteractiveIncludingNewInput =
-            allInteractiveFromDb.Concat(new[] { newInputToAppend });
+            allInteractiveFromDb.Concat([newInputToAppend]);
         
         var allCurrentInteractive = 
             allInteractiveIncludingNewInput
@@ -60,7 +61,7 @@ internal sealed record GeneralWorkflowUtils(
 
         return 
             allCurrentInteractive
-                .ToImmutableReadOnlyCollection();
+                .ToImmutableArray();
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(
@@ -78,7 +79,7 @@ internal sealed record GeneralWorkflowUtils(
         
         return currentRoleInputs
             .GetLatestRecordsUpTo(input => input.IsWorkflowLauncher(allBridges))
-            .ToImmutableReadOnlyCollection();
+            .ToImmutableArray();
     }
 
     public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)

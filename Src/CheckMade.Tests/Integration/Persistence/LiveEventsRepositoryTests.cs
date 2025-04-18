@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -19,7 +20,7 @@ public sealed class LiveEventsRepositoryTests
         var liveEventsRepo = _services.GetRequiredService<ILiveEventsRepository>();
     
         var liveEventGraph = await liveEventsRepo.GetAsync(X2024);
-        var allSphereNames = liveEventGraph!.DivIntoSpheres.Select(s => s.Name).ToList(); 
+        var allSphereNames = liveEventGraph!.DivIntoSpheres.Select(static s => s.Name).ToList(); 
 
         Assert.NotNull(liveEventGraph);
         
@@ -28,8 +29,8 @@ public sealed class LiveEventsRepositoryTests
 
         var actualLiveEventRoleTokens = 
             liveEventGraph.WithRoles
-                .Select(r => r.Token)
-                .ToImmutableReadOnlyCollection(); 
+                .Select(static r => r.Token)
+                .ToImmutableList(); 
         
         Assert.Equal(X2024.WithRoles.Count, actualLiveEventRoleTokens.Count);
         Assert.Contains(X2024.WithRoles.First().Token, actualLiveEventRoleTokens);
@@ -44,33 +45,33 @@ public sealed class LiveEventsRepositoryTests
         Assert.Equal(
             Sphere1_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .First(static s => s.Name == Sphere1_AtX2024.Name)
                 .GetTradeType());
         Assert.Equal(
             Sphere2_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .First(static s => s.Name == Sphere2_AtX2024.Name)
                 .GetTradeType());
         Assert.Equal(
             Sphere4_AtX2024.GetTradeType(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere4_AtX2024.Name)
+                .First(static s => s.Name == Sphere4_AtX2024.Name)
                 .GetTradeType());
 
         Assert.Equivalent(
             Location_Dassel,
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .First(static s => s.Name == Sphere1_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
         Assert.Equivalent(
             Location_4cc,
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .First(static s => s.Name == Sphere2_AtX2024.Name)
                 .Details.GeoCoordinates.GetValueOrThrow());
         Assert.Equivalent(
             Option<Geo>.None(),
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere4_AtX2024.Name)
+                .First(static s => s.Name == Sphere4_AtX2024.Name)
                 .Details.GeoCoordinates);
 
         List<DomainTerm> expectedFacilitiesAtX2024Sphere1 =
@@ -82,7 +83,7 @@ public sealed class LiveEventsRepositoryTests
 
         var actualFacilitiesAtX2024Sphere1 =
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .First(static s => s.Name == Sphere1_AtX2024.Name)
                 .Details.AvailableFacilities;
 
         foreach (var item in expectedFacilitiesAtX2024Sphere1)
@@ -92,7 +93,7 @@ public sealed class LiveEventsRepositoryTests
 
         var actualFacilitiesAtX2024Sphere2 =
             liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .First(static s => s.Name == Sphere2_AtX2024.Name)
                 .Details.AvailableFacilities; 
         
         Assert.Contains(Dt(typeof(GeneralMisc)), actualFacilitiesAtX2024Sphere2);
@@ -108,7 +109,7 @@ public sealed class LiveEventsRepositoryTests
 
         var actualConsumableItemsAtX2024Sphere1 = 
             ((SanitaryCampDetails)liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere1_AtX2024.Name)
+                .First(static s => s.Name == Sphere1_AtX2024.Name)
                 .Details)
             .AvailableConsumables;
 
@@ -119,7 +120,7 @@ public sealed class LiveEventsRepositoryTests
         
         var actualConsumableItemsAtX2024Sphere2 = 
             ((SanitaryCampDetails)liveEventGraph.DivIntoSpheres
-                .First(s => s.Name == Sphere2_AtX2024.Name)
+                .First(static s => s.Name == Sphere2_AtX2024.Name)
                 .Details)
             .AvailableConsumables;
         

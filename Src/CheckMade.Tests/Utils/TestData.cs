@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.Concrete;
@@ -179,7 +180,7 @@ internal static class TestData
                     Dt(typeof(GeneralMisc)),
                     Dt(typeof(Shower)),
                     Dt(typeof(Toilet))
-                }.ToImmutableReadOnlyCollection(),
+                }.ToImmutableArray(),
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesItem.ToiletPaper),
@@ -195,7 +196,7 @@ internal static class TestData
                     {
                         Dt(typeof(GeneralMisc))
                     }
-                    .ToImmutableReadOnlyCollection(),
+                    .ToImmutableArray(),
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesItem.ToiletPaper)
@@ -209,7 +210,7 @@ internal static class TestData
                     {
                         Dt(typeof(GeneralMisc))
                     }
-                    .ToImmutableReadOnlyCollection(),
+                    .ToImmutableArray(),
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesItem.ToiletPaper)
@@ -219,8 +220,8 @@ internal static class TestData
         new("Zone1",
             new SiteCleaningZoneDetails(
                 Option<Geo>.None(),
-                new List<DomainTerm>().ToImmutableReadOnlyCollection(),
-                new List<DomainTerm>().ToImmutableReadOnlyCollection()));
+                new List<DomainTerm>().ToImmutableArray(),
+                new List<DomainTerm>().ToImmutableArray()));
     
     internal static readonly LiveEvent X2024 = new(
         X2024Info,
@@ -264,19 +265,17 @@ internal static class TestData
     
     // Series
     
-    internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X", 
-        new [] 
-        {
-            X2024,
-            X2025
-        });
+    internal static readonly LiveEventSeries SeriesX = new("LiveEvent Series X",
+    [
+        X2024,
+        X2025
+    ]);
 
     internal static readonly LiveEventSeries SeriesY = new("LiveEvent Series Y",
-        new []
-        {
-            Y2024,
-            Y2025
-        });
+    [
+        Y2024,
+        Y2025
+    ]);
     
     #endregion
     

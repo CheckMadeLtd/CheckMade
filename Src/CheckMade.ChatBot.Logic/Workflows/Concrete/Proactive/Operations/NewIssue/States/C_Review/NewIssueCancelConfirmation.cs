@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot;
@@ -6,14 +7,15 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
 
 internal interface INewIssueCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueCancelConfirmation<T>(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator) 
     : INewIssueCancelConfirmation<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -31,10 +33,10 @@ internal sealed record NewIssueCancelConfirmation<T>(
             }
         ];
         
-        return Task.FromResult(
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-                () => outputs.ToImmutableReadOnlyCollection()));
+                ppf => outputs.Prepend(ppf).ToImmutableArray(),
+                () => outputs.ToImmutableArray()));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

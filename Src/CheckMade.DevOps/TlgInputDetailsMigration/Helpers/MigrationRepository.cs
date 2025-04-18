@@ -42,7 +42,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
     {
         TlgUserId tlgUserId = await reader.GetFieldValueAsync<long>(reader.GetOrdinal("user_id"));
         TlgChatId tlgChatId = await reader.GetFieldValueAsync<long?>(reader.GetOrdinal("chat_id"))
-            ?? 0;
+                              ?? 0;
         var actualOldFormatDetails = JObject.Parse(
             await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
@@ -71,7 +71,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
 
     internal async Task UpdateAsync(IReadOnlyCollection<DetailsUpdate> detailsUpdates)
     {
-        var commands = detailsUpdates.Select(detailUpdate =>
+        var commands = detailsUpdates.Select(static detailUpdate =>
         {
             const string commandTextPrefix = "UPDATE tlg_inputs SET details = @tlgDetails " +
                                              "WHERE user_id = @tlgUserId " +
@@ -88,7 +88,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             });
             
             return command;
-        }).ToImmutableReadOnlyCollection();
+        }).ToArray();
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {

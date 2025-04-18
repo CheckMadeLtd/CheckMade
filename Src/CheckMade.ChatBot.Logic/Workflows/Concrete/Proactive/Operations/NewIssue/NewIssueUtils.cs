@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -63,13 +64,13 @@ internal static class NewIssueUtils
         liveEvent
             .DivIntoSpheres
             .Where(soa => soa.GetTradeType() == trade.GetType())
-            .ToImmutableReadOnlyCollection();
+            .ToImmutableArray();
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
         IReadOnlyCollection<TlgInput> inputs,
         IReadOnlyCollection<ISphereOfAction> spheres) where T : ITrade, new()
     {
-        var sphereNames = spheres.Select(s => s.Name).ToHashSet();
+        var sphereNames = spheres.Select(static s => s.Name).ToHashSet();
         Func<string, bool> containsSphereName = text => sphereNames.Any(text.Contains);
 
         var lastSelectedSphereInput =
@@ -98,7 +99,7 @@ internal static class NewIssueUtils
         return
             spheres.First(s => 
                 s.Name == sphereNameByMessageId
-                    .MaxBy(kvp => kvp.Key) // the later of the two, in case the user confirmed AND selected a sphere
+                    .MaxBy(static kvp => kvp.Key) // the later of the two, in case the user confirmed AND selected a sphere
                     .Value);
     }
 
@@ -106,7 +107,7 @@ internal static class NewIssueUtils
     {
         return 
             inputs
-                .Last(i =>
+                .Last(static i =>
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))

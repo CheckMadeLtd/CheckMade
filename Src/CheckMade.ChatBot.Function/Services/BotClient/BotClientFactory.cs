@@ -12,10 +12,10 @@ public interface IBotClientFactory
 }
 
 public sealed class BotClientFactory(
-        IHttpClientFactory httpFactory,
-        INetworkRetryPolicy retryPolicy,
-        BotTokens botTokens,
-        ILogger<BotClientWrapper> loggerForClient) 
+    IHttpClientFactory httpFactory,
+    INetworkRetryPolicy retryPolicy,
+    BotTokens botTokens,
+    ILogger<BotClientWrapper> loggerForClient) 
     : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClient(InteractionMode interactionMode) => interactionMode switch

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model.ChatBot;
@@ -66,12 +67,12 @@ internal static class TestRepositoryUtils
         var mockLiveEventsRepo = new Mock<ILiveEventsRepository>();
 
         mockLiveEventsRepo
-            .Setup(repo => 
+            .Setup(static repo => 
                 repo.GetAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync(liveEvent);
         
         mockLiveEventsRepo
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(static repo => repo.GetAllAsync())
             .ReturnsAsync(liveEvents);
 
         container.Mocks[typeof(ILiveEventsRepository)] = mockLiveEventsRepo;
@@ -87,7 +88,7 @@ internal static class TestRepositoryUtils
     {
         var mockUsersRepo = new Mock<IUsersRepository>();
         mockUsersRepo
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(static repo => repo.GetAllAsync())
             .ReturnsAsync(users);
 
         container.Mocks[typeof(IUsersRepository)] = mockUsersRepo;
@@ -103,7 +104,7 @@ internal static class TestRepositoryUtils
     {
         var mockRolesRepo = new Mock<IRolesRepository>();
         mockRolesRepo
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(static repo => repo.GetAllAsync())
             .ReturnsAsync(roles);
 
         container.Mocks[typeof(IRolesRepository)] = mockRolesRepo;
@@ -120,14 +121,14 @@ internal static class TestRepositoryUtils
         var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
         
         mockRoleBindingsRepo
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(static repo => repo.GetAllAsync())
             .ReturnsAsync(roleBindings);
         
         mockRoleBindingsRepo
-            .Setup(repo => repo.GetAllActiveAsync())
+            .Setup(static repo => repo.GetAllActiveAsync())
             .ReturnsAsync(roleBindings
-                .Where(tarb => tarb.Status == DbRecordStatus.Active)
-                .ToImmutableReadOnlyCollection);
+                .Where(static tarb => tarb.Status == DbRecordStatus.Active)
+                .ToImmutableArray());
 
         container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
         var stubRoleBindingsRepo = mockRoleBindingsRepo.Object;
@@ -144,27 +145,27 @@ internal static class TestRepositoryUtils
         var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
         
         mockTlgInputsRepo
-            .Setup(repo => 
+            .Setup(static repo => 
                 repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
             .ReturnsAsync((TlgAgent tlgAgent) => 
                 inputs
                     .Where(i => 
                         i.TlgAgent.Equals(tlgAgent) &&
                         i.InputType != TlgInputType.Location)
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
         
         mockTlgInputsRepo
-            .Setup(repo => 
+            .Setup(static repo => 
                 repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) => 
                 inputs
                     .Where(i => 
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
                         i.InputType != TlgInputType.Location)
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
 
         mockTlgInputsRepo
-            .Setup(repo =>
+            .Setup(static repo =>
                 repo.GetAllLocationAsync(
                     It.IsAny<TlgAgent>(),
                     It.IsAny<DateTimeOffset>()))
@@ -174,10 +175,10 @@ internal static class TestRepositoryUtils
                         i.TlgAgent.Equals(tlgAgent) && 
                         i.TlgDate >= dateTime &&
                         i.InputType == TlgInputType.Location)
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
 
         mockTlgInputsRepo
-            .Setup(repo =>
+            .Setup(static repo =>
                 repo.GetEntityHistoryAsync(
                     It.IsAny<ILiveEventInfo>(),
                     It.IsAny<Guid>()))
@@ -186,7 +187,7 @@ internal static class TestRepositoryUtils
                     .Where(i =>
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
                         Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
         
         container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
         var stubTlgInputsRepo = mockTlgInputsRepo.Object;
@@ -202,13 +203,13 @@ internal static class TestRepositoryUtils
         var mockBridgesRepo = new Mock<IDerivedWorkflowBridgesRepository>();
 
         mockBridgesRepo
-            .Setup(repo =>
+            .Setup(static repo =>
                 repo.GetAllAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) =>
                 bridges
                     .Where(b =>
                         Equals(b.SourceInput.LiveEventContext.GetValueOrDefault(), liveEvent))
-                    .ToImmutableReadOnlyCollection());
+                    .ToImmutableArray());
         
         // ToDo: Implement also repo.GetAsync() if/when needed for testing? If not, remove ToDo!
 

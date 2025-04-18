@@ -3,7 +3,7 @@ using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration;
 
-internal class MigratorByIndexFactory
+internal sealed class MigratorByIndexFactory
 {
     private readonly IDictionary<string, MigratorBase> _migratorByIndex;
     
@@ -11,14 +11,14 @@ internal class MigratorByIndexFactory
     {
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(type => string.IsNullOrEmpty(type.Namespace) == false &&
-                           type.Namespace.StartsWith("CheckMade.DevOps.TlgInputDetailsMigration.Migrators") &&
-                           typeof(MigratorBase).IsAssignableFrom(type))
+            .Where(static type => string.IsNullOrEmpty(type.Namespace) == false &&
+                                  type.Namespace.StartsWith("CheckMade.DevOps.TlgInputDetailsMigration.Migrators") &&
+                                  typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
-                type => GetMigratorIndexFromTypeName(type.Name),
+                static type => GetMigratorIndexFromTypeName(type.Name),
                 type => (MigratorBase)(Activator.CreateInstance(type, migRepo) 
-                                        ?? throw new InvalidOperationException(
-                                            $"Could not create instance for {type.FullName}"))
+                                       ?? throw new InvalidOperationException(
+                                           $"Could not create instance for {type.FullName}"))
             );
     }
     

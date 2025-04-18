@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
@@ -11,9 +12,9 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.Sta
 internal interface ILogoutWorkflowConfirm : IWorkflowStateNormal;
 
 internal sealed record LogoutWorkflowConfirm(
-        IDomainGlossary Glossary, 
-        IStateMediator Mediator,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
+    IDomainGlossary Glossary, 
+    IStateMediator Mediator,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
     : ILogoutWorkflowConfirm
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -41,9 +42,9 @@ internal sealed record LogoutWorkflowConfirm(
             }
         ];
 
-        return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+        return previousPromptFinalizer.Match<IReadOnlyCollection<OutputDto>>(
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -93,7 +94,7 @@ internal sealed record LogoutWorkflowConfirm(
                     tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
                     tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
                     tarb.Role.Token.Equals(currentRoleBind.Role.Token))
-                .ToImmutableReadOnlyCollection();
+                .ToArray();
         
             await RoleBindingsRepo
                 .UpdateStatusAsync(

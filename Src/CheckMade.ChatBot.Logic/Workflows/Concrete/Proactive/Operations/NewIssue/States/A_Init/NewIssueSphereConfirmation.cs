@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -9,16 +10,17 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.NewIssueUtils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 
 internal interface INewIssueSphereConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueSphereConfirmation<T>(
-        ILiveEventsRepository LiveEventsRepo,    
-        IDomainGlossary Glossary,
-        IGeneralWorkflowUtils WorkflowUtils,
-        IStateMediator Mediator) 
+    ILiveEventsRepository LiveEventsRepo,    
+    IDomainGlossary Glossary,
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator) 
     : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -39,8 +41,8 @@ internal sealed record NewIssueSphereConfirmation<T>(
         ];
 
         return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
 
         async Task<Option<ISphereOfAction>> GetNearSphere()
         {

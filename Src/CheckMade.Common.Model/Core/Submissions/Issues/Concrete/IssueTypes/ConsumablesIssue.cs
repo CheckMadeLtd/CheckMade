@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -8,14 +10,14 @@ using static CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueSummar
 namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 
 public sealed record ConsumablesIssue<T>(
-        Guid Id,
-        DateTimeOffset CreationDate,
-        ISphereOfAction Sphere,
-        IReadOnlyCollection<ConsumablesItem> AffectedItems,
-        Role ReportedBy,
-        Option<Role> HandledBy,
-        IssueStatus Status,
-        IDomainGlossary Glossary) 
+    Guid Id,
+    DateTimeOffset CreationDate,
+    ISphereOfAction Sphere,
+    IReadOnlyCollection<ConsumablesItem> AffectedItems,
+    Role ReportedBy,
+    Option<Role> HandledBy,
+    IssueStatus Status,
+    IDomainGlossary Glossary) 
     : ITradeIssue<T> where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
@@ -25,7 +27,7 @@ public sealed record ConsumablesIssue<T>(
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
             [IssueSpecificInfo] = FormatConsumableItems()
-        }.ToImmutableReadOnlyDictionary();
+        }.ToFrozenDictionary();
     }
 
     private UiString FormatConsumableItems()
@@ -33,7 +35,7 @@ public sealed record ConsumablesIssue<T>(
         return UiConcatenate(
             Ui("Affected consumables: "),
             Glossary.GetUi(AffectedItems
-                .Select(ai => (Enum)ai)
-                .ToImmutableReadOnlyCollection()));
+                .Select(static ai => (Enum)ai)
+                .ToImmutableArray()));
     }
 }

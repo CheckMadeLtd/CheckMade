@@ -18,7 +18,7 @@ public sealed class DbCommandRetryPolicy : RetryPolicyBase, IDbCommandRetryPolic
         Policy = Polly.Policy
             .Handle<DbException>()
             .WaitAndRetryAsync(retryCount,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
+                static retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timeSpan, retryAttempt, _) => LogError(exception, timeSpan, retryAttempt));
     }
 }

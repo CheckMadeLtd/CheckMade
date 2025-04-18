@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -6,16 +7,17 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting.States;
 
 internal interface ILanguageSettingSelect : IWorkflowStateNormal;
 
 internal sealed record LanguageSettingSelect(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator,
-        ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-        IUsersRepository UsersRepo) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IUsersRepository UsersRepo) 
     : ILanguageSettingSelect
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -30,15 +32,15 @@ internal sealed record LanguageSettingSelect(
                 Text = Ui("🌎 Please select your preferred language:"),
                 DomainTermSelection = new List<DomainTerm>(
                     Enum.GetValues(typeof(LanguageCode)).Cast<LanguageCode>()
-                        .Select(lc => Dt(lc))),
+                        .Select(static lc => Dt(lc))),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
         
-        return Task.FromResult(
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-                () => outputs.ToImmutableReadOnlyCollection()));
+                ppf => outputs.Prepend(ppf).ToImmutableArray(),
+                () => outputs.ToImmutableArray()));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

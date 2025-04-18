@@ -33,10 +33,10 @@ public sealed class RetryPolicyTests
         Assert.Equal(2, executionCount);
         
         loggerMock.Verify(
-            x => x.Log(
+            static x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
+                It.Is<It.IsAnyType>(static (v, t) => true),
                 It.IsAny<RequestException>(),
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);

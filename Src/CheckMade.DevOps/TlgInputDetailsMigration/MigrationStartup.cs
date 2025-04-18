@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration;
 
-internal class MigrationStartup(
+internal sealed class MigrationStartup(
     IServiceCollection services, IConfigurationRoot config,
     string targetEnv, string migIndex)
 {
@@ -22,9 +22,9 @@ internal class MigrationStartup(
                 await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    ex => throw ex);
+                    static ex => throw ex);
             },
-            error => Console.Error.WriteLineAsync(error.GetFormattedEnglish())
+            static error => Console.Error.WriteLineAsync(error.GetFormattedEnglish())
         );
     }
 

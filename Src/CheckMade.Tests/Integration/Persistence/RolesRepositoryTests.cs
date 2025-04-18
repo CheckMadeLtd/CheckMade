@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Integration.Persistence;
 
-public class RolesRepositoryTests
+public sealed class RolesRepositoryTests
 {
     private ServiceProvider? _services;
 
@@ -30,6 +30,6 @@ public class RolesRepositoryTests
         
         Assert.Contains(
             SanitaryAdmin_DanielEn_X2024.Token,
-            roles.Select(r => r.Token));
+            roles.Select(static r => r.Token));
     }
 }

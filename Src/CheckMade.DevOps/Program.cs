@@ -75,7 +75,7 @@ static IServiceCollection GetServiceCollectionWithBasics()
 {
     var services = new ServiceCollection();
 
-    services.AddLogging(loggingConfig =>
+    services.AddLogging(static loggingConfig =>
     {
         loggingConfig.ClearProviders();
         loggingConfig.AddConsole(); 

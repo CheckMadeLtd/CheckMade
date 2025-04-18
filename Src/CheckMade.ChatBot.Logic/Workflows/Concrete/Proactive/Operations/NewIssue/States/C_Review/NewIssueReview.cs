@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.BusinessLogic;
@@ -10,18 +11,19 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
 
 internal interface INewIssueReview<T> : IWorkflowStateNormal where T : ITrade, new();
 
 internal sealed record NewIssueReview<T>(
-        IDomainGlossary Glossary,
-        IGeneralWorkflowUtils WorkflowUtils,
-        IStateMediator Mediator,
-        IIssueFactory<T> Factory,
-        ITlgInputsRepository InputsRepo,
-        IStakeholderReporter<T> Reporter) 
+    IDomainGlossary Glossary,
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator,
+    IIssueFactory<T> Factory,
+    ITlgInputsRepository InputsRepo,
+    IStakeholderReporter<T> Reporter) 
     : INewIssueReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
@@ -52,9 +54,9 @@ internal sealed record NewIssueReview<T>(
                     UiNewLines(1),
                     UiConcatenate(
                         summary
-                            .Where(kvp =>
+                            .Where(static kvp =>
                                 (IssueSummaryCategories.AllExceptOperationalInfo & kvp.Key) != 0)
-                            .Select(kvp => kvp.Value)
+                            .Select(static kvp => kvp.Value)
                             .ToArray())),
                 ControlPromptsSelection = ControlPrompts.Submit | ControlPrompts.Cancel,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -62,8 +64,8 @@ internal sealed record NewIssueReview<T>(
         ];
 
         return previousPromptFinalizer.Match(
-            ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-            () => outputs.ToImmutableReadOnlyCollection());
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
@@ -127,8 +129,8 @@ internal sealed record NewIssueReview<T>(
                     await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
-                    .Select(i => i.EntityGuid)
-                    .Last(g => g.IsSome)
+                    .Select(static i => i.EntityGuid)
+                    .Last(static g => g.IsSome)
                     .GetValueOrThrow();
             }
 

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -23,7 +24,7 @@ namespace CheckMade.Common.Persistence.Repositories;
 internal static class ModelReaders
 {
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
-        (reader, glossary) =>
+        static (reader, glossary) =>
         {
             var userInfo = ConstituteUserInfo(reader);
             var liveEventInfo = ConstituteLiveEventInfo(reader);
@@ -32,7 +33,7 @@ internal static class ModelReaders
         };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
-        (reader, glossary) =>
+        static (reader, glossary) =>
         {
             var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
             var liveEventInfo = ConstituteLiveEventInfo(reader);
@@ -41,7 +42,7 @@ internal static class ModelReaders
         };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> ReadTlgAgentRoleBind = 
-        (reader, glossary) =>
+        static (reader, glossary) =>
         {
             var role = ReadRole(reader, glossary);
             var tlgAgent = ConstituteTlgAgent(reader);
@@ -50,11 +51,11 @@ internal static class ModelReaders
         };
 
     internal static readonly Func<DbDataReader, IDomainGlossary, Vendor> ReadVendor = 
-        (reader, _) => 
+        static (reader, _) => 
             ConstituteVendor(reader).GetValueOrThrow();
 
     internal static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> ReadWorkflowBridge =
-        (reader, glossary) =>
+        static (reader, glossary) =>
         {
             var sourceInput = ReadTlgInput(reader, glossary);
 
@@ -69,8 +70,8 @@ internal static class ModelReaders
         GetUserReader(IDomainGlossary glossary)
     {
         return (
-            getKey: reader => reader.GetInt32(reader.GetOrdinal("user_id")),
-            initializeModel: reader => 
+            getKey: static reader => reader.GetInt32(reader.GetOrdinal("user_id")),
+            initializeModel: static reader => 
                 new User(
                     ConstituteUserInfo(reader),
                     new HashSet<IRoleInfo>(),
@@ -81,7 +82,7 @@ internal static class ModelReaders
                 if (roleInfo.IsSome)
                     ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
             },
-            finalizeModel: user => user with { HasRoles = user.HasRoles.ToImmutableReadOnlyCollection() }
+            finalizeModel: static user => user with { HasRoles = user.HasRoles.ToImmutableArray() }
         );
     }
     
@@ -93,8 +94,8 @@ internal static class ModelReaders
         GetLiveEventReader(IDomainGlossary glossary)
     {
         return (
-            getKey: reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
-            initializeModel: reader => 
+            getKey: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
+            initializeModel: static reader => 
                 new LiveEvent(
                     ConstituteLiveEventInfo(reader).GetValueOrThrow(),
                     new HashSet<IRoleInfo>(),
@@ -110,10 +111,10 @@ internal static class ModelReaders
                 if (sphereOfAction.IsSome)
                     ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
             },
-            finalizeModel: liveEvent => liveEvent with
+            finalizeModel: static liveEvent => liveEvent with
             {
-                WithRoles = liveEvent.WithRoles.ToImmutableReadOnlyCollection(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableReadOnlyCollection()
+                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
+                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
             }
         );
     }
@@ -236,8 +237,8 @@ internal static class ModelReaders
 
         Dictionary<string, Func<IRoleType>> roleTypeFactoryByFullTypeName = new()
         {
-            [typeof(LiveEventAdmin).FullName!] = () => new LiveEventAdmin(),
-            [typeof(LiveEventObserver).FullName!] = () => new LiveEventObserver(),
+            [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
+            [typeof(LiveEventObserver).FullName!] = static () => new LiveEventObserver(),
             
             [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
             [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),

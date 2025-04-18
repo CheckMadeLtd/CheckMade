@@ -59,7 +59,7 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                         new List<Role>(await ExecuteReaderOneToOneAsync(
                                 command, 
                                 ModelReaders.ReadRole))
-                            .ToImmutableReadOnlyCollection());
+                            .ToArray());
                 }
             }
             finally

@@ -39,13 +39,13 @@ var host = new HostBuilder()
          Azure App and they would take precedence over any local .json setting files (which are added by default) */
         config.AddEnvironmentVariables();
     })
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureServices(static (hostContext, services) =>
     {
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
         // Part of 'StartUp' rather than in shared Services method below to enable different values for Tests Startup.
-        services.AddScoped<DefaultUiLanguageCodeProvider>(_ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
+        services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
         services.RegisterChatBotFunctionBotClientServices(config, hostingEnvironment);
         services.RegisterChatBotFunctionUpdateHandlingServices();
@@ -58,13 +58,13 @@ var host = new HostBuilder()
         services.RegisterCommonExternalServices(config);
         
         services.AddOptions<ServiceProviderOptions>()
-            .Configure(options =>
+            .Configure(static options =>
             {
                 options.ValidateOnBuild = true;
                 options.ValidateScopes = true;
             });
     })
-    .ConfigureLogging((hostContext, logging) =>
+    .ConfigureLogging(static (hostContext, logging) =>
     {
         var config = hostContext.Configuration;
         
@@ -73,7 +73,6 @@ var host = new HostBuilder()
         loggerConfig
             .MinimumLevel.Override("CheckMade", LogEventLevel.Verbose)
             .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
-
             .Enrich.WithProcessId()
             .Enrich.FromLogContext();
          // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
@@ -89,13 +88,11 @@ var host = new HostBuilder()
            --> Hence for seeing logs in Dev env. following my precise config, we use files rather than console. */
 
             loggerConfig
-                    
                 .WriteTo.File(
                     new CompactJsonFormatter(),
                     "../../../logs/machine/devlogs-.log",
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
                     rollingInterval: RollingInterval.Day)
-                
                 .WriteTo.File(
                     "../../../logs/human/devlogs-.log", 
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
@@ -121,7 +118,6 @@ var host = new HostBuilder()
                 .WriteTo.Console(
                     outputTemplate: humanReadability,
                     restrictedToMinimumLevel: LogEventLevel.Debug)
-                
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
                     restrictedToMinimumLevel: LogEventLevel.Debug);
@@ -163,13 +159,13 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
     foreach (var mode in Enum.GetValues<InteractionMode>())
     {
         (await  
-            (from botClient
-                in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClient(mode))
-            from unit in Attempt<Unit>.RunAsync(() =>
-                botClient.SetBotCommandMenuAsync(new BotCommandMenus()))
-            select unit))
+                (from botClient
+                        in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClient(mode))
+                    from unit in Attempt<Unit>.RunAsync(() =>
+                        botClient.SetBotCommandMenuAsync(new BotCommandMenus()))
+                    select unit))
             .Match(
-                unit => unit, 
+                static unit => unit, 
                 ex => 
                 { 
                     logger.LogError(ex, "Failed to set BotCommandMenu(s)"); 

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot;
@@ -8,14 +9,15 @@ using CheckMade.Common.Model.Core.Submissions.Issues;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 
 internal interface INewIssueTypeSelection<T> : IWorkflowStateNormal where T : ITrade, new(); 
 
 internal sealed record NewIssueTypeSelection<T>(
-        IDomainGlossary Glossary,
-        IStateMediator Mediator) 
+    IDomainGlossary Glossary,
+    IStateMediator Mediator) 
     : INewIssueTypeSelection<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -31,17 +33,17 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
-                        .Where(dt => dt.TypeValue != typeof(GeneralIssue<T>))
-                        .ToImmutableReadOnlyCollection()),
+                        .Where(static dt => dt.TypeValue != typeof(GeneralIssue<T>))
+                        .ToImmutableArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back
             }
         ];
         
-        return Task.FromResult(
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-                () => outputs.ToImmutableReadOnlyCollection()));
+                ppf => outputs.Prepend(ppf).ToImmutableArray(),
+                () => outputs.ToImmutableArray()));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

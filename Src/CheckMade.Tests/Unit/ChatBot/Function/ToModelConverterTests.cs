@@ -80,15 +80,15 @@ public sealed class ToModelConverterTests
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            roleBindings: new[]
-            {
+            roleBindings:
+            [
                 new TlgAgentRoleBind(
                     SanitaryInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),
                     Option<DateTimeOffset>.Some(new DateTime(2021, 01, 05)),
                     DbRecordStatus.Historic)
-            });
+            ]);
         var basics = GetBasicTestingServices(services);
         
         var expectedTlgInput = new TlgInput(

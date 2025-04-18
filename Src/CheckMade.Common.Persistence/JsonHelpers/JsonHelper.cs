@@ -52,7 +52,7 @@ internal static class JsonHelper
     {
         var nullProperties = typeof(T).GetProperties()
             .Where(p => p.GetValue(obj) == null)
-            .Select(p => p.Name)
+            .Select(static p => p.Name)
             .ToList();
 
         if (nullProperties.Count != 0)

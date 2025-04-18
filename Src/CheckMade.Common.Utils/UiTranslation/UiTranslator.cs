@@ -10,8 +10,8 @@ public interface IUiTranslator
 }
 
 public sealed partial class UiTranslator(
-        Option<IReadOnlyDictionary<string, string>> translationByKey,
-        ILogger<UiTranslator> logger) 
+    Option<IReadOnlyDictionary<string, string>> translationByKey,
+    ILogger<UiTranslator> logger) 
     : IUiTranslator
 {
     public string Translate(UiString uiString)

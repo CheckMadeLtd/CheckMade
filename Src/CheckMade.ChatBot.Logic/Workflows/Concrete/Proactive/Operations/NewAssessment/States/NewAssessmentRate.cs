@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -5,6 +6,7 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Utils;
+// ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 
@@ -27,16 +29,16 @@ internal sealed record NewAssessmentRate(
                 Text = Ui("Provide rating for cleaning:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary.GetAll(typeof(AssessmentRating))
-                        .OrderBy(dt => dt.EnumValue).ToImmutableReadOnlyCollection()),
+                        .OrderBy(static dt => dt.EnumValue).ToImmutableArray()),
                 ControlPromptsSelection = ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
         
-        return Task.FromResult(
+        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
             previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableReadOnlyCollection(),
-                () => outputs.ToImmutableReadOnlyCollection()));
+                ppf => outputs.Prepend(ppf).ToImmutableArray(),
+                () => outputs.ToImmutableArray()));
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)

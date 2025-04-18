@@ -28,11 +28,11 @@ public sealed class LanguageSettingWorkflowTests
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 inputGenerator.GetValidTlgInputTextMessage(
                     text: "random decoy irrelevant to workflow")
-            });
+            ]);
         var workflow = services.GetRequiredService<LanguageSettingWorkflow>();
 
         var actualResponse = 
@@ -70,14 +70,14 @@ public sealed class LanguageSettingWorkflowTests
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
-            inputs: new[]
-            {
+            inputs:
+            [
                 inputGenerator.GetValidTlgInputTextMessage(
                     text: "random decoy irrelevant to workflow"),
-                inputSettingsCommand,
-            },
-            roles: new []{ roleBind.Role },
-            roleBindings: new []{ roleBind });
+                inputSettingsCommand
+            ],
+            roles: [roleBind.Role],
+            roleBindings: [roleBind]);
         var mockUserRepo = (Mock<IUsersRepository>)container.Mocks[typeof(IUsersRepository)];
         var workflow = services.GetRequiredService<LanguageSettingWorkflow>();
 

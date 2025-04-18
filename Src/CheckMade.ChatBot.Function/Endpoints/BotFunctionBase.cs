@@ -41,7 +41,7 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
 
             return attempt.Match(
                 _ => defaultOkResponse,
-                ex => throw new InvalidOperationException("Unhandled exception", ex));
+                static ex => throw new InvalidOperationException("Unhandled exception", ex));
         }
         catch (Exception ex)
         {

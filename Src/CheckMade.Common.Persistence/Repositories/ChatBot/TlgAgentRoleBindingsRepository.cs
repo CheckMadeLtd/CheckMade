@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
@@ -12,7 +13,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync(new[] { tlgAgentRoleBind });
+        await AddAsync([tlgAgentRoleBind]);
 
     public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
     {
@@ -32,7 +33,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 @activationDate, @deactivationDate, @status, @mode)
                                 """;
 
-        var commands = tlgAgentRoleBindings.Select(tarb =>
+        var commands = tlgAgentRoleBindings.Select(static tarb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
@@ -43,20 +44,18 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                 ["@status"] = (int)tarb.Status,
                 ["@mode"] = (int)tarb.TlgAgent.Mode,
                 ["@deactivationDate"] = tarb.DeactivationDate.Match<object>(
-                    date => date,
-                    () => DBNull.Value)
+                    static date => date,
+                    static () => DBNull.Value)
             };
 
             return GenerateCommand(rawQuery, normalParameters);
         });
 
-        await ExecuteTransactionAsync(
-            commands
-                .ToImmutableReadOnlyCollection());
+        await ExecuteTransactionAsync(commands.ToArray());
         
         _cache = _cache.Match(
             cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
-                cache.Concat(tlgAgentRoleBindings).ToImmutableReadOnlyCollection()),
+                cache.Concat(tlgAgentRoleBindings).ToArray()),
             Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
     }
 
@@ -112,7 +111,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                             command, ModelReaders.ReadTlgAgentRoleBind));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
-                        fetchedBindings.ToImmutableReadOnlyCollection());
+                        fetchedBindings.ToArray());
                 }
             }
             finally
@@ -126,11 +125,11 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
 
     public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
-        .Where(tarb => tarb.Status.Equals(DbRecordStatus.Active))
-        .ToImmutableReadOnlyCollection();
+        .Where(static tarb => tarb.Status.Equals(DbRecordStatus.Active))
+        .ToImmutableArray();
 
     public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
-        await UpdateStatusAsync(new [] { tlgAgentRoleBind }, newStatus);
+        await UpdateStatusAsync([tlgAgentRoleBind], newStatus);
 
     public async Task UpdateStatusAsync(
         IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
@@ -168,9 +167,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             return GenerateCommand(rawQuery, normalParameters);
         });
         
-        await ExecuteTransactionAsync(
-            commands
-                .ToImmutableReadOnlyCollection());
+        await ExecuteTransactionAsync(commands.ToArray());
         EmptyCache();
     }
 
@@ -195,7 +192,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        await ExecuteTransactionAsync(new[] { command });
+        await ExecuteTransactionAsync([command]);
         EmptyCache();
     }
 
