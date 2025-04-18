@@ -113,7 +113,12 @@ jobs:
         id: setup-dotnet
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: '8.x'
+          
+#          Not using global.json because the github action runner treats SDK and runtime differently:
+#          It correctly installs the latest runtime according to our rollForward policy in global.json
+#          However it then tries to install the exact version of the SDK (8.0.0) which doesn't exist.
+#          global-json-file: global.json
       
         
 # Build & Test ----------------------------
