@@ -21,8 +21,6 @@ public sealed record StakeholderReporter<T>(
     IIssueFactory<T> IssueFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    private const string IssueTypeIsActuallyAssessment = "MagicStringForAssessment";
-    
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
@@ -86,7 +84,7 @@ public sealed record StakeholderReporter<T>(
         
         var allRelevantSpecialist = currentIssueTypeName switch
         {
-            nameof(CleaningIssue<T>) or IssueTypeIsActuallyAssessment =>
+            nameof(CleaningIssue<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(static r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),
