@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
+namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
 public enum IssueStatus
 {

@@ -5,7 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Submissions.Issues;
+using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
@@ -33,7 +33,7 @@ internal sealed record ViewAttachmentsWorkflow(
                 $"It shouldn't be possible to enter the {nameof(ViewAttachmentsWorkflow)} " +
                 $"without a {nameof(workflowBridge)}");
 
-        var entityHistory = 
+        var issueHistory = 
             await InputsRepo.GetEntityHistoryAsync(
                 currentInput.LiveEventContext.GetValueOrThrow(), 
                 workflowBridge.SourceInput.EntityGuid.GetValueOrThrow());
@@ -44,29 +44,26 @@ internal sealed record ViewAttachmentsWorkflow(
                     .SourceInput.ResultantWorkflow.GetValueOrThrow()
                     .InStateId));
 
-        var submission = sourceWorkflowTerminator switch
+        var issue = sourceWorkflowTerminator switch
         {
             INewIssueSubmissionSucceeded<SanitaryTrade> =>
+                (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SanitaryTrade>>()
-                    .CreateAsync(entityHistory),
+                    .CreateAsync(issueHistory),
 
             INewIssueSubmissionSucceeded<SiteCleanTrade> =>
+                (ITradeIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SiteCleanTrade>>()
-                    .CreateAsync(entityHistory),
+                    .CreateAsync(issueHistory),
 
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(sourceWorkflowTerminator)} while attempting to resolve {nameof(IIssueFactory<ITrade>)}")
         };
 
-        var attachmentsOutput = submission switch
+        var attachmentsOutput = new OutputDto
         {
-            ITradeIssueWithEvidence issue => new OutputDto
-            {
-                Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
-                    issue.Evidence.Attachments.GetValueOrThrow())
-            },
-            
-            _ => throw new InvalidOperationException()
+            Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
+                issue.Evidence.Attachments.GetValueOrThrow())
         };
 
         return WorkflowResponse.Create(
