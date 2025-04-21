@@ -7,15 +7,15 @@ using static CheckMade.Common.Model.Core.Issues.Concrete.IssueSummaryCategories;
 namespace CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 
 public sealed record GeneralIssue<T>(
-        Guid Id, 
-        DateTimeOffset CreationDate, 
-        ISphereOfAction Sphere, 
-        IssueEvidence Evidence, 
-        Role ReportedBy, 
-        Option<Role> HandledBy, 
-        IssueStatus Status,
-        IDomainGlossary Glossary) 
-    : ITradeIssue<T>, ITradeIssueWithEvidence where T : ITrade, new()
+    Guid Id, 
+    DateTimeOffset CreationDate, 
+    ISphereOfAction Sphere, 
+    IssueEvidence Evidence, 
+    Role ReportedBy, 
+    Option<Role> HandledBy, 
+    IssueStatus Status,
+    IDomainGlossary Glossary) 
+    : ITradeIssue<T>, IIssueWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {

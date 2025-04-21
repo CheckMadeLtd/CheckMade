@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Issues;
 
-public interface ITradeIssueWithEvidence : IIssue
+public interface IIssueWithEvidence : IIssue
 {
     IssueEvidence Evidence { get; }
 }

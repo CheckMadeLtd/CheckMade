@@ -46,7 +46,7 @@ internal static class IssueFormatters
             UiNewLines(1));
     }
 
-    public static UiString FormatEvidenceInfo(ITradeIssueWithEvidence issue)
+    public static UiString FormatEvidenceInfo(IIssueWithEvidence issue)
     {
         var attachments = issue.Evidence.Attachments.IsSome
             ? issue.Evidence.Attachments.GetValueOrThrow()

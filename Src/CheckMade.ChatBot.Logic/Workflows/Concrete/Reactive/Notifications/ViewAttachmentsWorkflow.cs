@@ -47,12 +47,12 @@ internal sealed record ViewAttachmentsWorkflow(
         var issue = sourceWorkflowTerminator switch
         {
             INewIssueSubmissionSucceeded<SanitaryTrade> =>
-                (ITradeIssueWithEvidence)
+                (IIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SanitaryTrade>>()
                     .CreateAsync(issueHistory),
 
             INewIssueSubmissionSucceeded<SiteCleanTrade> =>
-                (ITradeIssueWithEvidence)
+                (IIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SiteCleanTrade>>()
                     .CreateAsync(issueHistory),
 
