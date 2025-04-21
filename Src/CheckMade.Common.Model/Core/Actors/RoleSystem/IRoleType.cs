@@ -1,4 +1,3 @@
-using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
@@ -9,5 +8,4 @@ public interface IRoleType
     Option<ITrade> GetTradeInstance();
     Option<Type> GetTradeType();
     IssueSummaryCategories GetIssueSummaryCategoriesForNotifications();
-    AssessmentSummaryCategories GetAssessmentSummaryCategoriesForNotifications();
 }

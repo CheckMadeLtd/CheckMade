@@ -1,4 +1,3 @@
-using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
@@ -11,7 +10,4 @@ public sealed record LiveEventAdmin : IRoleType
 
     public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
         IssueSummaryCategories.All;
-    
-    public AssessmentSummaryCategories GetAssessmentSummaryCategoriesForNotifications() =>
-        AssessmentSummaryCategories.All;
 }

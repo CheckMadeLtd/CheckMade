@@ -5,8 +5,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
@@ -18,7 +16,6 @@ using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -102,17 +99,7 @@ public sealed record DomainGlossary : IDomainGlossary
         
         AddTerm(typeof(INewIssueCancelled<SanitaryTrade>), "DN1KAK");
         AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");
-        
-        
-        AddTerm(typeof(NewAssessmentWorkflow), "DXFLZ2");
-        AddTerm(typeof(INewAssessmentSphereSelection), "DEFMTA");
-        AddTerm(typeof(INewAssessmentFacilitySelection), "D5SEWH");
-        AddTerm(typeof(INewAssessmentRate), "D1K6AS");
-        AddTerm(typeof(INewAssessmentEvidenceEntry), "DB4KLT");
-        AddTerm(typeof(INewAssessmentReview), "D93MJE");
-        AddTerm(typeof(INewAssessmentSubmissionSucceeded), "DF1IJA");
-        AddTerm(typeof(INewAssessmentCancelled), "DZQ2CK");
-        
+
         #endregion
         
         #region Submissions
@@ -139,10 +126,6 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
-        
-        AddTerm(AssessmentRating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
-        AddTerm(AssessmentRating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
-        AddTerm(AssessmentRating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
         
         #endregion
         
