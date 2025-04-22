@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CheckMade.DevOps.TlgInputDetailsMigration;
 
 internal sealed class MigrationStartup(
-    IServiceCollection services, IConfigurationRoot config,
-    string targetEnv, string migIndex)
+    IServiceCollection services,
+    IConfigurationRoot config,
+    string targetEnv,
+    string migIndex)
 {
     public async Task StartAsync()
     {
@@ -19,7 +21,7 @@ internal sealed class MigrationStartup(
         await migratorFactory.GetMigrator(migIndex).Match<Task>(
             async migrator =>
             {
-                await (await migrator.MigrateAsync(targetEnv)).Match<Task>(
+                await (await migrator.MigrateAsync()).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
                     static ex => throw ex);
