@@ -28,10 +28,10 @@ public sealed record DomainGlossary : IDomainGlossary
     private readonly ImmutableDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)>.Builder
         _domainGlossaryBuilder =
             ImmutableDictionary.CreateBuilder<DomainTerm, (CallbackId callbackId, UiString uiString)>();
-    
+
     public IReadOnlyDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
-    
+
     public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
     public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
     
@@ -126,6 +126,10 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
+        
+        AddTerm(Rating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
+        AddTerm(Rating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
+        AddTerm(Rating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
         
         #endregion
         
