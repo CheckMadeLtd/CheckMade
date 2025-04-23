@@ -127,9 +127,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
-        AddTerm(Rating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
-        AddTerm(Rating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
-        AddTerm(Rating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
+        AddTerm(IssueRating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
+        AddTerm(IssueRating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
+        AddTerm(IssueRating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
         
         #endregion
         
