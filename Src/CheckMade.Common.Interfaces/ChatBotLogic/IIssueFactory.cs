@@ -1,5 +1,5 @@
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Submissions.Issues;
+using CheckMade.Common.Model.Core.Issues;
 
 namespace CheckMade.Common.Interfaces.ChatBotLogic;
 

@@ -1,4 +1,3 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
@@ -6,9 +5,7 @@ using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Submissions.Assessment;
-using CheckMade.Common.Model.Core.Submissions.Issues;
+using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
@@ -36,7 +33,7 @@ internal sealed record ViewAttachmentsWorkflow(
                 $"It shouldn't be possible to enter the {nameof(ViewAttachmentsWorkflow)} " +
                 $"without a {nameof(workflowBridge)}");
 
-        var entityHistory = 
+        var issueHistory = 
             await InputsRepo.GetEntityHistoryAsync(
                 currentInput.LiveEventContext.GetValueOrThrow(), 
                 workflowBridge.SourceInput.EntityGuid.GetValueOrThrow());
@@ -47,40 +44,26 @@ internal sealed record ViewAttachmentsWorkflow(
                     .SourceInput.ResultantWorkflow.GetValueOrThrow()
                     .InStateId));
 
-        var submission = sourceWorkflowTerminator switch
+        var issue = sourceWorkflowTerminator switch
         {
             INewIssueSubmissionSucceeded<SanitaryTrade> =>
+                (IIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SanitaryTrade>>()
-                    .CreateAsync(entityHistory),
+                    .CreateAsync(issueHistory),
 
             INewIssueSubmissionSucceeded<SiteCleanTrade> =>
+                (IIssueWithEvidence)
                 await Services.GetRequiredService<IIssueFactory<SiteCleanTrade>>()
-                    .CreateAsync(entityHistory),
-            
-            INewAssessmentSubmissionSucceeded =>
-                (ISubmission)
-                await Services.GetRequiredService<IAssessmentFactory>()
-                    .CreateAsync(entityHistory),
+                    .CreateAsync(issueHistory),
 
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(sourceWorkflowTerminator)} while attempting to resolve {nameof(IIssueFactory<ITrade>)}")
         };
 
-        var attachmentsOutput = submission switch
+        var attachmentsOutput = new OutputDto
         {
-            ITradeIssueWithEvidence issue => new OutputDto
-            {
-                Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
-                    issue.Evidence.Attachments.GetValueOrThrow())
-            },
-            
-            IAssessment assessment => new OutputDto
-            {
-                Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
-                    assessment.Evidence.GetValueOrThrow().Attachments.GetValueOrThrow())
-            },
-            
-            _ => throw new InvalidOperationException()
+            Attachments = Option<IReadOnlyCollection<AttachmentDetails>>.Some(
+                issue.Evidence.Attachments.GetValueOrThrow())
         };
 
         return WorkflowResponse.Create(

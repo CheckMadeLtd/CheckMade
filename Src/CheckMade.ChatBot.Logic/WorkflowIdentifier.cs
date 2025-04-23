@@ -2,8 +2,6 @@ using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
@@ -26,7 +24,6 @@ internal interface IWorkflowIdentifier
 internal sealed record WorkflowIdentifier(
     UserAuthWorkflow UserAuthWorkflow,
     NewIssueWorkflow NewIssueWorkflow,
-    NewAssessmentWorkflow NewAssessmentWorkflow,
     LanguageSettingWorkflow LanguageSettingWorkflow,
     LogoutWorkflow LogoutWorkflow,
     ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
@@ -60,7 +57,6 @@ internal sealed record WorkflowIdentifier(
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
-                    (int)OperationsBotCommands.NewAssessment => Option<WorkflowBase>.Some(NewAssessmentWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             
@@ -145,8 +141,7 @@ internal sealed record WorkflowIdentifier(
             return sourceWorkflowTerminator switch
             {
                 INewIssueSubmissionSucceeded<SanitaryTrade> or 
-                    INewIssueSubmissionSucceeded<SiteCleanTrade> or
-                    INewAssessmentSubmissionSucceeded =>
+                    INewIssueSubmissionSucceeded<SiteCleanTrade> =>
                     Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
 
                 _ => throw new InvalidOperationException(

@@ -8,10 +8,9 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Submissions.Assessment.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Issues;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Issues;
+using CheckMade.Common.Model.Core.Issues.Concrete;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.BusinessLogic;
@@ -19,55 +18,9 @@ namespace CheckMade.Common.BusinessLogic;
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
     ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-    IIssueFactory<T> IssueFactory,
-    IAssessmentFactory AssessmentFactory) 
+    IIssueFactory<T> IssueFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    private const string IssueTypeIsActuallyAssessment = "MagicStringForAssessment";
-    
-    public async Task<IReadOnlyCollection<OutputDto>> GetNewAssessmentNotificationsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory)
-    {
-        var newAssessment = 
-            await AssessmentFactory.CreateAsync(inputHistory); 
-        var completeIssueSummary = 
-            newAssessment.GetSummary();
-        // ToDo: Clean up this use of fake data
-        var recipients = 
-            await GetNewIssueNotificationRecipientsAsync(inputHistory, IssueTypeIsActuallyAssessment);
-        
-        return 
-            recipients
-                .Select(recipient =>
-                    new OutputDto
-                    {
-                        Text = GetNotificationOutput(kvp =>
-                            (recipient.Role.RoleType.GetAssessmentSummaryCategoriesForNotifications() & kvp.Key) != 0),
-                        LogicalPort = recipient,
-                        Attachments = GetAttachments(),
-                    })
-                .ToImmutableArray();
-
-        Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
-            newAssessment.Evidence.IsSome 
-                ? newAssessment.Evidence.GetValueOrThrow().Attachments
-                : Option<IReadOnlyCollection<AttachmentDetails>>.None();
-        
-        UiString GetNotificationOutput(Func<KeyValuePair<AssessmentSummaryCategories, UiString>, bool> summaryFilter)
-        {
-            return 
-                UiConcatenate(
-                    Ui("New cleaning assessment:"),
-                    UiNewLines(1),
-                    UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
-                    UiNewLines(1),
-                    UiConcatenate(
-                        completeIssueSummary.Where(summaryFilter)
-                            .Select(static kvp => kvp.Value)
-                            .ToArray()));
-        }
-    }
-
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
@@ -91,7 +44,7 @@ public sealed record StakeholderReporter<T>(
                 .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
-            newIssue is ITradeIssueWithEvidence issueWithEvidence 
+            newIssue is IIssueWithEvidence issueWithEvidence 
                 ? issueWithEvidence.Evidence.Attachments 
                 : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
@@ -131,7 +84,7 @@ public sealed record StakeholderReporter<T>(
         
         var allRelevantSpecialist = currentIssueTypeName switch
         {
-            nameof(CleaningIssue<T>) or IssueTypeIsActuallyAssessment =>
+            nameof(CleaningIssue<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(static r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),

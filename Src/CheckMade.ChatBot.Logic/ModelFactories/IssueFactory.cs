@@ -7,12 +7,11 @@ using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.Model.Core.Issues;
+using CheckMade.Common.Model.Core.Issues.Concrete;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Submissions.Issues;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.NewIssueUtils;
@@ -136,7 +135,7 @@ internal sealed record IssueFactory<T>(
             return (IFacility)Activator.CreateInstance(lastFacilityType)!;
         }
 
-        SubmissionEvidence GetSubmittedEvidence()
+        IssueEvidence GetSubmittedEvidence()
         {
             var combinedDescriptionEvidence = new StringBuilder();
 
@@ -181,7 +180,7 @@ internal sealed record IssueFactory<T>(
 
             var combinedDescription = combinedDescriptionEvidence.ToString();
             
-            return new SubmissionEvidence
+            return new IssueEvidence
             {
                 Description = !string.IsNullOrWhiteSpace(combinedDescription)
                     ? combinedDescription

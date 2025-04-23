@@ -18,11 +18,6 @@ public sealed record BotCommandMenus
                 [LanguageCode.en] = new("/issue", "❗ Report a new issue"),
                 [LanguageCode.de] = new("/problem", "❗ Ein neues Problem melden")
             },
-            [OperationsBotCommands.NewAssessment] = new Dictionary<LanguageCode, TlgBotCommand>
-            {
-                [LanguageCode.en] = new("/assessment", "⭐ Submit a new assessment"),
-                [LanguageCode.de] = new("/bewertung", "⭐ Eine neue Bewertung vornehmen")
-            },
             [OperationsBotCommands.Settings] = new Dictionary<LanguageCode, TlgBotCommand>
             {
                 [LanguageCode.en] = new("/settings", "⚙️ Change language setting"),

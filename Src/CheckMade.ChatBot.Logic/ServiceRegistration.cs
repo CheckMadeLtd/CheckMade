@@ -5,8 +5,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewAssessment.States;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
@@ -35,11 +33,9 @@ public static class ServiceRegistration
 
         services.AddScoped<IIssueFactory<SanitaryTrade>, IssueFactory<SanitaryTrade>>();
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
-        services.AddScoped<IAssessmentFactory, AssessmentFactory>();
 
         services.AddScoped<UserAuthWorkflow>();
         services.AddScoped<NewIssueWorkflow>();
-        services.AddScoped<NewAssessmentWorkflow>();
         services.AddScoped<LanguageSettingWorkflow>();
         services.AddScoped<LogoutWorkflow>();
         services.AddScoped<ViewAttachmentsWorkflow>();
@@ -79,13 +75,5 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SanitaryTrade>, NewIssueSubmissionSucceeded<SanitaryTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, NewIssueSubmissionSucceeded<SiteCleanTrade>>();
-
-        services.AddScoped<INewAssessmentSphereSelection, NewAssessmentSphereSelection>();
-        services.AddScoped<INewAssessmentFacilitySelection, NewAssessmentFacilitySelection>();
-        services.AddScoped<INewAssessmentRate, NewAssessmentRate>();
-        services.AddScoped<INewAssessmentEvidenceEntry, NewAssessmentEvidenceEntry>();
-        services.AddScoped<INewAssessmentReview, NewAssessmentReview>();
-        services.AddScoped<INewAssessmentSubmissionSucceeded, NewAssessmentSubmissionSucceeded>();
-        services.AddScoped<INewAssessmentCancelled, NewAssessmentCancelled>();
     }
 }

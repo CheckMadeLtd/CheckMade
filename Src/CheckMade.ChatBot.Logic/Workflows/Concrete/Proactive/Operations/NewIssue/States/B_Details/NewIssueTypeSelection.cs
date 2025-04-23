@@ -5,8 +5,8 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Submissions.Issues;
-using CheckMade.Common.Model.Core.Submissions.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Issues;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 // ReSharper disable UseCollectionExpression
@@ -33,7 +33,6 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
-                        .Where(static dt => dt.TypeValue != typeof(GeneralIssue<T>))
                         .ToImmutableArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back

@@ -2,7 +2,7 @@ namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {
-    internal async Task<Attempt<int>> MigrateAsync(string env)
+    internal async Task<Attempt<int>> MigrateAsync()
     {
         return (await 
                 (from historicPairs 
