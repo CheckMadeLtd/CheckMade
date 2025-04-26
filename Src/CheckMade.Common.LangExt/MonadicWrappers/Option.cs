@@ -2,7 +2,7 @@
 // ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LangExt.MonadicWrappers;
 
-public record Option<T>
+public sealed record Option<T>
 {
     internal T? Value { get; }
     internal bool HasValue { get; }
@@ -44,6 +44,7 @@ public record Option<T>
         {
             return Value!;
         }
+
         throw new InvalidOperationException(
             $"No value present for type '{typeof(T)}' even though we expected there would have to be one!");
     }
