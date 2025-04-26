@@ -67,6 +67,8 @@ internal sealed class ToModelConverter(
                                        {update.Message.Date};
                                        """);
                     
+                    // This error message will surface to the user via the onError section of ProcessInputAsync()
+                    // in the InputProcessor.
                     return UiConcatenate(
                         Ui("Failed to convert your Telegram Message: "),
                         error);
