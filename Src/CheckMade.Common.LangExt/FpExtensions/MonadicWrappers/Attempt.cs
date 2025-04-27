@@ -1,6 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
-namespace CheckMade.Common.LangExt.MonadicWrappers;
+namespace CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
 
 public sealed record Attempt<T>
 {

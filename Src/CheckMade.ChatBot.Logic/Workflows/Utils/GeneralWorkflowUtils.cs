@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;

@@ -4,6 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.S
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;

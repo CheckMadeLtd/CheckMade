@@ -1,3 +1,5 @@
+using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+
 namespace CheckMade.Common.LangExt;
 
 public sealed record DomainTerm
