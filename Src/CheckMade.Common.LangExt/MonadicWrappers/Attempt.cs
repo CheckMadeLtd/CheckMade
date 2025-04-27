@@ -2,7 +2,7 @@
 // ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LangExt.MonadicWrappers;
 
-public record Attempt<T>
+public sealed record Attempt<T>
 {
     internal T? Value { get; }
     internal Exception? Exception { get; }
@@ -68,6 +68,7 @@ public record Attempt<T>
         {
             return Value!;
         }
+
         throw Exception!;
     }
 }

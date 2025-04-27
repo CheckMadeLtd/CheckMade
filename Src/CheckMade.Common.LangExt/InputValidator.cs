@@ -11,13 +11,14 @@ public static partial class InputValidator
     public static string GetTokenFormatExample() => "ABC123";
 
     public static bool IsValidToken(string token) => !string.IsNullOrEmpty(token) 
-                                              && TokenRegex.IsMatch(token);
+                                                     && TokenRegex.IsMatch(token);
     
     public static bool IsValidEmailAddress(string emailAddress) => !string.IsNullOrEmpty(emailAddress) 
-                                                     && EmailRegex.IsMatch(emailAddress);
+                                                                   && EmailRegex.IsMatch(emailAddress);
     
     public static bool IsValidMobileNumber(string mobileNumber) => !string.IsNullOrEmpty(mobileNumber) 
-                                                            && MobileNoRegex.IsMatch(mobileNumber);
+                                                                   && MobileNoRegex.IsMatch(mobileNumber);
+
     [GeneratedRegex(@"^\+\d+$")]
     private static partial Regex MyMobileNoRegex();
     

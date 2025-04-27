@@ -2,7 +2,7 @@
 // ReSharper disable MemberCanBeInternal
 namespace CheckMade.Common.LangExt.MonadicWrappers;
 
-public record Result<T>
+public sealed record Result<T>
 {
     internal T? Value { get; }
     internal UiString? Error { get; }
@@ -37,6 +37,7 @@ public record Result<T>
         {
             return Value!;
         }
+
         throw new InvalidOperationException(Error?.GetFormattedEnglish());
     }
 
