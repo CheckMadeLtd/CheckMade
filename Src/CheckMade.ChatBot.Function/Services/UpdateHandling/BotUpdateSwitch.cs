@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt.FpExtensions;
 using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Logging;

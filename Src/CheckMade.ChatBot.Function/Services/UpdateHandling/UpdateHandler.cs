@@ -6,7 +6,6 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions;
 using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -146,7 +145,7 @@ public sealed class UpdateHandler(
                 tarb.TlgAgent.UserId.Id == currentUserId &&
                 tarb.TlgAgent.ChatId.Id == currentChatId &&
                 tarb.TlgAgent.Mode == currentMode);
-
+        
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;
