@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;

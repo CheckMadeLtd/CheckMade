@@ -1,5 +1,5 @@
 using System.Collections.Frozen;
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;

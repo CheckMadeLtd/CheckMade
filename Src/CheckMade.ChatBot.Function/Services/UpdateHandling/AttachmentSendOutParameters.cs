@@ -1,4 +1,4 @@
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 

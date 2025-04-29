@@ -1,5 +1,5 @@
 using System.Reflection;
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration;

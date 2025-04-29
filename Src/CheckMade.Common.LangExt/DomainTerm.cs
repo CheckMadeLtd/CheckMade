@@ -1,4 +1,4 @@
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 namespace CheckMade.Common.LangExt;
 

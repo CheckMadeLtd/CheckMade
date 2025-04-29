@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;

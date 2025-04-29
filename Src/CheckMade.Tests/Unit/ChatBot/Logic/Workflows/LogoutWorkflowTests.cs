@@ -2,7 +2,7 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;

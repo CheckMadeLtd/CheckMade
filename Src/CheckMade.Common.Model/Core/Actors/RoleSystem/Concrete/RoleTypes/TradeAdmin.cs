@@ -1,4 +1,4 @@
-using CheckMade.Common.LangExt.FpExtensions.MonadicWrappers;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
