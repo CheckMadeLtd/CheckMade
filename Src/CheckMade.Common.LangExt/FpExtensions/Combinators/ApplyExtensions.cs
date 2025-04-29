@@ -1,15 +1,15 @@
 namespace CheckMade.Common.LangExt.FpExtensions.Combinators;
 
-public static class PipeExtensions
+public static class ApplyExtensions
 {
     /// <summary>
     /// Apply a transformation to this object with a result of type TOut.
     /// </summary>
-    public static TOut Pipe<TIn, TOut>(this TIn @this, Func<TIn, TOut> f) => f(@this);
+    public static TOut Apply<TIn, TOut>(this TIn @this, Func<TIn, TOut> f) => f(@this);
     
     /// <summary>
     /// Apply a series of transformations to this object, each with the same input and output type.
     /// </summary>
-    public static T Pipe<T>(this T @this, params Func<T, T>[] transformations) => 
+    public static T Apply<T>(this T @this, params Func<T, T>[] transformations) => 
         transformations.Aggregate(@this, static (current, func) => func(current));
 }
