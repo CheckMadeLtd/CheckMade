@@ -141,6 +141,4 @@ public static class OptionExtensions
             ? Option<TResult>.Some(resultSelector(source.Value!, collection.Value!))
             : Option<TResult>.None();
     }
-    
-    // Asynchronous initial operation binding to a synchronous subsequent operation
 }
