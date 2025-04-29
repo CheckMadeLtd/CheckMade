@@ -24,7 +24,12 @@ internal sealed class MigrationStartup(
                 await (await migrator.MigrateAsync()).Match<Task>(
                     recordsUpdated => Console.Out.WriteLineAsync(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
-                    static ex => throw ex);
+                    static failure => failure switch
+                    {
+                        ExceptionWrapper exw => throw exw.Exception,
+                        _ => throw new InvalidOperationException($"Unexpected {nameof(BusinessError)}: " +
+                                                                 $"{((BusinessError)failure).GetEnglishMessage()}")
+                    });
             },
             static failure => Console.Error.WriteLineAsync(failure.GetEnglishMessage())
         );

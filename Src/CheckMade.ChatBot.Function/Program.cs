@@ -161,15 +161,15 @@ static async Task InitBotCommandsAsync(IServiceProvider sp, ILogger<Program> log
     {
         (await  
                 (from botClient
-                        in Attempt<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClient(mode))
-                    from unit in Attempt<Unit>.RunAsync(() =>
+                        in Result<IBotClientWrapper>.Run(() => botClientFactory.CreateBotClient(mode))
+                    from unit in Result<Unit>.RunAsync(() =>
                         botClient.SetBotCommandMenuAsync(new BotCommandMenus()))
                     select unit))
             .Match(
                 static unit => unit, 
-                ex => 
+                failure => 
                 { 
-                    logger.LogError(ex, "Failed to set BotCommandMenu(s)"); 
+                    logger.LogError(failure.GetEnglishMessage(), "Failed to set BotCommandMenu(s)"); 
                     return Unit.Value; 
                 });
     }

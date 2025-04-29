@@ -25,22 +25,12 @@ public static class AlternateExtensions
             .First(static x => x.IsSome);
     
     /// <summary>
-    ///  Try a set of functions on this object (to achieve the same end, but that could result in an error)
+    ///  Try a set of functions on this object (to achieve the same end, but that could result in a failure)
     ///  until the first one succeeds.
     /// </summary>
     public static Result<TOut> Alternate<TIn, TOut>(
         this TIn @this,
         params Func<TIn, Result<TOut>>[] altFuncs) =>
-        altFuncs.Select(x => x(@this))
-            .First(static x => x.IsSuccess);
-    
-    /// <summary>
-    ///  Try a set of functions on this object (to achieve the same end, but that could throw an exception)
-    ///  until the first one succeeds.
-    /// </summary>
-    public static Attempt<TOut> Alternate<TIn, TOut>(
-        this TIn @this,
-        params Func<TIn, Attempt<TOut>>[] altFuncs) =>
         altFuncs.Select(x => x(@this))
             .First(static x => x.IsSuccess);
 }

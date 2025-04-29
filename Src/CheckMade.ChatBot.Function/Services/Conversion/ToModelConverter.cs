@@ -270,19 +270,21 @@ internal sealed class ToModelConverter(
 
         var tlgAttachmentUriAttempt = await attachmentDetails.FileId.Match(
             GetTlgAttachmentUriAsync,
-            static () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+            static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
 
         var tlgAttachmentUri = tlgAttachmentUriAttempt.Match(
             static uri => uri,
-            static ex => throw ex);
+            // assuming from context that this can only be an ExceptionWrapper and not a BusinessError
+            static ex => throw ((ExceptionWrapper)ex).Exception);
         
         var internalAttachmentUriAttempt = await tlgAttachmentUri.Match(
             UploadBlobAndGetInternalUriAsync,
-            static () => Task.FromResult<Attempt<Option<Uri>>>(Option<Uri>.None()));
+            static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
         
         var internalAttachmentUri = internalAttachmentUriAttempt.Match(
             static uri => uri,
-            static ex => throw ex);
+            // assuming from context that this can only be an ExceptionWrapper and not a BusinessError
+            static ex => throw ((ExceptionWrapper)ex).Exception);
         
         var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)
             ? update.Message.Text
@@ -311,23 +313,23 @@ internal sealed class ToModelConverter(
                 controlPromptEnumCode));
     }
 
-    private async Task<Attempt<Option<Uri>>> GetTlgAttachmentUriAsync(string fileId)
+    private async Task<Result<Option<Uri>>> GetTlgAttachmentUriAsync(string fileId)
     {
         return (await GetPathAsync())
             .Match(
                 static path => Option<Uri>.Some(GetUriFromPath(path)), 
-                Attempt<Option<Uri>>.Fail
+                Result<Option<Uri>>.Fail
             );
         
-        async Task<Attempt<string>> GetPathAsync() =>
+        async Task<Result<string>> GetPathAsync() =>
             await filePathResolver.GetTelegramFilePathAsync(fileId);
 
         static Uri GetUriFromPath(string path) => new(path);
     }
 
-    private async Task<Attempt<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri tlgAttachmentUri)
+    private async Task<Result<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri tlgAttachmentUri)
     {
-        return await Attempt<Option<Uri>>.RunAsync(async () => 
+        return await Result<Option<Uri>>.RunAsync(async () => 
             await blobLoader.UploadBlobAndReturnUriAsync(
                 await downloader.DownloadDataAsync(tlgAttachmentUri), 
                 GetFileName(tlgAttachmentUri)));

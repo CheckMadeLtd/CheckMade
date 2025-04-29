@@ -33,16 +33,18 @@ public sealed partial class UiTranslator(
                    // e.g. targetLanguage is 'en'; target dictionary couldn't be created;
             () => uiString.RawEnglishText);
         
-        var formattedTranslation = Attempt<string>.Run(() =>
+        var formattedTranslation = Result<string>.Run(() =>
             translatedAll + 
             string.Format(unformattedTranslation, uiString.MessageParams));
         
         return formattedTranslation.Match(
             GetFormattedTranslationWithAnySurplusParamsAppended,
+            // Assuming this failure can only be an Exception, as nothing would generate a BusinessError
             ex =>
             {
-                logger.LogWarning(ex, "Failed to format translated UiString for: '{unformatted}' " +
-                                      "with {paramsCount} provided string formatting parameters.", 
+                logger.LogWarning(((ExceptionWrapper)ex).Exception,
+                    "Failed to format translated UiString for: '{unformatted}' " +
+                    "with {paramsCount} provided string formatting parameters.", 
                     unformattedTranslation, uiString.MessageParams.Length);
                 
                 return GetUnformattedTranslationWithInsufficientParamsAppended();
