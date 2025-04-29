@@ -40,7 +40,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<ResultOld<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
             currentInput.TlgMessageId, true);

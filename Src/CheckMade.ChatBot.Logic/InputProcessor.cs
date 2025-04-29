@@ -16,7 +16,7 @@ public interface IInputProcessor
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
     public Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input);
+        ProcessInputAsync(ResultOld<TlgInput> input);
 }
 
 internal sealed class InputProcessor(
@@ -27,7 +27,7 @@ internal sealed class InputProcessor(
     : IInputProcessor
 {
     public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input)
+        ProcessInputAsync(ResultOld<TlgInput> input)
     {
         return await input.Match(
             async currentInput =>
@@ -96,7 +96,7 @@ internal sealed class InputProcessor(
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
     private ResultantWorkflowState? GetResultantWorkflowState(
-        Result<WorkflowResponse> response,
+        ResultOld<WorkflowResponse> response,
         Option<WorkflowBase> activeWorkflow)
     {
         ResultantWorkflowState? workflowInfo = null;
@@ -115,7 +115,7 @@ internal sealed class InputProcessor(
         return workflowInfo;
     }
 
-    private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
+    private static Option<Guid> GetEntityGuid(ResultOld<WorkflowResponse> response) =>
         response.Match(
             static r => r.EntityGuid,
             static _ => Option<Guid>.None());
@@ -149,7 +149,7 @@ internal sealed class InputProcessor(
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 
-    private static async Task<Result<WorkflowResponse>>
+    private static async Task<ResultOld<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
             Option<WorkflowBase> activeWorkflow,
             TlgInput currentInput)
@@ -158,7 +158,7 @@ internal sealed class InputProcessor(
             wf => 
                 wf.GetResponseAsync(currentInput),
             static () => 
-                Task.FromResult(Result<WorkflowResponse>
+                Task.FromResult(ResultOld<WorkflowResponse>
                     .FromSuccess(new WorkflowResponse(
                         [
                             new OutputDto 
@@ -174,7 +174,7 @@ internal sealed class InputProcessor(
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
-        Result<WorkflowResponse> responseResult,
+        ResultOld<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
         Option<WorkflowBase> activeWorkflow,
         TlgInput currentInput)

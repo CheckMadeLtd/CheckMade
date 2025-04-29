@@ -14,7 +14,7 @@ internal sealed record UserAuthWorkflow(
     IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<ResultOld<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {
         return await WorkflowResponse.CreateFromNextStateAsync(
             currentInput,

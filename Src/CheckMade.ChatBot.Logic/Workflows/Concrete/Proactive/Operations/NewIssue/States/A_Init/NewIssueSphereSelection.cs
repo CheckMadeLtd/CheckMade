@@ -62,7 +62,7 @@ internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> 
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<ResultOld<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
         

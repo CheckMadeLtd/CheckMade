@@ -28,9 +28,9 @@ public static class AlternateExtensions
     ///  Try a set of functions on this object (to achieve the same end, but that could result in an error)
     ///  until the first one succeeds.
     /// </summary>
-    public static Result<TOut> Alternate<TIn, TOut>(
+    public static ResultOld<TOut> Alternate<TIn, TOut>(
         this TIn @this,
-        params Func<TIn, Result<TOut>>[] altFuncs) =>
+        params Func<TIn, ResultOld<TOut>>[] altFuncs) =>
         altFuncs.Select(x => x(@this))
             .First(static x => x.IsSuccess);
     

@@ -65,7 +65,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         var mockInputProcessor = new Mock<IInputProcessor>();
         mockInputProcessor
-            .Setup(static opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .Setup(static opr => opr.ProcessInputAsync(It.IsAny<ResultOld<TlgInput>>()))
             .Throws<Exception>();
         serviceCollection.AddScoped<IInputProcessor>(_ => mockInputProcessor.Object);
         
@@ -566,7 +566,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         mockInputProcessor
             .Setup<Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
-                static ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+                static ip => ip.ProcessInputAsync(It.IsAny<ResultOld<TlgInput>>()))
             .ReturnsAsync((validInput, returningOutputs));
 
         return mockInputProcessor.Object;
