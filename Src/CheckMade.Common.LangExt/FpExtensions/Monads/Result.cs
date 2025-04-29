@@ -37,6 +37,7 @@ public sealed record Result<T>
     public static implicit operator Result<T>(T value) => Succeed(value);  
     public static implicit operator Result<T>(Exception ex) => Fail(ex);
     public static implicit operator Result<T>(UiString error) => Fail(error);
+    public static implicit operator Result<T>(Failure failure) => Fail(failure);
 
     public static Result<T> Run(Func<T> func)
     {
