@@ -14,5 +14,6 @@ internal interface IWorkflowStateNormal : IWorkflowState
         TlgInput currentInput, 
         Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer);
-    Task<ResultOld<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
+
+    Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
 }

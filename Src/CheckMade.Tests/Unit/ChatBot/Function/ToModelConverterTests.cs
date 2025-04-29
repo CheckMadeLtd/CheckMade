@@ -399,7 +399,7 @@ public sealed class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_InAnyMode()
+    public async Task ConvertToModelAsync_ReturnsFailure_WhenUserIsNull_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -418,11 +418,11 @@ public sealed class ToModelConverterTests
                 update, 
                 Operations);
         
-        Assert.True(conversionResult.IsError);
+        Assert.True(conversionResult.IsFailure);
     }
     
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_InAnyMode()
+    public async Task ConvertToModelAsync_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -440,11 +440,11 @@ public sealed class ToModelConverterTests
                 update, 
                 Operations);
         
-        Assert.True(conversionResult.IsError);
+        Assert.True(conversionResult.IsFailure);
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
+    public async Task ConvertToModelAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -457,10 +457,10 @@ public sealed class ToModelConverterTests
                 Operations);
 
         Assert.True(
-            conversionResult.IsError);
+            conversionResult.IsFailure);
         Assert.Equal(
             "Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
-            conversionResult.Error!.GetFormattedEnglish());
+            conversionResult.FailureInfo!.GetEnglishMessage());
     }
 
     private static (ITelegramUpdateGenerator updateGenerator, 

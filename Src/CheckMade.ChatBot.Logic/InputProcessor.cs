@@ -16,7 +16,7 @@ public interface IInputProcessor
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
     public Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(ResultOld<TlgInput> input);
+        ProcessInputAsync(Result<TlgInput> input);
 }
 
 internal sealed class InputProcessor(
@@ -27,7 +27,7 @@ internal sealed class InputProcessor(
     : IInputProcessor
 {
     public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(ResultOld<TlgInput> input)
+        ProcessInputAsync(Result<TlgInput> input)
     {
         return await input.Match(
             async currentInput =>
@@ -83,12 +83,19 @@ internal sealed class InputProcessor(
                         activeWorkflow,
                         currentInput));
             },
-            // This error was already logged at its source, in ToModelConverter
-            static error => 
-                Task.FromResult<(Option<TlgInput> EnrichedOriginalInput, 
+            static failure =>
+            {
+                var failureOutput = failure switch
+                {
+                    ExceptionWrapper exw => new OutputDto { Text = UiNoTranslate(exw.Exception.Message) },
+                    _ => new OutputDto { Text = ((BusinessError)failure).Error }
+                };
+
+                return Task.FromResult<(Option<TlgInput> EnrichedOriginalInput,
                     IReadOnlyCollection<OutputDto> ResultingOutputs)>((
-                    Option<TlgInput>.None(), [new OutputDto { Text = error }]
-                )));
+                    Option<TlgInput>.None(), [failureOutput]
+                ));
+            });
     }
 
     private static bool IsStartCommand(TlgInput currentInput) =>
@@ -96,7 +103,7 @@ internal sealed class InputProcessor(
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
     private ResultantWorkflowState? GetResultantWorkflowState(
-        ResultOld<WorkflowResponse> response,
+        Result<WorkflowResponse> response,
         Option<WorkflowBase> activeWorkflow)
     {
         ResultantWorkflowState? workflowInfo = null;
@@ -115,7 +122,7 @@ internal sealed class InputProcessor(
         return workflowInfo;
     }
 
-    private static Option<Guid> GetEntityGuid(ResultOld<WorkflowResponse> response) =>
+    private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
         response.Match(
             static r => r.EntityGuid,
             static _ => Option<Guid>.None());
@@ -149,7 +156,7 @@ internal sealed class InputProcessor(
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 
-    private static async Task<ResultOld<WorkflowResponse>>
+    private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
             Option<WorkflowBase> activeWorkflow,
             TlgInput currentInput)
@@ -158,8 +165,8 @@ internal sealed class InputProcessor(
             wf => 
                 wf.GetResponseAsync(currentInput),
             static () => 
-                Task.FromResult(ResultOld<WorkflowResponse>
-                    .FromSuccess(new WorkflowResponse(
+                Task.FromResult(Result<WorkflowResponse>
+                    .Succeed(new WorkflowResponse(
                         [
                             new OutputDto 
                             { 
@@ -174,7 +181,7 @@ internal sealed class InputProcessor(
     }
 
     private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
-        ResultOld<WorkflowResponse> responseResult,
+        Result<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
         Option<WorkflowBase> activeWorkflow,
         TlgInput currentInput)
@@ -185,19 +192,24 @@ internal sealed class InputProcessor(
                 outputBuilder.AddRange(wr.Output);
                 return outputBuilder;
             },
-            error =>
+            failure =>
             {
-                logger.LogWarning($"""
-                                   The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
-                                   this Error Result: '{error}'. Next, the corresponding input parameters.
-                                   UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                   InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
-                                   Date: {currentInput.TlgDate}; 
-                                   For more details of input, check database!
-                                   """);
-                        
-                return 
-                    [new OutputDto { Text = error }];
+                switch (failure)
+                {
+                    case ExceptionWrapper exw:
+                        logger.LogError($"""
+                                         The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
+                                         this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
+                                         UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
+                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
+                                         Date: {currentInput.TlgDate}; 
+                                         For more details of input, check database!
+                                         """);
+                        throw exw.Exception;
+                    
+                    default:
+                        return [new OutputDto { Text = ((BusinessError)failure).Error }];
+                }
             }
         );
     }

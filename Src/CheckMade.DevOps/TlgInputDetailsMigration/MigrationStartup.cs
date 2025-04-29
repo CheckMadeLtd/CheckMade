@@ -26,7 +26,7 @@ internal sealed class MigrationStartup(
                         $"Migration '{migIndex}' succeeded, {recordsUpdated} records were updated."),
                     static ex => throw ex);
             },
-            static error => Console.Error.WriteLineAsync(error.GetFormattedEnglish())
+            static failure => Console.Error.WriteLineAsync(failure.GetEnglishMessage())
         );
     }
 

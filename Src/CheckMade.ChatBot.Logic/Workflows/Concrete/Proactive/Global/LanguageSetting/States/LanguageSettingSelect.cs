@@ -44,7 +44,7 @@ internal sealed record LanguageSettingSelect(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<ResultOld<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType != TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);

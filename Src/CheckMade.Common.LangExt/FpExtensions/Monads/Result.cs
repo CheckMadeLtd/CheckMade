@@ -1,4 +1,3 @@
-using System.Diagnostics;
 
 namespace CheckMade.Common.LangExt.FpExtensions.Monads;
 

@@ -57,7 +57,7 @@ internal sealed record NewIssueConsumablesSelection<T>(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<ResultOld<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         if (currentInput.InputType is not TlgInputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);

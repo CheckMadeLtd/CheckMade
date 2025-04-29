@@ -23,7 +23,7 @@ internal sealed record ViewAttachmentsWorkflow(
     IDomainGlossary Glossary) 
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override async Task<ResultOld<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
     {
         var workflowBridge =
             await BridgesRepo.GetAsync(

@@ -29,7 +29,7 @@ internal sealed class MigratorByIndexFactory
         return typeName.Substring(3, 4);
     }
 
-    public ResultOld<MigratorBase> GetMigrator(string migIndex) => 
+    public Result<MigratorBase> GetMigrator(string migIndex) => 
         _migratorByIndex.TryGetValue(migIndex, out var migrator) switch
         {
             true => migrator,

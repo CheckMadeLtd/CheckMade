@@ -20,7 +20,7 @@ namespace CheckMade.ChatBot.Function.Services.Conversion;
 
 public interface IToModelConverter
 {
-    Task<ResultOld<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
+    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
 internal sealed class ToModelConverter(
@@ -31,7 +31,7 @@ internal sealed class ToModelConverter(
     ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
-    public async Task<ResultOld<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
+    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
     {
         return (await
                 (from tlgInputType 
@@ -56,27 +56,32 @@ internal sealed class ToModelConverter(
                             botCommandEnumCode, domainTerm, controlPromptEnumCode, originatorRole, liveEventContext) 
                     select tlgInput))
             .Match(
-                ResultOld<TlgInput>.FromSuccess,
-                error =>
+                Result<TlgInput>.Succeed,
+                failure =>
                 {
-                    logger.LogWarning($"""
-                                       The following error occured during an update's conversion to model in method 
-                                       '{nameof(ConvertToModelAsync)}': '{error}'.
-                                       Next, more update details for debugging. InteractionMode: '{interactionMode}'; 
-                                       {update.Update.Type}; {update.Message.From?.Id ?? 0}; {update.Message.Chat.Id}; 
-                                       {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text ?? ""};  
-                                       {update.Message.Date};
-                                       """);
-                    
-                    // This error message will surface to the user via the onError section of ProcessInputAsync()
-                    // in the InputProcessor.
-                    return UiConcatenate(
-                        Ui("Failed to convert your Telegram Message: "),
-                        error);
+                    switch (failure)
+                    {
+                        case ExceptionWrapper exw:
+                            logger.LogError($"""
+                                             The following exception occured during an update's conversion to model in method 
+                                             '{nameof(ConvertToModelAsync)}': '{exw.Exception.Message}'.
+                                             Next, more update details for debugging. InteractionMode: '{interactionMode}'; 
+                                             {update.Update.Type}; {update.Message.From?.Id ?? 0}; {update.Message.Chat.Id}; 
+                                             {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text ?? ""};  
+                                             {update.Message.Date};
+                                             """);
+                            throw exw.Exception;
+                        
+                        default:
+                            // The BusinessError message will be converted to user-facing outputs in the InputProcessor.
+                            return UiConcatenate(
+                                Ui("Failed to convert your Telegram Message: "),
+                                ((BusinessError)failure).Error);
+                    }
                 });
     }
 
-    private static ResultOld<TlgInputType> GetTlgInputType(UpdateWrapper update) =>
+    private static Result<TlgInputType> GetTlgInputType(UpdateWrapper update) =>
         update.Update.Type switch
         {
             UpdateType.Message or UpdateType.EditedMessage => update.Message.Type switch
@@ -97,7 +102,7 @@ internal sealed class ToModelConverter(
                 $"and shouldn't be handled in this converter!")
         };
 
-    private static ResultOld<TlgAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
+    private static Result<TlgAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
         // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
         const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
@@ -129,7 +134,7 @@ internal sealed class ToModelConverter(
 
     private sealed record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
 
-    private static ResultOld<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
+    private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
         {
             { } location => Option<Geo>.Some(new Geo(
@@ -140,7 +145,7 @@ internal sealed class ToModelConverter(
             _ => Option<Geo>.None() 
         };
     
-    private static ResultOld<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, InteractionMode interactionMode)
+    private static Result<Option<int>> GetBotCommandEnumCode(UpdateWrapper update, InteractionMode interactionMode)
     {
         var botCommandEntity = update.Message.Entities?
             .FirstOrDefault(static e => e.Type == MessageEntityType.BotCommand);
@@ -197,7 +202,7 @@ internal sealed class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static ResultOld<Option<DomainTerm>> GetDomainTerm(UpdateWrapper update)
+    private static Result<Option<DomainTerm>> GetDomainTerm(UpdateWrapper update)
     {
         var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
@@ -210,14 +215,14 @@ internal sealed class ToModelConverter(
             : Option<DomainTerm>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
-    private static ResultOld<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
+    private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
         return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData
             : Option<long>.None();
     }
 
-    private async Task<ResultOld<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
+    private async Task<Result<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
     {
         var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
             .FirstOrDefault(tarb =>
@@ -226,17 +231,17 @@ internal sealed class ToModelConverter(
                 tarb.TlgAgent.Mode == mode)?
             .Role;
 
-        return ResultOld<Option<Role>>.FromSuccess(originatorRole ?? Option<Role>.None());
+        return Result<Option<Role>>.Succeed(originatorRole ?? Option<Role>.None());
     }
 
-    private static ResultOld<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
+    private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
     {
         return originatorRole.IsSome 
             ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().AtLiveEvent) 
-            : ResultOld<Option<ILiveEventInfo>>.FromSuccess(Option<ILiveEventInfo>.None());
+            : Result<Option<ILiveEventInfo>>.Succeed(Option<ILiveEventInfo>.None());
     }
     
-    private async Task<ResultOld<TlgInput>> GetTlgInputAsync(
+    private async Task<Result<TlgInput>> GetTlgInputAsync(
         UpdateWrapper update,
         InteractionMode interactionMode,
         TlgInputType tlgInputType,

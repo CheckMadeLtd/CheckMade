@@ -86,7 +86,7 @@ public sealed class UpdateHandler(
                         toModelConverterFactory.Create(
                             new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
                 from tlgInput
-                    in Attempt<ResultOld<TlgInput>>.RunAsync(() => 
+                    in Attempt<Result<TlgInput>>.RunAsync(() => 
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
                     in Attempt<(Option<TlgInput> EnrichedOriginalInput, 
