@@ -64,26 +64,21 @@ public sealed record Result<T>
         }
     }
 
-    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Failure, TResult> onFailure)
-    {
-        return IsSuccess ? onSuccess(Value!) : onFailure(FailureInfo!);
-    }
+    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Failure, TResult> onFailure) =>
+        IsSuccess ? onSuccess(Value!) : onFailure(FailureInfo!);
 
     public T GetValueOrDefault(T defaultValue = default!) =>
         IsSuccess ? Value! : defaultValue;
 
-    public T GetValueOrThrow()
-    {
-        if (IsSuccess)
+    public T GetValueOrThrow() =>
+        IsSuccess switch
         {
-            return Value!;
-        }
-
-        if (FailureInfo is ExceptionWrapper exFailure)
-        {
-            throw exFailure.Exception;
-        }
-
-        throw new InvalidOperationException(FailureInfo!.Message);
-    }
+            true => Value!,
+            _ => FailureInfo switch
+            {
+                ExceptionWrapper exFailure => throw exFailure.Exception,
+                BusinessError error => throw new InvalidOperationException(error.Error.GetFormattedEnglish()),
+                _ => throw new InvalidOperationException("Unknown failure type")
+            }
+        };
 }
