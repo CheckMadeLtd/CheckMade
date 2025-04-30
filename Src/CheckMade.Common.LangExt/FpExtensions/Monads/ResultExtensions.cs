@@ -25,6 +25,7 @@ public static class ResultExtensions
     #region Synchronous SelectMany (Bind) Operations
     
     // Basic synchronous binding
+    // For use with LINQ fluent syntax
     public static Result<TResult> SelectMany<T, TResult>(
         this Result<T> source, 
         Func<T, Result<TResult>> binder)
@@ -33,6 +34,10 @@ public static class ResultExtensions
     }
     
     // Combining two synchronous operations to produce a final result
+    // For use with LINQ query syntax
+    // collectionSelector is the function that takes the result of the previous operation and returns the next monadic operation
+    // resultSelector is the function that combines values from both operations
+    // (the resultSelector is keeping track of all previous values so they're available for the final select clause)
     public static Result<TResult> SelectMany<T, TCollection, TResult>(
         this Result<T> source,
         Func<T, Result<TCollection>> collectionSelector,
