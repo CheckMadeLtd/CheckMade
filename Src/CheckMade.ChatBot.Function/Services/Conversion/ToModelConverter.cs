@@ -97,7 +97,7 @@ internal sealed class ToModelConverter(
 
             UpdateType.CallbackQuery => TlgInputType.CallbackQuery,
 
-            _ => throw new InvalidOperationException(
+            _ => new InvalidOperationException(
                 $"Telegram Update of type {update.Update.Type} is not yet supported " +
                 $"and shouldn't be handled in this converter!")
         };
