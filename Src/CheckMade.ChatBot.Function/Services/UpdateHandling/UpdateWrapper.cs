@@ -19,7 +19,9 @@ public sealed record UpdateWrapper
             UpdateType.Message => update.Message,
             UpdateType.EditedMessage => update.EditedMessage,
             UpdateType.CallbackQuery => update.CallbackQuery!.Message,
-            _ => throw new InvalidOperationException("This update type is not handled as a message (yet).")
+            _ => throw new InvalidOperationException(
+                "This update type should have not been attempted to be wrapped. " +
+                "It should have been filtered out when it first came in.")
         } ?? throw new InvalidOperationException("By definition, Message at this point can't be null.");
 
         // Otherwise the Id of the Bot instead of the actual User is stored (only an issue with CallbackQuery !!)

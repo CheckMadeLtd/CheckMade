@@ -31,7 +31,7 @@ public sealed record Result<T>
         {
             ExceptionWrapper ex => Fail(ex.Exception),
             BusinessError error => Fail(error.Error),
-            _ => throw new InvalidOperationException("Unknown failure type")
+            _ => throw new ArgumentOutOfRangeException(nameof(failure))
         };
 
     public static implicit operator Result<T>(T value) => Succeed(value);  
@@ -78,7 +78,7 @@ public sealed record Result<T>
             {
                 ExceptionWrapper exFailure => throw exFailure.Exception,
                 BusinessError error => throw new InvalidOperationException(error.Error.GetFormattedEnglish()),
-                _ => throw new InvalidOperationException("Unknown failure type")
+                _ => throw new ArgumentOutOfRangeException(nameof(FailureInfo))
             }
         };
 }
