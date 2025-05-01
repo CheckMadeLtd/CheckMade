@@ -27,10 +27,9 @@ public sealed class WorkflowIdentifierTests
         var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
             tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
-    
+
         var workflow = await workflowIdentifier
-            .IdentifyAsync(new[] { inputFromUnauthenticatedUser }
-                .ToArray());
+            .IdentifyAsync([inputFromUnauthenticatedUser]);
         
         Assert.True(
             workflow.GetValueOrThrow() is UserAuthWorkflow);
@@ -49,8 +48,7 @@ public sealed class WorkflowIdentifierTests
             (int)OperationsBotCommands.Settings);
         
         var workflow = await workflowIdentifier
-            .IdentifyAsync(new[] { inputWithSettingsBotCommand }
-                .ToArray());
+            .IdentifyAsync([inputWithSettingsBotCommand]);
         
         Assert.True(
             workflow.GetValueOrThrow() is LanguageSettingWorkflow);
@@ -69,8 +67,7 @@ public sealed class WorkflowIdentifierTests
             (int)OperationsBotCommands.NewIssue);
         
         var workflow = await workflowIdentifier
-            .IdentifyAsync(new[] { inputWithNewIssueBotCommand }
-                .ToArray());
+            .IdentifyAsync([inputWithNewIssueBotCommand]);
         
         Assert.True(
             workflow.GetValueOrThrow() is NewIssueWorkflow);

@@ -67,8 +67,7 @@ public sealed class LogoutWorkflowTests
             actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
-                new[] { boundRole }
-                    .ToArray(),
+                new[] { boundRole },
                 DbRecordStatus.Historic),
             Times.Once());
     }
