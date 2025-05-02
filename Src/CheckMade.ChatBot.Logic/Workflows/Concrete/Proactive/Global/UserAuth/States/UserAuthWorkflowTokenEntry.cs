@@ -52,7 +52,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
 
         var enteredText = currentInput.Details.Text.GetValueOrThrow();
 
-        return IsValidToken(enteredText) switch
+        return enteredText.IsValidToken switch
         {
             true => await TokenExistsAsync() switch
             {

@@ -59,7 +59,7 @@ public class InputValidatorTests
     [InlineData("", false)]
     public void IsValidToken_ReturnsExpectedResult(string token, bool expectedOutcome)
     {
-        var actualOutcome = InputValidator.IsValidToken(token);
+        var actualOutcome = token.IsValidToken();
         Assert.Equal(expectedOutcome, actualOutcome);
     }
 }
