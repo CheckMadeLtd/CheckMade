@@ -8,6 +8,12 @@ public sealed record UpdateWrapper
     internal Update Update { get; }
     internal Message Message { get; }
 
+    private readonly Action<Message> _checkFromIdNotNullOrThrow = static m =>
+    {
+        if (m.From?.Id == null)
+            throw new InvalidOperationException("A valid message must have a 'From.Id'");
+    };
+
     // ReSharper disable once ConvertToPrimaryConstructor
     internal UpdateWrapper(Update update)
     {
@@ -29,22 +35,26 @@ public sealed record UpdateWrapper
         {
             Message.From!.Id = update.CallbackQuery!.From.Id; // instead of the original CallbackQuery.Message.From.Id
         }
-        
         // We are not doing the equivalent swap for MessageId
         // I.e. it seems to make more sense to not swap CallbackQuery.Message.MessageId for CallbackQuery.Id !!
+
+        _checkFromIdNotNullOrThrow(Message);
     }
 
     internal UpdateWrapper(Message message)
     {
         Message = message;
-        
         // Needed only by fake messages from TestUtils, which are using this constructor overload as a shortcut.
         Update = new Update { Message = message };
+         
+        _checkFromIdNotNullOrThrow(Message);
     }
     
     internal UpdateWrapper(Update update, Message message)
     {
         Update = update;
         Message = message;
+
+        _checkFromIdNotNullOrThrow(Message);
     }
 }
