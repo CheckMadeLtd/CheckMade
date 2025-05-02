@@ -18,7 +18,6 @@ using Moq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
-using MessageType = Telegram.Bot.Types.Enums.MessageType;
 using static CheckMade.Tests.Utils.TestUtils;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
