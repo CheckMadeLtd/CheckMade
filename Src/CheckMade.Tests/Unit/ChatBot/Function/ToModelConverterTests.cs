@@ -399,26 +399,26 @@ public sealed class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUserIsNull_InAnyMode()
+    public async Task ConvertToModelAsync_ThrowsArgumentNullException_WhenUserIsNull_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-         
-        var update = new UpdateWrapper(new Message
+     
+        var message = new Message
         {
             From = null,
             Text = "not empty",
             Chat = new Chat{ Id = 1 },
             Id = 2,
             Date = DateTime.UtcNow
-        });
-        
-        var conversionResult = 
-            await basics.converter.ConvertToModelAsync(
-                update, 
-                Operations);
-        
-        Assert.True(conversionResult.IsFailure);
+        };
+    
+        // It's the UpdateWrapper further up the stack that performs the null check and throws.
+        await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            basics.converter.ConvertToModelAsync(
+                new UpdateWrapper(message), 
+                Operations)
+        );
     }
     
     [Fact]
