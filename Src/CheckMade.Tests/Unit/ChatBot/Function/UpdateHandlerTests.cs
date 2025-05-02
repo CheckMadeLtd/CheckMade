@@ -46,12 +46,13 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 
         await basics.handler.HandleUpdateAsync(unhandledMessageTypeUpdate, mode);
         
-        mockLogger.Verify(l => l.Log(
-            LogLevel.Warning, 
-            It.IsAny<EventId>(), 
-            It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
-            It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+        mockLogger.Verify(
+            l => l.Log(
+                LogLevel.Warning, 
+                It.IsAny<EventId>(), 
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
+                It.IsAny<Exception>(), 
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
     }
     
@@ -78,12 +79,13 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         await basics.handler.HandleUpdateAsync(textUpdate, mode);
         
-        mockLogger.Verify(static l => l.Log(
-            LogLevel.Error, 
-            It.IsAny<EventId>(), 
-            It.IsAny<It.IsAnyType>(), 
-            It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+        mockLogger.Verify(
+            static l => l.Log(
+                LogLevel.Error, 
+                It.IsAny<EventId>(), 
+                It.IsAny<It.IsAnyType>(), 
+                It.IsAny<Exception>(), 
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
     }
 
@@ -98,13 +100,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     
         // Writing out to OutputHelper to see the entire error message, as an additional manual verification
         basics.mockBotClient
-            .Setup(
-                x => x.SendTextMessageAsync(
-                    invalidBotCommandUpdate.Message.Chat.Id,
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    Option<ReplyMarkup>.None(),
-                    It.IsAny<CancellationToken>()))
+            .Setup(x => x.SendTextMessageAsync(
+                invalidBotCommandUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                Option<ReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()))
             .Callback<ChatId, string, string, Option<ReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
                 outputHelper.WriteLine(msg));
         
