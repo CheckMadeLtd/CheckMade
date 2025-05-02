@@ -11,7 +11,8 @@ public sealed record UpdateWrapper
     private readonly Action<Message> _checkFromIdNotNullOrThrow = static m =>
     {
         if (m.From?.Id == null)
-            throw new InvalidOperationException("A valid message must have a 'From.Id'");
+            throw new ArgumentNullException(nameof(m.From), 
+                $"A valid message must have a {nameof(m.From)}.{nameof(m.From.Id)}");
     };
 
     // ReSharper disable once ConvertToPrimaryConstructor
