@@ -208,7 +208,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
     {
         return new TlgInputDetails(
             text ?? Option<string>.None(),
-            attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
             attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),

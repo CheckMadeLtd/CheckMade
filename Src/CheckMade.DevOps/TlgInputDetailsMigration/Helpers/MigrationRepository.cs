@@ -59,7 +59,6 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             Option<string>.None(), 
             new TlgInputDetails(
                 Option<string>.None(),
-                Option<Uri>.None(),
                 Option<Uri>.None(), 
                 Option<TlgAttachmentType>.None(),
                 Option<Geo>.None(), 
