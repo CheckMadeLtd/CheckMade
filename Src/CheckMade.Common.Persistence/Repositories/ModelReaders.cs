@@ -183,10 +183,10 @@ internal static class ModelReaders
         ISphereOfActionDetails details = trade switch
         {
             SanitaryTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SanitaryCampDetails>(detailsJson, glossary)
+                JsonHelper.DeserializeFromJson<SanitaryCampDetails>(detailsJson, glossary)
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
             SiteCleanTrade => 
-                JsonHelper.DeserializeFromJsonStrict<SiteCleaningZoneDetails>(detailsJson, glossary)
+                JsonHelper.DeserializeFromJson<SiteCleaningZoneDetails>(detailsJson, glossary)
                 ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
@@ -315,7 +315,7 @@ internal static class ModelReaders
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            JsonHelper.DeserializeFromJsonStrict<TlgInputDetails>(tlgDetails, glossary)
+            JsonHelper.DeserializeFromJson<TlgInputDetails>(tlgDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()

@@ -19,7 +19,7 @@ internal static class JsonHelper
         return JsonConvert.SerializeObject(obj, jsonSettings);
     }
 
-    public static T DeserializeFromJsonStrict<T>(string json, IDomainGlossary glossary)
+    public static T DeserializeFromJson<T>(string json, IDomainGlossary glossary)
     {
         var jsonSettings = new JsonSerializerSettings
         {
