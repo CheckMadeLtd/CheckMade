@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;
 
-internal static class JsonHelper
+public static class JsonHelper
 {
     public static string SerializeToJson(object obj, IDomainGlossary glossary)
     {
@@ -19,13 +19,21 @@ internal static class JsonHelper
         return JsonConvert.SerializeObject(obj, jsonSettings);
     }
 
-    public static T DeserializeFromJson<T>(string json, IDomainGlossary glossary)
+    /// <summary>
+    /// Strict default setting for production code to force keeping historic 'details' data up to date with migrations.
+    /// Only ignore missing members e.g. for the purpose of migration operations. 
+    /// </summary>
+    public static T DeserializeFromJson<T>(string json, IDomainGlossary glossary, bool ignoreMissingMembers = false)
     {
         var jsonSettings = new JsonSerializerSettings
         {
-            // Throws exception during deserialization when json data has a field that doesn't map to my model class
-            // But does NOT throw an exception when json data LACKS a field that the model expects (instead, uses default)
-            MissingMemberHandling = MissingMemberHandling.Error,
+            MissingMemberHandling = ignoreMissingMembers  
+                ? MissingMemberHandling.Ignore 
+                
+                // Throws exception during deserialization when json data has a field that doesn't map to my model class
+                // But does NOT throw an exception when json data LACKS a field that the model expects
+                // (instead, uses default)
+                : MissingMemberHandling.Error,
             
             ContractResolver = new OptionContractResolver(glossary),
             Converters = new List<JsonConverter>
