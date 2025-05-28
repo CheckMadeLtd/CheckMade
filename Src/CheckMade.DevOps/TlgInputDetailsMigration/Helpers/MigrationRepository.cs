@@ -57,7 +57,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            command.Parameters.AddWithValue("@tlgUserId", newDetails.Identifier.HistoricUserId);
+            command.Parameters.AddWithValue("@tlgUserId", newDetails.Identifier.HistoricUserId.Id);
             command.Parameters.AddWithValue("@tlgDateTime", newDetails.Identifier.HistoricTlgDate);
             
             command.Parameters.Add(new NpgsqlParameter($"@tlgDetails", NpgsqlDbType.Jsonb)
