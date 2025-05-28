@@ -11,7 +11,7 @@ public interface ITelegramFilePathResolver
 
 internal sealed class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
 {
-    internal const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
+    private const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
     
     public async Task<Result<string>> GetTelegramFilePathAsync(string fileId)
     {

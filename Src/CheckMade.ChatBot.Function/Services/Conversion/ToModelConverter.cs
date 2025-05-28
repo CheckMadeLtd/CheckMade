@@ -38,6 +38,10 @@ internal sealed class ToModelConverter(
                         in GetTlgInputType(update)
                     from attachmentDetails 
                         in GetAttachmentDetails(update)
+                    from tlgAttachmentUri
+                        in GetTlgAttachmentUriAsync(attachmentDetails)
+                    from internalAttachmentUri
+                        in GetInternalAttachmentUriAsync(tlgAttachmentUri)
                     from geoCoordinates 
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
@@ -47,12 +51,12 @@ internal sealed class ToModelConverter(
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from originatorRole
-                        in GetOriginatorRole(update, interactionMode)
+                        in GetOriginatorRoleAsync(update, interactionMode)
                     from liveEventContext
                         in GetLiveEventContext(originatorRole)
                     from tlgInput 
-                        in GetTlgInputAsync(
-                            update, interactionMode, tlgInputType, attachmentDetails, geoCoordinates, 
+                        in GetTlgInput(
+                            update, interactionMode, tlgInputType, internalAttachmentUri, attachmentDetails.Type, geoCoordinates, 
                             botCommandEnumCode, domainTerm, controlPromptEnumCode, originatorRole, liveEventContext) 
                     select tlgInput))
             .Match(
@@ -70,7 +74,7 @@ internal sealed class ToModelConverter(
                                              {update.Message.Type}; {update.Message.MessageId}; {update.Message.Text ?? ""};  
                                              {update.Message.Date};
                                              """);
-                            throw exw.Exception;
+                            return exw;
                         
                         default:
                             // The BusinessError message will be converted to user-facing outputs in the InputProcessor.
@@ -99,37 +103,46 @@ internal sealed class ToModelConverter(
 
             _ => new InvalidOperationException(
                 $"Telegram Update of type {update.Update.Type} is not yet supported " +
-                $"and shouldn't be handled in this converter!")
+                $"and should have never arrived here in {nameof(ConvertToModelAsync)}!")
         };
 
     private static Result<TlgAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
-        // These stay proper Exceptions b/c they'd represent totally unexpected behaviour from an external library!
-        const string errorMessage = "For Telegram message of type {0} we expect the {0} property to not be null";
-
-        return update.Message.Type switch
+        if (!IsMessageTypeSupported(update.Message.Type))
+        {
+            return Ui($"Attachment type {update.Message.Type} is not yet supported!");
+        }
+        
+        // Why Run()? The null-forgiving operators below could throw exceptions if Telegram lib changes! 
+        return Result<TlgAttachmentDetails>.Run(() => update.Message.Type switch
         {
             MessageType.Text or MessageType.Location => new TlgAttachmentDetails(
                 Option<string>.None(), Option<TlgAttachmentType>.None()),
 
             MessageType.Document => new TlgAttachmentDetails(
-                update.Message.Document?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, update.Message.Type)),
+                update.Message.Document!.FileId,
                 TlgAttachmentType.Document),
 
             MessageType.Photo => new TlgAttachmentDetails(
-                update.Message.Photo?.OrderBy(static p => p.FileSize).Last().FileId
-                ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, update.Message.Type)),
+                update.Message.Photo!.OrderBy(static p => p.FileSize).Last().FileId,
                 TlgAttachmentType.Photo),
 
             MessageType.Voice => new TlgAttachmentDetails(
-                update.Message.Voice?.FileId ?? throw new InvalidOperationException(
-                    string.Format(errorMessage, update.Message.Type)),
+                update.Message.Voice!.FileId,
                 TlgAttachmentType.Voice),
 
-            _ => Ui("Attachment type {0} is not yet supported!", update.Message.Type)
-        };
+            _ => throw new ArgumentOutOfRangeException(nameof(GetAttachmentDetails))
+        });
+
+        static bool IsMessageTypeSupported(MessageType messageType)
+        {
+            return messageType switch
+            {
+                MessageType.Text or MessageType.Location or 
+                    MessageType.Document or MessageType.Photo or MessageType.Voice => true,
+                _ => false
+            };
+        }
     }
 
     private sealed record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
@@ -171,28 +184,29 @@ internal sealed class ToModelConverter(
         
         var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
             .SelectMany(static kvp => kvp.Values)
-            .FirstOrDefault(mbc => mbc.Command == isolatedBotCommand);
+            .FirstOrDefault(tbc => tbc.Command == isolatedBotCommand);
         
         if (tlgBotCommandFromTelegramUpdate == null)
             return UiConcatenate(
-                Ui("The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. ", 
-                    update.Message.Text ?? "[empty text!]", interactionMode, "W3DL9"),
+                Ui("The BotCommand {0} does not exist for the {1}Bot.", 
+                    update.Message.Text ?? "[empty text]", interactionMode),
                 IInputProcessor.SeeValidBotCommandsInstruction);
 
+        // The botCommandEnumCode will always be interpreted together with the interactionMode. 
         var botCommandUnderlyingEnumCodeForModeAgnosticRepresentation = interactionMode switch
         {
             InteractionMode.Operations => Option<int>.Some(
-                (int) allBotCommandMenus.OperationsBotCommandMenu
+                (int)allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
             InteractionMode.Communications => Option<int>.Some(
-                (int) allBotCommandMenus.CommunicationsBotCommandMenu
+                (int)allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
             InteractionMode.Notifications => Option<int>.Some(
-                (int) allBotCommandMenus.NotificationsBotCommandMenu
+                (int)allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
                         kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
                     .Key),
@@ -207,22 +221,21 @@ internal sealed class ToModelConverter(
         var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
 
-        if (string.IsNullOrWhiteSpace(callBackDataRaw))
+        if (string.IsNullOrWhiteSpace(callBackDataRaw) || !callBackDataRaw.IsValidToken())
             return Option<DomainTerm>.None();
 
-        return long.TryParse(update.Update.CallbackQuery?.Data, out _) 
-            ? Option<DomainTerm>.None() // This means, it's a ControlPrompt, see below
-            : Option<DomainTerm>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
+        return Option<DomainTerm>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)
     {
+        // Only ControlPromptEnumCodes are in format 'long', so if parsable, that's what it is (vs. token for DomainTerm)
         return long.TryParse(update.Update.CallbackQuery?.Data, out var callBackData)
             ? callBackData
             : Option<long>.None();
     }
-
-    private async Task<Result<Option<Role>>> GetOriginatorRole(UpdateWrapper update, InteractionMode mode)
+    
+    private async Task<Result<Option<Role>>> GetOriginatorRoleAsync(UpdateWrapper update, InteractionMode mode)
     {
         var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
             .FirstOrDefault(tarb =>
@@ -231,21 +244,22 @@ internal sealed class ToModelConverter(
                 tarb.TlgAgent.Mode == mode)?
             .Role;
 
-        return Result<Option<Role>>.Succeed(originatorRole ?? Option<Role>.None());
+        return originatorRole ?? Option<Role>.None();
     }
 
     private static Result<Option<ILiveEventInfo>> GetLiveEventContext(Option<Role> originatorRole)
     {
         return originatorRole.IsSome 
             ? Option<ILiveEventInfo>.Some(originatorRole.GetValueOrThrow().AtLiveEvent) 
-            : Result<Option<ILiveEventInfo>>.Succeed(Option<ILiveEventInfo>.None());
+            : Option<ILiveEventInfo>.None();
     }
     
-    private async Task<Result<TlgInput>> GetTlgInputAsync(
+    private static Result<TlgInput> GetTlgInput(
         UpdateWrapper update,
         InteractionMode interactionMode,
         TlgInputType tlgInputType,
-        TlgAttachmentDetails attachmentDetails,
+        Option<Uri> internalAttachmentUri,
+        Option<TlgAttachmentType> attachmentType,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,
@@ -253,38 +267,16 @@ internal sealed class ToModelConverter(
         Option<Role> originatorRole,
         Option<ILiveEventInfo> liveEventContext)
     {
-        if (update.Message.From?.Id == null || 
-            string.IsNullOrWhiteSpace(update.Message.Text) 
-            && attachmentDetails.FileId.IsNone
+        if (string.IsNullOrWhiteSpace(update.Message.Text) 
+            && internalAttachmentUri.IsNone
             && tlgInputType != TlgInputType.Location)
         {
-            return Ui("""
-                      A valid message must:  
-                      a) have a User Id ('From.Id' in Telegram); 
-                      b) either have a text or an attachment (unless it's a Location).
-                      """);   
+            return new ArgumentException("A valid Message that is not a Location update must have at least " +
+                                         "either a text or an attachment.");   
         }
         
-        TlgUserId userId = update.Message.From.Id;
+        TlgUserId userId = update.Message.From!.Id; // already checked for non-null in UpdateWrapper constructor
         TlgChatId chatId = update.Message.Chat.Id;
-
-        var tlgAttachmentUriAttempt = await attachmentDetails.FileId.Match(
-            GetTlgAttachmentUriAsync,
-            static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
-
-        var tlgAttachmentUri = tlgAttachmentUriAttempt.Match(
-            static uri => uri,
-            // assuming from context that this can only be an ExceptionWrapper and not a BusinessError
-            static ex => throw ((ExceptionWrapper)ex).Exception);
-        
-        var internalAttachmentUriAttempt = await tlgAttachmentUri.Match(
-            UploadBlobAndGetInternalUriAsync,
-            static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
-        
-        var internalAttachmentUri = internalAttachmentUriAttempt.Match(
-            static uri => uri,
-            // assuming from context that this can only be an ExceptionWrapper and not a BusinessError
-            static ex => throw ((ExceptionWrapper)ex).Exception);
         
         var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)
             ? update.Message.Text
@@ -304,17 +296,19 @@ internal sealed class ToModelConverter(
             update.Update.CallbackQuery?.Id ?? Option<string>.None(), 
             new TlgInputDetails(
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
-                tlgAttachmentUri,
                 internalAttachmentUri,
-                attachmentDetails.Type,
+                attachmentType,
                 geoCoordinates,
                 botCommandEnumCode,
                 domainTerm,
                 controlPromptEnumCode));
     }
-
-    private async Task<Result<Option<Uri>>> GetTlgAttachmentUriAsync(string fileId)
+    
+    private async Task<Result<Option<Uri>>> GetTlgAttachmentUriAsync(TlgAttachmentDetails attachmentDetails)
     {
+        if (attachmentDetails.FileId.IsNone)
+            return Option<Uri>.None();
+
         return (await GetPathAsync())
             .Match(
                 static path => Option<Uri>.Some(GetUriFromPath(path)), 
@@ -322,11 +316,18 @@ internal sealed class ToModelConverter(
             );
         
         async Task<Result<string>> GetPathAsync() =>
-            await filePathResolver.GetTelegramFilePathAsync(fileId);
+            await filePathResolver.GetTelegramFilePathAsync(attachmentDetails.FileId.GetValueOrThrow());
 
         static Uri GetUriFromPath(string path) => new(path);
     }
 
+    private async Task<Result<Option<Uri>>> GetInternalAttachmentUriAsync(Option<Uri> tlgAttachmentUri)
+    {
+        return await tlgAttachmentUri.Match(
+            UploadBlobAndGetInternalUriAsync,
+            static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
+    }
+    
     private async Task<Result<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri tlgAttachmentUri)
     {
         return await Result<Option<Uri>>.RunAsync(async () => 
