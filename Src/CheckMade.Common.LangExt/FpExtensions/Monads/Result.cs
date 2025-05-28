@@ -1,3 +1,5 @@
+// ReSharper disable MemberCanBeInternal
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace CheckMade.Common.LangExt.FpExtensions.Monads;
 
