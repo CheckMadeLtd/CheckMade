@@ -1,3 +1,4 @@
 DataMig_Index;DevDb;PrdDb;Required_By_Vers;Notes
 0001;1;1;0.7.7;""
 0002;1;1;0.8.5;Manually deleted old data instead
+0003;0;0;1.2.2;Delete AttachmentTlgUri from Details
