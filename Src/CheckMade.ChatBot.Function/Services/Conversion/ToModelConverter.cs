@@ -56,8 +56,9 @@ internal sealed class ToModelConverter(
                         in GetLiveEventContext(originatorRole)
                     from tlgInput 
                         in GetTlgInput(
-                            update, interactionMode, tlgInputType, internalAttachmentUri, attachmentDetails.Type, geoCoordinates, 
-                            botCommandEnumCode, domainTerm, controlPromptEnumCode, originatorRole, liveEventContext) 
+                            update, interactionMode, tlgInputType, internalAttachmentUri, attachmentDetails.Type, 
+                            geoCoordinates, botCommandEnumCode, domainTerm, controlPromptEnumCode, 
+                            originatorRole, liveEventContext) 
                     select tlgInput))
             .Match(
                 Result<TlgInput>.Succeed,
