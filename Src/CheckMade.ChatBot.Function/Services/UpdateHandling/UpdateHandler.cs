@@ -75,11 +75,6 @@ public sealed class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        // Note on exception/error handling in this chain - effectively Railway-Oriented Programming but on two levels:
-        // 1) Exceptions from any of the below operation are handled below in the onFailure section of Match()
-        // 2) Any handled error (with a message to the user) from the ModelConverter is wrapped in Result<T> and 
-        // converted to a corresponding output in the next step (ProcessInputAsync).
-        // This might get fixed, see https://github.com/CheckMadeLtd/CheckMade/issues/264
         var handleUpdateAttempt = await
             (from toModelConverter
                     in Result<IToModelConverter>.Run(() => 
