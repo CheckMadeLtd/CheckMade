@@ -81,7 +81,11 @@ public sealed class UpdateHandler(
                         toModelConverterFactory.Create(
                             new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
                 from tlgInput
-                    in toModelConverter.ConvertToModelAsync(update, currentInteractionMode)
+                    // this nested Result is necessary so that a failed conversion gets wrapped in a successful Result
+                    // to ensure it gets passed on to the next step where any Exception or BusinessError is turned 
+                    // into user-facing output
+                    in Result<Result<TlgInput>>.RunAsync(() =>
+                        toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
                     in Result<(Option<TlgInput> EnrichedOriginalInput, 
                         IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
