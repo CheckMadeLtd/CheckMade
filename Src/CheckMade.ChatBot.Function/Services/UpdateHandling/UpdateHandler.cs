@@ -6,6 +6,7 @@ using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -20,7 +21,7 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IUpdateHandler
 {
-    Task<Attempt<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentInteractionMode);
+    Task<Result<Unit>> HandleUpdateAsync(UpdateWrapper update, InteractionMode currentInteractionMode);
 }
 
 public sealed class UpdateHandler(
@@ -37,7 +38,7 @@ public sealed class UpdateHandler(
     ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
-    public async Task<Attempt<Unit>> HandleUpdateAsync(
+    public async Task<Result<Unit>> HandleUpdateAsync(
         UpdateWrapper update,
         InteractionMode currentInteractionMode)
     {
@@ -74,62 +75,72 @@ public sealed class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
         
-        // Note on exception/error handling in this chain - effectively Railway-Oriented Programming but on two levels:
-        // 1) Exceptions from any of the below operation are handled below in the onFailure section of Match()
-        // 2) Any handled error (with a message to the user) from the ModelConverter is wrapped in Result<T> and 
-        // converted to a corresponding output in the next step (ProcessInputAsync).
-        // This might get fixed, see https://github.com/CheckMadeLtd/CheckMade/issues/264
         var handleUpdateAttempt = await
             (from toModelConverter
-                    in Attempt<IToModelConverter>.Run(() => 
+                    in Result<IToModelConverter>.Run(() => 
                         toModelConverterFactory.Create(
                             new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
                 from tlgInput
-                    in Attempt<Result<TlgInput>>.RunAsync(() => 
+                    // this nested Result is necessary so that a failed conversion gets wrapped in a successful Result
+                    // to ensure it gets passed on to the next step where any Exception or BusinessError is turned 
+                    // into user-facing output
+                    in Result<Result<TlgInput>>.RunAsync(() =>
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
-                    in Attempt<(Option<TlgInput> EnrichedOriginalInput, 
+                    in Result<(Option<TlgInput> EnrichedOriginalInput, 
                         IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(tlgInput))
                 from activeRoleBindings
-                    in Attempt<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
+                    in Result<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
                         (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())
                         .ToArray())
                 from uiTranslator
-                    in Attempt<IUiTranslator>.Run(() => 
+                    in Result<IUiTranslator>.Run(() => 
                         translatorFactory.Create(GetUiLanguage(
                             activeRoleBindings,
                             currentUserId,
                             currentChatId,
                             currentInteractionMode)))
                 from replyMarkupConverter
-                    in Attempt<IOutputToReplyMarkupConverter>.Run(() => 
+                    in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
                 from sentOutputs
-                    in Attempt<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                    in Result<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
                             activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader))
                 from unit 
-                    in Attempt<Unit>.RunAsync(() =>
+                    in Result<Unit>.RunAsync(() =>
                         SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))
                 select unit);
         
         return handleUpdateAttempt.Match(
-            static _ => Attempt<Unit>.Succeed(Unit.Value),
-            ex =>
+            static _ => Result<Unit>.Succeed(Unit.Value),
+            failure =>
             {
-                logger.LogError(ex, "Exception with message '{exMessage}' was thrown. " +
-                                    "Next, some details to help debug the current exception. " +
-                                    "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
-                                    "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                    ex.Message, 
-                    currentInteractionMode, 
-                    update.Message.From!.Id,
-                    update.Message.Date,
-                    update.Message.Text);
-                
-                return ex;
+                switch (failure)
+                {
+                    case ExceptionWrapper exw:
+                        logger.LogError(exw.Exception, "Exception with message '{exMessage}' was thrown. " +
+                                                       "Next, some details to help debug the current exception. " +
+                                                       "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
+                                                       "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
+                            exw.GetEnglishMessage(), 
+                            currentInteractionMode, 
+                            update.Message.From!.Id,
+                            update.Message.Date,
+                            update.Message.Text);
+
+                        return failure;
+                    
+                    default:
+                        var error = (BusinessError)failure;
+                        logger.LogWarning("The following {businessError} was returned: '{message}'",
+                            nameof(BusinessError),
+                            error.GetEnglishMessage());
+                        
+                        return failure;
+                }
             });
     }
 
@@ -144,7 +155,7 @@ public sealed class UpdateHandler(
                 tarb.TlgAgent.UserId.Id == currentUserId &&
                 tarb.TlgAgent.ChatId.Id == currentChatId &&
                 tarb.TlgAgent.Mode == currentMode);
-
+        
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 
             : defaultUiLanguage.Code;

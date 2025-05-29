@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -207,7 +208,6 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
     {
         return new TlgInputDetails(
             text ?? Option<string>.None(),
-            attachmentTlgUri ?? Option<Uri>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
             attachmentType ?? Option<TlgAttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),

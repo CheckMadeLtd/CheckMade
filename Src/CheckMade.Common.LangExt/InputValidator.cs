@@ -10,7 +10,7 @@ public static partial class InputValidator
     
     public static string GetTokenFormatExample() => "ABC123";
 
-    public static bool IsValidToken(string token) => !string.IsNullOrEmpty(token) 
+    public static bool IsValidToken(this string token) => !string.IsNullOrEmpty(token) 
                                                      && TokenRegex.IsMatch(token);
     
     public static bool IsValidEmailAddress(string emailAddress) => !string.IsNullOrEmpty(emailAddress) 

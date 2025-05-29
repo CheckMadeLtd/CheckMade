@@ -1,6 +1,7 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Utils;
 

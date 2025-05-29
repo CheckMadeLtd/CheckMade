@@ -52,7 +52,7 @@ internal static class RegisterServicesExtensions
                     ?? throw new InvalidOperationException(
                         $"Can't find {DbConnectionProvider.KeyToPrdDbPswInKeyvaultOrSecrets}")),
             
-            _ => throw new ArgumentException((nameof(hostingEnvironment)))
+            _ => throw new ArgumentException(nameof(hostingEnvironment))
         };
         
         services.Register_CommonPersistence_Services(dbConnectionString);

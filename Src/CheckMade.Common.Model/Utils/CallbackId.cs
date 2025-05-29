@@ -16,7 +16,7 @@ public sealed record CallbackId
 
     public CallbackId(string id)
     {
-        if (!InputValidator.IsValidToken(id))
+        if (!id.IsValidToken())
         {
             throw new ArgumentException("ID must be a 6-digit alphanumeric code starting with 'D'.");
         }

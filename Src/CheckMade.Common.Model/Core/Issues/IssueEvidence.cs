@@ -1,3 +1,5 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
+
 namespace CheckMade.Common.Model.Core.Issues;
 
 public sealed record IssueEvidence

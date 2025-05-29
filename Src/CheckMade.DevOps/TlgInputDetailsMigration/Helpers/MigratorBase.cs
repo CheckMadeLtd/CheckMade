@@ -1,31 +1,33 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
+
 namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {
-    internal async Task<Attempt<int>> MigrateAsync()
+    internal async Task<Result<int>> MigrateAsync()
     {
         return (await 
-                (from historicPairs 
-                        in Attempt<IReadOnlyCollection<OldFormatDetailsPair>>.RunAsync(
-                            migRepo.GetMessageOldFormatDetailsPairsAsync)
-                    from detailsUpdate 
-                        in Attempt<IReadOnlyCollection<DetailsUpdate>>.RunAsync(() => 
-                            GenerateMigrationUpdatesAsync(historicPairs))
+                (from allOldFormatDetails 
+                        in Result<IReadOnlyCollection<OldFormatDetails>>.RunAsync(
+                            migRepo.GetOldFormatDetailsAsync)
+                    from allNewFormatDetails 
+                        in Result<IReadOnlyCollection<NewFormatDetails>>.Run(() => 
+                            ConvertOldToNewAsync(allOldFormatDetails))
                     from unit 
-                        in Attempt<Unit>.RunAsync(() => 
-                            MigrateHistoricMessagesAsync(detailsUpdate))
-                    select detailsUpdate.Count()))
+                        in Result<Unit>.RunAsync(() => 
+                            MigrateHistoricInputsAsync(allNewFormatDetails))
+                    select allNewFormatDetails.Count))
             .Match(
-                Attempt<int>.Succeed, 
-                static ex => ex);
+                Result<int>.Succeed, 
+                static failure => failure);
     }
 
-    protected abstract Task<IReadOnlyCollection<DetailsUpdate>> GenerateMigrationUpdatesAsync(
-        IReadOnlyCollection<OldFormatDetailsPair> allHistoricMessageDetailPairs);
+    protected abstract IReadOnlyCollection<NewFormatDetails> ConvertOldToNewAsync(
+        IReadOnlyCollection<OldFormatDetails> allOldFormatDetails);
     
-    private async Task<Unit> MigrateHistoricMessagesAsync(IReadOnlyCollection<DetailsUpdate> detailsUpdates)
+    private async Task<Unit> MigrateHistoricInputsAsync(IReadOnlyCollection<NewFormatDetails> allNewFormatDetails)
     {
-        await migRepo.UpdateAsync(detailsUpdates);
+        await migRepo.UpdateAsync(allNewFormatDetails);
 
         return Unit.Value;
     }

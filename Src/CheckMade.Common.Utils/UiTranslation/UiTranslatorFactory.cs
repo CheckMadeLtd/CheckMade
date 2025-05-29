@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
@@ -12,9 +13,9 @@ public interface IUiTranslatorFactory
     IUiTranslator Create(LanguageCode targetLanguage);
 }
 
-public class UiTranslatorFactory(
-        ILogger<UiTranslatorFactory> logger,
-        ILogger<UiTranslator> loggerForUiTranslator) 
+public sealed class UiTranslatorFactory(
+    ILogger<UiTranslatorFactory> logger,
+    ILogger<UiTranslator> loggerForUiTranslator) 
     : IUiTranslatorFactory
 {
     private LanguageCode _targetLanguage;
@@ -25,15 +26,16 @@ public class UiTranslatorFactory(
         
         var translationByKey = _targetLanguage switch
         {
-
             LanguageCode.en => Option<IReadOnlyDictionary<string, string>>.None(),
             
             LanguageCode.de => CreateTranslationDictionary().Match(
                 Option<IReadOnlyDictionary<string, string>>.Some,
+                // Assuming this can only be an Exception (not a BusinessError)
                 ex =>
                 {
-                    logger.LogWarning(ex, $"Failed to create translation dictionary for '{_targetLanguage}'," +
-                                          $"and so U.I. will be English.");
+                    logger.LogWarning(((ExceptionWrapper)ex).Exception,
+                        $"Failed to create translation dictionary for '{_targetLanguage}'," +
+                        $"and so U.I. will be English.");
                     
                     return Option<IReadOnlyDictionary<string, string>>.None();
                 }),
@@ -44,9 +46,9 @@ public class UiTranslatorFactory(
         return new UiTranslator(translationByKey, loggerForUiTranslator);
     }
 
-    private Attempt<IReadOnlyDictionary<string, string>> CreateTranslationDictionary()
+    private Result<IReadOnlyDictionary<string, string>> CreateTranslationDictionary()
     {
-        return Attempt<IReadOnlyDictionary<string, string>>.Run(() =>
+        return Result<IReadOnlyDictionary<string, string>>.Run(() =>
         {
             var builder = ImmutableDictionary.CreateBuilder<string, string>();
             

@@ -37,11 +37,11 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 return defaultOkResponse;
             }
 
-            var attempt = await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+            // Any failure wrapped in Result would have been logged already e.g. in UpdateHandler
+            // Only unhandled/unwrapped Exceptions would then bubble up here and lead to the catch block below, 
+            await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
 
-            return attempt.Match(
-                _ => defaultOkResponse,
-                static ex => throw new InvalidOperationException("Unhandled exception", ex));
+            return defaultOkResponse;
         }
         catch (Exception ex)
         {

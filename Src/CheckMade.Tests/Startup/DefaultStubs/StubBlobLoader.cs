@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;
 
-public class StubBlobLoader : IBlobLoader
+public sealed class StubBlobLoader : IBlobLoader
 {
     public Task<Uri> UploadBlobAndReturnUriAsync(MemoryStream stream, string fileName)
     {

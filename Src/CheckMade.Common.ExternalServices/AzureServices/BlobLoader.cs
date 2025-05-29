@@ -3,7 +3,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 
 namespace CheckMade.Common.ExternalServices.AzureServices;
 
-public class BlobLoader(BlobContainerClient containerClient) : IBlobLoader
+public sealed class BlobLoader(BlobContainerClient containerClient) : IBlobLoader
 {
     private const string FileName = "FileName";
     

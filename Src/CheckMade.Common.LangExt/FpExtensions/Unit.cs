@@ -1,4 +1,4 @@
-namespace CheckMade.Common.LangExt;
+namespace CheckMade.Common.LangExt.FpExtensions;
 
 // Unit here is a placeholder for "no value" - it's a way of handling void methods in a monadic context.
 

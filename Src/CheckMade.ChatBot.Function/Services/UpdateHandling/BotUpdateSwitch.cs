@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -7,7 +8,7 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 public interface IBotUpdateSwitch
 {
-    Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode);
+    Task<Result<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode);
 }
 
 public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
@@ -19,7 +20,7 @@ public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpd
                                       a Telegram-System-related update didn't work. You may assume it did.
                                       """);
     
-    public async Task<Attempt<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
+    public async Task<Result<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
     {
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)

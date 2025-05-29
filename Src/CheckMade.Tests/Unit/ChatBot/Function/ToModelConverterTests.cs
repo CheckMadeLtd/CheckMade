@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -114,56 +115,6 @@ public sealed class ToModelConverterTests
             actualTlgInput.GetValueOrThrow());
         Assert.True(
             actualTlgInput.GetValueOrThrow().OriginatorRole.IsNone);
-    }
-    
-    [Theory]
-    [InlineData(TlgAttachmentType.Photo)]
-    [InlineData(TlgAttachmentType.Voice)]
-    [InlineData(TlgAttachmentType.Document)]
-    public async Task ConvertToModelAsync_ResultsInCorrectTlgUri_ForValidAttachmentMessage_InAnyMode(
-        TlgAttachmentType attachmentType)
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var basics = GetBasicTestingServices(_services);
-        var attachmentUpdate = attachmentType switch
-        {
-            TlgAttachmentType.Document => basics.updateGenerator.GetValidTelegramDocumentMessage(),
-            TlgAttachmentType.Photo => basics.updateGenerator.GetValidTelegramPhotoMessage(),
-            TlgAttachmentType.Voice => basics.updateGenerator.GetValidTelegramVoiceMessage(),
-            _ => throw new ArgumentOutOfRangeException(nameof(attachmentType))
-        };
-        
-        var expectedAttachmentTlgUri = new Uri(
-            TelegramFilePathResolver.TelegramBotDownloadFileApiUrlStub + 
-            $"bot{basics.mockBotClient.Object.MyBotToken}/" +
-            $"{(await basics.mockBotClient.Object.GetFileAsync("any")).FilePath}");
-    
-        var expectedTlgInput = new TlgInput(
-            attachmentUpdate.Message.Date,
-            attachmentUpdate.Message.MessageId,
-            PrivateBotChat_Operations,
-            TlgInputType.AttachmentMessage,
-            SanitaryAdmin_DanielEn_X2024, 
-            X2024, 
-            Option<ResultantWorkflowState>.None(), 
-            Option<Guid>.None(), 
-            Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
-                attachmentUpdate.Message.Caption,
-                expectedAttachmentTlgUri,
-                new Uri("https://www.gorin.de/fakeUri1.html"),
-                attachmentType));
-        
-        var actualTlgInput = 
-            await basics.converter.ConvertToModelAsync(
-                attachmentUpdate, 
-                PrivateBotChat_Operations.Mode);
-        
-        // Can't do a deep comparison with Equivalent on the entire input here due to the complex Uri() type.
-        Assert.Equal(
-            expectedTlgInput.Details.AttachmentTlgUri.GetValueOrThrow().AbsoluteUri, 
-            actualTlgInput.GetValueOrThrow().Details.AttachmentTlgUri.GetValueOrThrow().AbsoluteUri);
     }
     
     [Theory]
@@ -398,30 +349,30 @@ public sealed class ToModelConverterTests
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUserIsNull_InAnyMode()
+    public async Task ConvertToModelAsync_ThrowsArgumentNullException_WhenUserIsNull_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-         
-        var update = new UpdateWrapper(new Message
+     
+        var message = new Message
         {
             From = null,
             Text = "not empty",
             Chat = new Chat{ Id = 1 },
             Id = 2,
             Date = DateTime.UtcNow
-        });
-        
-        var conversionResult = 
-            await basics.converter.ConvertToModelAsync(
-                update, 
-                Operations);
-        
-        Assert.True(conversionResult.IsError);
+        };
+    
+        // It's the UpdateWrapper further up the stack that performs the null check and throws.
+        await Assert.ThrowsAsync<ArgumentNullException>(() => 
+            basics.converter.ConvertToModelAsync(
+                new UpdateWrapper(message), 
+                Operations)
+        );
     }
     
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenTextAndAttachmentFileIdBothEmpty_InAnyMode()
+    public async Task ConvertToModelAsync_ReturnsFailure_WhenTextAndAttachmentFileIdBothEmpty_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
@@ -439,11 +390,11 @@ public sealed class ToModelConverterTests
                 update, 
                 Operations);
         
-        Assert.True(conversionResult.IsError);
+        Assert.True(conversionResult.IsFailure);
     }
 
     [Fact]
-    public async Task ConvertToModelAsync_ReturnsError_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
+    public async Task ConvertToModelAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
@@ -456,10 +407,10 @@ public sealed class ToModelConverterTests
                 Operations);
 
         Assert.True(
-            conversionResult.IsError);
+            conversionResult.IsFailure);
         Assert.Equal(
             "Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
-            conversionResult.Error!.GetFormattedEnglish());
+            conversionResult.FailureInfo!.GetEnglishMessage());
     }
 
     private static (ITelegramUpdateGenerator updateGenerator, 

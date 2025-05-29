@@ -1,3 +1,5 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
+
 namespace CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 
 public sealed record SanitaryCampDetails : ISphereOfActionDetails

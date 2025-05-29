@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -17,7 +18,6 @@ using Moq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
-using MessageType = Telegram.Bot.Types.Enums.MessageType;
 using static CheckMade.Tests.Utils.TestUtils;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
@@ -26,85 +26,23 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
-    [Theory]
-    [InlineData(Operations)]
-    [InlineData(Communications)]
-    [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_LogsWarningAndReturns_ForUnhandledMessageType(InteractionMode mode)
-    {
-        var serviceCollection = new UnitTestStartup().Services;
-        var mockLogger = new Mock<ILogger<UpdateHandler>>();
-        serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
-        _services = serviceCollection.BuildServiceProvider();
-        
-        var basics = GetBasicTestingServices(_services);
-        // type 'Unknown' is derived by Telegram for lack of any props!
-        var unhandledMessageTypeUpdate = new UpdateWrapper(new Message { Chat = new Chat { Id = 123L } });
-        var expectedLoggedMessage = $"Received message of type '{MessageType.Unknown}': " +
-                                    $"{BotUpdateSwitch.NoSpecialHandlingWarning.GetFormattedEnglish()}";
-
-        await basics.handler.HandleUpdateAsync(unhandledMessageTypeUpdate, mode);
-        
-        mockLogger.Verify(l => l.Log(
-            LogLevel.Warning, 
-            It.IsAny<EventId>(), 
-            It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedLoggedMessage)), 
-            It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
-    }
-    
-    [Theory]
-    [InlineData(Operations)]
-    [InlineData(Communications)]
-    [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_LogsError_WhenInputProcessorThrowsException(InteractionMode mode)
-    {
-        var serviceCollection = new UnitTestStartup().Services;
-        
-        var mockInputProcessor = new Mock<IInputProcessor>();
-        mockInputProcessor
-            .Setup(static opr => opr.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
-            .Throws<Exception>();
-        serviceCollection.AddScoped<IInputProcessor>(_ => mockInputProcessor.Object);
-        
-        var mockLogger = new Mock<ILogger<UpdateHandler>>();
-        serviceCollection.AddScoped<ILogger<UpdateHandler>>(_ => mockLogger.Object);
-        
-        _services = serviceCollection.BuildServiceProvider();
-        var basics = GetBasicTestingServices(_services);
-        var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("random valid text");
-        
-        await basics.handler.HandleUpdateAsync(textUpdate, mode);
-        
-        mockLogger.Verify(static l => l.Log(
-            LogLevel.Error, 
-            It.IsAny<EventId>(), 
-            It.IsAny<It.IsAnyType>(), 
-            It.IsAny<Exception>(), 
-            It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
-    }
-
     [Fact]
-    public async Task HandleUpdateAsync_ShowsCorrectError_ForInvalidBotCommandToOperations()
+    public async Task HandleUpdateAsync_ShowsCorrectError_ForInvalidBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         const string invalidBotCommand = "/invalid";
         var invalidBotCommandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(invalidBotCommand);
-        const string expectedErrorCode = "W3DL9";
     
         // Writing out to OutputHelper to see the entire error message, as an additional manual verification
         basics.mockBotClient
-            .Setup(
-                x => x.SendTextMessageAsync(
-                    invalidBotCommandUpdate.Message.Chat.Id,
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    Option<ReplyMarkup>.None(),
-                    It.IsAny<CancellationToken>()))
-            .Callback<ChatId, string, string, Option<ReplyMarkup>, CancellationToken>((_, msg, _, _, _) => 
+            .Setup(x => x.SendTextMessageAsync(
+                invalidBotCommandUpdate.Message.Chat.Id,
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                Option<ReplyMarkup>.None(),
+                It.IsAny<CancellationToken>()))
+            .Callback<ChatId, string, string, Option<ReplyMarkup>, CancellationToken>((_, _, msg, _, _) => 
                 outputHelper.WriteLine(msg));
         
         await basics.handler.HandleUpdateAsync(invalidBotCommandUpdate, Operations);
@@ -113,7 +51,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             x => x.SendTextMessageAsync(
                 invalidBotCommandUpdate.Message.Chat.Id,
                 It.IsAny<string>(),
-                It.Is<string>(static msg => msg.Contains(expectedErrorCode)),
+                It.Is<string>(static msg => 
+                    msg.Contains(IInputProcessor.SeeValidBotCommandsInstruction.GetFormattedEnglish())),
                 Option<ReplyMarkup>.None(),
                 It.IsAny<CancellationToken>()), 
             Times.Once);

@@ -2,8 +2,7 @@ assembly	en	de
 CheckMade.ChatBot.Function	Telegram Message/Update of this type not yet supported. No special handling is taking place for it, but that doesn't mean that a Telegram-System-related update didn't work. You may assume it did.	Telegram-Nachricht/Update dieses Typs wird noch nicht unterstützt. Es findet keine spezielle Verarbeitung statt, aber das bedeutet nicht, dass ein Telegram-System-bezogenes Update nicht funktioniert hat. Sie können davon ausgehen, dass es funktioniert hat.
 CheckMade.ChatBot.Function	Please contact technical support or your supervisor.	Bitte kontaktieren Sie den technischen Support oder Ihren Supervisor.
 CheckMade.ChatBot.Function	Attachment type {0} is not yet supported!	Noch keine Unterstützung für Anhang von Typ {0}! 
-CheckMade.ChatBot.Function	The BotCommand {0} does not exist for the {1}Bot [errcode: {2}]. 	Der BotCommand {0} existiert nicht für den {1}Bot [errcode: {2}]. 
-CheckMade.ChatBot.Function	A valid message must a) have a User Id ('From.Id' in Telegram); b) either have a text or an attachment (unless it's a Location).	Eine gültige Nachricht muss a) eine Benutzer-ID haben ('From.Id' in Telegram); b) entweder einen Text oder einen Anhang enthalten (ausser es ist eine Location).
+CheckMade.ChatBot.Function	The BotCommand {0} does not exist for the {1}Bot.	Der BotCommand {0} existiert nicht für den {1}Bot.
 CheckMade.ChatBot.Function	Error while trying to retrieve full Telegram server path to attachment file.	Fehler beim Versuch, den vollständigen Telegram-Serverpfad zum Anhang abzurufen.
 CheckMade.ChatBot.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand: 
 CheckMade.ChatBot.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klicken Sie auf den Menüknopf oder tippen Sie '/' um verfügbare Befehle zu sehen.

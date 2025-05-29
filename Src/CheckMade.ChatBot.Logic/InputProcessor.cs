@@ -1,5 +1,6 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -82,12 +83,19 @@ internal sealed class InputProcessor(
                         activeWorkflow,
                         currentInput));
             },
-            // This error was already logged at its source, in ToModelConverter
-            static error => 
-                Task.FromResult<(Option<TlgInput> EnrichedOriginalInput, 
+            static failure =>
+            {
+                var failureOutput = failure switch
+                {
+                    ExceptionWrapper exw => new OutputDto { Text = UiNoTranslate(exw.Exception.Message) },
+                    _ => new OutputDto { Text = ((BusinessError)failure).Error }
+                };
+
+                return Task.FromResult<(Option<TlgInput> EnrichedOriginalInput,
                     IReadOnlyCollection<OutputDto> ResultingOutputs)>((
-                    Option<TlgInput>.None(), [new OutputDto { Text = error }]
-                )));
+                    Option<TlgInput>.None(), [failureOutput]
+                ));
+            });
     }
 
     private static bool IsStartCommand(TlgInput currentInput) =>
@@ -158,7 +166,7 @@ internal sealed class InputProcessor(
                 wf.GetResponseAsync(currentInput),
             static () => 
                 Task.FromResult(Result<WorkflowResponse>
-                    .FromSuccess(new WorkflowResponse(
+                    .Succeed(new WorkflowResponse(
                         [
                             new OutputDto 
                             { 
@@ -184,19 +192,24 @@ internal sealed class InputProcessor(
                 outputBuilder.AddRange(wr.Output);
                 return outputBuilder;
             },
-            error =>
+            failure =>
             {
-                logger.LogWarning($"""
-                                   The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
-                                   this Error Result: '{error}'. Next, the corresponding input parameters.
-                                   UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                   InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
-                                   Date: {currentInput.TlgDate}; 
-                                   For more details of input, check database!
-                                   """);
-                        
-                return 
-                    [new OutputDto { Text = error }];
+                switch (failure)
+                {
+                    case ExceptionWrapper exw:
+                        logger.LogError($"""
+                                         The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
+                                         this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
+                                         UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
+                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
+                                         Date: {currentInput.TlgDate}; 
+                                         For more details of input, check database!
+                                         """);
+                        throw exw.Exception;
+                    
+                    default:
+                        return [new OutputDto { Text = ((BusinessError)failure).Error }];
+                }
             }
         );
     }

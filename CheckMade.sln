@@ -50,6 +50,39 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.ExternalSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.BusinessLogic", "Src\CheckMade.Common.BusinessLogic\CheckMade.Common.BusinessLogic.csproj", "{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{A539503E-BACE-48F9-822A-607F5F16A6F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{AF183FDB-DF1C-44FA-B362-881917C37716}"
+	ProjectSection(SolutionItems) = preProject
+		..\CheckMade.wiki\Top-Level Workflow.md = ..\CheckMade.wiki\Top-Level Workflow.md
+		..\CheckMade.wiki\Tooling.md = ..\CheckMade.wiki\Tooling.md
+		..\CheckMade.wiki\Telegram-CheckMade-Interaction.md = ..\CheckMade.wiki\Telegram-CheckMade-Interaction.md
+		..\CheckMade.wiki\Home.md = ..\CheckMade.wiki\Home.md
+		..\CheckMade.wiki\Domain-Model.md = ..\CheckMade.wiki\Domain-Model.md
+		..\CheckMade.wiki\DevOps>-Schema-Evolution.md = ..\CheckMade.wiki\DevOps>-Schema-Evolution.md
+		..\CheckMade.wiki\DevOps>-Deployment.md = ..\CheckMade.wiki\DevOps>-Deployment.md
+		..\CheckMade.wiki\DevOps>-Continuous-Integration-Workflow.md = ..\CheckMade.wiki\DevOps>-Continuous-Integration-Workflow.md
+		..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md = ..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md
+		..\CheckMade.wiki\Background-and-Nuances.md = ..\CheckMade.wiki\Background-and-Nuances.md
+		..\CheckMade.wiki\Architecture---Tech---Design-Choices.md = ..\CheckMade.wiki\Architecture---Tech---Design-Choices.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClaudeProject", "ClaudeProject", "{B0CDD972-E29B-447B-9458-296ECB020312}"
+	ProjectSection(SolutionItems) = preProject
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_style_guide.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_style_guide.md
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md
+		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dgor82_style_guide", "dgor82_style_guide", "{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Personal_GitHub\dgor82.github.io\style_guide_code.md = ..\..\Personal_GitHub\dgor82.github.io\style_guide_code.md
+		..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md = ..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_BackendOnly|Any CPU = Debug_BackendOnly|Any CPU
@@ -241,5 +274,9 @@ Global
 		{77CE18B0-ACE6-44BE-BB4D-2A2F73706630} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{92ACE0F6-E02F-45BC-B2BC-1352583D5AA7} = {E5835236-896A-4576-8A1F-EBF20213872E}
+		{A539503E-BACE-48F9-822A-607F5F16A6F8} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
+		{AF183FDB-DF1C-44FA-B362-881917C37716} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
+		{B0CDD972-E29B-447B-9458-296ECB020312} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
+		{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 	EndGlobalSection
 EndGlobal

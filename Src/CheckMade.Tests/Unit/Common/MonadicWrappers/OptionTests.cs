@@ -1,6 +1,6 @@
 // using FluentAssertions;
 //
-// namespace CheckMade.Tests.Unit.Common.MonadicWrappers;
+// namespace CheckMade.Tests.Unit.Common.Monads;
 //
 // public class OptionTests
 // {

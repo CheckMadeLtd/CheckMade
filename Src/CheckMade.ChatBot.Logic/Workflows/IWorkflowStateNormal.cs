@@ -1,4 +1,5 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -13,5 +14,6 @@ internal interface IWorkflowStateNormal : IWorkflowState
         TlgInput currentInput, 
         Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer);
+
     Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
 }

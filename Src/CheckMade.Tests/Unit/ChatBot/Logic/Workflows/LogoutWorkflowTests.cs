@@ -2,6 +2,7 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -66,8 +67,7 @@ public sealed class LogoutWorkflowTests
             actualResponse.GetValueOrThrow().Output.GetAllRawEnglish());
         
         mockRoleBindingsRepo.Verify(x => x.UpdateStatusAsync(
-                new[] { boundRole }
-                    .ToArray(),
+                new[] { boundRole },
                 DbRecordStatus.Historic),
             Times.Once());
     }

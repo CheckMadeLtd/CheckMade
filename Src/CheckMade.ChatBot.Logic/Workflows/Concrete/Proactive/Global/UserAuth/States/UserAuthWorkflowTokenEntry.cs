@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -51,7 +52,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
 
         var enteredText = currentInput.Details.Text.GetValueOrThrow();
 
-        return IsValidToken(enteredText) switch
+        return enteredText.IsValidToken() switch
         {
             true => await TokenExistsAsync() switch
             {
