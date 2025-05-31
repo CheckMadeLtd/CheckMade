@@ -108,7 +108,7 @@ public sealed class UpdateHandler(
                     in Result<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
-                            activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader))
+                            activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader, logger))
                 from unit 
                     in Result<Unit>.RunAsync(() =>
                         SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))

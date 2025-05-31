@@ -1,13 +1,17 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
+using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
+using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Utils.UiTranslation;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -22,28 +26,30 @@ internal static class OutputSender
         IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter,
-        IBlobLoader blobLoader)
+        IBlobLoader blobLoader,
+        ILogger logger)
     {
+        Func<TlgAgentRoleBind, LogicalPort, bool> hasBinding = static (tarb, lp) =>
+            tarb.Role.Equals(lp.Role) &&
+            tarb.TlgAgent.Mode == lp.InteractionMode;
+        
         Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<OutputDto>>> sendOutputsInSeriesAndOriginalOrder 
-            = async outputsPerPort =>
+            = async outputsPerBoundPort =>
             {
                 List<OutputDto> sentOutputs = [];
                 
-                foreach (var output in outputsPerPort)
+                foreach (var output in outputsPerBoundPort)
                 {
-                    // LogicalPort is only set for outputs NOT aimed at the originator of the current input
+                    // LogicalPort is only set for outputs aimed at anyone who is NOT the originator of the current input
                     var outputMode = output.LogicalPort.Match(
                         static logicalPort => logicalPort.InteractionMode,
                         () => currentInteractionMode);
 
                     var outputBotClient = botClientByMode[outputMode];
                     
-                    // Crashes hard when assumption broken, that LogicalPort only set for roles with TlgAgentRoleBind
                     var outputChatId = output.LogicalPort.Match(
                         logicalPort => activeRoleBindings
-                            .First(tarb => 
-                                tarb.Role.Equals(logicalPort.Role) &&
-                                tarb.TlgAgent.Mode == outputMode)
+                            .First(tarb => hasBinding(tarb, logicalPort))
                             .TlgAgent.ChatId.Id,
                         () => currentChatId);
 
@@ -167,13 +173,45 @@ internal static class OutputSender
                 return sentOutputs;
             };
 
-        var outputGroups = outputs.GroupBy(static o => o.LogicalPort);
+        // "Bound Ports" are those LogicalPorts where an actual TlgAgent has a binding to the Role and
+        // InteractionMode specified in the LogicalPort (i.e. only 'logged in' users).  
+        
+        Func<OutputDto, bool> logicalPortIsBound = o => 
+            o.LogicalPort.Match(
+                logicalPort => activeRoleBindings
+                    .Any(tarb => hasBinding(tarb, logicalPort)),
+                static () => true
+            );
 
-        var parallelTasks = outputGroups
-            .Select(outputsPerLogicalPortGroup => 
+        var outputsPerBoundPortGroups = 
+            outputs
+                .Where(logicalPortIsBound)
+                .GroupBy(static o => o.LogicalPort);
+
+        var parallelTasks = outputsPerBoundPortGroups
+            .Select(group => 
                 sendOutputsInSeriesAndOriginalOrder
-                    .Invoke(outputsPerLogicalPortGroup
-                        .ToArray()));
+                    .Invoke(group.ToArray()));
+
+        var glossary = new DomainGlossary();
+        
+        Action<IRoleInfo, InteractionMode> logWarningForPortsUnboundOnlyDueToMode = (unboundRole, mode) =>
+            logger.LogWarning(
+                $"One of the {nameof(outputs)} couldn't be sent due to an unbound {nameof(LogicalPort)}: " +
+                $"No user with the role {glossary.GetUi(unboundRole.RoleType.GetType()).GetFormattedEnglish()} " +
+                $"at {nameof(LiveEvent)} has a {nameof(TlgAgentRoleBind)} (i.e. is logged in) " +
+                $"for the {mode} bot, even though they are logged in to at least one bot in another mode. " +
+                $"This might not be what the user intended and could reflect a usability problem.");
+
+        Func<IRoleInfo, bool> isBoundForAtLeastOneMode = role =>
+            activeRoleBindings.Any(tarb => tarb.Role.Equals(role));
+        
+        outputs
+            .Where(o => !logicalPortIsBound(o))
+            .Where(o => isBoundForAtLeastOneMode(o.LogicalPort.GetValueOrThrow().Role))
+            .Select(static o => o.LogicalPort.GetValueOrThrow())
+            .ToList()
+            .ForEach(lp => logWarningForPortsUnboundOnlyDueToMode(lp.Role, lp.InteractionMode));
         
         /* 1) Waits for all parallel executing tasks (generated by .Select()), to complete
          * 2) The 'await' unwraps the resulting aggregate Task object and rethrows any Exceptions */
