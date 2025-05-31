@@ -100,20 +100,12 @@ public sealed record StakeholderReporter<T>(
 
         var currentRole = inputHistory.First().OriginatorRole.GetValueOrThrow();
         
-        var recipients = new List<LogicalPort>(
-            allAdminAndObservers.Concat(allRelevantSpecialist)
-                .Where(r => !r.Equals(currentRole))
-                .Select(static r => new LogicalPort(
-                    r,
-                    InteractionMode.Notifications)));
-
-        var allActiveRoleBindings = 
-            await RoleBindingsRepo.GetAllActiveAsync();
-        
-        return recipients
-            .Where(lp => 
-                allActiveRoleBindings.Select(static tarb => tarb.Role)
-                    .Contains(lp.Role))
+        return new List<LogicalPort>(
+                allAdminAndObservers.Concat(allRelevantSpecialist)
+                    .Where(r => !r.Equals(currentRole))
+                    .Select(static r => new LogicalPort(
+                        r,
+                        InteractionMode.Notifications)))
             .ToArray();
     }
 }
