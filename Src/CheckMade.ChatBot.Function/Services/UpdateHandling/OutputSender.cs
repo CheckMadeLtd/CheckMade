@@ -18,7 +18,7 @@ namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
 
 internal static class OutputSender
 {
-    internal static async Task<IReadOnlyCollection<OutputDto>> SendOutputsAsync(
+    internal static async Task<IReadOnlyCollection<Result<OutputDto>>> SendOutputsAsync(
         IReadOnlyCollection<OutputDto> outputs,
         IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
         InteractionMode currentInteractionMode,
@@ -36,10 +36,10 @@ internal static class OutputSender
             tarb.Role.Equals(lp.Role) &&
             tarb.TlgAgent.Mode == lp.InteractionMode;
         
-        Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<OutputDto>>> sendOutputsInSeriesAndOriginalOrder 
+        Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> sendOutputsInSeriesAndOriginalOrder 
             = async outputsPerBoundPort =>
             {
-                List<OutputDto> sentOutputs = [];
+                List<Result<OutputDto>> sentOutputs = [];
                 
                 foreach (var output in outputsPerBoundPort)
                 {
@@ -71,15 +71,19 @@ internal static class OutputSender
                         // For Outputs with the sole purpose of updating a previous message (e.g., removing buttons)
                         // By definition, they wouldn't need to have Attachments, Locations, etc.
                         case { UpdateExistingOutputMessageId.IsSome: true }:
-                            await InvokeEditTextMessageAsync();
                             sentOutputs.Add(
                                 GetOutputEnrichedWithActualSendOutParams(
-                                    output.UpdateExistingOutputMessageId.GetValueOrThrow()));
+                                    await InvokeEditTextMessageAsync()));
                             break;
                     
                         case { Attachments.IsSome: true }:
 
-                            TlgMessageId? messageId = null;
+                            /* Yes, this will only add the id of the last message/attachment that was sent out.
+                               The others don't get saved, which is ok for now, because it's only used to determine
+                               the destination ids for WorkflowBridges, which would typically not be an attachment
+                               message but even if it is, it would make sense for it to be the last one. */
+                            
+                            Result<TlgMessageId>? messageId = null;
                             
                             if (output.Text.IsSome)
                                 messageId = await InvokeSendTextMessageAsync();
@@ -100,76 +104,83 @@ internal static class OutputSender
 
                     continue;
 
-                    OutputDto GetOutputEnrichedWithActualSendOutParams(TlgMessageId messageId) =>
-                        output with
-                        {
-                            ActualSendOutParams = new ActualSendOutParams
+                    Result<OutputDto> GetOutputEnrichedWithActualSendOutParams(Result<TlgMessageId> messageId) =>
+                        messageId.Match(
+                            id => output with
                             {
-                                TlgMessageId = messageId,
-                                ChatId = outputChatId.Identifier!
-                            }
-                        };
+                                ActualSendOutParams = new ActualSendOutParams
+                                {
+                                    TlgMessageId = id,
+                                    ChatId = outputChatId.Identifier!
+                                }
+                            },
+                            Result<OutputDto>.Fail);
                     
-                    async Task<TlgMessageId> InvokeSendTextMessageAsync()
+                    async Task<Result<TlgMessageId>> InvokeSendTextMessageAsync()
                     {
-                        return await outputBotClient
-                            .SendTextMessageAsync(
-                                outputChatId,
-                                uiTranslator.Translate(Ui("Please choose:")),
-                                uiTranslator.Translate(output.Text.GetValueOrThrow()),
-                                converter.GetReplyMarkup(output));
+                        return await Result<TlgMessageId>.RunAsync(() => 
+                            outputBotClient
+                                .SendTextMessageAsync(
+                                    outputChatId,
+                                    uiTranslator.Translate(Ui("Please choose:")),
+                                    uiTranslator.Translate(output.Text.GetValueOrThrow()),
+                                    converter.GetReplyMarkup(output)));
                     }
 
-                    async Task InvokeEditTextMessageAsync()
+                    async Task<Result<TlgMessageId>> InvokeEditTextMessageAsync()
                     {
-                        await outputBotClient
-                            .EditTextMessageAsync(
-                                outputChatId,
-                                output.Text.IsSome
-                                    ? uiTranslator.Translate(output.Text.GetValueOrThrow())
-                                    : Option<string>.None(),
-                                output.UpdateExistingOutputMessageId.GetValueOrThrow(),
-                                converter.GetReplyMarkup(output),
-                                output.CallbackQueryId);
+                        return await Result<TlgMessageId>.RunAsync(() =>
+                            outputBotClient
+                                .EditTextMessageAsync(
+                                    outputChatId,
+                                    output.Text.IsSome
+                                        ? uiTranslator.Translate(output.Text.GetValueOrThrow())
+                                        : Option<string>.None(),
+                                    output.UpdateExistingOutputMessageId.GetValueOrThrow(),
+                                    converter.GetReplyMarkup(output),
+                                    output.CallbackQueryId));
                     }
                 
-                    async Task<TlgMessageId> InvokeSendAttachmentAsync(AttachmentDetails details)
+                    async Task<Result<TlgMessageId>> InvokeSendAttachmentAsync(AttachmentDetails details)
                     {
-                        var (blobData, fileName) =
-                            await blobLoader.DownloadBlobAsync(details.AttachmentUri);
-                        var fileStream = new InputFileStream(blobData, fileName);
-                    
-                        var caption = details.Caption.Match(
-                            static value => value,
-                            Option<string>.None);
-
-                        var attachmentSendOutParams = new AttachmentSendOutParameters(
-                            outputChatId,
-                            fileStream,
-                            caption,
-                            converter.GetReplyMarkup(output)
-                        );
-
-                        return details.AttachmentType switch
-                        {
-                            TlgAttachmentType.Document => 
-                                await outputBotClient.SendDocumentAsync(attachmentSendOutParams),
-                            TlgAttachmentType.Photo => 
-                                await outputBotClient.SendPhotoAsync(attachmentSendOutParams),
-                            TlgAttachmentType.Voice => 
-                                await outputBotClient.SendVoiceAsync(attachmentSendOutParams),
-                            _ => 
-                                throw new ArgumentOutOfRangeException(nameof(details.AttachmentType))
-                        };
+                        return await (
+                            from download 
+                                in Result<(MemoryStream, string)>.RunAsync(() => 
+                                    blobLoader.DownloadBlobAsync(details.AttachmentUri))
+                            from fileStream 
+                                in Result<InputFileStream>.Succeed(
+                                    new InputFileStream(download.Item1, download.Item2)) 
+                            from attachmentSendOutParams
+                                in Result<AttachmentSendOutParameters>.Run(() =>
+                                    new AttachmentSendOutParameters(
+                                        outputChatId,
+                                        fileStream,
+                                        details.Caption,
+                                        converter.GetReplyMarkup(output)))
+                            from messageId
+                                in Result<TlgMessageId>.RunAsync(() =>
+                                    details.AttachmentType switch
+                                    {
+                                        TlgAttachmentType.Document => 
+                                            outputBotClient.SendDocumentAsync(attachmentSendOutParams),
+                                        TlgAttachmentType.Photo => 
+                                            outputBotClient.SendPhotoAsync(attachmentSendOutParams),
+                                        TlgAttachmentType.Voice => 
+                                            outputBotClient.SendVoiceAsync(attachmentSendOutParams),
+                                        _ => 
+                                            throw new ArgumentOutOfRangeException(nameof(details.AttachmentType))
+                                    })
+                            select messageId);
                     }
 
-                    async Task<TlgMessageId> InvokeSendLocationAsync()
+                    async Task<Result<TlgMessageId>> InvokeSendLocationAsync()
                     {
-                        return await outputBotClient
-                            .SendLocationAsync(
-                                outputChatId,
-                                output.Location.GetValueOrThrow(),
-                                converter.GetReplyMarkup(output));
+                        return await Result<TlgMessageId>.RunAsync(() =>
+                            outputBotClient
+                                .SendLocationAsync(
+                                    outputChatId,
+                                    output.Location.GetValueOrThrow(),
+                                    converter.GetReplyMarkup(output)));
                     }
                 }
 
@@ -209,7 +220,7 @@ internal static class OutputSender
                 logger.LogWarning(
                     $"One of the {nameof(outputs)} couldn't be sent due to an unbound {nameof(LogicalPort)}: " +
                     $"No user with the role {glossary.GetUi(unboundRole.RoleType.GetType()).GetFormattedEnglish()} " +
-                    $"at {nameof(LiveEvent)} has a {nameof(TlgAgentRoleBind)} (i.e. is logged in) " +
+                    $"has a {nameof(TlgAgentRoleBind)} (i.e. is logged in) " +
                     $"for the {mode} bot, even though they are logged in to at least one bot in another mode. " +
                     $"This might not be what the user intended and could reflect a usability problem.");
 

@@ -105,7 +105,7 @@ public sealed class UpdateHandler(
                     in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
                 from sentOutputs
-                    in Result<IReadOnlyCollection<OutputDto>>.RunAsync(() => 
+                    in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
                             activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader, logger))
@@ -162,7 +162,7 @@ public sealed class UpdateHandler(
     }
 
     private async Task<Unit> SaveToDbAsync(
-        Option<TlgInput> enrichedInput, IReadOnlyCollection<OutputDto> sentOutputs)
+        Option<TlgInput> enrichedInput, IReadOnlyCollection<Result<OutputDto>> sentOutputs)
     {
         if (enrichedInput.IsNone)
             return Unit.Value;
@@ -178,20 +178,25 @@ public sealed class UpdateHandler(
             var resultantWorkflowState = 
                 enrichedInput.GetValueOrThrow().ResultantWorkflow; 
         
-            var isWorkflowTerminatingInput =
+            var doesCurrentInputTerminateWorkflow =
                 resultantWorkflowState.IsSome &&
                 glossary.GetDtType(resultantWorkflowState.GetValueOrThrow().InStateId)
                     .IsAssignableTo(typeof(IWorkflowStateTerminator));
 
-            if (!isWorkflowTerminatingInput)
+            if (!doesCurrentInputTerminateWorkflow)
                 return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
             
-            Func<OutputDto, bool> isOtherRecipientThanOriginatingRole = static dto => dto.LogicalPort.IsSome;
+            Func<Result<OutputDto>, bool> isOtherRecipientThanOriginatingRole = outputAttempt => 
+                outputAttempt.Match(
+                    o => o.LogicalPort.IsSome &&
+                         !enrichedInput.GetValueOrThrow().OriginatorRole.GetValueOrThrow()
+                             .Equals(o.LogicalPort.GetValueOrThrow().Role),
+                    static _ => false);
 
             return Option<IReadOnlyCollection<ActualSendOutParams>>.Some(
                 sentOutputs
                     .Where(isOtherRecipientThanOriginatingRole)
-                    .Select(static o => o.ActualSendOutParams!.Value)
+                    .Select(static o => o.GetValueOrThrow().ActualSendOutParams!.Value)
                     .ToArray());
         }
     }
