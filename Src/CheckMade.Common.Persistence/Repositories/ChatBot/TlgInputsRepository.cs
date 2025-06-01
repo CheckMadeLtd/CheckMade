@@ -127,10 +127,10 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
                 static le => le.Name, 
                 static () => DBNull.Value),  
-            ["@workflowId"] = tlgInput.ResultantWorkflow.Match<object>(  
+            ["@workflowId"] = tlgInput.ResultantState.Match<object>(  
                 static w => w.WorkflowId, 
                 static () => DBNull.Value),  
-            ["@workflowState"] = tlgInput.ResultantWorkflow.Match<object>(  
+            ["@workflowState"] = tlgInput.ResultantState.Match<object>(  
                 static w => w.InStateId,  
                 static () => DBNull.Value),
             ["@guid"] = tlgInput.EntityGuid.Match<object>(
@@ -138,7 +138,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                 static () => DBNull.Value)
         };
 
-        var command = (tlgInput.ResultantWorkflow.IsSome, bridgeDestinations.IsSome) switch
+        var command = (tlgInput.ResultantState.IsSome, bridgeDestinations.IsSome) switch
         {
             (false, false) => 
                 GenerateCommand(addInputQuery, 
@@ -154,7 +154,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             
             _ => throw new InvalidOperationException(
                 $"Saving a {nameof(tlgInput)} to DB with {nameof(bridgeDestinations)} but WITHOUT any " +
-                $"{nameof(tlgInput.ResultantWorkflow)} should never be attempted, as it contradicts our fundamental " +
+                $"{nameof(tlgInput.ResultantState)} should never be attempted, as it contradicts our fundamental " +
                 $"ChatBot interaction logic.")
         };     
         

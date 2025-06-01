@@ -107,7 +107,7 @@ internal sealed record NewIssueReview<T>(
                     currentInput with
                     {
                         EntityGuid = await GetLastGuidAsync(),
-                        ResultantWorkflow = new ResultantWorkflowState(
+                        ResultantState = new ResultantWorkflowState(
                             Glossary.GetId(typeof(NewIssueWorkflow)),
                             Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)))
                     });

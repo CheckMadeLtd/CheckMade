@@ -54,7 +54,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                     input.InputType, 
                     input.OriginatorRole, 
                     input.LiveEventContext, 
-                    input.ResultantWorkflow,
+                    input.ResultantState,
                     input.EntityGuid,
                     input.CallbackQueryId,
                     input.Details)

@@ -144,8 +144,8 @@ internal sealed record IssueFactory<T>(
                 inputs
                     .Where(i =>
                         i.InputType == TlgInputType.TextMessage &&
-                        i.ResultantWorkflow.IsSome &&
-                        i.ResultantWorkflow.GetValueOrThrow().InStateId ==
+                        i.ResultantState.IsSome &&
+                        i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .Select(static i => i.Details.Text.GetValueOrThrow())
                     .ToArray();
@@ -164,8 +164,8 @@ internal sealed record IssueFactory<T>(
                 inputs
                     .Where(i =>
                         i.InputType == TlgInputType.AttachmentMessage &&
-                        i.ResultantWorkflow.IsSome &&
-                        i.ResultantWorkflow.GetValueOrThrow().InStateId ==
+                        i.ResultantState.IsSome &&
+                        i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
                     .ToArray();
 
@@ -199,8 +199,8 @@ internal sealed record IssueFactory<T>(
             
             var isSubmitted = 
                 inputs.Any(i =>
-                    i.ResultantWorkflow.IsSome &&
-                    i.ResultantWorkflow.GetValueOrThrow().InStateId == 
+                    i.ResultantState.IsSome &&
+                    i.ResultantState.GetValueOrThrow().InStateId == 
                     Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)));
 
             return isSubmitted

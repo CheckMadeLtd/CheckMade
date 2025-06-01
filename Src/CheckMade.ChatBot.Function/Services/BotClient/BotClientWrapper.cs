@@ -31,7 +31,7 @@ public interface IBotClientWrapper
         int messageId,
         CancellationToken cancellationToken = default);
     
-    Task<Unit> EditTextMessageAsync(
+    Task<TlgMessageId> EditTextMessageAsync(
         ChatId chatId, 
         Option<string> text,
         int messageId,
@@ -94,7 +94,7 @@ public sealed class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<Unit> EditTextMessageAsync(
+    public async Task<TlgMessageId> EditTextMessageAsync(
         ChatId chatId, 
         Option<string> text, 
         int messageId, 
@@ -102,7 +102,10 @@ public sealed class BotClientWrapper(
         Option<string> callbackQueryId,
         CancellationToken cancellationToken = default)
     {
-        // EditMessageXAsync only supports updates to/with InlineKeyboardMarkup!
+        Message? editedMessage = null;
+        TlgMessageId? newMessageId = null;
+        
+        // EditMessageX only supports updates to/with InlineKeyboardMarkup!
         if (replyMarkup.GetValueOrDefault() is not ReplyKeyboardMarkup)
         {
             var updatedInlineKeyboard = replyMarkup.IsSome
@@ -124,7 +127,7 @@ public sealed class BotClientWrapper(
                 if (text.IsSome)
                 {
                     await retryPolicy.ExecuteAsync(async () =>
-                        await botClient.EditMessageText(
+                        editedMessage = await botClient.EditMessageText(
                             chatId,
                             messageId,
                             text.GetValueOrThrow(),
@@ -135,7 +138,7 @@ public sealed class BotClientWrapper(
                 else
                 {
                     await retryPolicy.ExecuteAsync(async () =>
-                        await botClient.EditMessageReplyMarkup(
+                        editedMessage = await botClient.EditMessageReplyMarkup(
                             chatId,
                             messageId,
                             updatedInlineKeyboard,
@@ -145,6 +148,7 @@ public sealed class BotClientWrapper(
             catch (ApiRequestException)
             {
                 // Gets thrown for "Bad Request: message can't be edited", in which case we delete and update
+                editedMessage = null;
                 await DeleteAndNewAsync();
             }
         }
@@ -152,8 +156,12 @@ public sealed class BotClientWrapper(
         {
             await DeleteAndNewAsync();
         }
-
-        return Unit.Value;
+        
+        if (editedMessage is null && newMessageId is null)
+            throw new InvalidOperationException(
+                $"{nameof(SendDocumentAsync)} failed to edit (or delete & send new).");
+        
+        return editedMessage?.MessageId ?? newMessageId!;
 
         async Task DeleteAndNewAsync()
         {
@@ -164,7 +172,7 @@ public sealed class BotClientWrapper(
                     messageId,
                     cancellationToken);
 
-                await SendTextMessageAsync(
+                newMessageId = await SendTextMessageAsync(
                     chatId,
                     string.Empty,
                     text.IsSome ? text.GetValueOrThrow() : string.Empty,
