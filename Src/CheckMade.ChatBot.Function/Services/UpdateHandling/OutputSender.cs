@@ -35,8 +35,8 @@ internal static class OutputSender
             tarb.Role.Equals(lp.Role) &&
             tarb.TlgAgent.Mode == lp.InteractionMode;
         
-        Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> sendOutputsInSeriesAndOriginalOrder 
-            = async outputsPerBoundPort =>
+        Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> 
+            sendOutputsInSeriesAndOriginalOrder = async outputsPerBoundPort =>
             {
                 List<Result<OutputDto>> sentOutputs = [];
                 
