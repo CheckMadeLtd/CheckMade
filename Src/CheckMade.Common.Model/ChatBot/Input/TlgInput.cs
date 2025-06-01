@@ -11,6 +11,7 @@ public sealed record TlgInput(
     TlgInputType InputType,
     Option<IRoleInfo> OriginatorRole,
     Option<ILiveEventInfo> LiveEventContext,
+    // ToDo: Rename this to ResultantState or ResultantWorkflowState
     Option<ResultantWorkflowState> ResultantWorkflow,
     Option<Guid> EntityGuid,
     Option<string> CallbackQueryId,
