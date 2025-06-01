@@ -9,7 +9,6 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

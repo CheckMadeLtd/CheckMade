@@ -24,7 +24,7 @@ internal sealed record NewIssueEditMenu<T>(
     {
         var workflowStateHistory =
             (await GeneralUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
-            .Select(static i => i.ResultantWorkflow)
+            .Select(static i => i.ResultantState)
             .Where(static rw => rw.IsSome)
             .Select(static rw => rw.GetValueOrThrow().InStateId)
             .ToArray();

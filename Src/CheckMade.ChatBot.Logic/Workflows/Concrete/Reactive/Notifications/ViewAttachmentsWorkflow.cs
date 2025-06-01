@@ -42,7 +42,7 @@ internal sealed record ViewAttachmentsWorkflow(
         var sourceWorkflowTerminator = Mediator.GetTerminator(
             Glossary.GetDtType(
                 workflowBridge
-                    .SourceInput.ResultantWorkflow.GetValueOrThrow()
+                    .SourceInput.ResultantState.GetValueOrThrow()
                     .InStateId));
 
         var issue = sourceWorkflowTerminator switch

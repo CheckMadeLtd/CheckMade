@@ -176,7 +176,7 @@ public sealed class UpdateHandler(
         Option<IReadOnlyCollection<ActualSendOutParams>> GetDestinationInfoForWorkflowBridges()
         {
             var resultantWorkflowState = 
-                enrichedInput.GetValueOrThrow().ResultantWorkflow; 
+                enrichedInput.GetValueOrThrow().ResultantState; 
         
             var doesCurrentInputTerminateWorkflow =
                 resultantWorkflowState.IsSome &&

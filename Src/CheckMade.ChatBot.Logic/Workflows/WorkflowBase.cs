@@ -72,13 +72,13 @@ internal abstract record WorkflowBase(
                     .SkipLast(1)
                     .Last();
 
-            if (lastInput.ResultantWorkflow.IsNone)
+            if (lastInput.ResultantState.IsNone)
                 return Option<Type>.None();
 
             return
                 Glossary.GetDtType(
                     lastInput
-                        .ResultantWorkflow.GetValueOrThrow()
+                        .ResultantState.GetValueOrThrow()
                         .InStateId);
         }
     }

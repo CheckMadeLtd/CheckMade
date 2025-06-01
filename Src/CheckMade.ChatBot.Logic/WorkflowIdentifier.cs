@@ -99,8 +99,8 @@ internal sealed record WorkflowIdentifier(
             var isWorkflowActive =
                 !lastWorkflowHistory
                     .Any(i =>
-                        i.ResultantWorkflow.IsSome &&
-                        Glossary.GetDtType(i.ResultantWorkflow.GetValueOrThrow().InStateId)
+                        i.ResultantState.IsSome &&
+                        Glossary.GetDtType(i.ResultantState.GetValueOrThrow().InStateId)
                             .IsAssignableTo(typeof(IWorkflowStateTerminator)));
             
             return isWorkflowActive switch
@@ -137,7 +137,7 @@ internal sealed record WorkflowIdentifier(
 
             var sourceWorkflowTerminator = Mediator.GetTerminator(
                 Glossary.GetDtType(
-                    sourceInput.ResultantWorkflow.GetValueOrThrow().InStateId));
+                    sourceInput.ResultantState.GetValueOrThrow().InStateId));
 
             return sourceWorkflowTerminator switch
             {

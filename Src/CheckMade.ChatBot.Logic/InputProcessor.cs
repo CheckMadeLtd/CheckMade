@@ -70,7 +70,7 @@ internal sealed class InputProcessor(
 
                 var enrichedCurrentInput = currentInput with
                 {
-                    ResultantWorkflow = GetResultantWorkflowState(responseResult, activeWorkflow)
+                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
                                         ?? Option<ResultantWorkflowState>.None(),
                     EntityGuid = GetEntityGuid(responseResult)
                 };
@@ -150,9 +150,9 @@ internal sealed class InputProcessor(
     {
         return
             inputHistory.Any(i =>
-                i.ResultantWorkflow.IsSome &&
+                i.ResultantState.IsSome &&
                 glossary.GetDtType(
-                        i.ResultantWorkflow.GetValueOrThrow().InStateId)
+                        i.ResultantState.GetValueOrThrow().InStateId)
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
     }
 
