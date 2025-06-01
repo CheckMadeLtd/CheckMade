@@ -101,6 +101,14 @@ internal static class OutputSender
                             break;
                     }
 
+                    sentOutputs.Last()
+                        .Tap(lastSentOutput => 
+                        {
+                            if (lastSentOutput.IsFailure)
+                                logger.LogWarning($"Failure while sending an Output: " +
+                                                  $"{lastSentOutput.GetEnglishFailureMessageIfAny()}");
+                        });
+
                     continue;
 
                     Result<OutputDto> GetOutputEnrichedWithActualSendOutParams(Result<TlgMessageId> messageId) =>
@@ -182,7 +190,7 @@ internal static class OutputSender
                                     converter.GetReplyMarkup(output)));
                     }
                 }
-
+                
                 return sentOutputs;
             };
         
