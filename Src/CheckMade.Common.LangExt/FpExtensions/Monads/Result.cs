@@ -83,4 +83,9 @@ public sealed record Result<T>
                 _ => throw new ArgumentOutOfRangeException(nameof(FailureInfo))
             }
         };
+
+    public Option<string> GetEnglishFailureMessageIfAny() => 
+        IsFailure
+            ? FailureInfo!.GetEnglishMessage()
+            : Option<string>.None();
 }
