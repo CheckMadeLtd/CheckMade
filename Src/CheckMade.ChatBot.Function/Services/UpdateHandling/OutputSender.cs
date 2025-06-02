@@ -106,7 +106,8 @@ internal static class OutputSender
                         {
                             if (lastSentOutput.IsFailure)
                                 logger.LogWarning($"Failure while sending an Output: " +
-                                                  $"{lastSentOutput.GetEnglishFailureMessageIfAny()}");
+                                                  $"{lastSentOutput.GetEnglishFailureMessageIfAny()
+                                                      .GetValueOrDefault()}");
                         });
 
                     continue;
