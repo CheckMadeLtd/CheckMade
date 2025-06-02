@@ -108,7 +108,16 @@ var host = new HostBuilder()
             'SourceContext' is one of the useful items that seems NOT to be logged by default though.
             
             ==> For more fain-grained control of what goes into Application Insights, we therefore use
-            SeriLog's corresponding sink here */
+            SeriLog's corresponding sink here 
+            
+            Mapping of LogLevel to ApplicationInsights severity level:
+            LogEventLevel.Verbose → Severity 0
+            LogEventLevel.Debug → Severity 0
+            LogEventLevel.Information → Severity 1
+            LogEventLevel.Warning → Severity 2
+            LogEventLevel.Error → Severity 3
+            LogEventLevel.Fatal → Severity 4
+            */
 
             var telemetryConfig = new TelemetryConfiguration
             {
@@ -116,14 +125,14 @@ var host = new HostBuilder()
             };
             
             loggerConfig
-                // this ensures logs are visile in Azure's live LogStream
+                // this ensures logs are visible in Azure's live LogStream
                 .WriteTo.Console(
                     outputTemplate: humanReadability,
                     restrictedToMinimumLevel: LogEventLevel.Debug)
                 // this ensures logs have the correct severity level in Application Insights queries on Azure
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
-                    restrictedToMinimumLevel: LogEventLevel.Debug);
+                    restrictedToMinimumLevel: LogEventLevel.Warning);
         }
 
         Log.Logger = loggerConfig.CreateLogger();
