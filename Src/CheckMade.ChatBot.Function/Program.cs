@@ -78,8 +78,8 @@ var host = new HostBuilder()
             .Enrich.FromLogContext();
          // .Enrich.WithProperty("PlaceholderProp", "PlaceholderValue")
 
-        var humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
-                               "{Message:lj} || SourceContext: {SourceContext} {NewLine}";
+        const string humanReadability = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] (PID:{ProcessId}) " +
+                                        "{Message:lj} || SourceContext: {SourceContext} {NewLine}";
         
         if (hostContext.HostingEnvironment.IsDevelopment())
         {
@@ -116,9 +116,11 @@ var host = new HostBuilder()
             };
             
             loggerConfig
+                // this ensures logs are visile in Azure's live LogStream
                 .WriteTo.Console(
                     outputTemplate: humanReadability,
                     restrictedToMinimumLevel: LogEventLevel.Debug)
+                // this ensures logs have the correct severity level in Application Insights queries on Azure
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
                     restrictedToMinimumLevel: LogEventLevel.Debug);
