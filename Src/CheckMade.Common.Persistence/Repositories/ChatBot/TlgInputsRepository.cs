@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -10,12 +11,22 @@ using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
 public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), ITlgInputsRepository
 {
+    internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> TlgInputMapper = 
+        static (reader, glossary) =>
+        {
+            var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
+        
+            return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
+        };
+    
     private const string GetAllBaseQuery = """
                                            SELECT
                                                
@@ -351,8 +362,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteReaderOneToOneAsync(
-            command, ModelReaders.ReadTlgInput);
+        return await ExecuteOneToOneMapperAsync(
+            command, TlgInputMapper);
     }
     
     public async Task HardDeleteAllAsync(TlgAgent tlgAgent)

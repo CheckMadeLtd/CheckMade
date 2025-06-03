@@ -1,8 +1,12 @@
+using System.Collections.Immutable;
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -12,6 +16,38 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<LiveEvent>> _cache = Option<IReadOnlyCollection<LiveEvent>>.None();
+
+    private static (Func<DbDataReader, int> keyGetter, 
+        Func<DbDataReader, LiveEvent> modelInitializer,
+        Action<LiveEvent, DbDataReader> accumulateData,
+        Func<LiveEvent, LiveEvent> modelFinalizer)
+        LiveEventMapper(IDomainGlossary glossary)
+    {
+        return (
+            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
+            modelInitializer: static reader => 
+                new LiveEvent(
+                    ConstituteLiveEventInfo(reader).GetValueOrThrow(),
+                    new HashSet<IRoleInfo>(),
+                    ConstituteLiveEventVenue(reader),
+                    new HashSet<ISphereOfAction>()),
+            accumulateData: (liveEvent, reader) =>
+            {
+                var roleInfo = ConstituteRoleInfo(reader, glossary);
+                if (roleInfo.IsSome)
+                    ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
+
+                var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
+                if (sphereOfAction.IsSome)
+                    ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
+            },
+            modelFinalizer: static liveEvent => liveEvent with
+            {
+                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
+                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
+            }
+        );
+    }
 
     public async Task<LiveEvent?> GetAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync())
@@ -60,10 +96,10 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = ModelReaders.GetLiveEventReader(Glossary);
+                        finalizeModel) = LiveEventMapper(Glossary);
 
                     var liveEvents =
-                        await ExecuteReaderOneToManyAsync(
+                        await ExecuteOneToManyMapperAsync(
                             command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);

@@ -1,8 +1,11 @@
 using System.Collections.Immutable;
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Persistence.Repositories.Core;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
@@ -12,6 +15,15 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
+
+    private static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> TlgAgentRoleBindMapper = 
+        static (reader, glossary) =>
+        {
+            var role = RolesRepository.RoleMapper(reader, glossary);
+            var tlgAgent = ConstituteTlgAgent(reader);
+
+            return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+        };
     
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
         await AddAsync([tlgAgentRoleBind]);
@@ -108,8 +120,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     var fetchedBindings = new List<TlgAgentRoleBind>(
-                        await ExecuteReaderOneToOneAsync(
-                            command, ModelReaders.ReadTlgAgentRoleBind));
+                        await ExecuteOneToOneMapperAsync(command, TlgAgentRoleBindMapper));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
                         fetchedBindings.ToArray());

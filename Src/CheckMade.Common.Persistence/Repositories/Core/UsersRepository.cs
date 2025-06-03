@@ -1,9 +1,13 @@
+using System.Collections.Immutable;
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors;
 using CheckMade.Common.Model.Core.Actors.Concrete;
+using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -13,6 +17,29 @@ public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<User>> _cache = Option<IReadOnlyCollection<User>>.None();
+
+    private static (Func<DbDataReader, int> keyGetter, 
+        Func<DbDataReader, User> modelInitializer, 
+        Action<User, DbDataReader> accumulateData, 
+        Func<User, User> modelFinalizer)
+        UserMapper(IDomainGlossary glossary)
+    {
+        return (
+            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("user_id")),
+            modelInitializer: static reader => 
+                new User(
+                    ConstituteUserInfo(reader),
+                    new HashSet<IRoleInfo>(),
+                    ConstituteVendor(reader)),
+            accumulateData: (user, reader) =>
+            {
+                var roleInfo = ConstituteRoleInfo(reader, glossary);
+                if (roleInfo.IsSome)
+                    ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
+            },
+            modelFinalizer: static user => user with { HasRoles = user.HasRoles.ToImmutableArray() }
+        );
+    }
 
     public async Task<User?> GetAsync(IUserInfo user) =>
         (await GetAllAsync())
@@ -63,10 +90,10 @@ public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = ModelReaders.GetUserReader(Glossary);
+                        finalizeModel) = UserMapper(Glossary);
 
                     var users =
-                        await ExecuteReaderOneToManyAsync(
+                        await ExecuteOneToManyMapperAsync(
                             command, getKey, initializeModel, accumulateData, finalizeModel);
 
                     _cache = Option<IReadOnlyCollection<User>>.Some(users);

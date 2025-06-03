@@ -1,8 +1,10 @@
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -12,6 +14,15 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
+    
+    internal static readonly Func<DbDataReader, IDomainGlossary, Role> RoleMapper = 
+        static (reader, glossary) =>
+        {
+            var userInfo = ConstituteUserInfo(reader);
+            var liveEventInfo = ConstituteLiveEventInfo(reader);
+
+            return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
+        };
 
     public async Task<Role?> GetAsync(IRoleInfo role) =>
         (await GetAllAsync())
@@ -57,9 +68,8 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     _cache = Option<IReadOnlyCollection<Role>>.Some(
-                        new List<Role>(await ExecuteReaderOneToOneAsync(
-                                command, 
-                                ModelReaders.ReadRole))
+                        new List<Role>(
+                                await ExecuteOneToOneMapperAsync(command, RoleMapper))
                             .ToArray());
                 }
             }

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -22,105 +21,9 @@ using CheckMade.Common.Utils.Generic;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
-internal static class ModelReaders
+internal static class DomainModelConstitutors
 {
-    internal static readonly Func<DbDataReader, IDomainGlossary, Role> ReadRole = 
-        static (reader, glossary) =>
-        {
-            var userInfo = ConstituteUserInfo(reader);
-            var liveEventInfo = ConstituteLiveEventInfo(reader);
-
-            return ConstituteRole(reader, userInfo, liveEventInfo.GetValueOrThrow(), glossary);
-        };
-
-    internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> ReadTlgInput = 
-        static (reader, glossary) =>
-        {
-            var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
-            var liveEventInfo = ConstituteLiveEventInfo(reader);
-        
-            return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
-        };
-
-    internal static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> ReadTlgAgentRoleBind = 
-        static (reader, glossary) =>
-        {
-            var role = ReadRole(reader, glossary);
-            var tlgAgent = ConstituteTlgAgent(reader);
-
-            return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
-        };
-
-    internal static readonly Func<DbDataReader, IDomainGlossary, Vendor> ReadVendor = 
-        static (reader, _) => 
-            ConstituteVendor(reader).GetValueOrThrow();
-
-    internal static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> ReadWorkflowBridge =
-        static (reader, glossary) =>
-        {
-            var sourceInput = ReadTlgInput(reader, glossary);
-
-            return ConstituteWorkflowBridge(reader, sourceInput);
-        };
-
-    internal static (
-        Func<DbDataReader, int> getKey,
-        Func<DbDataReader, User> initializeModel,
-        Action<User, DbDataReader> accumulateData,
-        Func<User, User> finalizeModel)
-        GetUserReader(IDomainGlossary glossary)
-    {
-        return (
-            getKey: static reader => reader.GetInt32(reader.GetOrdinal("user_id")),
-            initializeModel: static reader => 
-                new User(
-                    ConstituteUserInfo(reader),
-                    new HashSet<IRoleInfo>(),
-                    ConstituteVendor(reader)),
-            accumulateData: (user, reader) =>
-            {
-                var roleInfo = ConstituteRoleInfo(reader, glossary);
-                if (roleInfo.IsSome)
-                    ((HashSet<IRoleInfo>)user.HasRoles).Add(roleInfo.GetValueOrThrow());
-            },
-            finalizeModel: static user => user with { HasRoles = user.HasRoles.ToImmutableArray() }
-        );
-    }
-    
-    internal static (
-        Func<DbDataReader, int> getKey,
-        Func<DbDataReader, LiveEvent> initializeModel,
-        Action<LiveEvent, DbDataReader> accumulateData,
-        Func<LiveEvent, LiveEvent> finalizeModel)
-        GetLiveEventReader(IDomainGlossary glossary)
-    {
-        return (
-            getKey: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
-            initializeModel: static reader => 
-                new LiveEvent(
-                    ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-                    new HashSet<IRoleInfo>(),
-                    ConstituteLiveEventVenue(reader),
-                    new HashSet<ISphereOfAction>()),
-            accumulateData: (liveEvent, reader) =>
-            {
-                var roleInfo = ConstituteRoleInfo(reader, glossary);
-                if (roleInfo.IsSome)
-                    ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
-
-                var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
-                if (sphereOfAction.IsSome)
-                    ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-            },
-            finalizeModel: static liveEvent => liveEvent with
-            {
-                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
-            }
-        );
-    }
-
-    private static Option<Vendor> ConstituteVendor(DbDataReader reader)
+    internal static Option<Vendor> ConstituteVendor(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("vendor_name")))
             return Option<Vendor>.None();
@@ -131,7 +34,7 @@ internal static class ModelReaders
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("vendor_status"))));
     }
     
-    private static IUserInfo ConstituteUserInfo(DbDataReader reader)
+    internal static IUserInfo ConstituteUserInfo(DbDataReader reader)
     {
         return new UserInfo(
             new MobileNumber(reader.GetString(reader.GetOrdinal("user_mobile"))),
@@ -145,7 +48,7 @@ internal static class ModelReaders
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("user_status"))));
     }
 
-    private static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
+    internal static LiveEventVenue ConstituteLiveEventVenue(DbDataReader reader)
     {
         return new LiveEventVenue(
             reader.GetString(reader.GetOrdinal("venue_name")),
@@ -153,7 +56,7 @@ internal static class ModelReaders
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("venue_status"))));
     }
 
-    private static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
+    internal static Option<ILiveEventInfo> ConstituteLiveEventInfo(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("live_event_name")))
             return Option<ILiveEventInfo>.None();
@@ -166,7 +69,7 @@ internal static class ModelReaders
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    private static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
+    internal static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
@@ -222,7 +125,7 @@ internal static class ModelReaders
         }
     }
     
-    private static Role ConstituteRole(
+    internal static Role ConstituteRole(
         DbDataReader reader,
         IUserInfo userInfo,
         ILiveEventInfo liveEventInfo,
@@ -231,7 +134,7 @@ internal static class ModelReaders
             userInfo,
             liveEventInfo);
 
-    private static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader, IDomainGlossary glossary)
+    internal static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
@@ -285,7 +188,7 @@ internal static class ModelReaders
         }
     }
 
-    private static TlgInput ConstituteTlgInput(
+    internal static TlgInput ConstituteTlgInput(
         DbDataReader reader, 
         Option<IRoleInfo> roleInfo,
         Option<ILiveEventInfo> liveEventInfo,
@@ -329,7 +232,7 @@ internal static class ModelReaders
         }
     }
 
-    private static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    internal static TlgAgent ConstituteTlgAgent(DbDataReader reader)
     {
         return new TlgAgent(
             reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
@@ -338,7 +241,7 @@ internal static class ModelReaders
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
     }
 
-    private static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    internal static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
         var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("tarb_activation_date"));
 
@@ -354,7 +257,7 @@ internal static class ModelReaders
         return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
     }
 
-    private static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
+    internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
     {
         var destinationChatId = reader.GetInt64(reader.GetOrdinal("bridge_chat_id"));
         var destinationMessageId = reader.GetInt32(reader.GetOrdinal("bridge_message_id"));

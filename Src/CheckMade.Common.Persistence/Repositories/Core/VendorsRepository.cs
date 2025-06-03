@@ -1,7 +1,9 @@
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
 
@@ -12,6 +14,10 @@ public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossa
     
     private Option<IReadOnlyCollection<Vendor>> _cache = Option<IReadOnlyCollection<Vendor>>.None();
 
+    private static readonly Func<DbDataReader, IDomainGlossary, Vendor> VendorMapper = 
+        static (reader, _) => 
+            ConstituteVendor(reader).GetValueOrThrow();
+    
     public async Task<Vendor?> GetAsync(string vendorName) =>
         (await GetAllAsync())
         .FirstOrDefault(v => v.Name == vendorName);
@@ -40,7 +46,7 @@ public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossa
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
                     
                     var vendors = 
-                        await ExecuteReaderOneToOneAsync(command, ModelReaders.ReadVendor);
+                        await ExecuteOneToOneMapperAsync(command, VendorMapper);
                     
                     _cache = Option<IReadOnlyCollection<Vendor>>.Some(vendors);
                 }
