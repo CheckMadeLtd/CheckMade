@@ -5,11 +5,11 @@ using static CheckMade.Common.Model.Utils.Comparers.RoleInfoComparer;
 namespace CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 
 public sealed record Role(
-        string Token,
-        IRoleType RoleType,
-        IUserInfo ByUser,
-        ILiveEventInfo AtLiveEvent,
-        DbRecordStatus Status = DbRecordStatus.Active)
+    string Token,
+    IRoleType RoleType,
+    IUserInfo ByUser,
+    ILiveEventInfo AtLiveEvent,
+    DbRecordStatus Status = DbRecordStatus.Active)
     : IRoleInfo
 {
     public Role(IRoleInfo roleInfo, IUserInfo userInfo, ILiveEventInfo liveEventInfo)
