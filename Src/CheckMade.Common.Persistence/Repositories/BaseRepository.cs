@@ -38,8 +38,8 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         });
     }
 
-    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToOneAsync<TModel>(
-        NpgsqlCommand command, Func<DbDataReader, IDomainGlossary, TModel> readData)
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteOneToOneMapperAsync<TModel>(
+        NpgsqlCommand command, Func<DbDataReader, IDomainGlossary, TModel> mapper)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
         
@@ -47,18 +47,18 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         {
             while (await reader.ReadAsync())
             {
-                builder.Add(readData(reader, glossary));
+                builder.Add(mapper(reader, glossary));
             }
         });
         return builder.ToImmutable();
     }
 
-    protected async Task<IReadOnlyCollection<TModel>> ExecuteReaderOneToManyAsync<TModel, TKey>(
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteOneToManyMapperAsync<TModel, TKey>(
         NpgsqlCommand command, 
-        Func<DbDataReader, TKey> getKey,
-        Func<DbDataReader, TModel> initializeModel,
+        Func<DbDataReader, TKey> keyGetter,
+        Func<DbDataReader, TModel> modelInitializer,
         Action<TModel, DbDataReader> accumulateData,
-        Func<TModel, TModel> finalizeModel)
+        Func<TModel, TModel> modelFinalizer)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
 
@@ -69,16 +69,16 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 
             while (await reader.ReadAsync())
             {
-                var key = getKey(reader);
+                var key = keyGetter(reader);
 
                 if (!Equals(key, currentKey))
                 {
                     if (currentModel != null)
                     {
-                        builder.Add(finalizeModel(currentModel));
+                        builder.Add(modelFinalizer(currentModel));
                     }
 
-                    currentModel = initializeModel(reader);
+                    currentModel = modelInitializer(reader);
                     currentKey = key;
                 }
 
@@ -87,7 +87,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 
             if (currentModel != null)
             {
-                builder.Add(finalizeModel(currentModel));
+                builder.Add(modelFinalizer(currentModel));
             }
         });
 

@@ -1,17 +1,27 @@
+using System.Data.Common;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
+using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
 public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
+    private static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> WorkflowBridgeMapper =
+        static (reader, glossary) =>
+        {
+            var sourceInput = TlgInputsRepository.TlgInputMapper(reader, glossary);
+
+            return ConstituteWorkflowBridge(reader, sourceInput);
+        };
+
     private const string GetBaseQuery = """
                                         SELECT
-                                        
+
                                         r.token AS role_token, 
                                         r.role_type AS role_type, 
                                         r.status AS role_status, 
@@ -23,7 +33,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                             
                                         dws.resultant_workflow AS input_workflow,
                                         dws.in_state AS input_wf_state,
-                                        
+
                                         inp.date AS input_date,
                                         inp.message_id AS input_message_id,
                                         inp.user_id AS input_user_id, 
@@ -32,10 +42,10 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                         inp.input_type AS input_type,
                                         inp.details AS input_details,
                                         inp.entity_guid AS input_guid,
-                                        
+
                                         dwb.dst_chat_id AS bridge_chat_id,
                                         dwb.dst_message_id AS bridge_message_id
-                                        
+
                                         FROM derived_workflow_bridges dwb
                                         INNER JOIN tlg_inputs inp on dwb.src_input_id = inp.id
                                         LEFT JOIN roles r on inp.role_id = r.id
@@ -55,9 +65,8 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         
         var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
-        return (await ExecuteReaderOneToOneAsync(
-                command, 
-                ModelReaders.ReadWorkflowBridge))
+        return (await 
+                ExecuteOneToOneMapperAsync(command, WorkflowBridgeMapper))
             .FirstOrDefault();
     }
     
@@ -72,8 +81,8 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         
         var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
-        return await ExecuteReaderOneToOneAsync(
+        return await ExecuteOneToOneMapperAsync(
             command, 
-            ModelReaders.ReadWorkflowBridge);
+            WorkflowBridgeMapper);
     }
 }
