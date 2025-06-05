@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
@@ -9,6 +10,9 @@ namespace CheckMade.ChatBot.Function.Endpoints;
 public sealed class OperationsBot(ILogger<OperationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
     : BotFunctionBase(logger, botUpdateSwitch)
 {
+    private static readonly ConcurrentDictionary<int, byte> UpdateIds = new();
+
+    protected override ConcurrentDictionary<int, byte> CurrentlyProcessingUpdateIds => UpdateIds;
     protected override InteractionMode InteractionMode => InteractionMode.Operations;
 
     [Function("OperationsBot")]
