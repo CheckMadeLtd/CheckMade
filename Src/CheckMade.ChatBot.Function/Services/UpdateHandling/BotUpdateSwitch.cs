@@ -22,10 +22,6 @@ public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpd
     
     public async Task<Result<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
     {
-        // FOR TESTING OF TELEGRAM RETRY
-        // await Task.Delay(10000);
-        // throw new InvalidOperationException("Fake Exception 1234");
-        
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)
         {
