@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
@@ -11,6 +12,9 @@ namespace CheckMade.ChatBot.Function.Endpoints;
 
 public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
 {
+    // Thread-safe collection for this static cache (ensuring atomic operations in case of multiple function instances)
+    protected abstract ConcurrentDictionary<int, byte> CurrentlyProcessingUpdateIds { get; }
+    
     protected abstract InteractionMode InteractionMode { get; }
 
     protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
@@ -36,10 +40,27 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
                 logger.LogError("Unable to deserialize Update object");
                 return defaultOkResponse;
             }
-
-            // Any failure wrapped in Result would have been logged already e.g. in UpdateHandler
-            // Only unhandled/unwrapped Exceptions would then bubble up here and lead to the catch block below, 
-            await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+            
+            // Avoids duplicate processing when Telegram reattempts update delivery due to too-slow processing, which
+            // can happen e.g. due to unhandled exceptions or retry policies. As recommended by Wizou. See also:
+            // https://telegrambots.github.io/book/3/updates/webhook.html#updates-are-posted-sequentially-to-your-webapp
+            if (!CurrentlyProcessingUpdateIds.TryAdd(update.Id, 0))
+            {
+                logger.LogTrace($"Already processing update with ID {update.Id} for {InteractionMode}");
+                return defaultOkResponse;
+            }
+            
+            try
+            {
+                // Any failure wrapped in Result would have been logged already e.g. in UpdateHandler
+                // Only unhandled/unwrapped Exceptions would then bubble up here and lead to the catch block below, 
+                await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+            }
+            finally // any exception thrown within try would still be caught in the outer catch block below. 
+            {
+                CurrentlyProcessingUpdateIds.TryRemove(update.Id, out _);
+                logger.LogTrace($"Finished processing update {update.Id} for {InteractionMode}");
+            }
 
             return defaultOkResponse;
         }
