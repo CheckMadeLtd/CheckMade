@@ -59,12 +59,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{AF183FDB-D
 		..\CheckMade.wiki\Telegram-CheckMade-Interaction.md = ..\CheckMade.wiki\Telegram-CheckMade-Interaction.md
 		..\CheckMade.wiki\Home.md = ..\CheckMade.wiki\Home.md
 		..\CheckMade.wiki\Domain-Model.md = ..\CheckMade.wiki\Domain-Model.md
-		..\CheckMade.wiki\DevOps>-Schema-Evolution.md = ..\CheckMade.wiki\DevOps>-Schema-Evolution.md
-		..\CheckMade.wiki\DevOps>-Deployment.md = ..\CheckMade.wiki\DevOps>-Deployment.md
-		..\CheckMade.wiki\DevOps>-Continuous-Integration-Workflow.md = ..\CheckMade.wiki\DevOps>-Continuous-Integration-Workflow.md
 		..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md = ..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md
 		..\CheckMade.wiki\Background-and-Nuances.md = ..\CheckMade.wiki\Background-and-Nuances.md
 		..\CheckMade.wiki\Architecture---Tech---Design-Choices.md = ..\CheckMade.wiki\Architecture---Tech---Design-Choices.md
+		..\CheckMade.wiki\DevOps-Continuous-Integration-Workflow.md = ..\CheckMade.wiki\DevOps-Continuous-Integration-Workflow.md
+		..\CheckMade.wiki\DevOps-Deployment.md = ..\CheckMade.wiki\DevOps-Deployment.md
+		..\CheckMade.wiki\DevOps-Schema-Evolution.md = ..\CheckMade.wiki\DevOps-Schema-Evolution.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClaudeProject", "ClaudeProject", "{B0CDD972-E29B-447B-9458-296ECB020312}"
