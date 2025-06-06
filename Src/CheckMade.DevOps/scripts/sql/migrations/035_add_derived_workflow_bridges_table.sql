@@ -1,5 +1,4 @@
--- A bridge from a source input (e.g. the submission of a new entity by user A) to a dest. output for user B
--- (e.g. a notification about this new issue with controls that would launch new workflows in relation to that entity)
+-- See docs for WorkflowBridge class
 
 CREATE TABLE IF NOT EXISTS derived_workflow_bridges (
     id SERIAL PRIMARY KEY,
