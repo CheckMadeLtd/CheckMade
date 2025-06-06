@@ -93,7 +93,7 @@ public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                         finalizeModel) = UserMapper(Glossary);
 
                     var users =
-                        await ExecuteOneToManyMapperAsync(
+                        await ExecuteMapperAsync(
                             command, getKey, initializeModel, accumulateData, finalizeModel);
 
                     _cache = Option<IReadOnlyCollection<User>>.Some(users);

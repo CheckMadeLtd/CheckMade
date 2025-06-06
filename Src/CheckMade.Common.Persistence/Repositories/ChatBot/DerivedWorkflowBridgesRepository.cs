@@ -66,7 +66,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
         return (await 
-                ExecuteOneToOneMapperAsync(command, WorkflowBridgeMapper))
+                ExecuteMapperAsync(command, WorkflowBridgeMapper))
             .FirstOrDefault();
     }
     
@@ -81,7 +81,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         
         var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
-        return await ExecuteOneToOneMapperAsync(
+        return await ExecuteMapperAsync(
             command, 
             WorkflowBridgeMapper);
     }

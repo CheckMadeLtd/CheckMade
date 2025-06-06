@@ -38,7 +38,13 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         });
     }
 
-    protected async Task<IReadOnlyCollection<TModel>> ExecuteOneToOneMapperAsync<TModel>(
+    /// <summary>
+    /// Use to map / constitute domain model objects where one row represents the entire data needed
+    /// (e.g. from objects without or only with one-to-one links) 
+    /// </summary>
+    /// <param name="command">The SQL command that returns the result set in a DbDataReader</param>
+    /// <param name="mapper">A simple delegate that constitutes the objects of type TModel from</param>
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteMapperAsync<TModel>(
         NpgsqlCommand command, Func<DbDataReader, IDomainGlossary, TModel> mapper)
     {
         var builder = ImmutableList.CreateBuilder<TModel>();
@@ -53,7 +59,16 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         return builder.ToImmutable();
     }
 
-    protected async Task<IReadOnlyCollection<TModel>> ExecuteOneToManyMapperAsync<TModel, TKey>(
+    /// <summary>
+    /// Use to map / constitute domain model objects where multiple rows need to be aggregated into single objects
+    /// (e.g. entities with collections via one-to-many relationships) 
+    /// </summary>
+    /// <param name="command">The SQL command that returns the denormalized result set in a DbDataReader</param>
+    /// <param name="keyGetter">Identifies which rows belong together</param>
+    /// <param name="modelInitializer">Creates the object of type TModel with empty collections</param>
+    /// <param name="accumulateData">Adds data from each row to the collections</param>
+    /// <param name="modelFinalizer">Converts mutable collections to immutable ones</param>
+    protected async Task<IReadOnlyCollection<TModel>> ExecuteMapperAsync<TModel, TKey>(
         NpgsqlCommand command, 
         Func<DbDataReader, TKey> keyGetter,
         Func<DbDataReader, TModel> modelInitializer,
@@ -73,11 +88,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 
                 if (!Equals(key, currentKey))
                 {
-                    if (currentModel != null)
-                    {
-                        builder.Add(modelFinalizer(currentModel));
-                    }
-
+                    FinalizeCurrentModel();
                     currentModel = modelInitializer(reader);
                     currentKey = key;
                 }
@@ -85,9 +96,13 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                 accumulateData(currentModel!, reader);
             }
 
-            if (currentModel != null)
+            FinalizeCurrentModel();
+            return;
+
+            void FinalizeCurrentModel()
             {
-                builder.Add(modelFinalizer(currentModel));
+                if (currentModel != null)
+                    builder.Add(modelFinalizer(currentModel));
             }
         });
 

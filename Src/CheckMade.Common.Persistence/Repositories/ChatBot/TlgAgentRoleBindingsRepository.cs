@@ -16,15 +16,30 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
     
     private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
 
-    private static readonly Func<DbDataReader, IDomainGlossary, TlgAgentRoleBind> TlgAgentRoleBindMapper = 
-        static (reader, glossary) =>
-        {
-            var role = RolesRepository.RoleMapper(reader, glossary);
-            var tlgAgent = ConstituteTlgAgent(reader);
+    private static (Func<DbDataReader, int> keyGetter,
+        Func<DbDataReader, TlgAgentRoleBind> modelInitializer,
+        Action<TlgAgentRoleBind, DbDataReader> accumulateData,
+        Func<TlgAgentRoleBind, TlgAgentRoleBind> modelFinalizer)
+        TlgAgentRoleBindMapper(IDomainGlossary glossary)
+    {
+        return (
+            keyGetter: RolesRepository.GetRoleKey,
+            modelInitializer: reader =>
+            {
+                var role = RolesRepository.CreateRoleWithoutSphereAssignments(reader, glossary);
+                var tlgAgent = ConstituteTlgAgent(reader);
+                
+                return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+            },
+            accumulateData: (tarb, reader) => 
+                RolesRepository.AccumulateSphereAssignments(tarb.Role, reader, glossary),
+            modelFinalizer: static tarb => tarb with 
+            { 
+                Role = RolesRepository.FinalizeSphereAssignments(tarb.Role)
+            }
+        );
+    }
 
-            return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
-        };
-    
     public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
         await AddAsync([tlgAgentRoleBind]);
 
@@ -98,6 +113,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                             lve.end_date AS live_event_end_date, 
                                             lve.status AS live_event_status, 
 
+                                            r.id AS role_id,
                                             r.token AS role_token, 
                                             r.role_type AS role_type, 
                                             r.status AS role_status, 
@@ -107,20 +123,32 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                             tarb.interaction_mode AS tarb_interaction_mode, 
                                             tarb.activation_date AS tarb_activation_date, 
                                             tarb.deactivation_date AS tarb_deactivation_date, 
-                                            tarb.status AS tarb_status 
+                                            tarb.status AS tarb_status,
+                                            
+                                            soa.name AS sphere_name, 
+                                            soa.details AS sphere_details, 
+                                            soa.trade AS sphere_trade,
+                                            soa.status AS sphere_status
 
                                             FROM tlg_agent_role_bindings tarb 
                                             INNER JOIN roles r on tarb.role_id = r.id 
                                             INNER JOIN users usr on r.user_id = usr.id 
-                                            INNER JOIN live_events lve on r.live_event_id = lve.id 
+                                            INNER JOIN live_events lve on r.live_event_id = lve.id
+                                            LEFT JOIN roles_to_spheres_assignments rtsa ON r.id = rtsa.role_id
+                                            LEFT JOIN spheres_of_action soa ON rtsa.sphere_id = soa.id
                                             
                                             ORDER BY tarb.id
                                             """;
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
-                    var fetchedBindings = new List<TlgAgentRoleBind>(
-                        await ExecuteOneToOneMapperAsync(command, TlgAgentRoleBindMapper));
+                    var (getKey,
+                        initializeModel,
+                        accumulateData,
+                        finalizeModel) = TlgAgentRoleBindMapper(Glossary);
+                    
+                    var fetchedBindings = await ExecuteMapperAsync(
+                        command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
                         fetchedBindings.ToArray());
