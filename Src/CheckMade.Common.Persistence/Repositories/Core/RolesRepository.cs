@@ -69,7 +69,7 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
 
                     _cache = Option<IReadOnlyCollection<Role>>.Some(
                         new List<Role>(
-                                await ExecuteOneToOneMapperAsync(command, RoleMapper))
+                                await ExecuteMapperAsync(command, RoleMapper))
                             .ToArray());
                 }
             }

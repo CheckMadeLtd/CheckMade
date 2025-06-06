@@ -362,7 +362,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteOneToOneMapperAsync(
+        return await ExecuteMapperAsync(
             command, TlgInputMapper);
     }
     

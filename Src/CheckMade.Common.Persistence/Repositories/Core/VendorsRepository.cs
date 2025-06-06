@@ -44,9 +44,7 @@ public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossa
                                             """;
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
-                    
-                    var vendors = 
-                        await ExecuteOneToOneMapperAsync(command, VendorMapper);
+                    var vendors = await ExecuteMapperAsync(command, VendorMapper);
                     
                     _cache = Option<IReadOnlyCollection<Vendor>>.Some(vendors);
                 }

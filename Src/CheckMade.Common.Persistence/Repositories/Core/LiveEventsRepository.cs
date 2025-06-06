@@ -99,7 +99,7 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                         finalizeModel) = LiveEventMapper(Glossary);
 
                     var liveEvents =
-                        await ExecuteOneToManyMapperAsync(
+                        await ExecuteMapperAsync(
                             command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);

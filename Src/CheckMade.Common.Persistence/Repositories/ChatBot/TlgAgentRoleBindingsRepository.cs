@@ -120,7 +120,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
 
                     var fetchedBindings = new List<TlgAgentRoleBind>(
-                        await ExecuteOneToOneMapperAsync(command, TlgAgentRoleBindMapper));
+                        await ExecuteMapperAsync(command, TlgAgentRoleBindMapper));
                     
                     _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
                         fetchedBindings.ToArray());
