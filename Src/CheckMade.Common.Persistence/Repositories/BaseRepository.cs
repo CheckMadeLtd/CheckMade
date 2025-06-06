@@ -88,11 +88,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 
                 if (!Equals(key, currentKey))
                 {
-                    if (currentModel != null)
-                    {
-                        builder.Add(modelFinalizer(currentModel));
-                    }
-
+                    FinalizeCurrentModel();
                     currentModel = modelInitializer(reader);
                     currentKey = key;
                 }
@@ -100,9 +96,13 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                 accumulateData(currentModel!, reader);
             }
 
-            if (currentModel != null)
+            FinalizeCurrentModel();
+            return;
+
+            void FinalizeCurrentModel()
             {
-                builder.Add(modelFinalizer(currentModel));
+                if (currentModel != null)
+                    builder.Add(modelFinalizer(currentModel));
             }
         });
 

@@ -124,15 +124,6 @@ internal static class DomainModelConstitutors
             return (ITrade)Activator.CreateInstance(tradeType)!;
         }
     }
-    
-    internal static Role ConstituteRole(
-        DbDataReader reader,
-        IUserInfo userInfo,
-        ILiveEventInfo liveEventInfo,
-        IDomainGlossary glossary) =>
-        new(ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
-            userInfo,
-            liveEventInfo);
 
     internal static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader, IDomainGlossary glossary)
     {

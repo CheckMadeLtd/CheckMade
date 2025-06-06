@@ -1,3 +1,4 @@
+using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Utils.Comparers.RoleInfoComparer;
@@ -9,15 +10,18 @@ public sealed record Role(
     IRoleType RoleType,
     IUserInfo ByUser,
     ILiveEventInfo AtLiveEvent,
+    IReadOnlyCollection<ISphereOfAction> AssignedToSpheres,
     DbRecordStatus Status = DbRecordStatus.Active)
     : IRoleInfo
 {
-    public Role(IRoleInfo roleInfo, IUserInfo userInfo, ILiveEventInfo liveEventInfo)
+    public Role(IRoleInfo roleInfo, IUserInfo userInfo, ILiveEventInfo liveEventInfo, 
+        IReadOnlyCollection<ISphereOfAction> assignedSpheres)
         : this(
             roleInfo.Token,
             roleInfo.RoleType,
             userInfo,
             liveEventInfo,
+            assignedSpheres,
             roleInfo.Status)
     {
     }
