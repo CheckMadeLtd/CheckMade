@@ -2,6 +2,7 @@ using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
@@ -23,7 +24,8 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         var areEqual1 = role.Equals(roleInfo);
         var areEqual2 = roleInfo.Equals(role);
@@ -43,13 +45,15 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         IRoleInfo role2 = new Role(
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielDe),
-            new LiveEventInfo(Y2024));
+            new LiveEventInfo(Y2024),
+            new HashSet<ISphereOfAction>());
 
         var areEqual = role1.Equals(role2);
 
@@ -73,7 +77,8 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         var areEqual = role == roleInfo;
 
@@ -93,7 +98,8 @@ public class RoleInfoEqualityTests
             "Token2",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         var areEqual1 = role.Equals(roleInfo);
         var areEqual2 = roleInfo.Equals(role);
@@ -129,7 +135,8 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         var role2 = role1;
 
@@ -147,7 +154,8 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         IRoleInfo? role2 = null;
 
@@ -199,13 +207,15 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         IRoleInfo role2 = new Role(
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         var areEqual = role1.Equals(role2);
 
@@ -221,13 +231,15 @@ public class RoleInfoEqualityTests
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            new LiveEventInfo(X2024));
+            new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>());
 
         IRoleInfo role2 = new Role(
             "Token1",
             new TradeAdmin<SanitaryTrade>(),
             new UserInfo(DanielEn),
             new LiveEventInfo(X2024),
+            new HashSet<ISphereOfAction>(),
             DbRecordStatus.Historic);
 
         var areEqual = role1.Equals(role2);

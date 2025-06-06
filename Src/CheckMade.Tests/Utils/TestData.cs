@@ -92,73 +92,85 @@ internal static class TestData
         new("RVB70T",
             new TradeAdmin<SanitaryTrade>(), 
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryInspector_DanielEn_X2024 = 
         new("R3UDXW",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryInspector_DanielEn_X2025 = 
         new("R9AAB5",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            X2025Info);
+            X2025Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryInspector_LukasDe_X2024 = 
         new("R7UIP8",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(LukasDe),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
 
     internal static readonly Role SanitaryTeamLead_DanielDe_X2024 = 
         new("R2JXNM",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielDe),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
 
     internal static readonly Role SanitaryObserver_DanielEn_X2024 = 
         new("RYEATF",
             new TradeObserver<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryInspector_DanielDe_X2024 = 
         new("RMAM8S",
             new TradeInspector<SanitaryTrade>(),
             new UserInfo(DanielDe),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryEngineer_DanielEn_X2024 = 
         new("RGR37T",
             new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryTeamLead_DanielEn_X2024 = 
         new("RI8MJ1",
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielEn), 
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
 
     internal static readonly Role LiveEventAdmin_DanielEn_X2024 =
         new("R23QI6",
             new LiveEventAdmin(),
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SanitaryEngineer_DanielEn_Y2024 = 
         new("RS0BSU",
             new TradeEngineer<SanitaryTrade>(),
             new UserInfo(DanielEn),
-            Y2024Info);
+            Y2024Info,
+            new HashSet<ISphereOfAction>());
     
     internal static readonly Role SiteCleanEngineer_DanielEn_X2024 = 
         new("RMWC16",
             new TradeEngineer<SiteCleanTrade>(),
             new UserInfo(DanielEn),
-            X2024Info);
+            X2024Info,
+            new HashSet<ISphereOfAction>());
     
     #endregion
 

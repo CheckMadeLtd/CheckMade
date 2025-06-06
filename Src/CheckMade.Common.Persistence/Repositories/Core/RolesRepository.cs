@@ -16,6 +16,32 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
+    
+    internal static readonly Func<DbDataReader, int> GetRoleKey = 
+        static reader => reader.GetInt32(reader.GetOrdinal("role_id"));
+
+    internal static readonly Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments = 
+        static (reader, glossary) => 
+            new Role(
+                ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
+                ConstituteUserInfo(reader),
+                ConstituteLiveEventInfo(reader).GetValueOrThrow(),
+                new HashSet<ISphereOfAction>()
+            );
+
+    internal static readonly Action<Role, DbDataReader, IDomainGlossary> AccumulateSphereAssignments = 
+        static (role, reader, glossary) =>
+        {
+            var assignedSphere = ConstituteSphereOfAction(reader, glossary);
+            if (assignedSphere.IsSome)
+                ((HashSet<ISphereOfAction>)role.AssignedToSpheres).Add(assignedSphere.GetValueOrThrow());
+        };
+
+    internal static readonly Func<Role, Role> FinalizeSphereAssignments = 
+        static role => role with
+        {
+            AssignedToSpheres = role.AssignedToSpheres.ToImmutableArray()
+        };
 
     private static (Func<DbDataReader, int> keyGetter,
         Func<DbDataReader, Role> modelInitializer,
@@ -24,21 +50,10 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
         RoleMapper(IDomainGlossary glossary)
     {
         return (
-            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("role_id")),
-            modelInitializer: reader =>
-                new Role(
-                    ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
-                    ConstituteUserInfo(reader),
-                    ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-                    new HashSet<ISphereOfAction>()
-                ),
-            accumulateData: (role, reader) =>
-            {
-                var assignedSphere = ConstituteSphereOfAction(reader, glossary);
-                if (assignedSphere.IsSome)
-                    ((HashSet<ISphereOfAction>)role.AssignedToSpheres).Add(assignedSphere.GetValueOrThrow());
-            },
-            modelFinalizer: static role => role with { AssignedToSpheres = role.AssignedToSpheres.ToImmutableArray() }
+            keyGetter: GetRoleKey,
+            modelInitializer: reader => CreateRoleWithoutSphereAssignments(reader, glossary),
+            accumulateData: (role, reader) => AccumulateSphereAssignments(role, reader, glossary),
+            modelFinalizer: FinalizeSphereAssignments
         );
     }
     
@@ -81,7 +96,6 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                                             soa.details AS sphere_details, 
                                             soa.trade AS sphere_trade,
                                             soa.status AS sphere_status
-                                            
 
                                             FROM roles r 
                                             INNER JOIN users usr on r.user_id = usr.id 
@@ -99,9 +113,8 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                         accumulateData,
                         finalizeModel) = RoleMapper(Glossary);
 
-                    var roles =
-                        await ExecuteMapperAsync(
-                            command, getKey, initializeModel, accumulateData, finalizeModel);
+                    var roles = await ExecuteMapperAsync(
+                        command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<Role>>.Some(roles);
                 }

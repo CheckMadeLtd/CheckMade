@@ -98,9 +98,8 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                         accumulateData,
                         finalizeModel) = LiveEventMapper(Glossary);
 
-                    var liveEvents =
-                        await ExecuteMapperAsync(
-                            command, getKey, initializeModel, accumulateData, finalizeModel);
+                    var liveEvents = await ExecuteMapperAsync(
+                        command, getKey, initializeModel, accumulateData, finalizeModel);
                     
                     _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);
                 }
