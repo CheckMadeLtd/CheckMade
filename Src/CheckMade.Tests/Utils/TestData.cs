@@ -85,6 +85,70 @@ internal static class TestData
     
     #endregion
     
+    #region SphereOfActionsSetup ######################################################################################
+    
+    // 2024 LiveEvents
+    
+    internal static readonly Geo Location_Dassel = 
+        new(50.93140957842968, 6.932814116544934, Option<double>.None());
+    
+    internal static readonly Geo Location_4cc =
+        new Geo(51.240118, -0.789397, Option<double>.None());
+
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere1_AtX2024 =
+        new("CampDassel",
+            new SanitaryCampDetails(
+                Location_Dassel,
+                new List<DomainTerm>
+                {
+                    Dt(typeof(GeneralMisc)),
+                    Dt(typeof(Shower)),
+                    Dt(typeof(Toilet))
+                }.ToImmutableArray(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper),
+                    Dt(ConsumablesItem.PaperTowels),
+                    Dt(ConsumablesItem.Soap)
+                }));
+    
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere2_AtX2024 =
+        new("Camp2-4cc",
+            new SanitaryCampDetails(
+                Location_4cc,
+                new List<DomainTerm>
+                    {
+                        Dt(typeof(GeneralMisc))
+                    }
+                    .ToImmutableArray(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper)
+                }));
+    
+    internal static readonly SphereOfAction<SanitaryTrade> Sphere3_AtX2024 =
+        new("Camp3-NoGeo",
+            new SanitaryCampDetails(
+                Option<Geo>.None(), 
+                new List<DomainTerm>
+                    {
+                        Dt(typeof(GeneralMisc))
+                    }
+                    .ToImmutableArray(),
+                new List<DomainTerm>
+                {
+                    Dt(ConsumablesItem.ToiletPaper)
+                }));
+
+    internal static readonly SphereOfAction<SiteCleanTrade> Sphere4_AtX2024 =
+        new("Zone1",
+            new SiteCleaningZoneDetails(
+                Option<Geo>.None(),
+                new List<DomainTerm>().ToImmutableArray(),
+                new List<DomainTerm>().ToImmutableArray()));
+    
+    #endregion
+    
     #region RoleSetup ##################################################################################################
     
     // Default for testing
@@ -149,7 +213,10 @@ internal static class TestData
             new TradeTeamLead<SanitaryTrade>(),
             new UserInfo(DanielEn), 
             X2024Info,
-            new HashSet<ISphereOfAction>());
+            new HashSet<ISphereOfAction>
+            {
+                Sphere1_AtX2024
+            });
 
     internal static readonly Role LiveEventAdmin_DanielEn_X2024 =
         new("R23QI6",
@@ -174,67 +241,7 @@ internal static class TestData
     
     #endregion
 
-    #region LiveEventSetup #############################################################################################
-    
-    // 2024 LiveEvents
-    
-    internal static readonly Geo Location_Dassel = 
-        new(50.93140957842968, 6.932814116544934, Option<double>.None());
-    
-    internal static readonly Geo Location_4cc =
-        new Geo(51.240118, -0.789397, Option<double>.None());
-
-    internal static readonly SphereOfAction<SanitaryTrade> Sphere1_AtX2024 =
-        new("CampDassel",
-            new SanitaryCampDetails(
-                Location_Dassel,
-                new List<DomainTerm>
-                {
-                    Dt(typeof(GeneralMisc)),
-                    Dt(typeof(Shower)),
-                    Dt(typeof(Toilet))
-                }.ToImmutableArray(),
-                new List<DomainTerm>
-                {
-                    Dt(ConsumablesItem.ToiletPaper),
-                    Dt(ConsumablesItem.PaperTowels),
-                    Dt(ConsumablesItem.Soap)
-                }));
-    
-    internal static readonly SphereOfAction<SanitaryTrade> Sphere2_AtX2024 =
-        new("Camp2-4cc",
-            new SanitaryCampDetails(
-                Location_4cc,
-                new List<DomainTerm>
-                    {
-                        Dt(typeof(GeneralMisc))
-                    }
-                    .ToImmutableArray(),
-                new List<DomainTerm>
-                {
-                    Dt(ConsumablesItem.ToiletPaper)
-                }));
-    
-    internal static readonly SphereOfAction<SanitaryTrade> Sphere3_AtX2024 =
-        new("Camp3-NoGeo",
-            new SanitaryCampDetails(
-                Option<Geo>.None(), 
-                new List<DomainTerm>
-                    {
-                        Dt(typeof(GeneralMisc))
-                    }
-                    .ToImmutableArray(),
-                new List<DomainTerm>
-                {
-                    Dt(ConsumablesItem.ToiletPaper)
-                }));
-
-    internal static readonly SphereOfAction<SiteCleanTrade> Sphere4_AtX2024 =
-        new("Zone1",
-            new SiteCleaningZoneDetails(
-                Option<Geo>.None(),
-                new List<DomainTerm>().ToImmutableArray(),
-                new List<DomainTerm>().ToImmutableArray()));
+    #region LiveEventsSetup #########################################################################################
     
     internal static readonly LiveEvent X2024 = new(
         X2024Info,
@@ -350,4 +357,3 @@ internal static class TestData
 
     #endregion
 }
-
