@@ -95,18 +95,18 @@ internal sealed record UserAuthWorkflowTokenEntry(
                 DateTimeOffset.UtcNow,
                 Option<DateTimeOffset>.None());
 
-            var preExistingRoleBindings =
+            var preExistingActiveRoleBindings =
                 (await RoleBindingsRepo.GetAllActiveAsync());
 
-            var preExistingActiveRoleBind =
+            var lastActiveRoleBindForCurrentMode =
                 FirstOrDefaultPreExistingActiveRoleBind(currentMode);
 
             var roleTypeUiString =
                 Glossary.GetUi(newTlgAgentRoleBindForCurrentMode.Role.RoleType.GetType());
 
-            if (preExistingActiveRoleBind != null)
+            if (lastActiveRoleBindForCurrentMode != null)
             {
-                await RoleBindingsRepo.UpdateStatusAsync(preExistingActiveRoleBind, DbRecordStatus.Historic);
+                await RoleBindingsRepo.UpdateStatusAsync(lastActiveRoleBindForCurrentMode, DbRecordStatus.Historic);
 
                 outputs.Add(new OutputDto
                 {
@@ -155,7 +155,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                 Option<Guid>.None());
 
             TlgAgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
-                preExistingRoleBindings.FirstOrDefault(tarb =>
+                preExistingActiveRoleBindings.FirstOrDefault(tarb =>
                     tarb.Role.Token.Equals(inputText) &&
                     tarb.TlgAgent.Mode.Equals(mode));
 
