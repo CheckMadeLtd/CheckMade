@@ -23,7 +23,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         TlgAgentRoleBindMapper(IDomainGlossary glossary)
     {
         return (
-            keyGetter: RolesRepository.GetRoleKey,
+            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("tarb_id")),
             modelInitializer: reader =>
             {
                 var role = RolesRepository.CreateRoleWithoutSphereAssignments(reader, glossary);
@@ -118,6 +118,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                             r.role_type AS role_type, 
                                             r.status AS role_status, 
 
+                                            tarb.id AS tarb_id,
                                             tarb.tlg_user_id AS tarb_tlg_user_id, 
                                             tarb.tlg_chat_id AS tarb_tlg_chat_id, 
                                             tarb.interaction_mode AS tarb_interaction_mode, 
