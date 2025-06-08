@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
@@ -26,6 +27,9 @@ internal sealed record NewIssueTypeSelection<T>(
         Option<TlgMessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
+        var currentRoleType = currentInput.OriginatorRole.GetValueOrThrow().RoleType;
+        var skipCleaningIssue = currentRoleType is TradeTeamLead<T>; 
+        
         List<OutputDto> outputs =
         [
             new()
@@ -34,6 +38,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
+                        .SkipWhile(dt => dt.TypeValue == typeof(CleaningIssue<T>) && skipCleaningIssue)
                         .ToImmutableArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back
