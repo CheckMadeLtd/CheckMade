@@ -12,11 +12,12 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.New
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
 
 internal sealed record NewIssueWorkflow(
-        ILiveEventsRepository LiveEventsRepo,
-        IGeneralWorkflowUtils WorkflowUtils,
-        IStateMediator Mediator,
-        IDerivedWorkflowBridgesRepository BridgesRepo,
-        IDomainGlossary Glossary)
+    ILiveEventsRepository LiveEventsRepo,
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator,
+    IDerivedWorkflowBridgesRepository BridgesRepo,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
     protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
@@ -31,13 +32,16 @@ internal sealed record NewIssueWorkflow(
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
         
-        var liveEvent = (await LiveEventsRepo.GetAsync(
-            currentInput.LiveEventContext.GetValueOrThrow()))!;
-        
         var lastKnownLocation = await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
         var sphere = lastKnownLocation.IsSome
-            ? SphereNearCurrentUser(liveEvent, lastKnownLocation.GetValueOrThrow(), trade)
+            ? await SphereNearCurrentUserAsync(
+                currentInput.LiveEventContext.GetValueOrThrow(),
+                LiveEventsRepo,
+                lastKnownLocation.GetValueOrThrow(), 
+                trade,
+                currentInput,
+                RoleBindingsRepo) 
             : Option<ISphereOfAction>.None();
 
         return await sphere.Match(

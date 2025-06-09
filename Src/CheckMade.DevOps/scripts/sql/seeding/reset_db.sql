@@ -1,5 +1,5 @@
 -- run from terminal with
---  for local: `psql -d cm_ops -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_test_setup_data.sql`
+--  for local: `psql -d cm_ops -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_db.sql`
 --  for prd: `[psql conn string from psw manager] -f Src/CheckMade.DevOps/scripts/sql/seeding/reset_test_setup_data.sql`
 
 -- Deleting all records from local DB

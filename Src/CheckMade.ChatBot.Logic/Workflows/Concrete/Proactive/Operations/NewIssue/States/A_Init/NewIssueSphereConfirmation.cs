@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -21,6 +22,7 @@ internal sealed record NewIssueSphereConfirmation<T>(
     ILiveEventsRepository LiveEventsRepo,    
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
     IStateMediator Mediator) 
     : INewIssueSphereConfirmation<T> where T : ITrade, new()
 {
@@ -47,16 +49,17 @@ internal sealed record NewIssueSphereConfirmation<T>(
 
         async Task<Option<ISphereOfAction>> GetNearSphere()
         {
-            var liveEvent = (await LiveEventsRepo.GetAsync(
-                currentInput.LiveEventContext.GetValueOrThrow()))!;
-        
             var lastKnownLocation = 
                 await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
             return lastKnownLocation.IsSome
-                ? SphereNearCurrentUser(
-                    liveEvent, lastKnownLocation.GetValueOrThrow(), 
-                    new T())
+                ? await SphereNearCurrentUserAsync(
+                    currentInput.LiveEventContext.GetValueOrThrow(),
+                    LiveEventsRepo,
+                    lastKnownLocation.GetValueOrThrow(), 
+                    new T(),
+                    currentInput,
+                    RoleBindingsRepo)
                 : Option<ISphereOfAction>.None();
         }
     }

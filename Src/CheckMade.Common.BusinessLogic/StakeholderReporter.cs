@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Interfaces.ChatBotLogic;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
@@ -12,13 +11,14 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
+using CheckMade.Common.Model.Core.Trades.Concrete;
 
 namespace CheckMade.Common.BusinessLogic;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
     IIssueFactory<T> IssueFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
@@ -30,7 +30,7 @@ public sealed record StakeholderReporter<T>(
         var completeIssueSummary = 
             newIssue.GetSummary();
         var recipients = 
-            await GetNewIssueNotificationRecipientsAsync(inputHistory, currentIssueTypeName);
+            await GetNewIssueNotificationRecipientsAsync(inputHistory, newIssue.Sphere, currentIssueTypeName);
         
         return 
             recipients
@@ -65,7 +65,8 @@ public sealed record StakeholderReporter<T>(
     }
 
     private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory, 
+        IReadOnlyCollection<TlgInput> inputHistory,
+        ISphereOfAction issueSphere,
         string currentIssueTypeName)
     {
         var allRolesAtCurrentLiveEvent = 
@@ -98,11 +99,17 @@ public sealed record StakeholderReporter<T>(
             _ => []
         };
 
-        var currentRole = inputHistory.First().OriginatorRole.GetValueOrThrow();
+        var filterOutSpecialists = allRelevantSpecialist
+            .Where(r => r.RoleType is TradeTeamLead<SanitaryTrade> or TradeTeamLead<SiteCleanTrade>)
+            .Where(static r => r.AssignedToSpheres.Count != 0)
+            .Where(r => !r.AssignedToSpheres.Contains(issueSphere))
+            .ToArray();
+        
+        var currentRoleInfo = inputHistory.First().OriginatorRole.GetValueOrThrow();
         
         return new List<LogicalPort>(
-                allAdminAndObservers.Concat(allRelevantSpecialist)
-                    .Where(r => !r.Equals(currentRole))
+                allAdminAndObservers.Concat(allRelevantSpecialist).Except(filterOutSpecialists)
+                    .Where(r => !r.Equals(currentRoleInfo))
                     .Select(static r => new LogicalPort(
                         r,
                         InteractionMode.Notifications)))

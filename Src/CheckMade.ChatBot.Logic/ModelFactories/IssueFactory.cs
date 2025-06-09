@@ -28,12 +28,13 @@ internal sealed record IssueFactory<T>(
     public async Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var currentTrade = new T();
-        var liveEvent = (await LiveEventsRepo.GetAsync(
-            inputs.Last().LiveEventContext.GetValueOrThrow()))!;
         var role = (await RolesRepo.GetAsync(
             inputs.Last().OriginatorRole.GetValueOrThrow()))!;
-        var allSpheres = 
-            GetAllTradeSpecificSpheres(liveEvent, new T());
+        var allSpheres = await
+            GetAllTradeSpecificSpheresAsync(
+                new T(),
+                inputs.Last().LiveEventContext.GetValueOrThrow(),
+                LiveEventsRepo);
         
         var lastSelectedIssueTypeName =
             GetLastIssueType(inputs)
