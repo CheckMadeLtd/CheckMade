@@ -94,7 +94,7 @@ internal static class TestData
     
     internal static readonly Geo Location_4cc =
         new Geo(51.240118, -0.789397, Option<double>.None());
-
+    
     internal static readonly SphereOfAction<SanitaryTrade> Sphere1_AtX2024 =
         new("CampDassel",
             new SanitaryCampDetails(

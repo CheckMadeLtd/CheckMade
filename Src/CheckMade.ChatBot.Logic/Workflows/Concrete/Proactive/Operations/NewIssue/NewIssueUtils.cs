@@ -1,12 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
+using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues;
 using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Utils.GIS;
@@ -27,10 +29,14 @@ internal static class NewIssueUtils
             : lastKnownLocationInput.Details.GeoCoordinates.GetValueOrThrow();
     }
 
-    internal static Option<ISphereOfAction> SphereNearCurrentUser(
-        LiveEvent liveEvent,
+    internal static async Task<Option<ISphereOfAction>> SphereNearCurrentUserAsync(
+        ILiveEventInfo liveEventInfo,
+        ILiveEventsRepository liveEventsRepo,
         Geo lastKnownLocation,
-        ITrade trade)
+        ITrade trade,
+        TlgInput currentInput,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        bool filterAssignedSpheresIfAny = true)
     {
         var tradeSpecificNearnessThreshold = trade switch
         {
@@ -39,17 +45,19 @@ internal static class NewIssueUtils
             _ => throw new InvalidOperationException("Missing switch for ITrade type for nearness threshold")
         };
 
-        var allSpheres = GetAllTradeSpecificSpheres(
-            liveEvent ?? throw new InvalidOperationException("LiveEvent missing."),
-            trade);
+        var allRelevantSpheres = filterAssignedSpheresIfAny
+            ? await AssignedSpheresOrAllAsync(
+                currentInput, roleBindingsRepo, liveEventsRepo, trade)
+            : await GetAllTradeSpecificSpheresAsync(
+                trade, liveEventInfo, liveEventsRepo);
         
         var nearestSphere =
-            allSpheres
+            allRelevantSpheres
                 .Where(soa =>
                     soa.Details.GeoCoordinates.IsSome &&
                     DistanceFromLastKnownLocation(soa) < tradeSpecificNearnessThreshold)
                 .MinBy(DistanceFromLastKnownLocation);
-
+        
         return
             nearestSphere != null
                 ? Option<ISphereOfAction>.Some(nearestSphere)
@@ -60,12 +68,48 @@ internal static class NewIssueUtils
                 .MetersAwayFrom(lastKnownLocation);
     }
 
-    internal static IReadOnlyCollection<ISphereOfAction>
-        GetAllTradeSpecificSpheres(LiveEvent liveEvent, ITrade trade) =>
-        liveEvent
+    internal static async Task<IReadOnlyCollection<ISphereOfAction>> AssignedSpheresOrAllAsync(
+        TlgInput currentInput,
+        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        ILiveEventsRepository liveEventsRepo,
+        ITrade trade)
+    {
+        var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
+            
+        var currentRole = (await roleBindingsRepo.GetAllActiveAsync())
+            .First(tarb => tarb.Role.Equals(
+                currentInput.OriginatorRole.GetValueOrThrow()))
+            .Role;
+        var currentRoleType = currentRole.RoleType;
+        
+        // This is taking names from any assigned spheres, also those for other trades
+        // This might lead to a bug in case different trades end up with spheres of the same name
+        var assignedSpheres =
+            currentRoleType is TradeTeamLead<SanitaryTrade> or TradeTeamLead<SiteCleanTrade>
+                ? currentRole.AssignedToSpheres
+                : Array.Empty<ISphereOfAction>();
+
+        var allCurrentTradeSpheres = 
+            (await GetAllTradeSpecificSpheresAsync(trade, liveEventInfo, liveEventsRepo))
+            .ToArray();
+        
+        return
+            assignedSpheres.Count != 0
+                ? allCurrentTradeSpheres.Intersect(assignedSpheres).ToArray()
+                : allCurrentTradeSpheres;
+    }
+    
+    internal static async Task<IReadOnlyCollection<ISphereOfAction>>
+        GetAllTradeSpecificSpheresAsync(
+            ITrade trade,
+            ILiveEventInfo liveEventInfo,
+            ILiveEventsRepository liveEventsRepo)
+    {
+        return (await liveEventsRepo.GetAsync(liveEventInfo))!
             .DivIntoSpheres
             .Where(soa => soa.GetTradeType() == trade.GetType())
             .ToImmutableArray();
+    }
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
         IReadOnlyCollection<TlgInput> inputs,

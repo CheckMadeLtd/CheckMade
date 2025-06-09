@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -20,6 +21,7 @@ internal sealed record NewIssueTradeSelection(
     IDomainGlossary Glossary,
     ILiveEventsRepository LiveEventRepo,
     IGeneralWorkflowUtils WorkflowUtils,
+    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
     IStateMediator Mediator)
     : INewIssueTradeSelection
 {
@@ -102,13 +104,12 @@ internal sealed record NewIssueTradeSelection(
             var lastKnownLocation = 
                 await LastKnownLocationAsync(currentInput, WorkflowUtils);
 
-            var liveEvent =
-                (await LiveEventRepo.GetAsync(
-                    currentInput.LiveEventContext.GetValueOrThrow()))!;
-        
             return lastKnownLocation.IsSome
-                ? SphereNearCurrentUser(
-                    liveEvent, lastKnownLocation.GetValueOrThrow(), selectedTrade)
+                ? await SphereNearCurrentUserAsync(
+                    currentInput.LiveEventContext.GetValueOrThrow(),
+                    LiveEventRepo,
+                    lastKnownLocation.GetValueOrThrow(), selectedTrade,
+                    currentInput, RoleBindingsRepo)
                 : Option<ISphereOfAction>.None();
         }
     }
