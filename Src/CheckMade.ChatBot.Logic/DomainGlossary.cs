@@ -119,7 +119,10 @@ public sealed record DomainGlossary : IDomainGlossary
         
         AddTerm(typeof(StaffIssue<SanitaryTrade>), "D9MRJ9", Ui("🙋 Staff"));
         AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
-
+        
+        AddTerm(typeof(Assessment<SanitaryTrade>), "440IA", Ui("📋 Assessment"));
+        AddTerm(typeof(Assessment<SiteCleanTrade>), "JOMJN", Ui("📋 Assessment"));
+        
         AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
         AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
         AddTerm(IssueStatus.InProgress, "D15NQR", Ui("⏳ In Progress"));
