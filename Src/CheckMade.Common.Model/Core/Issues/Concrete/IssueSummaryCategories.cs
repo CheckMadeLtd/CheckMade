@@ -1,5 +1,8 @@
 namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
+/// <summary>
+/// The order of these categories here determines the order during output/formatting.
+/// </summary>
 [Flags]
 public enum IssueSummaryCategories
 {
