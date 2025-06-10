@@ -34,7 +34,7 @@ internal sealed record NewIssueTypeSelection<T>(
         [
             new()
             {
-                Text = Ui("Please select the type of issue:"),
+                Text = Ui("Please select the type of submission:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))

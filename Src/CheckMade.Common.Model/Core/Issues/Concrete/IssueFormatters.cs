@@ -11,7 +11,7 @@ internal static class IssueFormatters
         return UiConcatenate(
             Ui("<b>Trade:</b> "), glossary.GetUi(typeof(T)),
             UiNewLines(1),
-            Ui("<b>Issue type:</b> "), glossary.GetUi(issue.GetType()),
+            Ui("<b>Submission type:</b> "), glossary.GetUi(issue.GetType()),
             UiNewLines(1),
             new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name),
             UiNewLines(1));

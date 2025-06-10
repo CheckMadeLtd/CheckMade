@@ -28,7 +28,7 @@ internal sealed record NewIssueEvidenceEntry<T>(
         [
             new()
             {
-                Text = Ui("Please (optionally) provide description and/or photos of the issue."),
+                Text = Ui("Please (optionally) provide description and/or photos for this submission."),
                 ControlPromptsSelection = ControlPrompts.Skip | ControlPrompts.Back,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }

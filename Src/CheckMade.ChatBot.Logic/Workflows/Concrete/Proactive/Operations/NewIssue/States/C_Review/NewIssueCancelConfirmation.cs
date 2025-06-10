@@ -28,7 +28,7 @@ internal sealed record NewIssueCancelConfirmation<T>(
         [
             new OutputDto
             {
-                Text = Ui("Are you sure you want to cancel drafting this new issue?"),
+                Text = Ui("Are you sure you want to cancel drafting this new submission?"),
                 ControlPromptsSelection = ControlPrompts.YesNo,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }

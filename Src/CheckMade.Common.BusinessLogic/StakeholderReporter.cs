@@ -53,7 +53,7 @@ public sealed record StakeholderReporter<T>(
         {
             return 
                 UiConcatenate(
-                    Ui("New issue submission:"),
+                    Ui("New submission:"),
                     UiNewLines(1),
                     UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),

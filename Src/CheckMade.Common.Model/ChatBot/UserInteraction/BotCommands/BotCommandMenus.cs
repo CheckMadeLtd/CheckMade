@@ -15,8 +15,8 @@ public sealed record BotCommandMenus
         {
             [OperationsBotCommands.NewIssue] = new Dictionary<LanguageCode, TlgBotCommand>
             {
-                [LanguageCode.en] = new("/issue", "❗ Report a new issue"),
-                [LanguageCode.de] = new("/problem", "❗ Ein neues Problem melden")
+                [LanguageCode.en] = new("/submission", "❗ New submission"),
+                [LanguageCode.de] = new("/meldung", "❗ Neue Meldung")
             },
             [OperationsBotCommands.Settings] = new Dictionary<LanguageCode, TlgBotCommand>
             {

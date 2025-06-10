@@ -160,7 +160,7 @@ public sealed class NewIssueWorkflowInitTests
             basics.inputGenerator.GetValidTlgInputTextMessage(
                 text: Sphere1_AtX2024.Name);
 
-        const string expectedOutput = "Please select the type of issue:";
+        const string expectedOutput = "Please select the type of submission:";
         var expectedNewState = 
             basics.glossary.GetId(typeof(INewIssueTypeSelection<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
