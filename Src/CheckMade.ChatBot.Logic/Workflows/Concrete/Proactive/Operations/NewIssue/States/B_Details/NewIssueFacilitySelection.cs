@@ -6,6 +6,7 @@ using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
@@ -65,9 +66,13 @@ internal sealed record NewIssueFacilitySelection<T>(
         {
             var selectedFacility = currentInput.Details.DomainTerm.GetValueOrThrow();
             
-            return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, 
-                Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+            var currentIssueTypeName =
+                NewIssueUtils.GetLastIssueType(
+                        await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
+                    .Name
+                    .GetTypeNameWithoutGenericParamSuffix();
+            
+            var promptTransition =
                 new PromptTransition(
                     new OutputDto
                     {
@@ -76,7 +81,21 @@ internal sealed record NewIssueFacilitySelection<T>(
                             UiNoTranslate(" "),
                             Glossary.GetUi(selectedFacility)),
                         UpdateExistingOutputMessageId = currentInput.TlgMessageId
-                    }));
+                    });
+            
+            return currentIssueTypeName switch
+            {
+                nameof(Assessment<T>) => 
+                    await WorkflowResponse.CreateFromNextStateAsync(
+                        currentInput,
+                        Mediator.Next(typeof(INewIssueAssessmentRating<T>)),
+                        promptTransition),
+                
+                _ => await WorkflowResponse.CreateFromNextStateAsync(
+                    currentInput, 
+                    Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                    promptTransition) 
+            };
         }
 
         return // on ControlPrompts.Back

@@ -99,6 +99,19 @@ internal sealed record IssueFactory<T>(
                     HandledBy: Option<Role>.None(),
                     Status: GetStatus(),
                     Glossary),
+            
+            nameof(Assessment<T>) =>
+                new Assessment<T>(
+                    Id: GetGuid(),
+                    CreationDate: DateTimeOffset.UtcNow,
+                    Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
+                    Facility: GetLastSelectedFacility(),
+                    Rating: GetAssessmentRating(),
+                    Evidence: GetSubmittedEvidence(),
+                    ReportedBy: role,
+                    HandledBy: Option<Role>.None(), 
+                    Status: GetStatus(),
+                    Glossary),
 
             _ => throw new InvalidOperationException(
                 $"Unhandled {nameof(lastSelectedIssueTypeName)} for {nameof(ITrade)} " +
@@ -216,5 +229,14 @@ internal sealed record IssueFactory<T>(
                 .Select(static dt => (ConsumablesItem)dt.EnumValue!)
                 .ToArray();
         }
+
+        AssessmentRating GetAssessmentRating() =>
+            (AssessmentRating)inputs
+                .Last(i =>
+                    i.InputType == TlgInputType.CallbackQuery &&
+                    i.Details.DomainTerm.IsSome &&
+                    Glossary.GetAll(typeof(AssessmentRating)).Contains(i.Details.DomainTerm.GetValueOrThrow()))
+                .Details.DomainTerm.GetValueOrThrow()
+                .EnumValue!;
     }
 }

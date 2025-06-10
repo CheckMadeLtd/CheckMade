@@ -13,11 +13,13 @@ public sealed record Assessment<T>(
     DateTimeOffset CreationDate,
     ISphereOfAction Sphere,
     IFacility Facility,
+    AssessmentRating Rating,
+    IssueEvidence Evidence,
     Role ReportedBy,
     Option<Role> HandledBy,
     IssueStatus Status,
     IDomainGlossary Glossary) 
-    : ITradeIssueInvolvingFacility<T> where T : ITrade, new()
+    : ITradeIssueInvolvingFacility<T>, IIssueWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {
@@ -25,7 +27,12 @@ public sealed record Assessment<T>(
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
-            [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary)
+            [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
+            [IssueSpecificInfo] = UiConcatenate(
+                Ui("<b>Assessment Rating:</b> "), 
+                Glossary.GetUi(Rating),
+                UiNewLines(1)),
+            [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this),
         }.ToFrozenDictionary();
     }
 }

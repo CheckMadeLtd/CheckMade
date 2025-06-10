@@ -65,6 +65,8 @@ public static class ServiceRegistration
         services.AddScoped<INewIssueEvidenceEntry<SiteCleanTrade>, NewIssueEvidenceEntry<SiteCleanTrade>>();
         services.AddScoped<INewIssueFacilitySelection<SanitaryTrade>, NewIssueFacilitySelection<SanitaryTrade>>();
         services.AddScoped<INewIssueFacilitySelection<SiteCleanTrade>, NewIssueFacilitySelection<SiteCleanTrade>>();
+        services.AddScoped<INewIssueAssessmentRating<SanitaryTrade>, NewIssueAssessmentRating<SanitaryTrade>>();
+        services.AddScoped<INewIssueAssessmentRating<SiteCleanTrade>, NewIssueAssessmentRating<SiteCleanTrade>>();
         services.AddScoped<INewIssueReview<SanitaryTrade>, NewIssueReview<SanitaryTrade>>();
         services.AddScoped<INewIssueReview<SiteCleanTrade>, NewIssueReview<SiteCleanTrade>>();
         services.AddScoped<INewIssueSphereConfirmation<SanitaryTrade>, NewIssueSphereConfirmation<SanitaryTrade>>();

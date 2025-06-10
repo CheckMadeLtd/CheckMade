@@ -20,9 +20,9 @@ CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
 CheckMade.Common.Model	🚫 No	🚫 Nein
 CheckMade.Common.Model	✅ Yes	✅ Ja
 CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
-CheckMade.Common.Model	👎 Bad	👎 Schlecht
-CheckMade.Common.Model	😐 Ok	😐 Ok
-CheckMade.Common.Model	👍 Good	👍 Gut
+CheckMade.Common.Model	(3) 👎 Bad	(3) 👎 Schlecht
+CheckMade.Common.Model	(2) 😐 Ok	(2) 😐 Ok
+CheckMade.Common.Model	(1) 👍 Good	(1) 👍 Gut
 CheckMade.Common.Model	Sanitary-Admin	Sanitär-Admin
 CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
 CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
@@ -81,15 +81,15 @@ CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
 CheckMade.ChatBot.Logic	❗ General	❗ Sonstiges
-CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
-CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
-CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
-CheckMade.ChatBot.Logic	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
-CheckMade.ChatBot.Logic	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
-CheckMade.ChatBot.Logic	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
-CheckMade.ChatBot.Logic	in their role as 	in der Rolle 
-CheckMade.ChatBot.Logic	<b>Current status:</b> 	<b>Aktueller Status:</b> 
-CheckMade.ChatBot.Logic	Affected consumables: 	Betroffene Verbrauchsartikel: 
+CheckMade.Common.Model	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
+CheckMade.Common.Model	<b>Description:</b> 	<b>Beschreibung:</b> 
+CheckMade.Common.Model	<b># Attachments:</b> 	<b>Anhänge:</b> 
+CheckMade.Common.Model	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
+CheckMade.Common.Model	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
+CheckMade.Common.Model	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
+CheckMade.Common.Model	in their role as 	in der Rolle 
+CheckMade.Common.Model	<b>Current status:</b> 	<b>Aktueller Status:</b> 
+CheckMade.Common.Model	<b>Affected consumables:</b> 	<b>Betroffene Verbrauchsartikel:</b> 
 CheckMade.ChatBot.Logic	✏️ Drafting	✏️ Entwurf
 CheckMade.ChatBot.Logic	📤️ Reported	📤️ Gemeldet
 CheckMade.ChatBot.Logic	⏳ In Progress	⏳ In Bearbeitung
@@ -104,3 +104,5 @@ CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
 CheckMade.Common.Model	📋 Assessment	📋 Bewertung
+CheckMade.Common.Model	<b>Assessment Rating:</b> 	<b>Bewertungsergebnis:</b> 
+CheckMade.ChatBot.Logic	Provide rating:	Bewertung angeben:

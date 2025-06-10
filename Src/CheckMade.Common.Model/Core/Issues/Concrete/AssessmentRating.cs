@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Model.Core.Issues.Concrete;
 
-public enum IssueRating
+public enum AssessmentRating
 {
     Good,
     Ok,

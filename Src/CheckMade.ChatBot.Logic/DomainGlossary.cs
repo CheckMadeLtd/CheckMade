@@ -85,6 +85,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueFacilitySelection<SanitaryTrade>), "DWIY4L");
         AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7");
         
+        AddTerm(typeof(INewIssueAssessmentRating<SanitaryTrade>), "D1K6AS");
+        AddTerm(typeof(INewIssueAssessmentRating<SiteCleanTrade>), "DCQGAL");
+
         AddTerm(typeof(INewIssueReview<SanitaryTrade>), "DAH8TX");
         AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY");
         
@@ -120,8 +123,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(StaffIssue<SanitaryTrade>), "D9MRJ9", Ui("🙋 Staff"));
         AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
         
-        AddTerm(typeof(Assessment<SanitaryTrade>), "440IA", Ui("📋 Assessment"));
-        AddTerm(typeof(Assessment<SiteCleanTrade>), "JOMJN", Ui("📋 Assessment"));
+        AddTerm(typeof(Assessment<SanitaryTrade>), "D440IA", Ui("📋 Assessment"));
+        AddTerm(typeof(Assessment<SiteCleanTrade>), "DJOMJN", Ui("📋 Assessment"));
         
         AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
         AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
@@ -130,9 +133,9 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
-        AddTerm(IssueRating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
-        AddTerm(IssueRating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
-        AddTerm(IssueRating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
+        AddTerm(AssessmentRating.Good, "DYOY4X", Ui("(1) 👍 Good"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", Ui("(2) 😐 Ok"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", Ui("(3) 👎 Bad"));
         
         #endregion
         

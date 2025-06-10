@@ -34,7 +34,7 @@ public sealed record ConsumablesIssue<T>(
     private UiString FormatConsumableItems()
     {
         return UiConcatenate(
-            Ui("Affected consumables: "),
+            Ui("<b>Affected consumables:</b> "),
             Glossary.GetUi(AffectedItems
                 .Select(static ai => (Enum)ai)
                 .ToImmutableArray()));
