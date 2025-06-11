@@ -64,7 +64,7 @@ public sealed class WorkflowIdentifierTests
         
         var inputWithNewIssueBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
             Operations, 
-            (int)OperationsBotCommands.NewIssue);
+            (int)OperationsBotCommands.NewSubmission);
         
         var workflow = await workflowIdentifier
             .IdentifyAsync([inputWithNewIssueBotCommand]);

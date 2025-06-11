@@ -148,7 +148,7 @@ internal static class NewSubmissionUtils
                     .Value);
     }
 
-    internal static Type GetLastIssueType(IReadOnlyCollection<TlgInput> inputs)
+    internal static Type GetLastSubmissionType(IReadOnlyCollection<TlgInput> inputs)
     {
         return 
             inputs

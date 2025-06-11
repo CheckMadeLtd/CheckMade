@@ -53,7 +53,7 @@ internal sealed record WorkflowIdentifier(
             { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
+                    (int)OperationsBotCommands.NewSubmission => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             

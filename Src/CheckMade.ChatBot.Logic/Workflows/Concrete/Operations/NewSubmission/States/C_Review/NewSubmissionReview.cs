@@ -42,8 +42,8 @@ internal sealed record NewSubmissionReview<T>(
         var updatedHistoryWithGuid = 
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         
-        var issue = await Factory.CreateAsync(updatedHistoryWithGuid);
-        var summary = issue.GetSummary();
+        var submission = await Factory.CreateAsync(updatedHistoryWithGuid);
+        var summary = submission.GetSummary();
 
         List<OutputDto> outputs =
         [
@@ -113,14 +113,14 @@ internal sealed record NewSubmissionReview<T>(
                             Glossary.GetId(typeof(INewSubmissionSucceeded<T>)))
                     });
             
-            var currentIssueTypeName =
-                NewSubmissionUtils.GetLastIssueType(historyWithUpdatedCurrentInput)
+            var currentSubmissionTypeName =
+                NewSubmissionUtils.GetLastSubmissionType(historyWithUpdatedCurrentInput)
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
 
             return await Reporter.GetNewIssueNotificationsAsync(
                 historyWithUpdatedCurrentInput, 
-                currentIssueTypeName);
+                currentSubmissionTypeName);
         }
         
         async Task<Guid> GetLastGuidAsync()

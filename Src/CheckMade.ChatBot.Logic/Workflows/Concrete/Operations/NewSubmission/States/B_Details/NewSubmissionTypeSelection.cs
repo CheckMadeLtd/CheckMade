@@ -29,7 +29,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleType = currentInput.OriginatorRole.GetValueOrThrow().RoleType;
-        var skipCleaningRelatedIssues = currentRoleType is TradeTeamLead<T>; 
+        var skipCleaningRelatedSubmissions = currentRoleType is TradeTeamLead<T>; 
         
         List<OutputDto> outputs =
         [
@@ -39,7 +39,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeSubmission<T>))
-                        .SkipWhile(dt => skipCleaningRelatedIssues && 
+                        .SkipWhile(dt => skipCleaningRelatedSubmissions && 
                                          (dt.TypeValue == typeof(CleaningIssue<T>) ||
                                           dt.TypeValue == typeof(Assessment<T>)))
                         .ToImmutableArray()),
@@ -61,7 +61,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
 
         if (currentInput.Details.DomainTerm.IsSome)
         {
-            var issueTypeName = 
+            var submissionTypeName = 
                 currentInput.Details.DomainTerm.GetValueOrThrow()
                     .TypeValue!.Name
                     .GetTypeNameWithoutGenericParamSuffix();
@@ -77,7 +77,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
                         UpdateExistingOutputMessageId = currentInput.TlgMessageId
                     });
             
-            return issueTypeName switch
+            return submissionTypeName switch
             {
                 nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) or nameof(Assessment<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
@@ -98,7 +98,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
                         promptTransition),
                 
                 _ => throw new InvalidOperationException(
-                    $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{issueTypeName}'")
+                    $"Unhandled {nameof(currentInput.Details.DomainTerm)}: '{submissionTypeName}'")
             };
         }
 

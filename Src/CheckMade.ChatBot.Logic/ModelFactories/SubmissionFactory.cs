@@ -34,12 +34,12 @@ internal sealed record SubmissionFactory<T>(
                 inputs.Last().LiveEventContext.GetValueOrThrow(),
                 LiveEventsRepo);
         
-        var lastSelectedIssueTypeName =
-            GetLastIssueType(inputs)
+        var lastSelectedSubmissionTypeName =
+            GetLastSubmissionType(inputs)
                 .Name
                 .GetTypeNameWithoutGenericParamSuffix();
 
-        ISubmission submission = lastSelectedIssueTypeName switch
+        ISubmission submission = lastSelectedSubmissionTypeName switch
         {
             nameof(GeneralIssue<T>) =>
                 new GeneralIssue<T>(
@@ -100,8 +100,8 @@ internal sealed record SubmissionFactory<T>(
                     Glossary),
 
             _ => throw new InvalidOperationException(
-                $"Unhandled {nameof(lastSelectedIssueTypeName)} for {nameof(ITrade)} " +
-                $"'{currentTrade.GetType().Name}': '{lastSelectedIssueTypeName}'")
+                $"Unhandled {nameof(lastSelectedSubmissionTypeName)} for {nameof(ITrade)} " +
+                $"'{currentTrade.GetType().Name}': '{lastSelectedSubmissionTypeName}'")
         };
 
         return submission;

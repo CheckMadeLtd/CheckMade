@@ -158,7 +158,7 @@ public sealed class ToModelConverterTests
     }
     
     [Theory]
-    [InlineData(OperationsBotCommands.NewIssue)]
+    [InlineData(OperationsBotCommands.NewSubmission)]
     // [InlineData(OperationsBotCommands.NewAssessment)]
     [InlineData(OperationsBotCommands.Settings)]
     [InlineData(OperationsBotCommands.Logout)]

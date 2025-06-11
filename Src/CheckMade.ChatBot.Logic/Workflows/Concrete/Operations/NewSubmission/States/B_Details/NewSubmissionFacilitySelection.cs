@@ -66,8 +66,8 @@ internal sealed record NewSubmissionFacilitySelection<T>(
         {
             var selectedFacility = currentInput.Details.DomainTerm.GetValueOrThrow();
             
-            var currentIssueTypeName =
-                NewSubmissionUtils.GetLastIssueType(
+            var currentSubmissionTypeName =
+                NewSubmissionUtils.GetLastSubmissionType(
                         await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
@@ -83,7 +83,7 @@ internal sealed record NewSubmissionFacilitySelection<T>(
                         UpdateExistingOutputMessageId = currentInput.TlgMessageId
                     });
             
-            return currentIssueTypeName switch
+            return currentSubmissionTypeName switch
             {
                 nameof(Assessment<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(

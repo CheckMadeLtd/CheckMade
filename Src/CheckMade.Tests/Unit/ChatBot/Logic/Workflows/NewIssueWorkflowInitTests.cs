@@ -31,7 +31,7 @@ public sealed class NewIssueWorkflowInitTests
 
         var currentInput = basics.inputGenerator.GetValidTlgInputCommandMessage(
             tlgAgent.Mode,
-            (int)OperationsBotCommands.NewIssue,
+            (int)OperationsBotCommands.NewSubmission,
             roleSpecified: currentRole);
 
         const string expectedOutput = "Please select a Trade:";
@@ -72,7 +72,7 @@ public sealed class NewIssueWorkflowInitTests
         var currentInput = 
             basics.inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode, 
-                (int)OperationsBotCommands.NewIssue);
+                (int)OperationsBotCommands.NewSubmission);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
         var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>));
@@ -118,7 +118,7 @@ public sealed class NewIssueWorkflowInitTests
         var currentInput = 
             basics.inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode, 
-                (int)OperationsBotCommands.NewIssue);
+                (int)OperationsBotCommands.NewSubmission);
         
         const string expectedOutput = "Please select a ";
         var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>));
@@ -147,7 +147,7 @@ public sealed class NewIssueWorkflowInitTests
         List<TlgInput> interactiveHistory = [
             basics.inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewIssue,
+                (int)OperationsBotCommands.NewSubmission,
                 resultantWorkflowState: new ResultantWorkflowState(
                     basics.glossary.GetId(typeof(NewSubmissionWorkflow)),
                     basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>))))];
