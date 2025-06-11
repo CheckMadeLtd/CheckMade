@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 
-public sealed class NewIssueWorkflowInitTests
+public sealed class NewSubmissionWorkflowInitTests
 {
     private ServiceProvider? _services;
     
@@ -137,7 +137,7 @@ public sealed class NewIssueWorkflowInitTests
     }
 
     [Fact]
-    public async Task GetResponseAsync_PromptsIssueTypeSelection_WhenSphereConfirmed()
+    public async Task GetResponseAsync_PromptsSubmissionTypeSelection_WhenSphereConfirmed()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     

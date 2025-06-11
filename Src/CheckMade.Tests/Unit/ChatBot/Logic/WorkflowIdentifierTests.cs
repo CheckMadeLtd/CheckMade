@@ -55,19 +55,19 @@ public sealed class WorkflowIdentifierTests
     }
 
     [Fact]
-    public async Task Identify_ReturnsNewIssueWorkflow_OnCorrespondingBotCommand()
+    public async Task Identify_ReturnsNewSubmissionWorkflow_OnCorrespondingBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithNewIssueBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputWithNewSubmissionBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.NewSubmission);
         
         var workflow = await workflowIdentifier
-            .IdentifyAsync([inputWithNewIssueBotCommand]);
+            .IdentifyAsync([inputWithNewSubmissionBotCommand]);
         
         Assert.True(
             workflow.GetValueOrThrow() is NewSubmissionWorkflow);
