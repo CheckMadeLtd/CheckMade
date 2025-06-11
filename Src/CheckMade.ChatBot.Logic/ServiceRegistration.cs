@@ -29,8 +29,8 @@ public static class ServiceRegistration
         services.AddScoped<IGeneralWorkflowUtils, GeneralWorkflowUtils>();
         services.AddScoped<IStateMediator, StateMediator>();
 
-        services.AddScoped<IIssueFactory<SanitaryTrade>, IssueFactory<SanitaryTrade>>();
-        services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
+        services.AddScoped<ISubmissionFactory<SanitaryTrade>, SubmissionFactory<SanitaryTrade>>();
+        services.AddScoped<ISubmissionFactory<SiteCleanTrade>, SubmissionFactory<SiteCleanTrade>>();
 
         services.AddScoped<UserAuthWorkflow>();
         services.AddScoped<NewSubmissionWorkflow>();

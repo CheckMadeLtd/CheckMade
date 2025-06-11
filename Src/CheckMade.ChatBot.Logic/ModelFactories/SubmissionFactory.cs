@@ -17,11 +17,11 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 
-internal sealed record IssueFactory<T>(
+internal sealed record SubmissionFactory<T>(
     ILiveEventsRepository LiveEventsRepo,
     IRolesRepository RolesRepo,
     IDomainGlossary Glossary) 
-    : IIssueFactory<T> where T : ITrade, new()
+    : ISubmissionFactory<T> where T : ITrade, new()
 {
     public async Task<ISubmission> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {

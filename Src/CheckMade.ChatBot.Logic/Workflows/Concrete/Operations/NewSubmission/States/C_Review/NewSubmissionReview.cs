@@ -23,7 +23,7 @@ internal sealed record NewSubmissionReview<T>(
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
-    IIssueFactory<T> Factory,
+    ISubmissionFactory<T> Factory,
     ITlgInputsRepository InputsRepo,
     IStakeholderReporter<T> Reporter) 
     : INewSubmissionReview<T> where T : ITrade, new()

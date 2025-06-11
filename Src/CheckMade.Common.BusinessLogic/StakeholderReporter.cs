@@ -19,14 +19,14 @@ namespace CheckMade.Common.BusinessLogic;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
-    IIssueFactory<T> IssueFactory) 
+    ISubmissionFactory<T> SubmissionFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
     {
         var newIssue = 
-            await IssueFactory.CreateAsync(inputHistory); 
+            await SubmissionFactory.CreateAsync(inputHistory); 
         var completeIssueSummary = 
             newIssue.GetSummary();
         var recipients = 
