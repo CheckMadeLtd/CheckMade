@@ -87,12 +87,12 @@ internal sealed record NewIssueTradeSelection(
             {
                 SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueSphereSelection<SanitaryTrade>)),
+                    Mediator.Next(typeof(INewSubmissionSphereSelection<SanitaryTrade>)),
                     promptTransition),
                 
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueSphereSelection<SiteCleanTrade>)),
+                    Mediator.Next(typeof(INewSubmissionSphereSelection<SiteCleanTrade>)),
                     promptTransition),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedTrade)}: " +

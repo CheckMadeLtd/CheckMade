@@ -121,7 +121,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please select a ";
-        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereSelection<SanitaryTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =
@@ -150,7 +150,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowState: new ResultantWorkflowState(
                     basics.glossary.GetId(typeof(NewIssueWorkflow)),
-                    basics.glossary.GetId(typeof(INewIssueSphereSelection<SanitaryTrade>))))];
+                    basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>))))];
         
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(

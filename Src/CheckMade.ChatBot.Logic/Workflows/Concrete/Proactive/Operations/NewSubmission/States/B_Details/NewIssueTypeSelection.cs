@@ -105,7 +105,7 @@ internal sealed record NewIssueTypeSelection<T>(
         return // on ControlPrompts.Back 
             await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput, 
-                Mediator.Next(typeof(INewIssueSphereSelection<T>)),
+                Mediator.Next(typeof(INewSubmissionSphereSelection<T>)),
                 new PromptTransition(true));
     }
 }

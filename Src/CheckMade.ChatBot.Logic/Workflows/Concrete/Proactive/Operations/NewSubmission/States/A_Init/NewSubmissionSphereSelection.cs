@@ -14,15 +14,15 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.New
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.A_Init;
 
-internal interface INewIssueSphereSelection<T> : IWorkflowStateNormal where T : ITrade, new();
+internal interface INewSubmissionSphereSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewIssueSphereSelection<T> : INewIssueSphereSelection<T> where T : ITrade, new()
+internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelection<T> where T : ITrade, new()
 {
     private readonly ILiveEventsRepository _liveEventsRepo;
     private readonly ITrade _trade;
     private readonly ITlgAgentRoleBindingsRepository _roleBindingsRepo;
     
-    public NewIssueSphereSelection(
+    public NewSubmissionSphereSelection(
         ILiveEventsRepository liveEventsRepo,
         IDomainGlossary glossary,
         IStateMediator mediator, 

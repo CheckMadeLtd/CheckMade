@@ -63,8 +63,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(NewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");
         
-        AddTerm(typeof(INewIssueSphereSelection<SanitaryTrade>), "D8T63V");
-        AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL");
+        AddTerm(typeof(INewSubmissionSphereSelection<SanitaryTrade>), "D8T63V");
+        AddTerm(typeof(INewSubmissionSphereSelection<SiteCleanTrade>), "DYRNZL");
         
         AddTerm(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>), "D45JQ1");
         AddTerm(typeof(INewSubmissionSphereConfirmation<SiteCleanTrade>), "DI6GGV");
