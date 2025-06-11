@@ -72,7 +72,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueTypeSelection<SanitaryTrade>), "DDQHWW");
         AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2");
         
-        AddTerm(typeof(INewIssueConsumablesSelection<SanitaryTrade>), "DWBYSV");
+        AddTerm(typeof(INewSubmissionConsumablesSelection<SanitaryTrade>), "DWBYSV");
         
         AddTerm(typeof(INewIssueEvidenceEntry<SanitaryTrade>), "DKUR0Z");
         AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44");

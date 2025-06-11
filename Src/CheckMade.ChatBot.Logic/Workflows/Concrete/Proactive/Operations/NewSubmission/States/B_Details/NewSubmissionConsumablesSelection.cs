@@ -15,14 +15,14 @@ using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.New
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.B_Details;
 
-internal interface INewIssueConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
+internal interface INewSubmissionConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewIssueConsumablesSelection<T>(
+internal sealed record NewSubmissionConsumablesSelection<T>(
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     ILiveEventsRepository LiveEventsRepo) 
-    : INewIssueConsumablesSelection<T> where T : ITrade, new()
+    : INewSubmissionConsumablesSelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 

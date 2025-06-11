@@ -32,9 +32,9 @@ internal sealed record NewIssueEditMenu<T>(
         List<DomainTerm> editMenu = [];
 
         if (workflowStateHistory
-            .Contains(Glossary.GetId(typeof(INewIssueConsumablesSelection<T>))))
+            .Contains(Glossary.GetId(typeof(INewSubmissionConsumablesSelection<T>))))
         {
-            editMenu.Add(Dt(typeof(INewIssueConsumablesSelection<T>)));
+            editMenu.Add(Dt(typeof(INewSubmissionConsumablesSelection<T>)));
         }
         
         // ReSharper disable once UnusedVariable
