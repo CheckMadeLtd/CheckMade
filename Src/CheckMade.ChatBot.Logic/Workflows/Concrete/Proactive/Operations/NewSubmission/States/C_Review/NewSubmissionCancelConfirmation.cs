@@ -55,7 +55,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                     {
                         Text = Ui("Cancelled.")
                     },
-                    newState: Mediator.GetTerminator(typeof(INewIssueCancelled<T>)),
+                    newState: Mediator.GetTerminator(typeof(INewSubmissionCancelled<T>)),
                     promptTransition: new PromptTransition(currentInput.TlgMessageId)),
             
             (long)ControlPrompts.No =>

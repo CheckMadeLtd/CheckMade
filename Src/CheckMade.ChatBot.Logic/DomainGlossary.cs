@@ -95,8 +95,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewSubmissionCancelConfirmation<SanitaryTrade>), "DL69OL");
         AddTerm(typeof(INewSubmissionCancelConfirmation<SiteCleanTrade>), "DNLJMN");
         
-        AddTerm(typeof(INewIssueCancelled<SanitaryTrade>), "DN1KAK");
-        AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");
+        AddTerm(typeof(INewSubmissionCancelled<SanitaryTrade>), "DN1KAK");
+        AddTerm(typeof(INewSubmissionCancelled<SiteCleanTrade>), "DR8REC");
 
         #endregion
         
