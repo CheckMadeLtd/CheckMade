@@ -112,19 +112,19 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(GeneralIssue<SanitaryTrade>), "DVGI3N", Ui("❗ General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
         
-        AddTerm(typeof(CleaningIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleaning"));
-        AddTerm(typeof(CleaningIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleaning"));
+        AddTerm(typeof(CleaningIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleaning Issue"));
+        AddTerm(typeof(CleaningIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleaning Issue"));
         
-        AddTerm(typeof(TechnicalIssue<SanitaryTrade>), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical"));
+        AddTerm(typeof(TechnicalIssue<SanitaryTrade>), "DM46NG", Ui("🔧 Technical Issue"));
+        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical Issue"));
         
         AddTerm(typeof(ConsumablesIssue<SanitaryTrade>), "D582QJ", Ui("🗄 Missing Consumables"));
         
         AddTerm(typeof(StaffIssue<SanitaryTrade>), "D9MRJ9", Ui("🙋 Staff"));
         AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
         
-        AddTerm(typeof(Assessment<SanitaryTrade>), "D440IA", Ui("📋 Assessment"));
-        AddTerm(typeof(Assessment<SiteCleanTrade>), "DJOMJN", Ui("📋 Assessment"));
+        AddTerm(typeof(Assessment<SanitaryTrade>), "D440IA", Ui("📋 Cleaning Assessment"));
+        AddTerm(typeof(Assessment<SiteCleanTrade>), "DJOMJN", Ui("📋 Cleaning Assessment"));
         
         AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
         AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
@@ -134,8 +134,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
         AddTerm(AssessmentRating.Good, "DYOY4X", Ui("(1) 👍 Good"));
-        AddTerm(AssessmentRating.Ok, "D8WD05", Ui("(2) 😐 Ok"));
-        AddTerm(AssessmentRating.Bad, "DGUVKZ", Ui("(3) 👎 Bad"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", Ui("(2) 😐 Not Good"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", Ui("(3) 👎 Disastrous"));
         
         #endregion
         

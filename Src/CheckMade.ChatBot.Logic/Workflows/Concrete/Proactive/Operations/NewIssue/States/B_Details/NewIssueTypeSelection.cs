@@ -28,7 +28,7 @@ internal sealed record NewIssueTypeSelection<T>(
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleType = currentInput.OriginatorRole.GetValueOrThrow().RoleType;
-        var skipCleaningIssue = currentRoleType is TradeTeamLead<T>; 
+        var skipCleaningRelatedIssues = currentRoleType is TradeTeamLead<T>; 
         
         List<OutputDto> outputs =
         [
@@ -38,7 +38,9 @@ internal sealed record NewIssueTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeIssue<T>))
-                        .SkipWhile(dt => dt.TypeValue == typeof(CleaningIssue<T>) && skipCleaningIssue)
+                        .SkipWhile(dt => skipCleaningRelatedIssues && 
+                                         (dt.TypeValue == typeof(CleaningIssue<T>) ||
+                                          dt.TypeValue == typeof(Assessment<T>)))
                         .ToImmutableArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back

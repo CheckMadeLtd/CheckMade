@@ -19,16 +19,16 @@ CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
 CheckMade.Common.Model	🚫 No	🚫 Nein
 CheckMade.Common.Model	✅ Yes	✅ Ja
 CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
-CheckMade.Common.Model	(3) 👎 Bad	(3) 👎 Schlecht
-CheckMade.Common.Model	(2) 😐 Ok	(2) 😐 Ok
+CheckMade.Common.Model	(3) 👎 Disastrous	(3) 👎 Katastrophal
+CheckMade.Common.Model	(2) 😐 Not Good	(2) 😐 Nicht gut
 CheckMade.Common.Model	(1) 👍 Good	(1) 👍 Gut
 CheckMade.Common.Model	Sanitary-Admin	Sanitär-Admin
 CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
 CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
 CheckMade.Common.Model	Sanitary-CleanLead	Sanitär-Reinigungsvorarbeiter
 CheckMade.Common.Model	Sanitary-Observer	Sanitär-Beobachter
-CheckMade.Common.Model	🪣 Cleaning	🪣 Reinigung
-CheckMade.Common.Model	🔧 Technical	🔧 Technik
+CheckMade.Common.Model	🪣 Cleaning Issue	🪣 Reinigungsproblem
+CheckMade.Common.Model	🔧 Technical Issue	🔧 Technikproblem
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
@@ -102,6 +102,6 @@ CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new submis
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
-CheckMade.Common.Model	📋 Assessment	📋 Bewertung
+CheckMade.Common.Model	📋 Cleaning Assessment	📋 Reinigungsbewertung
 CheckMade.Common.Model	<b>Assessment Rating:</b> 	<b>Bewertungsergebnis:</b> 
 CheckMade.ChatBot.Logic	Provide rating:	Bewertung angeben:
