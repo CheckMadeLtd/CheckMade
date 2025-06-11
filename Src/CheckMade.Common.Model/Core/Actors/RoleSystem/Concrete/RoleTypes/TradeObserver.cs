@@ -9,6 +9,6 @@ public sealed record TradeObserver<T> : IRoleType where T : ITrade, new()
     public Option<ITrade> GetTradeInstance() => new T();
     public Option<Type> GetTradeType() => typeof(T);
 
-    public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
-        IssueSummaryCategories.All;
+    public SubmissionSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
+        SubmissionSummaryCategories.All;
 }

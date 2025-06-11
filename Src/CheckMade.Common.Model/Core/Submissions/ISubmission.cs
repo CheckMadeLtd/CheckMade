@@ -14,5 +14,5 @@ public interface ISubmission
     
     IDomainGlossary Glossary { get; }
 
-    IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary();
+    IReadOnlyDictionary<SubmissionSummaryCategories, UiString> GetSummary();
 }

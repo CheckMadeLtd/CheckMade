@@ -5,7 +5,7 @@ using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.Core.Submissions.Concrete.IssueSummaryCategories;
+using static CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionSummaryCategories;
 
 namespace CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
 
@@ -18,13 +18,13 @@ public sealed record ConsumablesIssue<T>(
     IDomainGlossary Glossary) 
     : ITradeSubmission<T> where T : ITrade, new()
 {
-    public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
+    public IReadOnlyDictionary<SubmissionSummaryCategories, UiString> GetSummary()
     {
-        return new Dictionary<IssueSummaryCategories, UiString>
+        return new Dictionary<SubmissionSummaryCategories, UiString>
         {
             [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
-            [IssueSpecificInfo] = FormatConsumableItems()
+            [SubmissionTypeSpecificInfo] = FormatConsumableItems()
         }.ToFrozenDictionary();
     }
 

@@ -49,7 +49,7 @@ public sealed record StakeholderReporter<T>(
                 ? issueWithEvidence.Evidence.Attachments 
                 : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
-        UiString GetNotificationOutput(Func<KeyValuePair<IssueSummaryCategories, UiString>, bool> summaryFilter)
+        UiString GetNotificationOutput(Func<KeyValuePair<SubmissionSummaryCategories, UiString>, bool> summaryFilter)
         {
             return 
                 UiConcatenate(

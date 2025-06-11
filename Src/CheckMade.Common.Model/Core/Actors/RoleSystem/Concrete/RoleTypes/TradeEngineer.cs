@@ -9,6 +9,6 @@ public sealed record TradeEngineer<T> : IRoleType where T : ITrade, new()
     public Option<ITrade> GetTradeInstance() => new T();
     public Option<Type> GetTradeType() => typeof(T);
 
-    public IssueSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
-        IssueSummaryCategories.AllExceptOperationalInfo;
+    public SubmissionSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
+        SubmissionSummaryCategories.AllExceptOperationalInfo;
 }
