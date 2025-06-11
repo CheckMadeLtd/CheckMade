@@ -116,7 +116,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                     (long)ControlPrompts.Skip or (long)ControlPrompts.Continue =>
                         await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, 
-                            Mediator.Next(typeof(INewIssueReview<T>)),
+                            Mediator.Next(typeof(INewSubmissionReview<T>)),
                             new PromptTransition(currentInput.TlgMessageId)),
             
                     (long)ControlPrompts.Back => 

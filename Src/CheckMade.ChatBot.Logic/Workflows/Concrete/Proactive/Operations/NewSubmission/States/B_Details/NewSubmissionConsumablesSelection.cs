@@ -76,7 +76,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
             (long)ControlPrompts.Save =>
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueReview<T>)),
+                    Mediator.Next(typeof(INewSubmissionReview<T>)),
                     new PromptTransition(
                         new OutputDto
                         {

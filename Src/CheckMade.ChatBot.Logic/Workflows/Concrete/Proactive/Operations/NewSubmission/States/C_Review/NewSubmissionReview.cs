@@ -17,16 +17,16 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.C_Review;
 
-internal interface INewIssueReview<T> : IWorkflowStateNormal where T : ITrade, new();
+internal interface INewSubmissionReview<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewIssueReview<T>(
+internal sealed record NewSubmissionReview<T>(
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IIssueFactory<T> Factory,
     ITlgInputsRepository InputsRepo,
     IStakeholderReporter<T> Reporter) 
-    : INewIssueReview<T> where T : ITrade, new()
+    : INewSubmissionReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
     
