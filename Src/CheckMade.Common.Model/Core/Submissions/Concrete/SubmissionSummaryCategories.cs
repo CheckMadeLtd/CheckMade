@@ -13,6 +13,6 @@ public enum SubmissionSummaryCategories
     SubmissionTypeSpecificInfo = 1 << 4,
     EvidenceInfo = 1 << 5,
     
-    AllExceptOperationalInfo = CommonBasics | FacilityInfo | EvidenceInfo | SubmissionTypeSpecificInfo,
-    All = CommonBasics | OperationalInfo | FacilityInfo | EvidenceInfo | SubmissionTypeSpecificInfo
+    AllExceptOperationalInfo = CommonBasics | FacilityInfo | SubmissionTypeSpecificInfo | EvidenceInfo,
+    All = OperationalInfo | CommonBasics | FacilityInfo | SubmissionTypeSpecificInfo | EvidenceInfo
 }
