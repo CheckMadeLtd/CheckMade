@@ -101,7 +101,7 @@ internal sealed record NewSubmissionFacilitySelection<T>(
         return // on ControlPrompts.Back
             await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput,
-                Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                 new PromptTransition(true));
     }
 }

@@ -77,7 +77,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
             (long)ControlPrompts.Yes => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                    Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                     new PromptTransition(
                         new OutputDto
                         {

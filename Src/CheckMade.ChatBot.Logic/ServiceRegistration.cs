@@ -68,8 +68,8 @@ public static class ServiceRegistration
         services.AddScoped<INewSubmissionSphereConfirmation<SiteCleanTrade>, NewSubmissionSphereConfirmation<SiteCleanTrade>>();
         services.AddScoped<INewSubmissionSphereSelection<SanitaryTrade>, NewSubmissionSphereSelection<SanitaryTrade>>();
         services.AddScoped<INewSubmissionSphereSelection<SiteCleanTrade>, NewSubmissionSphereSelection<SiteCleanTrade>>();
-        services.AddScoped<INewIssueTypeSelection<SanitaryTrade>, NewIssueTypeSelection<SanitaryTrade>>();
-        services.AddScoped<INewIssueTypeSelection<SiteCleanTrade>, NewIssueTypeSelection<SiteCleanTrade>>();
+        services.AddScoped<INewSubmissionTypeSelection<SanitaryTrade>, NewSubmissionTypeSelection<SanitaryTrade>>();
+        services.AddScoped<INewSubmissionTypeSelection<SiteCleanTrade>, NewSubmissionTypeSelection<SiteCleanTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SanitaryTrade>, NewIssueSubmissionSucceeded<SanitaryTrade>>();
         services.AddScoped<INewIssueSubmissionSucceeded<SiteCleanTrade>, NewIssueSubmissionSucceeded<SiteCleanTrade>>();
     }

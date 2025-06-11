@@ -90,7 +90,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
             (long)ControlPrompts.Back => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueTypeSelection<T>)),
+                    Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                     new PromptTransition(true)),
             
             _ => throw new InvalidOperationException(

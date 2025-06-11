@@ -162,7 +162,7 @@ public sealed class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select the type of submission:";
         var expectedNewState = 
-            basics.glossary.GetId(typeof(INewIssueTypeSelection<SanitaryTrade>));
+            basics.glossary.GetId(typeof(INewSubmissionTypeSelection<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =

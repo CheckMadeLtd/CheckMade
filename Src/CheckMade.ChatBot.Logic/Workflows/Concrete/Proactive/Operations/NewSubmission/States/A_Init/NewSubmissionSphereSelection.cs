@@ -80,6 +80,6 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
 
         return await WorkflowResponse.CreateFromNextStateAsync(
             currentInput, 
-            Mediator.Next(typeof(INewIssueTypeSelection<T>)));
+            Mediator.Next(typeof(INewSubmissionTypeSelection<T>)));
     }
 }
