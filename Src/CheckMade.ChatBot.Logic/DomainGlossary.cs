@@ -66,8 +66,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueSphereSelection<SanitaryTrade>), "D8T63V");
         AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL");
         
-        AddTerm(typeof(INewIssueSphereConfirmation<SanitaryTrade>), "D45JQ1");
-        AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV");
+        AddTerm(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>), "D45JQ1");
+        AddTerm(typeof(INewSubmissionSphereConfirmation<SiteCleanTrade>), "DI6GGV");
         
         AddTerm(typeof(INewIssueTypeSelection<SanitaryTrade>), "DDQHWW");
         AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2");

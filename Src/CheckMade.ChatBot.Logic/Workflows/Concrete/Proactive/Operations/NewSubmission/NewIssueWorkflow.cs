@@ -48,9 +48,9 @@ internal sealed record NewIssueWorkflow(
             _ => trade switch
             {
                 SanitaryTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SanitaryTrade>))),
+                    currentInput, Mediator.Next(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>))),
                 SiteCleanTrade => WorkflowResponse.CreateFromNextStateAsync(
-                    currentInput, Mediator.Next(typeof(INewIssueSphereConfirmation<SiteCleanTrade>))),
+                    currentInput, Mediator.Next(typeof(INewSubmissionSphereConfirmation<SiteCleanTrade>))),
                 _ => throw new InvalidOperationException($"Unhandled {nameof(trade)}: '{trade}'")
             },
             () => trade switch

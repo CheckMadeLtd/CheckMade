@@ -75,7 +75,7 @@ public sealed class NewIssueWorkflowInitTests
                 (int)OperationsBotCommands.NewIssue);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
-        var expectedNewState = basics.glossary.GetId(typeof(INewIssueSphereConfirmation<SanitaryTrade>));
+        var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =
