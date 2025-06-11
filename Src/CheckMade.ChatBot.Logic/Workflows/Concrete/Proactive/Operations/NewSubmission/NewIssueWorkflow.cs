@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -7,9 +7,9 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.NewIssueUtils;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission;
 
 internal sealed record NewIssueWorkflow(
     ILiveEventsRepository LiveEventsRepo,

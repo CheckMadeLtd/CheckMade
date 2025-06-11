@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -8,9 +8,10 @@ using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
+
 // ReSharper disable UseCollectionExpression
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.C_Review;
 
 internal interface INewIssueCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 

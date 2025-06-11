@@ -13,7 +13,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Utils.GIS;
 
-namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
+namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission;
 
 internal static class NewIssueUtils
 {
