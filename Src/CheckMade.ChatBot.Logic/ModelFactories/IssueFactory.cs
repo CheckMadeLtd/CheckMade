@@ -150,7 +150,7 @@ internal sealed record IssueFactory<T>(
             return (IFacility)Activator.CreateInstance(lastFacilityType)!;
         }
 
-        IssueEvidence GetSubmittedEvidence()
+        SubmissionEvidence GetSubmittedEvidence()
         {
             var combinedDescriptionEvidence = new StringBuilder();
 
@@ -195,7 +195,7 @@ internal sealed record IssueFactory<T>(
 
             var combinedDescription = combinedDescriptionEvidence.ToString();
             
-            return new IssueEvidence
+            return new SubmissionEvidence
             {
                 Description = !string.IsNullOrWhiteSpace(combinedDescription)
                     ? combinedDescription

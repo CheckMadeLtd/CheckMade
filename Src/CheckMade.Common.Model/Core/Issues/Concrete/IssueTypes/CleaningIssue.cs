@@ -13,7 +13,7 @@ public sealed record CleaningIssue<T>(
     DateTimeOffset CreationDate,
     ISphereOfAction Sphere,
     IFacility Facility,
-    IssueEvidence Evidence,
+    SubmissionEvidence Evidence,
     Role ReportedBy,
     Option<Role> HandledBy,
     IssueStatus Status,

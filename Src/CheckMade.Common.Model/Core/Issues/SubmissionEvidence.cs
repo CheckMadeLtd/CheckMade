@@ -2,7 +2,7 @@ using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
-public sealed record IssueEvidence
+public sealed record SubmissionEvidence
 {
     public Option<string> Description { get; init; } = 
         Option<string>.None();

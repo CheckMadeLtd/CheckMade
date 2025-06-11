@@ -14,7 +14,7 @@ public sealed record Assessment<T>(
     ISphereOfAction Sphere,
     IFacility Facility,
     AssessmentRating Rating,
-    IssueEvidence Evidence,
+    SubmissionEvidence Evidence,
     Role ReportedBy,
     Option<Role> HandledBy,
     IssueStatus Status,
