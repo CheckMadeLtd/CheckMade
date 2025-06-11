@@ -88,7 +88,7 @@ internal sealed record NewSubmissionReview<T>(
                         Text = Ui("✅ Submission succeeded!")
                     },
                     await GetStakeholderNotificationsAsync(),
-                    Mediator.GetTerminator(typeof(INewIssueSubmissionSucceeded<T>)),
+                    Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
                     promptTransition: new PromptTransition(currentInput.TlgMessageId),
                     entityGuid: await GetLastGuidAsync()),
             
@@ -110,7 +110,7 @@ internal sealed record NewSubmissionReview<T>(
                         EntityGuid = await GetLastGuidAsync(),
                         ResultantState = new ResultantWorkflowState(
                             Glossary.GetId(typeof(NewIssueWorkflow)),
-                            Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)))
+                            Glossary.GetId(typeof(INewSubmissionSucceeded<T>)))
                     });
             
             var currentIssueTypeName =

@@ -86,8 +86,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewSubmissionReview<SanitaryTrade>), "DAH8TX");
         AddTerm(typeof(INewSubmissionReview<SiteCleanTrade>), "DWNXLY");
         
-        AddTerm(typeof(INewIssueSubmissionSucceeded<SanitaryTrade>), "D8TGOV");
-        AddTerm(typeof(INewIssueSubmissionSucceeded<SiteCleanTrade>), "DM3PCW");
+        AddTerm(typeof(INewSubmissionSucceeded<SanitaryTrade>), "D8TGOV");
+        AddTerm(typeof(INewSubmissionSucceeded<SiteCleanTrade>), "DM3PCW");
         
         AddTerm(typeof(INewSubmissionEditMenu<SanitaryTrade>), "D8ABBA");
         AddTerm(typeof(INewSubmissionEditMenu<SiteCleanTrade>), "DHZY2B");
