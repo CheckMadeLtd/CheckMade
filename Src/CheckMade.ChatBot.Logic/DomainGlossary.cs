@@ -80,8 +80,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueFacilitySelection<SanitaryTrade>), "DWIY4L");
         AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7");
         
-        AddTerm(typeof(INewIssueAssessmentRating<SanitaryTrade>), "D1K6AS");
-        AddTerm(typeof(INewIssueAssessmentRating<SiteCleanTrade>), "DCQGAL");
+        AddTerm(typeof(INewSubmissionAssessmentRating<SanitaryTrade>), "D1K6AS");
+        AddTerm(typeof(INewSubmissionAssessmentRating<SiteCleanTrade>), "DCQGAL");
 
         AddTerm(typeof(INewIssueReview<SanitaryTrade>), "DAH8TX");
         AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY");
