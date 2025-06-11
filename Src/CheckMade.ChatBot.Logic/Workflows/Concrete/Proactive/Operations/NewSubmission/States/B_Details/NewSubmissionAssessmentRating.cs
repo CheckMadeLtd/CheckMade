@@ -85,7 +85,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
         return // on ControlPrompts.Back
             await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput,
-                Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
+                Mediator.Next(typeof(INewSubmissionFacilitySelection<T>)),
                 new PromptTransition(true));
     }
 }

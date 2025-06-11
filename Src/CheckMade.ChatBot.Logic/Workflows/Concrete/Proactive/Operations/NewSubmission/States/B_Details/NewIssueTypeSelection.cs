@@ -82,7 +82,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) or nameof(Assessment<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
-                        Mediator.Next(typeof(INewIssueFacilitySelection<T>)),
+                        Mediator.Next(typeof(INewSubmissionFacilitySelection<T>)),
                         promptTransition),
             
                 nameof(ConsumablesIssue<T>) => 
