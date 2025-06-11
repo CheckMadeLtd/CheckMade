@@ -1,5 +1,5 @@
 using System.Text;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.Core;
@@ -13,7 +13,7 @@ using CheckMade.Common.Model.Core.Submissions.Concrete;
 using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.NewSubmissionUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 

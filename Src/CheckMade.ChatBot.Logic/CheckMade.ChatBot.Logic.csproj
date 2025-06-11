@@ -34,8 +34,4 @@
       </Compile>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Workflows\Concrete\Proactive\" />
-    </ItemGroup>
-
 </Project>

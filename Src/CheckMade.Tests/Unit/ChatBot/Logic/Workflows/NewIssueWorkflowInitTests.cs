@@ -1,6 +1,6 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.A_Init;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
