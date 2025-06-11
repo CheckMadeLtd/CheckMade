@@ -8,5 +8,5 @@ public interface IRoleType
 {
     Option<ITrade> GetTradeInstance();
     Option<Type> GetTradeType();
-    SubmissionSummaryCategories GetIssueSummaryCategoriesForNotifications();
+    SubmissionSummaryCategories GetSubmissionSummaryCategoriesForNotifications();
 }

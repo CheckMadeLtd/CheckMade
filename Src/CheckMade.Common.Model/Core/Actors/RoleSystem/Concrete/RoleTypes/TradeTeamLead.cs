@@ -9,6 +9,6 @@ public sealed record TradeTeamLead<T> : IRoleType where T : ITrade, new()
     public Option<ITrade> GetTradeInstance() => new T();
     public Option<Type> GetTradeType() => typeof(T);
 
-    public SubmissionSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
+    public SubmissionSummaryCategories GetSubmissionSummaryCategoriesForNotifications() =>
         SubmissionSummaryCategories.AllExceptOperationalInfo;
 }

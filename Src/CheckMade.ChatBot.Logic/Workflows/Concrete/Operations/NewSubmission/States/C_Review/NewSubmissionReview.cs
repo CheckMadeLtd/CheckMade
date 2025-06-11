@@ -118,7 +118,7 @@ internal sealed record NewSubmissionReview<T>(
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
 
-            return await Reporter.GetNewIssueNotificationsAsync(
+            return await Reporter.GetNewSubmissionNotificationsAsync(
                 historyWithUpdatedCurrentInput, 
                 currentSubmissionTypeName);
         }

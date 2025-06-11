@@ -6,7 +6,7 @@ namespace CheckMade.Common.Interfaces.BusinessLogic;
 
 public interface IStakeholderReporter<T> where T : ITrade, new()
 {
-    Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
+    Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
         IReadOnlyCollection<TlgInput> inputHistory,
-        string currentIssueTypeName);
+        string currentSubmissionTypeName);
 }

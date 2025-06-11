@@ -22,15 +22,15 @@ public sealed record StakeholderReporter<T>(
     ISubmissionFactory<T> SubmissionFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
+    public async Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
+        IReadOnlyCollection<TlgInput> inputHistory, string currentSubmissionTypeName)
     {
-        var newIssue = 
+        var newSubmission = 
             await SubmissionFactory.CreateAsync(inputHistory); 
-        var completeIssueSummary = 
-            newIssue.GetSummary();
+        var completeSubmissionSummary = 
+            newSubmission.GetSummary();
         var recipients = 
-            await GetNewIssueNotificationRecipientsAsync(inputHistory, newIssue.Sphere, currentIssueTypeName);
+            await GetNotificationRecipientsAsync(inputHistory, newSubmission.Sphere, currentSubmissionTypeName);
         
         return 
             recipients
@@ -38,14 +38,14 @@ public sealed record StakeholderReporter<T>(
                     new OutputDto
                     {
                         Text = GetNotificationOutput(kvp =>
-                            (recipient.Role.RoleType.GetIssueSummaryCategoriesForNotifications() & kvp.Key) != 0),
+                            (recipient.Role.RoleType.GetSubmissionSummaryCategoriesForNotifications() & kvp.Key) != 0),
                         LogicalPort = recipient,
                         Attachments = GetAttachments()
                     })
                 .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
-            newIssue is ISubmissionWithEvidence issueWithEvidence 
+            newSubmission is ISubmissionWithEvidence issueWithEvidence 
                 ? issueWithEvidence.Evidence.Attachments 
                 : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
@@ -58,16 +58,16 @@ public sealed record StakeholderReporter<T>(
                     UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),
                     UiConcatenate(
-                        completeIssueSummary.Where(summaryFilter)
+                        completeSubmissionSummary.Where(summaryFilter)
                             .Select(static kvp => kvp.Value)
                             .ToArray()));
         }
     }
 
-    private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync(
+    private async Task<IReadOnlyCollection<LogicalPort>> GetNotificationRecipientsAsync(
         IReadOnlyCollection<TlgInput> inputHistory,
-        ISphereOfAction issueSphere,
-        string currentIssueTypeName)
+        ISphereOfAction submissionSphere,
+        string currentSubmissionTypeName)
     {
         var allRolesAtCurrentLiveEvent = 
             (await RoleRepo.GetAllAsync())
@@ -84,7 +84,7 @@ public sealed record StakeholderReporter<T>(
                     LiveEventObserver)
                 .ToArray();
         
-        var allRelevantSpecialist = currentIssueTypeName switch
+        var allRelevantSpecialist = currentSubmissionTypeName switch
         {
             nameof(CleaningIssue<T>) =>
                 allRolesAtCurrentLiveEvent
@@ -102,7 +102,7 @@ public sealed record StakeholderReporter<T>(
         var filterOutSpecialists = allRelevantSpecialist
             .Where(r => r.RoleType is TradeTeamLead<SanitaryTrade> or TradeTeamLead<SiteCleanTrade>)
             .Where(static r => r.AssignedToSpheres.Count != 0)
-            .Where(r => !r.AssignedToSpheres.Contains(issueSphere))
+            .Where(r => !r.AssignedToSpheres.Contains(submissionSphere))
             .ToArray();
         
         var currentRoleInfo = inputHistory.First().OriginatorRole.GetValueOrThrow();

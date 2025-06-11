@@ -9,6 +9,6 @@ public sealed record LiveEventObserver : IRoleType
     public Option<ITrade> GetTradeInstance() => Option<ITrade>.None();
     public Option<Type> GetTradeType() => Option<Type>.None();
 
-    public SubmissionSummaryCategories GetIssueSummaryCategoriesForNotifications() =>
+    public SubmissionSummaryCategories GetSubmissionSummaryCategoriesForNotifications() =>
         SubmissionSummaryCategories.CommonBasics;
 }
