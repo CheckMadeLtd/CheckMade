@@ -19,9 +19,9 @@ public sealed record GeneralIssue<T>(
     {
         return new Dictionary<SubmissionSummaryCategories, UiString>
         {
-            [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
-            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
-            [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
+            [CommonBasics] = SubmissionFormatters.FormatCommonBasics(this, Glossary),
+            [OperationalInfo] = SubmissionFormatters.FormatOperationalInfo(this, Glossary),
+            [EvidenceInfo] = SubmissionFormatters.FormatEvidenceInfo(this)
         };
     }
 }

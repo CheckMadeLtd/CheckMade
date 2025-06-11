@@ -21,10 +21,10 @@ public sealed record CleaningIssue<T>(
     {
         return new Dictionary<SubmissionSummaryCategories, UiString>
         {
-            [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
-            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
-            [FacilityInfo] = IssueFormatters.FormatFacilityInfo(this, Glossary),
-            [EvidenceInfo] = IssueFormatters.FormatEvidenceInfo(this)
+            [CommonBasics] = SubmissionFormatters.FormatCommonBasics(this, Glossary),
+            [OperationalInfo] = SubmissionFormatters.FormatOperationalInfo(this, Glossary),
+            [FacilityInfo] = SubmissionFormatters.FormatFacilityInfo(this, Glossary),
+            [EvidenceInfo] = SubmissionFormatters.FormatEvidenceInfo(this)
         }.ToFrozenDictionary();
     }
 }

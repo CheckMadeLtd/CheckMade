@@ -22,8 +22,8 @@ public sealed record ConsumablesIssue<T>(
     {
         return new Dictionary<SubmissionSummaryCategories, UiString>
         {
-            [CommonBasics] = IssueFormatters.FormatCommonBasics(this, Glossary),
-            [OperationalInfo] = IssueFormatters.FormatOperationalInfo(this, Glossary),
+            [CommonBasics] = SubmissionFormatters.FormatCommonBasics(this, Glossary),
+            [OperationalInfo] = SubmissionFormatters.FormatOperationalInfo(this, Glossary),
             [SubmissionTypeSpecificInfo] = FormatConsumableItems()
         }.ToFrozenDictionary();
     }

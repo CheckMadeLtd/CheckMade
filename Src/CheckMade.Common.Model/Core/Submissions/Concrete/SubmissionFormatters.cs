@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.Submissions.Concrete;
 
-internal static class IssueFormatters
+internal static class SubmissionFormatters
 {
     public static UiString FormatCommonBasics<T>(
         ITradeSubmission<T> submission, IDomainGlossary glossary) where T : ITrade, new()
