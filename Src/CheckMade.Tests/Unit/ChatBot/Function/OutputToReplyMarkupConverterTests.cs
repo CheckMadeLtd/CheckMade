@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;

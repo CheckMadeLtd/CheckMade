@@ -4,7 +4,7 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 
 public sealed record GeneralIssue<T>(
     Guid Id, 

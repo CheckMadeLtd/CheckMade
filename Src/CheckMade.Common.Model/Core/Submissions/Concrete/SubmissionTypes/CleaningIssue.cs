@@ -5,14 +5,13 @@ using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionSummaryCategories;
 
-namespace CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
+namespace CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 
-public sealed record Assessment<T>(
+public sealed record CleaningIssue<T>(
     Guid Id,
     DateTimeOffset CreationDate,
     ISphereOfAction Sphere,
     IFacility Facility,
-    AssessmentRating Rating,
     SubmissionEvidence Evidence,
     Role ReportedBy,
     IDomainGlossary Glossary) 
@@ -25,11 +24,7 @@ public sealed record Assessment<T>(
             [CommonBasics] = SubmissionFormatters.FormatCommonBasics(this, Glossary),
             [OperationalInfo] = SubmissionFormatters.FormatOperationalInfo(this, Glossary),
             [FacilityInfo] = SubmissionFormatters.FormatFacilityInfo(this, Glossary),
-            [SubmissionTypeSpecificInfo] = UiConcatenate(
-                Ui("<b>Assessment Rating:</b> "), 
-                Glossary.GetUi(Rating),
-                UiNewLines(1)),
-            [EvidenceInfo] = SubmissionFormatters.FormatEvidenceInfo(this),
+            [EvidenceInfo] = SubmissionFormatters.FormatEvidenceInfo(this)
         }.ToFrozenDictionary();
     }
 }

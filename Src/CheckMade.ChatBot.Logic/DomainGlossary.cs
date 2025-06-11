@@ -15,7 +15,7 @@ using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 
@@ -102,7 +102,7 @@ public sealed record DomainGlossary : IDomainGlossary
         
         #region Submissions
         
-        // Below, presence/absence determines the availability of IssueTypes per TradeType, also in the Workflow!
+        // Below, presence/absence determines the availability of SubmissionTypes per TradeType, also in the Workflow!
 
         AddTerm(typeof(GeneralIssue<SanitaryTrade>), "DVGI3N", Ui("❗ General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
