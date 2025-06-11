@@ -36,7 +36,7 @@ public sealed class NewIssueWorkflowInitTests
 
         const string expectedOutput = "Please select a Trade:";
         var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionTradeSelection));
-        var workflow = services.GetRequiredService<NewIssueWorkflow>();
+        var workflow = services.GetRequiredService<NewSubmissionWorkflow>();
 
         var actualResponse =
             await workflow.GetResponseAsync(currentInput);
@@ -76,7 +76,7 @@ public sealed class NewIssueWorkflowInitTests
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
         var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>));
-        var workflow = services.GetRequiredService<NewIssueWorkflow>();
+        var workflow = services.GetRequiredService<NewSubmissionWorkflow>();
 
         var actualResponse =
             await workflow.GetResponseAsync(currentInput);
@@ -122,7 +122,7 @@ public sealed class NewIssueWorkflowInitTests
         
         const string expectedOutput = "Please select a ";
         var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>));
-        var workflow = services.GetRequiredService<NewIssueWorkflow>();
+        var workflow = services.GetRequiredService<NewSubmissionWorkflow>();
 
         var actualResponse =
             await workflow.GetResponseAsync(currentInput);
@@ -149,7 +149,7 @@ public sealed class NewIssueWorkflowInitTests
                 tlgAgent.Mode,
                 (int)OperationsBotCommands.NewIssue,
                 resultantWorkflowState: new ResultantWorkflowState(
-                    basics.glossary.GetId(typeof(NewIssueWorkflow)),
+                    basics.glossary.GetId(typeof(NewSubmissionWorkflow)),
                     basics.glossary.GetId(typeof(INewSubmissionSphereSelection<SanitaryTrade>))))];
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -163,7 +163,7 @@ public sealed class NewIssueWorkflowInitTests
         const string expectedOutput = "Please select the type of submission:";
         var expectedNewState = 
             basics.glossary.GetId(typeof(INewSubmissionTypeSelection<SanitaryTrade>));
-        var workflow = services.GetRequiredService<NewIssueWorkflow>();
+        var workflow = services.GetRequiredService<NewSubmissionWorkflow>();
 
         var actualResponse =
             await workflow.GetResponseAsync(currentInput);

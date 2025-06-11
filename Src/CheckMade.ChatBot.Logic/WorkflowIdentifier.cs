@@ -21,7 +21,7 @@ internal interface IWorkflowIdentifier
 
 internal sealed record WorkflowIdentifier(
     UserAuthWorkflow UserAuthWorkflow,
-    NewIssueWorkflow NewIssueWorkflow,
+    NewSubmissionWorkflow NewSubmissionWorkflow,
     LanguageSettingWorkflow LanguageSettingWorkflow,
     LogoutWorkflow LogoutWorkflow,
     IStateMediator Mediator,
@@ -53,7 +53,7 @@ internal sealed record WorkflowIdentifier(
             { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
+                    (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             

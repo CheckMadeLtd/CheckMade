@@ -70,7 +70,7 @@ public sealed class WorkflowIdentifierTests
             .IdentifyAsync([inputWithNewIssueBotCommand]);
         
         Assert.True(
-            workflow.GetValueOrThrow() is NewIssueWorkflow);
+            workflow.GetValueOrThrow() is NewSubmissionWorkflow);
     }
     
     [Fact]

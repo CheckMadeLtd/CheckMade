@@ -60,7 +60,7 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
         
-        AddTerm(typeof(NewIssueWorkflow), "D6SORL");
+        AddTerm(typeof(NewSubmissionWorkflow), "D6SORL");
         AddTerm(typeof(INewSubmissionTradeSelection), "DA0ZMD");
         
         AddTerm(typeof(INewSubmissionSphereSelection<SanitaryTrade>), "D8T63V");

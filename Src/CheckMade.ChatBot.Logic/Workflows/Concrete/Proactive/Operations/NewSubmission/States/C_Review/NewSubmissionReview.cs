@@ -109,12 +109,12 @@ internal sealed record NewSubmissionReview<T>(
                     {
                         EntityGuid = await GetLastGuidAsync(),
                         ResultantState = new ResultantWorkflowState(
-                            Glossary.GetId(typeof(NewIssueWorkflow)),
+                            Glossary.GetId(typeof(NewSubmissionWorkflow)),
                             Glossary.GetId(typeof(INewSubmissionSucceeded<T>)))
                     });
             
             var currentIssueTypeName =
-                NewIssueUtils.GetLastIssueType(historyWithUpdatedCurrentInput)
+                NewSubmissionUtils.GetLastIssueType(historyWithUpdatedCurrentInput)
                     .Name
                     .GetTypeNameWithoutGenericParamSuffix();
 

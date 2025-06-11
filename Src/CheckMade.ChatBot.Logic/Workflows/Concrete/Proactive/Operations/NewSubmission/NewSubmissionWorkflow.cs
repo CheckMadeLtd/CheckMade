@@ -7,11 +7,11 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.NewIssueUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission;
 
-internal sealed record NewIssueWorkflow(
+internal sealed record NewSubmissionWorkflow(
     ILiveEventsRepository LiveEventsRepo,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,

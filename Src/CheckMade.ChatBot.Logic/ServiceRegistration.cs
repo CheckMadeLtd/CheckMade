@@ -33,7 +33,7 @@ public static class ServiceRegistration
         services.AddScoped<IIssueFactory<SiteCleanTrade>, IssueFactory<SiteCleanTrade>>();
 
         services.AddScoped<UserAuthWorkflow>();
-        services.AddScoped<NewIssueWorkflow>();
+        services.AddScoped<NewSubmissionWorkflow>();
         services.AddScoped<LanguageSettingWorkflow>();
         services.AddScoped<LogoutWorkflow>();
         

@@ -15,7 +15,7 @@ using CheckMade.Common.Utils.GIS;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission;
 
-internal static class NewIssueUtils
+internal static class NewSubmissionUtils
 {
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
         TlgInput currentInput, IGeneralWorkflowUtils workflowUtils)
