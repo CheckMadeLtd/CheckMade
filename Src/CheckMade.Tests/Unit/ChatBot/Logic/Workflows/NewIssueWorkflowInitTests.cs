@@ -35,7 +35,7 @@ public sealed class NewIssueWorkflowInitTests
             roleSpecified: currentRole);
 
         const string expectedOutput = "Please select a Trade:";
-        var expectedNewState = basics.glossary.GetId(typeof(INewIssueTradeSelection));
+        var expectedNewState = basics.glossary.GetId(typeof(INewSubmissionTradeSelection));
         var workflow = services.GetRequiredService<NewIssueWorkflow>();
 
         var actualResponse =

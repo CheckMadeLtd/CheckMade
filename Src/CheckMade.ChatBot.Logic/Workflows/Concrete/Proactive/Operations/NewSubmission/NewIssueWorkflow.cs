@@ -27,7 +27,7 @@ internal sealed record NewIssueWorkflow(
         if (!currentRole.IsCurrentRoleTradeSpecific())
         {
             return await WorkflowResponse.CreateFromNextStateAsync(
-                currentInput, Mediator.Next(typeof(INewIssueTradeSelection)));
+                currentInput, Mediator.Next(typeof(INewSubmissionTradeSelection)));
         }
 
         var trade = currentRole.RoleType.GetTradeInstance().GetValueOrThrow();
