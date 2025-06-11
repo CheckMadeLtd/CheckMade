@@ -1,6 +1,5 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
@@ -16,8 +15,6 @@ public sealed record ConsumablesIssue<T>(
     ISphereOfAction Sphere,
     IReadOnlyCollection<ConsumablesItem> AffectedItems,
     Role ReportedBy,
-    Option<Role> HandledBy,
-    IssueStatus Status,
     IDomainGlossary Glossary) 
     : ITradeSubmission<T> where T : ITrade, new()
 {

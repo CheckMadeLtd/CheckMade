@@ -1,13 +1,11 @@
 using System.Text;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.Submissions;
@@ -50,8 +48,6 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(),
-                    Status: GetStatus(),
                     Glossary),
 
             nameof(CleaningIssue<T>) =>
@@ -62,8 +58,6 @@ internal sealed record IssueFactory<T>(
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(),
-                    Status: GetStatus(),
                     Glossary),
 
             nameof(ConsumablesIssue<T>) =>
@@ -73,8 +67,6 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     AffectedItems: GetSelectedConsumablesItems(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(),
-                    Status: GetStatus(),
                     Glossary),
 
             nameof(StaffIssue<T>) =>
@@ -84,8 +76,6 @@ internal sealed record IssueFactory<T>(
                     Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(),
-                    Status: GetStatus(),
                     Glossary),
 
             nameof(TechnicalIssue<T>) =>
@@ -96,8 +86,6 @@ internal sealed record IssueFactory<T>(
                     Facility: GetLastSelectedFacility(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(),
-                    Status: GetStatus(),
                     Glossary),
             
             nameof(Assessment<T>) =>
@@ -109,8 +97,6 @@ internal sealed record IssueFactory<T>(
                     Rating: GetAssessmentRating(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,
-                    HandledBy: Option<Role>.None(), 
-                    Status: GetStatus(),
                     Glossary),
 
             _ => throw new InvalidOperationException(
@@ -206,22 +192,6 @@ internal sealed record IssueFactory<T>(
             };
         }
 
-        IssueStatus GetStatus()
-        {
-            // ToDo: Once we go beyond these two,
-            // refactor to look for the highest/latest status and when found, return early
-            
-            var isSubmitted = 
-                inputs.Any(i =>
-                    i.ResultantState.IsSome &&
-                    i.ResultantState.GetValueOrThrow().InStateId == 
-                    Glossary.GetId(typeof(INewIssueSubmissionSucceeded<T>)));
-
-            return isSubmitted
-                ? IssueStatus.Reported
-                : IssueStatus.Drafting;
-        }
-        
         IReadOnlyCollection<ConsumablesItem> GetSelectedConsumablesItems()
         {
             return Glossary.GetAll(typeof(ConsumablesItem))

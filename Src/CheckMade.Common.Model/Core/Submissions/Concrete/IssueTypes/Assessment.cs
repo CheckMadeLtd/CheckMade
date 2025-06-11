@@ -1,5 +1,4 @@
 using System.Collections.Frozen;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
@@ -16,8 +15,6 @@ public sealed record Assessment<T>(
     AssessmentRating Rating,
     SubmissionEvidence Evidence,
     Role ReportedBy,
-    Option<Role> HandledBy,
-    IssueStatus Status,
     IDomainGlossary Glossary) 
     : ITradeSubmissionInvolvingFacility<T>, ISubmissionWithEvidence where T : ITrade, new()
 {

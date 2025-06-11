@@ -121,13 +121,6 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(Assessment<SanitaryTrade>), "D440IA", Ui("📋 Cleaning Assessment"));
         AddTerm(typeof(Assessment<SiteCleanTrade>), "DJOMJN", Ui("📋 Cleaning Assessment"));
         
-        AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
-        AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
-        AddTerm(IssueStatus.InProgress, "D15NQR", Ui("⏳ In Progress"));
-        AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
-        AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
-        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
-        
         AddTerm(AssessmentRating.Good, "DYOY4X", Ui("(1) 👍 Good"));
         AddTerm(AssessmentRating.Ok, "D8WD05", Ui("(2) 😐 Not Good"));
         AddTerm(AssessmentRating.Bad, "DGUVKZ", Ui("(3) 👎 Disastrous"));

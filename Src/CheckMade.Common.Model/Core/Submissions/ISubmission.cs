@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Submissions.Concrete;
@@ -12,8 +11,6 @@ public interface ISubmission
     DateTimeOffset CreationDate { get; }
     ISphereOfAction Sphere { get; }
     Role ReportedBy { get; }
-    Option<Role> HandledBy { get; }
-    IssueStatus Status { get; }
     
     IDomainGlossary Glossary { get; }
 

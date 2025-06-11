@@ -1,4 +1,3 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
@@ -13,8 +12,6 @@ public sealed record StaffIssue<T>(
     ISphereOfAction Sphere, 
     SubmissionEvidence Evidence, 
     Role ReportedBy, 
-    Option<Role> HandledBy, 
-    IssueStatus Status,
     IDomainGlossary Glossary) 
     : ITradeSubmission<T>, ISubmissionWithEvidence where T : ITrade, new()
 {
