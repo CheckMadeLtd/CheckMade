@@ -1,23 +1,21 @@
 using System.Collections.Immutable;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.A_Init;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Model.Core.Submissions.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 
@@ -62,74 +60,70 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
         
-        AddTerm(typeof(ViewAttachmentsWorkflow), "D3TC83");
-        AddTerm(typeof(IOneStepWorkflowTerminator), "DT8SQ7");
+        AddTerm(typeof(NewSubmissionWorkflow), "D6SORL");
+        AddTerm(typeof(INewSubmissionTradeSelection), "DA0ZMD");
         
-        AddTerm(typeof(NewIssueWorkflow), "D6SORL");
-        AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");
+        AddTerm(typeof(INewSubmissionSphereSelection<SanitaryTrade>), "D8T63V");
+        AddTerm(typeof(INewSubmissionSphereSelection<SiteCleanTrade>), "DYRNZL");
         
-        AddTerm(typeof(INewIssueSphereSelection<SanitaryTrade>), "D8T63V");
-        AddTerm(typeof(INewIssueSphereSelection<SiteCleanTrade>), "DYRNZL");
+        AddTerm(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>), "D45JQ1");
+        AddTerm(typeof(INewSubmissionSphereConfirmation<SiteCleanTrade>), "DI6GGV");
         
-        AddTerm(typeof(INewIssueSphereConfirmation<SanitaryTrade>), "D45JQ1");
-        AddTerm(typeof(INewIssueSphereConfirmation<SiteCleanTrade>), "DI6GGV");
+        AddTerm(typeof(INewSubmissionTypeSelection<SanitaryTrade>), "DDQHWW");
+        AddTerm(typeof(INewSubmissionTypeSelection<SiteCleanTrade>), "D88CK2");
         
-        AddTerm(typeof(INewIssueTypeSelection<SanitaryTrade>), "DDQHWW");
-        AddTerm(typeof(INewIssueTypeSelection<SiteCleanTrade>), "D88CK2");
+        AddTerm(typeof(INewSubmissionConsumablesSelection<SanitaryTrade>), "DWBYSV");
         
-        AddTerm(typeof(INewIssueConsumablesSelection<SanitaryTrade>), "DWBYSV");
+        AddTerm(typeof(INewSubmissionEvidenceEntry<SanitaryTrade>), "DKUR0Z");
+        AddTerm(typeof(INewSubmissionEvidenceEntry<SiteCleanTrade>), "DJSD44");
         
-        AddTerm(typeof(INewIssueEvidenceEntry<SanitaryTrade>), "DKUR0Z");
-        AddTerm(typeof(INewIssueEvidenceEntry<SiteCleanTrade>), "DJSD44");
+        AddTerm(typeof(INewSubmissionFacilitySelection<SanitaryTrade>), "DWIY4L");
+        AddTerm(typeof(INewSubmissionFacilitySelection<SiteCleanTrade>), "D5W0J7");
         
-        AddTerm(typeof(INewIssueFacilitySelection<SanitaryTrade>), "DWIY4L");
-        AddTerm(typeof(INewIssueFacilitySelection<SiteCleanTrade>), "D5W0J7");
+        AddTerm(typeof(INewSubmissionAssessmentRating<SanitaryTrade>), "D1K6AS");
+        AddTerm(typeof(INewSubmissionAssessmentRating<SiteCleanTrade>), "DCQGAL");
+
+        AddTerm(typeof(INewSubmissionReview<SanitaryTrade>), "DAH8TX");
+        AddTerm(typeof(INewSubmissionReview<SiteCleanTrade>), "DWNXLY");
         
-        AddTerm(typeof(INewIssueReview<SanitaryTrade>), "DAH8TX");
-        AddTerm(typeof(INewIssueReview<SiteCleanTrade>), "DWNXLY");
+        AddTerm(typeof(INewSubmissionSucceeded<SanitaryTrade>), "D8TGOV");
+        AddTerm(typeof(INewSubmissionSucceeded<SiteCleanTrade>), "DM3PCW");
         
-        AddTerm(typeof(INewIssueSubmissionSucceeded<SanitaryTrade>), "D8TGOV");
-        AddTerm(typeof(INewIssueSubmissionSucceeded<SiteCleanTrade>), "DM3PCW");
+        AddTerm(typeof(INewSubmissionEditMenu<SanitaryTrade>), "D8ABBA");
+        AddTerm(typeof(INewSubmissionEditMenu<SiteCleanTrade>), "DHZY2B");
         
-        AddTerm(typeof(INewIssueEditMenu<SanitaryTrade>), "D8ABBA");
-        AddTerm(typeof(INewIssueEditMenu<SiteCleanTrade>), "DHZY2B");
+        AddTerm(typeof(INewSubmissionCancelConfirmation<SanitaryTrade>), "DL69OL");
+        AddTerm(typeof(INewSubmissionCancelConfirmation<SiteCleanTrade>), "DNLJMN");
         
-        AddTerm(typeof(INewIssueCancelConfirmation<SanitaryTrade>), "DL69OL");
-        AddTerm(typeof(INewIssueCancelConfirmation<SiteCleanTrade>), "DNLJMN");
-        
-        AddTerm(typeof(INewIssueCancelled<SanitaryTrade>), "DN1KAK");
-        AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");
+        AddTerm(typeof(INewSubmissionCancelled<SanitaryTrade>), "DN1KAK");
+        AddTerm(typeof(INewSubmissionCancelled<SiteCleanTrade>), "DR8REC");
 
         #endregion
         
-        #region Issues
+        #region Submissions
         
-        // Below, presence/absence determines the availability of IssueTypes per TradeType, also in the Workflow!
+        // Below, presence/absence determines the availability of SubmissionTypes per TradeType, also in the Workflow!
 
         AddTerm(typeof(GeneralIssue<SanitaryTrade>), "DVGI3N", Ui("❗ General"));
         AddTerm(typeof(GeneralIssue<SiteCleanTrade>), "D4QM7Q", Ui("❗ General"));
         
-        AddTerm(typeof(CleaningIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleaning"));
-        AddTerm(typeof(CleaningIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleaning"));
+        AddTerm(typeof(CleaningIssue<SanitaryTrade>), "DAWYZP", Ui("🪣 Cleaning Issue"));
+        AddTerm(typeof(CleaningIssue<SiteCleanTrade>), "DTG4C8", Ui("🪣 Cleaning Issue"));
         
-        AddTerm(typeof(TechnicalIssue<SanitaryTrade>), "DM46NG", Ui("🔧 Technical"));
-        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical"));
+        AddTerm(typeof(TechnicalIssue<SanitaryTrade>), "DM46NG", Ui("🔧 Technical Issue"));
+        AddTerm(typeof(TechnicalIssue<SiteCleanTrade>), "D4H7RG", Ui("🔧 Technical Issue"));
         
         AddTerm(typeof(ConsumablesIssue<SanitaryTrade>), "D582QJ", Ui("🗄 Missing Consumables"));
         
         AddTerm(typeof(StaffIssue<SanitaryTrade>), "D9MRJ9", Ui("🙋 Staff"));
         AddTerm(typeof(StaffIssue<SiteCleanTrade>), "DVVL0F", Ui("🙋 Staff"));
-
-        AddTerm(IssueStatus.Drafting, "DC5E1H", Ui("✏️ Drafting"));
-        AddTerm(IssueStatus.Reported, "DNYU8L", Ui("📤️ Reported"));
-        AddTerm(IssueStatus.InProgress, "D15NQR", Ui("⏳ In Progress"));
-        AddTerm(IssueStatus.ReviewRequired, "DBGOMN", Ui("📋 Review Required"));
-        AddTerm(IssueStatus.ReviewNotPassed, "DV6EBL", Ui("❌ Review Not Passed"));
-        AddTerm(IssueStatus.Closed, "D2PTQ6", Ui("✅ Closed"));
         
-        AddTerm(IssueRating.Good, "DYOY4X", UiNoTranslate("(1) 😃"));
-        AddTerm(IssueRating.Ok, "D8WD05", UiNoTranslate("(2) 😐"));
-        AddTerm(IssueRating.Bad, "DGUVKZ", UiNoTranslate("(3) 😩"));
+        AddTerm(typeof(Assessment<SanitaryTrade>), "D440IA", Ui("📋 Cleaning Assessment"));
+        AddTerm(typeof(Assessment<SiteCleanTrade>), "DJOMJN", Ui("📋 Cleaning Assessment"));
+        
+        AddTerm(AssessmentRating.Good, "DYOY4X", Ui("(1) 👍 Good"));
+        AddTerm(AssessmentRating.Ok, "D8WD05", Ui("(2) 😐 Not Good"));
+        AddTerm(AssessmentRating.Bad, "DGUVKZ", Ui("(3) 👎 Disastrous"));
         
         #endregion
         

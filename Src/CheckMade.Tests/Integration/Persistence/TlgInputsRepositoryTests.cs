@@ -1,5 +1,5 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
 using CheckMade.Common.Interfaces.Persistence;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
@@ -157,8 +157,8 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     /* Main purpose is to verify that the Details column doesn't have values with outdated schema e.g. because
     its migration has been forgotten after the details schema evolved in the model/code. */ 
     // [Theory(Skip = "Waiting to migrate the old DB data")]
-    // [Theory(Skip = "Running tests from unknown IP / internet")]
-    [Theory]
+    [Theory(Skip = "Running tests from unknown IP / internet")]
+    //[Theory]
     [InlineData(RealTestUser_DanielGorin_TelegramId, false)]
     [InlineData(RealTestUser_DanielGorin_TelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(

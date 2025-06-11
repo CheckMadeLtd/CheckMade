@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Logic;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting.States;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
@@ -62,7 +62,7 @@ public sealed class InputProcessorTests
         var interruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewIssue); 
+                (int)OperationsBotCommands.NewSubmission); 
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -104,7 +104,7 @@ public sealed class InputProcessorTests
         var notInterruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                (int)OperationsBotCommands.NewIssue);
+                (int)OperationsBotCommands.NewSubmission);
 
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         var serviceCollection = new UnitTestStartup().Services;

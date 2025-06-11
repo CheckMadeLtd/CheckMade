@@ -8,7 +8,6 @@ CheckMade.ChatBot.Logic	Echo of a {0} BotCommand: 	Echo eines {0} BotCommand:
 CheckMade.ChatBot.Logic	Tap on the menu button or type '/' to see available BotCommands.	Klicken Sie auf den Menüknopf oder tippen Sie '/' um verfügbare Befehle zu sehen.
 CheckMade.ChatBot.Function	Failed to convert your Telegram Message: 	Fehler beim Konvertieren deiner Telegram-Nachricht: 
 CheckMade.Tests	English string for testing	Deutscher Text für Tests
-CheckMade.ChatBot.Logic	What type of issue?	Welche Art von Problem?
 CheckMade.ChatBot.Logic	⬅️ Back	⬅️ Zurück
 CheckMade.Common.Model	❌ Cancel	❌ Abbrechen
 CheckMade.Common.Model	⏭️ Skip	⏭️ Überspringen
@@ -20,16 +19,16 @@ CheckMade.Common.Model	⏳ Wait...	⏳ Warten...
 CheckMade.Common.Model	🚫 No	🚫 Nein
 CheckMade.Common.Model	✅ Yes	✅ Ja
 CheckMade.Common.Model	❓ Maybe	❓ Vielleicht
-CheckMade.Common.Model	👎 Bad	👎 Schlecht
-CheckMade.Common.Model	😐 Ok	😐 Ok
-CheckMade.Common.Model	👍 Good	👍 Gut
+CheckMade.Common.Model	(3) 👎 Disastrous	(3) 👎 Katastrophal
+CheckMade.Common.Model	(2) 😐 Not Good	(2) 😐 Nicht gut
+CheckMade.Common.Model	(1) 👍 Good	(1) 👍 Gut
 CheckMade.Common.Model	Sanitary-Admin	Sanitär-Admin
 CheckMade.Common.Model	Sanitary-Inspector	Sanitär-Inspektor
 CheckMade.Common.Model	Sanitary-Engineer	Sanitär-Installateur
 CheckMade.Common.Model	Sanitary-CleanLead	Sanitär-Reinigungsvorarbeiter
 CheckMade.Common.Model	Sanitary-Observer	Sanitär-Beobachter
-CheckMade.Common.Model	🪣 Cleaning	🪣 Reinigung
-CheckMade.Common.Model	🔧 Technical	🔧 Technik
+CheckMade.Common.Model	🪣 Cleaning Issue	🪣 Reinigungsproblem
+CheckMade.Common.Model	🔧 Technical Issue	🔧 Technikproblem
 CheckMade.Common.Model	🗄 Missing Consumables	🗄 Fehlende Verbrauchsartikel
 CheckMade.Common.Model	🧻 Toilet Paper	🧻 Toilettenpapier
 CheckMade.Common.Model	🌫️ Paper Towels	🌫️ Papiertücher
@@ -64,12 +63,12 @@ CheckMade.ChatBot.Logic	Please confirm: are you at '{0}'?	Bitte bestätigen: Sin
 CheckMade.ChatBot.Logic	<b>Sanitary Camp</b>	<b>Sanitärcamp</b>
 CheckMade.ChatBot.Logic	<b>Zone</b>	<b>Zone</b>
 CheckMade.ChatBot.Logic	Please select a 	Bitte wählen Sie ein(e) 
-CheckMade.ChatBot.Logic	Please select the type of issue:	Bitte wählen Sie den Problemtyp:
+CheckMade.ChatBot.Logic	Please select the type of submission:	Bitte wählen Sie den Meldungstyp:
 CheckMade.ChatBot.Logic	Expected a simple text! Please try again entering a 	Ein einfacher Text war erwartet. Bitte erneut versuchen - 
 CheckMade.ChatBot.Logic	This is not a valid name. Please choose from the valid options for a 	Kein gültiger Name. Bitte eine gültige Option wählen für ein(e) 
 CheckMade.ChatBot.Logic	❗️Invalid input! Please answer only using the buttons above.	❗️Ungültige Eingabe! Bitte antworten Sie nur mit einem der oben angezeigten Knöpfe.
 CheckMade.ChatBot.Logic	Choose affected facility:	Wählen Sie die betroffene Einrichtung:
-CheckMade.ChatBot.Logic	Please (optionally) provide description and/or photos of the issue.	Bitte (optionale) Beschreibung und/oder Fotos des Problems eingeben.
+CheckMade.ChatBot.Logic	Please (optionally) provide description and/or photos for this submission.	Bitte (optionale) Beschreibung und/oder Fotos für diese Meldung eingeben.
 CheckMade.ChatBot.Logic	❗️Invalid input! Please choose from the options shown below.	❗Ungültige Eingabe! Bitte wählen Sie eine der unten angezeigten Optionen.
 CheckMade.ChatBot.Logic	Choose affected consumables:	Betroffene Verbrauchsartikel auswählen:
 CheckMade.ChatBot.Logic	✅📝 Description received. You can send more text, add photos/documents or continue to the next step.	✅📝 Beschreibung erhalten. Sie können einen weiteren Text schicken, Fotos/Dokumente hinzufügen oder weiter zum nächsten Schritt.
@@ -81,25 +80,28 @@ CheckMade.Common.Model	General/Misc	Allgemein/Sonstiges
 CheckMade.Common.Model	Continue ➡️	Weiter ➡️
 CheckMade.ChatBot.Logic	Please review all details before submitting.	Bitte vor Absenden der Meldung alle Details prüfen.
 CheckMade.ChatBot.Logic	❗ General	❗ Sonstiges
-CheckMade.ChatBot.Logic	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
-CheckMade.ChatBot.Logic	<b>Description:</b> 	<b>Beschreibung:</b> 
-CheckMade.ChatBot.Logic	<b># Attachments:</b> 	<b>Anhänge:</b> 
-CheckMade.ChatBot.Logic	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
-CheckMade.ChatBot.Logic	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
-CheckMade.ChatBot.Logic	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
-CheckMade.ChatBot.Logic	in their role as 	in der Rolle 
-CheckMade.ChatBot.Logic	<b>Current status:</b> 	<b>Aktueller Status:</b> 
-CheckMade.ChatBot.Logic	Affected consumables: 	Betroffene Verbrauchsartikel: 
+CheckMade.Common.Model	<b>Affected facility:</b> 	<b>Betroffene Einrichtung:</b> 
+CheckMade.Common.Model	<b>Description:</b> 	<b>Beschreibung:</b> 
+CheckMade.Common.Model	<b># Attachments:</b> 	<b>Anhänge:</b> 
+CheckMade.Common.Model	<b>Reported by:</b> {0} 	<b>Gemeldet von:</b> {0} 
+CheckMade.Common.Model	<b>Created:</b> {0}	<b>Erstellt:</b> {0}
+CheckMade.Common.Model	<b>Currently handled by:</b> 	<b>Aktuell bearbeitet von:</b> 
+CheckMade.Common.Model	in their role as 	in der Rolle 
+CheckMade.Common.Model	<b>Current status:</b> 	<b>Aktueller Status:</b> 
+CheckMade.Common.Model	<b>Affected consumables:</b> 	<b>Betroffene Verbrauchsartikel:</b> 
 CheckMade.ChatBot.Logic	✏️ Drafting	✏️ Entwurf
 CheckMade.ChatBot.Logic	📤️ Reported	📤️ Gemeldet
 CheckMade.ChatBot.Logic	⏳ In Progress	⏳ In Bearbeitung
 CheckMade.ChatBot.Logic	📋 Review Required	📋 Revision Erforderlich
 CheckMade.ChatBot.Logic	❌ Review Not Passed	❌ Revision Nicht Bestanden
 CheckMade.ChatBot.Logic	✅ Submission succeeded!	✅ Meldung erfolgt!
-CheckMade.ChatBot.Logic	New issue submission:	Neue Problemmeldung:
+CheckMade.ChatBot.Logic	New submission:	Neue Meldung:
 CheckMade.ChatBot.Logic	<b>Trade:</b> 	<b>Gewerk:</b> 
-CheckMade.ChatBot.Logic	<b>Issue type:</b> 	<b>Problemtyp:</b> 
-CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new issue?	Möchten Sie sicher das Erstellen des neuen Problems abbrechen?
+CheckMade.ChatBot.Logic	<b>Submission type:</b> 	<b>Meldungstyp:</b> 
+CheckMade.ChatBot.Logic	Are you sure you want to cancel drafting this new submission?	Möchten Sie sicher das Erstellen dieser neuen Meldung abbrechen?
 CheckMade.ChatBot.Logic	Cancelled.	Abgebrochen.
 CheckMade.ChatBot.Logic	📎 View Attachments	📎 Anhänge anschauen
 CheckMade.ChatBot.Logic	Enter {0} to begin.	Bitte mit {0} anfangen.
+CheckMade.Common.Model	📋 Cleaning Assessment	📋 Reinigungsbewertung
+CheckMade.Common.Model	<b>Assessment Rating:</b> 	<b>Bewertungsergebnis:</b> 
+CheckMade.ChatBot.Logic	Provide rating:	Bewertung angeben:

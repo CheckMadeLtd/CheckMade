@@ -8,10 +8,10 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues;
-using CheckMade.Common.Model.Core.Issues.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.Submissions;
+using CheckMade.Common.Model.Core.Submissions.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 
@@ -19,18 +19,18 @@ namespace CheckMade.Common.BusinessLogic;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
-    IIssueFactory<T> IssueFactory) 
+    ISubmissionFactory<T> SubmissionFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetNewIssueNotificationsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory, string currentIssueTypeName)
+    public async Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
+        IReadOnlyCollection<TlgInput> inputHistory, string currentSubmissionTypeName)
     {
-        var newIssue = 
-            await IssueFactory.CreateAsync(inputHistory); 
-        var completeIssueSummary = 
-            newIssue.GetSummary();
+        var newSubmission = 
+            await SubmissionFactory.CreateAsync(inputHistory); 
+        var completeSubmissionSummary = 
+            newSubmission.GetSummary();
         var recipients = 
-            await GetNewIssueNotificationRecipientsAsync(inputHistory, newIssue.Sphere, currentIssueTypeName);
+            await GetNotificationRecipientsAsync(inputHistory, newSubmission.Sphere, currentSubmissionTypeName);
         
         return 
             recipients
@@ -38,36 +38,36 @@ public sealed record StakeholderReporter<T>(
                     new OutputDto
                     {
                         Text = GetNotificationOutput(kvp =>
-                            (recipient.Role.RoleType.GetIssueSummaryCategoriesForNotifications() & kvp.Key) != 0),
+                            (recipient.Role.RoleType.GetSubmissionSummaryCategoriesForNotifications() & kvp.Key) != 0),
                         LogicalPort = recipient,
                         Attachments = GetAttachments()
                     })
                 .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
-            newIssue is IIssueWithEvidence issueWithEvidence 
+            newSubmission is ISubmissionWithEvidence issueWithEvidence 
                 ? issueWithEvidence.Evidence.Attachments 
                 : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
-        UiString GetNotificationOutput(Func<KeyValuePair<IssueSummaryCategories, UiString>, bool> summaryFilter)
+        UiString GetNotificationOutput(Func<KeyValuePair<SubmissionSummaryCategories, UiString>, bool> summaryFilter)
         {
             return 
                 UiConcatenate(
-                    Ui("New issue submission:"),
+                    Ui("New submission:"),
                     UiNewLines(1),
                     UiNoTranslate("- - - - - - - - - - - - - - - - - -"),
                     UiNewLines(1),
                     UiConcatenate(
-                        completeIssueSummary.Where(summaryFilter)
+                        completeSubmissionSummary.Where(summaryFilter)
                             .Select(static kvp => kvp.Value)
                             .ToArray()));
         }
     }
 
-    private async Task<IReadOnlyCollection<LogicalPort>> GetNewIssueNotificationRecipientsAsync(
+    private async Task<IReadOnlyCollection<LogicalPort>> GetNotificationRecipientsAsync(
         IReadOnlyCollection<TlgInput> inputHistory,
-        ISphereOfAction issueSphere,
-        string currentIssueTypeName)
+        ISphereOfAction submissionSphere,
+        string currentSubmissionTypeName)
     {
         var allRolesAtCurrentLiveEvent = 
             (await RoleRepo.GetAllAsync())
@@ -84,7 +84,7 @@ public sealed record StakeholderReporter<T>(
                     LiveEventObserver)
                 .ToArray();
         
-        var allRelevantSpecialist = currentIssueTypeName switch
+        var allRelevantSpecialist = currentSubmissionTypeName switch
         {
             nameof(CleaningIssue<T>) =>
                 allRolesAtCurrentLiveEvent
@@ -102,7 +102,7 @@ public sealed record StakeholderReporter<T>(
         var filterOutSpecialists = allRelevantSpecialist
             .Where(r => r.RoleType is TradeTeamLead<SanitaryTrade> or TradeTeamLead<SiteCleanTrade>)
             .Where(static r => r.AssignedToSpheres.Count != 0)
-            .Where(r => !r.AssignedToSpheres.Contains(issueSphere))
+            .Where(r => !r.AssignedToSpheres.Contains(submissionSphere))
             .ToArray();
         
         var currentRoleInfo = inputHistory.First().OriginatorRole.GetValueOrThrow();

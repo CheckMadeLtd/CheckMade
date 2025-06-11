@@ -1,16 +1,13 @@
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.Logout;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
@@ -24,10 +21,9 @@ internal interface IWorkflowIdentifier
 
 internal sealed record WorkflowIdentifier(
     UserAuthWorkflow UserAuthWorkflow,
-    NewIssueWorkflow NewIssueWorkflow,
+    NewSubmissionWorkflow NewSubmissionWorkflow,
     LanguageSettingWorkflow LanguageSettingWorkflow,
     LogoutWorkflow LogoutWorkflow,
-    ViewAttachmentsWorkflow ViewAttachmentsWorkflow,
     IStateMediator Mediator,
     IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
@@ -57,7 +53,7 @@ internal sealed record WorkflowIdentifier(
             { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    (int)OperationsBotCommands.NewIssue => Option<WorkflowBase>.Some(NewIssueWorkflow),
+                    (int)OperationsBotCommands.NewSubmission => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             
@@ -72,12 +68,6 @@ internal sealed record WorkflowIdentifier(
                 {
                     _ => Option<WorkflowBase>.None()
                 },
-            
-            { InputType: CallbackQuery, TlgAgent.Mode: Notifications } =>
-                GetReactiveWorkflowInNotificationsMode(activeWorkflowLauncher),
-                
-            { InputType: CallbackQuery, TlgAgent.Mode: Communications } =>
-                GetReactiveWorkflowInCommunicationsMode(activeWorkflowLauncher),
             
             _ => throw new InvalidOperationException(
                 $"An input with these properties must not be an {nameof(activeWorkflowLauncher)}.")
@@ -125,36 +115,6 @@ internal sealed record WorkflowIdentifier(
                         $"An unhandled BotCommand must not exist above the " +
                         $"'{nameof(BotCommandMenus.GlobalBotCommandsCodeThreshold_90)}'")
             };
-        }
-
-        Option<WorkflowBase> GetReactiveWorkflowInNotificationsMode(TlgInput reactiveLauncher)
-        {
-            var sourceInput =
-                allBridges.First(b =>
-                        b.DestinationChatId == reactiveLauncher.TlgAgent.ChatId &&
-                        b.DestinationMessageId == reactiveLauncher.TlgMessageId)
-                    .SourceInput;
-
-            var sourceWorkflowTerminator = Mediator.GetTerminator(
-                Glossary.GetDtType(
-                    sourceInput.ResultantState.GetValueOrThrow().InStateId));
-
-            return sourceWorkflowTerminator switch
-            {
-                INewIssueSubmissionSucceeded<SanitaryTrade> or 
-                    INewIssueSubmissionSucceeded<SiteCleanTrade> =>
-                    Option<WorkflowBase>.Some(ViewAttachmentsWorkflow),
-
-                _ => throw new InvalidOperationException(
-                    $"Unhandled {nameof(sourceWorkflowTerminator)} while trying to identify reactive Workflow in" +
-                    $"{nameof(Notifications)} mode")
-            };
-        }
-        
-        // ReSharper disable once UnusedParameter.Local
-        Option<WorkflowBase> GetReactiveWorkflowInCommunicationsMode(TlgInput reactiveLauncher)
-        {
-            return Option<WorkflowBase>.None();
         }
     }
 
