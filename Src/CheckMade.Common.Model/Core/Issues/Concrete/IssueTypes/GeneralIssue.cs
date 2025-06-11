@@ -16,7 +16,7 @@ public sealed record GeneralIssue<T>(
     Option<Role> HandledBy, 
     IssueStatus Status,
     IDomainGlossary Glossary) 
-    : ITradeIssue<T>, IIssueWithEvidence where T : ITrade, new()
+    : ITradeSubmission<T>, ISubmissionWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {

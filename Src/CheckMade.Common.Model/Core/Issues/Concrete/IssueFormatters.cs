@@ -6,26 +6,26 @@ namespace CheckMade.Common.Model.Core.Issues.Concrete;
 internal static class IssueFormatters
 {
     public static UiString FormatCommonBasics<T>(
-        ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade, new()
+        ITradeSubmission<T> submission, IDomainGlossary glossary) where T : ITrade, new()
     {
         return UiConcatenate(
             Ui("<b>Trade:</b> "), glossary.GetUi(typeof(T)),
             UiNewLines(1),
-            Ui("<b>Submission type:</b> "), glossary.GetUi(issue.GetType()),
+            Ui("<b>Submission type:</b> "), glossary.GetUi(submission.GetType()),
             UiNewLines(1),
-            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(issue.Sphere.Name),
+            new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(submission.Sphere.Name),
             UiNewLines(1));
     }
 
     public static UiString FormatOperationalInfo<T>(
-        ITradeIssue<T> issue, IDomainGlossary glossary) where T : ITrade
+        ITradeSubmission<T> submission, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
-            Ui("<b>Created:</b> {0}", issue.CreationDate.ToString("u")),
+            Ui("<b>Created:</b> {0}", submission.CreationDate.ToString("u")),
             UiNewLines(1),
             Ui("<b>Reported by:</b> {0} ",
-                $"{issue.ReportedBy.ByUser.FirstName} {issue.ReportedBy.ByUser.LastName}"),
-            Ui("in their role as "), glossary.GetUi(issue.ReportedBy.RoleType.GetType()),
+                $"{submission.ReportedBy.ByUser.FirstName} {submission.ReportedBy.ByUser.LastName}"),
+            Ui("in their role as "), glossary.GetUi(submission.ReportedBy.RoleType.GetType()),
             UiNewLines(1));
         // ToDo: put back in when I implemented setting HandledBy as part of task management workflow
         // Ui("<b>Currently handled by:</b> "), issue.HandledBy.IsSome 
@@ -40,17 +40,17 @@ internal static class IssueFormatters
     }
 
     public static UiString FormatFacilityInfo<T>(
-        ITradeIssueInvolvingFacility<T> issue, IDomainGlossary glossary) where T : ITrade
+        ITradeSubmissionInvolvingFacility<T> submission, IDomainGlossary glossary) where T : ITrade
     {
         return UiConcatenate(
-            Ui("<b>Affected facility:</b> "), glossary.GetUi(issue.Facility.GetType()),
+            Ui("<b>Affected facility:</b> "), glossary.GetUi(submission.Facility.GetType()),
             UiNewLines(1));
     }
 
-    public static UiString FormatEvidenceInfo(IIssueWithEvidence issue)
+    public static UiString FormatEvidenceInfo(ISubmissionWithEvidence submission)
     {
-        var attachments = issue.Evidence.Attachments.IsSome
-            ? issue.Evidence.Attachments.GetValueOrThrow()
+        var attachments = submission.Evidence.Attachments.IsSome
+            ? submission.Evidence.Attachments.GetValueOrThrow()
             : null;
 
         var captions = attachments != null
@@ -64,9 +64,9 @@ internal static class IssueFormatters
         
         return UiConcatenate(
             Ui("<b>Description:</b> "), 
-            issue.Evidence.Description.IsSome 
+            submission.Evidence.Description.IsSome 
                 ? UiConcatenate(
-                    UiIndirect(issue.Evidence.Description.GetValueOrThrow()),
+                    UiIndirect(submission.Evidence.Description.GetValueOrThrow()),
                     UiConcatenate(captions))
                 : captions.Count > 0 
                     ? UiConcatenate(captions)

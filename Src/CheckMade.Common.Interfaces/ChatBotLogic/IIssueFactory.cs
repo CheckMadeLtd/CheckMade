@@ -5,5 +5,5 @@ namespace CheckMade.Common.Interfaces.ChatBotLogic;
 
 public interface IIssueFactory<T>
 {
-    Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
+    Task<ISubmission> CreateAsync(IReadOnlyCollection<TlgInput> inputs);
 } 

@@ -25,7 +25,7 @@ internal sealed record IssueFactory<T>(
     IDomainGlossary Glossary) 
     : IIssueFactory<T> where T : ITrade, new()
 {
-    public async Task<IIssue> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<ISubmission> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
     {
         var currentTrade = new T();
         var role = (await RolesRepo.GetAsync(
@@ -41,7 +41,7 @@ internal sealed record IssueFactory<T>(
                 .Name
                 .GetTypeNameWithoutGenericParamSuffix();
 
-        IIssue issue = lastSelectedIssueTypeName switch
+        ISubmission submission = lastSelectedIssueTypeName switch
         {
             nameof(GeneralIssue<T>) =>
                 new GeneralIssue<T>(
@@ -118,7 +118,7 @@ internal sealed record IssueFactory<T>(
                 $"'{currentTrade.GetType().Name}': '{lastSelectedIssueTypeName}'")
         };
 
-        return issue;
+        return submission;
 
         Guid GetGuid()
         {

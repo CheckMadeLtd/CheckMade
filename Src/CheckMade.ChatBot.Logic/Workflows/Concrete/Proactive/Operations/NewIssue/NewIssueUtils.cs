@@ -155,7 +155,7 @@ internal static class NewIssueUtils
                 .Last(static i =>
                     i.Details.DomainTerm.IsSome &&
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue != null &&
-                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(IIssue)))
+                    i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ISubmission)))
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
     }

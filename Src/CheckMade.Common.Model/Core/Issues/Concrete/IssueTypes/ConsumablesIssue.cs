@@ -19,7 +19,7 @@ public sealed record ConsumablesIssue<T>(
     Option<Role> HandledBy,
     IssueStatus Status,
     IDomainGlossary Glossary) 
-    : ITradeIssue<T> where T : ITrade, new()
+    : ITradeSubmission<T> where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {

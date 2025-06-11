@@ -3,7 +3,7 @@ using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
-internal interface ITradeIssueInvolvingFacility<T> : ITradeIssue<T> where T : ITrade
+internal interface ITradeSubmissionInvolvingFacility<T> : ITradeSubmission<T> where T : ITrade
 {
     IFacility Facility { get; }
 }

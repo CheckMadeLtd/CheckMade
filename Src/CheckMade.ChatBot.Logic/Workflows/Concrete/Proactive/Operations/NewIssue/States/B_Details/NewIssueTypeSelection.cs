@@ -37,7 +37,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 Text = Ui("Please select the type of submission:"),
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
-                        .GetAll(typeof(ITradeIssue<T>))
+                        .GetAll(typeof(ITradeSubmission<T>))
                         .SkipWhile(dt => skipCleaningRelatedIssues && 
                                          (dt.TypeValue == typeof(CleaningIssue<T>) ||
                                           dt.TypeValue == typeof(Assessment<T>)))

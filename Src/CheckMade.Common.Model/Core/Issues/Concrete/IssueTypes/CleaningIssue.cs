@@ -18,7 +18,7 @@ public sealed record CleaningIssue<T>(
     Option<Role> HandledBy,
     IssueStatus Status,
     IDomainGlossary Glossary) 
-    : ITradeIssueInvolvingFacility<T>, IIssueWithEvidence where T : ITrade, new()
+    : ITradeSubmissionInvolvingFacility<T>, ISubmissionWithEvidence where T : ITrade, new()
 {
     public IReadOnlyDictionary<IssueSummaryCategories, UiString> GetSummary()
     {

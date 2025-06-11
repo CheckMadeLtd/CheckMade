@@ -6,7 +6,7 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.Common.Model.Core.Issues;
 
-public interface IIssue
+public interface ISubmission
 {
     Guid Id { get; }
     DateTimeOffset CreationDate { get; }

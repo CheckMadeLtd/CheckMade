@@ -45,7 +45,7 @@ public sealed record StakeholderReporter<T>(
                 .ToImmutableArray();
 
         Option<IReadOnlyCollection<AttachmentDetails>> GetAttachments() =>
-            newIssue is IIssueWithEvidence issueWithEvidence 
+            newIssue is ISubmissionWithEvidence issueWithEvidence 
                 ? issueWithEvidence.Evidence.Attachments 
                 : Option<IReadOnlyCollection<AttachmentDetails>>.None();
         
