@@ -7,8 +7,8 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
+using CheckMade.Common.Model.Core.Submissions;
+using CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Utils;
 // ReSharper disable UseCollectionExpression

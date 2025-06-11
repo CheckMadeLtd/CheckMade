@@ -1,6 +1,6 @@
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 
-namespace CheckMade.Common.Model.Core.Issues;
+namespace CheckMade.Common.Model.Core.Submissions;
 
 public sealed record SubmissionEvidence
 {

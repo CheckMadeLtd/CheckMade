@@ -1,5 +1,5 @@
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core.Issues.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Concrete;
 using CheckMade.Common.Model.Core.Trades;
 
 namespace CheckMade.Common.Model.Core.Actors.RoleSystem;

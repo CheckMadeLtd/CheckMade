@@ -1,10 +1,10 @@
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete;
 using CheckMade.Common.Model.Core.LiveEvents;
+using CheckMade.Common.Model.Core.Submissions.Concrete;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Common.Model.Core.Issues;
+namespace CheckMade.Common.Model.Core.Submissions;
 
 public interface ISubmission
 {

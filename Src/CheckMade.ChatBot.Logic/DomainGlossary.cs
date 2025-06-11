@@ -12,10 +12,10 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.S
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.Issues.Concrete;
-using CheckMade.Common.Model.Core.Issues.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Model.Core.Submissions.Concrete;
+using CheckMade.Common.Model.Core.Submissions.Concrete.IssueTypes;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using CheckMade.Common.Model.Utils;
 
@@ -100,7 +100,7 @@ public sealed record DomainGlossary : IDomainGlossary
 
         #endregion
         
-        #region Issues
+        #region Submissions
         
         // Below, presence/absence determines the availability of IssueTypes per TradeType, also in the Workflow!
 

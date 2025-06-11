@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.Trades;
 
-namespace CheckMade.Common.Model.Core.Issues;
+namespace CheckMade.Common.Model.Core.Submissions;
 
 internal interface ITradeSubmissionInvolvingFacility<T> : ITradeSubmission<T> where T : ITrade
 {

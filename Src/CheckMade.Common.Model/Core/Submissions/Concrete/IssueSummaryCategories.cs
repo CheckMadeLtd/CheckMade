@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Issues.Concrete;
+namespace CheckMade.Common.Model.Core.Submissions.Concrete;
 
 /// <summary>
 /// The order of these categories here determines the order during output/formatting.

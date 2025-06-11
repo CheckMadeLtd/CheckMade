@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Model.Core.Issues;
+namespace CheckMade.Common.Model.Core.Submissions;
 
 public interface ISubmissionWithEvidence : ISubmission
 {
