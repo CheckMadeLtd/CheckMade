@@ -10,8 +10,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.S
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
 using CheckMade.Common.Model.Core.Issues.Concrete;
@@ -61,9 +59,6 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(ILogoutWorkflowConfirm), "DZF3Z4");
         AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
         AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
-        
-        AddTerm(typeof(ViewAttachmentsWorkflow), "D3TC83");
-        AddTerm(typeof(IOneStepWorkflowTerminator), "DT8SQ7");
         
         AddTerm(typeof(NewIssueWorkflow), "D6SORL");
         AddTerm(typeof(INewIssueTradeSelection), "DA0ZMD");

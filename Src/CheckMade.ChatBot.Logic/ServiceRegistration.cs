@@ -10,8 +10,6 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.S
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewIssue.States.D_Terminators;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Reactive.Notifications;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Model.Core.Trades.Concrete;
@@ -38,10 +36,7 @@ public static class ServiceRegistration
         services.AddScoped<NewIssueWorkflow>();
         services.AddScoped<LanguageSettingWorkflow>();
         services.AddScoped<LogoutWorkflow>();
-        services.AddScoped<ViewAttachmentsWorkflow>();
         
-        services.AddScoped<IOneStepWorkflowTerminator, OneStepWorkflowTerminator>();
-
         services.AddScoped<ILanguageSettingSelect, LanguageSettingSelect>();
         services.AddScoped<ILanguageSettingSet, LanguageSettingSet>();
 
