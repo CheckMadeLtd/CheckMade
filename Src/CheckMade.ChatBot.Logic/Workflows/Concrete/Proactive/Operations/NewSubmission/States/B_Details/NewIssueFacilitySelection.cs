@@ -93,7 +93,7 @@ internal sealed record NewIssueFacilitySelection<T>(
                 
                 _ => await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput, 
-                    Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                    Mediator.Next(typeof(INewSubmissionEvidenceEntry<T>)),
                     promptTransition) 
             };
         }

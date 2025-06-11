@@ -146,7 +146,7 @@ internal sealed record IssueFactory<T>(
                         i.InputType == TlgInputType.TextMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
+                        Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
                     .Select(static i => i.Details.Text.GetValueOrThrow())
                     .ToArray();
 
@@ -166,7 +166,7 @@ internal sealed record IssueFactory<T>(
                         i.InputType == TlgInputType.AttachmentMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewIssueEvidenceEntry<T>)))
+                        Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
                     .ToArray();
 
             List<AttachmentDetails> attachments = [];

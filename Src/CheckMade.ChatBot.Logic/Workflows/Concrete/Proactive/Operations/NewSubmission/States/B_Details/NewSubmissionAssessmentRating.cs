@@ -75,7 +75,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                 AssessmentRating.Ok or AssessmentRating.Bad =>
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput,
-                        Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                        Mediator.Next(typeof(INewSubmissionEvidenceEntry<T>)),
                         promptTransition),
                 
                 _ => throw new InvalidOperationException($"Unhandled {nameof(selectedRating)}: {selectedRating}")

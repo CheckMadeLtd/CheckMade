@@ -94,7 +94,7 @@ internal sealed record NewIssueTypeSelection<T>(
                 nameof(StaffIssue<T>) or nameof(GeneralIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
-                        Mediator.Next(typeof(INewIssueEvidenceEntry<T>)),
+                        Mediator.Next(typeof(INewSubmissionEvidenceEntry<T>)),
                         promptTransition),
                 
                 _ => throw new InvalidOperationException(

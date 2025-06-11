@@ -13,12 +13,12 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.B_Details;
 
-internal interface INewIssueEvidenceEntry<T> : IWorkflowStateNormal where T : ITrade, new(); 
+internal interface INewSubmissionEvidenceEntry<T> : IWorkflowStateNormal where T : ITrade, new(); 
 
-internal sealed record NewIssueEvidenceEntry<T>(
+internal sealed record NewSubmissionEvidenceEntry<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator) 
-    : INewIssueEvidenceEntry<T> where T : ITrade, new()
+    : INewSubmissionEvidenceEntry<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
