@@ -95,7 +95,7 @@ internal sealed record NewIssueReview<T>(
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
-                    Mediator.Next(typeof(INewIssueCancelConfirmation<T>)), 
+                    Mediator.Next(typeof(INewSubmissionCancelConfirmation<T>)), 
                     new PromptTransition(currentInput.TlgMessageId)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")

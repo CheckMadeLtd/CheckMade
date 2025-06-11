@@ -48,8 +48,8 @@ public static class ServiceRegistration
         services.AddScoped<IUserAuthWorkflowAuthenticated, UserAuthWorkflowAuthenticated>();
 
         services.AddScoped<INewSubmissionTradeSelection, NewSubmissionTradeSelection>();
-        services.AddScoped<INewIssueCancelConfirmation<SanitaryTrade>, NewIssueCancelConfirmation<SanitaryTrade>>();
-        services.AddScoped<INewIssueCancelConfirmation<SiteCleanTrade>, NewIssueCancelConfirmation<SiteCleanTrade>>();
+        services.AddScoped<INewSubmissionCancelConfirmation<SanitaryTrade>, NewSubmissionCancelConfirmation<SanitaryTrade>>();
+        services.AddScoped<INewSubmissionCancelConfirmation<SiteCleanTrade>, NewSubmissionCancelConfirmation<SiteCleanTrade>>();
         services.AddScoped<INewIssueCancelled<SanitaryTrade>, NewIssueCancelled<SanitaryTrade>>();
         services.AddScoped<INewIssueCancelled<SiteCleanTrade>, NewIssueCancelled<SiteCleanTrade>>();
         services.AddScoped<INewSubmissionConsumablesSelection<SanitaryTrade>, NewSubmissionConsumablesSelection<SanitaryTrade>>();

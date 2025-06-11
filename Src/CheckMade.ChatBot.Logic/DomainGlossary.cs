@@ -92,8 +92,8 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(INewIssueEditMenu<SanitaryTrade>), "D8ABBA");
         AddTerm(typeof(INewIssueEditMenu<SiteCleanTrade>), "DHZY2B");
         
-        AddTerm(typeof(INewIssueCancelConfirmation<SanitaryTrade>), "DL69OL");
-        AddTerm(typeof(INewIssueCancelConfirmation<SiteCleanTrade>), "DNLJMN");
+        AddTerm(typeof(INewSubmissionCancelConfirmation<SanitaryTrade>), "DL69OL");
+        AddTerm(typeof(INewSubmissionCancelConfirmation<SiteCleanTrade>), "DNLJMN");
         
         AddTerm(typeof(INewIssueCancelled<SanitaryTrade>), "DN1KAK");
         AddTerm(typeof(INewIssueCancelled<SiteCleanTrade>), "DR8REC");

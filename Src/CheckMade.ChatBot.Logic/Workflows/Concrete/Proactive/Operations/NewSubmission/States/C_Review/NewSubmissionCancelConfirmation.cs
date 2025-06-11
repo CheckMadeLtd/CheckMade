@@ -13,12 +13,12 @@ using CheckMade.Common.Model.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Proactive.Operations.NewSubmission.States.C_Review;
 
-internal interface INewIssueCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
+internal interface INewSubmissionCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewIssueCancelConfirmation<T>(
+internal sealed record NewSubmissionCancelConfirmation<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator) 
-    : INewIssueCancelConfirmation<T> where T : ITrade, new()
+    : INewSubmissionCancelConfirmation<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
