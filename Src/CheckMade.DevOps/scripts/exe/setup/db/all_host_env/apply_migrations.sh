@@ -58,7 +58,7 @@ for sql_file in $(ls $migrations_dir/*.sql | sort); do
   
 done
 
-test_data_seeding_script="$migrations_dir/../seeding/fake_test_setup_data.sql"
+test_data_seeding_script="$migrations_dir/../../seeding/fake_test_setup_data.sql"
 
 if [ "$db_hosting_env" == "CI" ]; then
   psql -h localhost -U "$PG_SUPER_USER" -d "$PG_DB_NAME" -f "$test_data_seeding_script"
