@@ -110,7 +110,8 @@ internal static class TestData
                     Dt(ConsumablesItem.ToiletPaper),
                     Dt(ConsumablesItem.PaperTowels),
                     Dt(ConsumablesItem.Soap)
-                }));
+                },
+                Option<string>.None()));
     
     internal static readonly SphereOfAction<SanitaryTrade> Sphere2_AtX2024 =
         new("Camp2-4cc",
@@ -124,7 +125,8 @@ internal static class TestData
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesItem.ToiletPaper)
-                }));
+                },
+                Option<string>.None()));
     
     internal static readonly SphereOfAction<SanitaryTrade> Sphere3_AtX2024 =
         new("Camp3-NoGeo",
@@ -138,14 +140,16 @@ internal static class TestData
                 new List<DomainTerm>
                 {
                     Dt(ConsumablesItem.ToiletPaper)
-                }));
+                },
+                Option<string>.None()));
 
     internal static readonly SphereOfAction<SiteCleanTrade> Sphere4_AtX2024 =
         new("Zone1",
             new SiteCleaningZoneDetails(
                 Option<Geo>.None(),
                 new List<DomainTerm>().ToImmutableArray(),
-                new List<DomainTerm>().ToImmutableArray()));
+                new List<DomainTerm>().ToImmutableArray(),
+                Option<string>.None()));
     
     #endregion
     
