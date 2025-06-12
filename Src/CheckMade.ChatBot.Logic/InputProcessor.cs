@@ -71,7 +71,7 @@ internal sealed class InputProcessor(
                 var enrichedCurrentInput = currentInput with
                 {
                     ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
-                                        ?? Option<ResultantWorkflowState>.None(),
+                                     ?? Option<ResultantWorkflowState>.None(),
                     EntityGuid = GetEntityGuid(responseResult)
                 };
                 

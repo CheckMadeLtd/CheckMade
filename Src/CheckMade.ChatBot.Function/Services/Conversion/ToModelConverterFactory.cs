@@ -10,11 +10,11 @@ public interface IToModelConverterFactory
     IToModelConverter Create(ITelegramFilePathResolver filePathResolver);
 }
 
-internal class ToModelConverterFactory(
-        IBlobLoader blobLoader,
-        IHttpDownloader downloader,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
-        ILogger<ToModelConverter> logger) 
+internal sealed class ToModelConverterFactory(
+    IBlobLoader blobLoader,
+    IHttpDownloader downloader,
+    ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    ILogger<ToModelConverter> logger) 
     : IToModelConverterFactory
 {
     public IToModelConverter Create(ITelegramFilePathResolver filePathResolver) =>

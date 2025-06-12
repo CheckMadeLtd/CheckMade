@@ -121,7 +121,7 @@ internal static class RegisterServicesExtensions
                 GetBotToken(config, "PRD", InteractionMode.Communications),
                 GetBotToken(config, "PRD", InteractionMode.Notifications)),
 
-            _ => throw new ArgumentException((nameof(hostingEnvironment)))
+            _ => throw new ArgumentException(nameof(hostingEnvironment))
         };
 
     private static string GetBotToken(IConfiguration config, string envAcronym, InteractionMode interactionMode)
