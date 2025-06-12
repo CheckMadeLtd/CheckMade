@@ -115,7 +115,7 @@ WITH user_daniel_en AS (
                      'DX3KFI',
                      (SELECT id FROM new_live_event_X2024),
                      '{
-                       "LocationName": null,                       
+                       "LocationName": "SuperInfield Backside",                       
                        "GeoCoordinates": {
                          "Latitude": {
                            "Value": 50.93140957842968

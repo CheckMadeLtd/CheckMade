@@ -111,7 +111,7 @@ internal static class TestData
                     Dt(ConsumablesItem.PaperTowels),
                     Dt(ConsumablesItem.Soap)
                 },
-                Option<string>.None()));
+                "SuperInfield Backside"));
     
     internal static readonly SphereOfAction<SanitaryTrade> Sphere2_AtX2024 =
         new("Camp2-4cc",
