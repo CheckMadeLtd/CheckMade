@@ -13,6 +13,7 @@
     
     <ItemGroup>
       <Folder Include="scripts\" />
+      <Folder Include="scripts\sql\migrations\data\" />
     </ItemGroup>
     
     <ItemGroup>
