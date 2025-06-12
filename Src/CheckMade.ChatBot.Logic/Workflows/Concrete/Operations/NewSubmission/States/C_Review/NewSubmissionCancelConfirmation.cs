@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -17,7 +18,8 @@ internal interface INewSubmissionCancelConfirmation<T> : IWorkflowStateNormal wh
 
 internal sealed record NewSubmissionCancelConfirmation<T>(
     IDomainGlossary Glossary,
-    IStateMediator Mediator) 
+    IStateMediator Mediator,
+    ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionCancelConfirmation<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -56,7 +58,8 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                         Text = Ui("Cancelled.")
                     },
                     newState: Mediator.GetTerminator(typeof(INewSubmissionCancelled<T>)),
-                    promptTransition: new PromptTransition(currentInput.TlgMessageId)),
+                    promptTransition: new PromptTransition(
+                        currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
             
             (long)ControlPrompts.No =>
                 await WorkflowResponse.CreateFromNextStateAsync(

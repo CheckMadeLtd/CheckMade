@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
@@ -19,7 +20,8 @@ internal sealed record LanguageSettingSelect(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     ITlgAgentRoleBindingsRepository RoleBindingsRepo,
-    IUsersRepository UsersRepo) 
+    IUsersRepository UsersRepo,
+    ILastOutputMessageIdCache MsgIdCache) 
     : ILanguageSettingSelect
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -67,7 +69,7 @@ internal sealed record LanguageSettingSelect(
                     Glossary.GetUi(newLanguage))
             },
             newState: Mediator.GetTerminator(typeof(ILanguageSettingSet)),
-            promptTransition: new PromptTransition(currentInput.TlgMessageId)
+            promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)
         );
     }
 }
