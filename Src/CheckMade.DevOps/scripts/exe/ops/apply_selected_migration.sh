@@ -20,7 +20,7 @@ dbname=$PG_DB_NAME user=$PG_SUPER_USER_PRD password=$PG_SUPER_USER_PRD_PSW"
 
 declare -A MigrationFiles
 
-migrations_dir="$script_dir_apply_selected_migr/../../sql/migrations"
+migrations_dir="$script_dir_apply_selected_migr/../../sql/migrations/schema"
 
 [ -d "$migrations_dir" ] || { echo "Migration directory not found"; exit 1; }
 

@@ -13,3 +13,4 @@ TRUNCATE live_event_series CASCADE;
 TRUNCATE users_employment_history CASCADE;
 TRUNCATE vendors CASCADE;
 TRUNCATE users CASCADE;
+TRUNCATE roles_to_spheres_assignments CASCADE;

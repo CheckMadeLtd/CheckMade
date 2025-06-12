@@ -37,7 +37,7 @@ if [ "$db_hosting_env" == "Production" ]; then
 dbname=$PG_DB_NAME user=$PG_SUPER_USER password=$PG_SUPER_USER_PRD_PSW"
 fi
 
-migrations_dir="$script_dir_apply_migr/../../../../sql/migrations"
+migrations_dir="$script_dir_apply_migr/../../../../sql/migrations/schema"
 
 for sql_file in $(ls $migrations_dir/*.sql | sort); do
   

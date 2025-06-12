@@ -115,6 +115,7 @@ WITH user_daniel_en AS (
                      'DX3KFI',
                      (SELECT id FROM new_live_event_X2024),
                      '{
+                       "LocationName": "SuperInfield Backside",                       
                        "GeoCoordinates": {
                          "Latitude": {
                            "Value": 50.93140957842968
@@ -138,6 +139,7 @@ WITH user_daniel_en AS (
                      'DX3KFI',
                      (SELECT id FROM new_live_event_X2024),
                      '{
+                       "LocationName": null,
                        "GeoCoordinates": {
                          "Latitude": {
                            "Value": 51.240118
@@ -149,7 +151,7 @@ WITH user_daniel_en AS (
                        },
                        "AvailableFacilities": ["D55BLT"],
                        "AvailableConsumables": ["DSTP1N"]
-                     }',
+                      }',
                      1)
              ON CONFLICT (live_event_id, name) DO NOTHING
      ),
@@ -160,6 +162,7 @@ WITH user_daniel_en AS (
                      'DX3KFI',
                      (SELECT id FROM new_live_event_X2024),
                      '{
+                       "LocationName": null,
                        "GeoCoordinates": null,
                        "AvailableFacilities": ["D55BLT"],
                        "AvailableConsumables": ["DSTP1N"]
@@ -174,6 +177,7 @@ WITH user_daniel_en AS (
                      'DSIL7M',
                      (SELECT id FROM new_live_event_X2024),
                      '{
+                       "LocationName": null,
                        "GeoCoordinates": null,
                        "AvailableFacilities": ["D55BLT"],
                        "AvailableConsumables": []
