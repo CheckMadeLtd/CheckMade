@@ -170,10 +170,7 @@ internal sealed class InputProcessor(
                         [
                             new OutputDto 
                             { 
-                                Text = UiConcatenate(
-                                    Ui("Your input can't be processed."),
-                                    UiNewLines(1),
-                                    IInputProcessor.SeeValidBotCommandsInstruction)
+                                Text = IInputProcessor.SeeValidBotCommandsInstruction
                             }
                         ], 
                         Option<string>.None(),
