@@ -37,7 +37,12 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
         [
             new()
             {
-                Text = Ui("Please confirm: are you at '{0}'?", nearSphere.GetValueOrThrow().Name),
+                Text = UiConcatenate(
+                    Ui("Please confirm: are you at '{0}'?", nearSphere.GetValueOrThrow().Name),
+                    UiIndirect(
+                        nearSphere.GetValueOrThrow().Details.LocationName.IsSome
+                            ? " - " + nearSphere.GetValueOrThrow().Details.LocationName.GetValueOrDefault()
+                            : string.Empty)),
                 ControlPromptsSelection = ControlPrompts.YesNo,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }

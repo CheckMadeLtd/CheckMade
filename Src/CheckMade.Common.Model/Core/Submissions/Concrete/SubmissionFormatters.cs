@@ -14,7 +14,9 @@ internal static class SubmissionFormatters
             Ui("<b>Submission type:</b> "), glossary.GetUi(submission.GetType()),
             UiNewLines(1),
             new T().GetSphereOfActionLabel, UiNoTranslate(": "), UiIndirect(submission.Sphere.Name),
-            UiNoTranslate(" - "), UiIndirect(submission.Sphere.Details.LocationName.GetValueOrDefault()),
+            UiIndirect(submission.Sphere.Details.LocationName.IsSome
+                ? " - " + submission.Sphere.Details.LocationName.GetValueOrDefault()
+                : string.Empty),
             UiNewLines(1));
     }
 
