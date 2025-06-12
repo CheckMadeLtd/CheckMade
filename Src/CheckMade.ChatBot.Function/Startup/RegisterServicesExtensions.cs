@@ -6,6 +6,7 @@ using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.BusinessLogic;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ internal static class RegisterServicesExtensions
     {
         services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
+        services.AddSingleton<ILastOutputMessageIdCache, LastOutputMessageIdCache>();
     }
     
     internal static void RegisterCommonPersistenceServices(
@@ -121,7 +123,7 @@ internal static class RegisterServicesExtensions
                 GetBotToken(config, "PRD", InteractionMode.Communications),
                 GetBotToken(config, "PRD", InteractionMode.Notifications)),
 
-            _ => throw new ArgumentException((nameof(hostingEnvironment)))
+            _ => throw new ArgumentException(nameof(hostingEnvironment))
         };
 
     private static string GetBotToken(IConfiguration config, string envAcronym, InteractionMode interactionMode)

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -17,7 +18,8 @@ internal interface INewSubmissionEvidenceEntry<T> : IWorkflowStateNormal where T
 
 internal sealed record NewSubmissionEvidenceEntry<T>(
     IDomainGlossary Glossary,
-    IStateMediator Mediator) 
+    IStateMediator Mediator,
+    ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionEvidenceEntry<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -44,7 +46,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
-            currentInput.TlgMessageId, true);
+            currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent, true);
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
@@ -117,7 +119,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, 
                             Mediator.Next(typeof(INewSubmissionReview<T>)),
-                            new PromptTransition(currentInput.TlgMessageId)),
+                            new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(

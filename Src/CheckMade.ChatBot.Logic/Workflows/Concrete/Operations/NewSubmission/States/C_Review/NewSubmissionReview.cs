@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Interfaces.BusinessLogic;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Interfaces.ChatBotLogic;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
@@ -25,7 +26,8 @@ internal sealed record NewSubmissionReview<T>(
     IStateMediator Mediator,
     ISubmissionFactory<T> Factory,
     ITlgInputsRepository InputsRepo,
-    IStakeholderReporter<T> Reporter) 
+    IStakeholderReporter<T> Reporter,
+    ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionReview<T> where T : ITrade, new()
 {
     private Guid _lastGuidCache = Guid.Empty;
@@ -89,14 +91,14 @@ internal sealed record NewSubmissionReview<T>(
                     },
                     await GetStakeholderNotificationsAsync(),
                     Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
-                    promptTransition: new PromptTransition(currentInput.TlgMessageId),
+                    promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent),
                     entityGuid: await GetLastGuidAsync()),
             
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
                     Mediator.Next(typeof(INewSubmissionCancelConfirmation<T>)), 
-                    new PromptTransition(currentInput.TlgMessageId)),
+                    new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };

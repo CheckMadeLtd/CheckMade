@@ -5,6 +5,7 @@ using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
@@ -14,7 +15,6 @@ using CheckMade.Common.Model.ChatBot.UserInteraction;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
@@ -35,6 +35,7 @@ public sealed class UpdateHandler(
     IBlobLoader blobLoader,
     ITlgInputsRepository inputsRepo,
     IDomainGlossary glossary,
+    ILastOutputMessageIdCache msgIdCache,
     ILogger<UpdateHandler> logger)
     : IUpdateHandler
 {
@@ -42,14 +43,18 @@ public sealed class UpdateHandler(
         UpdateWrapper update,
         InteractionMode currentInteractionMode)
     {
-        var currentUserId = update.Message.From?.Id;
-        ChatId currentChatId = update.Message.Chat.Id;
+        var currentTlgAgent = new TlgAgent(
+            // Assuming Message.From will never be null for us, because this only happens for e.g. 
+            // Annonymous admins in groups and posts in Channels, neither of which are planned for CheckMade
+            update.Message.From!.Id,
+            update.Message.Chat.Id,
+            currentInteractionMode);
         
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
                         "with Message from UserId/ChatId: {userId}/{chatId}", 
             currentInteractionMode, 
-            update.Message.From?.Id ?? 0,
-            currentChatId);
+            currentTlgAgent.UserId,
+            currentTlgAgent.ChatId);
 
         var handledMessageTypes = new[]
         {
@@ -96,19 +101,15 @@ public sealed class UpdateHandler(
                         .ToArray())
                 from uiTranslator
                     in Result<IUiTranslator>.Run(() => 
-                        translatorFactory.Create(GetUiLanguage(
-                            activeRoleBindings,
-                            currentUserId,
-                            currentChatId,
-                            currentInteractionMode)))
+                        translatorFactory.Create(GetUiLanguage(activeRoleBindings, currentTlgAgent)))
                 from replyMarkupConverter
                     in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator))
                 from sentOutputs
                     in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
-                            result.ResultingOutputs, botClientByMode, currentInteractionMode, currentChatId,
-                            activeRoleBindings, uiTranslator, replyMarkupConverter, blobLoader, logger))
+                            result.ResultingOutputs, botClientByMode, currentTlgAgent, activeRoleBindings, 
+                            uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, logger))
                 from unit 
                     in Result<Unit>.RunAsync(() =>
                         SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))
@@ -146,15 +147,11 @@ public sealed class UpdateHandler(
 
     private LanguageCode GetUiLanguage(
         IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
-        long? currentUserId,
-        ChatId currentChatId,
-        InteractionMode currentMode)
+        TlgAgent currentTlgAgent)
     {
         var tlgAgentRole = activeRoleBindings
             .FirstOrDefault(tarb =>
-                tarb.TlgAgent.UserId.Id == currentUserId &&
-                tarb.TlgAgent.ChatId.Id == currentChatId &&
-                tarb.TlgAgent.Mode == currentMode);
+                tarb.TlgAgent.Equals(currentTlgAgent));
         
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -18,7 +19,8 @@ internal interface INewSubmissionAssessmentRating<T> : IWorkflowStateNormal wher
 
 internal sealed record NewSubmissionAssessmentRating<T>(
     IDomainGlossary Glossary, 
-    IStateMediator Mediator) 
+    IStateMediator Mediator,
+    ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionAssessmentRating<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -70,7 +72,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput,
                         Mediator.Next(typeof(INewSubmissionReview<T>)),
-                        new PromptTransition(currentInput.TlgMessageId)),
+                        new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
                 
                 AssessmentRating.Ok or AssessmentRating.Bad =>
                     await WorkflowResponse.CreateFromNextStateAsync(

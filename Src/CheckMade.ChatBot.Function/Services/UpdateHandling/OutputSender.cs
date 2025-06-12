@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
@@ -20,12 +21,12 @@ internal static class OutputSender
     internal static async Task<IReadOnlyCollection<Result<OutputDto>>> SendOutputsAsync(
         IReadOnlyCollection<OutputDto> outputs,
         IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
-        InteractionMode currentInteractionMode,
-        ChatId currentChatId,
+        TlgAgent currentTlgAgent,
         IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader,
+        ILastOutputMessageIdCache msgIdCache,
         ILogger logger)
     {
         // "Bound Ports" are those LogicalPorts where an actual TlgAgent has a binding to the Role and
@@ -43,18 +44,14 @@ internal static class OutputSender
                 foreach (var output in outputsPerBoundPort)
                 {
                     // LogicalPort is only set for outputs aimed at anyone who is NOT the originator of the current input
-                    var outputMode = output.LogicalPort.Match(
-                        static logicalPort => logicalPort.InteractionMode,
-                        () => currentInteractionMode);
-
-                    var outputBotClient = botClientByMode[outputMode];
-                    
-                    var outputChatId = output.LogicalPort.Match(
+                    var outputTlgAgent = output.LogicalPort.Match(
                         logicalPort => activeRoleBindings
                             .First(tarb => hasBinding(tarb, logicalPort))
-                            .TlgAgent.ChatId.Id,
-                        () => currentChatId);
+                            .TlgAgent,
+                        () => currentTlgAgent);
 
+                    var outputBotClient = botClientByMode[outputTlgAgent.Mode];
+                    
                     switch (output)
                     {
                         case
@@ -104,10 +101,18 @@ internal static class OutputSender
                     sentOutputs.Last()
                         .Tap(lastSentOutput => 
                         {
-                            if (lastSentOutput.IsFailure)
+                            if (lastSentOutput.IsSuccess)
+                            {
+                                msgIdCache.UpdateLastMessageId(
+                                    outputTlgAgent,
+                                    lastSentOutput.GetValueOrThrow().ActualSendOutParams!.Value.TlgMessageId);
+                            }
+                            else
+                            {
                                 logger.LogWarning($"Failure while sending an Output: " +
                                                   $"{lastSentOutput.GetEnglishFailureMessageIfAny()
                                                       .GetValueOrDefault()}");
+                            }
                         });
 
                     continue;
@@ -119,7 +124,7 @@ internal static class OutputSender
                                 ActualSendOutParams = new ActualSendOutParams
                                 {
                                     TlgMessageId = id,
-                                    ChatId = outputChatId.Identifier!
+                                    ChatId = outputTlgAgent.ChatId
                                 }
                             },
                             Result<OutputDto>.Fail);
@@ -129,7 +134,7 @@ internal static class OutputSender
                         return await Result<TlgMessageId>.RunAsync(() => 
                             outputBotClient
                                 .SendTextMessageAsync(
-                                    outputChatId,
+                                    outputTlgAgent.ChatId.Id,
                                     uiTranslator.Translate(Ui("Please choose:")),
                                     uiTranslator.Translate(output.Text.GetValueOrThrow()),
                                     converter.GetReplyMarkup(output)));
@@ -140,7 +145,7 @@ internal static class OutputSender
                         return await Result<TlgMessageId>.RunAsync(() =>
                             outputBotClient
                                 .EditTextMessageAsync(
-                                    outputChatId,
+                                    outputTlgAgent.ChatId.Id,
                                     output.Text.IsSome
                                         ? uiTranslator.Translate(output.Text.GetValueOrThrow())
                                         : Option<string>.None(),
@@ -161,7 +166,7 @@ internal static class OutputSender
                             from attachmentSendOutParams
                                 in Result<AttachmentSendOutParameters>.Run(() =>
                                     new AttachmentSendOutParameters(
-                                        outputChatId,
+                                        outputTlgAgent.ChatId.Id,
                                         fileStream,
                                         details.Caption,
                                         converter.GetReplyMarkup(output)))
@@ -186,7 +191,7 @@ internal static class OutputSender
                         return await Result<TlgMessageId>.RunAsync(() =>
                             outputBotClient
                                 .SendLocationAsync(
-                                    outputChatId,
+                                    outputTlgAgent.ChatId.Id,
                                     output.Location.GetValueOrThrow(),
                                     converter.GetReplyMarkup(output)));
                     }

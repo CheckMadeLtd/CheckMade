@@ -86,7 +86,7 @@ public sealed record StakeholderReporter<T>(
         
         var allRelevantSpecialist = currentSubmissionTypeName switch
         {
-            nameof(CleaningIssue<T>) =>
+            nameof(CleaningIssue<T>) or nameof(Assessment<T>) =>
                 allRolesAtCurrentLiveEvent
                     .Where(static r => r.RoleType is TradeTeamLead<T>)
                     .ToArray(),

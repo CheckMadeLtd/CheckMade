@@ -1,7 +1,7 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
@@ -23,6 +23,7 @@ internal sealed class InputProcessor(
     IWorkflowIdentifier workflowIdentifier,
     IGeneralWorkflowUtils workflowUtils,
     IDomainGlossary glossary,
+    ILastOutputMessageIdCache msgIdCache,
     ILogger<InputProcessor> logger)
     : IInputProcessor
 {
@@ -55,7 +56,7 @@ internal sealed class InputProcessor(
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission."),
-                            UpdateExistingOutputMessageId = new TlgMessageId(currentInput.TlgMessageId - 1)
+                            UpdateExistingOutputMessageId = msgIdCache.GetLastMessageId(currentInput.TlgAgent)
                         });
                 }
 
@@ -71,7 +72,7 @@ internal sealed class InputProcessor(
                 var enrichedCurrentInput = currentInput with
                 {
                     ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
-                                        ?? Option<ResultantWorkflowState>.None(),
+                                     ?? Option<ResultantWorkflowState>.None(),
                     EntityGuid = GetEntityGuid(responseResult)
                 };
                 
@@ -170,10 +171,7 @@ internal sealed class InputProcessor(
                         [
                             new OutputDto 
                             { 
-                                Text = UiConcatenate(
-                                    Ui("Your input can't be processed."),
-                                    UiNewLines(1),
-                                    IInputProcessor.SeeValidBotCommandsInstruction)
+                                Text = IInputProcessor.SeeValidBotCommandsInstruction
                             }
                         ], 
                         Option<string>.None(),
