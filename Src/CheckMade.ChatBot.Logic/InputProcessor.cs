@@ -10,15 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
 
-public interface IInputProcessor
-{
-    public static readonly UiString SeeValidBotCommandsInstruction = 
-        Ui("Tap on the menu button or type '/' to see available BotCommands.");
-
-    public Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input);
-}
-
 internal sealed class InputProcessor(
     IWorkflowIdentifier workflowIdentifier,
     IGeneralWorkflowUtils workflowUtils,

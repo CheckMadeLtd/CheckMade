@@ -1,14 +1,10 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils.UiTranslation;
-
-public interface IUiTranslator
-{
-    string Translate(UiString uiString);
-}
 
 public sealed partial class UiTranslator(
     Option<IReadOnlyDictionary<string, string>> translationByKey,

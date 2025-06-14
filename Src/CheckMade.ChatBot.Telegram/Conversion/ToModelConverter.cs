@@ -1,11 +1,11 @@
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
@@ -15,18 +15,19 @@ using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Function.Services.Conversion;
+namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface IToModelConverter
 {
     Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
-internal sealed class ToModelConverter(
+public sealed class ToModelConverter(
     ITelegramFilePathResolver filePathResolver,
     IBlobLoader blobLoader,
     IHttpDownloader downloader,
     ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    IDomainGlossary domainGlossary,
     ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
@@ -46,7 +47,7 @@ internal sealed class ToModelConverter(
                     from botCommandEnumCode 
                         in GetBotCommandEnumCode(update, interactionMode)
                     from domainTerm 
-                        in GetDomainTerm(update)
+                        in GetDomainTerm(update, domainGlossary)
                     from controlPromptEnumCode 
                         in GetControlPromptEnumCode(update)
                     from originatorRole
@@ -216,15 +217,14 @@ internal sealed class ToModelConverter(
         return botCommandUnderlyingEnumCodeForModeAgnosticRepresentation;
     }
 
-    private static Result<Option<DomainTerm>> GetDomainTerm(UpdateWrapper update)
+    private static Result<Option<DomainTerm>> GetDomainTerm(UpdateWrapper update, IDomainGlossary domainGlossary)
     {
-        var glossary = new DomainGlossary();
         var callBackDataRaw = update.Update.CallbackQuery?.Data;
 
         if (string.IsNullOrWhiteSpace(callBackDataRaw) || !callBackDataRaw.IsValidToken())
             return Option<DomainTerm>.None();
 
-        return Option<DomainTerm>.Some(glossary.TermById[new CallbackId(callBackDataRaw)]);
+        return Option<DomainTerm>.Some(domainGlossary.TermById[new CallbackId(callBackDataRaw)]);
     }
     
     private static Result<Option<long>> GetControlPromptEnumCode(UpdateWrapper update)

@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.DomainModel.Core.Submissions.SubmissionTypes;
@@ -252,7 +252,7 @@ public sealed class OutputToReplyMarkupConverterTests
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
         var converter = converterFactory.Create(new UiTranslator(
             Option<IReadOnlyDictionary<string, string>>.None(),
-            sp.GetRequiredService<ILogger<UiTranslator>>()));
+            sp.GetRequiredService<ILogger<UiTranslator>>()), new DomainGlossary());
 
         var controlPromptsGlossary = new ControlPromptsGlossary();
         var uiByPromptId = controlPromptsGlossary.UiByCallbackId;

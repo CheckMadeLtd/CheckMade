@@ -1,12 +1,12 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public sealed record UpdateWrapper
 {
-    internal Update Update { get; }
-    internal Message Message { get; }
+    public Update Update { get; }
+    public Message Message { get; }
 
     private readonly Action<Message> _checkFromIdNotNullOrThrow = static m =>
     {
@@ -16,7 +16,7 @@ public sealed record UpdateWrapper
     };
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    internal UpdateWrapper(Update update)
+    public UpdateWrapper(Update update)
     {
         Update = update;
         
@@ -42,7 +42,7 @@ public sealed record UpdateWrapper
         _checkFromIdNotNullOrThrow(Message);
     }
 
-    internal UpdateWrapper(Message message)
+    public UpdateWrapper(Message message)
     {
         Message = message;
         // Needed only by fake messages from TestUtils, which are using this constructor overload as a shortcut.
@@ -51,7 +51,7 @@ public sealed record UpdateWrapper
         _checkFromIdNotNullOrThrow(Message);
     }
     
-    internal UpdateWrapper(Update update, Message message)
+    public UpdateWrapper(Update update, Message message)
     {
         Update = update;
         Message = message;

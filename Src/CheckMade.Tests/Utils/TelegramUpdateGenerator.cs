@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.Utils.Generic;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

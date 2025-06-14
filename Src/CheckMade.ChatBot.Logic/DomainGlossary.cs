@@ -30,9 +30,6 @@ public sealed record DomainGlossary : IDomainGlossary
 
     public IReadOnlyDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
-
-    public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
-    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
     
     public DomainGlossary()
     {

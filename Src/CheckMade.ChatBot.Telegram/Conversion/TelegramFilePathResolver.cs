@@ -2,14 +2,14 @@ using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using File = Telegram.Bot.Types.TGFile;
 
-namespace CheckMade.ChatBot.Function.Services.Conversion;
+namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface ITelegramFilePathResolver
 {
     Task<Result<string>> GetTelegramFilePathAsync(string fileId);
 }
 
-internal sealed class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
+public sealed class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
 {
     private const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
     

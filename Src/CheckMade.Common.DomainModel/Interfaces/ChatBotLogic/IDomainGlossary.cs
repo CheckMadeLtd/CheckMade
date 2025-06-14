@@ -21,4 +21,7 @@ public interface IDomainGlossary
     UiString GetUi(IReadOnlyCollection<DomainTerm> domainTerms);
 
     Type GetDtType(string dtId);
+    
+    public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
+    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
 }

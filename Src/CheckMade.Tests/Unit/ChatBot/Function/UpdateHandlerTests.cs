@@ -1,13 +1,15 @@
-using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
@@ -157,7 +159,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
-        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
+        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, new DomainGlossary());
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
         var actualMarkup = Option<ReplyMarkup>.None();

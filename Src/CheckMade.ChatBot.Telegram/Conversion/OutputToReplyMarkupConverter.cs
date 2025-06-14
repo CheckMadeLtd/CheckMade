@@ -1,29 +1,26 @@
 using System.ComponentModel;
-using CheckMade.ChatBot.Logic;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Utils.Generic;
-using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.ChatBot.Function.Services.Conversion;
+namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {
     Option<ReplyMarkup> GetReplyMarkup(OutputDto output);
 }
 
-internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : IOutputToReplyMarkupConverter
+internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator, IDomainGlossary domainGlossary) 
+    : IOutputToReplyMarkupConverter
 {
     public Option<ReplyMarkup> GetReplyMarkup(OutputDto output)
     {
         if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");
-
-        var domainGlossary = new DomainGlossary();
         
         var textCallbackIdPairsForDomainTerms = 
             GetTextIdPairsForDomainTerms(
@@ -83,8 +80,8 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator) : I
                     text: translator.Translate(glossary.GetUi(term)) + 
                           (term.Toggle.IsSome 
                               ? term.Toggle.GetValueOrThrow() 
-                                  ? $" {DomainGlossary.ToggleOnSuffix.GetFormattedEnglish()}" 
-                                  : $" {DomainGlossary.ToggleOffSuffix.GetFormattedEnglish()}" 
+                                  ? $" {IDomainGlossary.ToggleOnSuffix.GetFormattedEnglish()}" 
+                                  : $" {IDomainGlossary.ToggleOffSuffix.GetFormattedEnglish()}" 
                               : string.Empty),
                     id: glossary.GetId(term)
                 )).ToList();
