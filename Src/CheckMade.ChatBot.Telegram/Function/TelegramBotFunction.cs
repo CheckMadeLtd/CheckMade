@@ -1,15 +1,14 @@
 using System.Collections.Concurrent;
 using System.Net;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
-using Telegram.Bot.Types;
 using System.Text.Json;
-using CheckMade.ChatBot.Telegram.Function;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
-namespace CheckMade.ChatBot.Function.Endpoints;
+namespace CheckMade.ChatBot.Telegram.Function;
 
 public sealed class TelegramBotFunction(ILogger logger, IBotUpdateSwitch botUpdateSwitch) : IBotFunction
 {

@@ -49,7 +49,6 @@
         <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-        <PackageReference Include="Telegram.Bot" Version="$(TelegramBotVersion)" />
     </ItemGroup>
     
     <ItemGroup>
