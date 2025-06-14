@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Tests.Startup.DefaultStubs;

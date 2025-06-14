@@ -1,14 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
+using CheckMade.Common.DomainModel.Interfaces.Utils;
 using Microsoft.Extensions.Logging;
 using Polly;
 
 namespace CheckMade.Common.Utils.RetryPolicies;
-
-public interface INetworkRetryPolicy
-{
-    Task ExecuteAsync(Func<Task> action);
-}
 
 public sealed class NetworkRetryPolicy : RetryPolicyBase, INetworkRetryPolicy
 {

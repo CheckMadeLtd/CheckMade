@@ -1,10 +1,10 @@
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -14,7 +14,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.TGFile;
 
-namespace CheckMade.ChatBot.Function.Services.BotClient;
+namespace CheckMade.ChatBot.Telegram.BotClient;
 
 /* The need for a Wrapper around ITelegramBotClient arises from the need to be able to mock it in unit tests
  and thereby allow verifications to check that my code 'uses' this important external dependency correctly */

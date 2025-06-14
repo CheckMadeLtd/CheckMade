@@ -1,9 +1,9 @@
-using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
+using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.Output;

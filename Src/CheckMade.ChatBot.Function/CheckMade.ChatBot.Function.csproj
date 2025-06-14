@@ -68,6 +68,5 @@
     <ItemGroup>
       <Folder Include="logs\human\" />
       <Folder Include="logs\machine\" />
-      <Folder Include="Services\BotClient\" />
     </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using File = Telegram.Bot.Types.TGFile;
 

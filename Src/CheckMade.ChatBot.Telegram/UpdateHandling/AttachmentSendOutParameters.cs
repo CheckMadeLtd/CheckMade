@@ -2,7 +2,7 @@ using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public sealed record AttachmentSendOutParameters(
     ChatId ChatId,
