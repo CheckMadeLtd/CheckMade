@@ -1,5 +1,5 @@
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;

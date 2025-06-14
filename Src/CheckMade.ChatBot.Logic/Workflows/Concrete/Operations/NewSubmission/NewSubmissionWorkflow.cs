@@ -1,12 +1,12 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.DomainModel.ChatBot.Input;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;

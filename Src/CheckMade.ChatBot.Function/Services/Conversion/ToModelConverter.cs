@@ -1,18 +1,18 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.ExternalServices.ExternalUtils;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.DomainModel.ChatBot;
+using CheckMade.Common.DomainModel.ChatBot.Input;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 

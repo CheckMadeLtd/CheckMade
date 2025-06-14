@@ -1,18 +1,18 @@
 using System.Text;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
+using CheckMade.Common.DomainModel;
+using CheckMade.Common.DomainModel.ChatBot.Input;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.Submissions;
+using CheckMade.Common.DomainModel.Core.Submissions.Concrete;
+using CheckMade.Common.DomainModel.Core.Submissions.Concrete.SubmissionTypes;
+using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;

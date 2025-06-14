@@ -1,5 +1,5 @@
+using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core;
 
 namespace CheckMade.Tests.Unit.Common;
 

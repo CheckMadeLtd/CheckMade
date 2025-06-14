@@ -1,5 +1,5 @@
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

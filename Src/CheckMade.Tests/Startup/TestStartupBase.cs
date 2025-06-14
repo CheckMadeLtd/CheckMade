@@ -1,6 +1,6 @@
 using System.Configuration;
 using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.DomainModel.Core;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

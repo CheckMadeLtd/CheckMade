@@ -1,10 +1,10 @@
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete;
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Utils;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
 

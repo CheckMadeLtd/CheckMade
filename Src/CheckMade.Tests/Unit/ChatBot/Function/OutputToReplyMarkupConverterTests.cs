@@ -1,18 +1,18 @@
 using System.ComponentModel;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
+using CheckMade.Common.DomainModel.ChatBot.Output;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.Submissions.Concrete.SubmissionTypes;
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
+using static CheckMade.Common.DomainModel.ChatBot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 

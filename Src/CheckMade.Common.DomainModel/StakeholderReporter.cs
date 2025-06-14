@@ -1,19 +1,18 @@
 ﻿using System.Collections.Immutable;
+using CheckMade.Common.DomainModel.ChatBot.Input;
+using CheckMade.Common.DomainModel.ChatBot.Output;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Core.Submissions;
+using CheckMade.Common.DomainModel.Core.Submissions.Concrete;
+using CheckMade.Common.DomainModel.Core.Submissions.Concrete.SubmissionTypes;
+using CheckMade.Common.DomainModel.Core.Trades;
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
 using CheckMade.Common.DomainModel.Interfaces.BusinessLogic;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete;
 
 namespace CheckMade.Common.DomainModel;
 

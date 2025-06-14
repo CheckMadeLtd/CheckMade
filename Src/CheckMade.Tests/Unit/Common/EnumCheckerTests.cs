@@ -1,5 +1,5 @@
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
 using CheckMade.Common.Utils.Generic;
 using Xunit.Abstractions;
 

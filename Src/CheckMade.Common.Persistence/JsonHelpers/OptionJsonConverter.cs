@@ -1,7 +1,7 @@
+using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Core.Structs;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

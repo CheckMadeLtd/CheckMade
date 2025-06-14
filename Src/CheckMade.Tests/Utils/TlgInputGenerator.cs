@@ -1,11 +1,11 @@
+using CheckMade.Common.DomainModel.ChatBot;
+using CheckMade.Common.DomainModel.ChatBot.Input;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Utils.Generic;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 

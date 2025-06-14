@@ -1,18 +1,18 @@
 using System.Collections.Immutable;
+using CheckMade.Common.DomainModel.ChatBot;
+using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Core.Actors.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.DomainModel.Core.Structs;
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
+using User = CheckMade.Common.DomainModel.Core.Actors.Concrete.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 

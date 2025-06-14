@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.DomainModel.Core;
 using GeoCoordinatePortable;
 
 namespace CheckMade.Common.Utils.GIS;

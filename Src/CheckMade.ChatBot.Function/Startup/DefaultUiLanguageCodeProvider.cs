@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.DomainModel.Core;
 
 namespace CheckMade.ChatBot.Function.Startup;
 

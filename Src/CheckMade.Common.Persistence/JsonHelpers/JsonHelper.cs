@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.DomainModel.Utils;
 using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;

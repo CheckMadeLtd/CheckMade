@@ -15,10 +15,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Model\CheckMade.Common.Model.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
@@ -30,6 +26,10 @@
 
     <ItemGroup>
       <Folder Include="Interfaces\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Common.LangExt\CheckMade.Common.LangExt.csproj" />
     </ItemGroup>
     
 </Project>

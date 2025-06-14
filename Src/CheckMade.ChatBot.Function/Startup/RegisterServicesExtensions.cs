@@ -6,8 +6,8 @@ using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.DomainModel;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

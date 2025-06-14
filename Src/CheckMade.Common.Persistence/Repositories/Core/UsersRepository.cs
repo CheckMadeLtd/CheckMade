@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Core.Actors;
+using CheckMade.Common.DomainModel.Core.Actors.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors;
-using CheckMade.Common.Model.Core.Actors.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Utils;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;

@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;

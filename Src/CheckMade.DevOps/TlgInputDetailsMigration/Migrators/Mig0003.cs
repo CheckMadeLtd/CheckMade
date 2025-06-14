@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.Model.ChatBot.Input;
+using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration.Migrators;

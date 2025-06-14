@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

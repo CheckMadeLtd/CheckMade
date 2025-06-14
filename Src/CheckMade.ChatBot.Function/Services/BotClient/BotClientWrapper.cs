@@ -1,9 +1,9 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.Common.DomainModel.ChatBot;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.Core;
 using CheckMade.Common.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;

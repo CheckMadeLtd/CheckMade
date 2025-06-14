@@ -1,5 +1,5 @@
+using CheckMade.Common.DomainModel.Core.Trades.Concrete;
 using CheckMade.Common.DomainModel.Interfaces.BusinessLogic;
-using CheckMade.Common.Model.Core.Trades.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.DomainModel;

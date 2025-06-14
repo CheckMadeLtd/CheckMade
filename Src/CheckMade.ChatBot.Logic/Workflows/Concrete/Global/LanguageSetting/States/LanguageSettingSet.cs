@@ -1,4 +1,4 @@
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.DomainModel.Utils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 

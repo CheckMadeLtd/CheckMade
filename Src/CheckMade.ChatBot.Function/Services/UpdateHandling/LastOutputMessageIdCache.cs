@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
+using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
