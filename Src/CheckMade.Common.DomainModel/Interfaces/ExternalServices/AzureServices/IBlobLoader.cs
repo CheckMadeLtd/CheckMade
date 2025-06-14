@@ -1,4 +1,4 @@
-namespace CheckMade.Common.DomainModel.ExternalServices.AzureServices;
+namespace CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 
 public interface IBlobLoader
 {

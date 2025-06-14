@@ -1,5 +1,5 @@
 using System.Data.Common;
-using CheckMade.Common.DomainModel.Persistence.Core;
+using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.Core.Actors.Concrete;
 using CheckMade.Common.Model.Utils;

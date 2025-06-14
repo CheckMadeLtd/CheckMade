@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Persistence.ChatBot;
+using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Model.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

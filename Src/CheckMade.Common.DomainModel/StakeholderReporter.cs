@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
-using CheckMade.Common.DomainModel.BusinessLogic;
-using CheckMade.Common.DomainModel.ChatBotLogic;
-using CheckMade.Common.DomainModel.Persistence.Core;
+using CheckMade.Common.DomainModel.Interfaces.BusinessLogic;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;

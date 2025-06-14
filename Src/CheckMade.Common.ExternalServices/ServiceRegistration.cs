@@ -1,10 +1,10 @@
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Common.ExternalServices.AzureServices;
 using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.Common.ExternalServices.GoogleApi;
-using CheckMade.Common.DomainModel.ExternalServices.AzureServices;
-using CheckMade.Common.DomainModel.ExternalServices.GoogleApi;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Common.ExternalServices;

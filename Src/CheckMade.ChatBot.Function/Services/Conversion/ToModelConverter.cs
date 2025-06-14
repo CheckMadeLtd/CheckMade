@@ -1,10 +1,10 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.Common.ExternalServices.ExternalUtils;
-using CheckMade.Common.DomainModel.ExternalServices.AzureServices;
 using CheckMade.Common.Model.Core;
 using CheckMade.Common.Model.Utils;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.DomainModel.Persistence.ChatBot;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;

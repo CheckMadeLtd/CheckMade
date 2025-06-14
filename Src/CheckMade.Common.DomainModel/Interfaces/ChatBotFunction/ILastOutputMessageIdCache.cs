@@ -1,7 +1,7 @@
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 
-namespace CheckMade.Common.DomainModel.ChatBotFunction;
+namespace CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
 
 /// <summary>
 /// Thread-safe cache for tracking the last message ID sent by each bot to each TlgAgent.
