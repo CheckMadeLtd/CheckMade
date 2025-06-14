@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;

@@ -1,10 +1,10 @@
 using System.Collections.Concurrent;
 using System.Net;
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using System.Text.Json;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using Telegram.Bot;
 

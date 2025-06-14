@@ -1,11 +1,10 @@
-using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public interface IBotUpdateSwitch
 {

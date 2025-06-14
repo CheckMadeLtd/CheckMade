@@ -9,11 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils.UiTranslation;
 
-public interface IUiTranslatorFactory
-{
-    IUiTranslator Create(LanguageCode targetLanguage);
-}
-
 public sealed class UiTranslatorFactory(
     ILogger<UiTranslatorFactory> logger,
     ILogger<UiTranslator> loggerForUiTranslator) 

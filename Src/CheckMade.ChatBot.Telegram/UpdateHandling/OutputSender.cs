@@ -1,12 +1,11 @@
 using System.Collections.Immutable;
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Utils;
@@ -14,7 +13,7 @@ using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
-namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 internal static class OutputSender
 {
@@ -27,6 +26,7 @@ internal static class OutputSender
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader,
         ILastOutputMessageIdCache msgIdCache,
+        IDomainGlossary glossary,
         ILogger logger)
     {
         // "Bound Ports" are those LogicalPorts where an actual TlgAgent has a binding to the Role and
@@ -227,8 +227,6 @@ internal static class OutputSender
 
         void LogWarningsForPortsUnboundDueOnlyToMissingMode()
         {
-            var glossary = new DomainGlossary();
-        
             Action<IRoleInfo, InteractionMode> logWarning = (unboundRole, mode) =>
                 logger.LogWarning(
                     $"One of the {nameof(outputs)} couldn't be sent due to an unbound {nameof(LogicalPort)}: " +

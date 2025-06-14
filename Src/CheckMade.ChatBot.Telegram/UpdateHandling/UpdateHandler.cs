@@ -1,9 +1,5 @@
-using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.Output;
@@ -18,7 +14,7 @@ using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Function.Services.UpdateHandling;
+namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public interface IUpdateHandler
 {
@@ -110,7 +106,7 @@ public sealed class UpdateHandler(
                     in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentTlgAgent, activeRoleBindings, 
-                            uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, logger))
+                            uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger))
                 from unit 
                     in Result<Unit>.RunAsync(() =>
                         SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs))

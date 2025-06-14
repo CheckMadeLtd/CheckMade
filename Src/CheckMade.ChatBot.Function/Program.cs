@@ -3,6 +3,7 @@ using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using CheckMade.ChatBot.Function.Startup;
 using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.DomainModel.Core;
