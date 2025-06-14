@@ -1,5 +1,6 @@
 using System.Configuration;
 using CheckMade.ChatBot.Function.Startup;
+using CheckMade.ChatBot.Telegram;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.Core;
 using CheckMade.Tests.Utils;
@@ -55,9 +56,9 @@ public abstract class TestStartupBase
         
         
         Services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
-        
-        Services.RegisterChatBotFunctionUpdateHandlingServices();
-        Services.RegisterChatBotFunctionConversionServices();
+
+        Services.RegisterChatBotTelegramUpdateHandlingServices();
+        Services.RegisterChatBotTelegramConversionServices();
         Services.RegisterChatBotLogicServices();
         
         Services.RegisterCommonBusinessLogicServices();

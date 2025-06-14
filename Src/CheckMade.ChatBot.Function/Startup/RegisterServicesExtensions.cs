@@ -1,13 +1,10 @@
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
+using CheckMade.ChatBot.Telegram;
 using CheckMade.ChatBot.Telegram.BotClient;
-using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.ChatBot.Telegram.Function;
-using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
 using CheckMade.Common.ExternalServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,29 +13,15 @@ namespace CheckMade.ChatBot.Function.Startup;
 
 internal static class RegisterServicesExtensions
 {
-    internal static void RegisterChatBotFunctionServices(this IServiceCollection services)
-    {
-        services.AddScoped<IBotFunction, TelegramBotFunction>();
-    }
-    
-    internal static void RegisterChatBotFunctionBotClientServices(
+    internal static void RegisterChatBotTelegramServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
-        services.AddSingleton<IBotClientFactory, BotClientFactory>();
+        services.RegisterChatBotTelegramFunctionServices();
+        services.RegisterChatBotTelegramUpdateHandlingServices();
+        services.RegisterChatBotTelegramConversionServices();
+        services.RegisterChatBotTelegramBotClientServices();
+        
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
-
-        var interactionModes = Enum.GetNames(typeof(InteractionMode));
-        foreach (var mode in interactionModes)
-        {
-            services.AddHttpClient($"CheckMade{mode}Bot");            
-        }    
-    }
-
-    internal static void RegisterChatBotFunctionUpdateHandlingServices(this IServiceCollection services)
-    {
-        services.AddScoped<IUpdateHandler, UpdateHandler>();
-        services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
-        services.AddSingleton<ILastOutputMessageIdCache, LastOutputMessageIdCache>();
     }
     
     internal static void RegisterCommonPersistenceServices(
@@ -64,12 +47,6 @@ internal static class RegisterServicesExtensions
         };
         
         services.Register_CommonPersistence_Services(dbConnectionString);
-    }
-
-    internal static void RegisterChatBotFunctionConversionServices(this IServiceCollection services)
-    {
-        services.AddScoped<IToModelConverterFactory, ToModelConverterFactory>();
-        services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
     }
 
     internal static void RegisterChatBotLogicServices(this IServiceCollection services)

@@ -10,7 +10,10 @@ using Telegram.Bot.Types;
 
 namespace CheckMade.ChatBot.Telegram.Function;
 
-public sealed class TelegramBotFunction(ILogger logger, IBotUpdateSwitch botUpdateSwitch) : IBotFunction
+public sealed class TelegramBotFunction(
+    ILogger<TelegramBotFunction> logger, 
+    IBotUpdateSwitch botUpdateSwitch) 
+    : IBotFunction
 {
     public async Task<HttpResponseData> ProcessRequestAsync(
         HttpRequestData request,
