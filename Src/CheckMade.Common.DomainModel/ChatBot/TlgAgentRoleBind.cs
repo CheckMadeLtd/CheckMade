@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
 using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 

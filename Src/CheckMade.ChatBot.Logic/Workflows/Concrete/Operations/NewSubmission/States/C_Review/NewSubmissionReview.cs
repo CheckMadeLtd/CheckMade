@@ -5,13 +5,12 @@ using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Core.Submissions.Concrete;
-using CheckMade.Common.DomainModel.Core.Trades;
+using CheckMade.Common.DomainModel.Core.Submissions;
 using CheckMade.Common.DomainModel.Interfaces.BusinessLogic;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression

@@ -11,12 +11,13 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.DomainModel.Core.Submissions.Concrete;
-using CheckMade.Common.DomainModel.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Common.DomainModel.Core.Submissions;
+using CheckMade.Common.DomainModel.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.DomainModel.Core.Trades;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Utils;
 
 namespace CheckMade.ChatBot.Logic;

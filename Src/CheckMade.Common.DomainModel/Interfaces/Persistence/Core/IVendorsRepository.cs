@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Core.Actors.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 

@@ -7,7 +7,7 @@ using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Utils;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

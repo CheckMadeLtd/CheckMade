@@ -1,6 +1,6 @@
 using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Actors;
-using CheckMade.Common.DomainModel.Core.Actors.Concrete;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 

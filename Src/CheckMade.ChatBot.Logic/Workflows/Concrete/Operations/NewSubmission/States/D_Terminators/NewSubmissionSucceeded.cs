@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.Core.Trades;
-using CheckMade.Common.DomainModel.Utils;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 

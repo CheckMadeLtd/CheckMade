@@ -1,5 +1,4 @@
-﻿using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Core.LiveEvents;
+﻿using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 namespace CheckMade.Common.DomainModel.ChatBot.Input;

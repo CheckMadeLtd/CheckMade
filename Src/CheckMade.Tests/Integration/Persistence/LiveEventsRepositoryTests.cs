@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails.Facilities;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Tests.Startup;

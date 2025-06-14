@@ -1,11 +1,10 @@
 using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Actors;
-using CheckMade.Common.DomainModel.Core.Actors.Concrete;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.DomainModel.Core.Structs;
-using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Core.Trades;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 

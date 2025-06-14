@@ -1,5 +1,5 @@
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 

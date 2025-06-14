@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Utils;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 

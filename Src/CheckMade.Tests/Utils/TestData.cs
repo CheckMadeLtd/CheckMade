@@ -1,18 +1,17 @@
 using System.Collections.Immutable;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Actors.Concrete;
+using CheckMade.Common.DomainModel.Core.Actors;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete.RoleTypes;
+using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.DomainModel.Core.LiveEvents;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.DomainModel.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails.Facilities;
 using CheckMade.Common.DomainModel.Core.Structs;
-using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Core.Trades;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using User = CheckMade.Common.DomainModel.Core.Actors.Concrete.User;
+using User = CheckMade.Common.DomainModel.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 

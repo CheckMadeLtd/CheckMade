@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

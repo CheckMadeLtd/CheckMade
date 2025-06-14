@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Core.Trades.Concrete;
+using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.DomainModel.Interfaces.BusinessLogic;
 using Microsoft.Extensions.DependencyInjection;
 

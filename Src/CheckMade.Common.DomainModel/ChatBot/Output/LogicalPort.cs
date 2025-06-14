@@ -1,5 +1,5 @@
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 
 namespace CheckMade.Common.DomainModel.ChatBot.Output;
 

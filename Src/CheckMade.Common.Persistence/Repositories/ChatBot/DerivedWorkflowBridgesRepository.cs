@@ -1,9 +1,9 @@
 using System.Data.Common;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.DomainModel.Utils;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;

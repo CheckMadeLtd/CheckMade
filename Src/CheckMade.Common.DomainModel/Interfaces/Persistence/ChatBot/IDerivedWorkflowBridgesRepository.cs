@@ -1,6 +1,6 @@
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Interfaces.Core;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 
