@@ -1,5 +1,5 @@
-using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.ChatBot.Function.Services.BotClient;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Tests.Startup.DefaultStubs;
 using CheckMade.Tests.Utils;

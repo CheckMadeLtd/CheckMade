@@ -1,5 +1,6 @@
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Common.ExternalServices.AzureServices;

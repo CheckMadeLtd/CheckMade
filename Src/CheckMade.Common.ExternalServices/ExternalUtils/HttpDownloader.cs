@@ -1,9 +1,6 @@
-namespace CheckMade.Common.ExternalServices.ExternalUtils;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 
-public interface IHttpDownloader
-{
-    Task<MemoryStream> DownloadDataAsync(Uri fileUri);
-};
+namespace CheckMade.Common.ExternalServices.ExternalUtils;
 
 public class HttpDownloader(HttpClient httpClient) : IHttpDownloader
 {

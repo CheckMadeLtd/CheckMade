@@ -1,8 +1,8 @@
-using CheckMade.Common.ExternalServices.ExternalUtils;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;
 
-public class StubHttpDownloader : IHttpDownloader
+public sealed class StubHttpDownloader : IHttpDownloader
 {
     public Task<MemoryStream> DownloadDataAsync(Uri fileUri)
     {

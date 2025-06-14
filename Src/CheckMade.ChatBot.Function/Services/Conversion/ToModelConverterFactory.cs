@@ -1,6 +1,6 @@
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.ExternalServices.ExternalUtils;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Function.Services.Conversion;

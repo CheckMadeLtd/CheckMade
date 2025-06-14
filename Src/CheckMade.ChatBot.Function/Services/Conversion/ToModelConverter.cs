@@ -1,5 +1,4 @@
 using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Common.ExternalServices.ExternalUtils;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
@@ -9,6 +8,7 @@ using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.Concrete;
 using CheckMade.Common.DomainModel.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.DomainModel.Utils;
