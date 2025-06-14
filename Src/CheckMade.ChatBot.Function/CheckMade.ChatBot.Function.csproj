@@ -53,6 +53,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\CheckMade.ChatBot.Telegram\CheckMade.ChatBot.Telegram.csproj" />
       <ProjectReference Include="..\CheckMade.Common.ExternalServices\CheckMade.Common.ExternalServices.csproj" />
       <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
       <ProjectReference Include="..\CheckMade.ChatBot.Logic\CheckMade.ChatBot.Logic.csproj" />
@@ -67,5 +68,6 @@
     <ItemGroup>
       <Folder Include="logs\human\" />
       <Folder Include="logs\machine\" />
+      <Folder Include="Services\BotClient\" />
     </ItemGroup>
 </Project>

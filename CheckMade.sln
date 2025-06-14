@@ -79,6 +79,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dgor82_style_guide", "dgor8
 		..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md = ..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.ChatBot.Telegram", "Src\CheckMade.ChatBot.Telegram\CheckMade.ChatBot.Telegram.csproj", "{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_BackendOnly|Any CPU = Debug_BackendOnly|Any CPU
@@ -230,6 +232,20 @@ Global
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_BackendOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_BackendOnly|Any CPU.Build.0 = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_Desktop|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_Desktop|Any CPU.Build.0 = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.No_Build|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.No_Build|Any CPU.Build.0 = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_DevOps|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_DevOps|Any CPU.Build.0 = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_ChatBot|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_ChatBot|Any CPU.Build.0 = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_AllPrd|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_AllPrd|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
@@ -246,5 +262,6 @@ Global
 		{AF183FDB-DF1C-44FA-B362-881917C37716} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{B0CDD972-E29B-447B-9458-296ECB020312} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 	EndGlobalSection
 EndGlobal
