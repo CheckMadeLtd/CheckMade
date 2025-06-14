@@ -5,8 +5,8 @@ namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public sealed record UpdateWrapper
 {
-    public Update Update { get; }
-    public Message Message { get; }
+    internal Update Update { get; }
+    internal Message Message { get; }
 
     private readonly Action<Message> _checkFromIdNotNullOrThrow = static m =>
     {
@@ -16,7 +16,7 @@ public sealed record UpdateWrapper
     };
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public UpdateWrapper(Update update)
+    internal UpdateWrapper(Update update)
     {
         Update = update;
         
@@ -42,7 +42,7 @@ public sealed record UpdateWrapper
         _checkFromIdNotNullOrThrow(Message);
     }
 
-    public UpdateWrapper(Message message)
+    internal UpdateWrapper(Message message)
     {
         Message = message;
         // Needed only by fake messages from TestUtils, which are using this constructor overload as a shortcut.
@@ -51,7 +51,7 @@ public sealed record UpdateWrapper
         _checkFromIdNotNullOrThrow(Message);
     }
     
-    public UpdateWrapper(Update update, Message message)
+    internal UpdateWrapper(Update update, Message message)
     {
         Update = update;
         Message = message;

@@ -9,7 +9,7 @@ public interface ITelegramFilePathResolver
     Task<Result<string>> GetTelegramFilePathAsync(string fileId);
 }
 
-public sealed class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
+internal sealed class TelegramFilePathResolver(IBotClientWrapper botClient) : ITelegramFilePathResolver
 {
     private const string TelegramBotDownloadFileApiUrlStub = "https://api.telegram.org/file/";
     
