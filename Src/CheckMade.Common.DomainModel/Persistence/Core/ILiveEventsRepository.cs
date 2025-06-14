@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.LiveEvents;
 using CheckMade.Common.Model.Core.LiveEvents.Concrete;
 
-namespace CheckMade.Common.Interfaces.Persistence.Core;
+namespace CheckMade.Common.DomainModel.Persistence.Core;
 
 public interface ILiveEventsRepository
 {

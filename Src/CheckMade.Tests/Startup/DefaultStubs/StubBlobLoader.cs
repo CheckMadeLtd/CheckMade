@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.DomainModel.ExternalServices.AzureServices;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;
 

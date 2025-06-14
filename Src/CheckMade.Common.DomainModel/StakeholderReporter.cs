@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
-using CheckMade.Common.Interfaces.BusinessLogic;
-using CheckMade.Common.Interfaces.ChatBotLogic;
-using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.DomainModel.BusinessLogic;
+using CheckMade.Common.DomainModel.ChatBotLogic;
+using CheckMade.Common.DomainModel.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model;
 using CheckMade.Common.Model.ChatBot.Input;
@@ -15,7 +15,7 @@ using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 
-namespace CheckMade.Common.Interfaces;
+namespace CheckMade.Common.DomainModel;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,

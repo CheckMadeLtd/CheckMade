@@ -1,4 +1,4 @@
-using CheckMade.Common.Interfaces.ChatBotFunction;
+using CheckMade.Common.DomainModel.ChatBotFunction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Output;

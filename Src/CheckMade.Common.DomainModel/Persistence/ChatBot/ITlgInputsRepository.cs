@@ -4,7 +4,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.LiveEvents;
 
-namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
+namespace CheckMade.Common.DomainModel.Persistence.ChatBot;
 
 public interface ITlgInputsRepository
 {

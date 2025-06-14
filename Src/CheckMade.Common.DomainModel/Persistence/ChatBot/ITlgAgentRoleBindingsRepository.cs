@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.Utils;
 
-namespace CheckMade.Common.Interfaces.Persistence.ChatBot;
+namespace CheckMade.Common.DomainModel.Persistence.ChatBot;
 
 public interface ITlgAgentRoleBindingsRepository
 {

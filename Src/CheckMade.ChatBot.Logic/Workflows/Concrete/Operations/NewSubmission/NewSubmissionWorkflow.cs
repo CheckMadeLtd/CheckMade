@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.DomainModel.Persistence.ChatBot;
+using CheckMade.Common.DomainModel.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.Core.LiveEvents;

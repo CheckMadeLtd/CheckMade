@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Interfaces\CheckMade.Common.Interfaces.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.DomainModel\CheckMade.Common.DomainModel.csproj" />
     </ItemGroup>
     
 </Project>

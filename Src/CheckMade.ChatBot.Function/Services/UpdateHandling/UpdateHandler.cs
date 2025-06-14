@@ -1,12 +1,12 @@
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.DomainModel.ExternalServices.AzureServices;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.DomainModel.ChatBotFunction;
+using CheckMade.Common.DomainModel.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Model.ChatBot;
 using CheckMade.Common.Model.ChatBot.Input;

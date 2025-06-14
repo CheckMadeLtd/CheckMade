@@ -2,7 +2,7 @@ using CheckMade.Common.Model.ChatBot.Input;
 using CheckMade.Common.Model.ChatBot.Output;
 using CheckMade.Common.Model.Core.Trades;
 
-namespace CheckMade.Common.Interfaces.BusinessLogic;
+namespace CheckMade.Common.DomainModel.BusinessLogic;
 
 public interface IStakeholderReporter<T> where T : ITrade, new()
 {

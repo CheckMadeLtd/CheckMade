@@ -1,7 +1,7 @@
 using System.Text;
 using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Services.Conversion;
-using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Common.DomainModel.ExternalServices.AzureServices;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;

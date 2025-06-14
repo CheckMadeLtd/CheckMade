@@ -1,7 +1,7 @@
 using CheckMade.Common.Model.Core.Actors.RoleSystem;
 using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
 
-namespace CheckMade.Common.Interfaces.Persistence.Core;
+namespace CheckMade.Common.DomainModel.Persistence.Core;
 
 public interface IRolesRepository
 {

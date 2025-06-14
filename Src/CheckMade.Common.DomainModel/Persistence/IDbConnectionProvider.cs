@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace CheckMade.Common.Interfaces.Persistence;
+namespace CheckMade.Common.DomainModel.Persistence;
 
 public interface IDbConnectionProvider
 {

@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Interfaces.ExternalServices.GoogleApi;
+namespace CheckMade.Common.DomainModel.ExternalServices.GoogleApi;
 
 public interface ISheetsService
 {

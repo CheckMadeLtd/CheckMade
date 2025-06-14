@@ -1,6 +1,6 @@
 using CheckMade.Common.Model.Core.Actors.Concrete;
 
-namespace CheckMade.Common.Interfaces.Persistence.Core;
+namespace CheckMade.Common.DomainModel.Persistence.Core;
 
 public interface IVendorsRepository
 {
