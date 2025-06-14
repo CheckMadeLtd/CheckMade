@@ -2,7 +2,7 @@ using CheckMade.Common.Interfaces.BusinessLogic;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Common.BusinessLogic;
+namespace CheckMade.Common.Interfaces;
 
 public static class ServiceRegistration
 {

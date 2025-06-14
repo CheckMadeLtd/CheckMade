@@ -5,7 +5,7 @@ using CheckMade.Common.ExternalServices;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.BusinessLogic;
+using CheckMade.Common.Interfaces;
 using CheckMade.Common.Interfaces.ChatBotFunction;
 using CheckMade.Common.Model.ChatBot.UserInteraction;
 using Microsoft.Extensions.Configuration;

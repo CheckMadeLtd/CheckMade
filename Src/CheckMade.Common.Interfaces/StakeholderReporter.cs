@@ -15,7 +15,7 @@ using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
 using CheckMade.Common.Model.Core.Trades;
 using CheckMade.Common.Model.Core.Trades.Concrete;
 
-namespace CheckMade.Common.BusinessLogic;
+namespace CheckMade.Common.Interfaces;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
