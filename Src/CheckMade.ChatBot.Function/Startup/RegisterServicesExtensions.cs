@@ -1,8 +1,10 @@
+using CheckMade.ChatBot.Function.Endpoints;
 using CheckMade.Common.Persistence;
 using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
+using CheckMade.ChatBot.Telegram.Function;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
@@ -15,6 +17,11 @@ namespace CheckMade.ChatBot.Function.Startup;
 
 internal static class RegisterServicesExtensions
 {
+    internal static void RegisterChatBotFunctionServices(this IServiceCollection services)
+    {
+        services.AddScoped<IBotFunction, TelegramBotFunction>();
+    }
+    
     internal static void RegisterChatBotFunctionBotClientServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {

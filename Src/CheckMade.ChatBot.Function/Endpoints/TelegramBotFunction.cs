@@ -4,20 +4,19 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using System.Text.Json;
+using CheckMade.ChatBot.Telegram.Function;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using Telegram.Bot;
 
 namespace CheckMade.ChatBot.Function.Endpoints;
 
-public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdateSwitch)
+public sealed class TelegramBotFunction(ILogger logger, IBotUpdateSwitch botUpdateSwitch) : IBotFunction
 {
-    // Thread-safe collection for this static cache (ensuring atomic operations in case of multiple function instances)
-    protected abstract ConcurrentDictionary<int, byte> CurrentlyProcessingUpdateIds { get; }
-    
-    protected abstract InteractionMode InteractionMode { get; }
-
-    protected async Task<HttpResponseData> ProcessRequestAsync(HttpRequestData request)
+    public async Task<HttpResponseData> ProcessRequestAsync(
+        HttpRequestData request,
+        ConcurrentDictionary<int, byte> currentlyProcessingUpdateIds,
+        InteractionMode interactionMode)
     {
         logger.LogTrace("C# HTTP trigger function processed a request");
 
@@ -44,9 +43,9 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             // Avoids duplicate processing when Telegram reattempts update delivery due to too-slow processing, which
             // can happen e.g. due to unhandled exceptions or retry policies. As recommended by Wizou. See also:
             // https://telegrambots.github.io/book/3/updates/webhook.html#updates-are-posted-sequentially-to-your-webapp
-            if (!CurrentlyProcessingUpdateIds.TryAdd(update.Id, 0))
+            if (!currentlyProcessingUpdateIds.TryAdd(update.Id, 0))
             {
-                logger.LogTrace($"Already processing update with ID {update.Id} for {InteractionMode}");
+                logger.LogTrace($"Already processing update with ID {update.Id} for {interactionMode}");
                 return defaultOkResponse;
             }
             
@@ -54,12 +53,12 @@ public abstract class BotFunctionBase(ILogger logger, IBotUpdateSwitch botUpdate
             {
                 // Any failure wrapped in Result would have been logged already e.g. in UpdateHandler
                 // Only unhandled/unwrapped Exceptions would then bubble up here and lead to the catch block below, 
-                await botUpdateSwitch.SwitchUpdateAsync(update, InteractionMode);
+                await botUpdateSwitch.SwitchUpdateAsync(update, interactionMode);
             }
             finally // any exception thrown within try would still be caught in the outer catch block below. 
             {
-                CurrentlyProcessingUpdateIds.TryRemove(update.Id, out _);
-                logger.LogTrace($"Finished processing update {update.Id} for {InteractionMode}");
+                currentlyProcessingUpdateIds.TryRemove(update.Id, out _);
+                logger.LogTrace($"Finished processing update {update.Id} for {interactionMode}");
             }
 
             return defaultOkResponse;

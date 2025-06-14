@@ -46,9 +46,10 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        // Part of 'StartUp' rather than in shared Services method below to enable different values for Tests Startup.
+        // Here rather than in shared Services method below to enable different values for Tests Startup.
         services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
+        services.RegisterChatBotFunctionServices();
         services.RegisterChatBotFunctionBotClientServices(config, hostingEnvironment);
         services.RegisterChatBotFunctionUpdateHandlingServices();
         services.RegisterChatBotFunctionConversionServices();
