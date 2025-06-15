@@ -12,9 +12,9 @@ using CheckMade.Common.DomainModel.Core.Structs;
 using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.Core;
-using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Persistence.JsonHelpers;
+using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Persistence.Repositories;

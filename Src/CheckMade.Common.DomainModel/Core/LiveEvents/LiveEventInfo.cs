@@ -4,10 +4,10 @@ using static CheckMade.Common.DomainModel.Utils.Comparers.LiveEventInfoComparer;
 namespace CheckMade.Common.DomainModel.Core.LiveEvents;
 
 public sealed record LiveEventInfo(
-        string Name,
-        DateTimeOffset StartDate,
-        DateTimeOffset EndDate,
-        DbRecordStatus Status = DbRecordStatus.Active)
+    string Name,
+    DateTimeOffset StartDate,
+    DateTimeOffset EndDate,
+    DbRecordStatus Status = DbRecordStatus.Active)
     : ILiveEventInfo
 {
     public LiveEventInfo(LiveEvent liveEvent) 

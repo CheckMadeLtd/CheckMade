@@ -1,4 +1,4 @@
-namespace CheckMade.Common.DomainModel.Utils;
+namespace CheckMade.Common.Utils;
 
 public static class EnumChecker
 {
