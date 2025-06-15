@@ -15,10 +15,10 @@ using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using static CheckMade.Tests.Utils.TestUtils;
+using ChatId = Telegram.Bot.Types.ChatId;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
@@ -268,7 +268,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TlgChatId = activeRoleBindings
+                ChatId = activeRoleBindings
                     .First(tarb => 
                         tarb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
                         tarb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
@@ -281,7 +281,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         {
             basics.mockBotClient.Verify(
                 x => x.SendTextMessageAsync(
-                    expectedParamSet.TlgChatId,
+                    expectedParamSet.ChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
                     It.IsAny<Option<ReplyMarkup>>(),

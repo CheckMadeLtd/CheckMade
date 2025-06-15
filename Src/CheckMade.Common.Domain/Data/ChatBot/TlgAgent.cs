@@ -5,5 +5,5 @@ namespace CheckMade.Common.Domain.Data.ChatBot;
 
 public sealed record TlgAgent(
     TlgUserId UserId,
-    TlgChatId ChatId,
+    ChatId ChatId,
     InteractionMode Mode);

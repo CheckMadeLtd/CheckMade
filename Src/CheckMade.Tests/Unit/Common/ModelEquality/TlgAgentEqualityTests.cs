@@ -12,11 +12,11 @@ public sealed class TlgAgentEqualityTests
     {
         // Arrange
         var userId = new TlgUserId(12345);
-        var chatId = new TlgChatId(67890);
+        var chatId = new ChatId(67890);
         const InteractionMode mode = Operations;
     
         var agent1 = new TlgAgent(userId, chatId, mode);
-        var agent2 = new TlgAgent(new TlgUserId(12345), new TlgChatId(67890), Operations);
+        var agent2 = new TlgAgent(new TlgUserId(12345), new ChatId(67890), Operations);
         var agent3 = new TlgAgent(new TlgUserId(99999), chatId, mode); // Different user
     
         // Verify equality works correctly

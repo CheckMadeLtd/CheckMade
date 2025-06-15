@@ -83,7 +83,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                      live_event_id,
                                      entity_guid) 
 
-                                     VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @tlgChatId, @tlgMessageDetails, 
+                                     VALUES (@tlgDate, @tlgMessageId, @tlgUserId, @chatId, @tlgMessageDetails, 
                                      @lastDataMig, @interactionMode, @tlgInputType, 
                                      (SELECT id FROM roles WHERE token = @token), 
                                      (SELECT id FROM live_events WHERE name = @liveEventName),
@@ -128,7 +128,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             ["@tlgDate"] = tlgInput.TlgDate,
             ["@tlgMessageId"] = tlgInput.TlgMessageId.Id,
             ["@tlgUserId"] = tlgInput.TlgAgent.UserId.Id,
-            ["@tlgChatId"] = tlgInput.TlgAgent.ChatId.Id,
+            ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
             ["@lastDataMig"] = 0,
             ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
             ["@tlgInputType"] = (int)tlgInput.InputType,
@@ -287,7 +287,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                 {
                     const string whereClause = """
                                                WHERE inp.user_id = @tlgUserId 
-                                               AND inp.chat_id = @tlgChatId 
+                                               AND inp.chat_id = @chatId 
                                                AND inp.interaction_mode = @mode
                                                """;
                     
@@ -345,7 +345,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     private async Task<IReadOnlyCollection<TlgInput>> GetAllExecuteAsync(
         string rawQuery,
         TlgUserId? userId = null,
-        TlgChatId? chatId = null,
+        ChatId? chatId = null,
         InteractionMode? mode = null,
         string? liveEventName = null)
     {
@@ -354,7 +354,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         if (userId != null)
             normalParameters.Add("@tlgUserId", userId.Id);
         if (chatId != null)
-            normalParameters.Add("@tlgChatId", chatId.Id);
+            normalParameters.Add("@chatId", chatId.Id);
         if (mode != null)
             normalParameters.Add("@mode", (int)mode);
         if (liveEventName != null)
@@ -373,7 +373,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                     SELECT id 
                                     FROM tlg_inputs 
                                     WHERE user_id = @tlgUserId 
-                                    AND chat_id = @tlgChatId 
+                                    AND chat_id = @chatId 
                                     AND interaction_mode = @mode
                                 )
                                 DELETE FROM derived_workflow_states 
@@ -381,14 +381,14 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
                                 DELETE FROM tlg_inputs 
                                 WHERE user_id = @tlgUserId 
-                                AND chat_id = @tlgChatId 
+                                AND chat_id = @chatId 
                                 AND interaction_mode = @mode;
                                 """;
         
         var normalParameters = new Dictionary<string, object>
         {
             ["@tlgUserId"] = tlgAgent.UserId.Id,
-            ["@tlgChatId"] = tlgAgent.ChatId.Id,
+            ["@chatId"] = tlgAgent.ChatId.Id,
             ["@mode"] = (int)tlgAgent.Mode
         };
         var command = GenerateCommand(rawQuery, normalParameters);

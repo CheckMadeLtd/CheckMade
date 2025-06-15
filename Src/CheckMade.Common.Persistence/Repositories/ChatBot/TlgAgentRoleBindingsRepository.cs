@@ -58,7 +58,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 interaction_mode) 
                                 
                                 VALUES ((SELECT id FROM roles WHERE token = @token), 
-                                @tlgUserId, @tlgChatId, 
+                                @tlgUserId, @chatId, 
                                 @activationDate, @deactivationDate, @status, @mode)
                                 """;
 
@@ -68,7 +68,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             {
                 ["@token"] = tarb.Role.Token,
                 ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
-                ["@tlgChatId"] = (long)tarb.TlgAgent.ChatId,
+                ["@chatId"] = (long)tarb.TlgAgent.ChatId,
                 ["@activationDate"] = tarb.ActivationDate,
                 ["@status"] = (int)tarb.Status,
                 ["@mode"] = (int)tarb.TlgAgent.Mode,
@@ -184,7 +184,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
                                 AND tlg_user_id = @tlgUserId 
-                                AND tlg_chat_id = @tlgChatId  
+                                AND tlg_chat_id = @chatId  
                                 AND interaction_mode = @mode 
                                 AND status = @oldStatus
                                 """;
@@ -196,7 +196,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                 ["@newStatus"] = (int)newStatus,
                 ["@token"] = tarb.Role.Token,
                 ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
-                ["@tlgChatId"] = (long)tarb.TlgAgent.ChatId,
+                ["@chatId"] = (long)tarb.TlgAgent.ChatId,
                 ["@mode"] = (int)tarb.TlgAgent.Mode,
                 ["@oldStatus"] = (int)tarb.Status
             };
@@ -220,7 +220,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                        
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
                                 AND tlg_user_id = @tlgUserId 
-                                AND tlg_chat_id = @tlgChatId 
+                                AND tlg_chat_id = @chatId 
                                 AND interaction_mode = @mode
                                 """;
         
@@ -228,7 +228,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         {
             ["@token"] = tlgAgentRoleBind.Role.Token,
             ["tlgUserId"] = (long)tlgAgentRoleBind.TlgAgent.UserId,
-            ["tlgChatId"] = (long)tlgAgentRoleBind.TlgAgent.ChatId,
+            ["chatId"] = (long)tlgAgentRoleBind.TlgAgent.ChatId,
             ["@mode"] = (int)tlgAgentRoleBind.TlgAgent.Mode
         };
         

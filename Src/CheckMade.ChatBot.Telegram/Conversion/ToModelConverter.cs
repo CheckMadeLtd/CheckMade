@@ -277,7 +277,7 @@ public sealed class ToModelConverter(
         }
         
         TlgUserId userId = update.Message.From!.Id; // already checked for non-null in UpdateWrapper constructor
-        TlgChatId chatId = update.Message.Chat.Id;
+        ChatId chatId = update.Message.Chat.Id;
         
         var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)
             ? update.Message.Text

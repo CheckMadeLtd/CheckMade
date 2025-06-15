@@ -5,5 +5,5 @@ namespace CheckMade.Common.Domain.Data.ChatBot.Output;
 public readonly struct ActualSendOutParams
 {
     public TlgMessageId TlgMessageId { get; init; }
-    public TlgChatId ChatId { get; init; }
+    public ChatId ChatId { get; init; }
 }
