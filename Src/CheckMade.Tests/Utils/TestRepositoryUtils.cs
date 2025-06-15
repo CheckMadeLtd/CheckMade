@@ -7,7 +7,7 @@ using CheckMade.Common.Domain.Data.Core.LiveEvents;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using User = CheckMade.Common.Domain.Data.Core.Actors.User;

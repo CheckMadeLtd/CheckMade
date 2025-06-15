@@ -1,4 +1,4 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

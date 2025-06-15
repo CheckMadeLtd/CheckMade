@@ -7,7 +7,7 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

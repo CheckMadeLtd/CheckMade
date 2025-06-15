@@ -1,5 +1,5 @@
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

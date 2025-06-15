@@ -11,9 +11,8 @@ using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Data.Core.Trades;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Persistence.JsonHelpers;
-using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Persistence.Repositories;

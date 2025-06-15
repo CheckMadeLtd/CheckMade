@@ -1,6 +1,6 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Common.LangExt.FpExtensions.Combinators;
+namespace CheckMade.Common.Utils.FpExtensions.Combinators;
 
 public static class AlternateExtensions
 {

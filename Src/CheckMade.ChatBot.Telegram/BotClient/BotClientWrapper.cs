@@ -3,7 +3,7 @@ using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.Core.GIS;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;

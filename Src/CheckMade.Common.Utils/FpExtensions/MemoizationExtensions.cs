@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace CheckMade.Common.LangExt.FpExtensions;
+namespace CheckMade.Common.Utils.FpExtensions;
 
 public static class MemoizationExtensions
 {

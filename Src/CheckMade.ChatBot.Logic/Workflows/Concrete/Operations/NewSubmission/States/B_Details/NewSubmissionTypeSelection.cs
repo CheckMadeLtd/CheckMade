@@ -9,7 +9,7 @@ using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 

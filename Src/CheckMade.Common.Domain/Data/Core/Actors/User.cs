@@ -1,5 +1,5 @@
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using static CheckMade.Common.Domain.Utils.Comparers.UserInfoComparer;
 

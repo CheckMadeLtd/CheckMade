@@ -1,6 +1,6 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Common.LangExt;
+namespace CheckMade.Common.Utils;
 
 public sealed record DomainTerm
 {

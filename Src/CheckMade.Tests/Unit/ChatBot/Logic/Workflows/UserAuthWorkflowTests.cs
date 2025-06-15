@@ -7,12 +7,12 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using InputValidator = CheckMade.Common.LangExt.InputValidator;
+using InputValidator = CheckMade.Common.Utils.InputValidator;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 

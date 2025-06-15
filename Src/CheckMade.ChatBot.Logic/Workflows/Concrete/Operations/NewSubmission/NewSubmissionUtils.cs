@@ -9,7 +9,7 @@ using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Domain.Utils;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 

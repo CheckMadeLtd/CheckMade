@@ -1,5 +1,4 @@
 using CheckMade.Common.Persistence;
-using CheckMade.Common.Utils;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram;
 using CheckMade.ChatBot.Telegram.BotClient;

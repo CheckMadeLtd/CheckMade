@@ -1,6 +1,6 @@
 using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Actors;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Interfaces.Data.Core;

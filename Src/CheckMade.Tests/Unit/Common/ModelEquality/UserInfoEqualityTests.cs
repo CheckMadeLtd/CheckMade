@@ -4,7 +4,7 @@ using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.Domain.Data.Core.Trades;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;

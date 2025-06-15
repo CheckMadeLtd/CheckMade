@@ -4,8 +4,7 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests.Utils;

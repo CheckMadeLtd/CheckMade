@@ -6,7 +6,7 @@ using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;

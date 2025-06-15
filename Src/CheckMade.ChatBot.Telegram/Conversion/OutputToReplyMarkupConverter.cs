@@ -2,8 +2,7 @@ using System.ComponentModel;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Utils;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types.ReplyMarkups;
 

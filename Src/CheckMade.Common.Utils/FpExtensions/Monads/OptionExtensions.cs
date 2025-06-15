@@ -1,4 +1,4 @@
-namespace CheckMade.Common.LangExt.FpExtensions.Monads;
+namespace CheckMade.Common.Utils.FpExtensions.Monads;
 
 public static class OptionExtensions
 {

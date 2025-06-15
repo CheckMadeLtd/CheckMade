@@ -3,7 +3,7 @@ using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -8,8 +8,8 @@ using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using static CheckMade.Common.LangExt.InputValidator;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using static CheckMade.Common.Utils.InputValidator;
 // ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;

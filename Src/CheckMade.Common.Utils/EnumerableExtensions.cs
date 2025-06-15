@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace CheckMade.Common.LangExt;
+namespace CheckMade.Common.Utils;
 
 public static class EnumerableExtensions
 {

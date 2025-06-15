@@ -5,7 +5,7 @@ using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;

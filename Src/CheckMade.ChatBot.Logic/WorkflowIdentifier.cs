@@ -8,7 +8,7 @@ using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.InteractionMode;
 using static CheckMade.Common.Domain.Data.ChatBot.Input.TlgInputType;
 

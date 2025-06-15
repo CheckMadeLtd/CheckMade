@@ -1,6 +1,6 @@
 using CheckMade.Common.Domain.Data.Core.Submissions;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 

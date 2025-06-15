@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 

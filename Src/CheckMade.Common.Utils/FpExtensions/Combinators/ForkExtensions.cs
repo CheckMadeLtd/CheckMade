@@ -1,4 +1,4 @@
-namespace CheckMade.Common.LangExt.FpExtensions.Combinators;
+namespace CheckMade.Common.Utils.FpExtensions.Combinators;
 
 public static class ForkExtensions
 {

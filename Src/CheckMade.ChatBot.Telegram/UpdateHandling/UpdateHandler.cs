@@ -8,7 +8,7 @@ using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
