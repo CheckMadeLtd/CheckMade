@@ -51,7 +51,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             [ 
                 new(input.TlgDate,
                     input.MessageId,
-                    input.TlgAgent, 
+                    input.Agent, 
                     input.InputType, 
                     input.OriginatorRole, 
                     input.LiveEventContext, 
@@ -66,11 +66,11 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 Option<IReadOnlyCollection<ActualSendOutParams>>.None());
             
             var retrievedInputs = 
-                (await inputRepo.GetAllInteractiveAsync(input.TlgAgent))
+                (await inputRepo.GetAllInteractiveAsync(input.Agent))
                 .OrderByDescending(static x => x.TlgDate)
                 .ToArray();
             
-            await inputRepo.HardDeleteAllAsync(input.TlgAgent);
+            await inputRepo.HardDeleteAllAsync(input.Agent);
         
             Assert.Equivalent(
                 expectedRetrieval[0],
@@ -143,13 +143,13 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
-        var tlgAgent = new TlgAgent(
+        var agent = new Agent(
             inputGenerator.Randomizer.GenerateRandomLong(),
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     
         var retrievedInputs = 
-            await inputRepo.GetAllInteractiveAsync(tlgAgent);
+            await inputRepo.GetAllInteractiveAsync(agent);
     
         Assert.Empty(
             retrievedInputs);
@@ -180,9 +180,9 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
         
         // No assert needed: test fails when exception thrown!
-        await inputRepo.GetAllInteractiveAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Operations));
-        await inputRepo.GetAllInteractiveAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Communications));
-        await inputRepo.GetAllInteractiveAsync(new TlgAgent(devDbUserId, devDbUserId.Id, Notifications));
+        await inputRepo.GetAllInteractiveAsync(new Agent(devDbUserId, devDbUserId.Id, Operations));
+        await inputRepo.GetAllInteractiveAsync(new Agent(devDbUserId, devDbUserId.Id, Communications));
+        await inputRepo.GetAllInteractiveAsync(new Agent(devDbUserId, devDbUserId.Id, Notifications));
     }
     
     [Fact]
@@ -209,7 +209,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             (await inputRepo.GetAllInteractiveAsync(Y2024))
             .ToList();
         
-        await inputRepo.HardDeleteAllAsync(inputsY2024[0].TlgAgent);
+        await inputRepo.HardDeleteAllAsync(inputsY2024[0].Agent);
         
         Assert.Equal(
             2,

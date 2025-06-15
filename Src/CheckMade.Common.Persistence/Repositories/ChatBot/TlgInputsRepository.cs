@@ -61,7 +61,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private Dictionary<TlgAgent, List<TlgInput>> _cacheInputsByTlgAgent = new();
+    private Dictionary<Agent, List<TlgInput>> _cacheInputsByAgent = new();
     private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
 
     public async Task AddAsync(
@@ -127,10 +127,10 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         {
             ["@tlgDate"] = tlgInput.TlgDate,
             ["@messageId"] = tlgInput.MessageId.Id,
-            ["@userId"] = tlgInput.TlgAgent.UserId.Id,
-            ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
+            ["@userId"] = tlgInput.Agent.UserId.Id,
+            ["@chatId"] = tlgInput.Agent.ChatId.Id,
             ["@lastDataMig"] = 0,
-            ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
+            ["@interactionMode"] = (int)tlgInput.Agent.Mode,
             ["@inputType"] = (int)tlgInput.InputType,
             ["@token"] = tlgInput.OriginatorRole.Match<object>(  
                 static r => r.Token, 
@@ -195,7 +195,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
         
-        if (_cacheInputsByTlgAgent.TryGetValue(tlgInput.TlgAgent, out var cacheForTlgInput))
+        if (_cacheInputsByAgent.TryGetValue(tlgInput.Agent, out var cacheForTlgInput))
         {
             cacheForTlgInput.Add(tlgInput);
         }
@@ -210,8 +210,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         }
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent) =>
-        (await GetAllAsync(tlgAgent))
+    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(Agent agent) =>
+        (await GetAllAsync(agent))
         .Where(static i => i.InputType != InputType.Location)
         .ToImmutableArray();
 
@@ -221,8 +221,8 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
-        TlgAgent tlgAgent, DateTimeOffset since) =>
-        (await GetAllAsync(tlgAgent))
+        Agent agent, DateTimeOffset since) =>
+        (await GetAllAsync(agent))
         .Where(i => 
             i.InputType == InputType.Location && 
             i.TlgDate >= since)
@@ -263,9 +263,9 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                 ["@newGuid"] = newGuid,
                 ["@tlgDate"] = tlgInput.TlgDate,
                 ["@messageId"] = tlgInput.MessageId.Id,
-                ["@userId"] = tlgInput.TlgAgent.UserId.Id,
-                ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
-                ["@mode"] = (int)tlgInput.TlgAgent.Mode
+                ["@userId"] = tlgInput.Agent.UserId.Id,
+                ["@chatId"] = tlgInput.Agent.ChatId.Id,
+                ["@mode"] = (int)tlgInput.Agent.Mode
             };
 
             return GenerateCommand(rawQuery, normalParameters);
@@ -275,15 +275,15 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         EmptyCache();
     }
 
-    private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(TlgAgent tlgAgent)
+    private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(Agent agent)
     {
-        if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
+        if (!_cacheInputsByAgent.ContainsKey(agent))
         {
             await Semaphore.WaitAsync();
         
             try
             {
-                if (!_cacheInputsByTlgAgent.ContainsKey(tlgAgent))
+                if (!_cacheInputsByAgent.ContainsKey(agent))
                 {
                     const string whereClause = """
                                                WHERE inp.user_id = @userId 
@@ -296,9 +296,9 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                     var fetchedTlgInputs = new List<TlgInput>(
                         await GetAllExecuteAsync(
                             rawQuery,
-                            tlgAgent.UserId, tlgAgent.ChatId, tlgAgent.Mode));
+                            agent.UserId, agent.ChatId, agent.Mode));
 
-                    _cacheInputsByTlgAgent[tlgAgent] = fetchedTlgInputs;
+                    _cacheInputsByAgent[agent] = fetchedTlgInputs;
                 }
             }
             finally
@@ -307,7 +307,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             }
         }
 
-        return _cacheInputsByTlgAgent[tlgAgent];
+        return _cacheInputsByAgent[agent];
     }
 
     private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
@@ -366,7 +366,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             command, TlgInputMapper);
     }
     
-    public async Task HardDeleteAllAsync(TlgAgent tlgAgent)
+    public async Task HardDeleteAllAsync(Agent agent)
     {
         const string rawQuery = """
                                 WITH inputs_to_delete AS (
@@ -387,9 +387,9 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         
         var normalParameters = new Dictionary<string, object>
         {
-            ["@userId"] = tlgAgent.UserId.Id,
-            ["@chatId"] = tlgAgent.ChatId.Id,
-            ["@mode"] = (int)tlgAgent.Mode
+            ["@userId"] = agent.UserId.Id,
+            ["@chatId"] = agent.ChatId.Id,
+            ["@mode"] = (int)agent.Mode
         };
         var command = GenerateCommand(rawQuery, normalParameters);
 
@@ -399,7 +399,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
     private void EmptyCache()
     {
-        _cacheInputsByTlgAgent = new Dictionary<TlgAgent, List<TlgInput>>();
+        _cacheInputsByAgent = new Dictionary<Agent, List<TlgInput>>();
         _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<TlgInput>>();
     }
 }

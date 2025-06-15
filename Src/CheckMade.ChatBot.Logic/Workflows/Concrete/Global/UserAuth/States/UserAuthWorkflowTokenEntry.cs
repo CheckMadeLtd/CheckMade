@@ -87,13 +87,13 @@ internal sealed record UserAuthWorkflowTokenEntry(
         async Task<WorkflowResponse> AuthenticateUserAsync(TlgInput tokenInputAttempt)
         {
             var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
-            var currentMode = tokenInputAttempt.TlgAgent.Mode;
+            var currentMode = tokenInputAttempt.Agent.Mode;
 
             var outputs = new List<OutputDto>();
 
             var newAgentRoleBindForCurrentMode = new AgentRoleBind(
                 (await RolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
-                tokenInputAttempt.TlgAgent with { Mode = currentMode },
+                tokenInputAttempt.Agent with { Mode = currentMode },
                 DateTimeOffset.UtcNow,
                 Option<DateTimeOffset>.None());
 
@@ -140,8 +140,8 @@ internal sealed record UserAuthWorkflowTokenEntry(
             var agentRoleBindingsToAdd = new List<AgentRoleBind> { newAgentRoleBindForCurrentMode };
 
             var isInputInPrivateBotChat =
-                tokenInputAttempt.TlgAgent.ChatId.Id.Equals(
-                    tokenInputAttempt.TlgAgent.UserId.Id);
+                tokenInputAttempt.Agent.ChatId.Id.Equals(
+                    tokenInputAttempt.Agent.UserId.Id);
 
             if (isInputInPrivateBotChat)
             {
@@ -159,7 +159,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
             AgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
                 preExistingActiveRoleBindings.FirstOrDefault(arb =>
                     arb.Role.Token.Equals(inputText) &&
-                    arb.TlgAgent.Mode.Equals(mode));
+                    arb.Agent.Mode.Equals(mode));
 
             void AddAgentRoleBindingsForOtherModes()
             {
@@ -171,7 +171,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                     where FirstOrDefaultPreExistingActiveRoleBind(mode) == null
                     select newAgentRoleBindForCurrentMode with
                     {
-                        TlgAgent = newAgentRoleBindForCurrentMode.TlgAgent with { Mode = mode },
+                        Agent = newAgentRoleBindForCurrentMode.Agent with { Mode = mode },
                         ActivationDate = DateTimeOffset.UtcNow
                     });
             }

@@ -6,7 +6,7 @@ namespace CheckMade.Common.Domain.Data.ChatBot;
 
 public sealed record AgentRoleBind(
     Role Role,
-    TlgAgent TlgAgent,
+    Agent Agent,
     DateTimeOffset ActivationDate,
     Option<DateTimeOffset> DeactivationDate,
     DbRecordStatus Status = DbRecordStatus.Active);

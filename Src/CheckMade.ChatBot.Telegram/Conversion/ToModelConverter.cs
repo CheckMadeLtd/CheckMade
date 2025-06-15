@@ -240,9 +240,9 @@ public sealed class ToModelConverter(
     {
         var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
             .FirstOrDefault(arb =>
-                arb.TlgAgent.UserId == update.Message.From?.Id &&
-                arb.TlgAgent.ChatId == update.Message.Chat.Id &&
-                arb.TlgAgent.Mode == mode)?
+                arb.Agent.UserId == update.Message.From?.Id &&
+                arb.Agent.ChatId == update.Message.Chat.Id &&
+                arb.Agent.Mode == mode)?
             .Role;
 
         return originatorRole ?? Option<Role>.None();
@@ -286,7 +286,7 @@ public sealed class ToModelConverter(
         return new TlgInput(
             update.Message.Date,
             update.Message.MessageId,
-            new TlgAgent(userId, chatId, interactionMode), 
+            new Agent(userId, chatId, interactionMode), 
             inputType,
             originatorRole.IsSome 
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 

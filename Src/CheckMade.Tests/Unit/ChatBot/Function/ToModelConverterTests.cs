@@ -35,7 +35,7 @@ public sealed class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
         var update = basics.updateGenerator.GetValidTelegramTextMessage(textInput);
         
         // based on defaultRoleBindings in TestRepositoryUtils
@@ -46,7 +46,7 @@ public sealed class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             update.Message.Date,
             update.Message.MessageId,
-            tlgAgent,
+            agent,
             InputType.TextMessage,
             expectedOriginatorRole,
             expectedLiveEventContext,
@@ -59,7 +59,7 @@ public sealed class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 update, 
-                tlgAgent.Mode);
+                agent.Mode);
         
         Assert.Equivalent(
             expectedTlgInput, 
@@ -72,12 +72,12 @@ public sealed class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var updateGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
-        var tlgAgent = UserId02_ChatId03_Operations;
+        var agent = UserId02_ChatId03_Operations;
         
         var update = updateGenerator.GetValidTelegramTextMessage(
             "valid text",
-            tlgAgent.UserId,
-            tlgAgent.ChatId);
+            agent.UserId,
+            agent.ChatId);
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories(
@@ -85,7 +85,7 @@ public sealed class ToModelConverterTests
             [
                 new AgentRoleBind(
                     SanitaryInspector_DanielEn_X2024,
-                    tlgAgent,
+                    agent,
                     new DateTime(2021, 01, 01),
                     Option<DateTimeOffset>.Some(new DateTime(2021, 01, 05)),
                     DbRecordStatus.Historic)
@@ -95,7 +95,7 @@ public sealed class ToModelConverterTests
         var expectedTlgInput = new TlgInput(
             update.Message.Date,
             update.Message.MessageId,
-            tlgAgent,
+            agent,
             InputType.TextMessage,
             Option<IRoleInfo>.None(), 
             Option<ILiveEventInfo>.None(), 
@@ -108,7 +108,7 @@ public sealed class ToModelConverterTests
         var actualTlgInput = 
             await basics.converter.ConvertToModelAsync(
                 update, 
-                tlgAgent.Mode);
+                agent.Mode);
     
         Assert.Equivalent(
             expectedTlgInput, 

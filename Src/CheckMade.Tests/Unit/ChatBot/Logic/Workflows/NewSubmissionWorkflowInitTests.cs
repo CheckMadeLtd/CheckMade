@@ -22,7 +22,7 @@ public sealed class NewSubmissionWorkflowInitTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
 
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
         var currentRole = LiveEventAdmin_DanielEn_X2024;
         Assert.True(currentRole.RoleType.GetTradeInstance().IsNone);
 
@@ -30,7 +30,7 @@ public sealed class NewSubmissionWorkflowInitTests
         var (services, _) = serviceCollection.ConfigureTestRepositories();
 
         var currentInput = basics.inputGenerator.GetValidTlgInputCommandMessage(
-            tlgAgent.Mode,
+            agent.Mode,
             (int)OperationsBotCommands.NewSubmission,
             roleSpecified: currentRole);
 
@@ -56,7 +56,7 @@ public sealed class NewSubmissionWorkflowInitTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
         
         List<TlgInput> recentLocationHistory = [
             basics.inputGenerator.GetValidTlgInputLocationMessage(
@@ -71,7 +71,7 @@ public sealed class NewSubmissionWorkflowInitTests
 
         var currentInput = 
             basics.inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, 
+                agent.Mode, 
                 (int)OperationsBotCommands.NewSubmission);
         
         const string expectedOutput = "Please confirm: are you at '{0}'?";
@@ -99,7 +99,7 @@ public sealed class NewSubmissionWorkflowInitTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         List<TlgInput> recentLocationHistory = [];
         
@@ -117,7 +117,7 @@ public sealed class NewSubmissionWorkflowInitTests
 
         var currentInput = 
             basics.inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode, 
+                agent.Mode, 
                 (int)OperationsBotCommands.NewSubmission);
         
         const string expectedOutput = "Please select a ";
@@ -142,11 +142,11 @@ public sealed class NewSubmissionWorkflowInitTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
     
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         List<TlgInput> interactiveHistory = [
             basics.inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode,
+                agent.Mode,
                 (int)OperationsBotCommands.NewSubmission,
                 resultantWorkflowState: new ResultantWorkflowState(
                     basics.glossary.GetId(typeof(NewSubmissionWorkflow)),

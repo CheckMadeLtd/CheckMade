@@ -31,8 +31,8 @@ public sealed class AgentRoleBindingsRepositoryTests
             newInputAgentRoleBind.Role.Token,
             retrieved!.Role.Token);
         Assert.Equivalent(
-            newInputAgentRoleBind.TlgAgent,
-            retrieved.TlgAgent);
+            newInputAgentRoleBind.Agent,
+            retrieved.Agent);
     }
 
     [Fact]
@@ -40,25 +40,25 @@ public sealed class AgentRoleBindingsRepositoryTests
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
-        var activeTlgAgentRole = 
+        var activeAgentRole = 
             TestRepositoryUtils.GetNewRoleBind(
                 SanitaryAdmin_DanielEn_X2024,
                 PrivateBotChat_Operations);
 
         var repo = _services.GetRequiredService<IAgentRoleBindingsRepository>();
         
-        await repo.AddAsync(activeTlgAgentRole);
+        await repo.AddAsync(activeAgentRole);
         await repo.UpdateStatusAsync(
-            activeTlgAgentRole,
+            activeAgentRole,
             DbRecordStatus.Historic);
         var retrievedUpdated = 
             (await repo.GetAllAsync())
             .MaxBy(static arb => arb.ActivationDate);
-        await repo.HardDeleteAsync(activeTlgAgentRole);
+        await repo.HardDeleteAsync(activeAgentRole);
         
         Assert.Equivalent(
-            activeTlgAgentRole.TlgAgent,
-            retrievedUpdated!.TlgAgent);
+            activeAgentRole.Agent,
+            retrievedUpdated!.Agent);
         Assert.Equal(
             DbRecordStatus.Historic,
             retrievedUpdated.Status);

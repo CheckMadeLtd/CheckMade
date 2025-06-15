@@ -19,12 +19,12 @@ public sealed class GeneralWorkflowUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
         
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId)
+                agent.UserId, agent.ChatId)
         };
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -33,10 +33,10 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
         
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId);
+            agent.UserId, agent.ChatId);
 
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
 
         Assert.Equal(
             historicInputs.Length + 1,
@@ -49,12 +49,12 @@ public sealed class GeneralWorkflowUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
         var expiredRoleBind = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
-            tlgAgent,
+            agent,
             cutoffDate.AddDays(-2),
             cutoffDate,
             DbRecordStatus.Historic);
@@ -62,9 +62,9 @@ public sealed class GeneralWorkflowUtilsTests
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(-1)),
+                agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(-1)),
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(1))
+                agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(1))
         };
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -74,10 +74,10 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId, dateTime: cutoffDate.AddHours(2));
+            agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(2));
 
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
 
         Assert.Equal(
             2,
@@ -94,7 +94,7 @@ public sealed class GeneralWorkflowUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var oldestCutoffDate = DateTimeOffset.UtcNow.AddDays(-3);
         var latestCutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
@@ -103,14 +103,14 @@ public sealed class GeneralWorkflowUtilsTests
         {
             new AgentRoleBind(
                 SanitaryAdmin_DanielEn_X2024,
-                tlgAgent,
+                agent,
                 oldestCutoffDate.AddDays(-1),
                 oldestCutoffDate,
                 DbRecordStatus.Historic),
             
             new AgentRoleBind(
                 SanitaryInspector_DanielEn_X2024,
-                tlgAgent,
+                agent,
                 latestCutoffDate.AddDays(-1),
                 latestCutoffDate,
                 DbRecordStatus.Historic)
@@ -119,13 +119,13 @@ public sealed class GeneralWorkflowUtilsTests
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 dateTime: oldestCutoffDate.AddHours(-1)),
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 dateTime: oldestCutoffDate.AddHours(1)),
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 dateTime: latestCutoffDate.AddHours(-1))
         };
 
@@ -136,11 +136,11 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId,
+            agent.UserId, agent.ChatId,
             dateTime: latestCutoffDate.AddHours(1));
         
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
 
         Assert.Single(result);
         Assert.True(
@@ -153,12 +153,12 @@ public sealed class GeneralWorkflowUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
         var expiredRoleBind = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
-            tlgAgent,
+            agent,
             cutoffDate.AddDays(-2),
             cutoffDate,
             DbRecordStatus.Historic);
@@ -166,7 +166,7 @@ public sealed class GeneralWorkflowUtilsTests
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 dateTime: cutoffDate.AddHours(-2))
         };
 
@@ -177,11 +177,11 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId,
+            agent.UserId, agent.ChatId,
             dateTime: cutoffDate.AddHours(-1));
         
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
 
         Assert.Empty(result);
     }
@@ -192,11 +192,11 @@ public sealed class GeneralWorkflowUtilsTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var roleBindWithNullDeactivation = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
-            tlgAgent,
+            agent,
             DateTimeOffset.UtcNow.AddDays(-2),
             Option<DateTimeOffset>.None(),
             DbRecordStatus.Historic);
@@ -204,7 +204,7 @@ public sealed class GeneralWorkflowUtilsTests
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId)
+                agent.UserId, agent.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -214,10 +214,10 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId);
+            agent.UserId, agent.ChatId);
             
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
 
         Assert.Equal(
             historicInputs.Length + 1,
@@ -225,20 +225,20 @@ public sealed class GeneralWorkflowUtilsTests
     }
 
     [Fact]
-    public async Task GetAllCurrentInteractiveAsync_FiltersInputsBySpecificTlgAgent()
+    public async Task GetAllCurrentInteractiveAsync_FiltersInputsBySpecificAgent()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var tlgAgentDecoy = UserId02_ChatId03_Operations;
+        var agent = PrivateBotChat_Operations;
+        var agentDecoy = UserId02_ChatId03_Operations;
 
         var historicInputs = new[]
         {
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgent.UserId, tlgAgent.ChatId),
+                agent.UserId, agent.ChatId),
             inputGenerator.GetValidTlgInputTextMessage(
-                tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId)
+                agentDecoy.UserId, agentDecoy.ChatId)
         };
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -247,29 +247,29 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
         var currentInput = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgent.UserId, tlgAgent.ChatId);
+            agent.UserId, agent.ChatId);
             
         var result = 
-            await workflowUtils.GetAllCurrentInteractiveAsync(tlgAgent, currentInput);
+            await workflowUtils.GetAllCurrentInteractiveAsync(agent, currentInput);
         
         Assert.Equal(
             2, result.Count);
         Assert.All(
             result,
-            input => Assert.Equal(tlgAgent.UserId, input.TlgAgent.UserId));
+            input => Assert.Equal(agent.UserId, input.Agent.UserId));
         Assert.All(
             result,
-            input => Assert.Equal(tlgAgent.ChatId, input.TlgAgent.ChatId));
+            input => Assert.Equal(agent.ChatId, input.Agent.ChatId));
     }
 
     [Fact]
-    public async Task GetRecentLocationHistory_FiltersInputs_ByTlgAgentAndLocationTypeAndTimeFrame()
+    public async Task GetRecentLocationHistory_FiltersInputs_ByAgentAndLocationTypeAndTimeFrame()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
-        var tlgAgentDecoy = UserId02_ChatId03_Operations;
+        var agent = PrivateBotChat_Operations;
+        var agentDecoy = UserId02_ChatId03_Operations;
 
         var randomDecoyLocation = 
             new Geo(0, 0, Option<double>.None());
@@ -282,12 +282,12 @@ public sealed class GeneralWorkflowUtilsTests
             // Decoy: too long ago
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
-            // Decoy: wrong TlgAgent
+            // Decoy: wrong Agent
             inputGenerator.GetValidTlgInputLocationMessage(
                 randomDecoyLocation,
-                tlgAgentDecoy.UserId, tlgAgentDecoy.ChatId,
+                agentDecoy.UserId, agentDecoy.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1))),
             // Decoy: not a LocationUpdate
             inputGenerator.GetValidTlgInputTextMessage(),
@@ -295,7 +295,7 @@ public sealed class GeneralWorkflowUtilsTests
             // Expected to be included
             inputGenerator.GetValidTlgInputLocationMessage(
                 expectedLocation,
-                tlgAgent.UserId, tlgAgent.ChatId,
+                agent.UserId, agent.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1)))
         };
         
@@ -305,7 +305,7 @@ public sealed class GeneralWorkflowUtilsTests
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
         
         var result = 
-            await workflowUtils.GetRecentLocationHistory(tlgAgent);
+            await workflowUtils.GetRecentLocationHistory(agent);
         
         Assert.Single(result);
         Assert.Equivalent(

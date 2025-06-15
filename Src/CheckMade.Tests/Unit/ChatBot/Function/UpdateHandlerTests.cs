@@ -101,14 +101,14 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     new() { Text = EnglishUiStringForTests }
                 }));
         
-        var tlgAgent = UserId02_ChatId04_Operations;
+        var agent = UserId02_ChatId04_Operations;
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings:
             [
                 TestRepositoryUtils.GetNewRoleBind(
                     SanitaryInspector_DanielDe_X2024,
-                    tlgAgent)
+                    agent)
             ]); 
         
         _services = repoServices;
@@ -117,12 +117,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var updateFromGermanUser = 
             basics.updateGenerator.GetValidTelegramTextMessage(
                 "any valid text",
-                tlgAgent.UserId,
-                tlgAgent.ChatId);
+                agent.UserId,
+                agent.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
-            tlgAgent.Mode);
+            agent.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -271,8 +271,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 ChatId = activeRoleBindings
                     .First(arb => 
                         arb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
-                        arb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
-                    .TlgAgent.ChatId.Id
+                        arb.Agent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
+                    .Agent.ChatId.Id
             }).ToList();
     
         await basics.handler.HandleUpdateAsync(update, mode);

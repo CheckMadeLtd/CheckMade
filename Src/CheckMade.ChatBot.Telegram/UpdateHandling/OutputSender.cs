@@ -21,7 +21,7 @@ internal static class OutputSender
     internal static async Task<IReadOnlyCollection<Result<OutputDto>>> SendOutputsAsync(
         IReadOnlyCollection<OutputDto> outputs,
         IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
-        TlgAgent currentTlgAgent,
+        Agent currentAgent,
         IReadOnlyCollection<AgentRoleBind> activeRoleBindings,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter,
@@ -30,12 +30,12 @@ internal static class OutputSender
         IDomainGlossary glossary,
         ILogger logger)
     {
-        // "Bound Ports" are those LogicalPorts where an actual TlgAgent has a binding to the Role and
+        // "Bound Ports" are those LogicalPorts where an actual Agent has a binding to the Role and
         // InteractionMode specified in the LogicalPort (i.e. only 'logged in' users).  
         
         Func<AgentRoleBind, LogicalPort, bool> hasBinding = static (arb, lp) =>
             arb.Role.Equals(lp.Role) &&
-            arb.TlgAgent.Mode == lp.InteractionMode;
+            arb.Agent.Mode == lp.InteractionMode;
         
         Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> 
             sendOutputsInSeriesAndOriginalOrder = async outputsPerBoundPort =>
@@ -45,13 +45,13 @@ internal static class OutputSender
                 foreach (var output in outputsPerBoundPort)
                 {
                     // LogicalPort is only set for outputs aimed at anyone who is NOT the originator of the current input
-                    var outputTlgAgent = output.LogicalPort.Match(
+                    var outputAgent = output.LogicalPort.Match(
                         logicalPort => activeRoleBindings
                             .First(arb => hasBinding(arb, logicalPort))
-                            .TlgAgent,
-                        () => currentTlgAgent);
+                            .Agent,
+                        () => currentAgent);
 
-                    var outputBotClient = botClientByMode[outputTlgAgent.Mode];
+                    var outputBotClient = botClientByMode[outputAgent.Mode];
                     
                     switch (output)
                     {
@@ -105,7 +105,7 @@ internal static class OutputSender
                             if (lastSentOutput.IsSuccess)
                             {
                                 msgIdCache.UpdateLastMessageId(
-                                    outputTlgAgent,
+                                    outputAgent,
                                     lastSentOutput.GetValueOrThrow().ActualSendOutParams!.Value.MessageId);
                             }
                             else
@@ -125,7 +125,7 @@ internal static class OutputSender
                                 ActualSendOutParams = new ActualSendOutParams
                                 {
                                     MessageId = id,
-                                    ChatId = outputTlgAgent.ChatId
+                                    ChatId = outputAgent.ChatId
                                 }
                             },
                             Result<OutputDto>.Fail);
@@ -135,7 +135,7 @@ internal static class OutputSender
                         return await Result<MessageId>.RunAsync(() => 
                             outputBotClient
                                 .SendTextMessageAsync(
-                                    outputTlgAgent.ChatId.Id,
+                                    outputAgent.ChatId.Id,
                                     uiTranslator.Translate(Ui("Please choose:")),
                                     uiTranslator.Translate(output.Text.GetValueOrThrow()),
                                     converter.GetReplyMarkup(output)));
@@ -146,7 +146,7 @@ internal static class OutputSender
                         return await Result<MessageId>.RunAsync(() =>
                             outputBotClient
                                 .EditTextMessageAsync(
-                                    outputTlgAgent.ChatId.Id,
+                                    outputAgent.ChatId.Id,
                                     output.Text.IsSome
                                         ? uiTranslator.Translate(output.Text.GetValueOrThrow())
                                         : Option<string>.None(),
@@ -167,7 +167,7 @@ internal static class OutputSender
                             from attachmentSendOutParams
                                 in Result<AttachmentSendOutParameters>.Run(() =>
                                     new AttachmentSendOutParameters(
-                                        outputTlgAgent.ChatId.Id,
+                                        outputAgent.ChatId.Id,
                                         fileStream,
                                         details.Caption,
                                         converter.GetReplyMarkup(output)))
@@ -192,7 +192,7 @@ internal static class OutputSender
                         return await Result<MessageId>.RunAsync(() =>
                             outputBotClient
                                 .SendLocationAsync(
-                                    outputTlgAgent.ChatId.Id,
+                                    outputAgent.ChatId.Id,
                                     output.Location.GetValueOrThrow(),
                                     converter.GetReplyMarkup(output)));
                     }

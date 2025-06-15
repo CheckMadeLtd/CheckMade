@@ -59,7 +59,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                     },
                     newState: Mediator.GetTerminator(typeof(INewSubmissionCancelled<T>)),
                     promptTransition: new PromptTransition(
-                        currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
+                        currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
             (long)ControlPrompts.No =>
                 await WorkflowResponse.CreateFromNextStateAsync(

@@ -23,9 +23,9 @@ public sealed class WorkflowIdentifierTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgentWithoutRole = UserId02_ChatId03_Operations;
+        var agentWithoutRole = UserId02_ChatId03_Operations;
         var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
+            agentWithoutRole.UserId, agentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
 
         var workflow = await workflowIdentifier
@@ -74,7 +74,7 @@ public sealed class WorkflowIdentifierTests
     }
     
     [Fact]
-    public async Task Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public async Task Identify_ReturnsNone_WhenCurrentInputsFromAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         

@@ -50,20 +50,20 @@ internal sealed record WorkflowIdentifier(
                      BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => 
                 GetGlobalMenuWorkflow(activeWorkflowLauncher),
             
-            { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
+            { InputType: CommandMessage, Agent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     (int)OperationsBotCommands.NewSubmission => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             
-            { InputType: CommandMessage, TlgAgent.Mode: Notifications } => 
+            { InputType: CommandMessage, Agent.Mode: Notifications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()
                 },
 
-            { InputType: CommandMessage, TlgAgent.Mode: Communications } => 
+            { InputType: CommandMessage, Agent.Mode: Communications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()

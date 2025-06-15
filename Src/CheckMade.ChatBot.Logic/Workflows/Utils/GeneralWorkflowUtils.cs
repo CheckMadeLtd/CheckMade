@@ -21,10 +21,10 @@ internal interface IGeneralWorkflowUtils
         IInputProcessor.SeeValidBotCommandsInstruction);
     
     Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
+        Agent agentForDbQuery, TlgInput newInputToAppend);
 
     Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
-    Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(Agent agent);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
@@ -35,7 +35,7 @@ internal sealed record GeneralWorkflowUtils(
     : IGeneralWorkflowUtils
 {
     public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgentForDbQuery,
+        Agent agentForDbQuery,
         TlgInput newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
@@ -43,7 +43,7 @@ internal sealed record GeneralWorkflowUtils(
         
         var lastExpiredRoleBind = (await AgentRoleBindingsRepo.GetAllAsync())
             .Where(arb =>
-                arb.TlgAgent.Equals(tlgAgentForDbQuery) &&
+                arb.Agent.Equals(agentForDbQuery) &&
                 arb.DeactivationDate.IsSome)
             .MaxBy(static arb => arb.DeactivationDate.GetValueOrThrow());
 
@@ -52,7 +52,7 @@ internal sealed record GeneralWorkflowUtils(
             : DateTimeOffset.MinValue;
 
         var allInteractiveFromDb =
-            await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
+            await InputsRepo.GetAllInteractiveAsync(agentForDbQuery);
 
         var allInteractiveIncludingNewInput =
             allInteractiveFromDb.Concat([newInputToAppend]);
@@ -74,7 +74,7 @@ internal sealed record GeneralWorkflowUtils(
         
         var currentRoleInputs = 
             await GetAllCurrentInteractiveAsync(
-                currentInput.TlgAgent,
+                currentInput.Agent,
                 currentInput);
 
         var allBridges = 
@@ -85,11 +85,11 @@ internal sealed record GeneralWorkflowUtils(
             .ToImmutableArray();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(Agent agent)
     {
         return 
             await InputsRepo.GetAllLocationAsync(
-                tlgAgent, 
+                agent, 
                 DateTimeOffset.UtcNow
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
@@ -124,9 +124,9 @@ internal static class GeneralWorkflowUtilsExtensions
             input.InputType == CommandMessage;
             
         var isReactiveWorkflowLauncher = 
-            input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
+            input is { InputType: CallbackQuery, Agent.Mode: Notifications or Communications } &&
             allBridges.Any(b =>
-                b.DestinationChatId == input.TlgAgent.ChatId &&
+                b.DestinationChatId == input.Agent.ChatId &&
                 b.DestinationMessageId == input.MessageId);
 
         return isProactiveWorkflowLauncher || isReactiveWorkflowLauncher;

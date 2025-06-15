@@ -57,11 +57,11 @@ public sealed class InputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var interruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode,
+                agent.Mode,
                 (int)OperationsBotCommands.NewSubmission); 
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -70,13 +70,13 @@ public sealed class InputProcessorTests
             [
                 // Decoys
                 inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
+                    agent.Mode,
                     (int)OperationsBotCommands.Settings),
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
                 inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
+                    agent.Mode,
                     (int)OperationsBotCommands.Settings)
             ]);
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
@@ -99,11 +99,11 @@ public sealed class InputProcessorTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var tlgAgent = PrivateBotChat_Operations;
+        var agent = PrivateBotChat_Operations;
 
         var notInterruptingBotCommandInput =
             inputGenerator.GetValidTlgInputCommandMessage(
-                tlgAgent.Mode,
+                agent.Mode,
                 (int)OperationsBotCommands.NewSubmission);
 
         var glossary = _services.GetRequiredService<IDomainGlossary>();
@@ -112,7 +112,7 @@ public sealed class InputProcessorTests
             inputs:
             [
                 inputGenerator.GetValidTlgInputCommandMessage(
-                    tlgAgent.Mode,
+                    agent.Mode,
                     (int)OperationsBotCommands.Settings),
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de),

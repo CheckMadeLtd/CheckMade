@@ -46,7 +46,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
-            currentInput.MessageId, MsgIdCache, currentInput.TlgAgent, true);
+            currentInput.MessageId, MsgIdCache, currentInput.Agent, true);
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
@@ -119,7 +119,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, 
                             Mediator.Next(typeof(INewSubmissionReview<T>)),
-                            new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
+                            new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(

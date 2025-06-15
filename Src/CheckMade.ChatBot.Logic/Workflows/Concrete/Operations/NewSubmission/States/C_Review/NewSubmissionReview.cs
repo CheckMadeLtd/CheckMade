@@ -90,14 +90,14 @@ internal sealed record NewSubmissionReview<T>(
                     },
                     await GetStakeholderNotificationsAsync(),
                     Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
-                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent),
+                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent),
                     entityGuid: await GetLastGuidAsync()),
             
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
                     Mediator.Next(typeof(INewSubmissionCancelConfirmation<T>)), 
-                    new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
+                    new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };

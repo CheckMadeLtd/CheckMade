@@ -73,7 +73,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput,
                         Mediator.Next(typeof(INewSubmissionReview<T>)),
-                        new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
+                        new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
                 
                 AssessmentRating.Ok or AssessmentRating.Bad =>
                     await WorkflowResponse.CreateFromNextStateAsync(

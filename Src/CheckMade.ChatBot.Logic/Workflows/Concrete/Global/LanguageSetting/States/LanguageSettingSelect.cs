@@ -56,7 +56,7 @@ internal sealed record LanguageSettingSelect(
         var newLanguage = currentInput.Details.DomainTerm.GetValueOrThrow();
         
         var currentUser = (await RoleBindingsRepo.GetAllActiveAsync())
-            .First(arb => arb.TlgAgent.Equals(currentInput.TlgAgent))
+            .First(arb => arb.Agent.Equals(currentInput.Agent))
             .Role.ByUser;
 
         await UsersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
@@ -70,7 +70,7 @@ internal sealed record LanguageSettingSelect(
                     Glossary.GetUi(newLanguage))
             },
             newState: Mediator.GetTerminator(typeof(ILanguageSettingSet)),
-            promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)
+            promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)
         );
     }
 }

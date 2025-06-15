@@ -199,7 +199,7 @@ internal static class DomainModelConstitutors
         return new TlgInput(
             tlgDate,
             messageId,
-            new TlgAgent(userId, chatId, interactionMode),
+            new Agent(userId, chatId, interactionMode),
             inputType,
             roleInfo,
             liveEventInfo,
@@ -220,16 +220,16 @@ internal static class DomainModelConstitutors
         }
     }
 
-    internal static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    internal static Agent ConstituteAgent(DbDataReader reader)
     {
-        return new TlgAgent(
+        return new Agent(
             reader.GetInt64(reader.GetOrdinal("arb_tlg_user_id")),
             reader.GetInt64(reader.GetOrdinal("arb_tlg_chat_id")),
             EnsureEnumValidityOrThrow(
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("arb_interaction_mode"))));
     }
 
-    internal static AgentRoleBind ConstituteAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    internal static AgentRoleBind ConstituteAgentRoleBind(DbDataReader reader, Role role, Agent agent)
     {
         var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("arb_activation_date"));
 
@@ -242,7 +242,7 @@ internal static class DomainModelConstitutors
         var status = EnsureEnumValidityOrThrow(
             (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("arb_status")));
 
-        return new AgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+        return new AgentRoleBind(role, agent, activationDate, deactivationDate, status);
     }
 
     internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)

@@ -47,12 +47,12 @@ internal sealed class InputProcessor(
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission."),
-                            UpdateExistingOutputMessageId = msgIdCache.GetLastMessageId(currentInput.TlgAgent)
+                            UpdateExistingOutputMessageId = msgIdCache.GetLastMessageId(currentInput.Agent)
                         });
                 }
 
                 var inputHistory = 
-                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
+                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput);
                 
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
@@ -128,7 +128,7 @@ internal sealed class InputProcessor(
             return false;
         
         var previousWorkflowInputHistory = 
-            (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
+            (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(static input => 
                 input.InputType.Equals(InputType.CommandMessage))
@@ -189,8 +189,8 @@ internal sealed class InputProcessor(
                         logger.LogError($"""
                                          The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
                                          this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
-                                         UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
+                                         UserId: {currentInput.Agent.UserId}; ChatId: {currentInput.Agent.ChatId}; 
+                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.Agent.Mode};
                                          Date: {currentInput.TlgDate}; 
                                          For more details of input, check database!
                                          """);

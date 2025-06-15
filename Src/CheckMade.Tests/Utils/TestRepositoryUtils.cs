@@ -18,11 +18,11 @@ internal static class TestRepositoryUtils
 {
     internal static AgentRoleBind GetNewRoleBind(
         Role role, 
-        TlgAgent tlgAgent)
+        Agent agent)
     {
         return new AgentRoleBind(
             role,
-            tlgAgent,
+            agent,
             DateTimeOffset.UtcNow,
             Option<DateTimeOffset>.None());
     }
@@ -147,11 +147,11 @@ internal static class TestRepositoryUtils
         
         mockTlgInputsRepo
             .Setup(static repo => 
-                repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync((TlgAgent tlgAgent) => 
+                repo.GetAllInteractiveAsync(It.IsAny<Agent>()))
+            .ReturnsAsync((Agent agent) => 
                 inputs
                     .Where(i => 
-                        i.TlgAgent.Equals(tlgAgent) &&
+                        i.Agent.Equals(agent) &&
                         i.InputType != InputType.Location)
                     .ToImmutableArray());
         
@@ -168,12 +168,12 @@ internal static class TestRepositoryUtils
         mockTlgInputsRepo
             .Setup(static repo =>
                 repo.GetAllLocationAsync(
-                    It.IsAny<TlgAgent>(),
+                    It.IsAny<Agent>(),
                     It.IsAny<DateTimeOffset>()))
-            .ReturnsAsync((TlgAgent tlgAgent, DateTimeOffset dateTime) =>
+            .ReturnsAsync((Agent agent, DateTimeOffset dateTime) =>
                 inputs
                     .Where(i => 
-                        i.TlgAgent.Equals(tlgAgent) && 
+                        i.Agent.Equals(agent) && 
                         i.TlgDate >= dateTime &&
                         i.InputType == InputType.Location)
                     .ToImmutableArray());

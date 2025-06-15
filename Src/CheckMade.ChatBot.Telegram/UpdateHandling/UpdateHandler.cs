@@ -39,7 +39,7 @@ public sealed class UpdateHandler(
         UpdateWrapper update,
         InteractionMode currentInteractionMode)
     {
-        var currentTlgAgent = new TlgAgent(
+        var currentAgent = new Agent(
             // Assuming Message.From will never be null for us, because this only happens for e.g. 
             // Annonymous admins in groups and posts in Channels, neither of which are planned for CheckMade
             update.Message.From!.Id,
@@ -49,8 +49,8 @@ public sealed class UpdateHandler(
         logger.LogTrace("Invoked telegram update function for InteractionMode: {interactionMode} " + 
                         "with Message from UserId/ChatId: {userId}/{chatId}", 
             currentInteractionMode, 
-            currentTlgAgent.UserId,
-            currentTlgAgent.ChatId);
+            currentAgent.UserId,
+            currentAgent.ChatId);
 
         var handledMessageTypes = new[]
         {
@@ -97,14 +97,14 @@ public sealed class UpdateHandler(
                         .ToArray())
                 from uiTranslator
                     in Result<IUiTranslator>.Run(() => 
-                        translatorFactory.Create(GetUiLanguage(activeRoleBindings, currentTlgAgent)))
+                        translatorFactory.Create(GetUiLanguage(activeRoleBindings, currentAgent)))
                 from replyMarkupConverter
                     in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator, glossary))
                 from sentOutputs
                     in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
-                            result.ResultingOutputs, botClientByMode, currentTlgAgent, activeRoleBindings, 
+                            result.ResultingOutputs, botClientByMode, currentAgent, activeRoleBindings, 
                             uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger))
                 from unit 
                     in Result<Unit>.RunAsync(() =>
@@ -143,14 +143,14 @@ public sealed class UpdateHandler(
 
     private LanguageCode GetUiLanguage(
         IReadOnlyCollection<AgentRoleBind> activeRoleBindings,
-        TlgAgent currentTlgAgent)
+        Agent currentAgent)
     {
-        var tlgAgentRole = activeRoleBindings
+        var agentRoleBind = activeRoleBindings
             .FirstOrDefault(arb =>
-                arb.TlgAgent.Equals(currentTlgAgent));
+                arb.Agent.Equals(currentAgent));
         
-        return tlgAgentRole != null 
-            ? tlgAgentRole.Role.ByUser.Language 
+        return agentRoleBind != null 
+            ? agentRoleBind.Role.ByUser.Language 
             : defaultUiLanguage.Code;
     }
 

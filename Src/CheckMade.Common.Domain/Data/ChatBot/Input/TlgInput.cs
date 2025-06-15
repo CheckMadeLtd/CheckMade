@@ -6,7 +6,7 @@ namespace CheckMade.Common.Domain.Data.ChatBot.Input;
 public sealed record TlgInput(
     DateTimeOffset TlgDate,
     MessageId MessageId, 
-    TlgAgent TlgAgent,
+    Agent Agent,
     InputType InputType,
     Option<IRoleInfo> OriginatorRole,
     Option<ILiveEventInfo> LiveEventContext,

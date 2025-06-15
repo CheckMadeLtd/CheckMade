@@ -33,13 +33,13 @@ internal sealed record PromptTransition
     internal PromptTransition(
         MessageId currentMessageId,
         ILastOutputMessageIdCache msgIdCache,
-        TlgAgent currentTlgAgent,
+        Agent currentAgent,
         bool applyToPreviousInsteadOfCurrentInput = false)
     {
         IsNextPromptInPlaceUpdate = false;
 
         var updateMessageId = applyToPreviousInsteadOfCurrentInput
-            ? msgIdCache.GetLastMessageId(currentTlgAgent)
+            ? msgIdCache.GetLastMessageId(currentAgent)
             : currentMessageId;
 
         CurrentPromptFinalizer = new OutputDto

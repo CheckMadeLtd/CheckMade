@@ -303,7 +303,7 @@ internal static class TestData
     
     #endregion
     
-    #region TlgAgentElementsSetup ######################################################################################
+    #region AgentElementsSetup ######################################################################################
 
     // Needs to be 'long' instead of 'UserId' for usage in InlineData() of Tests - but they implicitly convert
     
@@ -322,38 +322,38 @@ internal static class TestData
     internal const long ChatId07 = 100007L;
     
     // Default for tests
-    internal static readonly TlgAgent PrivateBotChat_Operations =
+    internal static readonly Agent PrivateBotChat_Operations =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     
-    internal static readonly TlgAgent PrivateBotChat_Communications =
+    internal static readonly Agent PrivateBotChat_Communications =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Communications);
 
-    internal static readonly TlgAgent PrivateBotChat_Notifications =
+    internal static readonly Agent PrivateBotChat_Notifications =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Notifications);
 
-    internal static readonly TlgAgent UserId02_ChatId03_Operations =
+    internal static readonly Agent UserId02_ChatId03_Operations =
         new(UserId02,
             ChatId03,
             Operations);
 
-    internal static readonly TlgAgent UserId02_ChatId04_Operations =
+    internal static readonly Agent UserId02_ChatId04_Operations =
         new(UserId02,
             ChatId04,
             Operations);
     
-    internal static readonly TlgAgent UserId03_ChatId06_Operations =
+    internal static readonly Agent UserId03_ChatId06_Operations =
         new(
             UserId03,
             ChatId06,
             Operations);
     
-    internal static readonly TlgAgent UserId03_ChatId06_Communications =
+    internal static readonly Agent UserId03_ChatId06_Communications =
         new(
             UserId03,
             ChatId06,

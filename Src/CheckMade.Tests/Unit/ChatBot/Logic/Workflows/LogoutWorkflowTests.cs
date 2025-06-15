@@ -79,9 +79,9 @@ public sealed class LogoutWorkflowTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        var tlgAgentOperations = PrivateBotChat_Operations;
-        var tlgAgentComms = PrivateBotChat_Communications;
-        var tlgAgentNotif = PrivateBotChat_Notifications;
+        var agentOperations = PrivateBotChat_Operations;
+        var agentComms = PrivateBotChat_Communications;
+        var agentNotif = PrivateBotChat_Notifications;
         var boundRole = SanitaryEngineer_DanielEn_X2024; 
         
         var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
@@ -101,18 +101,18 @@ public sealed class LogoutWorkflowTests
             roleBindings: new List<AgentRoleBind>
             {
                 // Relevant
-                new(boundRole, tlgAgentOperations,
+                new(boundRole, agentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
-                new(boundRole, tlgAgentComms,
+                new(boundRole, agentComms,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
-                new(boundRole, tlgAgentNotif,
+                new(boundRole, agentNotif,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
                 // Decoys
-                new(boundRole, tlgAgentOperations,
+                new(boundRole, agentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None(), DbRecordStatus.SoftDeleted),
-                new(SanitaryTeamLead_DanielDe_X2024, tlgAgentOperations,
+                new(SanitaryTeamLead_DanielDe_X2024, agentOperations,
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None()),
-                new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
+                new(boundRole, new Agent(UserId02, ChatId04, Communications),
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None())
             });
         var mockAgentRoleBindingsForAllModes =
@@ -122,8 +122,8 @@ public sealed class LogoutWorkflowTests
         var expectedBindingsUpdated = 
             (await mockAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
             .Where(arb => 
-                arb.TlgAgent.UserId.Equals(tlgAgentOperations.UserId) &&
-                arb.TlgAgent.ChatId.Equals(tlgAgentOperations.ChatId) &&
+                arb.Agent.UserId.Equals(agentOperations.UserId) &&
+                arb.Agent.ChatId.Equals(agentOperations.ChatId) &&
                 arb.Role.Equals(boundRole))
             .ToList();
         
@@ -148,8 +148,8 @@ public sealed class LogoutWorkflowTests
         for (var i = 0; i < expectedBindingsUpdated.Count; i++)
         {
             Assert.Equivalent(
-                expectedBindingsUpdated[i].TlgAgent,
-                actualAgentRoleBindingsUpdated[i].TlgAgent);
+                expectedBindingsUpdated[i].Agent,
+                actualAgentRoleBindingsUpdated[i].Agent);
             Assert.Equivalent(
                 expectedBindingsUpdated[i].Role,
                 actualAgentRoleBindingsUpdated[i].Role);

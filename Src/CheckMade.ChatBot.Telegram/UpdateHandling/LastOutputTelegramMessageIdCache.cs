@@ -8,7 +8,7 @@ namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
 {
-    private readonly ConcurrentDictionary<TlgAgent, MessageId> _lastMessageIdsByTlgAgent = new();
+    private readonly ConcurrentDictionary<Agent, MessageId> _lastMessageIdsByAgent = new();
     private ILogger<ILastOutputMessageIdCache> _logger;
 
     /// <summary>
@@ -21,13 +21,13 @@ public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
         _logger = logger;
     }
     
-    public void UpdateLastMessageId(TlgAgent tlgAgent, MessageId messageId) =>
-        _lastMessageIdsByTlgAgent.AddOrUpdate(
-            tlgAgent, messageId, (_, _) => messageId);
+    public void UpdateLastMessageId(Agent agent, MessageId messageId) =>
+        _lastMessageIdsByAgent.AddOrUpdate(
+            agent, messageId, (_, _) => messageId);
 
-    public Option<MessageId> GetLastMessageId(TlgAgent tlgAgent)
+    public Option<MessageId> GetLastMessageId(Agent agent)
     {
-        var lastId = _lastMessageIdsByTlgAgent.TryGetValue(tlgAgent, out var messageId) 
+        var lastId = _lastMessageIdsByAgent.TryGetValue(agent, out var messageId) 
             ? Option<MessageId>.Some(messageId)
             : Option<MessageId>.None();
         
@@ -38,8 +38,8 @@ public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
         return lastId;
     }
         
-    public bool RemoveLastMessageId(TlgAgent tlgAgent) =>
-        _lastMessageIdsByTlgAgent.TryRemove(tlgAgent, out _);
+    public bool RemoveLastMessageId(Agent agent) =>
+        _lastMessageIdsByAgent.TryRemove(agent, out _);
 
-    public int CacheSize => _lastMessageIdsByTlgAgent.Count;
+    public int CacheSize => _lastMessageIdsByAgent.Count;
 }

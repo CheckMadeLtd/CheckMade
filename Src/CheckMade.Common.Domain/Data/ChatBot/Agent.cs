@@ -3,7 +3,7 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 
 namespace CheckMade.Common.Domain.Data.ChatBot;
 
-public sealed record TlgAgent(
+public sealed record Agent(
     UserId UserId,
     ChatId ChatId,
     InteractionMode Mode);

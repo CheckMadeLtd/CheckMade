@@ -28,9 +28,9 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
             modelInitializer: reader =>
             {
                 var role = RolesRepository.CreateRoleWithoutSphereAssignments(reader, glossary);
-                var tlgAgent = ConstituteTlgAgent(reader);
+                var agent = ConstituteAgent(reader);
                 
-                return ConstituteAgentRoleBind(reader, role, tlgAgent);
+                return ConstituteAgentRoleBind(reader, role, agent);
             },
             accumulateData: (arb, reader) => 
                 RolesRepository.AccumulateSphereAssignments(arb.Role, reader, glossary),
@@ -67,11 +67,11 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
             var normalParameters = new Dictionary<string, object>
             {
                 ["@token"] = arb.Role.Token,
-                ["@userId"] = (long)arb.TlgAgent.UserId,
-                ["@chatId"] = (long)arb.TlgAgent.ChatId,
+                ["@userId"] = (long)arb.Agent.UserId,
+                ["@chatId"] = (long)arb.Agent.ChatId,
                 ["@activationDate"] = arb.ActivationDate,
                 ["@status"] = (int)arb.Status,
-                ["@mode"] = (int)arb.TlgAgent.Mode,
+                ["@mode"] = (int)arb.Agent.Mode,
                 ["@deactivationDate"] = arb.DeactivationDate.Match<object>(
                     static date => date,
                     static () => DBNull.Value)
@@ -195,9 +195,9 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
             {
                 ["@newStatus"] = (int)newStatus,
                 ["@token"] = arb.Role.Token,
-                ["@userId"] = (long)arb.TlgAgent.UserId,
-                ["@chatId"] = (long)arb.TlgAgent.ChatId,
-                ["@mode"] = (int)arb.TlgAgent.Mode,
+                ["@userId"] = (long)arb.Agent.UserId,
+                ["@chatId"] = (long)arb.Agent.ChatId,
+                ["@mode"] = (int)arb.Agent.Mode,
                 ["@oldStatus"] = (int)arb.Status
             };
 
@@ -227,9 +227,9 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
         var normalParameters = new Dictionary<string, object>
         {
             ["@token"] = agentRoleBind.Role.Token,
-            ["userId"] = (long)agentRoleBind.TlgAgent.UserId,
-            ["chatId"] = (long)agentRoleBind.TlgAgent.ChatId,
-            ["@mode"] = (int)agentRoleBind.TlgAgent.Mode
+            ["userId"] = (long)agentRoleBind.Agent.UserId,
+            ["chatId"] = (long)agentRoleBind.Agent.ChatId,
+            ["@mode"] = (int)agentRoleBind.Agent.Mode
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);

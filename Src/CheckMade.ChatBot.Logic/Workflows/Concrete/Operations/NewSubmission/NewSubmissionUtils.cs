@@ -19,7 +19,7 @@ internal static class NewSubmissionUtils
         TlgInput currentInput, IGeneralWorkflowUtils workflowUtils)
     {
         var lastKnownLocationInput =
-            (await workflowUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await workflowUtils.GetRecentLocationHistory(currentInput.Agent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 

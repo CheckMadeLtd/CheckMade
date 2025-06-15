@@ -76,7 +76,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             dateTime ?? DateTimeOffset.UtcNow, 
             1, 
-            new TlgAgent(userId, chatId, Operations),
+            new Agent(userId, chatId, Operations),
             InputType.TextMessage,
             originatorRole, 
             liveEvent, 
@@ -94,7 +94,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             DateTimeOffset.UtcNow,
             1,
-            new TlgAgent(Default_UserAndChatId_PrivateBotChat,
+            new Agent(Default_UserAndChatId_PrivateBotChat,
                 Default_UserAndChatId_PrivateBotChat,
                 Operations),
             InputType.AttachmentMessage,
@@ -119,7 +119,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             dateTime ?? DateTimeOffset.UtcNow, 
             1,
-            new TlgAgent(userId, chatId, Operations),
+            new Agent(userId, chatId, Operations),
             InputType.Location,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
@@ -143,7 +143,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             DateTimeOffset.UtcNow,
             messageId,
-            new TlgAgent(userId, chatId, interactionMode),
+            new Agent(userId, chatId, interactionMode),
             InputType.CommandMessage,
             originatorRole, 
             liveEvent, 
@@ -163,7 +163,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             dateTime ?? DateTimeOffset.UtcNow,
             messageId,
-            new TlgAgent(userId, chatId, Operations),
+            new Agent(userId, chatId, Operations),
             InputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
@@ -183,7 +183,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new TlgInput(
             dateTime ?? DateTimeOffset.UtcNow,
             1,
-            new TlgAgent(userId, chatId, Operations),
+            new Agent(userId, chatId, Operations),
             InputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
