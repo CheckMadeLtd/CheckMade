@@ -1,5 +1,5 @@
 using System.Text;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
+using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
@@ -10,7 +10,7 @@ using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
-using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
+using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 

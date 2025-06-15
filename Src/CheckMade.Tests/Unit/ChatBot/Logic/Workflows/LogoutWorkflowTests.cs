@@ -1,5 +1,5 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
+using CheckMade.ChatBot.Logic.Workflows.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Global.Logout.States;
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
