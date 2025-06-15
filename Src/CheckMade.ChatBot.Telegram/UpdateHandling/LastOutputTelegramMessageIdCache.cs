@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
-public sealed class LastOutputMessageIdCache : ILastOutputMessageIdCache
+public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
 {
     private readonly ConcurrentDictionary<TlgAgent, TlgMessageId> _lastMessageIdsByTlgAgent = new();
     private ILogger<ILastOutputMessageIdCache> _logger;
@@ -16,7 +16,7 @@ public sealed class LastOutputMessageIdCache : ILastOutputMessageIdCache
     /// See: https://github.com/CheckMadeLtd/CheckMade/wiki/Dev-Style-Guide-And-Pitfalls#avoid-singletons-that-hold-on-to-scoped-services
     /// This constructor should only accept stateless/configuration dependencies, if any.
     /// </summary>
-    public LastOutputMessageIdCache(ILogger<ILastOutputMessageIdCache> logger)
+    public LastOutputTelegramMessageIdCache(ILogger<ILastOutputMessageIdCache> logger)
     {
         _logger = logger;
     }
@@ -32,8 +32,8 @@ public sealed class LastOutputMessageIdCache : ILastOutputMessageIdCache
             : Option<TlgMessageId>.None();
         
         _logger.LogDebug(lastId.Match(
-            static id => $"{nameof(LastOutputMessageIdCache)} hit with id: {id}",
-            static () => $"No hit for {nameof(LastOutputMessageIdCache)}"));
+            static id => $"{nameof(LastOutputTelegramMessageIdCache)} hit with id: {id}",
+            static () => $"No hit for {nameof(LastOutputTelegramMessageIdCache)}"));
 
         return lastId;
     }

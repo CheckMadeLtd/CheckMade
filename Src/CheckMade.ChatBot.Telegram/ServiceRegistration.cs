@@ -19,7 +19,7 @@ public static class ServiceRegistration
     {
         services.AddScoped<IUpdateHandler, UpdateHandler>();
         services.AddScoped<IBotUpdateSwitch, BotUpdateSwitch>();
-        services.AddSingleton<ILastOutputMessageIdCache, LastOutputMessageIdCache>();
+        services.AddSingleton<ILastOutputMessageIdCache, LastOutputTelegramMessageIdCache>();
     }
     
     public static void RegisterChatBotTelegramConversionServices(this IServiceCollection services)
