@@ -55,7 +55,7 @@ internal static class RegisterServicesExtensions
 
     internal static void RegisterCommonBusinessLogicServices(this IServiceCollection services)
     {
-        services.Register_CommonBusinessLogic_Services();
+        services.Register_CommonDomainLogic_Services();
     }
     
     internal static void RegisterCommonUtilsServices(this IServiceCollection services)

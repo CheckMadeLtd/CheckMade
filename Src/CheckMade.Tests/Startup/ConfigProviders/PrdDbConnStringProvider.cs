@@ -1,6 +1,6 @@
 namespace CheckMade.Tests.Startup.ConfigProviders;
 
-internal class PrdDbConnStringProvider(string connString)
+internal sealed class PrdDbConnStringProvider(string connString)
 {
     public string Get => connString;
 }

@@ -7,7 +7,7 @@ namespace CheckMade.Common.Domain;
 
 public static class ServiceRegistration
 {
-    public static void Register_CommonBusinessLogic_Services(this IServiceCollection services)
+    public static void Register_CommonDomainLogic_Services(this IServiceCollection services)
     {
         services.AddScoped<IStakeholderReporter<SanitaryTrade>, StakeholderReporter<SanitaryTrade>>();
         services.AddScoped<IStakeholderReporter<SiteCleanTrade>, StakeholderReporter<SiteCleanTrade>>();

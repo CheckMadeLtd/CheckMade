@@ -140,11 +140,10 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         var agent = new Agent(
-            inputGenerator.Randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     

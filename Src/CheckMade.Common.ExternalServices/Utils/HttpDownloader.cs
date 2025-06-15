@@ -2,7 +2,7 @@ using CheckMade.Common.Domain.Interfaces.ExternalServices.Utils;
 
 namespace CheckMade.Common.ExternalServices.Utils;
 
-public class HttpDownloader(HttpClient httpClient) : IHttpDownloader
+public sealed class HttpDownloader(HttpClient httpClient) : IHttpDownloader
 {
     public async Task<MemoryStream> DownloadDataAsync(Uri fileUri)
     {
