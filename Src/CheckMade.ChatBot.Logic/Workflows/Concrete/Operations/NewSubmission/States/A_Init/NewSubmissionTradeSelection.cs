@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Trades;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;

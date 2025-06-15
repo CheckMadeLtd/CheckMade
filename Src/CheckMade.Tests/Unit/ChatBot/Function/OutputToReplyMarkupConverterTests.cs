@@ -3,6 +3,7 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.Domain.Data.Core.Trades;

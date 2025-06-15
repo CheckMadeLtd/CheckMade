@@ -4,6 +4,7 @@ using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;

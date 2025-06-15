@@ -1,3 +1,5 @@
+using static CheckMade.Common.Utils.UiTranslation.UiString;
+
 namespace CheckMade.Common.Utils.FpExtensions.Monads;
 
 public static class ResultExtensions

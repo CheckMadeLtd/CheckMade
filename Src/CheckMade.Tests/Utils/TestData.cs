@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Actors;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;

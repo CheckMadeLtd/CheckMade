@@ -1,6 +1,7 @@
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Interfaces.Data.Core;

@@ -27,12 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="..\SharedGlobalUsings.cs">
-        <Link>SharedGlobalUsings.cs</Link>
-      </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="UiTranslation\TargetLanguages\de.tsv" />
       <EmbeddedResource Include="UiTranslation\TargetLanguages\de.tsv" />
     </ItemGroup>
