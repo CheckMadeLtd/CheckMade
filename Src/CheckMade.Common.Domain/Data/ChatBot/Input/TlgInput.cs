@@ -13,4 +13,4 @@ public sealed record TlgInput(
     Option<ResultantWorkflowState> ResultantState,
     Option<Guid> EntityGuid,
     Option<string> CallbackQueryId,
-    TlgInputDetails Details);
+    InputDetails Details);

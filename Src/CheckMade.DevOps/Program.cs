@@ -1,4 +1,4 @@
-﻿using CheckMade.DevOps.TlgInputDetailsMigration;
+﻿using CheckMade.DevOps.InputDetailsMigration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

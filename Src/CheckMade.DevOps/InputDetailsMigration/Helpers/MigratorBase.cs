@@ -1,6 +1,6 @@
 using CheckMade.Common.Utils.FpExtensions.Monads;
 
-namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
+namespace CheckMade.DevOps.InputDetailsMigration.Helpers;
 
 internal abstract class MigratorBase(MigrationRepository migRepo)
 {

@@ -295,7 +295,7 @@ public sealed class ToModelConverter(
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             update.Update.CallbackQuery?.Id ?? Option<string>.None(), 
-            new TlgInputDetails(
+            new InputDetails(
                 !string.IsNullOrWhiteSpace(messageText) ? messageText : Option<string>.None(), 
                 internalAttachmentUri,
                 attachmentType,

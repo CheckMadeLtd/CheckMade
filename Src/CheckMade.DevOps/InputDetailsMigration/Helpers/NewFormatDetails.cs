@@ -1,4 +1,4 @@
-namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
+namespace CheckMade.DevOps.InputDetailsMigration.Helpers;
 
 internal sealed record NewFormatDetails(
     HistoricInputIdentifier Identifier, 

@@ -206,8 +206,8 @@ internal static class DomainModelConstitutors
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            JsonHelper.DeserializeFromJson<TlgInputDetails>(tlgDetails, glossary)
-            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
+            JsonHelper.DeserializeFromJson<InputDetails>(tlgDetails, glossary)
+            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {

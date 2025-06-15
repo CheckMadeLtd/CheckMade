@@ -1,8 +1,8 @@
 using System.Reflection;
 using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
+using CheckMade.DevOps.InputDetailsMigration.Helpers;
 
-namespace CheckMade.DevOps.TlgInputDetailsMigration;
+namespace CheckMade.DevOps.InputDetailsMigration;
 
 internal sealed class MigratorByIndexFactory
 {
@@ -13,7 +13,7 @@ internal sealed class MigratorByIndexFactory
         _migratorByIndex = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(static type => string.IsNullOrEmpty(type.Namespace) == false &&
-                                  type.Namespace.StartsWith("CheckMade.DevOps.TlgInputDetailsMigration.Migrators") &&
+                                  type.Namespace.StartsWith("CheckMade.DevOps.InputDetailsMigration.Migrators") &&
                                   typeof(MigratorBase).IsAssignableFrom(type))
             .ToDictionary(
                 static type => GetMigratorIndexFromTypeName(type.Name),

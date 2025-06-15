@@ -195,7 +195,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 controlPromptEnumCode: (long)prompts));
     }
 
-    internal static TlgInputDetails CreateFromRelevantDetails(
+    internal static InputDetails CreateFromRelevantDetails(
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
@@ -205,7 +205,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         DomainTerm? domainTerm = null,
         long? controlPromptEnumCode = null)
     {
-        return new TlgInputDetails(
+        return new InputDetails(
             text ?? Option<string>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
             attachmentType ?? Option<TlgAttachmentType>.None(),

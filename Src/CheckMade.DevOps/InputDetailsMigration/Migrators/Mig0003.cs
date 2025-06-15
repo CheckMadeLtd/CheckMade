@@ -2,16 +2,16 @@ using System.Collections.Immutable;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.ChatBot.Logic;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
+using CheckMade.DevOps.InputDetailsMigration.Helpers;
 
-namespace CheckMade.DevOps.TlgInputDetailsMigration.Migrators;
+namespace CheckMade.DevOps.InputDetailsMigration.Migrators;
 
 internal class Mig0003(MigrationRepository migRepo) : MigratorBase(migRepo)
 {
     /*
      * Overview:
      * - Necessary for v1.2.2
-     * - Removal of AttachmentTlgUri in TlgInputDetails
+     * - Removal of AttachmentTlgUri in InputDetails
      */
     
     protected override IReadOnlyCollection<NewFormatDetails> ConvertOldToNewAsync(
@@ -22,7 +22,7 @@ internal class Mig0003(MigrationRepository migRepo) : MigratorBase(migRepo)
 
         foreach (var oldDetails in allOldFormatDetails)
         {
-            var detailsWithoutTlgUri = JsonHelper.DeserializeFromJson<TlgInputDetails>(
+            var detailsWithoutTlgUri = JsonHelper.DeserializeFromJson<InputDetails>(
                 oldDetails.OldFormatDetailsJson.ToString(), glossary, true);
 
             var newDetails = new NewFormatDetails(
