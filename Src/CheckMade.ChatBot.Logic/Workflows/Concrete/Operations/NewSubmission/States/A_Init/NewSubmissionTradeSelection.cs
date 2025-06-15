@@ -21,7 +21,7 @@ internal sealed record NewSubmissionTradeSelection(
     IDomainGlossary Glossary,
     ILiveEventsRepository LiveEventRepo,
     IGeneralWorkflowUtils WorkflowUtils,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IStateMediator Mediator)
     : INewSubmissionTradeSelection
 {

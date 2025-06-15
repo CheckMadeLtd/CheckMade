@@ -14,7 +14,7 @@ public interface IToModelConverterFactory
 public sealed class ToModelConverterFactory(
     IBlobLoader blobLoader,
     IHttpDownloader downloader,
-    ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    IAgentRoleBindingsRepository roleBindingsRepo,
     IDomainGlossary domainGlossary,
     ILogger<ToModelConverter> logger) 
     : IToModelConverterFactory

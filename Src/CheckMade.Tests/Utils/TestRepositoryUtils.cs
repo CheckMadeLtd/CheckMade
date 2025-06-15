@@ -16,11 +16,11 @@ namespace CheckMade.Tests.Utils;
 
 internal static class TestRepositoryUtils
 {
-    internal static TlgAgentRoleBind GetNewRoleBind(
+    internal static AgentRoleBind GetNewRoleBind(
         Role role, 
         TlgAgent tlgAgent)
     {
-        return new TlgAgentRoleBind(
+        return new AgentRoleBind(
             role,
             tlgAgent,
             DateTimeOffset.UtcNow,
@@ -33,7 +33,7 @@ internal static class TestRepositoryUtils
         IReadOnlyCollection<LiveEvent>? liveEvents = null,
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
-        IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
+        IReadOnlyCollection<AgentRoleBind>? roleBindings = null,
         IReadOnlyCollection<TlgInput>? inputs = null,
         IReadOnlyCollection<WorkflowBridge>? bridges = null)
     {
@@ -41,7 +41,7 @@ internal static class TestRepositoryUtils
         List<LiveEvent> defaultLiveEvents = [X2024, X2025];
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SanitaryAdmin_DanielEn_X2024];
-        List<TlgAgentRoleBind> defaultRoleBindings = 
+        List<AgentRoleBind> defaultRoleBindings = 
             [GetNewRoleBind(SanitaryAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
         List<TlgInput> defaultInputs = [];
         List<WorkflowBridge> defaultBridges = [];
@@ -116,10 +116,10 @@ internal static class TestRepositoryUtils
 
     private static IServiceCollection ArrangeTestRoleBindingsRepo(
         this IServiceCollection serviceCollection, 
-        IReadOnlyCollection<TlgAgentRoleBind> roleBindings,
+        IReadOnlyCollection<AgentRoleBind> roleBindings,
         MockContainer container)
     {
-        var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+        var mockRoleBindingsRepo = new Mock<IAgentRoleBindingsRepository>();
         
         mockRoleBindingsRepo
             .Setup(static repo => repo.GetAllAsync())
@@ -128,13 +128,13 @@ internal static class TestRepositoryUtils
         mockRoleBindingsRepo
             .Setup(static repo => repo.GetAllActiveAsync())
             .ReturnsAsync(roleBindings
-                .Where(static tarb => tarb.Status == DbRecordStatus.Active)
+                .Where(static arb => arb.Status == DbRecordStatus.Active)
                 .ToImmutableArray());
 
-        container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
+        container.Mocks[typeof(IAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
         var stubRoleBindingsRepo = mockRoleBindingsRepo.Object;
         
-        return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
+        return serviceCollection.AddScoped<IAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
     }
 
 

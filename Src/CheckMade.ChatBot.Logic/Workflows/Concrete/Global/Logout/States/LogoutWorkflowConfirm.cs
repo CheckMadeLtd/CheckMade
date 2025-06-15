@@ -16,7 +16,7 @@ internal interface ILogoutWorkflowConfirm : IWorkflowStateNormal;
 internal sealed record LogoutWorkflowConfirm(
     IDomainGlossary Glossary, 
     IStateMediator Mediator,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
+    IAgentRoleBindingsRepository RoleBindingsRepo) 
     : ILogoutWorkflowConfirm
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
@@ -25,7 +25,7 @@ internal sealed record LogoutWorkflowConfirm(
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
+            .First(arb => arb.TlgAgent.Equals(currentInput.TlgAgent));
         
         List<OutputDto> outputs =
         [
@@ -88,14 +88,14 @@ internal sealed record LogoutWorkflowConfirm(
         async Task<WorkflowResponse> PerformLogoutAsync()
         {
             var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
-                .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
+                .First(arb => arb.TlgAgent.Equals(currentInput.TlgAgent));
         
             var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
                 (await RoleBindingsRepo.GetAllActiveAsync())
-                .Where(tarb =>
-                    tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
-                    tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
-                    tarb.Role.Token.Equals(currentRoleBind.Role.Token))
+                .Where(arb =>
+                    arb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
+                    arb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
+                    arb.Role.Token.Equals(currentRoleBind.Role.Token))
                 .ToArray();
         
             await RoleBindingsRepo

@@ -218,7 +218,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgAgentRoleBindingsExist(
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenAgentRoleBindingsExist(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -251,7 +251,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputsWithLogicalPort));
     
-        List<TlgAgentRoleBind> activeRoleBindings = [ 
+        List<AgentRoleBind> activeRoleBindings = [ 
             TestRepositoryUtils.GetNewRoleBind(SanitaryInspector_DanielEn_X2024, PrivateBotChat_Operations),
             TestRepositoryUtils.GetNewRoleBind(SanitaryTeamLead_DanielEn_X2024, PrivateBotChat_Notifications),
             TestRepositoryUtils.GetNewRoleBind(SanitaryEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
@@ -269,9 +269,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
                 ChatId = activeRoleBindings
-                    .First(tarb => 
-                        tarb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
-                        tarb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
+                    .First(arb => 
+                        arb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
+                        arb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
                     .TlgAgent.ChatId.Id
             }).ToList();
     

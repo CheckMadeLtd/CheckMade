@@ -55,7 +55,7 @@ public sealed class LogoutWorkflowTests
             ],
             roleBindings: [boundRole]);
         var mockRoleBindingsRepo =
-            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
+            (Mock<IAgentRoleBindingsRepository>)container.Mocks[typeof(IAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<LogoutWorkflow>();
         
         const string expectedMessage = "💨 Logged out.";
@@ -98,7 +98,7 @@ public sealed class LogoutWorkflowTests
                         glossary.GetId(typeof(LogoutWorkflow)),
                         glossary.GetId(typeof(ILogoutWorkflowConfirm))))
             ],
-            roleBindings: new List<TlgAgentRoleBind>
+            roleBindings: new List<AgentRoleBind>
             {
                 // Relevant
                 new(boundRole, tlgAgentOperations,
@@ -115,27 +115,27 @@ public sealed class LogoutWorkflowTests
                 new(boundRole, new TlgAgent(UserId02, ChatId04, Communications),
                     DateTimeOffset.UtcNow, Option<DateTimeOffset>.None())
             });
-        var mockTlgAgentRoleBindingsForAllModes =
-            (Mock<ITlgAgentRoleBindingsRepository>)container.Mocks[typeof(ITlgAgentRoleBindingsRepository)];
+        var mockAgentRoleBindingsForAllModes =
+            (Mock<IAgentRoleBindingsRepository>)container.Mocks[typeof(IAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<LogoutWorkflow>();
         
         var expectedBindingsUpdated = 
-            (await mockTlgAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
-            .Where(tarb => 
-                tarb.TlgAgent.UserId.Equals(tlgAgentOperations.UserId) &&
-                tarb.TlgAgent.ChatId.Equals(tlgAgentOperations.ChatId) &&
-                tarb.Role.Equals(boundRole))
+            (await mockAgentRoleBindingsForAllModes.Object.GetAllActiveAsync())
+            .Where(arb => 
+                arb.TlgAgent.UserId.Equals(tlgAgentOperations.UserId) &&
+                arb.TlgAgent.ChatId.Equals(tlgAgentOperations.ChatId) &&
+                arb.Role.Equals(boundRole))
             .ToList();
         
-        List<TlgAgentRoleBind> actualTlgAgentRoleBindingsUpdated = [];
-        mockTlgAgentRoleBindingsForAllModes
+        List<AgentRoleBind> actualAgentRoleBindingsUpdated = [];
+        mockAgentRoleBindingsForAllModes
             .Setup(static x => x.UpdateStatusAsync(
-                It.IsAny<IReadOnlyCollection<TlgAgentRoleBind>>(), DbRecordStatus.Historic))
-            .Callback<IReadOnlyCollection<TlgAgentRoleBind>, DbRecordStatus>(
-                (tlgAgentRoleBinds, newStatus) => 
+                It.IsAny<IReadOnlyCollection<AgentRoleBind>>(), DbRecordStatus.Historic))
+            .Callback<IReadOnlyCollection<AgentRoleBind>, DbRecordStatus>(
+                (agentRoleBinds, newStatus) => 
                 {
-                    actualTlgAgentRoleBindingsUpdated = tlgAgentRoleBinds
-                        .Select(tarb => tarb with
+                    actualAgentRoleBindingsUpdated = agentRoleBinds
+                        .Select(arb => arb with
                         {
                             DeactivationDate = DateTimeOffset.UtcNow,
                             Status = newStatus
@@ -149,13 +149,13 @@ public sealed class LogoutWorkflowTests
         {
             Assert.Equivalent(
                 expectedBindingsUpdated[i].TlgAgent,
-                actualTlgAgentRoleBindingsUpdated[i].TlgAgent);
+                actualAgentRoleBindingsUpdated[i].TlgAgent);
             Assert.Equivalent(
                 expectedBindingsUpdated[i].Role,
-                actualTlgAgentRoleBindingsUpdated[i].Role);
+                actualAgentRoleBindingsUpdated[i].Role);
             Assert.Equal(
                 DbRecordStatus.Historic, 
-                actualTlgAgentRoleBindingsUpdated[i].Status);
+                actualAgentRoleBindingsUpdated[i].Status);
         }
     }
 

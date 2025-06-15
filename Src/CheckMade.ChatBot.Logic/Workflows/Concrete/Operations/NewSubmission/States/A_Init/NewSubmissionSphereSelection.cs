@@ -20,13 +20,13 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
 {
     private readonly ILiveEventsRepository _liveEventsRepo;
     private readonly ITrade _trade;
-    private readonly ITlgAgentRoleBindingsRepository _roleBindingsRepo;
+    private readonly IAgentRoleBindingsRepository _roleBindingsRepo;
     
     public NewSubmissionSphereSelection(
         ILiveEventsRepository liveEventsRepo,
         IDomainGlossary glossary,
         IStateMediator mediator, 
-        ITlgAgentRoleBindingsRepository roleBindingsRepo)
+        IAgentRoleBindingsRepository roleBindingsRepo)
     {
         _liveEventsRepo = liveEventsRepo;
         Glossary = glossary;

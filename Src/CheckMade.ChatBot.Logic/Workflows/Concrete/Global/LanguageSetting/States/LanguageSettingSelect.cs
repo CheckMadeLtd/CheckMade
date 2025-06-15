@@ -20,7 +20,7 @@ internal interface ILanguageSettingSelect : IWorkflowStateNormal;
 internal sealed record LanguageSettingSelect(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IUsersRepository UsersRepo,
     ILastOutputMessageIdCache MsgIdCache) 
     : ILanguageSettingSelect
@@ -56,7 +56,7 @@ internal sealed record LanguageSettingSelect(
         var newLanguage = currentInput.Details.DomainTerm.GetValueOrThrow();
         
         var currentUser = (await RoleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent))
+            .First(arb => arb.TlgAgent.Equals(currentInput.TlgAgent))
             .Role.ByUser;
 
         await UsersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);

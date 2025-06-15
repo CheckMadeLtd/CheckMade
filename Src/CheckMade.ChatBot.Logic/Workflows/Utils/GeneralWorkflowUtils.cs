@@ -30,7 +30,7 @@ internal interface IGeneralWorkflowUtils
 
 internal sealed record GeneralWorkflowUtils(
     ITlgInputsRepository InputsRepo,
-    ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
+    IAgentRoleBindingsRepository AgentRoleBindingsRepo,
     IDerivedWorkflowBridgesRepository BridgesRepo)
     : IGeneralWorkflowUtils
 {
@@ -41,11 +41,11 @@ internal sealed record GeneralWorkflowUtils(
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
-        var lastExpiredRoleBind = (await TlgAgentRoleBindingsRepo.GetAllAsync())
-            .Where(tarb =>
-                tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
-                tarb.DeactivationDate.IsSome)
-            .MaxBy(static tarb => tarb.DeactivationDate.GetValueOrThrow());
+        var lastExpiredRoleBind = (await AgentRoleBindingsRepo.GetAllAsync())
+            .Where(arb =>
+                arb.TlgAgent.Equals(tlgAgentForDbQuery) &&
+                arb.DeactivationDate.IsSome)
+            .MaxBy(static arb => arb.DeactivationDate.GetValueOrThrow());
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()

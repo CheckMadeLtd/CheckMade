@@ -10,41 +10,41 @@ using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
-    : BaseRepository(dbHelper, glossary), ITlgAgentRoleBindingsRepository
+public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private Option<IReadOnlyCollection<TlgAgentRoleBind>> _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
+    private Option<IReadOnlyCollection<AgentRoleBind>> _cache = Option<IReadOnlyCollection<AgentRoleBind>>.None();
 
     private static (Func<DbDataReader, int> keyGetter,
-        Func<DbDataReader, TlgAgentRoleBind> modelInitializer,
-        Action<TlgAgentRoleBind, DbDataReader> accumulateData,
-        Func<TlgAgentRoleBind, TlgAgentRoleBind> modelFinalizer)
-        TlgAgentRoleBindMapper(IDomainGlossary glossary)
+        Func<DbDataReader, AgentRoleBind> modelInitializer,
+        Action<AgentRoleBind, DbDataReader> accumulateData,
+        Func<AgentRoleBind, AgentRoleBind> modelFinalizer)
+        AgentRoleBindMapper(IDomainGlossary glossary)
     {
         return (
-            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("tarb_id")),
+            keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("arb_id")),
             modelInitializer: reader =>
             {
                 var role = RolesRepository.CreateRoleWithoutSphereAssignments(reader, glossary);
                 var tlgAgent = ConstituteTlgAgent(reader);
                 
-                return ConstituteTlgAgentRoleBind(reader, role, tlgAgent);
+                return ConstituteAgentRoleBind(reader, role, tlgAgent);
             },
-            accumulateData: (tarb, reader) => 
-                RolesRepository.AccumulateSphereAssignments(tarb.Role, reader, glossary),
-            modelFinalizer: static tarb => tarb with 
+            accumulateData: (arb, reader) => 
+                RolesRepository.AccumulateSphereAssignments(arb.Role, reader, glossary),
+            modelFinalizer: static arb => arb with 
             { 
-                Role = RolesRepository.FinalizeSphereAssignments(tarb.Role)
+                Role = RolesRepository.FinalizeSphereAssignments(arb.Role)
             }
         );
     }
 
-    public async Task AddAsync(TlgAgentRoleBind tlgAgentRoleBind) =>
-        await AddAsync([tlgAgentRoleBind]);
+    public async Task AddAsync(AgentRoleBind agentRoleBind) =>
+        await AddAsync([agentRoleBind]);
 
-    public async Task AddAsync(IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings)
+    public async Task AddAsync(IReadOnlyCollection<AgentRoleBind> agentRoleBindings)
     {
         const string rawQuery = """
                                 INSERT INTO tlg_agent_role_bindings (
@@ -62,17 +62,17 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 @activationDate, @deactivationDate, @status, @mode)
                                 """;
 
-        var commands = tlgAgentRoleBindings.Select(static tarb =>
+        var commands = agentRoleBindings.Select(static arb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
-                ["@token"] = tarb.Role.Token,
-                ["@userId"] = (long)tarb.TlgAgent.UserId,
-                ["@chatId"] = (long)tarb.TlgAgent.ChatId,
-                ["@activationDate"] = tarb.ActivationDate,
-                ["@status"] = (int)tarb.Status,
-                ["@mode"] = (int)tarb.TlgAgent.Mode,
-                ["@deactivationDate"] = tarb.DeactivationDate.Match<object>(
+                ["@token"] = arb.Role.Token,
+                ["@userId"] = (long)arb.TlgAgent.UserId,
+                ["@chatId"] = (long)arb.TlgAgent.ChatId,
+                ["@activationDate"] = arb.ActivationDate,
+                ["@status"] = (int)arb.Status,
+                ["@mode"] = (int)arb.TlgAgent.Mode,
+                ["@deactivationDate"] = arb.DeactivationDate.Match<object>(
                     static date => date,
                     static () => DBNull.Value)
             };
@@ -83,12 +83,12 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         await ExecuteTransactionAsync(commands.ToArray());
         
         _cache = _cache.Match(
-            cache => Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
-                cache.Concat(tlgAgentRoleBindings).ToArray()),
-            Option<IReadOnlyCollection<TlgAgentRoleBind>>.None);
+            cache => Option<IReadOnlyCollection<AgentRoleBind>>.Some(
+                cache.Concat(agentRoleBindings).ToArray()),
+            Option<IReadOnlyCollection<AgentRoleBind>>.None);
     }
 
-    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllAsync()
+    public async Task<IReadOnlyCollection<AgentRoleBind>> GetAllAsync()
     {
         if (_cache.IsNone)
         {
@@ -119,27 +119,27 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                             r.role_type AS role_type, 
                                             r.status AS role_status, 
 
-                                            tarb.id AS tarb_id,
-                                            tarb.tlg_user_id AS tarb_tlg_user_id, 
-                                            tarb.tlg_chat_id AS tarb_tlg_chat_id, 
-                                            tarb.interaction_mode AS tarb_interaction_mode, 
-                                            tarb.activation_date AS tarb_activation_date, 
-                                            tarb.deactivation_date AS tarb_deactivation_date, 
-                                            tarb.status AS tarb_status,
+                                            arb.id AS arb_id,
+                                            arb.tlg_user_id AS arb_tlg_user_id, 
+                                            arb.tlg_chat_id AS arb_tlg_chat_id, 
+                                            arb.interaction_mode AS arb_interaction_mode, 
+                                            arb.activation_date AS arb_activation_date, 
+                                            arb.deactivation_date AS arb_deactivation_date, 
+                                            arb.status AS arb_status,
                                             
                                             soa.name AS sphere_name, 
                                             soa.details AS sphere_details, 
                                             soa.trade AS sphere_trade,
                                             soa.status AS sphere_status
 
-                                            FROM tlg_agent_role_bindings tarb 
-                                            INNER JOIN roles r on tarb.role_id = r.id 
+                                            FROM tlg_agent_role_bindings arb 
+                                            INNER JOIN roles r on arb.role_id = r.id 
                                             INNER JOIN users usr on r.user_id = usr.id 
                                             INNER JOIN live_events lve on r.live_event_id = lve.id
                                             LEFT JOIN roles_to_spheres_assignments rtsa ON r.id = rtsa.role_id
                                             LEFT JOIN spheres_of_action soa ON rtsa.sphere_id = soa.id
                                             
-                                            ORDER BY tarb.id
+                                            ORDER BY arb.id
                                             """;
 
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
@@ -147,12 +147,12 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = TlgAgentRoleBindMapper(Glossary);
+                        finalizeModel) = AgentRoleBindMapper(Glossary);
                     
                     var fetchedBindings = await ExecuteMapperAsync(
                         command, getKey, initializeModel, accumulateData, finalizeModel);
                     
-                    _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.Some(
+                    _cache = Option<IReadOnlyCollection<AgentRoleBind>>.Some(
                         fetchedBindings.ToArray());
                 }
             }
@@ -165,16 +165,16 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         return _cache.GetValueOrThrow();
     }
 
-    public async Task<IReadOnlyCollection<TlgAgentRoleBind>> GetAllActiveAsync() =>
+    public async Task<IReadOnlyCollection<AgentRoleBind>> GetAllActiveAsync() =>
         (await GetAllAsync())
-        .Where(static tarb => tarb.Status.Equals(DbRecordStatus.Active))
+        .Where(static arb => arb.Status.Equals(DbRecordStatus.Active))
         .ToImmutableArray();
 
-    public async Task UpdateStatusAsync(TlgAgentRoleBind tlgAgentRoleBind, DbRecordStatus newStatus) =>
-        await UpdateStatusAsync([tlgAgentRoleBind], newStatus);
+    public async Task UpdateStatusAsync(AgentRoleBind agentRoleBind, DbRecordStatus newStatus) =>
+        await UpdateStatusAsync([agentRoleBind], newStatus);
 
     public async Task UpdateStatusAsync(
-        IReadOnlyCollection<TlgAgentRoleBind> tlgAgentRoleBindings, 
+        IReadOnlyCollection<AgentRoleBind> agentRoleBindings, 
         DbRecordStatus newStatus)
     {
         const string rawQuery = """
@@ -189,16 +189,16 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 AND status = @oldStatus
                                 """;
 
-        var commands = tlgAgentRoleBindings.Select(tarb =>
+        var commands = agentRoleBindings.Select(arb =>
         {
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newStatus"] = (int)newStatus,
-                ["@token"] = tarb.Role.Token,
-                ["@userId"] = (long)tarb.TlgAgent.UserId,
-                ["@chatId"] = (long)tarb.TlgAgent.ChatId,
-                ["@mode"] = (int)tarb.TlgAgent.Mode,
-                ["@oldStatus"] = (int)tarb.Status
+                ["@token"] = arb.Role.Token,
+                ["@userId"] = (long)arb.TlgAgent.UserId,
+                ["@chatId"] = (long)arb.TlgAgent.ChatId,
+                ["@mode"] = (int)arb.TlgAgent.Mode,
+                ["@oldStatus"] = (int)arb.Status
             };
 
             if (newStatus != DbRecordStatus.Active)
@@ -213,7 +213,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         EmptyCache();
     }
 
-    public async Task HardDeleteAsync(TlgAgentRoleBind tlgAgentRoleBind)
+    public async Task HardDeleteAsync(AgentRoleBind agentRoleBind)
     {
         const string rawQuery = """
                                 DELETE FROM tlg_agent_role_bindings 
@@ -226,10 +226,10 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         
         var normalParameters = new Dictionary<string, object>
         {
-            ["@token"] = tlgAgentRoleBind.Role.Token,
-            ["userId"] = (long)tlgAgentRoleBind.TlgAgent.UserId,
-            ["chatId"] = (long)tlgAgentRoleBind.TlgAgent.ChatId,
-            ["@mode"] = (int)tlgAgentRoleBind.TlgAgent.Mode
+            ["@token"] = agentRoleBind.Role.Token,
+            ["userId"] = (long)agentRoleBind.TlgAgent.UserId,
+            ["chatId"] = (long)agentRoleBind.TlgAgent.ChatId,
+            ["@mode"] = (int)agentRoleBind.TlgAgent.Mode
         };
         
         var command = GenerateCommand(rawQuery, normalParameters);
@@ -238,5 +238,5 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         EmptyCache();
     }
 
-    private void EmptyCache() => _cache = Option<IReadOnlyCollection<TlgAgentRoleBind>>.None();
+    private void EmptyCache() => _cache = Option<IReadOnlyCollection<AgentRoleBind>>.None();
 }

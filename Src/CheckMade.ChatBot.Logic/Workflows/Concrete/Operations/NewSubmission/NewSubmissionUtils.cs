@@ -33,7 +33,7 @@ internal static class NewSubmissionUtils
         Geo lastKnownLocation,
         ITrade trade,
         TlgInput currentInput,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        IAgentRoleBindingsRepository roleBindingsRepo,
         bool filterAssignedSpheresIfAny = true)
     {
         var tradeSpecificNearnessThreshold = trade switch
@@ -68,14 +68,14 @@ internal static class NewSubmissionUtils
 
     internal static async Task<IReadOnlyCollection<ISphereOfAction>> AssignedSpheresOrAllAsync(
         TlgInput currentInput,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        IAgentRoleBindingsRepository roleBindingsRepo,
         ILiveEventsRepository liveEventsRepo,
         ITrade trade)
     {
         var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
             
         var currentRole = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.Role.Equals(
+            .First(arb => arb.Role.Equals(
                 currentInput.OriginatorRole.GetValueOrThrow()))
             .Role;
         var currentRoleType = currentRole.RoleType;

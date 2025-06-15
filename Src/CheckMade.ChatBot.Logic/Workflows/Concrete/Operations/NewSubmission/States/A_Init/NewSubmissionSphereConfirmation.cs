@@ -21,7 +21,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
     ILiveEventsRepository LiveEventsRepo,    
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IStateMediator Mediator) 
     : INewSubmissionSphereConfirmation<T> where T : ITrade, new()
 {

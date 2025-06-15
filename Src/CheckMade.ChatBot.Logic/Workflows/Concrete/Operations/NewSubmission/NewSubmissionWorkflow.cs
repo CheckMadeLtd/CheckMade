@@ -16,7 +16,7 @@ internal sealed record NewSubmissionWorkflow(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {

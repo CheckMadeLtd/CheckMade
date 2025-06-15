@@ -52,7 +52,7 @@ public sealed class GeneralWorkflowUtilsTests
         var tlgAgent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
-        var expiredRoleBind = new TlgAgentRoleBind(
+        var expiredRoleBind = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
             tlgAgent,
             cutoffDate.AddDays(-2),
@@ -101,14 +101,14 @@ public sealed class GeneralWorkflowUtilsTests
 
         var expiredRoleBinds = new[]
         {
-            new TlgAgentRoleBind(
+            new AgentRoleBind(
                 SanitaryAdmin_DanielEn_X2024,
                 tlgAgent,
                 oldestCutoffDate.AddDays(-1),
                 oldestCutoffDate,
                 DbRecordStatus.Historic),
             
-            new TlgAgentRoleBind(
+            new AgentRoleBind(
                 SanitaryInspector_DanielEn_X2024,
                 tlgAgent,
                 latestCutoffDate.AddDays(-1),
@@ -156,7 +156,7 @@ public sealed class GeneralWorkflowUtilsTests
         var tlgAgent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
-        var expiredRoleBind = new TlgAgentRoleBind(
+        var expiredRoleBind = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
             tlgAgent,
             cutoffDate.AddDays(-2),
@@ -194,7 +194,7 @@ public sealed class GeneralWorkflowUtilsTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var tlgAgent = PrivateBotChat_Operations;
 
-        var roleBindWithNullDeactivation = new TlgAgentRoleBind(
+        var roleBindWithNullDeactivation = new AgentRoleBind(
             SanitaryAdmin_DanielEn_X2024,
             tlgAgent,
             DateTimeOffset.UtcNow.AddDays(-2),

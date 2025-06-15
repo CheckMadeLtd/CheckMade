@@ -22,7 +22,7 @@ internal static class OutputSender
         IReadOnlyCollection<OutputDto> outputs,
         IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
         TlgAgent currentTlgAgent,
-        IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
+        IReadOnlyCollection<AgentRoleBind> activeRoleBindings,
         IUiTranslator uiTranslator,
         IOutputToReplyMarkupConverter converter,
         IBlobLoader blobLoader,
@@ -33,9 +33,9 @@ internal static class OutputSender
         // "Bound Ports" are those LogicalPorts where an actual TlgAgent has a binding to the Role and
         // InteractionMode specified in the LogicalPort (i.e. only 'logged in' users).  
         
-        Func<TlgAgentRoleBind, LogicalPort, bool> hasBinding = static (tarb, lp) =>
-            tarb.Role.Equals(lp.Role) &&
-            tarb.TlgAgent.Mode == lp.InteractionMode;
+        Func<AgentRoleBind, LogicalPort, bool> hasBinding = static (arb, lp) =>
+            arb.Role.Equals(lp.Role) &&
+            arb.TlgAgent.Mode == lp.InteractionMode;
         
         Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> 
             sendOutputsInSeriesAndOriginalOrder = async outputsPerBoundPort =>
@@ -47,7 +47,7 @@ internal static class OutputSender
                     // LogicalPort is only set for outputs aimed at anyone who is NOT the originator of the current input
                     var outputTlgAgent = output.LogicalPort.Match(
                         logicalPort => activeRoleBindings
-                            .First(tarb => hasBinding(tarb, logicalPort))
+                            .First(arb => hasBinding(arb, logicalPort))
                             .TlgAgent,
                         () => currentTlgAgent);
 
@@ -204,7 +204,7 @@ internal static class OutputSender
         Func<OutputDto, bool> logicalPortIsBound = o => 
             o.LogicalPort.Match(
                 logicalPort => activeRoleBindings
-                    .Any(tarb => hasBinding(tarb, logicalPort)),
+                    .Any(arb => hasBinding(arb, logicalPort)),
                 static () => true
             );
 
@@ -232,12 +232,12 @@ internal static class OutputSender
                 logger.LogWarning(
                     $"One of the {nameof(outputs)} couldn't be sent due to an unbound {nameof(LogicalPort)}: " +
                     $"No user with the role {glossary.GetUi(unboundRole.RoleType.GetType()).GetFormattedEnglish()} " +
-                    $"has a {nameof(TlgAgentRoleBind)} (i.e. is logged in) " +
+                    $"has a {nameof(AgentRoleBind)} (i.e. is logged in) " +
                     $"for the {mode} bot, even though they are logged in to at least one bot in another mode. " +
                     $"This might not be what the user intended and could reflect a usability problem.");
 
             Func<IRoleInfo, bool> isBoundForAtLeastOneMode = role =>
-                activeRoleBindings.Any(tarb => tarb.Role.Equals(role));
+                activeRoleBindings.Any(arb => arb.Role.Equals(role));
         
             outputs
                 .Where(o => !logicalPortIsBound(o))

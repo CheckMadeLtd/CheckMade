@@ -23,7 +23,7 @@ public interface IUpdateHandler
 public sealed class UpdateHandler(
     IBotClientFactory botClientFactory,
     IInputProcessor inputProcessor,
-    ITlgAgentRoleBindingsRepository tlgAgentRoleBindingsRepo,
+    IAgentRoleBindingsRepository agentRoleBindingsRepo,
     IToModelConverterFactory toModelConverterFactory,
     DefaultUiLanguageCodeProvider defaultUiLanguage,
     IUiTranslatorFactory translatorFactory,
@@ -92,8 +92,8 @@ public sealed class UpdateHandler(
                         IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(tlgInput))
                 from activeRoleBindings
-                    in Result<IReadOnlyCollection<TlgAgentRoleBind>>.RunAsync(async () => 
-                        (await tlgAgentRoleBindingsRepo.GetAllActiveAsync())
+                    in Result<IReadOnlyCollection<AgentRoleBind>>.RunAsync(async () => 
+                        (await agentRoleBindingsRepo.GetAllActiveAsync())
                         .ToArray())
                 from uiTranslator
                     in Result<IUiTranslator>.Run(() => 
@@ -142,12 +142,12 @@ public sealed class UpdateHandler(
     }
 
     private LanguageCode GetUiLanguage(
-        IReadOnlyCollection<TlgAgentRoleBind> activeRoleBindings,
+        IReadOnlyCollection<AgentRoleBind> activeRoleBindings,
         TlgAgent currentTlgAgent)
     {
         var tlgAgentRole = activeRoleBindings
-            .FirstOrDefault(tarb =>
-                tarb.TlgAgent.Equals(currentTlgAgent));
+            .FirstOrDefault(arb =>
+                arb.TlgAgent.Equals(currentTlgAgent));
         
         return tlgAgentRole != null 
             ? tlgAgentRole.Role.ByUser.Language 

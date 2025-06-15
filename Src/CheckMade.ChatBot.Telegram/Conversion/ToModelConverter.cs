@@ -27,7 +27,7 @@ public sealed class ToModelConverter(
     ITelegramFilePathResolver filePathResolver,
     IBlobLoader blobLoader,
     IHttpDownloader downloader,
-    ITlgAgentRoleBindingsRepository roleBindingsRepo,
+    IAgentRoleBindingsRepository roleBindingsRepo,
     IDomainGlossary domainGlossary,
     ILogger<ToModelConverter> logger) 
     : IToModelConverter
@@ -239,10 +239,10 @@ public sealed class ToModelConverter(
     private async Task<Result<Option<Role>>> GetOriginatorRoleAsync(UpdateWrapper update, InteractionMode mode)
     {
         var originatorRole = (await roleBindingsRepo.GetAllActiveAsync())
-            .FirstOrDefault(tarb =>
-                tarb.TlgAgent.UserId == update.Message.From?.Id &&
-                tarb.TlgAgent.ChatId == update.Message.Chat.Id &&
-                tarb.TlgAgent.Mode == mode)?
+            .FirstOrDefault(arb =>
+                arb.TlgAgent.UserId == update.Message.From?.Id &&
+                arb.TlgAgent.ChatId == update.Message.Chat.Id &&
+                arb.TlgAgent.Mode == mode)?
             .Role;
 
         return originatorRole ?? Option<Role>.None();

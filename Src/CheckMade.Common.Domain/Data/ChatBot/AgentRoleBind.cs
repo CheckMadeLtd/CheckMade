@@ -4,7 +4,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Common.Domain.Data.ChatBot;
 
-public sealed record TlgAgentRoleBind(
+public sealed record AgentRoleBind(
     Role Role,
     TlgAgent TlgAgent,
     DateTimeOffset ActivationDate,

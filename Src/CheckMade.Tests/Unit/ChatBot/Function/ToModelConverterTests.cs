@@ -83,7 +83,7 @@ public sealed class ToModelConverterTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings:
             [
-                new TlgAgentRoleBind(
+                new AgentRoleBind(
                     SanitaryInspector_DanielEn_X2024,
                     tlgAgent,
                     new DateTime(2021, 01, 01),

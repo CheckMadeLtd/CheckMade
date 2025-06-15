@@ -223,26 +223,26 @@ internal static class DomainModelConstitutors
     internal static TlgAgent ConstituteTlgAgent(DbDataReader reader)
     {
         return new TlgAgent(
-            reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
-            reader.GetInt64(reader.GetOrdinal("tarb_tlg_chat_id")),
+            reader.GetInt64(reader.GetOrdinal("arb_tlg_user_id")),
+            reader.GetInt64(reader.GetOrdinal("arb_tlg_chat_id")),
             EnsureEnumValidityOrThrow(
-                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("arb_interaction_mode"))));
     }
 
-    internal static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    internal static AgentRoleBind ConstituteAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
     {
-        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("tarb_activation_date"));
+        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("arb_activation_date"));
 
-        var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
+        var deactivationDateOrdinal = reader.GetOrdinal("arb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
             ? Option<DateTimeOffset>.Some(reader.GetFieldValue<DateTimeOffset>(deactivationDateOrdinal))
             : Option<DateTimeOffset>.None();
 
         var status = EnsureEnumValidityOrThrow(
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("arb_status")));
 
-        return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+        return new AgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
     }
 
     internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
