@@ -4,7 +4,7 @@ using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;
 
-internal class StubBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
+internal sealed class StubBotClientFactory(Mock<IBotClientWrapper> mockBotClientWrapper) : IBotClientFactory
 {
     public IBotClientWrapper CreateBotClient(InteractionMode interactionMode)
     {

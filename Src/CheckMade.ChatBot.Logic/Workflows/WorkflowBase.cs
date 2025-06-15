@@ -9,7 +9,7 @@ using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-internal abstract record WorkflowBase(
+public abstract record WorkflowBase(
     IGeneralWorkflowUtils WorkflowUtils,    
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,

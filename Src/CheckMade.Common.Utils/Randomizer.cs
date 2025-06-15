@@ -2,7 +2,7 @@
 
 public sealed class Randomizer
 {
-    public long GenerateRandomLong()
+    public static long GenerateRandomLong()
     {
         var random = new Random();
         var buffer = new byte[8];

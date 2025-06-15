@@ -1,8 +1,8 @@
 using CheckMade.ChatBot.Logic.Workflows;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
+using CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Global.Logout;
+using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
@@ -14,12 +14,12 @@ using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic;
 
-internal interface IWorkflowIdentifier
+public interface IWorkflowIdentifier
 {
     Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
 }
 
-internal sealed record WorkflowIdentifier(
+public sealed record WorkflowIdentifier(
     UserAuthWorkflow UserAuthWorkflow,
     NewSubmissionWorkflow NewSubmissionWorkflow,
     LanguageSettingWorkflow LanguageSettingWorkflow,

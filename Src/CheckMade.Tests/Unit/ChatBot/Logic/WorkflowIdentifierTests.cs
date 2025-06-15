@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Logic;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
+using CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting;
+using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission;
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Utils.UiTranslation;

@@ -1,5 +1,5 @@
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
-using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth.States;
+using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth;
+using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth.States;
 using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
@@ -140,11 +140,10 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllAsync_ReturnsEmptyList_WhenUserIdNotExist()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
         var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         var agent = new Agent(
-            inputGenerator.Randomizer.GenerateRandomLong(),
+            Randomizer.GenerateRandomLong(),
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     

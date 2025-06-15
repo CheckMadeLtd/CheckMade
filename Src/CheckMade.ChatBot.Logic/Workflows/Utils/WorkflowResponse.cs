@@ -6,7 +6,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
-internal sealed record WorkflowResponse(
+public sealed record WorkflowResponse(
     IReadOnlyCollection<OutputDto> Output,
     Option<string> NewStateId,
     Option<Guid> EntityGuid)

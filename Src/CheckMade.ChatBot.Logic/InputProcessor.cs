@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
 
-internal sealed class InputProcessor(
+public sealed class InputProcessor(
     IWorkflowIdentifier workflowIdentifier,
     IGeneralWorkflowUtils workflowUtils,
     IDomainGlossary glossary,

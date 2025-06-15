@@ -12,11 +12,11 @@ public interface IDbExecutionHelper
     Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation);
 }
 
-internal class DbExecutionHelper(
-        IDbConnectionProvider dbProvider,
-        IDbOpenRetryPolicy dbOpenRetryPolicy,
-        IDbCommandRetryPolicy dbCommandRetryPolicy,
-        ILogger<DbExecutionHelper> logger) 
+public sealed class DbExecutionHelper(
+    IDbConnectionProvider dbProvider,
+    IDbOpenRetryPolicy dbOpenRetryPolicy,
+    IDbCommandRetryPolicy dbCommandRetryPolicy,
+    ILogger<DbExecutionHelper> logger) 
     : IDbExecutionHelper
 {
     public async Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations)

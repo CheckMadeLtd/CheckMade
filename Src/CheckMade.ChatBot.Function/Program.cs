@@ -49,7 +49,8 @@ var host = new HostBuilder()
         // Here rather than in shared Services method below to enable different values for Tests Startup.
         services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        services.RegisterChatBotTelegramServices(config, hostingEnvironment);
+        services.RegisterChatBotTelegramFunctionServices(config, hostingEnvironment);
+        services.RegisterChatBotTelegramBusinessServices();
         services.RegisterChatBotLogicServices();
         
         services.RegisterCommonBusinessLogicServices();

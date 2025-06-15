@@ -1,7 +1,7 @@
-using CheckMade.Common.ExternalServices;
 using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Persistence;
 using CheckMade.ChatBot.Function.Startup;
+using CheckMade.Common.Domain.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup.ConfigProviders;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +19,7 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.RegisterChatBotTelegramServices(Config, HostingEnvironment);
+        Services.RegisterChatBotTelegramFunctionServices(Config, HostingEnvironment);
         Services.RegisterCommonPersistenceServices(Config, HostingEnvironment);
         Services.RegisterCommonExternalServices(Config);
 
@@ -46,8 +46,9 @@ public class IntegrationTestStartup : TestStartupBase
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             gglApiCredentialFileName);
         
-        Services.Register_GoogleApi_Services(gglApiCredentialFilePath);
-
+        Services.AddScoped<GoogleAuth>(_ => new GoogleAuth(gglApiCredentialFilePath));
+        Services.AddScoped<ISheetsService, GoogleSheetsService>();
+        
         const string testDataGglSheetKeyInEnv = "GOOGLE_SHEET_ID_TEST_DATA";
         
         Services.AddScoped<TestDataSheetIdProvider>(_ => new TestDataSheetIdProvider(

@@ -1,4 +1,5 @@
-﻿using CheckMade.DevOps.InputDetailsMigration;
+﻿using CheckMade.ChatBot.Function.Startup;
+using CheckMade.DevOps.InputDetailsMigration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -81,7 +82,7 @@ static IServiceCollection GetServiceCollectionWithBasics()
         loggingConfig.AddDebug(); 
     });
     
-    services.Register_CommonUtils_Services();
+    services.RegisterCommonUtilsServices();
 
     return services;
 }

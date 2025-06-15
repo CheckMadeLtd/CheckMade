@@ -1,3 +1,4 @@
+using CheckMade.ChatBot.Function.Startup;
 using CheckMade.Common.Persistence;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +51,7 @@ internal sealed class MigrationStartup(
             _ => throw new ArgumentException($"Invalid argument for {nameof(targetEnv)}.")
         };
 
-        services.Register_CommonPersistence_Services(dbConnString);
+        services.RegisterCommonPersistenceServices(config, dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
         services.AddScoped<MigrationRepository>();
     }

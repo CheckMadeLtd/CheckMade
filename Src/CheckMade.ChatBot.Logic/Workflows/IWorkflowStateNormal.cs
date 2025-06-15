@@ -7,7 +7,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
-internal interface IWorkflowStateNormal : IWorkflowState
+public interface IWorkflowStateNormal : IWorkflowState
 {
     IStateMediator Mediator { get; }
     
