@@ -24,7 +24,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -59,7 +59,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                     },
                     newState: Mediator.GetTerminator(typeof(INewSubmissionCancelled<T>)),
                     promptTransition: new PromptTransition(
-                        currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                        currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
             
             (long)ControlPrompts.No =>
                 await WorkflowResponse.CreateFromNextStateAsync(

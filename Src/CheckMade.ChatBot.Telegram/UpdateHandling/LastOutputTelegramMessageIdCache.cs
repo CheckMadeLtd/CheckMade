@@ -8,7 +8,7 @@ namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
 {
-    private readonly ConcurrentDictionary<TlgAgent, TlgMessageId> _lastMessageIdsByTlgAgent = new();
+    private readonly ConcurrentDictionary<TlgAgent, MessageId> _lastMessageIdsByTlgAgent = new();
     private ILogger<ILastOutputMessageIdCache> _logger;
 
     /// <summary>
@@ -21,15 +21,15 @@ public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
         _logger = logger;
     }
     
-    public void UpdateLastMessageId(TlgAgent tlgAgent, TlgMessageId messageId) =>
+    public void UpdateLastMessageId(TlgAgent tlgAgent, MessageId messageId) =>
         _lastMessageIdsByTlgAgent.AddOrUpdate(
             tlgAgent, messageId, (_, _) => messageId);
 
-    public Option<TlgMessageId> GetLastMessageId(TlgAgent tlgAgent)
+    public Option<MessageId> GetLastMessageId(TlgAgent tlgAgent)
     {
         var lastId = _lastMessageIdsByTlgAgent.TryGetValue(tlgAgent, out var messageId) 
-            ? Option<TlgMessageId>.Some(messageId)
-            : Option<TlgMessageId>.None();
+            ? Option<MessageId>.Some(messageId)
+            : Option<MessageId>.None();
         
         _logger.LogDebug(lastId.Match(
             static id => $"{nameof(LastOutputTelegramMessageIdCache)} hit with id: {id}",

@@ -1,5 +1,4 @@
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.Domain.Data.ChatBot;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.Core.GIS;
@@ -14,6 +13,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.TGFile;
+using MessageId = CheckMade.Common.Domain.Data.ChatBot.MessageId;
 
 namespace CheckMade.ChatBot.Telegram.BotClient;
 
@@ -32,7 +32,7 @@ public interface IBotClientWrapper
         int messageId,
         CancellationToken cancellationToken = default);
     
-    Task<TlgMessageId> EditTextMessageAsync(
+    Task<MessageId> EditTextMessageAsync(
         ChatId chatId, 
         Option<string> text,
         int messageId,
@@ -40,28 +40,28 @@ public interface IBotClientWrapper
         Option<string> callbackQueryId,
         CancellationToken cancellationToken = default);
     
-    Task<TlgMessageId> SendDocumentAsync(
+    Task<MessageId> SendDocumentAsync(
         AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default);
 
-    Task<TlgMessageId> SendLocationAsync(
+    Task<MessageId> SendLocationAsync(
         ChatId chatId,
         Geo location,
         Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
     
-    Task<TlgMessageId> SendPhotoAsync(
+    Task<MessageId> SendPhotoAsync(
         AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default);
     
-    Task<TlgMessageId> SendTextMessageAsync(
+    Task<MessageId> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
         Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default);
 
-    Task<TlgMessageId> SendVoiceAsync(
+    Task<MessageId> SendVoiceAsync(
         AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default);
     
@@ -95,7 +95,7 @@ public sealed class BotClientWrapper(
         return Unit.Value;
     }
 
-    public async Task<TlgMessageId> EditTextMessageAsync(
+    public async Task<MessageId> EditTextMessageAsync(
         ChatId chatId, 
         Option<string> text, 
         int messageId, 
@@ -104,7 +104,7 @@ public sealed class BotClientWrapper(
         CancellationToken cancellationToken = default)
     {
         Message? editedMessage = null;
-        TlgMessageId? newMessageId = null;
+        MessageId? newMessageId = null;
         
         // EditMessageX only supports updates to/with InlineKeyboardMarkup!
         if (replyMarkup.GetValueOrDefault() is not ReplyKeyboardMarkup)
@@ -183,7 +183,7 @@ public sealed class BotClientWrapper(
         }
     }
 
-    public async Task<TlgMessageId> SendDocumentAsync(
+    public async Task<MessageId> SendDocumentAsync(
         AttachmentSendOutParameters documentSendOutParams,
         CancellationToken cancellationToken = default)
     {
@@ -206,7 +206,7 @@ public sealed class BotClientWrapper(
         return sentMessage.MessageId;
     }
 
-    public async Task<TlgMessageId> SendLocationAsync(
+    public async Task<MessageId> SendLocationAsync(
         ChatId chatId, Geo location, Option<ReplyMarkup> replyMarkup,
         CancellationToken cancellationToken = default)
     {
@@ -228,7 +228,7 @@ public sealed class BotClientWrapper(
         return sentMessage.MessageId;
     }
 
-    public async Task<TlgMessageId> SendPhotoAsync(
+    public async Task<MessageId> SendPhotoAsync(
         AttachmentSendOutParameters photoSendOutParams,
         CancellationToken cancellationToken = default)
     {
@@ -251,7 +251,7 @@ public sealed class BotClientWrapper(
         return sentMessage.MessageId;
     }
 
-    public async Task<TlgMessageId> SendTextMessageAsync(
+    public async Task<MessageId> SendTextMessageAsync(
         ChatId chatId,
         string pleaseChooseText,
         string text,
@@ -292,7 +292,7 @@ public sealed class BotClientWrapper(
         return sentMessage.MessageId;
     }
 
-    public async Task<TlgMessageId> SendVoiceAsync(
+    public async Task<MessageId> SendVoiceAsync(
         AttachmentSendOutParameters voiceSendOutParams,
         CancellationToken cancellationToken = default)
     {

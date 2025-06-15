@@ -41,7 +41,7 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
 
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =

@@ -21,7 +21,7 @@ internal sealed record LogoutWorkflowConfirm(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
@@ -79,7 +79,7 @@ internal sealed record LogoutWorkflowConfirm(
                             Text = UiConcatenate(
                                 originalPrompt, UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             _ => throw new ArgumentOutOfRangeException(nameof(selectedControl))
@@ -121,7 +121,7 @@ internal sealed record LogoutWorkflowConfirm(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.Yes)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         }));
         }
     }

@@ -33,7 +33,7 @@ internal sealed record NewSubmissionReview<T>(
     
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
@@ -90,14 +90,14 @@ internal sealed record NewSubmissionReview<T>(
                     },
                     await GetStakeholderNotificationsAsync(),
                     Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
-                    promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent),
+                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent),
                     entityGuid: await GetLastGuidAsync()),
             
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
                     Mediator.Next(typeof(INewSubmissionCancelConfirmation<T>)), 
-                    new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                    new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };

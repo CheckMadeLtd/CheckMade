@@ -27,7 +27,7 @@ internal sealed record LanguageSettingSelect(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -70,7 +70,7 @@ internal sealed record LanguageSettingSelect(
                     Glossary.GetUi(newLanguage))
             },
             newState: Mediator.GetTerminator(typeof(ILanguageSettingSet)),
-            promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)
+            promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)
         );
     }
 }

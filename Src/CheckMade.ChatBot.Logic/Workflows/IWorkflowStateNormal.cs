@@ -13,7 +13,7 @@ internal interface IWorkflowStateNormal : IWorkflowState
     
     Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer);
 
     Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);

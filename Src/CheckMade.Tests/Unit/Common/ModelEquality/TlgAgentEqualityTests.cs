@@ -28,8 +28,8 @@ public sealed class TlgAgentEqualityTests
         Assert.NotEqual(agent3.GetHashCode(), agent1.GetHashCode());
     
         // Test actual dictionary usage
-        var cache = new ConcurrentDictionary<TlgAgent, TlgMessageId>();
-        var messageId = new TlgMessageId(555);
+        var cache = new ConcurrentDictionary<TlgAgent, MessageId>();
+        var messageId = new MessageId(555);
         
         cache[agent1] = messageId;
     

@@ -83,7 +83,7 @@ internal sealed record WorkflowIdentifier(
             
             var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
-                    i.TlgMessageId == lastLauncher.TlgMessageId &&
+                    i.MessageId == lastLauncher.MessageId &&
                     i.TlgDate == lastLauncher.TlgDate);
             
             var isWorkflowActive =

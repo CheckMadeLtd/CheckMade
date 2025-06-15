@@ -483,7 +483,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<Option<ReplyMarkup>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                new TlgMessageId(1));
+                new MessageId(1));
         
         return (sp.GetRequiredService<ITelegramUpdateGenerator>(),
             sp.GetRequiredService<ITlgInputGenerator>(),

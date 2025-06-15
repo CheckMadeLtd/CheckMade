@@ -26,7 +26,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -64,7 +64,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                         UiNoTranslate(" "),
                         Glossary.GetUi(selectedRating)),
-                    UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    UpdateExistingOutputMessageId = currentInput.MessageId
                 });
             
             return selectedRating switch
@@ -73,7 +73,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput,
                         Mediator.Next(typeof(INewSubmissionReview<T>)),
-                        new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                        new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.TlgAgent)),
                 
                 AssessmentRating.Ok or AssessmentRating.Bad =>
                     await WorkflowResponse.CreateFromNextStateAsync(

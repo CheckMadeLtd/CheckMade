@@ -27,7 +27,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var nearSphere = await GetNearSphere();
@@ -89,7 +89,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.Yes)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             (long)ControlPrompts.No => 
@@ -103,7 +103,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))

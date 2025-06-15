@@ -65,16 +65,16 @@ internal sealed record WorkflowResponse(
         );
     }
     
-    private static (Option<TlgMessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
+    private static (Option<MessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
         ResolvePromptTransitionIntoComponents(
             PromptTransition? promptTransition, 
             TlgInput currentInput)
     {
         var nextPromptInPlaceUpdateMessageId = promptTransition != null
             ? promptTransition.IsNextPromptInPlaceUpdate
-                ? currentInput.TlgMessageId
-                : Option<TlgMessageId>.None()
-            : Option<TlgMessageId>.None();
+                ? currentInput.MessageId
+                : Option<MessageId>.None()
+            : Option<MessageId>.None();
 
         var currentPromptFinalizer = promptTransition != null
             ? promptTransition.CurrentPromptFinalizer

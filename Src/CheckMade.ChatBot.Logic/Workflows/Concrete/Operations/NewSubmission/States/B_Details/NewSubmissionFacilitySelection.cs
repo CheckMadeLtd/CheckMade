@@ -26,7 +26,7 @@ internal sealed record NewSubmissionFacilitySelection<T>(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentSphere = 
@@ -80,7 +80,7 @@ internal sealed record NewSubmissionFacilitySelection<T>(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                             UiNoTranslate(" "),
                             Glossary.GetUi(selectedFacility)),
-                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        UpdateExistingOutputMessageId = currentInput.MessageId
                     });
             
             return currentSubmissionTypeName switch

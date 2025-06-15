@@ -131,11 +131,11 @@ internal static class NewSubmissionUtils
         var sphereNameByMessageId = new Dictionary<int, string>();
 
         if (lastSelectedSphereInput != null)
-            sphereNameByMessageId[lastSelectedSphereInput.TlgMessageId] =
+            sphereNameByMessageId[lastSelectedSphereInput.MessageId] =
                 lastSelectedSphereInput.Details.Text.GetValueOrThrow();
 
         if (lastConfirmedSphereInput != null)
-            sphereNameByMessageId[lastConfirmedSphereInput.TlgMessageId] =
+            sphereNameByMessageId[lastConfirmedSphereInput.MessageId] =
                 sphereNames.First(sn =>
                     lastConfirmedSphereInput.Details.Text.GetValueOrThrow().Contains(sn));  
         

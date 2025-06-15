@@ -27,7 +27,7 @@ internal sealed record NewSubmissionTradeSelection(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -64,7 +64,7 @@ internal sealed record NewSubmissionTradeSelection(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                         UiNoTranslate(" "),
                         Glossary.GetUi(selectedTradeDt)),
-                    UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    UpdateExistingOutputMessageId = currentInput.MessageId
                 });
         
         return await (await GetSphereNearUserAsync()).Match(

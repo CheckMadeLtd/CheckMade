@@ -50,7 +50,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             List<TlgInput> expectedRetrieval =
             [ 
                 new(input.TlgDate,
-                    input.TlgMessageId,
+                    input.MessageId,
                     input.TlgAgent, 
                     input.InputType, 
                     input.OriginatorRole, 

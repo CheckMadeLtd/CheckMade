@@ -28,7 +28,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
@@ -86,7 +86,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
                                 UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                                 UiNoTranslate(" "),
                                 await GetSelectedConsumablesAsync()),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             (long)ControlPrompts.Back => 

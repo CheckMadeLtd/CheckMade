@@ -20,7 +20,7 @@ internal sealed record NewSubmissionEditMenu<T>(
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         var workflowStateHistory =

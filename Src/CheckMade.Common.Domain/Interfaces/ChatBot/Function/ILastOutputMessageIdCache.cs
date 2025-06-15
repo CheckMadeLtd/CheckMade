@@ -11,8 +11,8 @@ namespace CheckMade.Common.Domain.Interfaces.ChatBot.Function;
 /// </summary>
 public interface ILastOutputMessageIdCache
 {
-    void UpdateLastMessageId(TlgAgent tlgAgent, TlgMessageId messageId);
-    Option<TlgMessageId> GetLastMessageId(TlgAgent tlgAgent);
+    void UpdateLastMessageId(TlgAgent tlgAgent, MessageId messageId);
+    Option<MessageId> GetLastMessageId(TlgAgent tlgAgent);
     bool RemoveLastMessageId(TlgAgent tlgAgent);
     int CacheSize { get; }
 } 

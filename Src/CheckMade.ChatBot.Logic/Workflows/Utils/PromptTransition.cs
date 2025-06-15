@@ -31,7 +31,7 @@ internal sealed record PromptTransition
     /// Optionally applies to last message: e.g. in cases where it has an InlineKeyboard that wasn't used. 
     /// </summary>
     internal PromptTransition(
-        TlgMessageId currentMessageId,
+        MessageId currentMessageId,
         ILastOutputMessageIdCache msgIdCache,
         TlgAgent currentTlgAgent,
         bool applyToPreviousInsteadOfCurrentInput = false)

@@ -12,6 +12,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
+using MessageId = CheckMade.Common.Domain.Data.ChatBot.MessageId;
 
 namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
@@ -79,7 +80,7 @@ internal static class OutputSender
                                the destination ids for WorkflowBridges, which would typically not be an attachment
                                message but even if it is, it would make sense for it to be the last one. */
                             
-                            Result<TlgMessageId>? messageId = null;
+                            Result<MessageId>? messageId = null;
                             
                             if (output.Text.IsSome)
                                 messageId = await InvokeSendTextMessageAsync();
@@ -105,7 +106,7 @@ internal static class OutputSender
                             {
                                 msgIdCache.UpdateLastMessageId(
                                     outputTlgAgent,
-                                    lastSentOutput.GetValueOrThrow().ActualSendOutParams!.Value.TlgMessageId);
+                                    lastSentOutput.GetValueOrThrow().ActualSendOutParams!.Value.MessageId);
                             }
                             else
                             {
@@ -117,21 +118,21 @@ internal static class OutputSender
 
                     continue;
 
-                    Result<OutputDto> GetOutputEnrichedWithActualSendOutParams(Result<TlgMessageId> messageId) =>
+                    Result<OutputDto> GetOutputEnrichedWithActualSendOutParams(Result<MessageId> messageId) =>
                         messageId.Match(
                             id => output with
                             {
                                 ActualSendOutParams = new ActualSendOutParams
                                 {
-                                    TlgMessageId = id,
+                                    MessageId = id,
                                     ChatId = outputTlgAgent.ChatId
                                 }
                             },
                             Result<OutputDto>.Fail);
                     
-                    async Task<Result<TlgMessageId>> InvokeSendTextMessageAsync()
+                    async Task<Result<MessageId>> InvokeSendTextMessageAsync()
                     {
-                        return await Result<TlgMessageId>.RunAsync(() => 
+                        return await Result<MessageId>.RunAsync(() => 
                             outputBotClient
                                 .SendTextMessageAsync(
                                     outputTlgAgent.ChatId.Id,
@@ -140,9 +141,9 @@ internal static class OutputSender
                                     converter.GetReplyMarkup(output)));
                     }
 
-                    async Task<Result<TlgMessageId>> InvokeEditTextMessageAsync()
+                    async Task<Result<MessageId>> InvokeEditTextMessageAsync()
                     {
-                        return await Result<TlgMessageId>.RunAsync(() =>
+                        return await Result<MessageId>.RunAsync(() =>
                             outputBotClient
                                 .EditTextMessageAsync(
                                     outputTlgAgent.ChatId.Id,
@@ -154,7 +155,7 @@ internal static class OutputSender
                                     output.CallbackQueryId));
                     }
                 
-                    async Task<Result<TlgMessageId>> InvokeSendAttachmentAsync(AttachmentDetails details)
+                    async Task<Result<MessageId>> InvokeSendAttachmentAsync(AttachmentDetails details)
                     {
                         return await (
                             from download 
@@ -171,7 +172,7 @@ internal static class OutputSender
                                         details.Caption,
                                         converter.GetReplyMarkup(output)))
                             from messageId
-                                in Result<TlgMessageId>.RunAsync(() =>
+                                in Result<MessageId>.RunAsync(() =>
                                     details.AttachmentType switch
                                     {
                                         AttachmentType.Document => 
@@ -186,9 +187,9 @@ internal static class OutputSender
                             select messageId);
                     }
 
-                    async Task<Result<TlgMessageId>> InvokeSendLocationAsync()
+                    async Task<Result<MessageId>> InvokeSendLocationAsync()
                     {
-                        return await Result<TlgMessageId>.RunAsync(() =>
+                        return await Result<MessageId>.RunAsync(() =>
                             outputBotClient
                                 .SendLocationAsync(
                                     outputTlgAgent.ChatId.Id,

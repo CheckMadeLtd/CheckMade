@@ -127,7 +127,7 @@ internal static class GeneralWorkflowUtilsExtensions
             input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
             allBridges.Any(b =>
                 b.DestinationChatId == input.TlgAgent.ChatId &&
-                b.DestinationMessageId == input.TlgMessageId);
+                b.DestinationMessageId == input.MessageId);
 
         return isProactiveWorkflowLauncher || isReactiveWorkflowLauncher;
     }

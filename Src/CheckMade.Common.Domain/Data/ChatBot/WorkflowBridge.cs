@@ -11,4 +11,4 @@ namespace CheckMade.Common.Domain.Data.ChatBot;
 public sealed record WorkflowBridge(
     TlgInput SourceInput,
     ChatId DestinationChatId,
-    TlgMessageId DestinationMessageId);
+    MessageId DestinationMessageId);

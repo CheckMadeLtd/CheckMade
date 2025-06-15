@@ -53,7 +53,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                         LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
                                         """;
 
-    public async Task<WorkflowBridge?> GetAsync(ChatId dstChatId, TlgMessageId dstMessageId)
+    public async Task<WorkflowBridge?> GetAsync(ChatId dstChatId, MessageId dstMessageId)
     {
         const string whereClause = "WHERE dwb.dst_chat_id = @dstChatId AND dwb.dst_message_id = @dstMessageId";
 

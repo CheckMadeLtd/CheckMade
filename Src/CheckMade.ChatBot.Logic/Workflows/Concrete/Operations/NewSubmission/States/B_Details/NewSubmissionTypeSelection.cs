@@ -25,7 +25,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleType = currentInput.OriginatorRole.GetValueOrThrow().RoleType;
@@ -74,7 +74,7 @@ internal sealed record NewSubmissionTypeSelection<T>(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                             UiNoTranslate(" "),
                             Glossary.GetUi(currentInput.Details.DomainTerm.GetValueOrThrow())),
-                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        UpdateExistingOutputMessageId = currentInput.MessageId
                     });
             
             return submissionTypeName switch

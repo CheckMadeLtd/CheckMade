@@ -83,7 +83,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                      live_event_id,
                                      entity_guid) 
 
-                                     VALUES (@tlgDate, @tlgMessageId, @userId, @chatId, @tlgMessageDetails, 
+                                     VALUES (@tlgDate, @messageId, @userId, @chatId, @tlgMessageDetails, 
                                      @lastDataMig, @interactionMode, @inputType, 
                                      (SELECT id FROM roles WHERE token = @token), 
                                      (SELECT id FROM live_events WHERE name = @liveEventName),
@@ -126,7 +126,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         var normalParameters = new Dictionary<string, object>
         {
             ["@tlgDate"] = tlgInput.TlgDate,
-            ["@tlgMessageId"] = tlgInput.TlgMessageId.Id,
+            ["@messageId"] = tlgInput.MessageId.Id,
             ["@userId"] = tlgInput.TlgAgent.UserId.Id,
             ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
             ["@lastDataMig"] = 0,
@@ -189,7 +189,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             
             command.Parameters.Add(new NpgsqlParameter("@dstMessageIds", NpgsqlDbType.Array | NpgsqlDbType.Integer)
             {
-                Value = destinations.Select(static d => d.TlgMessageId.Id).ToArray()
+                Value = destinations.Select(static d => d.MessageId.Id).ToArray()
             });
         }
 
@@ -250,7 +250,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                 SET entity_guid = @newGuid
 
                                 WHERE date = @tlgDate
-                                AND message_id = @tlgMessageId
+                                AND message_id = @messageId
                                 AND user_id = @userId 
                                 AND chat_id = @chatId
                                 AND interaction_mode = @mode
@@ -262,7 +262,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             {
                 ["@newGuid"] = newGuid,
                 ["@tlgDate"] = tlgInput.TlgDate,
-                ["@tlgMessageId"] = tlgInput.TlgMessageId.Id,
+                ["@messageId"] = tlgInput.MessageId.Id,
                 ["@userId"] = tlgInput.TlgAgent.UserId.Id,
                 ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
                 ["@mode"] = (int)tlgInput.TlgAgent.Mode
