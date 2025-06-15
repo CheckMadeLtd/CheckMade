@@ -171,8 +171,8 @@ public sealed class ToModelConverter(
         // In Telegram Group Chats, any botCommand is appended with @[botName]
         var isolatedBotCommand = update.Message.Text!.Split('@')[0];
         
-        if (isolatedBotCommand == TlgStart.Command)
-            return Option<int>.Some(TlgStart.CommandCode);
+        if (isolatedBotCommand == Start.Command)
+            return Option<int>.Some(Start.CommandCode);
         
         var allBotCommandMenus = new BotCommandMenus();
 

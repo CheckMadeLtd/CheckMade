@@ -27,7 +27,7 @@ public sealed class InputProcessorTests
         var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
         var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
             UserId02_ChatId03_Operations.Mode,
-            TlgStart.CommandCode,
+            Start.CommandCode,
             UserId02_ChatId03_Operations.UserId,
             UserId02_ChatId03_Operations.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);

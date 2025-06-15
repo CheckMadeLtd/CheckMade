@@ -15,7 +15,7 @@ internal abstract record WorkflowBase(
     IDerivedWorkflowBridgesRepository BridgesRepo,
     IDomainGlossary Glossary)
 {
-    internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", TlgStart.Command);
+    internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", Start.Command);
     
     protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
     {

@@ -33,7 +33,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -72,7 +72,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -130,7 +130,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -199,7 +199,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -269,7 +269,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -354,7 +354,7 @@ public sealed class UserAuthWorkflowTests
         [
             inputGenerator.GetValidTlgInputCommandMessage(
                 tlgAgent.Mode,
-                TlgStart.CommandCode,
+                Start.CommandCode,
                 tlgAgent.UserId,
                 tlgAgent.ChatId,
                 resultantWorkflowState: new ResultantWorkflowState(

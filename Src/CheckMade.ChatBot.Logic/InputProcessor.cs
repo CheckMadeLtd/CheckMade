@@ -92,7 +92,7 @@ internal sealed class InputProcessor(
 
     private static bool IsStartCommand(TlgInput currentInput) =>
         currentInput.InputType.Equals(InputType.CommandMessage)
-        && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
+        && currentInput.Details.BotCommandEnumCode.Equals(Start.CommandCode);
     
     private ResultantWorkflowState? GetResultantWorkflowState(
         Result<WorkflowResponse> response,
