@@ -7,7 +7,7 @@ public sealed record TlgInput(
     DateTimeOffset TlgDate,
     TlgMessageId TlgMessageId, 
     TlgAgent TlgAgent,
-    TlgInputType InputType,
+    InputType InputType,
     Option<IRoleInfo> OriginatorRole,
     Option<ILiveEventInfo> LiveEventContext,
     Option<ResultantWorkflowState> ResultantState,

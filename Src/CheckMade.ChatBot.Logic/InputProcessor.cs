@@ -24,7 +24,7 @@ internal sealed class InputProcessor(
         return await input.Match(
             async currentInput =>
             {
-                if (currentInput.InputType == TlgInputType.Location)
+                if (currentInput.InputType == InputType.Location)
                 {
                     return (currentInput, []);
                 }
@@ -91,7 +91,7 @@ internal sealed class InputProcessor(
     }
 
     private static bool IsStartCommand(TlgInput currentInput) =>
-        currentInput.InputType.Equals(TlgInputType.CommandMessage)
+        currentInput.InputType.Equals(InputType.CommandMessage)
         && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
     
     private ResultantWorkflowState? GetResultantWorkflowState(
@@ -124,14 +124,14 @@ internal sealed class InputProcessor(
         if (currentInput.OriginatorRole.IsNone)
             return false;
         
-        if (currentInput.InputType is not TlgInputType.CommandMessage)
+        if (currentInput.InputType is not InputType.CommandMessage)
             return false;
         
         var previousWorkflowInputHistory = 
             (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(static input => 
-                input.InputType.Equals(TlgInputType.CommandMessage))
+                input.InputType.Equals(InputType.CommandMessage))
             .ToList();
 
         return previousWorkflowInputHistory.Count > 0 && 

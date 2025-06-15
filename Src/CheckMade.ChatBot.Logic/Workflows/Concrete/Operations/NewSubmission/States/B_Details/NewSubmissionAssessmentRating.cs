@@ -50,7 +50,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         if (currentInput.Details.DomainTerm.IsSome)

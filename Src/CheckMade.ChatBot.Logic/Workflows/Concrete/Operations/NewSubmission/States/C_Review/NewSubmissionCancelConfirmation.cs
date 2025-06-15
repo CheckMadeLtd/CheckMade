@@ -45,7 +45,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch

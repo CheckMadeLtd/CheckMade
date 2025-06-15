@@ -51,7 +51,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
         {
-            case TlgInputType.TextMessage:
+            case InputType.TextMessage:
 
                 return WorkflowResponse.Create(
                     currentInput,
@@ -64,7 +64,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                     newState: this,
                     promptTransition: promptTransitionAfterEvidenceEntry);
             
-            case TlgInputType.AttachmentMessage:
+            case InputType.AttachmentMessage:
 
                 var currentAttachmentType = 
                     currentInput.Details.AttachmentType.GetValueOrThrow(); 

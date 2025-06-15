@@ -70,7 +70,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+        if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         var controlPromptsGlossary = new ControlPromptsGlossary();

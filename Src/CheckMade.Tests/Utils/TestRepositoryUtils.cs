@@ -152,7 +152,7 @@ internal static class TestRepositoryUtils
                 inputs
                     .Where(i => 
                         i.TlgAgent.Equals(tlgAgent) &&
-                        i.InputType != TlgInputType.Location)
+                        i.InputType != InputType.Location)
                     .ToImmutableArray());
         
         mockTlgInputsRepo
@@ -162,7 +162,7 @@ internal static class TestRepositoryUtils
                 inputs
                     .Where(i => 
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
-                        i.InputType != TlgInputType.Location)
+                        i.InputType != InputType.Location)
                     .ToImmutableArray());
 
         mockTlgInputsRepo
@@ -175,7 +175,7 @@ internal static class TestRepositoryUtils
                     .Where(i => 
                         i.TlgAgent.Equals(tlgAgent) && 
                         i.TlgDate >= dateTime &&
-                        i.InputType == TlgInputType.Location)
+                        i.InputType == InputType.Location)
                     .ToImmutableArray());
 
         mockTlgInputsRepo

@@ -10,7 +10,7 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.Definitio
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.InteractionMode;
-using static CheckMade.Common.Domain.Data.ChatBot.Input.TlgInputType;
+using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic;
 

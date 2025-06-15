@@ -84,7 +84,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                      entity_guid) 
 
                                      VALUES (@tlgDate, @tlgMessageId, @userId, @chatId, @tlgMessageDetails, 
-                                     @lastDataMig, @interactionMode, @tlgInputType, 
+                                     @lastDataMig, @interactionMode, @inputType, 
                                      (SELECT id FROM roles WHERE token = @token), 
                                      (SELECT id FROM live_events WHERE name = @liveEventName),
                                      @guid)
@@ -131,7 +131,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             ["@chatId"] = tlgInput.TlgAgent.ChatId.Id,
             ["@lastDataMig"] = 0,
             ["@interactionMode"] = (int)tlgInput.TlgAgent.Mode,
-            ["@tlgInputType"] = (int)tlgInput.InputType,
+            ["@inputType"] = (int)tlgInput.InputType,
             ["@token"] = tlgInput.OriginatorRole.Match<object>(  
                 static r => r.Token, 
                 static () => DBNull.Value),  
@@ -212,19 +212,19 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(TlgAgent tlgAgent) =>
         (await GetAllAsync(tlgAgent))
-        .Where(static i => i.InputType != TlgInputType.Location)
+        .Where(static i => i.InputType != InputType.Location)
         .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync(liveEvent))
-        .Where(static i => i.InputType != TlgInputType.Location)
+        .Where(static i => i.InputType != InputType.Location)
         .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
         TlgAgent tlgAgent, DateTimeOffset since) =>
         (await GetAllAsync(tlgAgent))
         .Where(i => 
-            i.InputType == TlgInputType.Location && 
+            i.InputType == InputType.Location && 
             i.TlgDate >= since)
         .ToImmutableArray();
 
@@ -232,7 +232,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         ILiveEventInfo liveEvent, DateTimeOffset since) =>
         (await GetAllAsync(liveEvent))
         .Where(i => 
-            i.InputType == TlgInputType.Location &&
+            i.InputType == InputType.Location &&
             i.TlgDate >= since)
         .ToImmutableArray();
 

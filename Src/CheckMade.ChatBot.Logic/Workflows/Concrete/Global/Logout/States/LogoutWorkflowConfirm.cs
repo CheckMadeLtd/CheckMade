@@ -51,7 +51,7 @@ internal sealed record LogoutWorkflowConfirm(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
         
         var controlPromptsGlossary = new ControlPromptsGlossary();

@@ -188,8 +188,8 @@ internal static class DomainModelConstitutors
         ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
         var interactionMode = EnsureEnumValidityOrThrow(
             (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
-        var tlgInputType = EnsureEnumValidityOrThrow(
-            (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+        var inputType = EnsureEnumValidityOrThrow(
+            (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
         var resultantWorkflow = GetWorkflowInfo();
         var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
             ? Option<Guid>.None()
@@ -200,7 +200,7 @@ internal static class DomainModelConstitutors
             tlgDate,
             tlgMessageId,
             new TlgAgent(userId, chatId, interactionMode),
-            tlgInputType,
+            inputType,
             roleInfo,
             liveEventInfo,
             resultantWorkflow,

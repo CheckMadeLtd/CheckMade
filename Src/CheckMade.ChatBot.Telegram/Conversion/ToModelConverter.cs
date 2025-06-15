@@ -35,7 +35,7 @@ public sealed class ToModelConverter(
     public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
     {
         return (await
-                (from tlgInputType 
+                (from inputType 
                         in GetTlgInputType(update)
                     from attachmentDetails 
                         in GetAttachmentDetails(update)
@@ -57,7 +57,7 @@ public sealed class ToModelConverter(
                         in GetLiveEventContext(originatorRole)
                     from tlgInput 
                         in GetTlgInput(
-                            update, interactionMode, tlgInputType, internalAttachmentUri, attachmentDetails.Type, 
+                            update, interactionMode, inputType, internalAttachmentUri, attachmentDetails.Type, 
                             geoCoordinates, botCommandEnumCode, domainTerm, controlPromptEnumCode, 
                             originatorRole, liveEventContext) 
                     select tlgInput))
@@ -87,21 +87,21 @@ public sealed class ToModelConverter(
                 });
     }
 
-    private static Result<TlgInputType> GetTlgInputType(UpdateWrapper update) =>
+    private static Result<InputType> GetTlgInputType(UpdateWrapper update) =>
         update.Update.Type switch
         {
             UpdateType.Message or UpdateType.EditedMessage => update.Message.Type switch
             {
                 MessageType.Text => update.Message.Entities?[0].Type switch
                 {
-                    MessageEntityType.BotCommand => TlgInputType.CommandMessage,
-                    _ => TlgInputType.TextMessage
+                    MessageEntityType.BotCommand => InputType.CommandMessage,
+                    _ => InputType.TextMessage
                 },
-                MessageType.Location => TlgInputType.Location,
-                _ => TlgInputType.AttachmentMessage
+                MessageType.Location => InputType.Location,
+                _ => InputType.AttachmentMessage
             },
 
-            UpdateType.CallbackQuery => TlgInputType.CallbackQuery,
+            UpdateType.CallbackQuery => InputType.CallbackQuery,
 
             _ => new InvalidOperationException(
                 $"Telegram Update of type {update.Update.Type} is not yet supported " +
@@ -258,7 +258,7 @@ public sealed class ToModelConverter(
     private static Result<TlgInput> GetTlgInput(
         UpdateWrapper update,
         InteractionMode interactionMode,
-        TlgInputType tlgInputType,
+        InputType inputType,
         Option<Uri> internalAttachmentUri,
         Option<TlgAttachmentType> attachmentType,
         Option<Geo> geoCoordinates,
@@ -270,7 +270,7 @@ public sealed class ToModelConverter(
     {
         if (string.IsNullOrWhiteSpace(update.Message.Text) 
             && internalAttachmentUri.IsNone
-            && tlgInputType != TlgInputType.Location)
+            && inputType != InputType.Location)
         {
             return new ArgumentException("A valid Message that is not a Location update must have at least " +
                                          "either a text or an attachment.");   
@@ -287,7 +287,7 @@ public sealed class ToModelConverter(
             update.Message.Date,
             update.Message.MessageId,
             new TlgAgent(userId, chatId, interactionMode), 
-            tlgInputType,
+            inputType,
             originatorRole.IsSome 
                 ? Option<IRoleInfo>.Some(originatorRole.GetValueOrThrow()) 
                 : Option<IRoleInfo>.None(),

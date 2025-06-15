@@ -49,7 +49,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
     {
-        if (currentInput.InputType != TlgInputType.TextMessage)
+        if (currentInput.InputType != InputType.TextMessage)
             return WorkflowResponse.CreateWarningEnterTextOnly(this);
 
         var enteredText = currentInput.Details.Text.GetValueOrThrow();

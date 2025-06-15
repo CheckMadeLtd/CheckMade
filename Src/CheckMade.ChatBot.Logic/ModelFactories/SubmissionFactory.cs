@@ -140,7 +140,7 @@ internal sealed record SubmissionFactory<T>(
             var submittedDescriptions = 
                 inputs
                     .Where(i =>
-                        i.InputType == TlgInputType.TextMessage &&
+                        i.InputType == InputType.TextMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
@@ -160,7 +160,7 @@ internal sealed record SubmissionFactory<T>(
             var submittedAttachments =
                 inputs
                     .Where(i =>
-                        i.InputType == TlgInputType.AttachmentMessage &&
+                        i.InputType == InputType.AttachmentMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
@@ -200,7 +200,7 @@ internal sealed record SubmissionFactory<T>(
         AssessmentRating GetAssessmentRating() =>
             (AssessmentRating)inputs
                 .Last(i =>
-                    i.InputType == TlgInputType.CallbackQuery &&
+                    i.InputType == InputType.CallbackQuery &&
                     i.Details.DomainTerm.IsSome &&
                     Glossary.GetAll(typeof(AssessmentRating)).Contains(i.Details.DomainTerm.GetValueOrThrow()))
                 .Details.DomainTerm.GetValueOrThrow()

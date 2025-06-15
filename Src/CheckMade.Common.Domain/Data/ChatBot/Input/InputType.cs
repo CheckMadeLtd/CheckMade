@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Domain.Data.ChatBot.Input;
 
-public enum TlgInputType
+public enum InputType
 {
     CommandMessage = 10,
     TextMessage = 11,

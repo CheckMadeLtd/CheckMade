@@ -118,12 +118,12 @@ internal static class NewSubmissionUtils
 
         var lastSelectedSphereInput =
             inputs.LastOrDefault(i =>
-                i.InputType == TlgInputType.TextMessage &&
+                i.InputType == InputType.TextMessage &&
                 containsSphereName(i.Details.Text.GetValueOrThrow()));
 
         var lastConfirmedSphereInput =
             inputs.LastOrDefault(i =>
-                i.InputType == TlgInputType.CallbackQuery &&
+                i.InputType == InputType.CallbackQuery &&
                 i.Details.ControlPromptEnumCode.IsSome &&
                 i.Details.ControlPromptEnumCode.GetValueOrThrow() == (int)ControlPrompts.Yes &&
                 containsSphereName(i.Details.Text.GetValueOrThrow()));

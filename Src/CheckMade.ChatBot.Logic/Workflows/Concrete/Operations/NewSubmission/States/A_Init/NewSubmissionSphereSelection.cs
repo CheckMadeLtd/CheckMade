@@ -69,7 +69,7 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
                 currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
             .Select(static soa => soa.Name).ToArray(); 
         
-        if (currentInput.InputType is not TlgInputType.TextMessage ||
+        if (currentInput.InputType is not InputType.TextMessage ||
             !relevantSphereNames
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
