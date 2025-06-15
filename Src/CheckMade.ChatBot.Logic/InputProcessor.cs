@@ -191,7 +191,7 @@ internal sealed class InputProcessor(
                                          this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
                                          UserId: {currentInput.Agent.UserId}; ChatId: {currentInput.Agent.ChatId}; 
                                          InputType: {currentInput.InputType}; InteractionMode: {currentInput.Agent.Mode};
-                                         Date: {currentInput.TlgDate}; 
+                                         Date: {currentInput.TimeStamp}; 
                                          For more details of input, check database!
                                          """);
                         throw exw.Exception;

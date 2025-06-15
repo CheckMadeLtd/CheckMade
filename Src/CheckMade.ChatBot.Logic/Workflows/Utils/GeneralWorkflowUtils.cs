@@ -59,7 +59,7 @@ internal sealed record GeneralWorkflowUtils(
         
         var allCurrentInteractive = 
             allInteractiveIncludingNewInput
-                .Where(i => i.TlgDate > cutOffDate)
+                .Where(i => i.TimeStamp > cutOffDate)
                 .ToList();
 
         return 

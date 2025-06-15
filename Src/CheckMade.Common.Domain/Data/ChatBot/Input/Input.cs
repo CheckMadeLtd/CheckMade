@@ -4,7 +4,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 namespace CheckMade.Common.Domain.Data.ChatBot.Input;
 
 public sealed record Input(
-    DateTimeOffset TlgDate,
+    DateTimeOffset TimeStamp,
     MessageId MessageId, 
     Agent Agent,
     InputType InputType,

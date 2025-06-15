@@ -105,7 +105,6 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
             Option<string>.None(), 
             CreateFromRelevantDetails(
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
-                new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
                 new Uri("https://www.gorin.de/fakeInternalUri1.html"),
                 type));
     }
@@ -197,7 +196,6 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
 
     internal static InputDetails CreateFromRelevantDetails(
         string? text = null,
-        Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
         AttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,

@@ -39,10 +39,10 @@ public sealed class ToModelConverter(
                         in GetInputType(update)
                     from attachmentDetails 
                         in GetAttachmentDetails(update)
-                    from tlgAttachmentUri
-                        in GetTlgAttachmentUriAsync(attachmentDetails)
+                    from telegramAttachmentUri
+                        in GetTelegramAttachmentUriAsync(attachmentDetails)
                     from internalAttachmentUri
-                        in GetInternalAttachmentUriAsync(tlgAttachmentUri)
+                        in GetInternalAttachmentUriAsync(telegramAttachmentUri)
                     from geoCoordinates 
                         in GetGeoCoordinates(update)
                     from botCommandEnumCode 
@@ -108,7 +108,7 @@ public sealed class ToModelConverter(
                 $"and should have never arrived here in {nameof(ConvertToModelAsync)}!")
         };
 
-    private static Result<TlgAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
+    private static Result<TelegramAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
         if (!IsMessageTypeSupported(update.Message.Type))
         {
@@ -116,20 +116,20 @@ public sealed class ToModelConverter(
         }
         
         // Why Run()? The null-forgiving operators below could throw exceptions if Telegram lib changes! 
-        return Result<TlgAttachmentDetails>.Run(() => update.Message.Type switch
+        return Result<TelegramAttachmentDetails>.Run(() => update.Message.Type switch
         {
-            MessageType.Text or MessageType.Location => new TlgAttachmentDetails(
+            MessageType.Text or MessageType.Location => new TelegramAttachmentDetails(
                 Option<string>.None(), Option<AttachmentType>.None()),
 
-            MessageType.Document => new TlgAttachmentDetails(
+            MessageType.Document => new TelegramAttachmentDetails(
                 update.Message.Document!.FileId,
                 AttachmentType.Document),
 
-            MessageType.Photo => new TlgAttachmentDetails(
+            MessageType.Photo => new TelegramAttachmentDetails(
                 update.Message.Photo!.OrderBy(static p => p.FileSize).Last().FileId,
                 AttachmentType.Photo),
 
-            MessageType.Voice => new TlgAttachmentDetails(
+            MessageType.Voice => new TelegramAttachmentDetails(
                 update.Message.Voice!.FileId,
                 AttachmentType.Voice),
 
@@ -147,7 +147,7 @@ public sealed class ToModelConverter(
         }
     }
 
-    private sealed record TlgAttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
+    private sealed record TelegramAttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
@@ -305,7 +305,7 @@ public sealed class ToModelConverter(
                 controlPromptEnumCode));
     }
     
-    private async Task<Result<Option<Uri>>> GetTlgAttachmentUriAsync(TlgAttachmentDetails attachmentDetails)
+    private async Task<Result<Option<Uri>>> GetTelegramAttachmentUriAsync(TelegramAttachmentDetails attachmentDetails)
     {
         if (attachmentDetails.FileId.IsNone)
             return Option<Uri>.None();
@@ -322,19 +322,19 @@ public sealed class ToModelConverter(
         static Uri GetUriFromPath(string path) => new(path);
     }
 
-    private async Task<Result<Option<Uri>>> GetInternalAttachmentUriAsync(Option<Uri> tlgAttachmentUri)
+    private async Task<Result<Option<Uri>>> GetInternalAttachmentUriAsync(Option<Uri> telegramAttachmentUri)
     {
-        return await tlgAttachmentUri.Match(
+        return await telegramAttachmentUri.Match(
             UploadBlobAndGetInternalUriAsync,
             static () => Task.FromResult<Result<Option<Uri>>>(Option<Uri>.None()));
     }
     
-    private async Task<Result<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri tlgAttachmentUri)
+    private async Task<Result<Option<Uri>>> UploadBlobAndGetInternalUriAsync(Uri telegramAttachmentUri)
     {
         return await Result<Option<Uri>>.RunAsync(async () => 
             await blobLoader.UploadBlobAndReturnUriAsync(
-                await downloader.DownloadDataAsync(tlgAttachmentUri), 
-                GetFileName(tlgAttachmentUri)));
+                await downloader.DownloadDataAsync(telegramAttachmentUri), 
+                GetFileName(telegramAttachmentUri)));
         
         static string GetFileName(Uri aUri) => aUri.AbsoluteUri.Split('/').Last();
     }

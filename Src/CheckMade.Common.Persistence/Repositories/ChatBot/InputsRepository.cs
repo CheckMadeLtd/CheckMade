@@ -125,7 +125,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         
         var normalParameters = new Dictionary<string, object>
         {
-            ["@tlgDate"] = input.TlgDate,
+            ["@tlgDate"] = input.TimeStamp,
             ["@messageId"] = input.MessageId.Id,
             ["@userId"] = input.Agent.UserId.Id,
             ["@chatId"] = input.Agent.ChatId.Id,
@@ -225,7 +225,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         (await GetAllAsync(agent))
         .Where(i => 
             i.InputType == InputType.Location && 
-            i.TlgDate >= since)
+            i.TimeStamp >= since)
         .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<Input>> GetAllLocationAsync(
@@ -233,7 +233,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         (await GetAllAsync(liveEvent))
         .Where(i => 
             i.InputType == InputType.Location &&
-            i.TlgDate >= since)
+            i.TimeStamp >= since)
         .ToImmutableArray();
 
     public async Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
@@ -261,7 +261,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newGuid"] = newGuid,
-                ["@tlgDate"] = input.TlgDate,
+                ["@tlgDate"] = input.TimeStamp,
                 ["@messageId"] = input.MessageId.Id,
                 ["@userId"] = input.Agent.UserId.Id,
                 ["@chatId"] = input.Agent.ChatId.Id,

@@ -49,7 +49,7 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             List<Input> expectedRetrieval =
             [ 
-                new(input.TlgDate,
+                new(input.TimeStamp,
                     input.MessageId,
                     input.Agent, 
                     input.InputType, 
@@ -67,7 +67,7 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.Agent))
-                .OrderByDescending(static x => x.TlgDate)
+                .OrderByDescending(static x => x.TimeStamp)
                 .ToArray();
             
             await inputRepo.HardDeleteAllAsync(input.Agent);
@@ -260,15 +260,15 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
                 sinceParam);
         var retrievedDates =
             retrievedInputs
-                .Select(static i => i.TlgDate)
+                .Select(static i => i.TimeStamp)
                 .ToList();
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
-        Assert.Contains(inputExactlyAt.TlgDate, retrievedDates);
-        Assert.Contains(inputAfter.TlgDate, retrievedDates);
-        Assert.DoesNotContain(inputRightBefore.TlgDate, retrievedDates);
-        Assert.DoesNotContain(inputLongBefore.TlgDate, retrievedDates);
+        Assert.Contains(inputExactlyAt.TimeStamp, retrievedDates);
+        Assert.Contains(inputAfter.TimeStamp, retrievedDates);
+        Assert.DoesNotContain(inputRightBefore.TimeStamp, retrievedDates);
+        Assert.DoesNotContain(inputLongBefore.TimeStamp, retrievedDates);
     }
 
     private static async Task AddActionAsync(Input i, IInputsRepository inputRepo) => 

@@ -182,7 +182,7 @@ internal static class DomainModelConstitutors
         Option<ILiveEventInfo> liveEventInfo,
         IDomainGlossary glossary)
     {
-        var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
+        var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
@@ -194,10 +194,10 @@ internal static class DomainModelConstitutors
         var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
             ? Option<Guid>.None()
             : reader.GetGuid(reader.GetOrdinal("input_guid"));
-        var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
+        var inputDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
         return new Input(
-            tlgDate,
+            timeStamp,
             messageId,
             new Agent(userId, chatId, interactionMode),
             inputType,
@@ -206,7 +206,7 @@ internal static class DomainModelConstitutors
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            JsonHelper.DeserializeFromJson<InputDetails>(tlgDetails, glossary)
+            JsonHelper.DeserializeFromJson<InputDetails>(inputDetails, glossary)
             ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()

@@ -174,7 +174,7 @@ internal static class TestRepositoryUtils
                 inputs
                     .Where(i => 
                         i.Agent.Equals(agent) && 
-                        i.TlgDate >= dateTime &&
+                        i.TimeStamp >= dateTime &&
                         i.InputType == InputType.Location)
                     .ToImmutableArray());
 

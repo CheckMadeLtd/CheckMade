@@ -36,8 +36,8 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             var identifier = await reader.Fork(
                 static async r => await r.GetFieldValueAsync<long>(r.GetOrdinal("user_id")),
                 static async r => await r.GetFieldValueAsync<DateTimeOffset>(r.GetOrdinal("date")),
-                static async (historicUserId, historicTlgDate) => 
-                    new HistoricInputIdentifier(new UserId(await historicUserId), await historicTlgDate)
+                static async (historicUserId, historicTimeStamp) => 
+                    new HistoricInputIdentifier(new UserId(await historicUserId), await historicTimeStamp)
             );
         
             var actualOldFormatDetails = JObject.Parse(
@@ -58,7 +58,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
             var command = new NpgsqlCommand(commandTextPrefix);
             
             command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricUserId.Id);
-            command.Parameters.AddWithValue("@tlgDateTime", newDetails.Identifier.HistoricTlgDate);
+            command.Parameters.AddWithValue("@tlgDateTime", newDetails.Identifier.HistoricTimeStamp);
             
             command.Parameters.Add(new NpgsqlParameter($"@tlgDetails", NpgsqlDbType.Jsonb)
             {
