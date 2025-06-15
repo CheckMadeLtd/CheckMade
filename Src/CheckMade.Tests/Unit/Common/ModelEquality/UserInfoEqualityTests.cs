@@ -1,10 +1,9 @@
-using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Actors;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Common.DomainModel.Core.Structs;
-using CheckMade.Common.DomainModel.Core.Trades;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Data.Core;
+using CheckMade.Common.DomainModel.Data.Core.Actors;
+using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.DomainModel.Data.Core.Trades;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 

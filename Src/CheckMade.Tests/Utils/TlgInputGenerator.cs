@@ -1,9 +1,9 @@
-using CheckMade.Common.DomainModel.ChatBot;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Data.ChatBot;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.DomainModel.Data.Core.GIS;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;

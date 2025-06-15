@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 

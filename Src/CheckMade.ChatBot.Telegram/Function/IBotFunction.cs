@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker.Http;
 
 

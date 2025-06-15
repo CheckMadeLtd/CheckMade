@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.Common.DomainModel;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
 using CheckMade.Common.ExternalServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.Core.Actors;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Data.Core.Actors;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.Core;

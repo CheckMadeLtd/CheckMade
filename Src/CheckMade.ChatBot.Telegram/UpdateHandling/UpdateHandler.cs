@@ -1,11 +1,11 @@
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.Common.DomainModel.ChatBot;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.Output;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.Output;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Function;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;

@@ -1,10 +1,10 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.Output;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.Output;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Function;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 

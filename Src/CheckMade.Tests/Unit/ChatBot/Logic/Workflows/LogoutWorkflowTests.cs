@@ -1,11 +1,11 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
-using CheckMade.Common.DomainModel.ChatBot;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.DomainModel.Data.Core;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;

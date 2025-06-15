@@ -1,8 +1,8 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.DomainModel.ChatBot;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.Output;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.Output;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows;

@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.ChatBot;
-using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.Data.ChatBot;
+using CheckMade.Common.DomainModel.Data.Core;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 

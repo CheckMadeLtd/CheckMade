@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Interfaces.ExternalServices;
+using CheckMade.Common.DomainModel.Interfaces.ExternalServices.Utils;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;
 

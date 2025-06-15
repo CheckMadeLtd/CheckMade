@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Common.DomainModel.Core.Trades;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.DomainModel.Data.Core.GIS;
+using CheckMade.Common.DomainModel.Data.Core.Trades;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.DomainModel.Utils;

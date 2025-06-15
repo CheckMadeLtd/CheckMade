@@ -28,5 +28,11 @@
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\" />
+      <Folder Include="Interfaces\ChatBot\" />
+      <Folder Include="Interfaces\Data\" />
+    </ItemGroup>
     
 </Project>

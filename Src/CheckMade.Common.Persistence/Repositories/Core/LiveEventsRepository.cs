@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.DomainModel.Core.LiveEvents;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Data.Core.LiveEvents;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;

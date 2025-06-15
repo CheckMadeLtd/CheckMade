@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Npgsql;
 

@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using CheckMade.Common.DomainModel.ChatBot.Output;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot.Output;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils;
 using CheckMade.Common.Utils.UiTranslation;

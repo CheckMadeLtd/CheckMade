@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Interfaces.Core;
+using CheckMade.Common.DomainModel.Interfaces.Data.Core;
 
 namespace CheckMade.Common.DomainModel.Utils.Comparers;
 

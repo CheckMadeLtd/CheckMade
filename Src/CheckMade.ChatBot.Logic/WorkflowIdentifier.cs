@@ -4,13 +4,13 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.DomainModel.ChatBot.Input;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
+using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using static CheckMade.Common.DomainModel.ChatBot.UserInteraction.InteractionMode;
-using static CheckMade.Common.DomainModel.ChatBot.Input.TlgInputType;
+using static CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Common.DomainModel.Data.ChatBot.Input.TlgInputType;
 
 namespace CheckMade.ChatBot.Logic;
 
