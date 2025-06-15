@@ -223,8 +223,8 @@ internal static class DomainModelConstitutors
     internal static Agent ConstituteAgent(DbDataReader reader)
     {
         return new Agent(
-            reader.GetInt64(reader.GetOrdinal("arb_tlg_user_id")),
-            reader.GetInt64(reader.GetOrdinal("arb_tlg_chat_id")),
+            reader.GetInt64(reader.GetOrdinal("arb_user_id")),
+            reader.GetInt64(reader.GetOrdinal("arb_chat_id")),
             EnsureEnumValidityOrThrow(
                 (InteractionMode)reader.GetInt16(reader.GetOrdinal("arb_interaction_mode"))));
     }

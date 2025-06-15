@@ -13,7 +13,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
     internal async Task<IReadOnlyCollection<OldFormatDetails>> GetOldFormatDetailsAsync()
     {
         var oldDetailsBuilder = ImmutableArray.CreateBuilder<OldFormatDetails>();
-        var command = new NpgsqlCommand("SELECT * FROM tlg_inputs");
+        var command = new NpgsqlCommand("SELECT * FROM inputs");
         
         await dbHelper.ExecuteAsync(async (db, transaction) =>
         {
@@ -51,16 +51,16 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
     {
         var commands = allNewFormatDetails.Select(static newDetails =>
         {
-            const string commandTextPrefix = "UPDATE tlg_inputs SET details = @tlgDetails " +
+            const string commandTextPrefix = "UPDATE inputs SET details = @inputDetails " +
                                              "WHERE user_id = @userId " +
-                                             "AND date = @tlgDateTime";
+                                             "AND date = @timeStamp";
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
             command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricUserId.Id);
-            command.Parameters.AddWithValue("@tlgDateTime", newDetails.Identifier.HistoricTimeStamp);
+            command.Parameters.AddWithValue("@timeStamp", newDetails.Identifier.HistoricTimeStamp);
             
-            command.Parameters.Add(new NpgsqlParameter($"@tlgDetails", NpgsqlDbType.Jsonb)
+            command.Parameters.Add(new NpgsqlParameter($"@inputDetails", NpgsqlDbType.Jsonb)
             {
                 Value = newDetails.NewDetails
             });
