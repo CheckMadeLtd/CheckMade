@@ -4,6 +4,7 @@ using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.UiTranslation;
 using static CheckMade.Common.Domain.Data.Core.Submissions.SubmissionSummaryCategories;
 
 namespace CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;

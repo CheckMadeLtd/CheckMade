@@ -1,3 +1,5 @@
+using CheckMade.Common.Utils.Validators;
+
 namespace CheckMade.Common.Domain.Data.Core.Actors;
 
 public readonly record struct EmailAddress

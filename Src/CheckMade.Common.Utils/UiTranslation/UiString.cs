@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using JetBrains.Annotations;
 
-namespace CheckMade.Common.Utils;
+namespace CheckMade.Common.Utils.UiTranslation;
 
 public sealed record UiString(
     IReadOnlyCollection<UiString?> Concatenations,

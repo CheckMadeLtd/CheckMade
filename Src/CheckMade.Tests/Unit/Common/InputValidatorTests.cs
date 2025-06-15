@@ -1,3 +1,6 @@
+using CheckMade.Common.Utils.Validators;
+using InputValidator = CheckMade.Common.Utils.Validators.InputValidator;
+
 namespace CheckMade.Tests.Unit.Common;
 
 public class InputValidatorTests

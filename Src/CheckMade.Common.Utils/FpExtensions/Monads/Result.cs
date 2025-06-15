@@ -1,6 +1,8 @@
 // ReSharper disable MemberCanBeInternal
 // ReSharper disable MemberCanBePrivate.Global
 
+using CheckMade.Common.Utils.UiTranslation;
+
 namespace CheckMade.Common.Utils.FpExtensions.Monads;
 
 public sealed record Result<T>

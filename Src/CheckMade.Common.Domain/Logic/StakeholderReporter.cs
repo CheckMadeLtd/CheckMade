@@ -12,6 +12,7 @@ using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Domain.Interfaces.Logic;
 using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Logic;
 

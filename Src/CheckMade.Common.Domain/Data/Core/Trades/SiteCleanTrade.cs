@@ -1,4 +1,5 @@
 using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Data.Core.Trades;
 

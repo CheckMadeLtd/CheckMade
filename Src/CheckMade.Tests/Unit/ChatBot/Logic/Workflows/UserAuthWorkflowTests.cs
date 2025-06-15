@@ -12,7 +12,7 @@ using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using InputValidator = CheckMade.Common.Utils.InputValidator;
+using InputValidator = CheckMade.Common.Utils.Validators.InputValidator;
 
 namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
 

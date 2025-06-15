@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace CheckMade.Common.Utils;
+namespace CheckMade.Common.Utils.Validators;
 
 public static partial class InputValidator
 {

@@ -1,6 +1,7 @@
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Data.ChatBot.Output;
 

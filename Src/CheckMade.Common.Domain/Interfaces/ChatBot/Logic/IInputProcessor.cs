@@ -1,6 +1,7 @@
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 

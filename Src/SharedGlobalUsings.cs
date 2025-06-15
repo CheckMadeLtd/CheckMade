@@ -1,4 +1,4 @@
-global using static CheckMade.Common.Utils.UiString;
+global using static CheckMade.Common.Utils.UiTranslation.UiString;
 global using static CheckMade.Common.Utils.FpExtensions.Combinators.ComposeExtensions;
 global using static CheckMade.Common.Utils.FpExtensions.Combinators.AlternateExtensions;
 global using static CheckMade.Common.Utils.FpExtensions.Combinators.ForkExtensions;

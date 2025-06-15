@@ -1,3 +1,5 @@
+using CheckMade.Common.Utils.UiTranslation;
+
 namespace CheckMade.Common.Utils.FpExtensions;
 
 public abstract record Failure

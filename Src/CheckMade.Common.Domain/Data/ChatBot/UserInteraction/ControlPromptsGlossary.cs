@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 

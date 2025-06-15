@@ -4,7 +4,7 @@ namespace CheckMade.Common.Utils;
 
 public sealed record DomainTerm
 {
-    public DomainTerm(Enum enumValue)
+    private DomainTerm(Enum enumValue)
     {
         EnumValue = enumValue;
         EnumType = EnumValue.GetType();
@@ -12,7 +12,7 @@ public sealed record DomainTerm
         TypeValue = null;
     }
 
-    public DomainTerm(Type typeValue)
+    private DomainTerm(Type typeValue)
     {
         EnumValue = null;
         EnumType = null;

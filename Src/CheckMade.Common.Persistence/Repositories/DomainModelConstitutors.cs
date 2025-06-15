@@ -14,6 +14,7 @@ using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Persistence.JsonHelpers;
 using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Common.Utils.Validators;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
