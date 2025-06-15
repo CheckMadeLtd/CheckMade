@@ -10,7 +10,7 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
-using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.DomainModel.Core.LiveEvents.SphereOfActionDetails.Facilities;
@@ -18,7 +18,7 @@ using CheckMade.Common.DomainModel.Core.Submissions;
 using CheckMade.Common.DomainModel.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
-using CheckMade.Common.DomainModel.Utils;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic;
 

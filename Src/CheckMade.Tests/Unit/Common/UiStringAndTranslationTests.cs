@@ -1,5 +1,3 @@
-using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;

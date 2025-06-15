@@ -2,9 +2,9 @@ using System.ComponentModel;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
-using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;

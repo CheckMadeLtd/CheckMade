@@ -1,4 +1,4 @@
-namespace CheckMade.Common.DomainModel.Utils;
+namespace CheckMade.Common.DomainModel.Core;
 
 public enum DbRecordStatus
 {

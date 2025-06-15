@@ -37,7 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.DomainModel\CheckMade.Common.DomainModel.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.LangExt\CheckMade.Common.LangExt.csproj" />
     </ItemGroup>
     
 </Project>

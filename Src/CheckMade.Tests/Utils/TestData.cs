@@ -11,6 +11,7 @@ using CheckMade.Common.DomainModel.Core.Structs;
 using CheckMade.Common.DomainModel.Core.Trades;
 using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using User = CheckMade.Common.DomainModel.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming

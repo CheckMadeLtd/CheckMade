@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.DomainModel\CheckMade.Common.DomainModel.csproj" />
     </ItemGroup>
 
     <ItemGroup>

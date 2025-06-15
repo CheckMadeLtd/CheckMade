@@ -1,7 +1,7 @@
 // ReSharper disable StringLiteralTypo
 
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.DomainModel.Core;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.DomainModel.ChatBot.UserInteraction.BotCommands;
 

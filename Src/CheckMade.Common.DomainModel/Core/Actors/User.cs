@@ -1,7 +1,7 @@
 using CheckMade.Common.DomainModel.Core.Structs;
 using CheckMade.Common.DomainModel.Interfaces.Core;
-using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using static CheckMade.Common.DomainModel.Utils.Comparers.UserInfoComparer;
 
 namespace CheckMade.Common.DomainModel.Core.Actors;

@@ -1,7 +1,7 @@
 using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Structs;
-using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.DomainModel.Interfaces.Core;
 

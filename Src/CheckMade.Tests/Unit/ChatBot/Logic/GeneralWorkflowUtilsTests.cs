@@ -1,7 +1,6 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.Core;
-using CheckMade.Common.DomainModel.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

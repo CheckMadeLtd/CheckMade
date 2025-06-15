@@ -1,4 +1,4 @@
-namespace CheckMade.Common.DomainModel.Interfaces.Utils;
+namespace CheckMade.Common.Utils.UiTranslation;
 
 public interface IUiTranslator
 {

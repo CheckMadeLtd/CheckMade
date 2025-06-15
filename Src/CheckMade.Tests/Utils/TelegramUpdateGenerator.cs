@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.Utils;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramUser = Telegram.Bot.Types.User;

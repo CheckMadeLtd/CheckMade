@@ -1,5 +1,4 @@
 using CheckMade.Common.DomainModel.Interfaces.Core;
-using CheckMade.Common.DomainModel.Utils;
 
 namespace CheckMade.Common.DomainModel.Core.LiveEvents;
 

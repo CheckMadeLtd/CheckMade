@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
-using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 
-namespace CheckMade.Common.DomainModel.Utils;
+namespace CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 
 public sealed record ControlPromptsGlossary
 {

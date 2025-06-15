@@ -5,7 +5,7 @@ using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Core.Actors.RoleSystem;
 using CheckMade.Common.DomainModel.Interfaces.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.Utils;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests.Utils;

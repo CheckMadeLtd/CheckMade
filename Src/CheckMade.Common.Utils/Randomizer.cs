@@ -1,6 +1,6 @@
-﻿namespace CheckMade.Common.Utils.Generic;
+﻿namespace CheckMade.Common.Utils;
 
-public class Randomizer
+public sealed class Randomizer
 {
     public long GenerateRandomLong()
     {

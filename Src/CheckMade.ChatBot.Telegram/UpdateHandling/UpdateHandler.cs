@@ -4,13 +4,12 @@ using CheckMade.Common.DomainModel.ChatBot;
 using CheckMade.Common.DomainModel.ChatBot.Input;
 using CheckMade.Common.DomainModel.ChatBot.Output;
 using CheckMade.Common.DomainModel.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Core;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotFunction;
 using CheckMade.Common.DomainModel.Interfaces.ChatBotLogic;
 using CheckMade.Common.DomainModel.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.DomainModel.Interfaces.Utils;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 

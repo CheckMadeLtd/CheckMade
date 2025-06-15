@@ -1,4 +1,4 @@
-namespace CheckMade.Common.DomainModel.Utils;
+namespace CheckMade.Common.DomainModel.ChatBot.UserInteraction;
 
 public sealed record CallbackId
 {

@@ -1,7 +1,7 @@
 using CheckMade.Common.DomainModel.Core;
 using GeoCoordinatePortable;
 
-namespace CheckMade.Common.Utils.GIS;
+namespace CheckMade.Common.DomainModel.Utils;
 
 public static class GeoUtils
 {
