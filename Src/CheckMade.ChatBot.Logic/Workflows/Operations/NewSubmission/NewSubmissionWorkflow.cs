@@ -11,7 +11,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmi
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission;
 
-internal sealed record NewSubmissionWorkflow(
+public sealed record NewSubmissionWorkflow(
     ILiveEventsRepository LiveEventsRepo,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,

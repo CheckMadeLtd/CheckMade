@@ -11,9 +11,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.Logout.States;
 
-internal interface ILogoutWorkflowConfirm : IWorkflowStateNormal;
+public interface ILogoutWorkflowConfirm : IWorkflowStateNormal;
 
-internal sealed record LogoutWorkflowConfirm(
+public sealed record LogoutWorkflowConfirm(
     IDomainGlossary Glossary, 
     IStateMediator Mediator,
     IAgentRoleBindingsRepository RoleBindingsRepo) 

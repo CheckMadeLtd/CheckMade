@@ -10,9 +10,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 
-internal interface INewSubmissionEditMenu<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionEditMenu<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionEditMenu<T>(
+public sealed record NewSubmissionEditMenu<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     IGeneralWorkflowUtils GeneralUtils) 

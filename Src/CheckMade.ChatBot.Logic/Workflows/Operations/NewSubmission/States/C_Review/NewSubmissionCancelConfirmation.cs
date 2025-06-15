@@ -14,9 +14,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 
-internal interface INewSubmissionCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionCancelConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionCancelConfirmation<T>(
+public sealed record NewSubmissionCancelConfirmation<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     ILastOutputMessageIdCache MsgIdCache) 

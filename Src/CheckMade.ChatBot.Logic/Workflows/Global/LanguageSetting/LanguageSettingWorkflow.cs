@@ -7,7 +7,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting;
 
-internal sealed record LanguageSettingWorkflow(
+public sealed record LanguageSettingWorkflow(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,

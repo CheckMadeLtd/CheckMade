@@ -7,7 +7,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.UserAuth;
 
-internal sealed record UserAuthWorkflow(
+public sealed record UserAuthWorkflow(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,

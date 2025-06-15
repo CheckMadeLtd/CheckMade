@@ -12,7 +12,7 @@ using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
-internal interface IGeneralWorkflowUtils
+public interface IGeneralWorkflowUtils
 {
     const int RecentLocationHistoryTimeFrameInMinutes = 2;
     
@@ -28,7 +28,7 @@ internal interface IGeneralWorkflowUtils
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
-internal sealed record GeneralWorkflowUtils(
+public sealed record GeneralWorkflowUtils(
     IInputsRepository InputsRepo,
     IAgentRoleBindingsRepository AgentRoleBindingsRepo,
     IDerivedWorkflowBridgesRepository BridgesRepo)

@@ -14,12 +14,12 @@ using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic;
 
-internal interface IWorkflowIdentifier
+public interface IWorkflowIdentifier
 {
     Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
 }
 
-internal sealed record WorkflowIdentifier(
+public sealed record WorkflowIdentifier(
     UserAuthWorkflow UserAuthWorkflow,
     NewSubmissionWorkflow NewSubmissionWorkflow,
     LanguageSettingWorkflow LanguageSettingWorkflow,

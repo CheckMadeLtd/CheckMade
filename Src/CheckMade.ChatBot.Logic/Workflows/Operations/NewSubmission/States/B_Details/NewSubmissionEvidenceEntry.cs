@@ -14,9 +14,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 
-internal interface INewSubmissionEvidenceEntry<T> : IWorkflowStateNormal where T : ITrade, new(); 
+public interface INewSubmissionEvidenceEntry<T> : IWorkflowStateNormal where T : ITrade, new(); 
 
-internal sealed record NewSubmissionEvidenceEntry<T>(
+public sealed record NewSubmissionEvidenceEntry<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     ILastOutputMessageIdCache MsgIdCache) 

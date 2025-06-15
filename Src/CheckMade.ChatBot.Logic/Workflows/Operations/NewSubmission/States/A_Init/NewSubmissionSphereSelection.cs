@@ -14,9 +14,9 @@ using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmi
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.A_Init;
 
-internal interface INewSubmissionSphereSelection<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionSphereSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelection<T> where T : ITrade, new()
+public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelection<T> where T : ITrade, new()
 {
     private readonly ILiveEventsRepository _liveEventsRepo;
     private readonly ITrade _trade;

@@ -7,7 +7,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.Logout;
 
-internal sealed record LogoutWorkflow(
+public sealed record LogoutWorkflow(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,

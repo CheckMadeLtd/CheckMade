@@ -17,9 +17,9 @@ using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmi
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 
-internal interface INewSubmissionConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionConsumablesSelection<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionConsumablesSelection<T>(
+public sealed record NewSubmissionConsumablesSelection<T>(
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,

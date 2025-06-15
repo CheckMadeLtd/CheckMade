@@ -16,9 +16,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 
-internal interface INewSubmissionTypeSelection<T> : IWorkflowStateNormal where T : ITrade, new(); 
+public interface INewSubmissionTypeSelection<T> : IWorkflowStateNormal where T : ITrade, new(); 
 
-internal sealed record NewSubmissionTypeSelection<T>(
+public sealed record NewSubmissionTypeSelection<T>(
     IDomainGlossary Glossary,
     IStateMediator Mediator) 
     : INewSubmissionTypeSelection<T> where T : ITrade, new()

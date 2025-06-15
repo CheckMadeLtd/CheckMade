@@ -15,9 +15,9 @@ using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting.States;
 
-internal interface ILanguageSettingSelect : IWorkflowStateNormal;
+public interface ILanguageSettingSelect : IWorkflowStateNormal;
 
-internal sealed record LanguageSettingSelect(
+public sealed record LanguageSettingSelect(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     IAgentRoleBindingsRepository RoleBindingsRepo,

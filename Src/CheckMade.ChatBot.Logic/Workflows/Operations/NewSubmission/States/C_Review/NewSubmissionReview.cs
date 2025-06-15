@@ -17,9 +17,9 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 
-internal interface INewSubmissionReview<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionReview<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionReview<T>(
+public sealed record NewSubmissionReview<T>(
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,

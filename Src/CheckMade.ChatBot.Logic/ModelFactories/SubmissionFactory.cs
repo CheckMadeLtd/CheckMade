@@ -14,7 +14,7 @@ using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmi
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
 
-internal sealed record SubmissionFactory<T>(
+public sealed record SubmissionFactory<T>(
     ILiveEventsRepository LiveEventsRepo,
     IRolesRepository RolesRepo,
     IDomainGlossary Glossary) 

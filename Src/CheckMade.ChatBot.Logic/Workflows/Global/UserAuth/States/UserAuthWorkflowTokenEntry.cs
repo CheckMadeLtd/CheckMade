@@ -15,9 +15,9 @@ using static CheckMade.Common.Utils.Validators.InputValidator;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.UserAuth.States;
 
-internal interface IUserAuthWorkflowTokenEntry : IWorkflowStateNormal;
+public interface IUserAuthWorkflowTokenEntry : IWorkflowStateNormal;
 
-internal sealed record UserAuthWorkflowTokenEntry(
+public sealed record UserAuthWorkflowTokenEntry(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
     IRolesRepository RolesRepo,

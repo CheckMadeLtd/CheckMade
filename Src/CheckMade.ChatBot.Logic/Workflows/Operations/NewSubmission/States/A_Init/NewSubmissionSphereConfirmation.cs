@@ -15,9 +15,9 @@ using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmi
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.A_Init;
 
-internal interface INewSubmissionSphereConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
+public interface INewSubmissionSphereConfirmation<T> : IWorkflowStateNormal where T : ITrade, new();
 
-internal sealed record NewSubmissionSphereConfirmation<T>(
+public sealed record NewSubmissionSphereConfirmation<T>(
     ILiveEventsRepository LiveEventsRepo,    
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
