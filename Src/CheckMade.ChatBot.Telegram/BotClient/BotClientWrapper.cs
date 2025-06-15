@@ -351,7 +351,7 @@ public sealed class BotClientWrapper(
     }
 
     private static IReadOnlyCollection<BotCommand> GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, TlgBotCommand>> menu, LanguageCode language) 
+        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, Common.Domain.Data.ChatBot.UserInteraction.BotCommands.BotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
             .SelectMany(static kvp => kvp.Value)

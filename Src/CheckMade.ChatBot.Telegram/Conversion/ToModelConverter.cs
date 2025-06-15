@@ -184,11 +184,11 @@ public sealed class ToModelConverter(
             _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
         
-        var tlgBotCommandFromTelegramUpdate = botCommandMenuForCurrentMode
+        var botCommandFromTelegramUpdate = botCommandMenuForCurrentMode
             .SelectMany(static kvp => kvp.Values)
             .FirstOrDefault(tbc => tbc.Command == isolatedBotCommand);
         
-        if (tlgBotCommandFromTelegramUpdate == null)
+        if (botCommandFromTelegramUpdate == null)
             return UiConcatenate(
                 Ui("The BotCommand {0} does not exist for the {1}Bot.", 
                     update.Message.Text ?? "[empty text]", interactionMode),
@@ -200,17 +200,17 @@ public sealed class ToModelConverter(
             InteractionMode.Operations => Option<int>.Some(
                 (int)allBotCommandMenus.OperationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             InteractionMode.Communications => Option<int>.Some(
                 (int)allBotCommandMenus.CommunicationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             InteractionMode.Notifications => Option<int>.Some(
                 (int)allBotCommandMenus.NotificationsBotCommandMenu
                     .First(kvp => 
-                        kvp.Value.Values.Contains(tlgBotCommandFromTelegramUpdate))
+                        kvp.Value.Values.Contains(botCommandFromTelegramUpdate))
                     .Key),
             _ => throw new ArgumentOutOfRangeException(nameof(interactionMode))
         };
