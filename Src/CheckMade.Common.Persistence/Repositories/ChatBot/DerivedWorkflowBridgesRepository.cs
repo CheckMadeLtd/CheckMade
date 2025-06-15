@@ -47,10 +47,10 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                         dwb.dst_message_id AS bridge_message_id
 
                                         FROM derived_workflow_bridges dwb
-                                        INNER JOIN tlg_inputs inp on dwb.src_input_id = inp.id
+                                        INNER JOIN inputs inp on dwb.src_input_id = inp.id
                                         LEFT JOIN roles r on inp.role_id = r.id
                                         LEFT JOIN live_events le on inp.live_event_id = le.id
-                                        LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
+                                        LEFT JOIN derived_workflow_states dws on dws.inputs_id = inp.id
                                         """;
 
     public async Task<WorkflowBridge?> GetAsync(ChatId dstChatId, MessageId dstMessageId)

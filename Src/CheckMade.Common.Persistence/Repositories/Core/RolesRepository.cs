@@ -15,8 +15,8 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
-    
-    internal static readonly Func<DbDataReader, int> GetRoleKey = 
+
+    private static readonly Func<DbDataReader, int> GetRoleKey = 
         static reader => reader.GetInt32(reader.GetOrdinal("role_id"));
 
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments = 

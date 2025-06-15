@@ -47,11 +47,11 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
     public async Task AddAsync(IReadOnlyCollection<AgentRoleBind> agentRoleBindings)
     {
         const string rawQuery = """
-                                INSERT INTO tlg_agent_role_bindings (
+                                INSERT INTO agent_role_bindings (
 
                                 role_id, 
-                                tlg_user_id, 
-                                tlg_chat_id, 
+                                user_id, 
+                                chat_id, 
                                 activation_date, 
                                 deactivation_date, 
                                 status, 
@@ -120,8 +120,8 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
                                             r.status AS role_status, 
 
                                             arb.id AS arb_id,
-                                            arb.tlg_user_id AS arb_tlg_user_id, 
-                                            arb.tlg_chat_id AS arb_tlg_chat_id, 
+                                            arb.user_id AS arb_user_id, 
+                                            arb.chat_id AS arb_chat_id, 
                                             arb.interaction_mode AS arb_interaction_mode, 
                                             arb.activation_date AS arb_activation_date, 
                                             arb.deactivation_date AS arb_deactivation_date, 
@@ -132,7 +132,7 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
                                             soa.trade AS sphere_trade,
                                             soa.status AS sphere_status
 
-                                            FROM tlg_agent_role_bindings arb 
+                                            FROM agent_role_bindings arb 
                                             INNER JOIN roles r on arb.role_id = r.id 
                                             INNER JOIN users usr on r.user_id = usr.id 
                                             INNER JOIN live_events lve on r.live_event_id = lve.id
@@ -178,13 +178,13 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
         DbRecordStatus newStatus)
     {
         const string rawQuery = """
-                                UPDATE tlg_agent_role_bindings 
+                                UPDATE agent_role_bindings 
                                 
                                 SET status = @newStatus, deactivation_date = @deactivationDate 
                                 
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
-                                AND tlg_user_id = @userId 
-                                AND tlg_chat_id = @chatId  
+                                AND user_id = @userId 
+                                AND chat_id = @chatId  
                                 AND interaction_mode = @mode 
                                 AND status = @oldStatus
                                 """;
@@ -216,11 +216,11 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
     public async Task HardDeleteAsync(AgentRoleBind agentRoleBind)
     {
         const string rawQuery = """
-                                DELETE FROM tlg_agent_role_bindings 
+                                DELETE FROM agent_role_bindings 
                                        
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
-                                AND tlg_user_id = @userId 
-                                AND tlg_chat_id = @chatId 
+                                AND user_id = @userId 
+                                AND chat_id = @chatId 
                                 AND interaction_mode = @mode
                                 """;
         

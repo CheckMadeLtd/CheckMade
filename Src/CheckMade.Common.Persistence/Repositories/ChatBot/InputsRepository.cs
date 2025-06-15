@@ -51,10 +51,10 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                                            inp.details AS input_details,
                                            inp.entity_guid AS input_guid
                                                
-                                           FROM tlg_inputs inp 
+                                           FROM inputs inp 
                                            LEFT JOIN roles r on inp.role_id = r.id 
                                            LEFT JOIN live_events le on inp.live_event_id = le.id
-                                           LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
+                                           LEFT JOIN derived_workflow_states dws on dws.inputs_id = inp.id
                                            """;
 
     private const string OrderByClause = "ORDER BY inp.id";
@@ -69,7 +69,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations)
     {
         const string addInputQuery = """
-                                     INSERT INTO tlg_inputs 
+                                     INSERT INTO inputs 
 
                                      (date,
                                      message_id,
@@ -83,7 +83,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                                      live_event_id,
                                      entity_guid) 
 
-                                     VALUES (@tlgDate, @messageId, @userId, @chatId, @tlgMessageDetails, 
+                                     VALUES (@timeStamp, @messageId, @userId, @chatId, @messageDetails, 
                                      @lastDataMig, @interactionMode, @inputType, 
                                      (SELECT id FROM roles WHERE token = @token), 
                                      (SELECT id FROM live_events WHERE name = @liveEventName),
@@ -92,7 +92,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 
         const string derivedWorkflowInfoQuery = $"""
                                                  INSERT INTO derived_workflow_states
-                                                 (tlg_inputs_id,
+                                                 (inputs_id,
                                                  resultant_workflow,
                                                  in_state)
 
@@ -125,7 +125,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         
         var normalParameters = new Dictionary<string, object>
         {
-            ["@tlgDate"] = input.TimeStamp,
+            ["@timeStamp"] = input.TimeStamp,
             ["@messageId"] = input.MessageId.Id,
             ["@userId"] = input.Agent.UserId.Id,
             ["@chatId"] = input.Agent.ChatId.Id,
@@ -170,7 +170,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         };     
         
         command.Parameters.Add(
-            new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
+            new NpgsqlParameter("@messageDetails", NpgsqlDbType.Jsonb)
             {
                 Value = JsonHelper.SerializeToJson(input.Details, Glossary)
             });
@@ -245,11 +245,11 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
     public async Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid)
     {
         const string rawQuery = """
-                                UPDATE tlg_inputs 
+                                UPDATE inputs 
 
                                 SET entity_guid = @newGuid
 
-                                WHERE date = @tlgDate
+                                WHERE date = @timeStamp
                                 AND message_id = @messageId
                                 AND user_id = @userId 
                                 AND chat_id = @chatId
@@ -261,7 +261,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newGuid"] = newGuid,
-                ["@tlgDate"] = input.TimeStamp,
+                ["@timeStamp"] = input.TimeStamp,
                 ["@messageId"] = input.MessageId.Id,
                 ["@userId"] = input.Agent.UserId.Id,
                 ["@chatId"] = input.Agent.ChatId.Id,
@@ -371,15 +371,15 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         const string rawQuery = """
                                 WITH inputs_to_delete AS (
                                     SELECT id 
-                                    FROM tlg_inputs 
+                                    FROM inputs 
                                     WHERE user_id = @userId 
                                     AND chat_id = @chatId 
                                     AND interaction_mode = @mode
                                 )
                                 DELETE FROM derived_workflow_states 
-                                WHERE tlg_inputs_id IN (SELECT id FROM inputs_to_delete);
+                                WHERE inputs_id IN (SELECT id FROM inputs_to_delete);
 
-                                DELETE FROM tlg_inputs 
+                                DELETE FROM inputs 
                                 WHERE user_id = @userId 
                                 AND chat_id = @chatId 
                                 AND interaction_mode = @mode;
