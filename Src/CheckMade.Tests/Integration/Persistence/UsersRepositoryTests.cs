@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

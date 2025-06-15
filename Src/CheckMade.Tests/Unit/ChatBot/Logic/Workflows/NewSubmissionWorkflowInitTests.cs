@@ -1,10 +1,10 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
-using CheckMade.Common.DomainModel.Data.ChatBot.Input;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.DomainModel.Data.Core.GIS;
-using CheckMade.Common.DomainModel.Data.Core.Trades;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Data.Core.Trades;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

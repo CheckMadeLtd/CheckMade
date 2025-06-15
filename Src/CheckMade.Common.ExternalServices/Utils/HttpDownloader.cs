@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Interfaces.ExternalServices.Utils;
+using CheckMade.Common.Domain.Interfaces.ExternalServices.Utils;
 
 namespace CheckMade.Common.ExternalServices.Utils;
 

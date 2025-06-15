@@ -1,8 +1,8 @@
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.DomainModel.Data.ChatBot;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.DomainModel.Data.Core.GIS;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Common.Utils.UiTranslation;

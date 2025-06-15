@@ -2,8 +2,8 @@ using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.ChatBot.Telegram.Function;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.ChatBot.Telegram;

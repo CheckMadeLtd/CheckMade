@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
 
 namespace CheckMade.DevOps.TlgInputDetailsMigration.Helpers;
 

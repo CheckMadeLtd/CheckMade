@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using Newtonsoft.Json;
 
 namespace CheckMade.Common.Persistence.JsonHelpers;

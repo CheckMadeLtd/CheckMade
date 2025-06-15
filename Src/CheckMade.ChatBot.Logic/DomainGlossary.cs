@@ -10,14 +10,14 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Common.DomainModel.Data.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Common.DomainModel.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
-using CheckMade.Common.DomainModel.Data.Core.Submissions;
-using CheckMade.Common.DomainModel.Data.Core.Submissions.SubmissionTypes;
-using CheckMade.Common.DomainModel.Data.Core.Trades;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic;

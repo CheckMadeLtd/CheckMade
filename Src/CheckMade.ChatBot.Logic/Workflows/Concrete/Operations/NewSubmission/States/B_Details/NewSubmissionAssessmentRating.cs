@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.DomainModel.Data.ChatBot;
-using CheckMade.Common.DomainModel.Data.ChatBot.Input;
-using CheckMade.Common.DomainModel.Data.ChatBot.Output;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
-using CheckMade.Common.DomainModel.Data.Core.Submissions;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Function;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
-using CheckMade.Common.DomainModel.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression

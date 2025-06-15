@@ -1,4 +1,4 @@
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;

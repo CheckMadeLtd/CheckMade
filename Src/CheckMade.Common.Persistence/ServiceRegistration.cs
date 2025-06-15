@@ -1,6 +1,6 @@
-using CheckMade.Common.DomainModel.Interfaces.Persistence;
-using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Persistence.Repositories.ChatBot;
 using CheckMade.Common.Persistence.Repositories.Core;
 using CheckMade.Common.Utils.RetryPolicies;

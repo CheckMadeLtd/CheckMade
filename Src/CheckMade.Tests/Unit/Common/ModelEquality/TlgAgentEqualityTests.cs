@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using CheckMade.Common.DomainModel.Data.ChatBot;
-using CheckMade.Common.DomainModel.Data.ChatBot.Input;
-using CheckMade.Common.DomainModel.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
 

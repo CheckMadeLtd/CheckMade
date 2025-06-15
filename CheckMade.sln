@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Tests", "Src\Chec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.ChatBot.Logic", "Src\CheckMade.ChatBot.Logic\CheckMade.ChatBot.Logic.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.DomainModel", "Src\CheckMade.Common.DomainModel\CheckMade.Common.DomainModel.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Domain", "Src\CheckMade.Common.Domain\CheckMade.Common.Domain.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}"
 EndProject

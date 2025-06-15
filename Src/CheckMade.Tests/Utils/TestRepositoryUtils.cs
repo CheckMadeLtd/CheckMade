@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
-using CheckMade.Common.DomainModel.Data.ChatBot;
-using CheckMade.Common.DomainModel.Data.ChatBot.Input;
-using CheckMade.Common.DomainModel.Data.Core;
-using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Data.Core.LiveEvents;
-using CheckMade.Common.DomainModel.Interfaces.Data.Core;
-using CheckMade.Common.DomainModel.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.DomainModel.Interfaces.Persistence.Core;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.LiveEvents;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using User = CheckMade.Common.DomainModel.Data.Core.Actors.User;
+using User = CheckMade.Common.Domain.Data.Core.Actors.User;
 
 namespace CheckMade.Tests.Utils;
 

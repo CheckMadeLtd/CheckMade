@@ -1,9 +1,9 @@
-using CheckMade.Common.DomainModel.Data.Core;
-using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem;
-using CheckMade.Common.DomainModel.Data.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Common.DomainModel.Data.Core.LiveEvents;
-using CheckMade.Common.DomainModel.Data.Core.Trades;
-using CheckMade.Common.DomainModel.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.LiveEvents;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
 
 namespace CheckMade.Tests.Unit.Common.ModelEquality;
 

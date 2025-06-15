@@ -1,5 +1,5 @@
-using CheckMade.Common.DomainModel.Data.ChatBot.Output;
-using CheckMade.Common.DomainModel.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.LangExt.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 
