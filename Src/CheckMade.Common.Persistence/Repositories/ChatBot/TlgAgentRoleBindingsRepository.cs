@@ -58,7 +58,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 interaction_mode) 
                                 
                                 VALUES ((SELECT id FROM roles WHERE token = @token), 
-                                @tlgUserId, @chatId, 
+                                @userId, @chatId, 
                                 @activationDate, @deactivationDate, @status, @mode)
                                 """;
 
@@ -67,7 +67,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             var normalParameters = new Dictionary<string, object>
             {
                 ["@token"] = tarb.Role.Token,
-                ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
+                ["@userId"] = (long)tarb.TlgAgent.UserId,
                 ["@chatId"] = (long)tarb.TlgAgent.ChatId,
                 ["@activationDate"] = tarb.ActivationDate,
                 ["@status"] = (int)tarb.Status,
@@ -183,7 +183,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 SET status = @newStatus, deactivation_date = @deactivationDate 
                                 
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
-                                AND tlg_user_id = @tlgUserId 
+                                AND tlg_user_id = @userId 
                                 AND tlg_chat_id = @chatId  
                                 AND interaction_mode = @mode 
                                 AND status = @oldStatus
@@ -195,7 +195,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
             {
                 ["@newStatus"] = (int)newStatus,
                 ["@token"] = tarb.Role.Token,
-                ["@tlgUserId"] = (long)tarb.TlgAgent.UserId,
+                ["@userId"] = (long)tarb.TlgAgent.UserId,
                 ["@chatId"] = (long)tarb.TlgAgent.ChatId,
                 ["@mode"] = (int)tarb.TlgAgent.Mode,
                 ["@oldStatus"] = (int)tarb.Status
@@ -219,7 +219,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
                                 DELETE FROM tlg_agent_role_bindings 
                                        
                                 WHERE role_id = (SELECT id FROM roles WHERE token = @token) 
-                                AND tlg_user_id = @tlgUserId 
+                                AND tlg_user_id = @userId 
                                 AND tlg_chat_id = @chatId 
                                 AND interaction_mode = @mode
                                 """;
@@ -227,7 +227,7 @@ public sealed class TlgAgentRoleBindingsRepository(IDbExecutionHelper dbHelper, 
         var normalParameters = new Dictionary<string, object>
         {
             ["@token"] = tlgAgentRoleBind.Role.Token,
-            ["tlgUserId"] = (long)tlgAgentRoleBind.TlgAgent.UserId,
+            ["userId"] = (long)tlgAgentRoleBind.TlgAgent.UserId,
             ["chatId"] = (long)tlgAgentRoleBind.TlgAgent.ChatId,
             ["@mode"] = (int)tlgAgentRoleBind.TlgAgent.Mode
         };

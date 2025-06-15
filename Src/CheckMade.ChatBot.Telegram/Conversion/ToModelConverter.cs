@@ -276,7 +276,7 @@ public sealed class ToModelConverter(
                                          "either a text or an attachment.");   
         }
         
-        TlgUserId userId = update.Message.From!.Id; // already checked for non-null in UpdateWrapper constructor
+        UserId userId = update.Message.From!.Id; // already checked for non-null in UpdateWrapper constructor
         ChatId chatId = update.Message.Chat.Id;
         
         var messageText = !string.IsNullOrWhiteSpace(update.Message.Text)

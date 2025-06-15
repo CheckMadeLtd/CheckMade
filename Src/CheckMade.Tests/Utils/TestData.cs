@@ -305,7 +305,7 @@ internal static class TestData
     
     #region TlgAgentElementsSetup ######################################################################################
 
-    // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
+    // Needs to be 'long' instead of 'UserId' for usage in InlineData() of Tests - but they implicitly convert
     
     internal const long RealTestUser_DanielGorin_TelegramId = 215737196L;
     

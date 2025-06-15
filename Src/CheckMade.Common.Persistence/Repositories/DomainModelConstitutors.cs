@@ -184,7 +184,7 @@ internal static class DomainModelConstitutors
     {
         var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         TlgMessageId tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
-        TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
+        UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
         ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
         var interactionMode = EnsureEnumValidityOrThrow(
             (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
@@ -199,7 +199,7 @@ internal static class DomainModelConstitutors
         return new TlgInput(
             tlgDate,
             tlgMessageId,
-            new TlgAgent(tlgUserId, chatId, interactionMode),
+            new TlgAgent(userId, chatId, interactionMode),
             tlgInputType,
             roleInfo,
             liveEventInfo,

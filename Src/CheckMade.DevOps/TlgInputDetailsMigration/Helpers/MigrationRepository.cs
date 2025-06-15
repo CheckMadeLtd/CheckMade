@@ -37,7 +37,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
                 static async r => await r.GetFieldValueAsync<long>(r.GetOrdinal("user_id")),
                 static async r => await r.GetFieldValueAsync<DateTimeOffset>(r.GetOrdinal("date")),
                 static async (historicUserId, historicTlgDate) => 
-                    new HistoricInputIdentifier(new TlgUserId(await historicUserId), await historicTlgDate)
+                    new HistoricInputIdentifier(new UserId(await historicUserId), await historicTlgDate)
             );
         
             var actualOldFormatDetails = JObject.Parse(
@@ -52,12 +52,12 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
         var commands = allNewFormatDetails.Select(static newDetails =>
         {
             const string commandTextPrefix = "UPDATE tlg_inputs SET details = @tlgDetails " +
-                                             "WHERE user_id = @tlgUserId " +
+                                             "WHERE user_id = @userId " +
                                              "AND date = @tlgDateTime";
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            command.Parameters.AddWithValue("@tlgUserId", newDetails.Identifier.HistoricUserId.Id);
+            command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricUserId.Id);
             command.Parameters.AddWithValue("@tlgDateTime", newDetails.Identifier.HistoricTlgDate);
             
             command.Parameters.Add(new NpgsqlParameter($"@tlgDetails", NpgsqlDbType.Jsonb)

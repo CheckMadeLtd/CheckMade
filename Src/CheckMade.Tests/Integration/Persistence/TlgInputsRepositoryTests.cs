@@ -163,7 +163,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     [InlineData(RealTestUser_DanielGorin_TelegramId, false)]
     [InlineData(RealTestUser_DanielGorin_TelegramId, true)]
     public async Task Verifies_Db_DoesNotHaveInvalidTestData_ForGivenTestUser(
-        TlgUserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
+        UserId devDbUserId, bool overwriteDefaultDbConnProviderWithPrdDbConn)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         
