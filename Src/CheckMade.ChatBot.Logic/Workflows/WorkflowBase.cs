@@ -17,7 +17,7 @@ internal abstract record WorkflowBase(
 {
     internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", Start.Command);
     
-    protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
+    protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(Input currentInput)
     {
         var allBridges = 
             await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(currentInput.LiveEventContext);
@@ -84,5 +84,5 @@ internal abstract record WorkflowBase(
         }
     }
 
-    protected abstract Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput);
+    protected abstract Task<Result<WorkflowResponse>> InitializeAsync(Input currentInput);
 }

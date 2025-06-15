@@ -28,7 +28,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
         Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample());
     
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
+        Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -47,7 +47,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         if (currentInput.InputType != InputType.TextMessage)
             return WorkflowResponse.CreateWarningEnterTextOnly(this);
@@ -84,7 +84,7 @@ internal sealed record UserAuthWorkflowTokenEntry(
             (await RolesRepo.GetAllAsync())
             .Any(role => role.Token.Equals(enteredText));
 
-        async Task<WorkflowResponse> AuthenticateUserAsync(TlgInput tokenInputAttempt)
+        async Task<WorkflowResponse> AuthenticateUserAsync(Input tokenInputAttempt)
         {
             var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
             var currentMode = tokenInputAttempt.Agent.Mode;

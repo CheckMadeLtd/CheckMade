@@ -12,9 +12,9 @@ internal interface IWorkflowStateNormal : IWorkflowState
     IStateMediator Mediator { get; }
     
     Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+        Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer);
 
-    Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput);
+    Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput);
 }

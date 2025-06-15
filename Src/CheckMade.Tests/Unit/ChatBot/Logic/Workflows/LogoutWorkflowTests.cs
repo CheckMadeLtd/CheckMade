@@ -25,10 +25,10 @@ public sealed class LogoutWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
 
-        var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
+        var confirmLogoutCommand = inputGenerator.GetValidInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
         var boundRole = TestRepositoryUtils.GetNewRoleBind(
@@ -40,13 +40,13 @@ public sealed class LogoutWorkflowTests
             inputs:
             [
                 // Decoys
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Settings),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Logout,
                     resultantWorkflowState: new ResultantWorkflowState(
@@ -76,7 +76,7 @@ public sealed class LogoutWorkflowTests
     public async Task GetResponseAsync_LogsOutFromAllModes_WhenLoggingOutInPrivateChat()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
         var agentOperations = PrivateBotChat_Operations;
@@ -84,14 +84,14 @@ public sealed class LogoutWorkflowTests
         var agentNotif = PrivateBotChat_Notifications;
         var boundRole = SanitaryEngineer_DanielEn_X2024; 
         
-        var confirmLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
+        var confirmLogoutCommand = inputGenerator.GetValidInputCallbackQueryForControlPrompts(
             ControlPrompts.Yes);
 
         var serviceCollection = new UnitTestStartup().Services;
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs:
             [
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Logout,
                     resultantWorkflowState: new ResultantWorkflowState(
@@ -164,9 +164,9 @@ public sealed class LogoutWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
-        var abortLogoutCommand = inputGenerator.GetValidTlgInputCallbackQueryForControlPrompts(
+        var abortLogoutCommand = inputGenerator.GetValidInputCallbackQueryForControlPrompts(
             ControlPrompts.No);
 
         var serviceCollection = new UnitTestStartup().Services;
@@ -174,13 +174,13 @@ public sealed class LogoutWorkflowTests
             inputs:
             [
                 // Decoys
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Settings),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     Operations,
                     (int)OperationsBotCommands.Logout,
                     resultantWorkflowState: new ResultantWorkflowState(

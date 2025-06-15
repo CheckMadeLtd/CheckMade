@@ -25,13 +25,13 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
 
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -47,7 +47,7 @@ public sealed class UserAuthWorkflowTests
             roles: [SanitaryEngineer_DanielEn_X2024]);
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
-        var nonExistingTokenInput = inputGenerator.GetValidTlgInputTextMessage(
+        var nonExistingTokenInput = inputGenerator.GetValidInputTextMessage(
             text: InputValidator.GetTokenFormatExample());
         
         var actualResponses = 
@@ -64,13 +64,13 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -94,7 +94,7 @@ public sealed class UserAuthWorkflowTests
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
         var inputTokenWithPreExistingActiveAgentRoleBind = 
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 text: SanitaryAdmin_DanielEn_X2024.Token);
         
         const string expectedWarning = """
@@ -121,14 +121,14 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = UserId03_ChatId06_Operations;
         var roleForAuth = SanitaryEngineer_DanielEn_X2024;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
 
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -146,7 +146,7 @@ public sealed class UserAuthWorkflowTests
             (Mock<IAgentRoleBindingsRepository>)container.Mocks[typeof(IAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
-        var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
+        var inputValidToken = inputGenerator.GetValidInputTextMessage(
             userId: agent.UserId,
             chatId: agent.ChatId,
             text: roleForAuth.Token,
@@ -190,14 +190,14 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var roleForAuth = SanitaryInspector_DanielDe_X2024;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -215,7 +215,7 @@ public sealed class UserAuthWorkflowTests
             (Mock<IAgentRoleBindingsRepository>)container.Mocks[typeof(IAgentRoleBindingsRepository)];
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
-        var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
+        var inputValidToken = inputGenerator.GetValidInputTextMessage(
             userId: agent.UserId,
             chatId: agent.ChatId,
             text: roleForAuth.Token);
@@ -260,14 +260,14 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var roleForAuth = SanitaryEngineer_DanielEn_X2024;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -289,7 +289,7 @@ public sealed class UserAuthWorkflowTests
         var mockAgentRoleBindingsRepo =
             (Mock<IAgentRoleBindingsRepository>)container.Mocks[typeof(IAgentRoleBindingsRepository)];
 
-        var inputValidToken = inputGenerator.GetValidTlgInputTextMessage(
+        var inputValidToken = inputGenerator.GetValidInputTextMessage(
             userId: agent.UserId,
             chatId: agent.ChatId,
             text: roleForAuth.Token);
@@ -346,13 +346,13 @@ public sealed class UserAuthWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        List<TlgInput> inputHistory = 
+        List<Input> inputHistory = 
         [
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 Start.CommandCode,
                 agent.UserId,
@@ -373,7 +373,7 @@ public sealed class UserAuthWorkflowTests
             ]);
         var workflow = services.GetRequiredService<UserAuthWorkflow>();
         
-        var badTokenInput = inputGenerator.GetValidTlgInputTextMessage(text: badToken);
+        var badTokenInput = inputGenerator.GetValidInputTextMessage(text: badToken);
         
         var actualResponses = await workflow.GetResponseAsync(badTokenInput);
         

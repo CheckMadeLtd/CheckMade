@@ -24,8 +24,8 @@ public sealed class InputProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var startCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var startCommand = inputGenerator.GetValidInputCommandMessage(
             UserId02_ChatId03_Operations.Mode,
             Start.CommandCode,
             UserId02_ChatId03_Operations.UserId,
@@ -56,11 +56,11 @@ public sealed class InputProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var interruptingBotCommandInput =
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 (int)OperationsBotCommands.NewSubmission); 
 
@@ -69,13 +69,13 @@ public sealed class InputProcessorTests
             inputs:
             [
                 // Decoys
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     agent.Mode,
                     (int)OperationsBotCommands.Settings),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de)),
                 // Relevant
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     agent.Mode,
                     (int)OperationsBotCommands.Settings)
             ]);
@@ -98,11 +98,11 @@ public sealed class InputProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var notInterruptingBotCommandInput =
-            inputGenerator.GetValidTlgInputCommandMessage(
+            inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 (int)OperationsBotCommands.NewSubmission);
 
@@ -111,10 +111,10 @@ public sealed class InputProcessorTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs:
             [
-                inputGenerator.GetValidTlgInputCommandMessage(
+                inputGenerator.GetValidInputCommandMessage(
                     agent.Mode,
                     (int)OperationsBotCommands.Settings),
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(
                     Dt(LanguageCode.de),
                     resultantWorkflowState: new ResultantWorkflowState(
                         glossary.GetId(typeof(LanguageSettingWorkflow)),
@@ -139,9 +139,9 @@ public sealed class InputProcessorTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var locationUpdate =
-            inputGenerator.GetValidTlgInputLocationMessage(
+            inputGenerator.GetValidInputLocationMessage(
                 new Geo(17, -22, Option<double>.None()));
         
         var serviceCollection = new UnitTestStartup().Services;

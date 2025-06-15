@@ -20,11 +20,11 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var agentWithoutRole = UserId02_ChatId03_Operations;
-        var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
+        var inputFromUnauthenticatedUser = inputGenerator.GetValidInputTextMessage(
             agentWithoutRole.UserId, agentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
 
@@ -40,10 +40,10 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithSettingsBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputWithSettingsBotCommand = inputGenerator.GetValidInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.Settings);
         
@@ -59,10 +59,10 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithNewSubmissionBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputWithNewSubmissionBotCommand = inputGenerator.GetValidInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.NewSubmission);
         
@@ -78,16 +78,16 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var workflow = await workflowIdentifier
             .IdentifyAsync([
-                inputGenerator.GetValidTlgInputTextMessage(),
-                inputGenerator.GetValidTlgInputTextMessageWithAttachment(AttachmentType.Photo),
+                inputGenerator.GetValidInputTextMessage(),
+                inputGenerator.GetValidInputTextMessageWithAttachment(AttachmentType.Photo),
                 // This could be in response to an out-of-scope message in the history e.g. in another Role!
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-                inputGenerator.GetValidTlgInputTextMessage()
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                inputGenerator.GetValidInputTextMessage()
             ]);
         
         Assert.True(

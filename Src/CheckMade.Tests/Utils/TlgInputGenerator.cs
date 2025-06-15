@@ -10,9 +10,9 @@ using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests.Utils;
 
-internal interface ITlgInputGenerator
+internal interface IInputGenerator
 {
-    TlgInput GetValidTlgInputTextMessage(
+    Input GetValidInputTextMessage(
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", 
@@ -21,11 +21,11 @@ internal interface ITlgInputGenerator
         Role? roleSpecified = null,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputTextMessageWithAttachment(
+    Input GetValidInputTextMessageWithAttachment(
         AttachmentType type,
         TestOriginatorRoleSetting roleSetting = Default);
     
-    TlgInput GetValidTlgInputLocationMessage(
+    Input GetValidInputLocationMessage(
         Geo location, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
@@ -33,7 +33,7 @@ internal interface ITlgInputGenerator
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCommandMessage(
+    Input GetValidInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
@@ -42,7 +42,7 @@ internal interface ITlgInputGenerator
         Role? roleSpecified = null,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
+    Input GetValidInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
@@ -50,7 +50,7 @@ internal interface ITlgInputGenerator
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
+    Input GetValidInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
         string text = "Default fake prompt",
         long userId = Default_UserAndChatId_PrivateBotChat, 
@@ -60,11 +60,11 @@ internal interface ITlgInputGenerator
         ResultantWorkflowState? resultantWorkflowState = null);
 }
 
-internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
+internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
 {
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgInputTextMessage(
+    public Input GetValidInputTextMessage(
         long userId, long chatId, string text, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         Role? roleSpecified,
@@ -73,7 +73,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         var (originatorRole, liveEvent) = 
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow, 
             1, 
             new Agent(userId, chatId, Operations),
@@ -87,11 +87,11 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 text));
     }
 
-    public TlgInput GetValidTlgInputTextMessageWithAttachment(
+    public Input GetValidInputTextMessageWithAttachment(
         AttachmentType type, 
         TestOriginatorRoleSetting roleSetting)
     {
-        return new TlgInput(
+        return new Input(
             DateTimeOffset.UtcNow,
             1,
             new Agent(Default_UserAndChatId_PrivateBotChat,
@@ -110,13 +110,13 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 type));
     }
 
-    public TlgInput GetValidTlgInputLocationMessage(
+    public Input GetValidInputLocationMessage(
         Geo location,
         long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow, 
             1,
             new Agent(userId, chatId, Operations),
@@ -130,7 +130,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 geoCoordinates: location));
     }
 
-    public TlgInput GetValidTlgInputCommandMessage(
+    public Input GetValidInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode,
         long userId, long chatId, int messageId,
         TestOriginatorRoleSetting roleSetting,
@@ -140,7 +140,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         var (originatorRole, liveEvent) = 
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
-        return new TlgInput(
+        return new Input(
             DateTimeOffset.UtcNow,
             messageId,
             new Agent(userId, chatId, interactionMode),
@@ -154,13 +154,13 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 botCommandEnumCode: botCommandEnumCode));
     }
 
-    public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
+    public Input GetValidInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm,
         long userId, long chatId, DateTimeOffset? dateTime, int messageId,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow,
             messageId,
             new Agent(userId, chatId, Operations),
@@ -174,13 +174,13 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 domainTerm: domainTerm));
     }
 
-    public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
+    public Input GetValidInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, string text,
         long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow,
             1,
             new Agent(userId, chatId, Operations),

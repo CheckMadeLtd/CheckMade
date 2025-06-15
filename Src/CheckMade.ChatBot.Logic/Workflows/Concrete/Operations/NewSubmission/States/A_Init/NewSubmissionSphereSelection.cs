@@ -40,7 +40,7 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
     public IStateMediator Mediator { get; }
 
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
+        Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -63,7 +63,7 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         var relevantSphereNames = (await AssignedSpheresOrAllAsync(
                 currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))

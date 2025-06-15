@@ -15,16 +15,16 @@ using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
 
-public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
-    : BaseRepository(dbHelper, glossary), ITlgInputsRepository
+public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+    : BaseRepository(dbHelper, glossary), IInputsRepository
 {
-    internal static readonly Func<DbDataReader, IDomainGlossary, TlgInput> TlgInputMapper = 
+    internal static readonly Func<DbDataReader, IDomainGlossary, Input> InputMapper = 
         static (reader, glossary) =>
         {
             var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
             var liveEventInfo = ConstituteLiveEventInfo(reader);
         
-            return ConstituteTlgInput(reader, originatorRoleInfo, liveEventInfo, glossary);
+            return ConstituteInput(reader, originatorRoleInfo, liveEventInfo, glossary);
         };
     
     private const string GetAllBaseQuery = """
@@ -61,11 +61,11 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
     
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
-    private Dictionary<Agent, List<TlgInput>> _cacheInputsByAgent = new();
-    private Dictionary<ILiveEventInfo, List<TlgInput>> _cacheInputsByLiveEvent = new();
+    private Dictionary<Agent, List<Input>> _cacheInputsByAgent = new();
+    private Dictionary<ILiveEventInfo, List<Input>> _cacheInputsByLiveEvent = new();
 
     public async Task AddAsync(
-        TlgInput tlgInput,
+        Input input,
         Option<IReadOnlyCollection<ActualSendOutParams>> bridgeDestinations)
     {
         const string addInputQuery = """
@@ -125,31 +125,31 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         
         var normalParameters = new Dictionary<string, object>
         {
-            ["@tlgDate"] = tlgInput.TlgDate,
-            ["@messageId"] = tlgInput.MessageId.Id,
-            ["@userId"] = tlgInput.Agent.UserId.Id,
-            ["@chatId"] = tlgInput.Agent.ChatId.Id,
+            ["@tlgDate"] = input.TlgDate,
+            ["@messageId"] = input.MessageId.Id,
+            ["@userId"] = input.Agent.UserId.Id,
+            ["@chatId"] = input.Agent.ChatId.Id,
             ["@lastDataMig"] = 0,
-            ["@interactionMode"] = (int)tlgInput.Agent.Mode,
-            ["@inputType"] = (int)tlgInput.InputType,
-            ["@token"] = tlgInput.OriginatorRole.Match<object>(  
+            ["@interactionMode"] = (int)input.Agent.Mode,
+            ["@inputType"] = (int)input.InputType,
+            ["@token"] = input.OriginatorRole.Match<object>(  
                 static r => r.Token, 
                 static () => DBNull.Value),  
-            ["@liveEventName"] = tlgInput.LiveEventContext.Match<object>(  
+            ["@liveEventName"] = input.LiveEventContext.Match<object>(  
                 static le => le.Name, 
                 static () => DBNull.Value),  
-            ["@workflowId"] = tlgInput.ResultantState.Match<object>(  
+            ["@workflowId"] = input.ResultantState.Match<object>(  
                 static w => w.WorkflowId, 
                 static () => DBNull.Value),  
-            ["@workflowState"] = tlgInput.ResultantState.Match<object>(  
+            ["@workflowState"] = input.ResultantState.Match<object>(  
                 static w => w.InStateId,  
                 static () => DBNull.Value),
-            ["@guid"] = tlgInput.EntityGuid.Match<object>(
+            ["@guid"] = input.EntityGuid.Match<object>(
                 static guid => guid,
                 static () => DBNull.Value)
         };
 
-        var command = (tlgInput.ResultantState.IsSome, bridgeDestinations.IsSome) switch
+        var command = (input.ResultantState.IsSome, bridgeDestinations.IsSome) switch
         {
             (false, false) => 
                 GenerateCommand(addInputQuery, 
@@ -164,15 +164,15 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                     normalParameters),
             
             _ => throw new InvalidOperationException(
-                $"Saving a {nameof(tlgInput)} to DB with {nameof(bridgeDestinations)} but WITHOUT any " +
-                $"{nameof(tlgInput.ResultantState)} should never be attempted, as it contradicts our fundamental " +
+                $"Saving a {nameof(input)} to DB with {nameof(bridgeDestinations)} but WITHOUT any " +
+                $"{nameof(input.ResultantState)} should never be attempted, as it contradicts our fundamental " +
                 $"ChatBot interaction logic.")
         };     
         
         command.Parameters.Add(
             new NpgsqlParameter("@tlgMessageDetails", NpgsqlDbType.Jsonb)
             {
-                Value = JsonHelper.SerializeToJson(tlgInput.Details, Glossary)
+                Value = JsonHelper.SerializeToJson(input.Details, Glossary)
             });
 
         // Suppressing warning due to Npgsql library design:
@@ -195,32 +195,32 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
         
-        if (_cacheInputsByAgent.TryGetValue(tlgInput.Agent, out var cacheForTlgInput))
+        if (_cacheInputsByAgent.TryGetValue(input.Agent, out var cacheForInput))
         {
-            cacheForTlgInput.Add(tlgInput);
+            cacheForInput.Add(input);
         }
 
-        if (tlgInput.LiveEventContext.IsSome)
+        if (input.LiveEventContext.IsSome)
         {
-            if (_cacheInputsByLiveEvent.TryGetValue(tlgInput.LiveEventContext.GetValueOrDefault(), 
+            if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
                     out var cacheForLiveEvent))
             {
-                cacheForLiveEvent.Add(tlgInput);
+                cacheForLiveEvent.Add(input);
             }
         }
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(Agent agent) =>
+    public async Task<IReadOnlyCollection<Input>> GetAllInteractiveAsync(Agent agent) =>
         (await GetAllAsync(agent))
         .Where(static i => i.InputType != InputType.Location)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
+    public async Task<IReadOnlyCollection<Input>> GetAllInteractiveAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync(liveEvent))
         .Where(static i => i.InputType != InputType.Location)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
+    public async Task<IReadOnlyCollection<Input>> GetAllLocationAsync(
         Agent agent, DateTimeOffset since) =>
         (await GetAllAsync(agent))
         .Where(i => 
@@ -228,7 +228,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             i.TlgDate >= since)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllLocationAsync(
+    public async Task<IReadOnlyCollection<Input>> GetAllLocationAsync(
         ILiveEventInfo liveEvent, DateTimeOffset since) =>
         (await GetAllAsync(liveEvent))
         .Where(i => 
@@ -236,13 +236,13 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
             i.TlgDate >= since)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
+    public async Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
         (await GetAllAsync(liveEvent))
         .Where(i =>
             i.EntityGuid.GetValueOrDefault() == entityGuid)
         .ToImmutableArray();
     
-    public async Task UpdateGuid(IReadOnlyCollection<TlgInput> tlgInputs, Guid newGuid)
+    public async Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid)
     {
         const string rawQuery = """
                                 UPDATE tlg_inputs 
@@ -256,16 +256,16 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                                 AND interaction_mode = @mode
                                 """;
 
-        var commands = tlgInputs.Select(tlgInput =>
+        var commands = inputs.Select(input =>
         {
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newGuid"] = newGuid,
-                ["@tlgDate"] = tlgInput.TlgDate,
-                ["@messageId"] = tlgInput.MessageId.Id,
-                ["@userId"] = tlgInput.Agent.UserId.Id,
-                ["@chatId"] = tlgInput.Agent.ChatId.Id,
-                ["@mode"] = (int)tlgInput.Agent.Mode
+                ["@tlgDate"] = input.TlgDate,
+                ["@messageId"] = input.MessageId.Id,
+                ["@userId"] = input.Agent.UserId.Id,
+                ["@chatId"] = input.Agent.ChatId.Id,
+                ["@mode"] = (int)input.Agent.Mode
             };
 
             return GenerateCommand(rawQuery, normalParameters);
@@ -275,7 +275,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         EmptyCache();
     }
 
-    private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(Agent agent)
+    private async Task<IReadOnlyCollection<Input>> GetAllAsync(Agent agent)
     {
         if (!_cacheInputsByAgent.ContainsKey(agent))
         {
@@ -293,12 +293,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                     
                     const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
                     
-                    var fetchedTlgInputs = new List<TlgInput>(
+                    var fetchedInputs = new List<Input>(
                         await GetAllExecuteAsync(
                             rawQuery,
                             agent.UserId, agent.ChatId, agent.Mode));
 
-                    _cacheInputsByAgent[agent] = fetchedTlgInputs;
+                    _cacheInputsByAgent[agent] = fetchedInputs;
                 }
             }
             finally
@@ -310,7 +310,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         return _cacheInputsByAgent[agent];
     }
 
-    private async Task<IReadOnlyCollection<TlgInput>> GetAllAsync(ILiveEventInfo liveEvent)
+    private async Task<IReadOnlyCollection<Input>> GetAllAsync(ILiveEventInfo liveEvent)
     {
         if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
         {
@@ -325,12 +325,12 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
                
                     const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
                     
-                    var fetchedTlgInputs = new List<TlgInput>(
+                    var fetchedInputs = new List<Input>(
                         await GetAllExecuteAsync(
                             rawQuery,
                             liveEventName: liveEvent.Name));
 
-                    _cacheInputsByLiveEvent[liveEvent] = fetchedTlgInputs;
+                    _cacheInputsByLiveEvent[liveEvent] = fetchedInputs;
                 }
             }
             finally
@@ -342,7 +342,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         return _cacheInputsByLiveEvent[liveEvent];
     }
 
-    private async Task<IReadOnlyCollection<TlgInput>> GetAllExecuteAsync(
+    private async Task<IReadOnlyCollection<Input>> GetAllExecuteAsync(
         string rawQuery,
         UserId? userId = null,
         ChatId? chatId = null,
@@ -363,7 +363,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
         var command = GenerateCommand(rawQuery, normalParameters);
 
         return await ExecuteMapperAsync(
-            command, TlgInputMapper);
+            command, InputMapper);
     }
     
     public async Task HardDeleteAllAsync(Agent agent)
@@ -399,7 +399,7 @@ public sealed class TlgInputsRepository(IDbExecutionHelper dbHelper, IDomainGlos
 
     private void EmptyCache()
     {
-        _cacheInputsByAgent = new Dictionary<Agent, List<TlgInput>>();
-        _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<TlgInput>>();
+        _cacheInputsByAgent = new Dictionary<Agent, List<Input>>();
+        _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<Input>>();
     }
 }

@@ -27,7 +27,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
     : INewSubmissionConsumablesSelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+        Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -59,7 +59,7 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
@@ -115,8 +115,8 @@ internal sealed record NewSubmissionConsumablesSelection<T>(
     }
 
     private async Task<IReadOnlyCollection<DomainTerm>> GetAvailableConsumablesAsync(
-        IReadOnlyCollection<TlgInput> interactiveHistory,
-        TlgInput currentInput)
+        IReadOnlyCollection<Input> interactiveHistory,
+        Input currentInput)
     {
         var currentSphere = 
             GetLastSelectedSphere<T>(

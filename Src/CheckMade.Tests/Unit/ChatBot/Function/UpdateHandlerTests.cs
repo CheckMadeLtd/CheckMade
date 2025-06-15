@@ -466,7 +466,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     private static (ITelegramUpdateGenerator updateGenerator,
-        ITlgInputGenerator inputGenerator,
+        IInputGenerator inputGenerator,
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
@@ -486,7 +486,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 new MessageId(1));
         
         return (sp.GetRequiredService<ITelegramUpdateGenerator>(),
-            sp.GetRequiredService<ITlgInputGenerator>(),
+            sp.GetRequiredService<IInputGenerator>(),
             mockBotClient,
             sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
@@ -497,14 +497,14 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returningOutputs)
     {
         var sp = new UnitTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = sp.GetRequiredService<ITlgInputGenerator>();
-        var validInput = inputGenerator.GetValidTlgInputTextMessage();
+        var inputGenerator = sp.GetRequiredService<IInputGenerator>();
+        var validInput = inputGenerator.GetValidInputTextMessage();
         
         var mockInputProcessor = new Mock<IInputProcessor>();
         
         mockInputProcessor
-            .Setup<Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
-                static ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .Setup<Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
+                static ip => ip.ProcessInputAsync(It.IsAny<Result<Input>>()))
             .ReturnsAsync((validInput, returningOutputs));
 
         return mockInputProcessor.Object;

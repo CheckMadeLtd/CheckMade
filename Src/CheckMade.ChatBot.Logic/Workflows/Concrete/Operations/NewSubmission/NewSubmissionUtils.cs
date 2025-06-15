@@ -16,7 +16,7 @@ namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 internal static class NewSubmissionUtils
 {
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
-        TlgInput currentInput, IGeneralWorkflowUtils workflowUtils)
+        Input currentInput, IGeneralWorkflowUtils workflowUtils)
     {
         var lastKnownLocationInput =
             (await workflowUtils.GetRecentLocationHistory(currentInput.Agent))
@@ -32,7 +32,7 @@ internal static class NewSubmissionUtils
         ILiveEventsRepository liveEventsRepo,
         Geo lastKnownLocation,
         ITrade trade,
-        TlgInput currentInput,
+        Input currentInput,
         IAgentRoleBindingsRepository roleBindingsRepo,
         bool filterAssignedSpheresIfAny = true)
     {
@@ -67,7 +67,7 @@ internal static class NewSubmissionUtils
     }
 
     internal static async Task<IReadOnlyCollection<ISphereOfAction>> AssignedSpheresOrAllAsync(
-        TlgInput currentInput,
+        Input currentInput,
         IAgentRoleBindingsRepository roleBindingsRepo,
         ILiveEventsRepository liveEventsRepo,
         ITrade trade)
@@ -110,7 +110,7 @@ internal static class NewSubmissionUtils
     }
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
-        IReadOnlyCollection<TlgInput> inputs,
+        IReadOnlyCollection<Input> inputs,
         IReadOnlyCollection<ISphereOfAction> spheres) where T : ITrade, new()
     {
         var sphereNames = spheres.Select(static s => s.Name).ToHashSet();
@@ -146,7 +146,7 @@ internal static class NewSubmissionUtils
                     .Value);
     }
 
-    internal static Type GetLastSubmissionType(IReadOnlyCollection<TlgInput> inputs)
+    internal static Type GetLastSubmissionType(IReadOnlyCollection<Input> inputs)
     {
         return 
             inputs

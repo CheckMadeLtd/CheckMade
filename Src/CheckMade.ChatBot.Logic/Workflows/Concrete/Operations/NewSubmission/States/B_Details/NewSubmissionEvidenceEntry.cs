@@ -23,7 +23,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
     : INewSubmissionEvidenceEntry<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+        Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -43,7 +43,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
             currentInput.MessageId, MsgIdCache, currentInput.Agent, true);

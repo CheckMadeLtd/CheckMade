@@ -20,23 +20,23 @@ internal interface IGeneralWorkflowUtils
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        Agent agentForDbQuery, TlgInput newInputToAppend);
+    Task<IReadOnlyCollection<Input>> GetAllCurrentInteractiveAsync(
+        Agent agentForDbQuery, Input newInputToAppend);
 
-    Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
-    Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(Agent agent);
+    Task<IReadOnlyCollection<Input>> GetInteractiveWorkflowHistoryAsync(Input currentInput);
+    Task<IReadOnlyCollection<Input>> GetRecentLocationHistory(Agent agent);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
 internal sealed record GeneralWorkflowUtils(
-    ITlgInputsRepository InputsRepo,
+    IInputsRepository InputsRepo,
     IAgentRoleBindingsRepository AgentRoleBindingsRepo,
     IDerivedWorkflowBridgesRepository BridgesRepo)
     : IGeneralWorkflowUtils
 {
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
+    public async Task<IReadOnlyCollection<Input>> GetAllCurrentInteractiveAsync(
         Agent agentForDbQuery,
-        TlgInput newInputToAppend)
+        Input newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
@@ -67,8 +67,8 @@ internal sealed record GeneralWorkflowUtils(
                 .ToImmutableArray();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(
-        TlgInput currentInput)
+    public async Task<IReadOnlyCollection<Input>> GetInteractiveWorkflowHistoryAsync(
+        Input currentInput)
     {
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
@@ -85,7 +85,7 @@ internal sealed record GeneralWorkflowUtils(
             .ToImmutableArray();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(Agent agent)
+    public async Task<IReadOnlyCollection<Input>> GetRecentLocationHistory(Agent agent)
     {
         return 
             await InputsRepo.GetAllLocationAsync(
@@ -107,7 +107,7 @@ internal static class GeneralWorkflowUtilsExtensions
         typeName.Split('`')[0];
     
     public static bool IsToggleOn(
-        this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
+        this DomainTerm domainTerm, IReadOnlyCollection<Input> inputHistory) =>
         inputHistory
             .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
         % 2 != 0;
@@ -118,7 +118,7 @@ internal static class GeneralWorkflowUtilsExtensions
             .GetTradeInstance().IsSome;
 
     public static bool IsWorkflowLauncher(
-        this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges)
+        this Input input, IReadOnlyCollection<WorkflowBridge> allBridges)
     {
         var isProactiveWorkflowLauncher = 
             input.InputType == CommandMessage;

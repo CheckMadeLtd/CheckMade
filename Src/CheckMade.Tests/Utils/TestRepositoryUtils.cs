@@ -34,7 +34,7 @@ internal static class TestRepositoryUtils
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
         IReadOnlyCollection<AgentRoleBind>? roleBindings = null,
-        IReadOnlyCollection<TlgInput>? inputs = null,
+        IReadOnlyCollection<Input>? inputs = null,
         IReadOnlyCollection<WorkflowBridge>? bridges = null)
     {
         var defaultLiveEvent = X2024;
@@ -43,7 +43,7 @@ internal static class TestRepositoryUtils
         List<Role> defaultRoles = [SanitaryAdmin_DanielEn_X2024];
         List<AgentRoleBind> defaultRoleBindings = 
             [GetNewRoleBind(SanitaryAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
-        List<TlgInput> defaultInputs = [];
+        List<Input> defaultInputs = [];
         List<WorkflowBridge> defaultBridges = [];
 
         var mockContainer = new MockContainer();
@@ -53,7 +53,7 @@ internal static class TestRepositoryUtils
             .ArrangeTestUsersRepo(users ?? defaultUsers, mockContainer)
             .ArrangeTestRolesRepo(roles ?? defaultRoles, mockContainer)
             .ArrangeTestRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
-            .ArrangeTestTlgInputsRepo(inputs ?? defaultInputs, mockContainer)
+            .ArrangeTestInputsRepo(inputs ?? defaultInputs, mockContainer)
             .ArrangeTestDerivedWorkflowBridgesRepo(bridges ?? defaultBridges, mockContainer);
 
         return (serviceCollection.BuildServiceProvider(), mockContainer);
@@ -138,14 +138,14 @@ internal static class TestRepositoryUtils
     }
 
 
-    private static IServiceCollection ArrangeTestTlgInputsRepo(
+    private static IServiceCollection ArrangeTestInputsRepo(
         this IServiceCollection serviceCollection,
-        IReadOnlyCollection<TlgInput> inputs,
+        IReadOnlyCollection<Input> inputs,
         MockContainer container)
     {
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        var mockInputsRepo = new Mock<IInputsRepository>();
         
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo => 
                 repo.GetAllInteractiveAsync(It.IsAny<Agent>()))
             .ReturnsAsync((Agent agent) => 
@@ -155,7 +155,7 @@ internal static class TestRepositoryUtils
                         i.InputType != InputType.Location)
                     .ToImmutableArray());
         
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo => 
                 repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) => 
@@ -165,7 +165,7 @@ internal static class TestRepositoryUtils
                         i.InputType != InputType.Location)
                     .ToImmutableArray());
 
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo =>
                 repo.GetAllLocationAsync(
                     It.IsAny<Agent>(),
@@ -178,7 +178,7 @@ internal static class TestRepositoryUtils
                         i.InputType == InputType.Location)
                     .ToImmutableArray());
 
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo =>
                 repo.GetEntityHistoryAsync(
                     It.IsAny<ILiveEventInfo>(),
@@ -190,10 +190,10 @@ internal static class TestRepositoryUtils
                         Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
                     .ToImmutableArray());
         
-        container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
-        var stubTlgInputsRepo = mockTlgInputsRepo.Object;
+        container.Mocks[typeof(IInputsRepository)] = mockInputsRepo;
+        var stubInputsRepo = mockInputsRepo.Object;
         
-        return serviceCollection.AddScoped<ITlgInputsRepository>(_ => stubTlgInputsRepo);
+        return serviceCollection.AddScoped<IInputsRepository>(_ => stubInputsRepo);
     }
 
     private static IServiceCollection ArrangeTestDerivedWorkflowBridgesRepo(

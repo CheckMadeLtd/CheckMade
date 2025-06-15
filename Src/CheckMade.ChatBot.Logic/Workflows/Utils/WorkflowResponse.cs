@@ -30,7 +30,7 @@ internal sealed record WorkflowResponse(
     }
 
     internal static WorkflowResponse Create(
-        TlgInput currentInput, 
+        Input currentInput, 
         OutputDto singleOutput, 
         IReadOnlyCollection<OutputDto>? additionalOutputs = null,
         IWorkflowState? newState = null, 
@@ -68,7 +68,7 @@ internal sealed record WorkflowResponse(
     private static (Option<MessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
         ResolvePromptTransitionIntoComponents(
             PromptTransition? promptTransition, 
-            TlgInput currentInput)
+            Input currentInput)
     {
         var nextPromptInPlaceUpdateMessageId = promptTransition != null
             ? promptTransition.IsNextPromptInPlaceUpdate
@@ -84,7 +84,7 @@ internal sealed record WorkflowResponse(
     }
 
     internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
-        TlgInput currentInput,
+        Input currentInput,
         IWorkflowStateNormal newState,
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)

@@ -53,11 +53,11 @@ internal static class TestUtils
         return combinedRawEnglish;
     }
 
-    internal static (ITlgInputGenerator inputGenerator, IDomainGlossary glossary)
+    internal static (IInputGenerator inputGenerator, IDomainGlossary glossary)
         GetBasicWorkflowTestingServices(IServiceProvider services)
     {
         return (
-            services.GetRequiredService<ITlgInputGenerator>(),
+            services.GetRequiredService<IInputGenerator>(),
             services.GetRequiredService<IDomainGlossary>());
     }
 }

@@ -14,7 +14,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
     private static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> WorkflowBridgeMapper =
         static (reader, glossary) =>
         {
-            var sourceInput = TlgInputsRepository.TlgInputMapper(reader, glossary);
+            var sourceInput = InputsRepository.InputMapper(reader, glossary);
 
             return ConstituteWorkflowBridge(reader, sourceInput);
         };

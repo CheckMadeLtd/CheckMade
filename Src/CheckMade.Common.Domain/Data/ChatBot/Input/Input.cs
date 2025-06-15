@@ -3,7 +3,7 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Common.Domain.Data.ChatBot.Input;
 
-public sealed record TlgInput(
+public sealed record Input(
     DateTimeOffset TlgDate,
     MessageId MessageId, 
     Agent Agent,

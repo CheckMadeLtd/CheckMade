@@ -24,7 +24,7 @@ internal sealed record NewSubmissionReview<T>(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     ISubmissionFactory<T> Factory,
-    ITlgInputsRepository InputsRepo,
+    IInputsRepository InputsRepo,
     IStakeholderReporter<T> Reporter,
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionReview<T> where T : ITrade, new()
@@ -32,7 +32,7 @@ internal sealed record NewSubmissionReview<T>(
     private Guid _lastGuidCache = Guid.Empty;
     
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+        Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -71,7 +71,7 @@ internal sealed record NewSubmissionReview<T>(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);

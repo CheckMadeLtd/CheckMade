@@ -20,7 +20,7 @@ using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 namespace CheckMade.Tests.Integration.Persistence;
 
 // ProblematicTestsOutsideOfIDE
-public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
+public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
 {
     private ServiceProvider? _services;
     
@@ -28,26 +28,26 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_IndividualInputs_WhenAllInputsValid()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        var tlgInputs = new[]
+        var inputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 roleSetting: None),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 roleSetting: Default),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 roleSetting: Default,
                 resultantWorkflowState: new ResultantWorkflowState(
                     glossary.GetId(typeof(UserAuthWorkflow)),
                     glossary.GetId(typeof(IUserAuthWorkflowTokenEntry))))
         };
         
-        foreach (var input in tlgInputs)
+        foreach (var input in inputs)
         {
-            List<TlgInput> expectedRetrieval =
+            List<Input> expectedRetrieval =
             [ 
                 new(input.TlgDate,
                     input.MessageId,
@@ -82,16 +82,16 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_DomainTerm_ViaCustomJsonSerialization_WhenInputHasValidDomainTerm()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         
         var expectedDomainTerm = Dt(LanguageCode.de);
-        var tlgInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+        var input = inputGenerator.GetValidInputCallbackQueryForDomainTerm(
             expectedDomainTerm,
             roleSetting: Default);
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         await inputRepo.AddAsync(
-            tlgInput,
+            input,
             Option<IReadOnlyCollection<ActualSendOutParams>>.None());
         
         var retrievedInput = 
@@ -109,20 +109,20 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task SavesAndRetrieves_GeoLocation_ViaCustomJsonSerialization_WhenInputHasValidGeo()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         var expectedGeo = new Geo(
             17.456,
             -23.00987,
             15.7f);
         
-        var tlgInput = inputGenerator.GetValidTlgInputLocationMessage(
+        var input = inputGenerator.GetValidInputLocationMessage(
             expectedGeo,
             roleSetting: Default);
         
         await inputRepo.AddAsync(
-            tlgInput,
+            input,
             Option<IReadOnlyCollection<ActualSendOutParams>>.None());
         
         var retrievedInput = 
@@ -141,7 +141,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
         var inputGenerator = _services.GetRequiredService<ITelegramUpdateGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         var agent = new Agent(
             inputGenerator.Randomizer.GenerateRandomLong(),
@@ -177,7 +177,7 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
             _services = serviceCollection.BuildServiceProvider();
         }
         
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         
         // No assert needed: test fails when exception thrown!
         await inputRepo.GetAllInteractiveAsync(new Agent(devDbUserId, devDbUserId.Id, Operations));
@@ -189,15 +189,15 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllAsync_ReturnsCorrectInputs_ForGivenLiveEvent()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
 
         var inputsY2024 = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 text: "Input for Y 2024 1",
                 roleSpecified: SanitaryEngineer_DanielEn_Y2024),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 text: "Input for Y 2024 2",
                 roleSpecified: SanitaryEngineer_DanielEn_Y2024)
         };
@@ -223,32 +223,32 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
     public async Task GetAllLocationAsync_GetsOnlyLocations_FromGivenDate()
     {
         _services = new IntegrationTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputRepo = _services.GetRequiredService<ITlgInputsRepository>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var inputRepo = _services.GetRequiredService<IInputsRepository>();
         var sinceParam = new DateTime(2024, 07, 01, 12, 15, 00, DateTimeKind.Utc);
         
-        var tlgInputLongBefore = inputGenerator.GetValidTlgInputLocationMessage(
+        var inputLongBefore = inputGenerator.GetValidInputLocationMessage(
             new Geo(13.4, 51.2, Option<double>.None()),
             dateTime: sinceParam.AddHours(-2));
         
-        var tlgInputRightBefore = inputGenerator.GetValidTlgInputLocationMessage(
+        var inputRightBefore = inputGenerator.GetValidInputLocationMessage(
             new Geo(13.6, 51.7, Option<double>.None()),
             dateTime: sinceParam.AddMilliseconds(-1));
 
-        var tlgInputExactlyAt = inputGenerator.GetValidTlgInputLocationMessage(
+        var inputExactlyAt = inputGenerator.GetValidInputLocationMessage(
             new Geo(11.4, 47.2, Option<double>.None()),
             dateTime: sinceParam);
         
-        var tlgInputAfter = inputGenerator.GetValidTlgInputLocationMessage(
+        var inputAfter = inputGenerator.GetValidInputLocationMessage(
             new Geo(11.5, 47.6, Option<double>.None()),
             dateTime: sinceParam.AddSeconds(1));
 
-        List<TlgInput> allInputs = 
+        List<Input> allInputs = 
         [
-            tlgInputLongBefore,
-            tlgInputRightBefore,
-            tlgInputExactlyAt,
-            tlgInputAfter
+            inputLongBefore,
+            inputRightBefore,
+            inputExactlyAt,
+            inputAfter
         ];
 
         foreach (var i in allInputs)
@@ -265,13 +265,13 @@ public sealed class TlgInputsRepositoryTests(ITestOutputHelper testOutputHelper)
         
         await inputRepo.HardDeleteAllAsync(PrivateBotChat_Operations);
         
-        Assert.Contains(tlgInputExactlyAt.TlgDate, retrievedDates);
-        Assert.Contains(tlgInputAfter.TlgDate, retrievedDates);
-        Assert.DoesNotContain(tlgInputRightBefore.TlgDate, retrievedDates);
-        Assert.DoesNotContain(tlgInputLongBefore.TlgDate, retrievedDates);
+        Assert.Contains(inputExactlyAt.TlgDate, retrievedDates);
+        Assert.Contains(inputAfter.TlgDate, retrievedDates);
+        Assert.DoesNotContain(inputRightBefore.TlgDate, retrievedDates);
+        Assert.DoesNotContain(inputLongBefore.TlgDate, retrievedDates);
     }
 
-    private static async Task AddActionAsync(TlgInput i, ITlgInputsRepository inputRepo) => 
+    private static async Task AddActionAsync(Input i, IInputsRepository inputRepo) => 
         await inputRepo.AddAsync(
             i,
             Option<IReadOnlyCollection<ActualSendOutParams>>.None());

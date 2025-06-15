@@ -7,6 +7,6 @@ namespace CheckMade.Common.Domain.Interfaces.Logic;
 public interface IStakeholderReporter<T> where T : ITrade, new()
 {
     Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory,
+        IReadOnlyCollection<Input> inputHistory,
         string currentSubmissionTypeName);
 }

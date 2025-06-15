@@ -19,7 +19,7 @@ internal sealed record NewSubmissionEditMenu<T>(
     : INewSubmissionEditMenu<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
+        Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -52,7 +52,7 @@ internal sealed record NewSubmissionEditMenu<T>(
         throw new NotImplementedException();
     }
 
-    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         // once I choose one, depending on which it is, it just loops back to that state.
         // however, in each state, when I got there via edit, after submission of new input there, it 

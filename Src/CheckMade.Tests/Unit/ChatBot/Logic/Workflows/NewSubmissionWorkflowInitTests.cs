@@ -29,7 +29,7 @@ public sealed class NewSubmissionWorkflowInitTests
         var serviceCollection = new UnitTestStartup().Services;
         var (services, _) = serviceCollection.ConfigureTestRepositories();
 
-        var currentInput = basics.inputGenerator.GetValidTlgInputCommandMessage(
+        var currentInput = basics.inputGenerator.GetValidInputCommandMessage(
             agent.Mode,
             (int)OperationsBotCommands.NewSubmission,
             roleSpecified: currentRole);
@@ -58,11 +58,11 @@ public sealed class NewSubmissionWorkflowInitTests
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
         var agent = PrivateBotChat_Operations;
         
-        List<TlgInput> recentLocationHistory = [
-            basics.inputGenerator.GetValidTlgInputLocationMessage(
+        List<Input> recentLocationHistory = [
+            basics.inputGenerator.GetValidInputLocationMessage(
                 GetLocationFarFromAnySanitarySphere(),
                 dateTime: DateTimeOffset.UtcNow.AddSeconds(-10)),
-            basics.inputGenerator.GetValidTlgInputLocationMessage(
+            basics.inputGenerator.GetValidInputLocationMessage(
                 GetLocationNearSanitarySphere())];
         
         var serviceCollection = new UnitTestStartup().Services;
@@ -70,7 +70,7 @@ public sealed class NewSubmissionWorkflowInitTests
             inputs: recentLocationHistory);
 
         var currentInput = 
-            basics.inputGenerator.GetValidTlgInputCommandMessage(
+            basics.inputGenerator.GetValidInputCommandMessage(
                 agent.Mode, 
                 (int)OperationsBotCommands.NewSubmission);
         
@@ -101,12 +101,12 @@ public sealed class NewSubmissionWorkflowInitTests
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
         var agent = PrivateBotChat_Operations;
 
-        List<TlgInput> recentLocationHistory = [];
+        List<Input> recentLocationHistory = [];
         
         if (hasLocationHistory)
         {
             recentLocationHistory.Add(
-                basics.inputGenerator.GetValidTlgInputLocationMessage(
+                basics.inputGenerator.GetValidInputLocationMessage(
                     GetLocationFarFromAnySanitarySphere(),
                     dateTime: DateTimeOffset.UtcNow));
         }
@@ -116,7 +116,7 @@ public sealed class NewSubmissionWorkflowInitTests
             inputs: recentLocationHistory);
 
         var currentInput = 
-            basics.inputGenerator.GetValidTlgInputCommandMessage(
+            basics.inputGenerator.GetValidInputCommandMessage(
                 agent.Mode, 
                 (int)OperationsBotCommands.NewSubmission);
         
@@ -144,8 +144,8 @@ public sealed class NewSubmissionWorkflowInitTests
         var basics = TestUtils.GetBasicWorkflowTestingServices(_services);
         var agent = PrivateBotChat_Operations;
 
-        List<TlgInput> interactiveHistory = [
-            basics.inputGenerator.GetValidTlgInputCommandMessage(
+        List<Input> interactiveHistory = [
+            basics.inputGenerator.GetValidInputCommandMessage(
                 agent.Mode,
                 (int)OperationsBotCommands.NewSubmission,
                 resultantWorkflowState: new ResultantWorkflowState(
@@ -157,7 +157,7 @@ public sealed class NewSubmissionWorkflowInitTests
             inputs: interactiveHistory);
 
         var currentInput =
-            basics.inputGenerator.GetValidTlgInputTextMessage(
+            basics.inputGenerator.GetValidInputTextMessage(
                 text: Sphere1_AtX2024.Name);
 
         const string expectedOutput = "Please select the type of submission:";

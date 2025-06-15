@@ -21,8 +21,8 @@ public sealed class LanguageSettingWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
-        var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
+        var inputSettingsCommand = inputGenerator.GetValidInputCommandMessage(
             Operations,
             (int)OperationsBotCommands.Settings); 
         
@@ -30,7 +30,7 @@ public sealed class LanguageSettingWorkflowTests
         var (services, _) = serviceCollection.ConfigureTestRepositories(
             inputs:
             [
-                inputGenerator.GetValidTlgInputTextMessage(
+                inputGenerator.GetValidInputTextMessage(
                     text: "random decoy irrelevant to workflow")
             ]);
         var workflow = services.GetRequiredService<LanguageSettingWorkflow>();
@@ -51,16 +51,16 @@ public sealed class LanguageSettingWorkflowTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var glossary = _services.GetRequiredService<IDomainGlossary>();
         
-        var inputSettingsCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputSettingsCommand = inputGenerator.GetValidInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.Settings,
             resultantWorkflowState: new ResultantWorkflowState(
                 glossary.GetId(typeof(LanguageSettingWorkflow)),
                 glossary.GetId(typeof(ILanguageSettingSelect)))); 
-        var languageSettingInput = inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(
+        var languageSettingInput = inputGenerator.GetValidInputCallbackQueryForDomainTerm(
             Dt(languageCode),
             resultantWorkflowState: new ResultantWorkflowState("DDI3H3", "DL32QX"));
 
@@ -72,7 +72,7 @@ public sealed class LanguageSettingWorkflowTests
         var (services, container) = serviceCollection.ConfigureTestRepositories(
             inputs:
             [
-                inputGenerator.GetValidTlgInputTextMessage(
+                inputGenerator.GetValidInputTextMessage(
                     text: "random decoy irrelevant to workflow"),
                 inputSettingsCommand
             ],

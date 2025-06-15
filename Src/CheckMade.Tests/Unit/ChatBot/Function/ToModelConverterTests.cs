@@ -43,7 +43,7 @@ public sealed class ToModelConverterTests
         var expectedLiveEventContext = 
             Option<ILiveEventInfo>.Some(SanitaryAdmin_DanielEn_X2024.AtLiveEvent); 
         
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             update.Message.Date,
             update.Message.MessageId,
             agent,
@@ -53,17 +53,17 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
 
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 update, 
                 agent.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput, 
-            actualTlgInput.GetValueOrThrow());
+            expectedInput, 
+            actualInput.GetValueOrThrow());
     }
     
     [Fact]
@@ -92,7 +92,7 @@ public sealed class ToModelConverterTests
             ]);
         var basics = GetBasicTestingServices(services);
         
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             update.Message.Date,
             update.Message.MessageId,
             agent,
@@ -102,19 +102,19 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 update.Message.Text));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 update, 
                 agent.Mode);
     
         Assert.Equivalent(
-            expectedTlgInput, 
-            actualTlgInput.GetValueOrThrow());
+            expectedInput, 
+            actualInput.GetValueOrThrow());
         Assert.True(
-            actualTlgInput.GetValueOrThrow().OriginatorRole.IsNone);
+            actualInput.GetValueOrThrow().OriginatorRole.IsNone);
     }
     
     [Theory]
@@ -134,7 +134,7 @@ public sealed class ToModelConverterTests
             location.Longitude,
             horizontalAccuracy ?? Option<double>.None());
         
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             locationUpdate.Message.Date,
             locationUpdate.Message.MessageId,
             PrivateBotChat_Operations,
@@ -144,17 +144,17 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 geoCoordinates: expectedGeoCoordinates));
         
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 locationUpdate, 
                 PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput, 
-            actualTlgInput.GetValueOrThrow());
+            expectedInput, 
+            actualInput.GetValueOrThrow());
     }
     
     [Theory]
@@ -173,7 +173,7 @@ public sealed class ToModelConverterTests
         var commandText = operationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Operations,
@@ -183,18 +183,18 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
                 PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput,
-            actualTlgInput.GetValueOrThrow());        
+            expectedInput,
+            actualInput.GetValueOrThrow());        
     }
     
     [Theory]
@@ -212,7 +212,7 @@ public sealed class ToModelConverterTests
         var commandText = communicationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Communications,
@@ -222,18 +222,18 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
                 PrivateBotChat_Communications.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput,
-            actualTlgInput.GetValueOrThrow());        
+            expectedInput,
+            actualInput.GetValueOrThrow());        
     }
     
     [Theory]
@@ -251,7 +251,7 @@ public sealed class ToModelConverterTests
         var commandText = notificationsCommandMenu[command][LanguageCode.en].Command;
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Notifications,
@@ -261,18 +261,18 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 commandText,
                 botCommandEnumCode: (int)command));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 commandUpdate,
                 PrivateBotChat_Notifications.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput,
-            actualTlgInput.GetValueOrThrow());        
+            expectedInput,
+            actualInput.GetValueOrThrow());        
     }
     
     [Theory]
@@ -289,7 +289,7 @@ public sealed class ToModelConverterTests
             basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             callbackQuery.Message.Date,
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
@@ -299,18 +299,18 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(),
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
                 controlPromptEnumCode: controlPromptEnumCode));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 callbackQuery,
                 PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput,
-            actualTlgInput.GetValueOrThrow());
+            expectedInput,
+            actualInput.GetValueOrThrow());
     }
     
     [Fact]
@@ -324,7 +324,7 @@ public sealed class ToModelConverterTests
         var callbackQueryData = new CallbackId(domainGlossary.GetId(domainTerm));
         var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
-        var expectedTlgInput = new TlgInput(
+        var expectedInput = new Input(
             callbackQuery.Message.Date,
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
@@ -334,18 +334,18 @@ public sealed class ToModelConverterTests
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
-            TlgInputGenerator.CreateFromRelevantDetails(
+            InputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
                 domainTerm: domainTerm));
     
-        var actualTlgInput = 
+        var actualInput = 
             await basics.converter.ConvertToModelAsync(
                 callbackQuery,
                 PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
-            expectedTlgInput,
-            actualTlgInput.GetValueOrThrow());
+            expectedInput,
+            actualInput.GetValueOrThrow());
     }
 
     [Fact]

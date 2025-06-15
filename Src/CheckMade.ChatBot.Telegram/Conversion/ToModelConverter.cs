@@ -20,7 +20,7 @@ namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface IToModelConverter
 {
-    Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
+    Task<Result<Input>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode);
 }
 
 public sealed class ToModelConverter(
@@ -32,11 +32,11 @@ public sealed class ToModelConverter(
     ILogger<ToModelConverter> logger) 
     : IToModelConverter
 {
-    public async Task<Result<TlgInput>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
+    public async Task<Result<Input>> ConvertToModelAsync(UpdateWrapper update, InteractionMode interactionMode)
     {
         return (await
                 (from inputType 
-                        in GetTlgInputType(update)
+                        in GetInputType(update)
                     from attachmentDetails 
                         in GetAttachmentDetails(update)
                     from tlgAttachmentUri
@@ -55,14 +55,14 @@ public sealed class ToModelConverter(
                         in GetOriginatorRoleAsync(update, interactionMode)
                     from liveEventContext
                         in GetLiveEventContext(originatorRole)
-                    from tlgInput 
-                        in GetTlgInput(
+                    from input 
+                        in GetInput(
                             update, interactionMode, inputType, internalAttachmentUri, attachmentDetails.Type, 
                             geoCoordinates, botCommandEnumCode, domainTerm, controlPromptEnumCode, 
                             originatorRole, liveEventContext) 
-                    select tlgInput))
+                    select input))
             .Match(
-                Result<TlgInput>.Succeed,
+                Result<Input>.Succeed,
                 failure =>
                 {
                     switch (failure)
@@ -87,7 +87,7 @@ public sealed class ToModelConverter(
                 });
     }
 
-    private static Result<InputType> GetTlgInputType(UpdateWrapper update) =>
+    private static Result<InputType> GetInputType(UpdateWrapper update) =>
         update.Update.Type switch
         {
             UpdateType.Message or UpdateType.EditedMessage => update.Message.Type switch
@@ -255,7 +255,7 @@ public sealed class ToModelConverter(
             : Option<ILiveEventInfo>.None();
     }
     
-    private static Result<TlgInput> GetTlgInput(
+    private static Result<Input> GetInput(
         UpdateWrapper update,
         InteractionMode interactionMode,
         InputType inputType,
@@ -283,7 +283,7 @@ public sealed class ToModelConverter(
             ? update.Message.Text
             : update.Message.Caption;
         
-        return new TlgInput(
+        return new Input(
             update.Message.Date,
             update.Message.MessageId,
             new Agent(userId, chatId, interactionMode), 

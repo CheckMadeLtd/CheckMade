@@ -29,7 +29,7 @@ public sealed class UpdateHandler(
     IUiTranslatorFactory translatorFactory,
     IOutputToReplyMarkupConverterFactory replyMarkupConverterFactory,
     IBlobLoader blobLoader,
-    ITlgInputsRepository inputsRepo,
+    IInputsRepository inputsRepo,
     IDomainGlossary glossary,
     ILastOutputMessageIdCache msgIdCache,
     ILogger<UpdateHandler> logger)
@@ -81,16 +81,16 @@ public sealed class UpdateHandler(
                     in Result<IToModelConverter>.Run(() => 
                         toModelConverterFactory.Create(
                             new TelegramFilePathResolver(botClientByMode[currentInteractionMode])))
-                from tlgInput
+                from input
                     // this nested Result is necessary so that a failed conversion gets wrapped in a successful Result
                     // to ensure it gets passed on to the next step where any Exception or BusinessError is turned 
                     // into user-facing output
-                    in Result<Result<TlgInput>>.RunAsync(() =>
+                    in Result<Result<Input>>.RunAsync(() =>
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
-                    in Result<(Option<TlgInput> EnrichedOriginalInput, 
+                    in Result<(Option<Input> EnrichedOriginalInput, 
                         IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
-                        inputProcessor.ProcessInputAsync(tlgInput))
+                        inputProcessor.ProcessInputAsync(input))
                 from activeRoleBindings
                     in Result<IReadOnlyCollection<AgentRoleBind>>.RunAsync(async () => 
                         (await agentRoleBindingsRepo.GetAllActiveAsync())
@@ -155,7 +155,7 @@ public sealed class UpdateHandler(
     }
 
     private async Task<Unit> SaveToDbAsync(
-        Option<TlgInput> enrichedInput, IReadOnlyCollection<Result<OutputDto>> sentOutputs)
+        Option<Input> enrichedInput, IReadOnlyCollection<Result<OutputDto>> sentOutputs)
     {
         if (enrichedInput.IsNone)
             return Unit.Value;

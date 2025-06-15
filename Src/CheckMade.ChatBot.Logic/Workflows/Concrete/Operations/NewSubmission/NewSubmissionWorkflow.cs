@@ -20,7 +20,7 @@ internal sealed record NewSubmissionWorkflow(
     IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<Result<WorkflowResponse>> InitializeAsync(Input currentInput)
     {
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
         

@@ -26,7 +26,7 @@ internal sealed record NewSubmissionTradeSelection(
     : INewSubmissionTradeSelection
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
+        Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -48,7 +48,7 @@ internal sealed record NewSubmissionTradeSelection(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);

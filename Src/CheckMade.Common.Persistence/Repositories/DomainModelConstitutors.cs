@@ -176,7 +176,7 @@ internal static class DomainModelConstitutors
         }
     }
 
-    internal static TlgInput ConstituteTlgInput(
+    internal static Input ConstituteInput(
         DbDataReader reader, 
         Option<IRoleInfo> roleInfo,
         Option<ILiveEventInfo> liveEventInfo,
@@ -196,7 +196,7 @@ internal static class DomainModelConstitutors
             : reader.GetGuid(reader.GetOrdinal("input_guid"));
         var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
-        return new TlgInput(
+        return new Input(
             tlgDate,
             messageId,
             new Agent(userId, chatId, interactionMode),
@@ -245,7 +245,7 @@ internal static class DomainModelConstitutors
         return new AgentRoleBind(role, agent, activationDate, deactivationDate, status);
     }
 
-    internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
+    internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, Input sourceInput)
     {
         var destinationChatId = reader.GetInt64(reader.GetOrdinal("bridge_chat_id"));
         var destinationMessageId = reader.GetInt32(reader.GetOrdinal("bridge_message_id"));

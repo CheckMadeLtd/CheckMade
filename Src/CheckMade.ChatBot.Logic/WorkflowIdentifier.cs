@@ -16,7 +16,7 @@ namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory);
+    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
 }
 
 internal sealed record WorkflowIdentifier(
@@ -28,7 +28,7 @@ internal sealed record WorkflowIdentifier(
     IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
 {
-    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory)
+    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
@@ -73,13 +73,13 @@ internal sealed record WorkflowIdentifier(
                 $"An input with these properties must not be an {nameof(activeWorkflowLauncher)}.")
         };
 
-        Option<TlgInput> GetWorkflowLauncherOfLastActiveWorkflow()
+        Option<Input> GetWorkflowLauncherOfLastActiveWorkflow()
         {
             var lastLauncher = 
                 inputHistory.LastOrDefault(i => i.IsWorkflowLauncher(allBridges));
             
             if (lastLauncher is null)
-                return Option<TlgInput>.None();
+                return Option<Input>.None();
             
             var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
@@ -96,11 +96,11 @@ internal sealed record WorkflowIdentifier(
             return isWorkflowActive switch
             {
                 true => lastLauncher,
-                _ => Option<TlgInput>.None()
+                _ => Option<Input>.None()
             };
         }
         
-        Option<WorkflowBase> GetGlobalMenuWorkflow(TlgInput inputWithGlobalBotCommand)
+        Option<WorkflowBase> GetGlobalMenuWorkflow(Input inputWithGlobalBotCommand)
         {
             var lastBotCommandCode = inputWithGlobalBotCommand.Details.BotCommandEnumCode.GetValueOrThrow();
             
@@ -118,7 +118,7 @@ internal sealed record WorkflowIdentifier(
         }
     }
 
-    private static bool IsUserAuthenticated(IReadOnlyCollection<TlgInput> inputHistory) => 
+    private static bool IsUserAuthenticated(IReadOnlyCollection<Input> inputHistory) => 
         inputHistory.Count != 0 && 
         inputHistory.Last().OriginatorRole.IsSome;
 }

@@ -18,12 +18,12 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId)
         };
         
@@ -32,7 +32,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
         
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId);
 
         var result = 
@@ -48,7 +48,7 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
@@ -61,9 +61,9 @@ public sealed class GeneralWorkflowUtilsTests
 
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(-1)),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(1))
         };
         
@@ -73,7 +73,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId, dateTime: cutoffDate.AddHours(2));
 
         var result = 
@@ -93,7 +93,7 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var oldestCutoffDate = DateTimeOffset.UtcNow.AddDays(-3);
@@ -118,13 +118,13 @@ public sealed class GeneralWorkflowUtilsTests
 
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId,
                 dateTime: oldestCutoffDate.AddHours(-1)),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId,
                 dateTime: oldestCutoffDate.AddHours(1)),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId,
                 dateTime: latestCutoffDate.AddHours(-1))
         };
@@ -135,7 +135,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId,
             dateTime: latestCutoffDate.AddHours(1));
         
@@ -152,7 +152,7 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var cutoffDate = DateTimeOffset.UtcNow.AddDays(-1);
@@ -165,7 +165,7 @@ public sealed class GeneralWorkflowUtilsTests
 
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId,
                 dateTime: cutoffDate.AddHours(-2))
         };
@@ -176,7 +176,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId,
             dateTime: cutoffDate.AddHours(-1));
         
@@ -191,7 +191,7 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
 
         var roleBindWithNullDeactivation = new AgentRoleBind(
@@ -203,7 +203,7 @@ public sealed class GeneralWorkflowUtilsTests
 
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId)
         };
 
@@ -213,7 +213,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId);
             
         var result = 
@@ -229,15 +229,15 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var agentDecoy = UserId02_ChatId03_Operations;
 
         var historicInputs = new[]
         {
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agent.UserId, agent.ChatId),
-            inputGenerator.GetValidTlgInputTextMessage(
+            inputGenerator.GetValidInputTextMessage(
                 agentDecoy.UserId, agentDecoy.ChatId)
         };
 
@@ -246,7 +246,7 @@ public sealed class GeneralWorkflowUtilsTests
             inputs: historicInputs);
         var workflowUtils = services.GetRequiredService<IGeneralWorkflowUtils>();
 
-        var currentInput = inputGenerator.GetValidTlgInputTextMessage(
+        var currentInput = inputGenerator.GetValidInputTextMessage(
             agent.UserId, agent.ChatId);
             
         var result = 
@@ -267,7 +267,7 @@ public sealed class GeneralWorkflowUtilsTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var agent = PrivateBotChat_Operations;
         var agentDecoy = UserId02_ChatId03_Operations;
 
@@ -280,20 +280,20 @@ public sealed class GeneralWorkflowUtilsTests
         var historicInputs = new[]
         {
             // Decoy: too long ago
-            inputGenerator.GetValidTlgInputLocationMessage(
+            inputGenerator.GetValidInputLocationMessage(
                 randomDecoyLocation,
                 agent.UserId, agent.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes + 2))),
             // Decoy: wrong Agent
-            inputGenerator.GetValidTlgInputLocationMessage(
+            inputGenerator.GetValidInputLocationMessage(
                 randomDecoyLocation,
                 agentDecoy.UserId, agentDecoy.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1))),
             // Decoy: not a LocationUpdate
-            inputGenerator.GetValidTlgInputTextMessage(),
+            inputGenerator.GetValidInputTextMessage(),
             
             // Expected to be included
-            inputGenerator.GetValidTlgInputLocationMessage(
+            inputGenerator.GetValidInputLocationMessage(
                 expectedLocation,
                 agent.UserId, agent.ChatId,
                 DateTimeOffset.UtcNow.AddMinutes(-(IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes - 1)))

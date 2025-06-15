@@ -22,7 +22,7 @@ public sealed record StakeholderReporter<T>(
     : IStakeholderReporter<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory, string currentSubmissionTypeName)
+        IReadOnlyCollection<Input> inputHistory, string currentSubmissionTypeName)
     {
         var newSubmission = 
             await SubmissionFactory.CreateAsync(inputHistory); 
@@ -64,7 +64,7 @@ public sealed record StakeholderReporter<T>(
     }
 
     private async Task<IReadOnlyCollection<LogicalPort>> GetNotificationRecipientsAsync(
-        IReadOnlyCollection<TlgInput> inputHistory,
+        IReadOnlyCollection<Input> inputHistory,
         ISphereOfAction submissionSphere,
         string currentSubmissionTypeName)
     {

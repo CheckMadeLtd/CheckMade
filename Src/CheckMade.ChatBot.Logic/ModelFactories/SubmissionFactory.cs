@@ -20,7 +20,7 @@ internal sealed record SubmissionFactory<T>(
     IDomainGlossary Glossary) 
     : ISubmissionFactory<T> where T : ITrade, new()
 {
-    public async Task<ISubmission> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<ISubmission> CreateAsync(IReadOnlyCollection<Input> inputs)
     {
         var currentTrade = new T();
         var role = (await RolesRepo.GetAsync(

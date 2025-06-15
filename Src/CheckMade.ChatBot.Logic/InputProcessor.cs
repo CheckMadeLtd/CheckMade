@@ -18,8 +18,8 @@ internal sealed class InputProcessor(
     ILogger<InputProcessor> logger)
     : IInputProcessor
 {
-    public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input)
+    public async Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+        ProcessInputAsync(Result<Input> input)
     {
         return await input.Match(
             async currentInput =>
@@ -68,7 +68,7 @@ internal sealed class InputProcessor(
                 };
                 
                 return (
-                    Option<TlgInput>.Some(enrichedCurrentInput), 
+                    Option<Input>.Some(enrichedCurrentInput), 
                     ResolveResponseResultIntoOutputs(
                         responseResult,
                         outputBuilder,
@@ -83,14 +83,14 @@ internal sealed class InputProcessor(
                     _ => new OutputDto { Text = ((BusinessError)failure).Error }
                 };
 
-                return Task.FromResult<(Option<TlgInput> EnrichedOriginalInput,
+                return Task.FromResult<(Option<Input> EnrichedOriginalInput,
                     IReadOnlyCollection<OutputDto> ResultingOutputs)>((
-                    Option<TlgInput>.None(), [failureOutput]
+                    Option<Input>.None(), [failureOutput]
                 ));
             });
     }
 
-    private static bool IsStartCommand(TlgInput currentInput) =>
+    private static bool IsStartCommand(Input currentInput) =>
         currentInput.InputType.Equals(InputType.CommandMessage)
         && currentInput.Details.BotCommandEnumCode.Equals(Start.CommandCode);
     
@@ -119,7 +119,7 @@ internal sealed class InputProcessor(
             static r => r.EntityGuid,
             static _ => Option<Guid>.None());
     
-    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
+    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
             return false;
@@ -138,7 +138,7 @@ internal sealed class InputProcessor(
                !IsWorkflowTerminated(previousWorkflowInputHistory);
     }
     
-    private bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
+    private bool IsWorkflowTerminated(IReadOnlyCollection<Input> inputHistory)
     {
         return
             inputHistory.Any(i =>
@@ -151,7 +151,7 @@ internal sealed class InputProcessor(
     private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
             Option<WorkflowBase> activeWorkflow,
-            TlgInput currentInput)
+            Input currentInput)
     {
         return await activeWorkflow.Match(
             wf => 
@@ -173,7 +173,7 @@ internal sealed class InputProcessor(
         Result<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
         Option<WorkflowBase> activeWorkflow,
-        TlgInput currentInput)
+        Input currentInput)
     {
         return responseResult.Match(
             wr => 

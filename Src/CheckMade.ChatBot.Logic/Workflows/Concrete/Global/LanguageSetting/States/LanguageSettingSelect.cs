@@ -26,7 +26,7 @@ internal sealed record LanguageSettingSelect(
     : ILanguageSettingSelect
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
+        Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
@@ -48,7 +48,7 @@ internal sealed record LanguageSettingSelect(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);

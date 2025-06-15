@@ -52,7 +52,7 @@ public abstract class TestStartupBase
         });
         
         Services.AddSingleton<ITelegramUpdateGenerator, TelegramUpdateGenerator>();
-        Services.AddSingleton<ITlgInputGenerator, TlgInputGenerator>();
+        Services.AddSingleton<IInputGenerator, InputGenerator>();
         
         
         Services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
