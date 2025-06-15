@@ -1,9 +1,9 @@
 using System.Data.Common;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.ChatBot;
@@ -14,7 +14,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
     private static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> WorkflowBridgeMapper =
         static (reader, glossary) =>
         {
-            var sourceInput = TlgInputsRepository.TlgInputMapper(reader, glossary);
+            var sourceInput = InputsRepository.InputMapper(reader, glossary);
 
             return ConstituteWorkflowBridge(reader, sourceInput);
         };
@@ -47,13 +47,13 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                                         dwb.dst_message_id AS bridge_message_id
 
                                         FROM derived_workflow_bridges dwb
-                                        INNER JOIN tlg_inputs inp on dwb.src_input_id = inp.id
+                                        INNER JOIN inputs inp on dwb.src_input_id = inp.id
                                         LEFT JOIN roles r on inp.role_id = r.id
                                         LEFT JOIN live_events le on inp.live_event_id = le.id
-                                        LEFT JOIN derived_workflow_states dws on dws.tlg_inputs_id = inp.id
+                                        LEFT JOIN derived_workflow_states dws on dws.inputs_id = inp.id
                                         """;
 
-    public async Task<WorkflowBridge?> GetAsync(TlgChatId dstChatId, TlgMessageId dstMessageId)
+    public async Task<WorkflowBridge?> GetAsync(ChatId dstChatId, MessageId dstMessageId)
     {
         const string whereClause = "WHERE dwb.dst_chat_id = @dstChatId AND dwb.dst_message_id = @dstMessageId";
 

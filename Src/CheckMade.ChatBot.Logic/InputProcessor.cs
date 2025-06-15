@@ -1,23 +1,14 @@
 ﻿using CheckMade.ChatBot.Logic.Workflows;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Logic;
-
-public interface IInputProcessor
-{
-    public static readonly UiString SeeValidBotCommandsInstruction = 
-        Ui("Tap on the menu button or type '/' to see available BotCommands.");
-
-    public Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input);
-}
 
 internal sealed class InputProcessor(
     IWorkflowIdentifier workflowIdentifier,
@@ -27,13 +18,13 @@ internal sealed class InputProcessor(
     ILogger<InputProcessor> logger)
     : IInputProcessor
 {
-    public async Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
-        ProcessInputAsync(Result<TlgInput> input)
+    public async Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+        ProcessInputAsync(Result<Input> input)
     {
         return await input.Match(
             async currentInput =>
             {
-                if (currentInput.InputType == TlgInputType.Location)
+                if (currentInput.InputType == InputType.Location)
                 {
                     return (currentInput, []);
                 }
@@ -56,12 +47,12 @@ internal sealed class InputProcessor(
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission."),
-                            UpdateExistingOutputMessageId = msgIdCache.GetLastMessageId(currentInput.TlgAgent)
+                            UpdateExistingOutputMessageId = msgIdCache.GetLastMessageId(currentInput.Agent)
                         });
                 }
 
                 var inputHistory = 
-                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput);
+                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput);
                 
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
@@ -77,7 +68,7 @@ internal sealed class InputProcessor(
                 };
                 
                 return (
-                    Option<TlgInput>.Some(enrichedCurrentInput), 
+                    Option<Input>.Some(enrichedCurrentInput), 
                     ResolveResponseResultIntoOutputs(
                         responseResult,
                         outputBuilder,
@@ -92,16 +83,16 @@ internal sealed class InputProcessor(
                     _ => new OutputDto { Text = ((BusinessError)failure).Error }
                 };
 
-                return Task.FromResult<(Option<TlgInput> EnrichedOriginalInput,
+                return Task.FromResult<(Option<Input> EnrichedOriginalInput,
                     IReadOnlyCollection<OutputDto> ResultingOutputs)>((
-                    Option<TlgInput>.None(), [failureOutput]
+                    Option<Input>.None(), [failureOutput]
                 ));
             });
     }
 
-    private static bool IsStartCommand(TlgInput currentInput) =>
-        currentInput.InputType.Equals(TlgInputType.CommandMessage)
-        && currentInput.Details.BotCommandEnumCode.Equals(TlgStart.CommandCode);
+    private static bool IsStartCommand(Input currentInput) =>
+        currentInput.InputType.Equals(InputType.CommandMessage)
+        && currentInput.Details.BotCommandEnumCode.Equals(Start.CommandCode);
     
     private ResultantWorkflowState? GetResultantWorkflowState(
         Result<WorkflowResponse> response,
@@ -128,26 +119,26 @@ internal sealed class InputProcessor(
             static r => r.EntityGuid,
             static _ => Option<Guid>.None());
     
-    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(TlgInput currentInput)
+    private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
             return false;
         
-        if (currentInput.InputType is not TlgInputType.CommandMessage)
+        if (currentInput.InputType is not InputType.CommandMessage)
             return false;
         
         var previousWorkflowInputHistory = 
-            (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.TlgAgent, currentInput))
+            (await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput))
             .SkipLast(1) // Excluding the current BotCommand input
             .GetLatestRecordsUpTo(static input => 
-                input.InputType.Equals(TlgInputType.CommandMessage))
+                input.InputType.Equals(InputType.CommandMessage))
             .ToList();
 
         return previousWorkflowInputHistory.Count > 0 && 
                !IsWorkflowTerminated(previousWorkflowInputHistory);
     }
     
-    private bool IsWorkflowTerminated(IReadOnlyCollection<TlgInput> inputHistory)
+    private bool IsWorkflowTerminated(IReadOnlyCollection<Input> inputHistory)
     {
         return
             inputHistory.Any(i =>
@@ -160,7 +151,7 @@ internal sealed class InputProcessor(
     private static async Task<Result<WorkflowResponse>>
         GetResponseFromActiveWorkflowAsync(
             Option<WorkflowBase> activeWorkflow,
-            TlgInput currentInput)
+            Input currentInput)
     {
         return await activeWorkflow.Match(
             wf => 
@@ -182,7 +173,7 @@ internal sealed class InputProcessor(
         Result<WorkflowResponse> responseResult,
         List<OutputDto> outputBuilder,
         Option<WorkflowBase> activeWorkflow,
-        TlgInput currentInput)
+        Input currentInput)
     {
         return responseResult.Match(
             wr => 
@@ -198,9 +189,9 @@ internal sealed class InputProcessor(
                         logger.LogError($"""
                                          The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
                                          this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
-                                         UserId: {currentInput.TlgAgent.UserId}; ChatId: {currentInput.TlgAgent.ChatId}; 
-                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.TlgAgent.Mode};
-                                         Date: {currentInput.TlgDate}; 
+                                         UserId: {currentInput.Agent.UserId}; ChatId: {currentInput.Agent.ChatId}; 
+                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.Agent.Mode};
+                                         Date: {currentInput.TimeStamp}; 
                                          For more details of input, check database!
                                          """);
                         throw exw.Exception;

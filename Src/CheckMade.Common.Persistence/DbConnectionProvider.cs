@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using CheckMade.Common.Interfaces.Persistence;
+using CheckMade.Common.Domain.Interfaces.Persistence;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence;
 
-public class DbConnectionProvider(string connectionString) : IDbConnectionProvider
+public sealed class DbConnectionProvider(string connectionString) : IDbConnectionProvider
 {
     // In the Unix Env. (including locally and on GitHub Runner) the var names/keys need to use '_'
     // but in Azure Keyvault they need to use '-'

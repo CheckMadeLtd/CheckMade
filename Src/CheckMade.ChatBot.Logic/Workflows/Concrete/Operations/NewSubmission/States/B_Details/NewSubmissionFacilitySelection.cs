@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 // ReSharper disable UseCollectionExpression
 
@@ -25,8 +25,8 @@ internal sealed record NewSubmissionFacilitySelection<T>(
     : INewSubmissionFacilitySelection<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput, 
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentSphere = 
@@ -57,9 +57,9 @@ internal sealed record NewSubmissionFacilitySelection<T>(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+        if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         if (currentInput.Details.DomainTerm.IsSome)
@@ -80,7 +80,7 @@ internal sealed record NewSubmissionFacilitySelection<T>(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                             UiNoTranslate(" "),
                             Glossary.GetUi(selectedFacility)),
-                        UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                        UpdateExistingOutputMessageId = currentInput.MessageId
                     });
             
             return currentSubmissionTypeName switch

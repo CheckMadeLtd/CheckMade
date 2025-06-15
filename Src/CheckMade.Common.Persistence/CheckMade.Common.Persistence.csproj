@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
+      <ProjectReference Include="..\CheckMade.Common.Domain\CheckMade.Common.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

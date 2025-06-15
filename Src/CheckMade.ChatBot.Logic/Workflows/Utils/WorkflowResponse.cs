@@ -1,7 +1,8 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
@@ -29,7 +30,7 @@ internal sealed record WorkflowResponse(
     }
 
     internal static WorkflowResponse Create(
-        TlgInput currentInput, 
+        Input currentInput, 
         OutputDto singleOutput, 
         IReadOnlyCollection<OutputDto>? additionalOutputs = null,
         IWorkflowState? newState = null, 
@@ -64,16 +65,16 @@ internal sealed record WorkflowResponse(
         );
     }
     
-    private static (Option<TlgMessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
+    private static (Option<MessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
         ResolvePromptTransitionIntoComponents(
             PromptTransition? promptTransition, 
-            TlgInput currentInput)
+            Input currentInput)
     {
         var nextPromptInPlaceUpdateMessageId = promptTransition != null
             ? promptTransition.IsNextPromptInPlaceUpdate
-                ? currentInput.TlgMessageId
-                : Option<TlgMessageId>.None()
-            : Option<TlgMessageId>.None();
+                ? currentInput.MessageId
+                : Option<MessageId>.None()
+            : Option<MessageId>.None();
 
         var currentPromptFinalizer = promptTransition != null
             ? promptTransition.CurrentPromptFinalizer
@@ -83,7 +84,7 @@ internal sealed record WorkflowResponse(
     }
 
     internal static async Task<WorkflowResponse> CreateFromNextStateAsync(
-        TlgInput currentInput,
+        Input currentInput,
         IWorkflowStateNormal newState,
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)

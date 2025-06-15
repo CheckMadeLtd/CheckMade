@@ -1,18 +1,19 @@
 using System.ComponentModel;
-using CheckMade.ChatBot.Function.Services.Conversion;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.ChatBot.Telegram.Conversion;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.ControlPrompts;
+using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
@@ -252,7 +253,7 @@ public sealed class OutputToReplyMarkupConverterTests
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
         var converter = converterFactory.Create(new UiTranslator(
             Option<IReadOnlyDictionary<string, string>>.None(),
-            sp.GetRequiredService<ILogger<UiTranslator>>()));
+            sp.GetRequiredService<ILogger<UiTranslator>>()), new DomainGlossary());
 
         var controlPromptsGlossary = new ControlPromptsGlossary();
         var uiByPromptId = controlPromptsGlossary.UiByCallbackId;

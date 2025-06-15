@@ -4,19 +4,19 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Utils;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
-using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic;
 
 internal interface IWorkflowIdentifier
 {
-    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory);
+    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
 }
 
 internal sealed record WorkflowIdentifier(
@@ -28,7 +28,7 @@ internal sealed record WorkflowIdentifier(
     IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
 {
-    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<TlgInput> inputHistory)
+    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
             return Option<WorkflowBase>.Some(UserAuthWorkflow);
@@ -50,20 +50,20 @@ internal sealed record WorkflowIdentifier(
                      BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => 
                 GetGlobalMenuWorkflow(activeWorkflowLauncher),
             
-            { InputType: CommandMessage, TlgAgent.Mode: Operations } => 
+            { InputType: CommandMessage, Agent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     (int)OperationsBotCommands.NewSubmission => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
                     _ => Option<WorkflowBase>.None()
                 },
             
-            { InputType: CommandMessage, TlgAgent.Mode: Notifications } => 
+            { InputType: CommandMessage, Agent.Mode: Notifications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()
                 },
 
-            { InputType: CommandMessage, TlgAgent.Mode: Communications } => 
+            { InputType: CommandMessage, Agent.Mode: Communications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
                     _ => Option<WorkflowBase>.None()
@@ -73,18 +73,18 @@ internal sealed record WorkflowIdentifier(
                 $"An input with these properties must not be an {nameof(activeWorkflowLauncher)}.")
         };
 
-        Option<TlgInput> GetWorkflowLauncherOfLastActiveWorkflow()
+        Option<Input> GetWorkflowLauncherOfLastActiveWorkflow()
         {
             var lastLauncher = 
                 inputHistory.LastOrDefault(i => i.IsWorkflowLauncher(allBridges));
             
             if (lastLauncher is null)
-                return Option<TlgInput>.None();
+                return Option<Input>.None();
             
             var lastWorkflowHistory =
                 inputHistory.GetLatestRecordsUpTo(i => 
-                    i.TlgMessageId == lastLauncher.TlgMessageId &&
-                    i.TlgDate == lastLauncher.TlgDate);
+                    i.MessageId == lastLauncher.MessageId &&
+                    i.TimeStamp == lastLauncher.TimeStamp);
             
             var isWorkflowActive =
                 !lastWorkflowHistory
@@ -96,11 +96,11 @@ internal sealed record WorkflowIdentifier(
             return isWorkflowActive switch
             {
                 true => lastLauncher,
-                _ => Option<TlgInput>.None()
+                _ => Option<Input>.None()
             };
         }
         
-        Option<WorkflowBase> GetGlobalMenuWorkflow(TlgInput inputWithGlobalBotCommand)
+        Option<WorkflowBase> GetGlobalMenuWorkflow(Input inputWithGlobalBotCommand)
         {
             var lastBotCommandCode = inputWithGlobalBotCommand.Details.BotCommandEnumCode.GetValueOrThrow();
             
@@ -118,7 +118,7 @@ internal sealed record WorkflowIdentifier(
         }
     }
 
-    private static bool IsUserAuthenticated(IReadOnlyCollection<TlgInput> inputHistory) => 
+    private static bool IsUserAuthenticated(IReadOnlyCollection<Input> inputHistory) => 
         inputHistory.Count != 0 && 
         inputHistory.Last().OriginatorRole.IsSome;
 }

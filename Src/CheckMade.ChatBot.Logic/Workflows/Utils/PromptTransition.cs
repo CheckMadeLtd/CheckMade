@@ -1,7 +1,7 @@
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
@@ -31,15 +31,15 @@ internal sealed record PromptTransition
     /// Optionally applies to last message: e.g. in cases where it has an InlineKeyboard that wasn't used. 
     /// </summary>
     internal PromptTransition(
-        TlgMessageId currentMessageId,
+        MessageId currentMessageId,
         ILastOutputMessageIdCache msgIdCache,
-        TlgAgent currentTlgAgent,
+        Agent currentAgent,
         bool applyToPreviousInsteadOfCurrentInput = false)
     {
         IsNextPromptInPlaceUpdate = false;
 
         var updateMessageId = applyToPreviousInsteadOfCurrentInput
-            ? msgIdCache.GetLastMessageId(currentTlgAgent)
+            ? msgIdCache.GetLastMessageId(currentAgent)
             : currentMessageId;
 
         CurrentPromptFinalizer = new OutputDto

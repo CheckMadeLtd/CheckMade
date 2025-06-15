@@ -1,11 +1,12 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 
@@ -18,8 +19,8 @@ internal sealed record NewSubmissionEditMenu<T>(
     : INewSubmissionEditMenu<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Input currentInput,
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         var workflowStateHistory =
@@ -51,7 +52,7 @@ internal sealed record NewSubmissionEditMenu<T>(
         throw new NotImplementedException();
     }
 
-    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         // once I choose one, depending on which it is, it just loops back to that state.
         // however, in each state, when I got there via edit, after submission of new input there, it 

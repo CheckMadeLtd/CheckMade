@@ -1,27 +1,25 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Utils.GIS;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Domain.Utils;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
 
 internal static class NewSubmissionUtils
 {
     internal static async Task<Option<Geo>> LastKnownLocationAsync(
-        TlgInput currentInput, IGeneralWorkflowUtils workflowUtils)
+        Input currentInput, IGeneralWorkflowUtils workflowUtils)
     {
         var lastKnownLocationInput =
-            (await workflowUtils.GetRecentLocationHistory(currentInput.TlgAgent))
+            (await workflowUtils.GetRecentLocationHistory(currentInput.Agent))
             .LastOrDefault();
 
         return lastKnownLocationInput is null 
@@ -34,8 +32,8 @@ internal static class NewSubmissionUtils
         ILiveEventsRepository liveEventsRepo,
         Geo lastKnownLocation,
         ITrade trade,
-        TlgInput currentInput,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        Input currentInput,
+        IAgentRoleBindingsRepository roleBindingsRepo,
         bool filterAssignedSpheresIfAny = true)
     {
         var tradeSpecificNearnessThreshold = trade switch
@@ -69,15 +67,15 @@ internal static class NewSubmissionUtils
     }
 
     internal static async Task<IReadOnlyCollection<ISphereOfAction>> AssignedSpheresOrAllAsync(
-        TlgInput currentInput,
-        ITlgAgentRoleBindingsRepository roleBindingsRepo,
+        Input currentInput,
+        IAgentRoleBindingsRepository roleBindingsRepo,
         ILiveEventsRepository liveEventsRepo,
         ITrade trade)
     {
         var liveEventInfo = currentInput.LiveEventContext.GetValueOrThrow();
             
         var currentRole = (await roleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.Role.Equals(
+            .First(arb => arb.Role.Equals(
                 currentInput.OriginatorRole.GetValueOrThrow()))
             .Role;
         var currentRoleType = currentRole.RoleType;
@@ -112,7 +110,7 @@ internal static class NewSubmissionUtils
     }
 
     internal static ISphereOfAction GetLastSelectedSphere<T>(
-        IReadOnlyCollection<TlgInput> inputs,
+        IReadOnlyCollection<Input> inputs,
         IReadOnlyCollection<ISphereOfAction> spheres) where T : ITrade, new()
     {
         var sphereNames = spheres.Select(static s => s.Name).ToHashSet();
@@ -120,12 +118,12 @@ internal static class NewSubmissionUtils
 
         var lastSelectedSphereInput =
             inputs.LastOrDefault(i =>
-                i.InputType == TlgInputType.TextMessage &&
+                i.InputType == InputType.TextMessage &&
                 containsSphereName(i.Details.Text.GetValueOrThrow()));
 
         var lastConfirmedSphereInput =
             inputs.LastOrDefault(i =>
-                i.InputType == TlgInputType.CallbackQuery &&
+                i.InputType == InputType.CallbackQuery &&
                 i.Details.ControlPromptEnumCode.IsSome &&
                 i.Details.ControlPromptEnumCode.GetValueOrThrow() == (int)ControlPrompts.Yes &&
                 containsSphereName(i.Details.Text.GetValueOrThrow()));
@@ -133,11 +131,11 @@ internal static class NewSubmissionUtils
         var sphereNameByMessageId = new Dictionary<int, string>();
 
         if (lastSelectedSphereInput != null)
-            sphereNameByMessageId[lastSelectedSphereInput.TlgMessageId] =
+            sphereNameByMessageId[lastSelectedSphereInput.MessageId] =
                 lastSelectedSphereInput.Details.Text.GetValueOrThrow();
 
         if (lastConfirmedSphereInput != null)
-            sphereNameByMessageId[lastConfirmedSphereInput.TlgMessageId] =
+            sphereNameByMessageId[lastConfirmedSphereInput.MessageId] =
                 sphereNames.First(sn =>
                     lastConfirmedSphereInput.Details.Text.GetValueOrThrow().Contains(sn));  
         
@@ -148,7 +146,7 @@ internal static class NewSubmissionUtils
                     .Value);
     }
 
-    internal static Type GetLastSubmissionType(IReadOnlyCollection<TlgInput> inputs)
+    internal static Type GetLastSubmissionType(IReadOnlyCollection<Input> inputs)
     {
         return 
             inputs

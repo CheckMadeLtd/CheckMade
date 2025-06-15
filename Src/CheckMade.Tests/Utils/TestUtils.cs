@@ -1,6 +1,7 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Utils;
@@ -52,11 +53,11 @@ internal static class TestUtils
         return combinedRawEnglish;
     }
 
-    internal static (ITlgInputGenerator inputGenerator, IDomainGlossary glossary)
+    internal static (IInputGenerator inputGenerator, IDomainGlossary glossary)
         GetBasicWorkflowTestingServices(IServiceProvider services)
     {
         return (
-            services.GetRequiredService<ITlgInputGenerator>(),
+            services.GetRequiredService<IInputGenerator>(),
             services.GetRequiredService<IDomainGlossary>());
     }
 }

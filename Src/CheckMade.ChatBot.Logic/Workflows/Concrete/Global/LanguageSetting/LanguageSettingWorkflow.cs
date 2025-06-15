@@ -1,9 +1,9 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 
@@ -14,7 +14,7 @@ internal sealed record LanguageSettingWorkflow(
     IDomainGlossary Glossary) 
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<Result<WorkflowResponse>> InitializeAsync(Input currentInput)
     {
         return await WorkflowResponse.CreateFromNextStateAsync(
             currentInput,

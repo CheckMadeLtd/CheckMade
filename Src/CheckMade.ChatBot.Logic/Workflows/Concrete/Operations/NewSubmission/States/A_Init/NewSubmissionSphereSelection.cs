@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 // ReSharper disable UseCollectionExpression
 
@@ -20,13 +20,13 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
 {
     private readonly ILiveEventsRepository _liveEventsRepo;
     private readonly ITrade _trade;
-    private readonly ITlgAgentRoleBindingsRepository _roleBindingsRepo;
+    private readonly IAgentRoleBindingsRepository _roleBindingsRepo;
     
     public NewSubmissionSphereSelection(
         ILiveEventsRepository liveEventsRepo,
         IDomainGlossary glossary,
         IStateMediator mediator, 
-        ITlgAgentRoleBindingsRepository roleBindingsRepo)
+        IAgentRoleBindingsRepository roleBindingsRepo)
     {
         _liveEventsRepo = liveEventsRepo;
         Glossary = glossary;
@@ -40,8 +40,8 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
     public IStateMediator Mediator { get; }
 
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -63,13 +63,13 @@ internal sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSel
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         var relevantSphereNames = (await AssignedSpheresOrAllAsync(
                 currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
             .Select(static soa => soa.Name).ToArray(); 
         
-        if (currentInput.InputType is not TlgInputType.TextMessage ||
+        if (currentInput.InputType is not InputType.TextMessage ||
             !relevantSphereNames
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {

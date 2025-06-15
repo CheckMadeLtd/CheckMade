@@ -1,12 +1,12 @@
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.A_Init;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
@@ -16,11 +16,11 @@ internal sealed record NewSubmissionWorkflow(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     IDerivedWorkflowBridgesRepository BridgesRepo,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IDomainGlossary Glossary)
     : WorkflowBase(WorkflowUtils, Mediator, BridgesRepo, Glossary)
 {
-    protected override async Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput)
+    protected override async Task<Result<WorkflowResponse>> InitializeAsync(Input currentInput)
     {
         var currentRole = currentInput.OriginatorRole.GetValueOrThrow();
         

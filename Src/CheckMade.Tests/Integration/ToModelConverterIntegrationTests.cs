@@ -1,7 +1,7 @@
 using System.Text;
-using CheckMade.ChatBot.Function.Services.BotClient;
-using CheckMade.ChatBot.Function.Services.Conversion;
-using CheckMade.Common.Interfaces.ExternalServices.AzureServices;
+using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.ChatBot.Telegram.Conversion;
+using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,28 +1,28 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.LiveEvents;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
+using User = CheckMade.Common.Domain.Data.Core.Actors.User;
 
 namespace CheckMade.Tests.Utils;
 
 internal static class TestRepositoryUtils
 {
-    internal static TlgAgentRoleBind GetNewRoleBind(
+    internal static AgentRoleBind GetNewRoleBind(
         Role role, 
-        TlgAgent tlgAgent)
+        Agent agent)
     {
-        return new TlgAgentRoleBind(
+        return new AgentRoleBind(
             role,
-            tlgAgent,
+            agent,
             DateTimeOffset.UtcNow,
             Option<DateTimeOffset>.None());
     }
@@ -33,17 +33,17 @@ internal static class TestRepositoryUtils
         IReadOnlyCollection<LiveEvent>? liveEvents = null,
         IReadOnlyCollection<User>? users = null,
         IReadOnlyCollection<Role>? roles = null,
-        IReadOnlyCollection<TlgAgentRoleBind>? roleBindings = null,
-        IReadOnlyCollection<TlgInput>? inputs = null,
+        IReadOnlyCollection<AgentRoleBind>? roleBindings = null,
+        IReadOnlyCollection<Input>? inputs = null,
         IReadOnlyCollection<WorkflowBridge>? bridges = null)
     {
         var defaultLiveEvent = X2024;
         List<LiveEvent> defaultLiveEvents = [X2024, X2025];
         List<User> defaultUsers = [DanielEn, DanielDe];
         List<Role> defaultRoles = [SanitaryAdmin_DanielEn_X2024];
-        List<TlgAgentRoleBind> defaultRoleBindings = 
+        List<AgentRoleBind> defaultRoleBindings = 
             [GetNewRoleBind(SanitaryAdmin_DanielEn_X2024, PrivateBotChat_Operations)];
-        List<TlgInput> defaultInputs = [];
+        List<Input> defaultInputs = [];
         List<WorkflowBridge> defaultBridges = [];
 
         var mockContainer = new MockContainer();
@@ -53,7 +53,7 @@ internal static class TestRepositoryUtils
             .ArrangeTestUsersRepo(users ?? defaultUsers, mockContainer)
             .ArrangeTestRolesRepo(roles ?? defaultRoles, mockContainer)
             .ArrangeTestRoleBindingsRepo(roleBindings ?? defaultRoleBindings, mockContainer)
-            .ArrangeTestTlgInputsRepo(inputs ?? defaultInputs, mockContainer)
+            .ArrangeTestInputsRepo(inputs ?? defaultInputs, mockContainer)
             .ArrangeTestDerivedWorkflowBridgesRepo(bridges ?? defaultBridges, mockContainer);
 
         return (serviceCollection.BuildServiceProvider(), mockContainer);
@@ -116,10 +116,10 @@ internal static class TestRepositoryUtils
 
     private static IServiceCollection ArrangeTestRoleBindingsRepo(
         this IServiceCollection serviceCollection, 
-        IReadOnlyCollection<TlgAgentRoleBind> roleBindings,
+        IReadOnlyCollection<AgentRoleBind> roleBindings,
         MockContainer container)
     {
-        var mockRoleBindingsRepo = new Mock<ITlgAgentRoleBindingsRepository>();
+        var mockRoleBindingsRepo = new Mock<IAgentRoleBindingsRepository>();
         
         mockRoleBindingsRepo
             .Setup(static repo => repo.GetAllAsync())
@@ -128,57 +128,57 @@ internal static class TestRepositoryUtils
         mockRoleBindingsRepo
             .Setup(static repo => repo.GetAllActiveAsync())
             .ReturnsAsync(roleBindings
-                .Where(static tarb => tarb.Status == DbRecordStatus.Active)
+                .Where(static arb => arb.Status == DbRecordStatus.Active)
                 .ToImmutableArray());
 
-        container.Mocks[typeof(ITlgAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
+        container.Mocks[typeof(IAgentRoleBindingsRepository)] = mockRoleBindingsRepo;
         var stubRoleBindingsRepo = mockRoleBindingsRepo.Object;
         
-        return serviceCollection.AddScoped<ITlgAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
+        return serviceCollection.AddScoped<IAgentRoleBindingsRepository>(_ => stubRoleBindingsRepo);
     }
 
 
-    private static IServiceCollection ArrangeTestTlgInputsRepo(
+    private static IServiceCollection ArrangeTestInputsRepo(
         this IServiceCollection serviceCollection,
-        IReadOnlyCollection<TlgInput> inputs,
+        IReadOnlyCollection<Input> inputs,
         MockContainer container)
     {
-        var mockTlgInputsRepo = new Mock<ITlgInputsRepository>();
+        var mockInputsRepo = new Mock<IInputsRepository>();
         
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo => 
-                repo.GetAllInteractiveAsync(It.IsAny<TlgAgent>()))
-            .ReturnsAsync((TlgAgent tlgAgent) => 
+                repo.GetAllInteractiveAsync(It.IsAny<Agent>()))
+            .ReturnsAsync((Agent agent) => 
                 inputs
                     .Where(i => 
-                        i.TlgAgent.Equals(tlgAgent) &&
-                        i.InputType != TlgInputType.Location)
+                        i.Agent.Equals(agent) &&
+                        i.InputType != InputType.Location)
                     .ToImmutableArray());
         
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo => 
                 repo.GetAllInteractiveAsync(It.IsAny<ILiveEventInfo>()))
             .ReturnsAsync((ILiveEventInfo liveEvent) => 
                 inputs
                     .Where(i => 
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
-                        i.InputType != TlgInputType.Location)
+                        i.InputType != InputType.Location)
                     .ToImmutableArray());
 
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo =>
                 repo.GetAllLocationAsync(
-                    It.IsAny<TlgAgent>(),
+                    It.IsAny<Agent>(),
                     It.IsAny<DateTimeOffset>()))
-            .ReturnsAsync((TlgAgent tlgAgent, DateTimeOffset dateTime) =>
+            .ReturnsAsync((Agent agent, DateTimeOffset dateTime) =>
                 inputs
                     .Where(i => 
-                        i.TlgAgent.Equals(tlgAgent) && 
-                        i.TlgDate >= dateTime &&
-                        i.InputType == TlgInputType.Location)
+                        i.Agent.Equals(agent) && 
+                        i.TimeStamp >= dateTime &&
+                        i.InputType == InputType.Location)
                     .ToImmutableArray());
 
-        mockTlgInputsRepo
+        mockInputsRepo
             .Setup(static repo =>
                 repo.GetEntityHistoryAsync(
                     It.IsAny<ILiveEventInfo>(),
@@ -190,10 +190,10 @@ internal static class TestRepositoryUtils
                         Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
                     .ToImmutableArray());
         
-        container.Mocks[typeof(ITlgInputsRepository)] = mockTlgInputsRepo;
-        var stubTlgInputsRepo = mockTlgInputsRepo.Object;
+        container.Mocks[typeof(IInputsRepository)] = mockInputsRepo;
+        var stubInputsRepo = mockInputsRepo.Object;
         
-        return serviceCollection.AddScoped<ITlgInputsRepository>(_ => stubTlgInputsRepo);
+        return serviceCollection.AddScoped<IInputsRepository>(_ => stubInputsRepo);
     }
 
     private static IServiceCollection ArrangeTestDerivedWorkflowBridgesRepo(

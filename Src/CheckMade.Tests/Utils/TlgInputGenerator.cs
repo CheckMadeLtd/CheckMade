@@ -1,19 +1,18 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests.Utils;
 
-internal interface ITlgInputGenerator
+internal interface IInputGenerator
 {
-    TlgInput GetValidTlgInputTextMessage(
+    Input GetValidInputTextMessage(
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
         string text = "Hello World", 
@@ -22,11 +21,11 @@ internal interface ITlgInputGenerator
         Role? roleSpecified = null,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputTextMessageWithAttachment(
-        TlgAttachmentType type,
+    Input GetValidInputTextMessageWithAttachment(
+        AttachmentType type,
         TestOriginatorRoleSetting roleSetting = Default);
     
-    TlgInput GetValidTlgInputLocationMessage(
+    Input GetValidInputLocationMessage(
         Geo location, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
@@ -34,7 +33,7 @@ internal interface ITlgInputGenerator
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCommandMessage(
+    Input GetValidInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat,
@@ -43,7 +42,7 @@ internal interface ITlgInputGenerator
         Role? roleSpecified = null,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
+    Input GetValidInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm, 
         long userId = Default_UserAndChatId_PrivateBotChat, 
         long chatId = Default_UserAndChatId_PrivateBotChat, 
@@ -51,7 +50,7 @@ internal interface ITlgInputGenerator
         TestOriginatorRoleSetting roleSetting = Default,
         ResultantWorkflowState? resultantWorkflowState = null);
     
-    TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
+    Input GetValidInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, 
         string text = "Default fake prompt",
         long userId = Default_UserAndChatId_PrivateBotChat, 
@@ -61,11 +60,11 @@ internal interface ITlgInputGenerator
         ResultantWorkflowState? resultantWorkflowState = null);
 }
 
-internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenerator
+internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
 {
     public Randomizer Randomizer { get; } = randomizer;
     
-    public TlgInput GetValidTlgInputTextMessage(
+    public Input GetValidInputTextMessage(
         long userId, long chatId, string text, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         Role? roleSpecified,
@@ -74,11 +73,11 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         var (originatorRole, liveEvent) = 
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow, 
             1, 
-            new TlgAgent(userId, chatId, Operations),
-            TlgInputType.TextMessage,
+            new Agent(userId, chatId, Operations),
+            InputType.TextMessage,
             originatorRole, 
             liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
@@ -88,17 +87,17 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 text));
     }
 
-    public TlgInput GetValidTlgInputTextMessageWithAttachment(
-        TlgAttachmentType type, 
+    public Input GetValidInputTextMessageWithAttachment(
+        AttachmentType type, 
         TestOriginatorRoleSetting roleSetting)
     {
-        return new TlgInput(
+        return new Input(
             DateTimeOffset.UtcNow,
             1,
-            new TlgAgent(Default_UserAndChatId_PrivateBotChat,
+            new Agent(Default_UserAndChatId_PrivateBotChat,
                 Default_UserAndChatId_PrivateBotChat,
                 Operations),
-            TlgInputType.AttachmentMessage,
+            InputType.AttachmentMessage,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
             Option<ResultantWorkflowState>.None(), 
@@ -106,22 +105,21 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
             Option<string>.None(), 
             CreateFromRelevantDetails(
                 $"Hello World, with attachment: {Randomizer.GenerateRandomLong()}",
-                new Uri("https://www.gorin.de/fakeTelegramUri1.html"),
                 new Uri("https://www.gorin.de/fakeInternalUri1.html"),
                 type));
     }
 
-    public TlgInput GetValidTlgInputLocationMessage(
+    public Input GetValidInputLocationMessage(
         Geo location,
         long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow, 
             1,
-            new TlgAgent(userId, chatId, Operations),
-            TlgInputType.Location,
+            new Agent(userId, chatId, Operations),
+            InputType.Location,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
@@ -131,7 +129,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 geoCoordinates: location));
     }
 
-    public TlgInput GetValidTlgInputCommandMessage(
+    public Input GetValidInputCommandMessage(
         InteractionMode interactionMode, int botCommandEnumCode,
         long userId, long chatId, int messageId,
         TestOriginatorRoleSetting roleSetting,
@@ -141,11 +139,11 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         var (originatorRole, liveEvent) = 
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
-        return new TlgInput(
+        return new Input(
             DateTimeOffset.UtcNow,
             messageId,
-            new TlgAgent(userId, chatId, interactionMode),
-            TlgInputType.CommandMessage,
+            new Agent(userId, chatId, interactionMode),
+            InputType.CommandMessage,
             originatorRole, 
             liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
@@ -155,17 +153,17 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 botCommandEnumCode: botCommandEnumCode));
     }
 
-    public TlgInput GetValidTlgInputCallbackQueryForDomainTerm(
+    public Input GetValidInputCallbackQueryForDomainTerm(
         DomainTerm domainTerm,
         long userId, long chatId, DateTimeOffset? dateTime, int messageId,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow,
             messageId,
-            new TlgAgent(userId, chatId, Operations),
-            TlgInputType.CallbackQuery,
+            new Agent(userId, chatId, Operations),
+            InputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
@@ -175,17 +173,17 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 domainTerm: domainTerm));
     }
 
-    public TlgInput GetValidTlgInputCallbackQueryForControlPrompts(
+    public Input GetValidInputCallbackQueryForControlPrompts(
         ControlPrompts prompts, string text,
         long userId, long chatId, DateTimeOffset? dateTime,
         TestOriginatorRoleSetting roleSetting,
         ResultantWorkflowState? resultantWorkflowState)
     {
-        return new TlgInput(
+        return new Input(
             dateTime ?? DateTimeOffset.UtcNow,
             1,
-            new TlgAgent(userId, chatId, Operations),
-            TlgInputType.CallbackQuery,
+            new Agent(userId, chatId, Operations),
+            InputType.CallbackQuery,
             GetInputContextInfo(roleSetting).originatorRole, 
             GetInputContextInfo(roleSetting).liveEvent, 
             resultantWorkflowState ?? Option<ResultantWorkflowState>.None(), 
@@ -196,20 +194,19 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
                 controlPromptEnumCode: (long)prompts));
     }
 
-    internal static TlgInputDetails CreateFromRelevantDetails(
+    internal static InputDetails CreateFromRelevantDetails(
         string? text = null,
-        Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
-        TlgAttachmentType? attachmentType = null,
+        AttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
         DomainTerm? domainTerm = null,
         long? controlPromptEnumCode = null)
     {
-        return new TlgInputDetails(
+        return new InputDetails(
             text ?? Option<string>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
-            attachmentType ?? Option<TlgAttachmentType>.None(),
+            attachmentType ?? Option<AttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
             domainTerm ?? Option<DomainTerm>.None(),

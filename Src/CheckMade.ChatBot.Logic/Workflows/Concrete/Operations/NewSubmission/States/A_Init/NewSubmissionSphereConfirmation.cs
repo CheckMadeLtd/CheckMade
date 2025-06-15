@@ -1,16 +1,15 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 // ReSharper disable UseCollectionExpression
 
@@ -22,13 +21,13 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
     ILiveEventsRepository LiveEventsRepo,    
     IDomainGlossary Glossary,
     IGeneralWorkflowUtils WorkflowUtils,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IStateMediator Mediator) 
     : INewSubmissionSphereConfirmation<T> where T : ITrade, new()
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var nearSphere = await GetNearSphere();
@@ -69,9 +68,9 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
         }
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+        if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         var controlPromptsGlossary = new ControlPromptsGlossary();
@@ -90,7 +89,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.Yes)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             (long)ControlPrompts.No => 
@@ -104,7 +103,7 @@ internal sealed record NewSubmissionSphereConfirmation<T>(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             _ => throw new ArgumentOutOfRangeException(nameof(currentInput.Details.ControlPromptEnumCode))

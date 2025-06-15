@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,8 @@ public sealed class LiveEventsRepositoryTests
 {
     private IServiceProvider? _services;
 
+    
+    // [Fact(Skip = "Temporarily modified DB")]
     [Fact]
     public async Task GetAsync_ReturnsCorrectLiveEventObjectGraph_ForX2024TestEvent()
     {

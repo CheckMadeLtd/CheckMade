@@ -1,6 +1,6 @@
-using CheckMade.Common.Interfaces.Persistence;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Persistence.Repositories.ChatBot;
 using CheckMade.Common.Persistence.Repositories.Core;
 using CheckMade.Common.Utils.RetryPolicies;
@@ -20,10 +20,10 @@ public static class ServiceRegistration
                 sp.GetRequiredService<IDbCommandRetryPolicy>(),
                 sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
         
-        services.AddScoped<ITlgInputsRepository, TlgInputsRepository>();
+        services.AddScoped<IInputsRepository, InputsRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
-        services.AddScoped<ITlgAgentRoleBindingsRepository, TlgAgentRoleBindingsRepository>();
+        services.AddScoped<IAgentRoleBindingsRepository, AgentRoleBindingsRepository>();
         services.AddScoped<ILiveEventsRepository, LiveEventsRepository>();
         services.AddScoped<IVendorsRepository, VendorsRepository>();
         services.AddScoped<IDerivedWorkflowBridgesRepository, DerivedWorkflowBridgesRepository>();

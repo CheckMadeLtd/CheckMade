@@ -1,10 +1,11 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
@@ -14,9 +15,9 @@ internal abstract record WorkflowBase(
     IDerivedWorkflowBridgesRepository BridgesRepo,
     IDomainGlossary Glossary)
 {
-    internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", TlgStart.Command);
+    internal static readonly UiString BeginWithStart = Ui("Enter {0} to begin.", Start.Command);
     
-    protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(TlgInput currentInput)
+    protected internal async Task<Result<WorkflowResponse>> GetResponseAsync(Input currentInput)
     {
         var allBridges = 
             await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(currentInput.LiveEventContext);
@@ -83,5 +84,5 @@ internal abstract record WorkflowBase(
         }
     }
 
-    protected abstract Task<Result<WorkflowResponse>> InitializeAsync(TlgInput currentInput);
+    protected abstract Task<Result<WorkflowResponse>> InitializeAsync(Input currentInput);
 }

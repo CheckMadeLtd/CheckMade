@@ -2,9 +2,9 @@ using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,12 +20,12 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var tlgAgentWithoutRole = UserId02_ChatId03_Operations;
-        var inputFromUnauthenticatedUser = inputGenerator.GetValidTlgInputTextMessage(
-            tlgAgentWithoutRole.UserId, tlgAgentWithoutRole.ChatId,
+        var agentWithoutRole = UserId02_ChatId03_Operations;
+        var inputFromUnauthenticatedUser = inputGenerator.GetValidInputTextMessage(
+            agentWithoutRole.UserId, agentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
 
         var workflow = await workflowIdentifier
@@ -40,10 +40,10 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithSettingsBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputWithSettingsBotCommand = inputGenerator.GetValidInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.Settings);
         
@@ -59,10 +59,10 @@ public sealed class WorkflowIdentifierTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var inputWithNewSubmissionBotCommand = inputGenerator.GetValidTlgInputCommandMessage(
+        var inputWithNewSubmissionBotCommand = inputGenerator.GetValidInputCommandMessage(
             Operations, 
             (int)OperationsBotCommands.NewSubmission);
         
@@ -74,20 +74,20 @@ public sealed class WorkflowIdentifierTests
     }
     
     [Fact]
-    public async Task Identify_ReturnsNone_WhenCurrentInputsFromTlgAgent_WithoutBotCommand()
+    public async Task Identify_ReturnsNone_WhenCurrentInputsFromAgent_WithoutBotCommand()
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
-        var inputGenerator = _services.GetRequiredService<ITlgInputGenerator>();
+        var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
         var workflow = await workflowIdentifier
             .IdentifyAsync([
-                inputGenerator.GetValidTlgInputTextMessage(),
-                inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
+                inputGenerator.GetValidInputTextMessage(),
+                inputGenerator.GetValidInputTextMessageWithAttachment(AttachmentType.Photo),
                 // This could be in response to an out-of-scope message in the history e.g. in another Role!
-                inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
-                inputGenerator.GetValidTlgInputTextMessage()
+                inputGenerator.GetValidInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
+                inputGenerator.GetValidInputTextMessage()
             ]);
         
         Assert.True(

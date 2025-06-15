@@ -1,24 +1,24 @@
-using CheckMade.ChatBot.Function.Services.BotClient;
-using CheckMade.ChatBot.Function.Services.Conversion;
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
 using CheckMade.ChatBot.Logic;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
+using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.ChatBot.Telegram.Conversion;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit.Abstractions;
 using static CheckMade.Tests.Utils.TestUtils;
+using ChatId = Telegram.Bot.Types.ChatId;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 
@@ -101,14 +101,14 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                     new() { Text = EnglishUiStringForTests }
                 }));
         
-        var tlgAgent = UserId02_ChatId04_Operations;
+        var agent = UserId02_ChatId04_Operations;
         
         var (repoServices, _) = serviceCollection.ConfigureTestRepositories(
             roleBindings:
             [
                 TestRepositoryUtils.GetNewRoleBind(
                     SanitaryInspector_DanielDe_X2024,
-                    tlgAgent)
+                    agent)
             ]); 
         
         _services = repoServices;
@@ -117,12 +117,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var updateFromGermanUser = 
             basics.updateGenerator.GetValidTelegramTextMessage(
                 "any valid text",
-                tlgAgent.UserId,
-                tlgAgent.ChatId);
+                agent.UserId,
+                agent.ChatId);
         
         await basics.handler.HandleUpdateAsync(
             updateFromGermanUser,
-            tlgAgent.Mode);
+            agent.Mode);
         
         basics.mockBotClient.Verify(
             x => x.SendTextMessageAsync(
@@ -157,7 +157,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
-        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator);
+        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, new DomainGlossary());
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
         var actualMarkup = Option<ReplyMarkup>.None();
@@ -218,7 +218,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenTlgAgentRoleBindingsExist(
+    public async Task HandleUpdateAsync_SendsMessagesToSpecifiedLogicalPorts_WhenAgentRoleBindingsExist(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
@@ -251,7 +251,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor(outputsWithLogicalPort));
     
-        List<TlgAgentRoleBind> activeRoleBindings = [ 
+        List<AgentRoleBind> activeRoleBindings = [ 
             TestRepositoryUtils.GetNewRoleBind(SanitaryInspector_DanielEn_X2024, PrivateBotChat_Operations),
             TestRepositoryUtils.GetNewRoleBind(SanitaryTeamLead_DanielEn_X2024, PrivateBotChat_Notifications),
             TestRepositoryUtils.GetNewRoleBind(SanitaryEngineer_DanielEn_X2024, PrivateBotChat_Communications)];
@@ -268,11 +268,11 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             {
                 Text = output.Text.GetValueOrThrow().GetFormattedEnglish(),
                 
-                TlgChatId = activeRoleBindings
-                    .First(tarb => 
-                        tarb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
-                        tarb.TlgAgent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
-                    .TlgAgent.ChatId.Id
+                ChatId = activeRoleBindings
+                    .First(arb => 
+                        arb.Role.Equals(output.LogicalPort.GetValueOrThrow().Role) &&
+                        arb.Agent.Mode.Equals(output.LogicalPort.GetValueOrThrow().InteractionMode))
+                    .Agent.ChatId.Id
             }).ToList();
     
         await basics.handler.HandleUpdateAsync(update, mode);
@@ -281,7 +281,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         {
             basics.mockBotClient.Verify(
                 x => x.SendTextMessageAsync(
-                    expectedParamSet.TlgChatId,
+                    expectedParamSet.ChatId,
                     It.IsAny<string>(),
                     expectedParamSet.Text,
                     It.IsAny<Option<ReplyMarkup>>(),
@@ -342,13 +342,13 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, Option<string>.None()),
+                        AttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, Option<string>.None()),
+                        AttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri3.html"), 
-                        TlgAttachmentType.Voice, Option<string>.None()),
+                        AttachmentType.Voice, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri4.html"), 
-                        TlgAttachmentType.Document, Option<string>.None())
+                        AttachmentType.Document, Option<string>.None())
                 } 
             }
         ];
@@ -399,9 +399,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, "Random caption for Attachment 1"),
+                        AttachmentType.Photo, "Random caption for Attachment 1"),
                     new(new Uri("http://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, "Random caption for Attachment 2"),
+                        AttachmentType.Photo, "Random caption for Attachment 2"),
                 }
             }
         ];
@@ -466,7 +466,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     }
 
     private static (ITelegramUpdateGenerator updateGenerator,
-        ITlgInputGenerator inputGenerator,
+        IInputGenerator inputGenerator,
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
@@ -483,10 +483,10 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 It.IsAny<Option<ReplyMarkup>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                new TlgMessageId(1));
+                new MessageId(1));
         
         return (sp.GetRequiredService<ITelegramUpdateGenerator>(),
-            sp.GetRequiredService<ITlgInputGenerator>(),
+            sp.GetRequiredService<IInputGenerator>(),
             mockBotClient,
             sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
@@ -497,14 +497,14 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returningOutputs)
     {
         var sp = new UnitTestStartup().Services.BuildServiceProvider();
-        var inputGenerator = sp.GetRequiredService<ITlgInputGenerator>();
-        var validInput = inputGenerator.GetValidTlgInputTextMessage();
+        var inputGenerator = sp.GetRequiredService<IInputGenerator>();
+        var validInput = inputGenerator.GetValidInputTextMessage();
         
         var mockInputProcessor = new Mock<IInputProcessor>();
         
         mockInputProcessor
-            .Setup<Task<(Option<TlgInput> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
-                static ip => ip.ProcessInputAsync(It.IsAny<Result<TlgInput>>()))
+            .Setup<Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
+                static ip => ip.ProcessInputAsync(It.IsAny<Result<Input>>()))
             .ReturnsAsync((validInput, returningOutputs));
 
         return mockInputProcessor.Object;

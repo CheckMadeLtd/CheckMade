@@ -1,18 +1,18 @@
 using System.Collections.Immutable;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using User = CheckMade.Common.Model.Core.Actors.Concrete.User;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Data.Core.LiveEvents;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
+using User = CheckMade.Common.Domain.Data.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 
@@ -303,9 +303,9 @@ internal static class TestData
     
     #endregion
     
-    #region TlgAgentElementsSetup ######################################################################################
+    #region AgentElementsSetup ######################################################################################
 
-    // Needs to be 'long' instead of 'TlgUserId' for usage in InlineData() of Tests - but they implicitly convert
+    // Needs to be 'long' instead of 'UserId' for usage in InlineData() of Tests - but they implicitly convert
     
     internal const long RealTestUser_DanielGorin_TelegramId = 215737196L;
     
@@ -322,38 +322,38 @@ internal static class TestData
     internal const long ChatId07 = 100007L;
     
     // Default for tests
-    internal static readonly TlgAgent PrivateBotChat_Operations =
+    internal static readonly Agent PrivateBotChat_Operations =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Operations);
     
-    internal static readonly TlgAgent PrivateBotChat_Communications =
+    internal static readonly Agent PrivateBotChat_Communications =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Communications);
 
-    internal static readonly TlgAgent PrivateBotChat_Notifications =
+    internal static readonly Agent PrivateBotChat_Notifications =
         new(Default_UserAndChatId_PrivateBotChat,
             Default_UserAndChatId_PrivateBotChat,
             Notifications);
 
-    internal static readonly TlgAgent UserId02_ChatId03_Operations =
+    internal static readonly Agent UserId02_ChatId03_Operations =
         new(UserId02,
             ChatId03,
             Operations);
 
-    internal static readonly TlgAgent UserId02_ChatId04_Operations =
+    internal static readonly Agent UserId02_ChatId04_Operations =
         new(UserId02,
             ChatId04,
             Operations);
     
-    internal static readonly TlgAgent UserId03_ChatId06_Operations =
+    internal static readonly Agent UserId03_ChatId06_Operations =
         new(
             UserId03,
             ChatId06,
             Operations);
     
-    internal static readonly TlgAgent UserId03_ChatId06_Communications =
+    internal static readonly Agent UserId03_ChatId06_Communications =
         new(
             UserId03,
             ChatId06,

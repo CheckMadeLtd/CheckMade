@@ -10,14 +10,16 @@ using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic;
 
@@ -29,9 +31,6 @@ public sealed record DomainGlossary : IDomainGlossary
 
     public IReadOnlyDictionary<DomainTerm, (CallbackId callbackId, UiString uiString)> IdAndUiByTerm { get; }
     public IDictionary<CallbackId, DomainTerm> TermById { get; }
-
-    public static readonly UiString ToggleOffSuffix = UiNoTranslate("[  ]");
-    public static readonly UiString ToggleOnSuffix = UiNoTranslate("[☑️]");
     
     public DomainGlossary()
     {

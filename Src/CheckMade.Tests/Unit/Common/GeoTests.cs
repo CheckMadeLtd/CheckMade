@@ -1,5 +1,5 @@
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core;
+using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Tests.Unit.Common;
 

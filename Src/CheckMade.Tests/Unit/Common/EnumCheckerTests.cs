@@ -1,6 +1,6 @@
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Utils.Validators;
 using Xunit.Abstractions;
 
 // ReSharper disable ConditionIsAlwaysTrueOrFalse

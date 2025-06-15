@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;
@@ -16,8 +15,8 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
-    
-    internal static readonly Func<DbDataReader, int> GetRoleKey = 
+
+    private static readonly Func<DbDataReader, int> GetRoleKey = 
         static reader => reader.GetInt32(reader.GetOrdinal("role_id"));
 
     internal static readonly Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments = 

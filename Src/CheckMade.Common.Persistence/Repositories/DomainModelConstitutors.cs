@@ -1,23 +1,20 @@
 using System.Data.Common;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Core.Actors;
-using CheckMade.Common.Model.Core.Actors.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete;
-using CheckMade.Common.Model.Core.Actors.RoleSystem.Concrete.RoleTypes;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Structs;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Core.Trades.Concrete;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Actors;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem;
+using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
+using CheckMade.Common.Domain.Data.Core.LiveEvents;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Persistence.JsonHelpers;
-using CheckMade.Common.Utils.Generic;
+using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Common.Utils.Validators;
 
 namespace CheckMade.Common.Persistence.Repositories;
 
@@ -179,38 +176,38 @@ internal static class DomainModelConstitutors
         }
     }
 
-    internal static TlgInput ConstituteTlgInput(
+    internal static Input ConstituteInput(
         DbDataReader reader, 
         Option<IRoleInfo> roleInfo,
         Option<ILiveEventInfo> liveEventInfo,
         IDomainGlossary glossary)
     {
-        var tlgDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
-        TlgMessageId tlgMessageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
-        TlgUserId tlgUserId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
-        TlgChatId tlgChatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
+        var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
+        MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
+        UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
+        ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
         var interactionMode = EnsureEnumValidityOrThrow(
             (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
-        var tlgInputType = EnsureEnumValidityOrThrow(
-            (TlgInputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+        var inputType = EnsureEnumValidityOrThrow(
+            (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
         var resultantWorkflow = GetWorkflowInfo();
         var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
             ? Option<Guid>.None()
             : reader.GetGuid(reader.GetOrdinal("input_guid"));
-        var tlgDetails = reader.GetString(reader.GetOrdinal("input_details"));
+        var inputDetails = reader.GetString(reader.GetOrdinal("input_details"));
 
-        return new TlgInput(
-            tlgDate,
-            tlgMessageId,
-            new TlgAgent(tlgUserId, tlgChatId, interactionMode),
-            tlgInputType,
+        return new Input(
+            timeStamp,
+            messageId,
+            new Agent(userId, chatId, interactionMode),
+            inputType,
             roleInfo,
             liveEventInfo,
             resultantWorkflow,
             guid,
             Option<string>.None(), 
-            JsonHelper.DeserializeFromJson<TlgInputDetails>(tlgDetails, glossary)
-            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(TlgInputDetails)}'!"));
+            JsonHelper.DeserializeFromJson<InputDetails>(inputDetails, glossary)
+            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {
@@ -223,32 +220,32 @@ internal static class DomainModelConstitutors
         }
     }
 
-    internal static TlgAgent ConstituteTlgAgent(DbDataReader reader)
+    internal static Agent ConstituteAgent(DbDataReader reader)
     {
-        return new TlgAgent(
-            reader.GetInt64(reader.GetOrdinal("tarb_tlg_user_id")),
-            reader.GetInt64(reader.GetOrdinal("tarb_tlg_chat_id")),
+        return new Agent(
+            reader.GetInt64(reader.GetOrdinal("arb_user_id")),
+            reader.GetInt64(reader.GetOrdinal("arb_chat_id")),
             EnsureEnumValidityOrThrow(
-                (InteractionMode)reader.GetInt16(reader.GetOrdinal("tarb_interaction_mode"))));
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("arb_interaction_mode"))));
     }
 
-    internal static TlgAgentRoleBind ConstituteTlgAgentRoleBind(DbDataReader reader, Role role, TlgAgent tlgAgent)
+    internal static AgentRoleBind ConstituteAgentRoleBind(DbDataReader reader, Role role, Agent agent)
     {
-        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("tarb_activation_date"));
+        var activationDate = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("arb_activation_date"));
 
-        var deactivationDateOrdinal = reader.GetOrdinal("tarb_deactivation_date");
+        var deactivationDateOrdinal = reader.GetOrdinal("arb_deactivation_date");
 
         var deactivationDate = !reader.IsDBNull(deactivationDateOrdinal)
             ? Option<DateTimeOffset>.Some(reader.GetFieldValue<DateTimeOffset>(deactivationDateOrdinal))
             : Option<DateTimeOffset>.None();
 
         var status = EnsureEnumValidityOrThrow(
-            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("tarb_status")));
+            (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("arb_status")));
 
-        return new TlgAgentRoleBind(role, tlgAgent, activationDate, deactivationDate, status);
+        return new AgentRoleBind(role, agent, activationDate, deactivationDate, status);
     }
 
-    internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, TlgInput sourceInput)
+    internal static WorkflowBridge ConstituteWorkflowBridge(DbDataReader reader, Input sourceInput)
     {
         var destinationChatId = reader.GetInt64(reader.GetOrdinal("bridge_chat_id"));
         var destinationMessageId = reader.GetInt32(reader.GetOrdinal("bridge_message_id"));

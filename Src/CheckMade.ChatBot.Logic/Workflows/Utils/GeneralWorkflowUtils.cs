@@ -1,12 +1,14 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.Actors.RoleSystem;
-using CheckMade.Common.Model.Core.LiveEvents;
-using static CheckMade.Common.Model.ChatBot.UserInteraction.InteractionMode;
-using static CheckMade.Common.Model.ChatBot.Input.TlgInputType;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
+using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
@@ -18,46 +20,46 @@ internal interface IGeneralWorkflowUtils
         Ui("The previous workflow was completed. You can continue with a new one... "),
         IInputProcessor.SeeValidBotCommandsInstruction);
     
-    Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgentForDbQuery, TlgInput newInputToAppend);
+    Task<IReadOnlyCollection<Input>> GetAllCurrentInteractiveAsync(
+        Agent agentForDbQuery, Input newInputToAppend);
 
-    Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(TlgInput currentInput);
-    Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent);
+    Task<IReadOnlyCollection<Input>> GetInteractiveWorkflowHistoryAsync(Input currentInput);
+    Task<IReadOnlyCollection<Input>> GetRecentLocationHistory(Agent agent);
     Task<IReadOnlyCollection<WorkflowBridge>> GetWorkflowBridgesOrNoneAsync(Option<ILiveEventInfo> liveEventInfo);
 }
 
 internal sealed record GeneralWorkflowUtils(
-    ITlgInputsRepository InputsRepo,
-    ITlgAgentRoleBindingsRepository TlgAgentRoleBindingsRepo,
+    IInputsRepository InputsRepo,
+    IAgentRoleBindingsRepository AgentRoleBindingsRepo,
     IDerivedWorkflowBridgesRepository BridgesRepo)
     : IGeneralWorkflowUtils
 {
-    public async Task<IReadOnlyCollection<TlgInput>> GetAllCurrentInteractiveAsync(
-        TlgAgent tlgAgentForDbQuery,
-        TlgInput newInputToAppend)
+    public async Task<IReadOnlyCollection<Input>> GetAllCurrentInteractiveAsync(
+        Agent agentForDbQuery,
+        Input newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
-        var lastExpiredRoleBind = (await TlgAgentRoleBindingsRepo.GetAllAsync())
-            .Where(tarb =>
-                tarb.TlgAgent.Equals(tlgAgentForDbQuery) &&
-                tarb.DeactivationDate.IsSome)
-            .MaxBy(static tarb => tarb.DeactivationDate.GetValueOrThrow());
+        var lastExpiredRoleBind = (await AgentRoleBindingsRepo.GetAllAsync())
+            .Where(arb =>
+                arb.Agent.Equals(agentForDbQuery) &&
+                arb.DeactivationDate.IsSome)
+            .MaxBy(static arb => arb.DeactivationDate.GetValueOrThrow());
 
         var cutOffDate = lastExpiredRoleBind != null
             ? lastExpiredRoleBind.DeactivationDate.GetValueOrThrow()
             : DateTimeOffset.MinValue;
 
         var allInteractiveFromDb =
-            await InputsRepo.GetAllInteractiveAsync(tlgAgentForDbQuery);
+            await InputsRepo.GetAllInteractiveAsync(agentForDbQuery);
 
         var allInteractiveIncludingNewInput =
             allInteractiveFromDb.Concat([newInputToAppend]);
         
         var allCurrentInteractive = 
             allInteractiveIncludingNewInput
-                .Where(i => i.TlgDate > cutOffDate)
+                .Where(i => i.TimeStamp > cutOffDate)
                 .ToList();
 
         return 
@@ -65,14 +67,14 @@ internal sealed record GeneralWorkflowUtils(
                 .ToImmutableArray();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetInteractiveWorkflowHistoryAsync(
-        TlgInput currentInput)
+    public async Task<IReadOnlyCollection<Input>> GetInteractiveWorkflowHistoryAsync(
+        Input currentInput)
     {
         // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
         var currentRoleInputs = 
             await GetAllCurrentInteractiveAsync(
-                currentInput.TlgAgent,
+                currentInput.Agent,
                 currentInput);
 
         var allBridges = 
@@ -83,11 +85,11 @@ internal sealed record GeneralWorkflowUtils(
             .ToImmutableArray();
     }
 
-    public async Task<IReadOnlyCollection<TlgInput>> GetRecentLocationHistory(TlgAgent tlgAgent)
+    public async Task<IReadOnlyCollection<Input>> GetRecentLocationHistory(Agent agent)
     {
         return 
             await InputsRepo.GetAllLocationAsync(
-                tlgAgent, 
+                agent, 
                 DateTimeOffset.UtcNow
                     .AddMinutes(-IGeneralWorkflowUtils.RecentLocationHistoryTimeFrameInMinutes));
     }
@@ -105,7 +107,7 @@ internal static class GeneralWorkflowUtilsExtensions
         typeName.Split('`')[0];
     
     public static bool IsToggleOn(
-        this DomainTerm domainTerm, IReadOnlyCollection<TlgInput> inputHistory) =>
+        this DomainTerm domainTerm, IReadOnlyCollection<Input> inputHistory) =>
         inputHistory
             .Count(i => i.Details.DomainTerm.GetValueOrDefault() == domainTerm) 
         % 2 != 0;
@@ -116,17 +118,42 @@ internal static class GeneralWorkflowUtilsExtensions
             .GetTradeInstance().IsSome;
 
     public static bool IsWorkflowLauncher(
-        this TlgInput input, IReadOnlyCollection<WorkflowBridge> allBridges)
+        this Input input, IReadOnlyCollection<WorkflowBridge> allBridges)
     {
         var isProactiveWorkflowLauncher = 
             input.InputType == CommandMessage;
             
         var isReactiveWorkflowLauncher = 
-            input is { InputType: CallbackQuery, TlgAgent.Mode: Notifications or Communications } &&
+            input is { InputType: CallbackQuery, Agent.Mode: Notifications or Communications } &&
             allBridges.Any(b =>
-                b.DestinationChatId == input.TlgAgent.ChatId &&
-                b.DestinationMessageId == input.TlgMessageId);
+                b.DestinationChatId == input.Agent.ChatId &&
+                b.DestinationMessageId == input.MessageId);
 
         return isProactiveWorkflowLauncher || isReactiveWorkflowLauncher;
+    }
+    
+    public static IReadOnlyCollection<T> GetLatestRecordsUpTo<T>(
+        this IEnumerable<T> enumerable, Func<T, bool> stopCondition, bool includeStopItem = true)
+    {
+        var enumeratedDesc = enumerable.Reverse().ToList(); // .Reverse() required for usage of .TakeWhile()
+        
+        if (enumeratedDesc.Count == 0)
+            return ImmutableList<T>.Empty;
+        
+        var result = enumeratedDesc
+            .TakeWhile(item => !stopCondition(item))
+            .ToList();
+
+        if (includeStopItem)
+        {
+            var firstItemMeetingCondition = enumeratedDesc.FirstOrDefault(stopCondition);
+
+            if (firstItemMeetingCondition != null)
+                result.Add(firstItemMeetingCondition);
+        }
+
+        result.Reverse(); // back to the original ASC order
+        
+        return result.ToImmutableList();
     }
 }

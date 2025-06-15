@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Concrete.Global.Logout.States;
 
@@ -15,16 +16,16 @@ internal interface ILogoutWorkflowConfirm : IWorkflowStateNormal;
 internal sealed record LogoutWorkflowConfirm(
     IDomainGlossary Glossary, 
     IStateMediator Mediator,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo) 
+    IAgentRoleBindingsRepository RoleBindingsRepo) 
     : ILogoutWorkflowConfirm
 {
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
+            .First(arb => arb.Agent.Equals(currentInput.Agent));
         
         List<OutputDto> outputs =
         [
@@ -48,9 +49,9 @@ internal sealed record LogoutWorkflowConfirm(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
         
         var controlPromptsGlossary = new ControlPromptsGlossary();
@@ -78,7 +79,7 @@ internal sealed record LogoutWorkflowConfirm(
                             Text = UiConcatenate(
                                 originalPrompt, UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.No)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         })),
             
             _ => throw new ArgumentOutOfRangeException(nameof(selectedControl))
@@ -87,14 +88,14 @@ internal sealed record LogoutWorkflowConfirm(
         async Task<WorkflowResponse> PerformLogoutAsync()
         {
             var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
-                .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent));
+                .First(arb => arb.Agent.Equals(currentInput.Agent));
         
             var roleBindingsToUpdateIncludingOtherModesInCaseOfPrivateChat = 
                 (await RoleBindingsRepo.GetAllActiveAsync())
-                .Where(tarb =>
-                    tarb.TlgAgent.UserId.Equals(currentRoleBind.TlgAgent.UserId) &&
-                    tarb.TlgAgent.ChatId.Equals(currentRoleBind.TlgAgent.ChatId) &&
-                    tarb.Role.Token.Equals(currentRoleBind.Role.Token))
+                .Where(arb =>
+                    arb.Agent.UserId.Equals(currentRoleBind.Agent.UserId) &&
+                    arb.Agent.ChatId.Equals(currentRoleBind.Agent.ChatId) &&
+                    arb.Role.Token.Equals(currentRoleBind.Role.Token))
                 .ToArray();
         
             await RoleBindingsRepo
@@ -120,7 +121,7 @@ internal sealed record LogoutWorkflowConfirm(
                                 originalPrompt,
                                 UiNoTranslate(" "),
                                 controlPromptsGlossary.UiByCallbackId[new CallbackId((long)ControlPrompts.Yes)]),
-                            UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                            UpdateExistingOutputMessageId = currentInput.MessageId
                         }));
         }
     }

@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -23,8 +23,8 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
     : INewSubmissionEvidenceEntry<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput, 
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -43,15 +43,15 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
         var promptTransitionAfterEvidenceEntry = new PromptTransition(
-            currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent, true);
+            currentInput.MessageId, MsgIdCache, currentInput.Agent, true);
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (currentInput.InputType)
         {
-            case TlgInputType.TextMessage:
+            case InputType.TextMessage:
 
                 return WorkflowResponse.Create(
                     currentInput,
@@ -64,14 +64,14 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                     newState: this,
                     promptTransition: promptTransitionAfterEvidenceEntry);
             
-            case TlgInputType.AttachmentMessage:
+            case InputType.AttachmentMessage:
 
                 var currentAttachmentType = 
                     currentInput.Details.AttachmentType.GetValueOrThrow(); 
                 
                 return currentAttachmentType switch
                 {
-                    TlgAttachmentType.Photo => WorkflowResponse.Create(
+                    AttachmentType.Photo => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {
@@ -82,7 +82,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
-                    TlgAttachmentType.Document => WorkflowResponse.Create(
+                    AttachmentType.Document => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {
@@ -93,7 +93,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
-                    TlgAttachmentType.Voice => WorkflowResponse.Create(
+                    AttachmentType.Voice => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {
@@ -119,7 +119,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         await WorkflowResponse.CreateFromNextStateAsync(
                             currentInput, 
                             Mediator.Next(typeof(INewSubmissionReview<T>)),
-                            new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                            new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
                     (long)ControlPrompts.Back => 
                         await WorkflowResponse.CreateFromNextStateAsync(

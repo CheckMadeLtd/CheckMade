@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -23,8 +23,8 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
     : INewSubmissionCancelConfirmation<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Input currentInput, 
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -43,9 +43,9 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         return currentInput.Details.ControlPromptEnumCode.GetValueOrThrow() switch
@@ -59,7 +59,7 @@ internal sealed record NewSubmissionCancelConfirmation<T>(
                     },
                     newState: Mediator.GetTerminator(typeof(INewSubmissionCancelled<T>)),
                     promptTransition: new PromptTransition(
-                        currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                        currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
             (long)ControlPrompts.No =>
                 await WorkflowResponse.CreateFromNextStateAsync(

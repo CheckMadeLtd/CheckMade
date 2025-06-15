@@ -1,12 +1,13 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using CheckMade.ChatBot.Function.Services.BotClient;
 using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Model.Core;
+using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.ChatBot.Telegram.UpdateHandling;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,12 +46,10 @@ var host = new HostBuilder()
         var config = hostContext.Configuration;
         var hostingEnvironment = hostContext.HostingEnvironment.EnvironmentName;
         
-        // Part of 'StartUp' rather than in shared Services method below to enable different values for Tests Startup.
+        // Here rather than in shared Services method below to enable different values for Tests Startup.
         services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        services.RegisterChatBotFunctionBotClientServices(config, hostingEnvironment);
-        services.RegisterChatBotFunctionUpdateHandlingServices();
-        services.RegisterChatBotFunctionConversionServices();
+        services.RegisterChatBotTelegramServices(config, hostingEnvironment);
         services.RegisterChatBotLogicServices();
         
         services.RegisterCommonBusinessLogicServices();

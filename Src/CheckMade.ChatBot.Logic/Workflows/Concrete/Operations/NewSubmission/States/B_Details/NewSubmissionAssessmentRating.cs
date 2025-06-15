@@ -1,15 +1,16 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -24,8 +25,8 @@ internal sealed record NewSubmissionAssessmentRating<T>(
     : INewSubmissionAssessmentRating<T> where T : ITrade, new()
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId, 
+        Input currentInput, 
+        Option<MessageId> inPlaceUpdateMessageId, 
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -47,9 +48,9 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         if (currentInput.Details.DomainTerm.IsSome)
@@ -63,7 +64,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),
                         UiNoTranslate(" "),
                         Glossary.GetUi(selectedRating)),
-                    UpdateExistingOutputMessageId = currentInput.TlgMessageId
+                    UpdateExistingOutputMessageId = currentInput.MessageId
                 });
             
             return selectedRating switch
@@ -72,7 +73,7 @@ internal sealed record NewSubmissionAssessmentRating<T>(
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput,
                         Mediator.Next(typeof(INewSubmissionReview<T>)),
-                        new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                        new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
                 
                 AssessmentRating.Ok or AssessmentRating.Bad =>
                     await WorkflowResponse.CreateFromNextStateAsync(

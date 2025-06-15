@@ -1,18 +1,15 @@
 using System.Text;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotLogic;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.Core.LiveEvents;
-using CheckMade.Common.Model.Core.LiveEvents.Concrete.SphereOfActionDetails;
-using CheckMade.Common.Model.Core.Submissions;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Submissions.Concrete.SubmissionTypes;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.NewSubmissionUtils;
 
 namespace CheckMade.ChatBot.Logic.ModelFactories;
@@ -23,7 +20,7 @@ internal sealed record SubmissionFactory<T>(
     IDomainGlossary Glossary) 
     : ISubmissionFactory<T> where T : ITrade, new()
 {
-    public async Task<ISubmission> CreateAsync(IReadOnlyCollection<TlgInput> inputs)
+    public async Task<ISubmission> CreateAsync(IReadOnlyCollection<Input> inputs)
     {
         var currentTrade = new T();
         var role = (await RolesRepo.GetAsync(
@@ -143,7 +140,7 @@ internal sealed record SubmissionFactory<T>(
             var submittedDescriptions = 
                 inputs
                     .Where(i =>
-                        i.InputType == TlgInputType.TextMessage &&
+                        i.InputType == InputType.TextMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
@@ -163,7 +160,7 @@ internal sealed record SubmissionFactory<T>(
             var submittedAttachments =
                 inputs
                     .Where(i =>
-                        i.InputType == TlgInputType.AttachmentMessage &&
+                        i.InputType == InputType.AttachmentMessage &&
                         i.ResultantState.IsSome &&
                         i.ResultantState.GetValueOrThrow().InStateId ==
                         Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
@@ -203,7 +200,7 @@ internal sealed record SubmissionFactory<T>(
         AssessmentRating GetAssessmentRating() =>
             (AssessmentRating)inputs
                 .Last(i =>
-                    i.InputType == TlgInputType.CallbackQuery &&
+                    i.InputType == InputType.CallbackQuery &&
                     i.Details.DomainTerm.IsSome &&
                     Glossary.GetAll(typeof(AssessmentRating)).Contains(i.Details.DomainTerm.GetValueOrThrow()))
                 .Details.DomainTerm.GetValueOrThrow()

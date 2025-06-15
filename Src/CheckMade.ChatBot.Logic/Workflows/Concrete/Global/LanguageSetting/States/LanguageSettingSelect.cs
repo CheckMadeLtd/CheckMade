@@ -1,14 +1,15 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Interfaces.Persistence.Core;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.Core;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.Core;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
+using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Common.Utils.UiTranslation;
 
 // ReSharper disable UseCollectionExpression
 
@@ -19,14 +20,14 @@ internal interface ILanguageSettingSelect : IWorkflowStateNormal;
 internal sealed record LanguageSettingSelect(
     IDomainGlossary Glossary,
     IStateMediator Mediator,
-    ITlgAgentRoleBindingsRepository RoleBindingsRepo,
+    IAgentRoleBindingsRepository RoleBindingsRepo,
     IUsersRepository UsersRepo,
     ILastOutputMessageIdCache MsgIdCache) 
     : ILanguageSettingSelect
 {
     public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput,
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput,
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         List<OutputDto> outputs =
@@ -47,15 +48,15 @@ internal sealed record LanguageSettingSelect(
                 () => outputs.ToImmutableArray()));
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType != TlgInputType.CallbackQuery)
+        if (currentInput.InputType != InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
         
         var newLanguage = currentInput.Details.DomainTerm.GetValueOrThrow();
         
         var currentUser = (await RoleBindingsRepo.GetAllActiveAsync())
-            .First(tarb => tarb.TlgAgent.Equals(currentInput.TlgAgent))
+            .First(arb => arb.Agent.Equals(currentInput.Agent))
             .Role.ByUser;
 
         await UsersRepo.UpdateLanguageSettingAsync(currentUser, (LanguageCode)newLanguage.EnumValue!);
@@ -69,7 +70,7 @@ internal sealed record LanguageSettingSelect(
                     Glossary.GetUi(newLanguage))
             },
             newState: Mediator.GetTerminator(typeof(ILanguageSettingSet)),
-            promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)
+            promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)
         );
     }
 }

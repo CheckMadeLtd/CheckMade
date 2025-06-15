@@ -1,18 +1,17 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Concrete.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Interfaces.BusinessLogic;
-using CheckMade.Common.Interfaces.ChatBotFunction;
-using CheckMade.Common.Interfaces.ChatBotLogic;
-using CheckMade.Common.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
-using CheckMade.Common.Model.ChatBot;
-using CheckMade.Common.Model.ChatBot.Input;
-using CheckMade.Common.Model.ChatBot.Output;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
-using CheckMade.Common.Model.Core.Submissions.Concrete;
-using CheckMade.Common.Model.Core.Trades;
-using CheckMade.Common.Model.Utils;
+using CheckMade.Common.Domain.Data.ChatBot;
+using CheckMade.Common.Domain.Data.ChatBot.Input;
+using CheckMade.Common.Domain.Data.ChatBot.Output;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core.Submissions;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Logic;
+using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -25,7 +24,7 @@ internal sealed record NewSubmissionReview<T>(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     ISubmissionFactory<T> Factory,
-    ITlgInputsRepository InputsRepo,
+    IInputsRepository InputsRepo,
     IStakeholderReporter<T> Reporter,
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionReview<T> where T : ITrade, new()
@@ -33,8 +32,8 @@ internal sealed record NewSubmissionReview<T>(
     private Guid _lastGuidCache = Guid.Empty;
     
     public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
-        TlgInput currentInput, 
-        Option<TlgMessageId> inPlaceUpdateMessageId,
+        Input currentInput, 
+        Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
         var interactiveHistory =
@@ -72,9 +71,9 @@ internal sealed record NewSubmissionReview<T>(
             () => outputs.ToImmutableArray());
     }
 
-    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(TlgInput currentInput)
+    public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        if (currentInput.InputType is not TlgInputType.CallbackQuery)
+        if (currentInput.InputType is not InputType.CallbackQuery)
             return WorkflowResponse.CreateWarningUseInlineKeyboardButtons(this);
 
         var selectedControl = 
@@ -91,14 +90,14 @@ internal sealed record NewSubmissionReview<T>(
                     },
                     await GetStakeholderNotificationsAsync(),
                     Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
-                    promptTransition: new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent),
+                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent),
                     entityGuid: await GetLastGuidAsync()),
             
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
                     currentInput,
                     Mediator.Next(typeof(INewSubmissionCancelConfirmation<T>)), 
-                    new PromptTransition(currentInput.TlgMessageId, MsgIdCache, currentInput.TlgAgent)),
+                    new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };

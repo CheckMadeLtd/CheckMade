@@ -1,24 +1,21 @@
 using System.Collections.Concurrent;
-using CheckMade.ChatBot.Function.Services.UpdateHandling;
-using CheckMade.Common.Model.ChatBot.UserInteraction;
+using CheckMade.ChatBot.Telegram.Function;
+using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Function.Endpoints;
 
-public sealed class OperationsBot(ILogger<OperationsBot> logger, IBotUpdateSwitch botUpdateSwitch)
-    : BotFunctionBase(logger, botUpdateSwitch)
+public sealed class OperationsBot(IBotFunction botFunction)
 {
+    // Thread-safe collection for this static cache (ensuring atomic operations in case of multiple function instances)
     private static readonly ConcurrentDictionary<int, byte> UpdateIds = new();
-
-    protected override ConcurrentDictionary<int, byte> CurrentlyProcessingUpdateIds => UpdateIds;
-    protected override InteractionMode InteractionMode => InteractionMode.Operations;
+    private static InteractionMode Mode => InteractionMode.Operations;
 
     [Function("OperationsBot")]
     public async Task<HttpResponseData> 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
-        return await ProcessRequestAsync(request);
+        return await botFunction.ProcessRequestAsync(request, UpdateIds, Mode);
     }
 }

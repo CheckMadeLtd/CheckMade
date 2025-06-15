@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CheckMade.Common.LangExt.FpExtensions.Monads;
+using CheckMade.Common.Utils.FpExtensions;
+using CheckMade.Common.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Common.Utils.UiTranslation;
