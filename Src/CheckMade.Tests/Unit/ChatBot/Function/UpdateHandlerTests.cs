@@ -342,13 +342,13 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("https://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, Option<string>.None()),
+                        AttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, Option<string>.None()),
+                        AttachmentType.Photo, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri3.html"), 
-                        TlgAttachmentType.Voice, Option<string>.None()),
+                        AttachmentType.Voice, Option<string>.None()),
                     new(new Uri("https://www.gorin.de/fakeUri4.html"), 
-                        TlgAttachmentType.Document, Option<string>.None())
+                        AttachmentType.Document, Option<string>.None())
                 } 
             }
         ];
@@ -399,9 +399,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
                 Attachments = new List<AttachmentDetails>
                 {
                     new(new Uri("http://www.gorin.de/fakeUri1.html"), 
-                        TlgAttachmentType.Photo, "Random caption for Attachment 1"),
+                        AttachmentType.Photo, "Random caption for Attachment 1"),
                     new(new Uri("http://www.gorin.de/fakeUri2.html"), 
-                        TlgAttachmentType.Photo, "Random caption for Attachment 2"),
+                        AttachmentType.Photo, "Random caption for Attachment 2"),
                 }
             }
         ];

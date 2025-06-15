@@ -1,6 +1,6 @@
 namespace CheckMade.Common.Domain.Data.ChatBot;
 
-public enum TlgAttachmentType
+public enum AttachmentType
 {
     Document = 1,
     Photo,

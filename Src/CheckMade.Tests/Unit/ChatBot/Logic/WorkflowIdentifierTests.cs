@@ -84,7 +84,7 @@ public sealed class WorkflowIdentifierTests
         var workflow = await workflowIdentifier
             .IdentifyAsync([
                 inputGenerator.GetValidTlgInputTextMessage(),
-                inputGenerator.GetValidTlgInputTextMessageWithAttachment(TlgAttachmentType.Photo),
+                inputGenerator.GetValidTlgInputTextMessageWithAttachment(AttachmentType.Photo),
                 // This could be in response to an out-of-scope message in the history e.g. in another Role!
                 inputGenerator.GetValidTlgInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
                 inputGenerator.GetValidTlgInputTextMessage()

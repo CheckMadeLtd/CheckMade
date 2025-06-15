@@ -119,19 +119,19 @@ public sealed class ToModelConverter(
         return Result<TlgAttachmentDetails>.Run(() => update.Message.Type switch
         {
             MessageType.Text or MessageType.Location => new TlgAttachmentDetails(
-                Option<string>.None(), Option<TlgAttachmentType>.None()),
+                Option<string>.None(), Option<AttachmentType>.None()),
 
             MessageType.Document => new TlgAttachmentDetails(
                 update.Message.Document!.FileId,
-                TlgAttachmentType.Document),
+                AttachmentType.Document),
 
             MessageType.Photo => new TlgAttachmentDetails(
                 update.Message.Photo!.OrderBy(static p => p.FileSize).Last().FileId,
-                TlgAttachmentType.Photo),
+                AttachmentType.Photo),
 
             MessageType.Voice => new TlgAttachmentDetails(
                 update.Message.Voice!.FileId,
-                TlgAttachmentType.Voice),
+                AttachmentType.Voice),
 
             _ => throw new ArgumentOutOfRangeException(nameof(GetAttachmentDetails))
         });
@@ -147,7 +147,7 @@ public sealed class ToModelConverter(
         }
     }
 
-    private sealed record TlgAttachmentDetails(Option<string> FileId, Option<TlgAttachmentType> Type);
+    private sealed record TlgAttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
 
     private static Result<Option<Geo>> GetGeoCoordinates(UpdateWrapper update) =>
         update.Message.Location switch
@@ -260,7 +260,7 @@ public sealed class ToModelConverter(
         InteractionMode interactionMode,
         InputType inputType,
         Option<Uri> internalAttachmentUri,
-        Option<TlgAttachmentType> attachmentType,
+        Option<AttachmentType> attachmentType,
         Option<Geo> geoCoordinates,
         Option<int> botCommandEnumCode,
         Option<DomainTerm> domainTerm,

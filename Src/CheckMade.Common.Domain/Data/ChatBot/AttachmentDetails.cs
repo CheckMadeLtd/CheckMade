@@ -4,5 +4,5 @@ namespace CheckMade.Common.Domain.Data.ChatBot;
 
 public sealed record AttachmentDetails(
     Uri AttachmentUri,
-    TlgAttachmentType AttachmentType,
+    AttachmentType AttachmentType,
     Option<string> Caption);

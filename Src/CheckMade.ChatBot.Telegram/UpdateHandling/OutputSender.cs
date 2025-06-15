@@ -174,11 +174,11 @@ internal static class OutputSender
                                 in Result<TlgMessageId>.RunAsync(() =>
                                     details.AttachmentType switch
                                     {
-                                        TlgAttachmentType.Document => 
+                                        AttachmentType.Document => 
                                             outputBotClient.SendDocumentAsync(attachmentSendOutParams),
-                                        TlgAttachmentType.Photo => 
+                                        AttachmentType.Photo => 
                                             outputBotClient.SendPhotoAsync(attachmentSendOutParams),
-                                        TlgAttachmentType.Voice => 
+                                        AttachmentType.Voice => 
                                             outputBotClient.SendVoiceAsync(attachmentSendOutParams),
                                         _ => 
                                             throw new ArgumentOutOfRangeException(nameof(details.AttachmentType))

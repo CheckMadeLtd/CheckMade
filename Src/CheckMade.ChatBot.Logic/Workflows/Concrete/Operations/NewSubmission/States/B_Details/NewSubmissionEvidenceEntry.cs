@@ -71,7 +71,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                 
                 return currentAttachmentType switch
                 {
-                    TlgAttachmentType.Photo => WorkflowResponse.Create(
+                    AttachmentType.Photo => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {
@@ -82,7 +82,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
-                    TlgAttachmentType.Document => WorkflowResponse.Create(
+                    AttachmentType.Document => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {
@@ -93,7 +93,7 @@ internal sealed record NewSubmissionEvidenceEntry<T>(
                         newState: this,
                         promptTransition: promptTransitionAfterEvidenceEntry),
 
-                    TlgAttachmentType.Voice => WorkflowResponse.Create(
+                    AttachmentType.Voice => WorkflowResponse.Create(
                         currentInput,
                         new OutputDto
                         {

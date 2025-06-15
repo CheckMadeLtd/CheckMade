@@ -22,7 +22,7 @@ internal interface ITlgInputGenerator
         ResultantWorkflowState? resultantWorkflowState = null);
     
     TlgInput GetValidTlgInputTextMessageWithAttachment(
-        TlgAttachmentType type,
+        AttachmentType type,
         TestOriginatorRoleSetting roleSetting = Default);
     
     TlgInput GetValidTlgInputLocationMessage(
@@ -88,7 +88,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
     }
 
     public TlgInput GetValidTlgInputTextMessageWithAttachment(
-        TlgAttachmentType type, 
+        AttachmentType type, 
         TestOriginatorRoleSetting roleSetting)
     {
         return new TlgInput(
@@ -199,7 +199,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         string? text = null,
         Uri? attachmentTlgUri = null,
         Uri? attachmentInternalUri = null,
-        TlgAttachmentType? attachmentType = null,
+        AttachmentType? attachmentType = null,
         Geo? geoCoordinates = null,
         int? botCommandEnumCode = null,
         DomainTerm? domainTerm = null,
@@ -208,7 +208,7 @@ internal sealed class TlgInputGenerator(Randomizer randomizer) : ITlgInputGenera
         return new InputDetails(
             text ?? Option<string>.None(),
             attachmentInternalUri ?? Option<Uri>.None(), 
-            attachmentType ?? Option<TlgAttachmentType>.None(),
+            attachmentType ?? Option<AttachmentType>.None(),
             geoCoordinates ?? Option<Geo>.None(),
             botCommandEnumCode ?? Option<int>.None(),
             domainTerm ?? Option<DomainTerm>.None(),

@@ -7,7 +7,7 @@ namespace CheckMade.Common.Domain.Data.ChatBot.Input;
 public sealed record InputDetails(
     Option<string> Text,
     Option<Uri> AttachmentInternalUri,
-    Option<TlgAttachmentType> AttachmentType,
+    Option<AttachmentType> AttachmentType,
     Option<Geo> GeoCoordinates,
     Option<int> BotCommandEnumCode,
     Option<DomainTerm> DomainTerm,
