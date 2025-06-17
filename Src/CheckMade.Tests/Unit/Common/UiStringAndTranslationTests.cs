@@ -1,5 +1,5 @@
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

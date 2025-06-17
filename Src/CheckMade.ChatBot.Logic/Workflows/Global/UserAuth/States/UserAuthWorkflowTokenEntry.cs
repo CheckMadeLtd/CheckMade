@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
-using static CheckMade.Common.Utils.Validators.InputValidator;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
+using static General.Utils.Validators.InputValidator;
 // ReSharper disable UseCollectionExpression
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.UserAuth.States;
@@ -27,21 +27,21 @@ public sealed record UserAuthWorkflowTokenEntry(
     internal static readonly UiString EnterTokenPrompt = 
         Ui("🌀 Please enter your role token (format '{0}'): ", GetTokenFormatExample());
     
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
-            new OutputDto
+            new Output
             {
                 Text = EnterTokenPrompt,
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -62,7 +62,7 @@ public sealed record UserAuthWorkflowTokenEntry(
 
                 _ => WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = UiConcatenate(
                             Ui("This is an unknown token. Try again..."),
@@ -73,7 +73,7 @@ public sealed record UserAuthWorkflowTokenEntry(
 
             _ => WorkflowResponse.Create(
                 currentInput,
-                new OutputDto
+                new Output
                 {
                     Text = Ui("Bad token format! Try again...")
                 },
@@ -89,7 +89,7 @@ public sealed record UserAuthWorkflowTokenEntry(
             var inputText = tokenInputAttempt.Details.Text.GetValueOrThrow();
             var currentMode = tokenInputAttempt.Agent.Mode;
 
-            var outputs = new List<OutputDto>();
+            var outputs = new List<Output>();
 
             var newAgentRoleBindForCurrentMode = new AgentRoleBind(
                 (await RolesRepo.GetAllAsync()).First(r => r.Token.Equals(inputText)),
@@ -110,7 +110,7 @@ public sealed record UserAuthWorkflowTokenEntry(
             {
                 await RoleBindingsRepo.UpdateStatusAsync(lastActiveRoleBindForCurrentMode, DbRecordStatus.Historic);
 
-                outputs.Add(new OutputDto
+                outputs.Add(new Output
                 {
                     Text = UiConcatenate(
                         Ui("""
@@ -123,7 +123,7 @@ public sealed record UserAuthWorkflowTokenEntry(
                 });
             }
 
-            outputs.Add(new OutputDto
+            outputs.Add(new Output
             {
                 Text = UiConcatenate(
                     Ui("{0}, you have successfully authenticated at live-event {1} in your role as: ",
@@ -132,7 +132,7 @@ public sealed record UserAuthWorkflowTokenEntry(
                     roleTypeUiString)
             });
 
-            outputs.Add(new OutputDto
+            outputs.Add(new Output
             {
                 Text = IInputProcessor.SeeValidBotCommandsInstruction
             });

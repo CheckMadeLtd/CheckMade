@@ -35,7 +35,7 @@
     <ItemGroup>
       <ProjectReference Include="..\CheckMade.ChatBot.Function\CheckMade.ChatBot.Function.csproj" />
       <ProjectReference Include="..\CheckMade.ChatBot.Logic\CheckMade.ChatBot.Logic.csproj" />
-      <ProjectReference Include="..\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj" />
+      <ProjectReference Include="..\CheckMade.Services.Persistence\CheckMade.Services.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

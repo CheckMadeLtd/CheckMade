@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Persistence;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Services.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;

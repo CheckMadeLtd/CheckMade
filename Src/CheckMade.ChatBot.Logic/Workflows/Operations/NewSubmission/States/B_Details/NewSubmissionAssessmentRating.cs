@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Data.Core.Submissions;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Data.Core.Submissions;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using General.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -24,12 +24,12 @@ public sealed record NewSubmissionAssessmentRating<T>(
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionAssessmentRating<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId, 
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -42,7 +42,7 @@ public sealed record NewSubmissionAssessmentRating<T>(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -58,7 +58,7 @@ public sealed record NewSubmissionAssessmentRating<T>(
             var selectedRating = currentInput.Details.DomainTerm.GetValueOrThrow().EnumValue!;
 
             var promptTransition = new PromptTransition(
-                new OutputDto
+                new Output
                 {
                     Text = UiConcatenate(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

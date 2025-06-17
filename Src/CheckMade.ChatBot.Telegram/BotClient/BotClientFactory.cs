@@ -1,5 +1,5 @@
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Utils.RetryPolicies;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 

@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Global.Logout.States;
 
@@ -19,17 +19,17 @@ public sealed record LogoutWorkflowConfirm(
     IAgentRoleBindingsRepository RoleBindingsRepo) 
     : ILogoutWorkflowConfirm
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var currentRoleBind = (await RoleBindingsRepo.GetAllActiveAsync())
             .First(arb => arb.Agent.Equals(currentInput.Agent));
         
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
-            new OutputDto
+            new Output
             {
                 Text = UiConcatenate(
                     Ui("{0}, your current role is: ", 
@@ -44,7 +44,7 @@ public sealed record LogoutWorkflowConfirm(
             }
         ];
 
-        return previousPromptFinalizer.Match<IReadOnlyCollection<OutputDto>>(
+        return previousPromptFinalizer.Match<IReadOnlyCollection<Output>>(
             ppf => outputs.Prepend(ppf).ToImmutableArray(),
             () => outputs.ToImmutableArray());
     }
@@ -66,7 +66,7 @@ public sealed record LogoutWorkflowConfirm(
             (long)ControlPrompts.No =>
                 WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = UiConcatenate(
                             Ui("Logout aborted."), UiNewLines(1),
@@ -74,7 +74,7 @@ public sealed record LogoutWorkflowConfirm(
                     },
                     newState: Mediator.GetTerminator(typeof(ILogoutWorkflowAborted)),
                     promptTransition: new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt, UiNoTranslate(" "),
@@ -106,7 +106,7 @@ public sealed record LogoutWorkflowConfirm(
             return
                 WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = UiConcatenate(
                             Ui("💨 Logged out."),
@@ -115,7 +115,7 @@ public sealed record LogoutWorkflowConfirm(
                     },
                     newState: Mediator.GetTerminator(typeof(ILogoutWorkflowLoggedOut)),
                     promptTransition: new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt,

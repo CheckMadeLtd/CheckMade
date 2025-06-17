@@ -1,7 +1,7 @@
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
@@ -13,14 +13,14 @@ internal sealed record PromptTransition
     internal PromptTransition(bool isNextPromptInPlaceUpdate)
     {
         IsNextPromptInPlaceUpdate = isNextPromptInPlaceUpdate;
-        CurrentPromptFinalizer = Option<OutputDto>.None();
+        CurrentPromptFinalizer = Option<Output>.None();
     }
 
     /// <summary>
     /// Explicitly specifies how to finalize (modify) the bot's current message, before sending the next one.
     /// E.g. showing the original prompt plus the user's choice from among DomainTerms, while removing InlineKeyboard. 
     /// </summary>
-    internal PromptTransition(OutputDto currentPromptFinalizer)
+    internal PromptTransition(Output currentPromptFinalizer)
     {
         IsNextPromptInPlaceUpdate = false;
         CurrentPromptFinalizer = currentPromptFinalizer;
@@ -42,12 +42,12 @@ internal sealed record PromptTransition
             ? msgIdCache.GetLastMessageId(currentAgent)
             : currentMessageId;
 
-        CurrentPromptFinalizer = new OutputDto
+        CurrentPromptFinalizer = new Output
         {
             UpdateExistingOutputMessageId = updateMessageId
         };
     }
     
     internal bool IsNextPromptInPlaceUpdate { get; }
-    internal Option<OutputDto> CurrentPromptFinalizer { get; }
+    internal Option<Output> CurrentPromptFinalizer { get; }
 }

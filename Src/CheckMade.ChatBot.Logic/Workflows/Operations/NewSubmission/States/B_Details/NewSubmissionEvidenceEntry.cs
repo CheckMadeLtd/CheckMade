@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using General.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -22,12 +22,12 @@ public sealed record NewSubmissionEvidenceEntry<T>(
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionEvidenceEntry<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -37,7 +37,7 @@ public sealed record NewSubmissionEvidenceEntry<T>(
             }
         ];
     
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -55,7 +55,7 @@ public sealed record NewSubmissionEvidenceEntry<T>(
 
                 return WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = Ui("✅📝 Description received. You can send more text, add photos/documents " +
                                   "or continue to the next step."),
@@ -73,7 +73,7 @@ public sealed record NewSubmissionEvidenceEntry<T>(
                 {
                     AttachmentType.Photo => WorkflowResponse.Create(
                         currentInput,
-                        new OutputDto
+                        new Output
                         {
                             Text = Ui("✅📷 Photo received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
@@ -84,7 +84,7 @@ public sealed record NewSubmissionEvidenceEntry<T>(
 
                     AttachmentType.Document => WorkflowResponse.Create(
                         currentInput,
-                        new OutputDto
+                        new Output
                         {
                             Text = Ui("✅📄 Document received. You can send more attachments, add a description " +
                                       "or continue to the next step."),
@@ -95,7 +95,7 @@ public sealed record NewSubmissionEvidenceEntry<T>(
 
                     AttachmentType.Voice => WorkflowResponse.Create(
                         currentInput,
-                        new OutputDto
+                        new Output
                         {
                             Text = Ui("❗🎙 Voice messages are not yet supported. You can send photos/documents, " +
                                       "add a description or continue to the next step."),

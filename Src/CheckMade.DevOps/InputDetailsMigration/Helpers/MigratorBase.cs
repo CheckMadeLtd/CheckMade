@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Helpers;
 

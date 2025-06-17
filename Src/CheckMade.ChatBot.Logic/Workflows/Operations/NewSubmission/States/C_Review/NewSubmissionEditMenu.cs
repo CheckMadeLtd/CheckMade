@@ -1,12 +1,12 @@
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 
@@ -18,10 +18,10 @@ public sealed record NewSubmissionEditMenu<T>(
     IGeneralWorkflowUtils GeneralUtils) 
     : INewSubmissionEditMenu<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId, 
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var workflowStateHistory =
             (await GeneralUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
@@ -39,7 +39,7 @@ public sealed record NewSubmissionEditMenu<T>(
         }
         
         // ReSharper disable once UnusedVariable
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             new()
             {

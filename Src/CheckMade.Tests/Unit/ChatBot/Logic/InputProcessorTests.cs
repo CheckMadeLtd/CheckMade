@@ -1,14 +1,14 @@
 using CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting;
 using CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting.States;
 using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth.States;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Domain.Data.Core.GIS;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +36,7 @@ public sealed class InputProcessorTests
         var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
     
-        List<OutputDto> expectedOutputs = 
+        List<Output> expectedOutputs = 
         [
             new() { Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
             new() { Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }

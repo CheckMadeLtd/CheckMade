@@ -1,17 +1,17 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.D_Terminators;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core.Submissions;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Domain.Interfaces.Logic;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core.Submissions;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using General.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 
@@ -31,10 +31,10 @@ public sealed record NewSubmissionReview<T>(
 {
     private Guid _lastGuidCache = Guid.Empty;
     
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var interactiveHistory =
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
@@ -46,7 +46,7 @@ public sealed record NewSubmissionReview<T>(
         var submission = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = submission.GetSummary();
 
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -84,7 +84,7 @@ public sealed record NewSubmissionReview<T>(
             (long)ControlPrompts.Submit =>
                 WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = Ui("✅ Submission succeeded!")
                     },
@@ -102,7 +102,7 @@ public sealed record NewSubmissionReview<T>(
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };
 
-        async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
+        async Task<IReadOnlyCollection<Output>> GetStakeholderNotificationsAsync()
         {
             var historyWithUpdatedCurrentInput = 
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(

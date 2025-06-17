@@ -1,25 +1,25 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
-using MessageId = CheckMade.Common.Domain.Data.ChatBot.MessageId;
+using MessageId = CheckMade.Abstract.Domain.Data.ChatBot.MessageId;
 
 namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 
 internal static class OutputSender
 {
-    internal static async Task<IReadOnlyCollection<Result<OutputDto>>> SendOutputsAsync(
-        IReadOnlyCollection<OutputDto> outputs,
+    internal static async Task<IReadOnlyCollection<Result<Output>>> SendOutputsAsync(
+        IReadOnlyCollection<Output> outputs,
         IDictionary<InteractionMode, IBotClientWrapper> botClientByMode,
         Agent currentAgent,
         IReadOnlyCollection<AgentRoleBind> activeRoleBindings,
@@ -37,10 +37,10 @@ internal static class OutputSender
             arb.Role.Equals(lp.Role) &&
             arb.Agent.Mode == lp.InteractionMode;
         
-        Func<IReadOnlyCollection<OutputDto>, Task<IReadOnlyCollection<Result<OutputDto>>>> 
+        Func<IReadOnlyCollection<Output>, Task<IReadOnlyCollection<Result<Output>>>> 
             sendOutputsInSeriesAndOriginalOrder = async outputsPerBoundPort =>
             {
-                List<Result<OutputDto>> sentOutputs = [];
+                List<Result<Output>> sentOutputs = [];
                 
                 foreach (var output in outputsPerBoundPort)
                 {
@@ -118,7 +118,7 @@ internal static class OutputSender
 
                     continue;
 
-                    Result<OutputDto> GetOutputEnrichedWithActualSendOutParams(Result<MessageId> messageId) =>
+                    Result<Output> GetOutputEnrichedWithActualSendOutParams(Result<MessageId> messageId) =>
                         messageId.Match(
                             id => output with
                             {
@@ -128,7 +128,7 @@ internal static class OutputSender
                                     ChatId = outputAgent.ChatId
                                 }
                             },
-                            Result<OutputDto>.Fail);
+                            Result<Output>.Fail);
                     
                     async Task<Result<MessageId>> InvokeSendTextMessageAsync()
                     {
@@ -201,7 +201,7 @@ internal static class OutputSender
                 return sentOutputs;
             };
         
-        Func<OutputDto, bool> logicalPortIsBound = o => 
+        Func<Output, bool> logicalPortIsBound = o => 
             o.LogicalPort.Match(
                 logicalPort => activeRoleBindings
                     .Any(arb => hasBinding(arb, logicalPort)),

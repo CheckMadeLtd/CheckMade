@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Data.Core.GIS;
-using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
-using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

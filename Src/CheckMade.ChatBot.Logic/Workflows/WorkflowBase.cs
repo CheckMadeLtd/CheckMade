@@ -1,11 +1,11 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
@@ -36,7 +36,7 @@ public abstract record WorkflowBase(
         if (currentStateTypeOption.IsNone)
         {
             return new WorkflowResponse(
-                new OutputDto
+                new Output
                 {
                     Text = BeginWithStart
                 },
@@ -49,7 +49,7 @@ public abstract record WorkflowBase(
         {
             return WorkflowResponse.Create(
                 currentInput,
-                new OutputDto { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
+                new Output { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
                 newState: Mediator.GetTerminator(currentStateType));
         }
         

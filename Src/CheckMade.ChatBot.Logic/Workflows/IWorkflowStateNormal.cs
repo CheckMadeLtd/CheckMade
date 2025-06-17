@@ -1,9 +1,9 @@
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 
@@ -11,10 +11,10 @@ public interface IWorkflowStateNormal : IWorkflowState
 {
     IStateMediator Mediator { get; }
     
-    Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer);
+        Option<Output> previousPromptFinalizer);
 
     Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput);
 }

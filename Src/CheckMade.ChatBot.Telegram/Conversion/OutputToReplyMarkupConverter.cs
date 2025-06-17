@@ -1,24 +1,24 @@
 using System.ComponentModel;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Common.Utils.Validators;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
+using General.Utils.Validators;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {
-    Option<ReplyMarkup> GetReplyMarkup(OutputDto output);
+    Option<ReplyMarkup> GetReplyMarkup(Output output);
 }
 
 internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator, IDomainGlossary domainGlossary) 
     : IOutputToReplyMarkupConverter
 {
-    public Option<ReplyMarkup> GetReplyMarkup(OutputDto output)
+    public Option<ReplyMarkup> GetReplyMarkup(Output output)
     {
         if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");

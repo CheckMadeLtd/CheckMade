@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 
 // ReSharper disable UseCollectionExpression
 
@@ -25,14 +25,14 @@ public sealed record LanguageSettingSelect(
     ILastOutputMessageIdCache MsgIdCache) 
     : ILanguageSettingSelect
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
-            new OutputDto
+            new Output
             {
                 Text = Ui("🌎 Please select your preferred language:"),
                 DomainTermSelection = new List<DomainTerm>(
@@ -42,7 +42,7 @@ public sealed record LanguageSettingSelect(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -63,7 +63,7 @@ public sealed record LanguageSettingSelect(
 
         return WorkflowResponse.Create(
             currentInput,
-            new OutputDto
+            new Output
             {
                 Text = UiConcatenate(
                     Ui("New language: "),

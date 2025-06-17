@@ -1,15 +1,14 @@
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core.GIS;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,7 +64,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         serviceCollection.AddScoped<IInputProcessor>(static _ => 
             GetStubInputProcessor( 
-                new List<OutputDto>
+                new List<Output>
                 {
                     new() { Text = EnglishUiStringForTests }
                 }));
@@ -96,7 +95,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         serviceCollection.AddScoped<IInputProcessor>(static _ => 
             GetStubInputProcessor(
-                new List<OutputDto>
+                new List<Output>
                 {
                     new() { Text = EnglishUiStringForTests }
                 }));
@@ -142,7 +141,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputWithPrompts = 
+        List<Output> outputWithPrompts = 
         [ 
             new()
             {
@@ -157,7 +156,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
-        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, new DomainGlossary());
+        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, basics.glossary);
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
         var actualMarkup = Option<ReplyMarkup>.None();
@@ -185,14 +184,14 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsMultipleMessages_ForListOfOutputDtos(InteractionMode mode)
+    public async Task HandleUpdateAsync_SendsMultipleMessages_ForListOfOutputs(InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsMultiple = 
+        List<Output> outputsMultiple = 
         [
-            new OutputDto { Text = UiNoTranslate("Output1") },
-            new OutputDto { Text = UiNoTranslate("Output2") }
+            new Output { Text = UiNoTranslate("Output1") },
+            new Output { Text = UiNoTranslate("Output2") }
         ];
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
@@ -223,23 +222,23 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputsWithLogicalPort = 
+        List<Output> outputsWithLogicalPort = 
         [
-            new OutputDto
+            new Output
             { 
                 LogicalPort = new LogicalPort(
                     SanitaryInspector_DanielEn_X2024, 
                     Operations), 
                 Text = UiNoTranslate("Output1")   
             },
-            new OutputDto
+            new Output
             {
                 LogicalPort = new LogicalPort(
                     SanitaryTeamLead_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output2") 
             },
-            new OutputDto
+            new Output
             {
                 LogicalPort = new LogicalPort(
                     SanitaryEngineer_DanielEn_X2024, 
@@ -294,12 +293,12 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     [InlineData(Operations)]
     [InlineData(Communications)]
     [InlineData(Notifications)]
-    public async Task HandleUpdateAsync_SendsToCurrentChatId_WhenOutputDtoHasNoLogicalPort(
+    public async Task HandleUpdateAsync_SendsToCurrentChatId_WhenOutputHasNoLogicalPort(
         InteractionMode mode)
     {
         var serviceCollection = new UnitTestStartup().Services;
         const string expectedOutputMessage = "Output without logical port";
-        List<OutputDto> outputWithoutPort = [new OutputDto{ Text = UiNoTranslate(expectedOutputMessage) }];
+        List<Output> outputWithoutPort = [new Output{ Text = UiNoTranslate(expectedOutputMessage) }];
     
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor((outputWithoutPort)));
@@ -335,9 +334,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputWithMultipleAttachmentTypes =
+        List<Output> outputWithMultipleAttachmentTypes =
         [
-            new OutputDto
+            new Output
             {
                 Attachments = new List<AttachmentDetails>
                 {
@@ -391,9 +390,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var serviceCollection = new UnitTestStartup().Services;
         const string mainText = "This is the main text describing all attachments";
         
-        List<OutputDto> outputWithTextAndCaptions =
+        List<Output> outputWithTextAndCaptions =
         [
-            new OutputDto
+            new Output
             {
                 Text = UiNoTranslate(mainText),
                 Attachments = new List<AttachmentDetails>
@@ -439,9 +438,9 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         
-        List<OutputDto> outputWithLocation =
+        List<Output> outputWithLocation =
         [
-            new OutputDto
+            new Output
             {
                 Location = new Geo(35.098, -17.077, Option<double>.None()) 
             }
@@ -470,7 +469,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator)
+        IUiTranslator emptyTranslator,
+        IDomainGlossary glossary)
         GetBasicTestingServices(IServiceProvider sp)
     {
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -491,10 +491,11 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
             new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
-                sp.GetRequiredService<ILogger<UiTranslator>>()));
+                sp.GetRequiredService<ILogger<UiTranslator>>()),
+            sp.GetRequiredService<IDomainGlossary>());
     } 
     
-    private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<OutputDto> returningOutputs)
+    private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<Output> returningOutputs)
     {
         var sp = new UnitTestStartup().Services.BuildServiceProvider();
         var inputGenerator = sp.GetRequiredService<IInputGenerator>();
@@ -503,7 +504,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         var mockInputProcessor = new Mock<IInputProcessor>();
         
         mockInputProcessor
-            .Setup<Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)>>(
+            .Setup<Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<Output> ResultingOutputs)>>(
                 static ip => ip.ProcessInputAsync(It.IsAny<Result<Input>>()))
             .ReturnsAsync((validInput, returningOutputs));
 

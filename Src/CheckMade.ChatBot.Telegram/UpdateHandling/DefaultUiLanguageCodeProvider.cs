@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Telegram.UpdateHandling;
 

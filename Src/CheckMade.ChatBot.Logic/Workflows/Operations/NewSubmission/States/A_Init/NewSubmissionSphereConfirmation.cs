@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using General.Utils.FpExtensions.Monads;
 using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmissionUtils;
 // ReSharper disable UseCollectionExpression
 
@@ -25,14 +25,14 @@ public sealed record NewSubmissionSphereConfirmation<T>(
     IStateMediator Mediator) 
     : INewSubmissionSphereConfirmation<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var nearSphere = await GetNearSphere();
 
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             new()
             {
@@ -83,7 +83,7 @@ public sealed record NewSubmissionSphereConfirmation<T>(
                     currentInput, 
                     Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                     new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt,
@@ -97,7 +97,7 @@ public sealed record NewSubmissionSphereConfirmation<T>(
                     currentInput, 
                     Mediator.Next(typeof(INewSubmissionSphereSelection<T>)),
                     new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt,

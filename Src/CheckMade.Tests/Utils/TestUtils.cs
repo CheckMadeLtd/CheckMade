@@ -1,7 +1,7 @@
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Tests.Utils;
@@ -12,10 +12,10 @@ internal static class TestUtils
     internal static readonly UiString EnglishUiStringForTests = Ui("English string for testing");
     internal const string GermanStringForTests = "Deutscher Text für Tests";
 
-    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<OutputDto>> actualOutput) => 
+    internal static string GetFirstRawEnglish(Result<IReadOnlyCollection<Output>> actualOutput) => 
         GetFirstRawEnglish(actualOutput.GetValueOrThrow());
 
-    internal static string GetFirstRawEnglish(this IReadOnlyCollection<OutputDto> actualOutput)
+    internal static string GetFirstRawEnglish(this IReadOnlyCollection<Output> actualOutput)
     {
         var text = actualOutput.First().Text.GetValueOrThrow();
 
@@ -24,7 +24,7 @@ internal static class TestUtils
             : text.RawEnglishText;
     }
 
-    internal static string GetAllRawEnglish(this IReadOnlyCollection<OutputDto> actualOutput)
+    internal static string GetAllRawEnglish(this IReadOnlyCollection<Output> actualOutput)
     {
         var combinedRawEnglish = string.Empty;
 

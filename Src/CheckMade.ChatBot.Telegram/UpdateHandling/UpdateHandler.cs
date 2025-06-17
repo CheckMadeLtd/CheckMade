@@ -1,15 +1,15 @@
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.ChatBot.Output;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
@@ -89,7 +89,7 @@ public sealed class UpdateHandler(
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
                     in Result<(Option<Input> EnrichedOriginalInput, 
-                        IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
+                        IReadOnlyCollection<Output> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(input))
                 from activeRoleBindings
                     in Result<IReadOnlyCollection<AgentRoleBind>>.RunAsync(async () => 
@@ -102,7 +102,7 @@ public sealed class UpdateHandler(
                     in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator, glossary))
                 from sentOutputs
-                    in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
+                    in Result<IReadOnlyCollection<Result<Output>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentAgent, activeRoleBindings, 
                             uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger))
@@ -155,7 +155,7 @@ public sealed class UpdateHandler(
     }
 
     private async Task<Unit> SaveToDbAsync(
-        Option<Input> enrichedInput, IReadOnlyCollection<Result<OutputDto>> sentOutputs)
+        Option<Input> enrichedInput, IReadOnlyCollection<Result<Output>> sentOutputs)
     {
         if (enrichedInput.IsNone)
             return Unit.Value;
@@ -179,7 +179,7 @@ public sealed class UpdateHandler(
             if (!doesCurrentInputTerminateWorkflow)
                 return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
             
-            Func<Result<OutputDto>, bool> isOtherRecipientThanOriginatingRole = outputAttempt => 
+            Func<Result<Output>, bool> isOtherRecipientThanOriginatingRole = outputAttempt => 
                 outputAttempt.Match(
                     o => o.LogicalPort.IsSome &&
                          !enrichedInput.GetValueOrThrow().OriginatorRole.GetValueOrThrow()
