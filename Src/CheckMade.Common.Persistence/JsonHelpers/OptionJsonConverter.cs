@@ -1,6 +1,6 @@
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Data.Core.GIS;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

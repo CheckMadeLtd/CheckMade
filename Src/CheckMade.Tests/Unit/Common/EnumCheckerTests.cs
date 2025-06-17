@@ -1,5 +1,5 @@
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Utils.Validators;
 using Xunit.Abstractions;
 

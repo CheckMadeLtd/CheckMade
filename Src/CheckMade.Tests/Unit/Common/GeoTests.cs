@@ -1,4 +1,4 @@
-using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Tests.Unit.Common;

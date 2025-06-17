@@ -1,7 +1,7 @@
 using CheckMade.ChatBot.Telegram.UpdateHandling;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.RetryPolicies;
 using CheckMade.Common.Utils.UiTranslation;
@@ -13,7 +13,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.TGFile;
-using MessageId = CheckMade.Common.Domain.Data.ChatBot.MessageId;
+using MessageId = CheckMade.Abstract.Domain.Data.ChatBot.MessageId;
 
 namespace CheckMade.ChatBot.Telegram.BotClient;
 
@@ -351,7 +351,7 @@ public sealed class BotClientWrapper(
     }
 
     private static IReadOnlyCollection<BotCommand> GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, Common.Domain.Data.ChatBot.UserInteraction.BotCommands.BotCommand>> menu, LanguageCode language) 
+        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.BotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
             .SelectMany(static kvp => kvp.Value)

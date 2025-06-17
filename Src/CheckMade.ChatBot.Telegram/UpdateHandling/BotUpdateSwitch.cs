@@ -1,4 +1,4 @@
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;

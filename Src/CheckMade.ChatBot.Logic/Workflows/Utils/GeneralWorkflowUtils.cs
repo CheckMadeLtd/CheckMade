@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
-using CheckMade.Common.Domain.Data.ChatBot;
-using CheckMade.Common.Domain.Data.ChatBot.Input;
-using CheckMade.Common.Domain.Data.Core;
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
-using static CheckMade.Common.Domain.Data.ChatBot.UserInteraction.InteractionMode;
-using static CheckMade.Common.Domain.Data.ChatBot.Input.InputType;
+using static CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.InteractionMode;
+using static CheckMade.Abstract.Domain.Data.ChatBot.Input.InputType;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 

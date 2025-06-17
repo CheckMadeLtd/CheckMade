@@ -1,7 +1,7 @@
-using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.Utils;
-using CheckMade.Common.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;

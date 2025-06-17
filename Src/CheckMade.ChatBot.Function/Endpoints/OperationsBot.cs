@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using CheckMade.ChatBot.Telegram.Function;
-using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 

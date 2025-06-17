@@ -1,5 +1,5 @@
 using Azure.Storage.Blobs;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
 
 namespace CheckMade.Common.ExternalServices.AzureServices;
 

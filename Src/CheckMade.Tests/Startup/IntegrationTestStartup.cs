@@ -1,7 +1,7 @@
 using CheckMade.Common.ExternalServices.GoogleApi;
 using CheckMade.Common.Persistence;
 using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.Domain.Interfaces.ExternalServices.GoogleApi;
+using CheckMade.Abstract.Domain.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup.ConfigProviders;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
