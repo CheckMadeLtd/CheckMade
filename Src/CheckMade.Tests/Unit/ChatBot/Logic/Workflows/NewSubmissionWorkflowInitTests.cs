@@ -1,6 +1,6 @@
-using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission;
-using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.A_Init;
-using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.B_Details;
+using CheckMade.Bot.Workflows.Workflows.Operations.NewSubmission;
+using CheckMade.Bot.Workflows.Workflows.Operations.NewSubmission.States.A_Init;
+using CheckMade.Bot.Workflows.Workflows.Operations.NewSubmission.States.B_Details;
 using CheckMade.Abstract.Domain.Data.ChatBot.Input;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
