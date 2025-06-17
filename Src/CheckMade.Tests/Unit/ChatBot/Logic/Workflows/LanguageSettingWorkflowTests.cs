@@ -1,9 +1,9 @@
-using CheckMade.Bot.Workflows.Workflows.Global.LanguageSetting;
-using CheckMade.Bot.Workflows.Workflows.Global.LanguageSetting.States;
 using CheckMade.Abstract.Domain.Data.ChatBot.Input;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using CheckMade.Bot.Workflows.Global.LanguageSetting;
+using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
