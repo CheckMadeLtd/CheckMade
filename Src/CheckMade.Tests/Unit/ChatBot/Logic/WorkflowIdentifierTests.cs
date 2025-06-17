@@ -4,7 +4,7 @@ using CheckMade.ChatBot.Logic.Workflows.Global.UserAuth;
 using CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission;
 using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;
 

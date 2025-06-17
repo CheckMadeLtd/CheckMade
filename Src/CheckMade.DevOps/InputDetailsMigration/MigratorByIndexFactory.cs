@@ -1,5 +1,5 @@
 using System.Reflection;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.InputDetailsMigration;

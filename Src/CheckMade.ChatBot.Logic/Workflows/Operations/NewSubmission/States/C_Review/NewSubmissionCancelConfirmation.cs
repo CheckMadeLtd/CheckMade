@@ -8,7 +8,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 
 // ReSharper disable UseCollectionExpression
 

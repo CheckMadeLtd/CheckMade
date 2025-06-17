@@ -1,6 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
-namespace CheckMade.Common.Utils.FpExtensions.Monads;
+namespace General.Utils.FpExtensions.Monads;
 
 public sealed record Option<T>
 {

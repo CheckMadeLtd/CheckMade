@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.Validators;
+using General.Utils.Validators;
 
 namespace CheckMade.Abstract.Domain.Data.Core.Actors;
 

@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Data.Core.LiveEvents;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Common.Persistence.Repositories.Core;

@@ -7,7 +7,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using CheckMade.Common.Persistence.JsonHelpers;
 using Npgsql;
 using NpgsqlTypes;

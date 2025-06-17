@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils.FpExtensions;
+namespace General.Utils.FpExtensions;
 
 public static class RecursionExtensions
 {

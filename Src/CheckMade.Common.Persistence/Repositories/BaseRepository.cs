@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using Npgsql;
 
 namespace CheckMade.Common.Persistence.Repositories;

@@ -6,7 +6,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot.Output;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.States.C_Review;
 

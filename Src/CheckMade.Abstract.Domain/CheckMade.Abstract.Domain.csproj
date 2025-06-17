@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Common.Utils\CheckMade.Common.Utils.csproj" />
+      <ProjectReference Include="..\General.Utils\General.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>

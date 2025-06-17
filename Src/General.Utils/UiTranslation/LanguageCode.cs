@@ -1,5 +1,5 @@
 // ReSharper disable InconsistentNaming
-namespace CheckMade.Common.Utils.UiTranslation;
+namespace General.Utils.UiTranslation;
 
 public enum LanguageCode
 {

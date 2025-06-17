@@ -19,7 +19,7 @@ using CheckMade.Abstract.Domain.Data.Core.Submissions;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic;
 

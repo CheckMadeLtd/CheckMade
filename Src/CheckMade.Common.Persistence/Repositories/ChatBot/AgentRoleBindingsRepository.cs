@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using CheckMade.Common.Persistence.Repositories.Core;
 using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
 

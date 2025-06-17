@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.Tests.Unit.Common;
 

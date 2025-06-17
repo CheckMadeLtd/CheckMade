@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Polly;
 
-namespace CheckMade.Common.Utils.RetryPolicies;
+namespace General.Utils.RetryPolicies;
 
 public interface INetworkRetryPolicy
 {

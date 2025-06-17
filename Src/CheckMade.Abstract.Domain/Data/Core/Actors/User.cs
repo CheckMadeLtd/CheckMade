@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using static CheckMade.Abstract.Domain.Utils.Comparers.UserInfoComparer;
 
 namespace CheckMade.Abstract.Domain.Data.Core.Actors;

@@ -1,4 +1,4 @@
-﻿namespace CheckMade.Common.Utils;
+﻿namespace General.Utils;
 
 public sealed class Randomizer
 {

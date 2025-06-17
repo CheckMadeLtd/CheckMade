@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Telegram.BotClient;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using File = Telegram.Bot.Types.TGFile;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;

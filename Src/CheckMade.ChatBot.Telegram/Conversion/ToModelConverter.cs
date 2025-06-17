@@ -11,8 +11,8 @@ using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.Validators;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.Validators;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 

@@ -1,6 +1,6 @@
-using static CheckMade.Common.Utils.UiTranslation.UiString;
+using static General.Utils.UiTranslation.UiString;
 
-namespace CheckMade.Common.Utils.FpExtensions.Monads;
+namespace General.Utils.FpExtensions.Monads;
 
 public static class ResultExtensions
 {

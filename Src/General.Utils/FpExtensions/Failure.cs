@@ -1,6 +1,6 @@
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
-namespace CheckMade.Common.Utils.FpExtensions;
+namespace General.Utils.FpExtensions;
 
 public abstract record Failure
 {

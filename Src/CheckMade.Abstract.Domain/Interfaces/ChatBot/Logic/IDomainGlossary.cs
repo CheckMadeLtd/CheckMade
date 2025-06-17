@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 

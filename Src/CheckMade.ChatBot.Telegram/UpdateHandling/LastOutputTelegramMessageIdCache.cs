@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
 namespace CheckMade.ChatBot.Telegram.UpdateHandling;

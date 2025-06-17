@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils.Validators;
+namespace General.Utils.Validators;
 
 public static class EnumChecker
 {

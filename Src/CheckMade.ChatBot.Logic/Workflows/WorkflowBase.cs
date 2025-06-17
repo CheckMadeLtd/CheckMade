@@ -4,8 +4,8 @@ using CheckMade.Abstract.Domain.Data.ChatBot.Output;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 

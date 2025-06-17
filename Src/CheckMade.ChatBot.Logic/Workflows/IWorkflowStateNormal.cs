@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.ChatBot.Input;
 using CheckMade.Abstract.Domain.Data.ChatBot.Output;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.ChatBot.Logic.Workflows;
 

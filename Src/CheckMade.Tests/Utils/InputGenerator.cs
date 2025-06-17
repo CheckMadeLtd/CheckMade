@@ -5,7 +5,7 @@ using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 
 namespace CheckMade.Tests.Utils;

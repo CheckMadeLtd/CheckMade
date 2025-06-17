@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
-using CheckMade.Common.Utils.FpExtensions;
-using CheckMade.Common.Utils.FpExtensions.Monads;
 using CsvHelper;
+using General.Utils.FpExtensions;
+using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Common.Utils.UiTranslation;
+namespace General.Utils.UiTranslation;
 
 public interface IUiTranslatorFactory
 {

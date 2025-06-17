@@ -1,4 +1,4 @@
-using CheckMade.Common.Utils.RetryPolicies;
+using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Exceptions;

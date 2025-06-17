@@ -3,9 +3,9 @@ using CheckMade.Abstract.Domain.Data.ChatBot.Output;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
-using CheckMade.Common.Utils.Validators;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
+using General.Utils.Validators;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheckMade.ChatBot.Telegram.Conversion;

@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Data.Core.Actors;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 
 namespace CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 

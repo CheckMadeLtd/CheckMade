@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Polly.Retry;
 
-namespace CheckMade.Common.Utils.RetryPolicies;
+namespace General.Utils.RetryPolicies;
 
 public abstract class RetryPolicyBase(string errorType, ILogger<RetryPolicyBase> logger)
 {

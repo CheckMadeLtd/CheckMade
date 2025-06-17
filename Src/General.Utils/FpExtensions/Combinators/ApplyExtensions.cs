@@ -1,4 +1,4 @@
-namespace CheckMade.Common.Utils.FpExtensions.Combinators;
+namespace General.Utils.FpExtensions.Combinators;
 
 public static class ApplyExtensions
 {

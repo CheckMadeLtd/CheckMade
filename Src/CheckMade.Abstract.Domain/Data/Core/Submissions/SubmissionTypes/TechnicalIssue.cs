@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.UiTranslation;
 using static CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionSummaryCategories;
 
 namespace CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;

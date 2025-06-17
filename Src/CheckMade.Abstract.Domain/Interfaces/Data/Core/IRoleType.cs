@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Data.Core.Submissions;
-using CheckMade.Common.Utils.FpExtensions.Monads;
+using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Abstract.Domain.Interfaces.Data.Core;
 

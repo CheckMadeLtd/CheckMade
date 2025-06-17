@@ -10,8 +10,8 @@ using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Common.Utils.FpExtensions.Monads;
-using CheckMade.Common.Utils.UiTranslation;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using User = CheckMade.Abstract.Domain.Data.Core.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
