@@ -24,10 +24,10 @@ public sealed record NewSubmissionFacilitySelection<T>(
     ILiveEventsRepository LiveEventsRepo) 
     : INewSubmissionFacilitySelection<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var currentSphere = 
             GetLastSelectedSphere<T>(
@@ -37,7 +37,7 @@ public sealed record NewSubmissionFacilitySelection<T>(
                     currentInput.LiveEventContext.GetValueOrThrow(),
                     LiveEventsRepo));
         
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -74,7 +74,7 @@ public sealed record NewSubmissionFacilitySelection<T>(
             
             var promptTransition =
                 new PromptTransition(
-                    new OutputDto
+                    new Output
                     {
                         Text = UiConcatenate(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

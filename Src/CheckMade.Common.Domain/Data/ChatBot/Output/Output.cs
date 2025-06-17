@@ -6,7 +6,7 @@ using CheckMade.Common.Utils.UiTranslation;
 
 namespace CheckMade.Common.Domain.Data.ChatBot.Output;
 
-public sealed record OutputDto
+public sealed record Output
 {
     public Option<LogicalPort> LogicalPort { get; init; } 
         = Option<LogicalPort>.None();

@@ -26,17 +26,17 @@ public sealed record NewSubmissionConsumablesSelection<T>(
     ILiveEventsRepository LiveEventsRepo) 
     : INewSubmissionConsumablesSelection<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var interactiveHistory =
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         var availableConsumables = 
             await GetAvailableConsumablesAsync<T>(interactiveHistory, currentInput, LiveEventsRepo);
         
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             new()
             {
@@ -80,7 +80,7 @@ public sealed record NewSubmissionConsumablesSelection<T>(
                     currentInput, 
                     Mediator.Next(typeof(INewSubmissionReview<T>)),
                     new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

@@ -11,10 +11,10 @@ public interface IWorkflowStateNormal : IWorkflowState
 {
     IStateMediator Mediator { get; }
     
-    Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer);
+        Option<Output> previousPromptFinalizer);
 
     Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput);
 }

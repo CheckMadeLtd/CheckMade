@@ -22,14 +22,14 @@ public sealed record NewSubmissionCancelConfirmation<T>(
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionCancelConfirmation<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId, 
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
-            new OutputDto
+            new Output
             {
                 Text = Ui("Are you sure you want to cancel drafting this new submission?"),
                 ControlPromptsSelection = ControlPrompts.YesNo,
@@ -37,7 +37,7 @@ public sealed record NewSubmissionCancelConfirmation<T>(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -53,7 +53,7 @@ public sealed record NewSubmissionCancelConfirmation<T>(
             (long)ControlPrompts.Yes =>
                 WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = Ui("Cancelled.")
                     },

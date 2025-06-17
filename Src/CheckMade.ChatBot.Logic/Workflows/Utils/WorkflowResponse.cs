@@ -7,23 +7,23 @@ using CheckMade.Common.Utils.FpExtensions.Monads;
 namespace CheckMade.ChatBot.Logic.Workflows.Utils;
 
 public sealed record WorkflowResponse(
-    IReadOnlyCollection<OutputDto> Output,
+    IReadOnlyCollection<Output> Output,
     Option<string> NewStateId,
     Option<Guid> EntityGuid)
 {
     internal WorkflowResponse(
-        OutputDto singleOutput, Option<string> newStateId, Guid? entityGuid = null) 
+        Output singleOutput, Option<string> newStateId, Guid? entityGuid = null) 
         : this(
-            Output: new List<OutputDto> { singleOutput }, 
+            Output: new List<Output> { singleOutput }, 
             NewStateId: newStateId,
             EntityGuid: entityGuid ?? Option<Guid>.None())
     {
     }
     
     internal WorkflowResponse(
-        OutputDto singleOutput, IWorkflowStateNormal newState, Guid? entityGuid = null) 
+        Output singleOutput, IWorkflowStateNormal newState, Guid? entityGuid = null) 
         : this(
-            Output: new List<OutputDto> { singleOutput }, 
+            Output: new List<Output> { singleOutput }, 
             NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
             EntityGuid: entityGuid ?? Option<Guid>.None())
     {
@@ -31,8 +31,8 @@ public sealed record WorkflowResponse(
 
     internal static WorkflowResponse Create(
         Input currentInput, 
-        OutputDto singleOutput, 
-        IReadOnlyCollection<OutputDto>? additionalOutputs = null,
+        Output singleOutput, 
+        IReadOnlyCollection<Output>? additionalOutputs = null,
         IWorkflowState? newState = null, 
         PromptTransition? promptTransition = null,
         Guid? entityGuid = null)
@@ -40,7 +40,7 @@ public sealed record WorkflowResponse(
         var (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer) = 
             ResolvePromptTransitionIntoComponents(promptTransition, currentInput);
 
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             singleOutput with
             {
@@ -65,7 +65,7 @@ public sealed record WorkflowResponse(
         );
     }
     
-    private static (Option<MessageId> nextPromptInPlaceUpdateMessageId, Option<OutputDto> currentPromptFinalizer)
+    private static (Option<MessageId> nextPromptInPlaceUpdateMessageId, Option<Output> currentPromptFinalizer)
         ResolvePromptTransitionIntoComponents(
             PromptTransition? promptTransition, 
             Input currentInput)
@@ -78,7 +78,7 @@ public sealed record WorkflowResponse(
 
         var currentPromptFinalizer = promptTransition != null
             ? promptTransition.CurrentPromptFinalizer
-            : Option<OutputDto>.None();
+            : Option<Output>.None();
 
         return (nextPromptInPlaceUpdateMessageId, currentPromptFinalizer);
     }
@@ -111,7 +111,7 @@ public sealed record WorkflowResponse(
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(
         IWorkflowStateNormal currentState) =>
-        new(Output: new List<OutputDto>
+        new(Output: new List<Output>
             {
                 new()
                 {
@@ -124,7 +124,7 @@ public sealed record WorkflowResponse(
     internal static WorkflowResponse
         CreateWarningChooseReplyKeyboardOptions(
             IWorkflowStateNormal currentState, IReadOnlyCollection<string> choices) => 
-        new(Output: new List<OutputDto> 
+        new(Output: new List<Output> 
             {
                 new()
                 {
@@ -136,7 +136,7 @@ public sealed record WorkflowResponse(
             EntityGuid: Option<Guid>.None());
 
     internal static WorkflowResponse CreateWarningEnterTextOnly(IWorkflowStateNormal currentState) =>
-        new(Output: new List<OutputDto>
+        new(Output: new List<Output>
             {
                 new()
                 {

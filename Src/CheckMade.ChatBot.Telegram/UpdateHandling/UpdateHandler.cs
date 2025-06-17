@@ -89,7 +89,7 @@ public sealed class UpdateHandler(
                         toModelConverter.ConvertToModelAsync(update, currentInteractionMode))
                 from result
                     in Result<(Option<Input> EnrichedOriginalInput, 
-                        IReadOnlyCollection<OutputDto> ResultingOutputs)>.RunAsync(() => 
+                        IReadOnlyCollection<Output> ResultingOutputs)>.RunAsync(() => 
                         inputProcessor.ProcessInputAsync(input))
                 from activeRoleBindings
                     in Result<IReadOnlyCollection<AgentRoleBind>>.RunAsync(async () => 
@@ -102,7 +102,7 @@ public sealed class UpdateHandler(
                     in Result<IOutputToReplyMarkupConverter>.Run(() => 
                         replyMarkupConverterFactory.Create(uiTranslator, glossary))
                 from sentOutputs
-                    in Result<IReadOnlyCollection<Result<OutputDto>>>.RunAsync(() => 
+                    in Result<IReadOnlyCollection<Result<Output>>>.RunAsync(() => 
                         OutputSender.SendOutputsAsync(
                             result.ResultingOutputs, botClientByMode, currentAgent, activeRoleBindings, 
                             uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger))
@@ -155,7 +155,7 @@ public sealed class UpdateHandler(
     }
 
     private async Task<Unit> SaveToDbAsync(
-        Option<Input> enrichedInput, IReadOnlyCollection<Result<OutputDto>> sentOutputs)
+        Option<Input> enrichedInput, IReadOnlyCollection<Result<Output>> sentOutputs)
     {
         if (enrichedInput.IsNone)
             return Unit.Value;
@@ -179,7 +179,7 @@ public sealed class UpdateHandler(
             if (!doesCurrentInputTerminateWorkflow)
                 return Option<IReadOnlyCollection<ActualSendOutParams>>.None();
             
-            Func<Result<OutputDto>, bool> isOtherRecipientThanOriginatingRole = outputAttempt => 
+            Func<Result<Output>, bool> isOtherRecipientThanOriginatingRole = outputAttempt => 
                 outputAttempt.Match(
                     o => o.LogicalPort.IsSome &&
                          !enrichedInput.GetValueOrThrow().OriginatorRole.GetValueOrThrow()

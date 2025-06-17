@@ -25,12 +25,12 @@ public sealed record NewSubmissionTradeSelection(
     IStateMediator Mediator)
     : INewSubmissionTradeSelection
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -42,7 +42,7 @@ public sealed record NewSubmissionTradeSelection(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -58,7 +58,7 @@ public sealed record NewSubmissionTradeSelection(
         
         var promptTransition =
             new PromptTransition(
-                new OutputDto
+                new Output
                 {
                     Text = UiConcatenate(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

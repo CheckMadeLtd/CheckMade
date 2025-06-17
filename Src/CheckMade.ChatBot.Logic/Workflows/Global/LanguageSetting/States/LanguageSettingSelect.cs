@@ -25,14 +25,14 @@ public sealed record LanguageSettingSelect(
     ILastOutputMessageIdCache MsgIdCache) 
     : ILanguageSettingSelect
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
-            new OutputDto
+            new Output
             {
                 Text = Ui("🌎 Please select your preferred language:"),
                 DomainTermSelection = new List<DomainTerm>(
@@ -42,7 +42,7 @@ public sealed record LanguageSettingSelect(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -63,7 +63,7 @@ public sealed record LanguageSettingSelect(
 
         return WorkflowResponse.Create(
             currentInput,
-            new OutputDto
+            new Output
             {
                 Text = UiConcatenate(
                     Ui("New language: "),

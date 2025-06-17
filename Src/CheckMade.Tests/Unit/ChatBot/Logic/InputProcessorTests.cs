@@ -36,7 +36,7 @@ public sealed class InputProcessorTests
         var (services, _) = serviceCollection.ConfigureTestRepositories();
         var inputProcessor = services.GetRequiredService<IInputProcessor>();
     
-        List<OutputDto> expectedOutputs = 
+        List<Output> expectedOutputs = 
         [
             new() { Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
             new() { Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }

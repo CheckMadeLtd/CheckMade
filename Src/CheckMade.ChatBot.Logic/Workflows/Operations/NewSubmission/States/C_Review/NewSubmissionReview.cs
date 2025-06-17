@@ -31,10 +31,10 @@ public sealed record NewSubmissionReview<T>(
 {
     private Guid _lastGuidCache = Guid.Empty;
     
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var interactiveHistory =
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
@@ -46,7 +46,7 @@ public sealed record NewSubmissionReview<T>(
         var submission = await Factory.CreateAsync(updatedHistoryWithGuid);
         var summary = submission.GetSummary();
 
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -84,7 +84,7 @@ public sealed record NewSubmissionReview<T>(
             (long)ControlPrompts.Submit =>
                 WorkflowResponse.Create(
                     currentInput,
-                    new OutputDto
+                    new Output
                     {
                         Text = Ui("✅ Submission succeeded!")
                     },
@@ -102,7 +102,7 @@ public sealed record NewSubmissionReview<T>(
             _ => throw new InvalidOperationException($"Unhandled choice of {nameof(ControlPrompts)}")
         };
 
-        async Task<IReadOnlyCollection<OutputDto>> GetStakeholderNotificationsAsync()
+        async Task<IReadOnlyCollection<Output>> GetStakeholderNotificationsAsync()
         {
             var historyWithUpdatedCurrentInput = 
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(

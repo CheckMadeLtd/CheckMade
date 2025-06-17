@@ -39,12 +39,12 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
     public IDomainGlossary Glossary { get; }
     public IStateMediator Mediator { get; }
 
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {

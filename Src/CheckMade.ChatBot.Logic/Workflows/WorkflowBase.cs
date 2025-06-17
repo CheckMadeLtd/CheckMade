@@ -36,7 +36,7 @@ public abstract record WorkflowBase(
         if (currentStateTypeOption.IsNone)
         {
             return new WorkflowResponse(
-                new OutputDto
+                new Output
                 {
                     Text = BeginWithStart
                 },
@@ -49,7 +49,7 @@ public abstract record WorkflowBase(
         {
             return WorkflowResponse.Create(
                 currentInput,
-                new OutputDto { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
+                new Output { Text = IGeneralWorkflowUtils.WorkflowWasCompleted },
                 newState: Mediator.GetTerminator(currentStateType));
         }
         

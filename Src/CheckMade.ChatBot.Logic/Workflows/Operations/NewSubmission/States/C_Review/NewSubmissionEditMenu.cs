@@ -18,10 +18,10 @@ public sealed record NewSubmissionEditMenu<T>(
     IGeneralWorkflowUtils GeneralUtils) 
     : INewSubmissionEditMenu<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId, 
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var workflowStateHistory =
             (await GeneralUtils.GetInteractiveWorkflowHistoryAsync(currentInput))
@@ -39,7 +39,7 @@ public sealed record NewSubmissionEditMenu<T>(
         }
         
         // ReSharper disable once UnusedVariable
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             new()
             {

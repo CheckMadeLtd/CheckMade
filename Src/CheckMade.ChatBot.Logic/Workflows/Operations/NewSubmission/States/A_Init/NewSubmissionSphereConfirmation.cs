@@ -25,14 +25,14 @@ public sealed record NewSubmissionSphereConfirmation<T>(
     IStateMediator Mediator) 
     : INewSubmissionSphereConfirmation<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
         var nearSphere = await GetNearSphere();
 
-        List<OutputDto> outputs = 
+        List<Output> outputs = 
         [
             new()
             {
@@ -83,7 +83,7 @@ public sealed record NewSubmissionSphereConfirmation<T>(
                     currentInput, 
                     Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                     new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt,
@@ -97,7 +97,7 @@ public sealed record NewSubmissionSphereConfirmation<T>(
                     currentInput, 
                     Mediator.Next(typeof(INewSubmissionSphereSelection<T>)),
                     new PromptTransition(
-                        new OutputDto
+                        new Output
                         {
                             Text = UiConcatenate(
                                 originalPrompt,

@@ -27,12 +27,12 @@ public sealed record NewSubmissionTypeSelection<T>(
     ILiveEventsRepository LiveEventsRepo) 
     : INewSubmissionTypeSelection<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -96,7 +96,7 @@ public sealed record NewSubmissionTypeSelection<T>(
 
             var promptTransition =
                 new PromptTransition(
-                    new OutputDto
+                    new Output
                     {
                         Text = UiConcatenate(
                             UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

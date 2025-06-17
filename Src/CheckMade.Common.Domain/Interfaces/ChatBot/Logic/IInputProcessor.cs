@@ -10,6 +10,6 @@ public interface IInputProcessor
     public static readonly UiString SeeValidBotCommandsInstruction = 
         Ui("Tap on the menu button or type '/' to see available BotCommands.");
 
-    public Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+    public Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<Output> ResultingOutputs)> 
         ProcessInputAsync(Result<Input> input);
 }

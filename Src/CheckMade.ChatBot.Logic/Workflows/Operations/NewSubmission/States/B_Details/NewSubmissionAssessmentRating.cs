@@ -24,12 +24,12 @@ public sealed record NewSubmissionAssessmentRating<T>(
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionAssessmentRating<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId, 
-        Option<OutputDto> previousPromptFinalizer)
+        Option<Output> previousPromptFinalizer)
     {
-        List<OutputDto> outputs =
+        List<Output> outputs =
         [
             new()
             {
@@ -42,7 +42,7 @@ public sealed record NewSubmissionAssessmentRating<T>(
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
+        return Task.FromResult<IReadOnlyCollection<Output>>(
             previousPromptFinalizer.Match(
                 ppf => outputs.Prepend(ppf).ToImmutableArray(),
                 () => outputs.ToImmutableArray()));
@@ -58,7 +58,7 @@ public sealed record NewSubmissionAssessmentRating<T>(
             var selectedRating = currentInput.Details.DomainTerm.GetValueOrThrow().EnumValue!;
 
             var promptTransition = new PromptTransition(
-                new OutputDto
+                new Output
                 {
                     Text = UiConcatenate(
                         UiIndirect(currentInput.Details.Text.GetValueOrThrow()),

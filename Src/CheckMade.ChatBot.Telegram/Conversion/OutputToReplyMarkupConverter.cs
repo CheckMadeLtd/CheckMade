@@ -12,13 +12,13 @@ namespace CheckMade.ChatBot.Telegram.Conversion;
 
 public interface IOutputToReplyMarkupConverter
 {
-    Option<ReplyMarkup> GetReplyMarkup(OutputDto output);
+    Option<ReplyMarkup> GetReplyMarkup(Output output);
 }
 
 internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator, IDomainGlossary domainGlossary) 
     : IOutputToReplyMarkupConverter
 {
-    public Option<ReplyMarkup> GetReplyMarkup(OutputDto output)
+    public Option<ReplyMarkup> GetReplyMarkup(Output output)
     {
         if (!AllEnumsAreDefined(output.ControlPromptsSelection))
             throw new InvalidEnumArgumentException("Some enums are undefined!");

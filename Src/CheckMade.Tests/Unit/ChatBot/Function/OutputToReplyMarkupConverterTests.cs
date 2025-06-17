@@ -34,7 +34,7 @@ public sealed class OutputToReplyMarkupConverterTests
             Dt(typeof(ConsumablesIssue<SanitaryTrade>))
         ];
 
-        var outputWithDomainTerms = new OutputDto
+        var outputWithDomainTerms = new Output
         {
             DomainTermSelection = domainTermSelection
         };
@@ -87,7 +87,7 @@ public sealed class OutputToReplyMarkupConverterTests
             (prompt: Continue, promptId: new CallbackId((long)Continue)),
             (prompt: Yes, promptId: new CallbackId((long)Yes))
         };
-        var outputWithPrompts = new OutputDto
+        var outputWithPrompts = new Output
         {
             ControlPromptsSelection = 
                 promptSelection
@@ -144,7 +144,7 @@ public sealed class OutputToReplyMarkupConverterTests
             (prompt: No, promptId: new CallbackId((long)No)),
         };
         
-        var outputWithBoth = new OutputDto
+        var outputWithBoth = new Output
         {
             DomainTermSelection = domainTermSelection,
             
@@ -191,7 +191,7 @@ public sealed class OutputToReplyMarkupConverterTests
         const string choice4 = "c4";
         const string choice5 = "c5";
         
-        var outputWithChoices = new OutputDto
+        var outputWithChoices = new Output
         {
             PredefinedChoices = new[] { choice1, choice2, choice3, choice4, choice5 }   
         };
@@ -219,7 +219,7 @@ public sealed class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var outputWithout = new OutputDto();
+        var outputWithout = new Output();
         
         var actualReplyMarkup = 
             basics.converter.GetReplyMarkup(outputWithout);
@@ -234,7 +234,7 @@ public sealed class OutputToReplyMarkupConverterTests
     {
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
-        var outputWithInvalid = new OutputDto
+        var outputWithInvalid = new Output
         {
             ControlPromptsSelection = Cancel + 5
         };

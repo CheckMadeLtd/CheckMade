@@ -18,7 +18,7 @@ public sealed class InputProcessor(
     ILogger<InputProcessor> logger)
     : IInputProcessor
 {
-    public async Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<OutputDto> ResultingOutputs)> 
+    public async Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<Output> ResultingOutputs)> 
         ProcessInputAsync(Result<Input> input)
     {
         return await input.Match(
@@ -29,11 +29,11 @@ public sealed class InputProcessor(
                     return (currentInput, []);
                 }
                 
-                List<OutputDto> outputBuilder = [];
+                List<Output> outputBuilder = [];
 
                 if (IsStartCommand(currentInput))
                 {
-                    outputBuilder.Add(new OutputDto
+                    outputBuilder.Add(new Output
                     { 
                         Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
                                   "I shall follow your command!")
@@ -43,7 +43,7 @@ public sealed class InputProcessor(
                 if (await IsInputInterruptingPreviousWorkflowAsync(currentInput))
                 {
                     outputBuilder.Add(
-                        new OutputDto
+                        new Output
                         {
                             Text = Ui("FYI: you interrupted the previous workflow before its completion or " +
                                       "successful submission."),
@@ -79,12 +79,12 @@ public sealed class InputProcessor(
             {
                 var failureOutput = failure switch
                 {
-                    ExceptionWrapper exw => new OutputDto { Text = UiNoTranslate(exw.Exception.Message) },
-                    _ => new OutputDto { Text = ((BusinessError)failure).Error }
+                    ExceptionWrapper exw => new Output { Text = UiNoTranslate(exw.Exception.Message) },
+                    _ => new Output { Text = ((BusinessError)failure).Error }
                 };
 
                 return Task.FromResult<(Option<Input> EnrichedOriginalInput,
-                    IReadOnlyCollection<OutputDto> ResultingOutputs)>((
+                    IReadOnlyCollection<Output> ResultingOutputs)>((
                     Option<Input>.None(), [failureOutput]
                 ));
             });
@@ -160,7 +160,7 @@ public sealed class InputProcessor(
                 Task.FromResult(Result<WorkflowResponse>
                     .Succeed(new WorkflowResponse(
                         [
-                            new OutputDto 
+                            new Output 
                             { 
                                 Text = IInputProcessor.SeeValidBotCommandsInstruction
                             }
@@ -169,9 +169,9 @@ public sealed class InputProcessor(
                         Option<Guid>.None()))));
     }
 
-    private IReadOnlyCollection<OutputDto> ResolveResponseResultIntoOutputs(
+    private IReadOnlyCollection<Output> ResolveResponseResultIntoOutputs(
         Result<WorkflowResponse> responseResult,
-        List<OutputDto> outputBuilder,
+        List<Output> outputBuilder,
         Option<WorkflowBase> activeWorkflow,
         Input currentInput)
     {
@@ -197,7 +197,7 @@ public sealed class InputProcessor(
                         throw exw.Exception;
                     
                     default:
-                        return [new OutputDto { Text = ((BusinessError)failure).Error }];
+                        return [new Output { Text = ((BusinessError)failure).Error }];
                 }
             }
         );

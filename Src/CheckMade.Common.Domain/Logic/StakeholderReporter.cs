@@ -21,7 +21,7 @@ public sealed record StakeholderReporter<T>(
     ISubmissionFactory<T> SubmissionFactory) 
     : IStakeholderReporter<T> where T : ITrade, new()
 {
-    public async Task<IReadOnlyCollection<OutputDto>> GetNewSubmissionNotificationsAsync(
+    public async Task<IReadOnlyCollection<Output>> GetNewSubmissionNotificationsAsync(
         IReadOnlyCollection<Input> inputHistory, string currentSubmissionTypeName)
     {
         var newSubmission = 
@@ -34,7 +34,7 @@ public sealed record StakeholderReporter<T>(
         return 
             recipients
                 .Select(recipient =>
-                    new OutputDto
+                    new Output
                     {
                         Text = GetNotificationOutput(kvp =>
                             (recipient.Role.RoleType.GetSubmissionSummaryCategoriesForNotifications() & kvp.Key) != 0),
