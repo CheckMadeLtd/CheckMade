@@ -10,11 +10,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../az_setup_utils.sh"
 
 STORAGE_NAME=$(confirm_and_select_resource "storage_account" "$STORAGE_NAME")
 
-echo "Enter the name for the new functionapp (can't contain '_', and a random alphanumeric string will be appended \
-to the chosen name). Also, a new Y1 Consumption plan will automatically be created alongside it:"
-read -r new_FUNCTIONAPP_NAME
-
-new_FUNCTIONAPP_NAME="${new_FUNCTIONAPP_NAME}-$(get_random_id)"
+new_FUNCTIONAPP_NAME="functions-$(get_random_id)"
 
 # os = Windows instead of Linux b/c on Linux, toggling (migration) between consumption and premium plans not supported!
 # see/track: https://github.com/Azure/Azure-Functions/issues/2199

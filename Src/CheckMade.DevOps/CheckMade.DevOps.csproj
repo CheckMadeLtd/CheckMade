@@ -33,8 +33,8 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.ChatBot.Function\CheckMade.ChatBot.Function.csproj" />
-      <ProjectReference Include="..\CheckMade.ChatBot.Logic\CheckMade.ChatBot.Logic.csproj" />
+      <ProjectReference Include="..\CheckMade.Functions\CheckMade.Functions.csproj" />
+      <ProjectReference Include="..\CheckMade.Bot.Workflows\CheckMade.Bot.Workflows.csproj" />
       <ProjectReference Include="..\CheckMade.Services.Persistence\CheckMade.Services.Persistence.csproj" />
     </ItemGroup>
 

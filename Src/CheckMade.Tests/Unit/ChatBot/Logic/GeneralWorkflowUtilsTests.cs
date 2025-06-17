@@ -1,7 +1,7 @@
-using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

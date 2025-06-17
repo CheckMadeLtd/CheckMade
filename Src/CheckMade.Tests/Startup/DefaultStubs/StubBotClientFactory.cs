@@ -1,4 +1,4 @@
-using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Moq;
 

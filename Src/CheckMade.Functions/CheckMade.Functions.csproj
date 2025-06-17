@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+        <OutputType>Exe</OutputType>
+        <Configurations>No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <UserSecretsId>dd4f1069-ae94-4987-9751-690e8da6f3c0</UserSecretsId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(Configuration), '^Debug_')) ">
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Update="host.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="local.settings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>CheckMade.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+        <PackageReference Include="Azure.Identity" Version="1.13.2" />
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.3.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.3" />
+        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+        <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
+        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+        <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\CheckMade.Bot.Telegram\CheckMade.Bot.Telegram.csproj" />
+      <ProjectReference Include="..\CheckMade.Services.ExtAPIs\CheckMade.Services.ExtAPIs.csproj" />
+      <ProjectReference Include="..\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj" />
+      <ProjectReference Include="..\CheckMade.Services.Persistence\CheckMade.Services.Persistence.csproj" />
+      <ProjectReference Include="..\CheckMade.Bot.Workflows\CheckMade.Bot.Workflows.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Compile Include="..\SharedGlobalUsings.cs">
+        <Link>SharedGlobalUsings.cs</Link>
+      </Compile>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="logs\human\" />
+      <Folder Include="logs\machine\" />
+    </ItemGroup>
+</Project>
