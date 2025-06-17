@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.ChatBot.Telegram.Conversion;
+namespace CheckMade.Bot.Telegram.Conversion;
 
 public interface IOutputToReplyMarkupConverterFactory
 {

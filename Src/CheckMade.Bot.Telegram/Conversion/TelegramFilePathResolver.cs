@@ -1,8 +1,8 @@
-using CheckMade.ChatBot.Telegram.BotClient;
+using CheckMade.Bot.Telegram.BotClient;
 using General.Utils.FpExtensions.Monads;
 using File = Telegram.Bot.Types.TGFile;
 
-namespace CheckMade.ChatBot.Telegram.Conversion;
+namespace CheckMade.Bot.Telegram.Conversion;
 
 public interface ITelegramFilePathResolver
 {

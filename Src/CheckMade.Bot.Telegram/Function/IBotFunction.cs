@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker.Http;
 
 
-namespace CheckMade.ChatBot.Telegram.Function;
+namespace CheckMade.Bot.Telegram.Function;
 
 public interface IBotFunction
 {

@@ -1,5 +1,3 @@
-using CheckMade.ChatBot.Telegram.BotClient;
-using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.ChatBot.Input;
 using CheckMade.Abstract.Domain.Data.ChatBot.Output;
@@ -8,12 +6,14 @@ using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Bot.Telegram.BotClient;
+using CheckMade.Bot.Telegram.Conversion;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Telegram.UpdateHandling;
+namespace CheckMade.Bot.Telegram.UpdateHandling;
 
 public interface IUpdateHandler
 {

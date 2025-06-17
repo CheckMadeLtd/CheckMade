@@ -1,7 +1,7 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace CheckMade.ChatBot.Telegram.UpdateHandling;
+namespace CheckMade.Bot.Telegram.UpdateHandling;
 
 public sealed record UpdateWrapper
 {

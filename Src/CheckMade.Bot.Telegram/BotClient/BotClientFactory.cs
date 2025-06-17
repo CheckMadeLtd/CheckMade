@@ -3,7 +3,7 @@ using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace CheckMade.ChatBot.Telegram.BotClient;
+namespace CheckMade.Bot.Telegram.BotClient;
 
 public interface IBotClientFactory
 {

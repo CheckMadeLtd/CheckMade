@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.ChatBot.Telegram.Conversion;
+namespace CheckMade.Bot.Telegram.Conversion;
 
 public interface IToModelConverterFactory
 {

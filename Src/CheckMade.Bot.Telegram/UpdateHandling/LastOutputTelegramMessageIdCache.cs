@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.ChatBot.Telegram.UpdateHandling;
+namespace CheckMade.Bot.Telegram.UpdateHandling;
 
 public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
 {

@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using CheckMade.ChatBot.Telegram.Conversion;
+using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Abstract.Domain.Data.ChatBot.Output;
 using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;

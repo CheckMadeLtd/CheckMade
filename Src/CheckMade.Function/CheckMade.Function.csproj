@@ -52,7 +52,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.ChatBot.Telegram\CheckMade.ChatBot.Telegram.csproj" />
+      <ProjectReference Include="..\CheckMade.Bot.Telegram\CheckMade.Bot.Telegram.csproj" />
       <ProjectReference Include="..\CheckMade.Services.ExtAPIs\CheckMade.Services.ExtAPIs.csproj" />
       <ProjectReference Include="..\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj" />
       <ProjectReference Include="..\CheckMade.Services.Persistence\CheckMade.Services.Persistence.csproj" />

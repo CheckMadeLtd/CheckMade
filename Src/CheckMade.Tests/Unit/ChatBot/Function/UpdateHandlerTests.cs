@@ -1,6 +1,6 @@
-using CheckMade.ChatBot.Telegram.BotClient;
-using CheckMade.ChatBot.Telegram.Conversion;
-using CheckMade.ChatBot.Telegram.UpdateHandling;
+using CheckMade.Bot.Telegram.BotClient;
+using CheckMade.Bot.Telegram.Conversion;
+using CheckMade.Bot.Telegram.UpdateHandling;
 using CheckMade.Abstract.Domain.Data.ChatBot;
 using CheckMade.Abstract.Domain.Data.ChatBot.Input;
 using CheckMade.Abstract.Domain.Data.ChatBot.Output;

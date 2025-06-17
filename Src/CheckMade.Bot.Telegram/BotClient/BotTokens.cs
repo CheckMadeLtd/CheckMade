@@ -1,4 +1,4 @@
-namespace CheckMade.ChatBot.Telegram.BotClient;
+namespace CheckMade.Bot.Telegram.BotClient;
 
 public sealed record BotTokens(
     string OperationsBotToken,
