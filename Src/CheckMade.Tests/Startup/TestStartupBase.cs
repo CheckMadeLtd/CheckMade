@@ -1,5 +1,5 @@
 using System.Configuration;
-using CheckMade.ChatBot.Function.Startup;
+using CheckMade.Function.Startup;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
 using General.Utils.UiTranslation;
 using CheckMade.Tests.Utils;

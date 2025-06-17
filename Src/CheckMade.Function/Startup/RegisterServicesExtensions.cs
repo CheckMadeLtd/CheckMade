@@ -40,7 +40,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.ChatBot.Function.Startup;
+namespace CheckMade.Function.Startup;
 
 public static class RegisterServicesExtensions
 {

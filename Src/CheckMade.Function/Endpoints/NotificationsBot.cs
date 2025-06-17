@@ -4,15 +4,15 @@ using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace CheckMade.ChatBot.Function.Endpoints;
+namespace CheckMade.Function.Endpoints;
 
-public sealed class CommunicationsBot(IBotFunction botFunction)
+public sealed class NotificationsBot(IBotFunction botFunction)
 {
     // See comment in OperationsBot
     private static readonly ConcurrentDictionary<int, byte> UpdateIds = new();
-    private static InteractionMode Mode => InteractionMode.Communications;
+    private static InteractionMode Mode => InteractionMode.Notifications;
 
-    [Function("CommunicationsBot")]
+    [Function("NotificationsBot")]
     public async Task<HttpResponseData> 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
