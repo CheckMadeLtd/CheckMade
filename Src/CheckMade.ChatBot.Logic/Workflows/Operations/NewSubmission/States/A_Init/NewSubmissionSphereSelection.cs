@@ -53,7 +53,9 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     (await AssignedSpheresOrAllAsync(
                         currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
-                    .Select(static soa => soa.Name).ToArray()),
+                    .Select(static soa => soa.Name)
+                    .Order()
+                    .ToArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
             }
         ];
