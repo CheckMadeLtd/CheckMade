@@ -5,7 +5,7 @@ using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace CheckMade.Common.Persistence;
+namespace CheckMade.Services.Persistence;
 
 public interface IDbExecutionHelper
 {

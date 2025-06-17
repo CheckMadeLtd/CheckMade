@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using General.Utils.FpExtensions.Monads;
 using Npgsql;
 
-namespace CheckMade.Common.Persistence.Repositories;
+namespace CheckMade.Services.Persistence.Repositories;
 
 public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary)
 {

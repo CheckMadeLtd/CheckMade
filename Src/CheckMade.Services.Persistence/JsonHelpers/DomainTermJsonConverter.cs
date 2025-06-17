@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using Newtonsoft.Json;
 
-namespace CheckMade.Common.Persistence.JsonHelpers;
+namespace CheckMade.Services.Persistence.JsonHelpers;
 
 internal sealed class DomainTermJsonConverter(IDomainGlossary glossary) : JsonConverter<DomainTerm>
 {

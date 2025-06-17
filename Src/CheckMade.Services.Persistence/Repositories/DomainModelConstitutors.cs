@@ -12,11 +12,11 @@ using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.FpExtensions.Monads;
-using CheckMade.Common.Persistence.JsonHelpers;
+using CheckMade.Services.Persistence.JsonHelpers;
 using General.Utils.UiTranslation;
 using General.Utils.Validators;
 
-namespace CheckMade.Common.Persistence.Repositories;
+namespace CheckMade.Services.Persistence.Repositories;
 
 internal static class DomainModelConstitutors
 {

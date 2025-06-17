@@ -5,9 +5,9 @@ using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using General.Utils.FpExtensions.Monads;
-using static CheckMade.Common.Persistence.Repositories.DomainModelConstitutors;
+using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
-namespace CheckMade.Common.Persistence.Repositories.Core;
+namespace CheckMade.Services.Persistence.Repositories.Core;
 
 public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository

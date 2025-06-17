@@ -8,7 +8,7 @@ using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
 using General.Utils.FpExtensions.Monads;
-using CheckMade.Common.Persistence;
+using CheckMade.Services.Persistence;
 using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;

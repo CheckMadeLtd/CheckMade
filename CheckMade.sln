@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E58352
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ChatBot", "ChatBot", "{442F01A3-80F3-4BE3-8D51-4E4505216822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Persistence", "Src\CheckMade.Common.Persistence\CheckMade.Common.Persistence.csproj", "{B5FF670E-F6EA-418D-A1AB-46726997181D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.Persistence", "Src\CheckMade.Services.Persistence\CheckMade.Services.Persistence.csproj", "{B5FF670E-F6EA-418D-A1AB-46726997181D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.DevOps", "Src\CheckMade.DevOps\CheckMade.DevOps.csproj", "{5A64BC73-A68D-431C-8703-940F8B3A0F00}"
 EndProject

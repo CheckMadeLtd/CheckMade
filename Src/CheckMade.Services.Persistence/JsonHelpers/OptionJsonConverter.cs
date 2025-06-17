@@ -5,7 +5,7 @@ using General.Utils.FpExtensions.Monads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CheckMade.Common.Persistence.JsonHelpers;
+namespace CheckMade.Services.Persistence.JsonHelpers;
 
 internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
 {

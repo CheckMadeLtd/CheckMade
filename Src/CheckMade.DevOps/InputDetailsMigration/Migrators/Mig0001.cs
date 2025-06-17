@@ -1,7 +1,7 @@
 // using System.Collections.Immutable;
 // using System.Globalization;
 // using General.Utils.Monads;
-// using CheckMade.Common.Persistence.JsonHelpers;
+// using CheckMade.Services.Persistence.JsonHelpers;
 // using General.Utils;
 // using CheckMade.DevOps.DetailsMigration.InputMessages.Helpers;
 // using CheckMade.Telegram.Model;

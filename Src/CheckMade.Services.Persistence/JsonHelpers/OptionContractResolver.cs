@@ -3,7 +3,7 @@ using General.Utils.FpExtensions.Monads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CheckMade.Common.Persistence.JsonHelpers;
+namespace CheckMade.Services.Persistence.JsonHelpers;
 
 internal sealed class OptionContractResolver(IDomainGlossary glossary) : DefaultContractResolver
 {

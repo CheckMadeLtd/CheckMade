@@ -2,7 +2,7 @@
 using CheckMade.Abstract.Domain.Interfaces.Persistence;
 using Npgsql;
 
-namespace CheckMade.Common.Persistence;
+namespace CheckMade.Services.Persistence;
 
 public sealed class DbConnectionProvider(string connectionString) : IDbConnectionProvider
 {

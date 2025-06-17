@@ -1,5 +1,5 @@
 using CheckMade.ChatBot.Function.Startup;
-using CheckMade.Common.Persistence;
+using CheckMade.Services.Persistence;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,6 @@
 using Azure.Storage;
 using Azure.Storage.Blobs;
-using CheckMade.Common.Persistence;
+using CheckMade.Services.Persistence;
 using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Logic.ModelFactories;
 using CheckMade.ChatBot.Logic.Workflows.Global.LanguageSetting;
@@ -32,8 +32,8 @@ using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
 using CheckMade.Common.Logic;
-using CheckMade.Common.Persistence.Repositories.ChatBot;
-using CheckMade.Common.Persistence.Repositories.Core;
+using CheckMade.Services.Persistence.Repositories.ChatBot;
+using CheckMade.Services.Persistence.Repositories.Core;
 using General.Utils.RetryPolicies;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Configuration;
