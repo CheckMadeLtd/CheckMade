@@ -10,7 +10,9 @@ using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
+using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
+using static CheckMade.ChatBot.Logic.Workflows.Operations.NewSubmission.NewSubmissionUtils;
 
 // ReSharper disable UseCollectionExpression
 
@@ -20,17 +22,16 @@ public interface INewSubmissionTypeSelection<T> : IWorkflowStateNormal where T :
 
 public sealed record NewSubmissionTypeSelection<T>(
     IDomainGlossary Glossary,
-    IStateMediator Mediator) 
+    IGeneralWorkflowUtils WorkflowUtils,
+    IStateMediator Mediator,
+    ILiveEventsRepository LiveEventsRepo) 
     : INewSubmissionTypeSelection<T> where T : ITrade, new()
 {
-    public Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
+    public async Task<IReadOnlyCollection<OutputDto>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
         Option<OutputDto> previousPromptFinalizer)
     {
-        var currentRoleType = currentInput.OriginatorRole.GetValueOrThrow().RoleType;
-        var skipCleaningRelatedSubmissions = currentRoleType is TradeTeamLead<T>; 
-        
         List<OutputDto> outputs =
         [
             new()
@@ -39,19 +40,46 @@ public sealed record NewSubmissionTypeSelection<T>(
                 DomainTermSelection = Option<IReadOnlyCollection<DomainTerm>>.Some(
                     Glossary
                         .GetAll(typeof(ITradeSubmission<T>))
-                        .SkipWhile(dt => skipCleaningRelatedSubmissions && 
-                                         (dt.TypeValue == typeof(CleaningIssue<T>) ||
-                                          dt.TypeValue == typeof(Assessment<T>)))
+                        .Except(await GetExcludedSubmissionTypesAsync())
                         .ToImmutableArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId,
                 ControlPromptsSelection = ControlPrompts.Back
             }
         ];
         
-        return Task.FromResult<IReadOnlyCollection<OutputDto>>(
-            previousPromptFinalizer.Match(
-                ppf => outputs.Prepend(ppf).ToImmutableArray(),
-                () => outputs.ToImmutableArray()));
+        return previousPromptFinalizer.Match(
+            ppf => outputs.Prepend(ppf).ToImmutableArray(),
+            () => outputs.ToImmutableArray());
+
+        async Task<IReadOnlyCollection<DomainTerm>> GetExcludedSubmissionTypesAsync()
+        {
+            var skipCleaningRelatedSubmissions = 
+                currentInput.OriginatorRole
+                    .GetValueOrThrow()
+                    .RoleType is TradeTeamLead<T>;
+
+            var skipMissingConsumablesSubmission = 
+                await currentInput
+                    .Apply(WorkflowUtils.GetInteractiveWorkflowHistoryAsync)
+                    .Apply(async history => 
+                        await GetAvailableConsumablesAsync<T>(await history, currentInput, LiveEventsRepo))
+                    .Apply(async static consumables => (await consumables).Count == 0);
+            
+            var exclusions = new List<DomainTerm>();
+    
+            if (skipCleaningRelatedSubmissions)
+            {
+                exclusions.Add(Dt(typeof(CleaningIssue<T>)));
+                exclusions.Add(Dt(typeof(Assessment<T>)));
+            }
+    
+            if (skipMissingConsumablesSubmission)
+            {
+                exclusions.Add(Dt(typeof(ConsumablesIssue<T>)));
+            }
+    
+            return exclusions;
+        }
     }
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
