@@ -14,7 +14,7 @@ using CheckMade.Common.Domain.Interfaces.Persistence.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 
-namespace CheckMade.Common.Domain.Logic;
+namespace CheckMade.Common.Logic;
 
 public sealed record StakeholderReporter<T>(
     IRolesRepository RoleRepo,
