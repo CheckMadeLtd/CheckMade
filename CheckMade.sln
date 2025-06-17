@@ -79,7 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dgor82_style_guide", "dgor8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.ChatBot.Telegram", "Src\CheckMade.ChatBot.Telegram\CheckMade.ChatBot.Telegram.csproj", "{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.Logic", "Src\CheckMade.Common.Logic\CheckMade.Common.Logic.csproj", "{E11C3542-1705-42B1-8AF7-A19C96AE071D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.Logic", "Src\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj", "{E11C3542-1705-42B1-8AF7-A19C96AE071D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

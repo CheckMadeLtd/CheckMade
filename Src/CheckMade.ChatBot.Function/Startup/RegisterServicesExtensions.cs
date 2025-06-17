@@ -31,7 +31,7 @@ using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
-using CheckMade.Common.Logic;
+using CheckMade.Services.Logic;
 using CheckMade.Services.Persistence.Repositories.ChatBot;
 using CheckMade.Services.Persistence.Repositories.Core;
 using General.Utils.RetryPolicies;
