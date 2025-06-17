@@ -42,7 +42,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.DevOps", "Src\Che
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "General.Utils", "Src\General.Utils\General.Utils.csproj", "{8FABE16E-9692-46A8-9254-B414F6EA34AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Common.ExternalServices", "Src\CheckMade.Common.ExternalServices\CheckMade.Common.ExternalServices.csproj", "{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.ExtAPIs", "Src\CheckMade.Services.ExtAPIs\CheckMade.Services.ExtAPIs.csproj", "{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{A539503E-BACE-48F9-822A-607F5F16A6F8}"
 EndProject

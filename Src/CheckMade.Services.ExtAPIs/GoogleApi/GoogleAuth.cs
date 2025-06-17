@@ -1,7 +1,7 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 
-namespace CheckMade.Common.ExternalServices.GoogleApi;
+namespace CheckMade.Services.ExtAPIs.GoogleApi;
 
 public sealed class GoogleAuth(string credentialFile)
 {

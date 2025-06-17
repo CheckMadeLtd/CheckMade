@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
 
-namespace CheckMade.Common.ExternalServices.Utils;
+namespace CheckMade.Services.ExtAPIs.Utils;
 
 public sealed class HttpDownloader(HttpClient httpClient) : IHttpDownloader
 {

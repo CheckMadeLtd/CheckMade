@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
 
-namespace CheckMade.Common.ExternalServices.AzureServices;
+namespace CheckMade.Services.ExtAPIs.AzureServices;
 
 public sealed class BlobLoader(BlobContainerClient containerClient) : IBlobLoader
 {

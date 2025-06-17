@@ -3,7 +3,7 @@ using Google.Apis.Http;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 
-namespace CheckMade.Common.ExternalServices.GoogleApi;
+namespace CheckMade.Services.ExtAPIs.GoogleApi;
 
 public sealed class GoogleSheetsService(GoogleAuth googleAuth) : ISheetsService
 {
