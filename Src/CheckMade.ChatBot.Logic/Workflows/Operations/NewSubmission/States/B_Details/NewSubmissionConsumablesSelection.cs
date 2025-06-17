@@ -34,7 +34,7 @@ public sealed record NewSubmissionConsumablesSelection<T>(
         var interactiveHistory =
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         var availableConsumables = 
-            await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
+            await GetAvailableConsumablesAsync<T>(interactiveHistory, currentInput, LiveEventsRepo);
         
         List<OutputDto> outputs = 
         [
@@ -104,7 +104,7 @@ public sealed record NewSubmissionConsumablesSelection<T>(
             var interactiveHistory =
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             var availableConsumables =
-                await GetAvailableConsumablesAsync(interactiveHistory, currentInput);
+                await GetAvailableConsumablesAsync<T>(interactiveHistory, currentInput, LiveEventsRepo);
             
             return Glossary.GetUi(
                 availableConsumables
@@ -112,20 +112,5 @@ public sealed record NewSubmissionConsumablesSelection<T>(
                         item.IsToggleOn(interactiveHistory))
                     .ToImmutableArray());
         }
-    }
-
-    private async Task<IReadOnlyCollection<DomainTerm>> GetAvailableConsumablesAsync(
-        IReadOnlyCollection<Input> interactiveHistory,
-        Input currentInput)
-    {
-        var currentSphere = 
-            GetLastSelectedSphere<T>(
-                interactiveHistory, 
-                await GetAllTradeSpecificSpheresAsync(
-                    new T(),
-                    currentInput.LiveEventContext.GetValueOrThrow(),
-                    LiveEventsRepo));
-
-        return currentSphere.Details.AvailableConsumables;
     }
 }

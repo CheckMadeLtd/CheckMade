@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CheckMade.ChatBot.Logic.Workflows.Utils;
 using CheckMade.Common.Domain.Data.ChatBot.Input;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Common.Domain.Data.Core.GIS;
 using CheckMade.Common.Domain.Data.Core.Trades;
@@ -156,5 +157,21 @@ internal static class NewSubmissionUtils
                     i.Details.DomainTerm.GetValueOrThrow().TypeValue!.IsAssignableTo(typeof(ISubmission)))
                 .Details.DomainTerm.GetValueOrThrow()
                 .TypeValue!;
+    }
+    
+    internal static async Task<IReadOnlyCollection<DomainTerm>> GetAvailableConsumablesAsync<T>(
+        IReadOnlyCollection<Input> interactiveHistory,
+        Input currentInput,
+        ILiveEventsRepository liveEventsRepo) where T : ITrade, new()
+    {
+        var currentSphere = 
+            GetLastSelectedSphere<T>(
+                interactiveHistory, 
+                await GetAllTradeSpecificSpheresAsync(
+                    new T(),
+                    currentInput.LiveEventContext.GetValueOrThrow(),
+                    liveEventsRepo));
+
+        return currentSphere.Details.AvailableConsumables;
     }
 }
