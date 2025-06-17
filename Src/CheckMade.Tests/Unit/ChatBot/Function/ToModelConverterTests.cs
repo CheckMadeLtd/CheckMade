@@ -1,4 +1,3 @@
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
@@ -9,6 +8,7 @@ using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.GIS;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Domain.Interfaces.Data.Core;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
@@ -319,10 +319,10 @@ public sealed class ToModelConverterTests
         _services = new UnitTestStartup().Services.BuildServiceProvider();
         
         var basics = GetBasicTestingServices(_services);
-        var domainGlossary = new DomainGlossary();
         var domainTerm = Dt(LanguageCode.de);
-        var callbackQueryData = new CallbackId(domainGlossary.GetId(domainTerm));
-        var callbackQuery = basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+        var callbackQueryData = new CallbackId(basics.glossary.GetId(domainTerm));
+        var callbackQuery = 
+            basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedInput = new Input(
             callbackQuery.Message.Date,
@@ -415,14 +415,16 @@ public sealed class ToModelConverterTests
 
     private static (ITelegramUpdateGenerator updateGenerator, 
         Mock<IBotClientWrapper> mockBotClient,
-        IToModelConverter converter)
+        IToModelConverter converter,
+        IDomainGlossary glossary)
         GetBasicTestingServices(IServiceProvider sp)
     {
         var updateGenerator = sp.GetRequiredService<ITelegramUpdateGenerator>();
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
         var converterFactory = sp.GetRequiredService<IToModelConverterFactory>();
         var converter = converterFactory.Create(new TelegramFilePathResolver(mockBotClient.Object));
+        var glossary = sp.GetRequiredService<IDomainGlossary>();
 
-        return (updateGenerator, mockBotClient, converter);
+        return (updateGenerator, mockBotClient, converter, glossary);
     }
 }

@@ -1,4 +1,3 @@
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.BotClient;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.ChatBot.Telegram.UpdateHandling;
@@ -157,7 +156,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         _services = serviceCollection.BuildServiceProvider();
         var basics = GetBasicTestingServices(_services);
         var textUpdate = basics.updateGenerator.GetValidTelegramTextMessage("any valid text");
-        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, new DomainGlossary());
+        var converter = basics.markupConverterFactory.Create(basics.emptyTranslator, basics.glossary);
         var expectedReplyMarkup = converter.GetReplyMarkup(outputWithPrompts[0]);
         
         var actualMarkup = Option<ReplyMarkup>.None();
@@ -470,7 +469,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         Mock<IBotClientWrapper> mockBotClient,
         IUpdateHandler handler,
         IOutputToReplyMarkupConverterFactory markupConverterFactory,
-        IUiTranslator emptyTranslator)
+        IUiTranslator emptyTranslator,
+        IDomainGlossary glossary)
         GetBasicTestingServices(IServiceProvider sp)
     {
         var mockBotClient = sp.GetRequiredService<Mock<IBotClientWrapper>>();
@@ -491,7 +491,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
             sp.GetRequiredService<IUpdateHandler>(),
             sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>(),
             new UiTranslator(Option<IReadOnlyDictionary<string, string>>.None(), 
-                sp.GetRequiredService<ILogger<UiTranslator>>()));
+                sp.GetRequiredService<ILogger<UiTranslator>>()),
+            sp.GetRequiredService<IDomainGlossary>());
     } 
     
     private static IInputProcessor GetStubInputProcessor(IReadOnlyCollection<Output> returningOutputs)

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using CheckMade.ChatBot.Logic;
 using CheckMade.ChatBot.Telegram.Conversion;
 using CheckMade.Common.Domain.Data.ChatBot.Output;
 using CheckMade.Common.Domain.Data.ChatBot.UserInteraction;
@@ -7,6 +6,7 @@ using CheckMade.Common.Domain.Data.Core;
 using CheckMade.Common.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Common.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Common.Domain.Data.Core.Trades;
+using CheckMade.Common.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Common.Utils.FpExtensions.Monads;
 using CheckMade.Common.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
@@ -44,24 +44,24 @@ public sealed class OutputToReplyMarkupConverterTests
             new InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary
+                        basics.glossary
                             .GetUi(typeof(CleaningIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(CleaningIssue<SanitaryTrade>)))
+                        basics.glossary.GetId(typeof(CleaningIssue<SanitaryTrade>)))
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary
+                        basics.glossary
                             .GetUi(typeof(TechnicalIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(TechnicalIssue<SanitaryTrade>))), 
+                        basics.glossary.GetId(typeof(TechnicalIssue<SanitaryTrade>))), 
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary
+                        basics.glossary
                             .GetUi(typeof(ConsumablesIssue<SanitaryTrade>))
                             .GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(typeof(ConsumablesIssue<SanitaryTrade>))), 
+                        basics.glossary.GetId(typeof(ConsumablesIssue<SanitaryTrade>))), 
                 ]
             ]));
 
@@ -159,8 +159,8 @@ public sealed class OutputToReplyMarkupConverterTests
             new InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton.WithCallbackData(
-                        basics.domainGlossary.GetUi(ConsumablesItem.PaperTowels).GetFormattedEnglish(),
-                        basics.domainGlossary.GetId(ConsumablesItem.PaperTowels))
+                        basics.glossary.GetUi(ConsumablesItem.PaperTowels).GetFormattedEnglish(),
+                        basics.glossary.GetId(ConsumablesItem.PaperTowels))
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData(
@@ -245,19 +245,21 @@ public sealed class OutputToReplyMarkupConverterTests
         Assert.Throws<InvalidEnumArgumentException>(act);
     }
     
-    private static (IOutputToReplyMarkupConverter converter, 
-        IReadOnlyDictionary<CallbackId, UiString> uiByPromptId,
-        DomainGlossary domainGlossary) 
+    private static (IOutputToReplyMarkupConverter converter,
+        IReadOnlyDictionary<CallbackId,
+            UiString> uiByPromptId,
+        IDomainGlossary glossary) 
         GetBasicTestingServices(IServiceProvider sp)
     {
+        var glossary = sp.GetRequiredService<IDomainGlossary>();
         var converterFactory = sp.GetRequiredService<IOutputToReplyMarkupConverterFactory>();
         var converter = converterFactory.Create(new UiTranslator(
             Option<IReadOnlyDictionary<string, string>>.None(),
-            sp.GetRequiredService<ILogger<UiTranslator>>()), new DomainGlossary());
+            sp.GetRequiredService<ILogger<UiTranslator>>()), glossary);
 
         var controlPromptsGlossary = new ControlPromptsGlossary();
         var uiByPromptId = controlPromptsGlossary.UiByCallbackId;
         
-        return (converter, uiByPromptId, new DomainGlossary());
+        return (converter, uiByPromptId, glossary);
     }
 }
