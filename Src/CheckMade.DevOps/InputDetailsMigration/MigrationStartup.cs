@@ -1,4 +1,4 @@
-using CheckMade.Function.Startup;
+using CheckMade.Functions.Startup;
 using CheckMade.Services.Persistence;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 using Microsoft.Extensions.Configuration;

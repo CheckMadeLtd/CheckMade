@@ -40,7 +40,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CheckMade.Function.Startup;
+namespace CheckMade.Functions.Startup;
 
 public static class RegisterServicesExtensions
 {

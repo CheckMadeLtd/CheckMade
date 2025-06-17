@@ -1,5 +1,5 @@
 using System.Configuration;
-using CheckMade.Function.Startup;
+using CheckMade.Functions.Startup;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using General.Utils.UiTranslation;
 using CheckMade.Tests.Utils;

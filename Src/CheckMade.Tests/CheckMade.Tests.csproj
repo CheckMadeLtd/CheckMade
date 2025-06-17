@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CheckMade.Function\CheckMade.Function.csproj" />
+      <ProjectReference Include="..\CheckMade.Functions\CheckMade.Functions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -4,15 +4,15 @@ using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace CheckMade.Function.Endpoints;
+namespace CheckMade.Functions.Endpoints;
 
-public sealed class OperationsBot(IBotFunction botFunction)
+public sealed class CommunicationsBot(IBotFunction botFunction)
 {
-    // Thread-safe collection for this static cache (ensuring atomic operations in case of multiple function instances)
+    // See comment in OperationsBot
     private static readonly ConcurrentDictionary<int, byte> UpdateIds = new();
-    private static InteractionMode Mode => InteractionMode.Operations;
+    private static InteractionMode Mode => InteractionMode.Communications;
 
-    [Function("OperationsBot")]
+    [Function("CommunicationsBot")]
     public async Task<HttpResponseData> 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
