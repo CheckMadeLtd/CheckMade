@@ -44,6 +44,15 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
         Option<MessageId> inPlaceUpdateMessageId,
         Option<Output> previousPromptFinalizer)
     {
+        Func<ISphereOfAction, string> sphereLabelComposer = static soa =>
+        {
+            var locationNameSuffix = soa.Details.LocationName.IsSome
+                ? " - " + soa.Details.LocationName.GetValueOrDefault()
+                : string.Empty;
+
+            return soa.Name + locationNameSuffix;
+        };
+
         List<Output> outputs =
         [
             new()
@@ -53,7 +62,7 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     (await AssignedSpheresOrAllAsync(
                         currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
-                    .Select(static soa => soa.Name)
+                    .Select(sphereLabelComposer)
                     .Order()
                     .ToArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId

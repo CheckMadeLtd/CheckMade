@@ -174,7 +174,7 @@ internal sealed class OutputToReplyMarkupConverter(IUiTranslator translator, IDo
     
     private static Option<ReplyKeyboardMarkup> GenerateReplyKeyboardMarkup(IReadOnlyCollection<string> choices)
     {
-        const int replyKeyboardNumberOfColumns = 3;
+        const int replyKeyboardNumberOfColumns = 2;
 
         var replyKeyboardTable = choices
             .Select(static (item, index) => new { Index = index, Choice = item })
