@@ -7,14 +7,14 @@ using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Global.UserAuth.States;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using InputValidator = General.Utils.Validators.InputValidator;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
 
 public sealed class UserAuthWorkflowTests
 {

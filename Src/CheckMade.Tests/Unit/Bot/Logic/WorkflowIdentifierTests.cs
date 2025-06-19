@@ -4,12 +4,12 @@ using CheckMade.Bot.Workflows;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
-using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic;
+namespace CheckMade.Tests.Unit.Bot.Logic;
 
 public sealed class WorkflowIdentifierTests
 {

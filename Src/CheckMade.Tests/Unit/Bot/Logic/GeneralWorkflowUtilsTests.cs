@@ -2,12 +2,12 @@ using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Bot.Workflows.Utils;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic;
+namespace CheckMade.Tests.Unit.Bot.Logic;
 
 public sealed class GeneralWorkflowUtilsTests
 {

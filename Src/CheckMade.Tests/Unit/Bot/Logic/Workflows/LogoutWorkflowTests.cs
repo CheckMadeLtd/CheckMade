@@ -7,14 +7,14 @@ using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.Logout;
 using CheckMade.Bot.Workflows.Global.Logout.States;
-using General.Utils.FpExtensions.Monads;
-using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
 
 public sealed class LogoutWorkflowTests
 {

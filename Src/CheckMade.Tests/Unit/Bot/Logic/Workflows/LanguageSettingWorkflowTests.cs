@@ -4,13 +4,13 @@ using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
-using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
 
 public sealed class LanguageSettingWorkflowTests
 {

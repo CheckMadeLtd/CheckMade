@@ -3,23 +3,23 @@ using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Bot.Telegram.BotClient;
-using CheckMade.Bot.Telegram.Conversion;
-using CheckMade.Bot.Telegram.UpdateHandling;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using General.Utils.FpExtensions.Monads;
-using General.Utils.UiTranslation;
+using CheckMade.Bot.Telegram.BotClient;
+using CheckMade.Bot.Telegram.Conversion;
+using CheckMade.Bot.Telegram.UpdateHandling;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Unit.Bot.Function;
 
 public sealed class ToModelConverterTests
 {

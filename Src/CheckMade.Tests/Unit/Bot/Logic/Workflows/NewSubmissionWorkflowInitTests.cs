@@ -5,12 +5,12 @@ using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.ChatBot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
 
 public sealed class NewSubmissionWorkflowInitTests
 {

@@ -2,15 +2,15 @@ using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Core.GIS;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.UpdateHandling;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using General.Utils.FpExtensions.Monads;
-using General.Utils.UiTranslation;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
+using General.Utils.FpExtensions.Monads;
+using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 using static CheckMade.Tests.Utils.TestUtils;
 using ChatId = Telegram.Bot.Types.ChatId;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Unit.Bot.Function;
 
 public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {

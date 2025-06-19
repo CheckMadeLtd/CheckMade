@@ -1,21 +1,21 @@
 using System.ComponentModel;
 using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
-using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Bot.Telegram.Conversion;
+using CheckMade.Tests.Startup;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
-using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 using static CheckMade.Abstract.Domain.Data.Bot.UserInteraction.ControlPrompts;
 
-namespace CheckMade.Tests.Unit.ChatBot.Function;
+namespace CheckMade.Tests.Unit.Bot.Function;
 
 public sealed class OutputToReplyMarkupConverterTests
 {
