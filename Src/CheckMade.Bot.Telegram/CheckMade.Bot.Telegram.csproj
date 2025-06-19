@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd</Configurations>
+        <Configurations>No_Build;Release;Debug_DevOps;Debug_AllPrd;Debug_Bot</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
