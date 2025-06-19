@@ -1,4 +1,4 @@
-namespace CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+namespace CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 
 [Flags]
 public enum ControlPrompts : long

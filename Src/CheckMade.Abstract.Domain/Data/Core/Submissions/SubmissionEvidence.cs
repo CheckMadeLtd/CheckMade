@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.Bot;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Abstract.Domain.Data.Core.Submissions;

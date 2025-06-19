@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Helpers;
 

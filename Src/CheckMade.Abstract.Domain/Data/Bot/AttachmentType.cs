@@ -1,4 +1,4 @@
-namespace CheckMade.Abstract.Domain.Data.ChatBot;
+namespace CheckMade.Abstract.Domain.Data.Bot;
 
 public enum AttachmentType
 {

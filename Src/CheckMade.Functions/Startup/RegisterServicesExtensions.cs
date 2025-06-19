@@ -1,5 +1,6 @@
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Services.Persistence;
 using CheckMade.Bot.Workflows;
 using CheckMade.Bot.Workflows.ModelFactories;
@@ -7,7 +8,6 @@ using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.Function;
 using CheckMade.Bot.Telegram.UpdateHandling;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;

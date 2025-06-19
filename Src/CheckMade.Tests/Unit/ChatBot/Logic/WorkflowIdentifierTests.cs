@@ -1,6 +1,6 @@
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Bot.Workflows;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;

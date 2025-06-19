@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;

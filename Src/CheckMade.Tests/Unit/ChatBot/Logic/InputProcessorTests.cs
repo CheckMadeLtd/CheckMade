@@ -1,7 +1,7 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
@@ -38,7 +38,7 @@ public sealed class InputProcessorTests
     
         List<Output> expectedOutputs = 
         [
-            new() { Text = Ui("🫡 Welcome to the CheckMade ChatBot. I shall follow your command!") },
+            new() { Text = Ui("🫡 Welcome to the CheckMade Bot. I shall follow your command!") },
             new() { Text = UserAuthWorkflowTokenEntry.EnterTokenPrompt }
         ];
         

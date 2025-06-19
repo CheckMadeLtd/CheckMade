@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

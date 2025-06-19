@@ -1,6 +1,6 @@
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot;
+namespace CheckMade.Abstract.Domain.Data.Bot;
 
 public sealed record AttachmentDetails(
     Uri AttachmentUri,

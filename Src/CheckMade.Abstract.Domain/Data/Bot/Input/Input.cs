@@ -1,7 +1,7 @@
 ﻿using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot.Input;
+namespace CheckMade.Abstract.Domain.Data.Bot.Input;
 
 public sealed record Input(
     DateTimeOffset TimeStamp,

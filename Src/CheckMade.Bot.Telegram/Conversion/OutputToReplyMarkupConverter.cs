@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using General.Utils.FpExtensions.Monads;

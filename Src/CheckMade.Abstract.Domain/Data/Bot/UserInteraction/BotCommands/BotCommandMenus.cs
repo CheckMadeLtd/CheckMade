@@ -1,9 +1,9 @@
 // ReSharper disable StringLiteralTypo
 
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
+namespace CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
 
 public sealed record BotCommandMenus
 {

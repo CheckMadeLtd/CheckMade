@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;

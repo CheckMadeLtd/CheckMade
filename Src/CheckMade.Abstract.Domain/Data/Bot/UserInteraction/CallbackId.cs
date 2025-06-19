@@ -1,6 +1,6 @@
 using General.Utils.Validators;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+namespace CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 
 public sealed record CallbackId
 {

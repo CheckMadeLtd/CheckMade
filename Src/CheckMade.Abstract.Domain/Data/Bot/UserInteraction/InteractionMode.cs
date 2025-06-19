@@ -1,4 +1,4 @@
-namespace CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+namespace CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 
 // Avoids 'Operations' implicilty being the default (= 0).
 // There shouldn't be a 'default' e.g. to avoid Json Serializer to assigning it implicitly in some cases.

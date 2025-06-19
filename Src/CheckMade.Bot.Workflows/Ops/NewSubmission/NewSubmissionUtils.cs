@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Abstract.Domain.Data.Core.GIS;

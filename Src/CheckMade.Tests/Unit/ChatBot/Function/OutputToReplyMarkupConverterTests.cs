@@ -1,7 +1,7 @@
 using System.ComponentModel;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Bot.Telegram.Conversion;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
@@ -13,7 +13,7 @@ using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.ControlPrompts;
+using static CheckMade.Abstract.Domain.Data.Bot.UserInteraction.ControlPrompts;
 
 namespace CheckMade.Tests.Unit.ChatBot.Function;
 

@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot;
+namespace CheckMade.Abstract.Domain.Data.Bot;
 
 /// <summary>
 /// Creates a logical link between a workflow-terminating input from role A (e.g. submission) 

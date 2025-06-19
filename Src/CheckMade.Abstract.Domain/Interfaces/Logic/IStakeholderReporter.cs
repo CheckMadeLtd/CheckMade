@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 
 namespace CheckMade.Abstract.Domain.Interfaces.Logic;

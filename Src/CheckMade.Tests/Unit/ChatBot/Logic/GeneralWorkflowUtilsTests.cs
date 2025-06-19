@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Bot.Workflows.Utils;

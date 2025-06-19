@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
@@ -166,7 +166,7 @@ public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossar
             _ => throw new InvalidOperationException(
                 $"Saving a {nameof(input)} to DB with {nameof(bridgeDestinations)} but WITHOUT any " +
                 $"{nameof(input.ResultantState)} should never be attempted, as it contradicts our fundamental " +
-                $"ChatBot interaction logic.")
+                $"Bot interaction logic.")
         };     
         
         command.Parameters.Add(

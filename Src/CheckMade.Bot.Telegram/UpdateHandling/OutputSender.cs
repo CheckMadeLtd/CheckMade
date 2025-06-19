@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
@@ -12,7 +12,7 @@ using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
-using MessageId = CheckMade.Abstract.Domain.Data.ChatBot.MessageId;
+using MessageId = CheckMade.Abstract.Domain.Data.Bot.MessageId;
 
 namespace CheckMade.Bot.Telegram.UpdateHandling;
 

@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Output;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 

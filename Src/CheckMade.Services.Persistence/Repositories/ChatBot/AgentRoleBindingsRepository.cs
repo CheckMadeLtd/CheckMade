@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Data.ChatBot;
+using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents;

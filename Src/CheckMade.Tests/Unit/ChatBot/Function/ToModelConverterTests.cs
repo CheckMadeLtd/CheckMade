@@ -1,11 +1,11 @@
+using CheckMade.Abstract.Domain.Data.Bot;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.UpdateHandling;
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands.DefinitionsByBot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;

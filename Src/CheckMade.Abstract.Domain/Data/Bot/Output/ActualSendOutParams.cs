@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
+using CheckMade.Abstract.Domain.Data.Bot.Input;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot.Output;
+namespace CheckMade.Abstract.Domain.Data.Bot.Output;
 
 public readonly struct ActualSendOutParams
 {

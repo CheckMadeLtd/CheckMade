@@ -1,4 +1,4 @@
-namespace CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
+namespace CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
 
 public static class Start
 {

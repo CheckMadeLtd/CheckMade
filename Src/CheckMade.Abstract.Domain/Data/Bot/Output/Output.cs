@@ -1,10 +1,10 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
+using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Abstract.Domain.Data.ChatBot.Output;
+namespace CheckMade.Abstract.Domain.Data.Bot.Output;
 
 public sealed record Output
 {
