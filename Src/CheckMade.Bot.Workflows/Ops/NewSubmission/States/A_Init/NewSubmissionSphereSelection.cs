@@ -38,21 +38,12 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
     
     public IDomainGlossary Glossary { get; }
     public IStateMediator Mediator { get; }
-
+    
     public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput,
         Option<MessageId> inPlaceUpdateMessageId,
         Option<Output> previousPromptFinalizer)
     {
-        Func<ISphereOfAction, string> sphereLabelComposer = static soa =>
-        {
-            var locationNameSuffix = soa.Details.LocationName.IsSome
-                ? " - " + soa.Details.LocationName.GetValueOrDefault()
-                : string.Empty;
-
-            return soa.Name + locationNameSuffix;
-        };
-
         List<Output> outputs =
         [
             new()
@@ -62,7 +53,7 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
                 PredefinedChoices = Option<IReadOnlyCollection<string>>.Some(
                     (await AssignedSpheresOrAllAsync(
                         currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
-                    .Select(sphereLabelComposer)
+                    .Select(SphereLabelComposer)
                     .Order()
                     .ToArray()),
                 UpdateExistingOutputMessageId = inPlaceUpdateMessageId
@@ -76,17 +67,19 @@ public sealed record NewSubmissionSphereSelection<T> : INewSubmissionSphereSelec
 
     public async Task<Result<WorkflowResponse>> GetWorkflowResponseAsync(Input currentInput)
     {
-        var relevantSphereNames = (await AssignedSpheresOrAllAsync(
+        var relevantSphereLabels = (await AssignedSpheresOrAllAsync(
                 currentInput, _roleBindingsRepo, _liveEventsRepo, _trade))
-            .Select(static soa => soa.Name).ToArray(); 
+            .Select(SphereLabelComposer)
+            .Order()
+            .ToArray(); 
         
         if (currentInput.InputType is not InputType.TextMessage ||
-            !relevantSphereNames
+            !relevantSphereLabels
                 .Contains(currentInput.Details.Text.GetValueOrThrow()))
         {
             return WorkflowResponse.CreateWarningChooseReplyKeyboardOptions(
                 this, 
-                relevantSphereNames);
+                relevantSphereLabels);
         }
 
         return await WorkflowResponse.CreateFromNextStateAsync(

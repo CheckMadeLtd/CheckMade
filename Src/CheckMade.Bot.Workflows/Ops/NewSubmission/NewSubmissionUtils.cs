@@ -114,20 +114,20 @@ internal static class NewSubmissionUtils
         IReadOnlyCollection<Input> inputs,
         IReadOnlyCollection<ISphereOfAction> spheres) where T : ITrade, new()
     {
-        var sphereNames = spheres.Select(static s => s.Name).ToHashSet();
-        Func<string, bool> containsSphereName = text => sphereNames.Any(text.Contains);
+        var sphereLabels = spheres.Select(SphereLabelComposer).ToHashSet();
+        Func<string, bool> containsSphereLabel = text => sphereLabels.Any(text.Contains);
 
         var lastSelectedSphereInput =
             inputs.LastOrDefault(i =>
                 i.InputType == InputType.TextMessage &&
-                containsSphereName(i.Details.Text.GetValueOrThrow()));
+                containsSphereLabel(i.Details.Text.GetValueOrThrow()));
 
         var lastConfirmedSphereInput =
             inputs.LastOrDefault(i =>
                 i.InputType == InputType.CallbackQuery &&
                 i.Details.ControlPromptEnumCode.IsSome &&
                 i.Details.ControlPromptEnumCode.GetValueOrThrow() == (int)ControlPrompts.Yes &&
-                containsSphereName(i.Details.Text.GetValueOrThrow()));
+                containsSphereLabel(i.Details.Text.GetValueOrThrow()));
 
         var sphereNameByMessageId = new Dictionary<int, string>();
 
@@ -137,12 +137,12 @@ internal static class NewSubmissionUtils
 
         if (lastConfirmedSphereInput != null)
             sphereNameByMessageId[lastConfirmedSphereInput.MessageId] =
-                sphereNames.First(sn =>
+                sphereLabels.First(sn =>
                     lastConfirmedSphereInput.Details.Text.GetValueOrThrow().Contains(sn));  
         
         return
             spheres.First(s => 
-                s.Name == sphereNameByMessageId
+                SphereLabelComposer(s) == sphereNameByMessageId
                     .MaxBy(static kvp => kvp.Key) // the later of the two, in case the user confirmed AND selected a sphere
                     .Value);
     }
@@ -174,4 +174,13 @@ internal static class NewSubmissionUtils
 
         return currentSphere.Details.AvailableConsumables;
     }
+    
+    internal static Func<ISphereOfAction, string> SphereLabelComposer => static soa =>
+    {
+        var locationNameSuffix = soa.Details.LocationName.IsSome
+            ? " - " + soa.Details.LocationName.GetValueOrDefault()
+            : string.Empty;
+
+        return soa.Name + locationNameSuffix;
+    };
 }
