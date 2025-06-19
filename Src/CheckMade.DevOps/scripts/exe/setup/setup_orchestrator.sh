@@ -10,7 +10,7 @@ source "$script_dir_orchestrator/../script_utils.sh"
 # -------------------------------------------------------------------------------------------------------
 
 # #######################################################################################################
-# This meta-script serves as executable documentation for the setup of Azure/ChatBot/DB from scratch. 
+# This meta-script serves as executable documentation for the setup of Azure / Bot / DB from scratch. 
 # It also represents an overview / menu of config options outside of 'full setup from scratch'.
 # #######################################################################################################
 
@@ -26,7 +26,7 @@ echo "- Azure Portal account and 'CheckMade' subscription have been set up"
 echo "- Logged in to Azure CLI and default account and location have been set (use 'az_init/az_cli_init.sh')"
 echo "- All needed bots have been created with the Telegram BotFather and their credentials/tokens saved in the \
 ENVIRONMENT for access by subsequent scripts; the dev-related tokens have been saved in secrets.json of the \
-ChatBot StartUp project."
+Functions StartUp project."
 echo "- 'GITHUB_TOKEN' in ENVIRONMENT has been set to a GitHub PAT that gives gh comprehensive admin access"
 
 echo "--------------------"
