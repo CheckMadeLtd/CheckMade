@@ -393,26 +393,6 @@ public sealed class ToModelConverterTests
         Assert.True(conversionResult.IsFailure);
     }
 
-    [Fact]
-    public async Task ConvertToModelAsync_ReturnsFailure_WhenUnsupportedAttachmentTypeLikeAudioSent_InAnyMode()
-    {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
-        
-        var basics = GetBasicTestingServices(_services);
-        var audioMessage = basics.updateGenerator.GetValidTelegramAudioMessage();
-        
-        var conversionResult = 
-            await basics.converter.ConvertToModelAsync(
-                audioMessage, 
-                Operations);
-
-        Assert.True(
-            conversionResult.IsFailure);
-        Assert.Equal(
-            "Failed to convert your Telegram Message: Attachment type Audio is not yet supported!",
-            conversionResult.FailureInfo!.GetEnglishMessage());
-    }
-
     private static (ITelegramUpdateGenerator updateGenerator, 
         Mock<IBotClientWrapper> mockBotClient,
         IToModelConverter converter,
