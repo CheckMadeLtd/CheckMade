@@ -158,7 +158,7 @@ public sealed class NewSubmissionWorkflowInitTests
 
         var currentInput =
             basics.inputGenerator.GetValidInputTextMessage(
-                text: Sphere1_AtX2024.Name);
+                text: NewSubmissionUtils.SphereLabelComposer(Sphere1_AtX2024));
 
         const string expectedOutput = "Please select the type of submission:";
         var expectedNewState = 
