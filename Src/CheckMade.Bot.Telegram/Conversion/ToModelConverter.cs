@@ -110,10 +110,7 @@ public sealed class ToModelConverter(
 
     private static Result<TelegramAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
-        if (!IsMessageTypeSupported(update.Message.Type))
-        {
-            return Ui($"Attachment type {update.Message.Type} is not yet supported!");
-        }
+        // No need to check whether we have a valid MessageType, UpdateHandler already filtered that.
         
         // Why Run()? The null-forgiving operators below could throw exceptions if Telegram lib changes! 
         return Result<TelegramAttachmentDetails>.Run(() => update.Message.Type switch
@@ -135,16 +132,6 @@ public sealed class ToModelConverter(
 
             _ => throw new ArgumentOutOfRangeException(nameof(GetAttachmentDetails))
         });
-
-        static bool IsMessageTypeSupported(MessageType messageType)
-        {
-            return messageType switch
-            {
-                MessageType.Text or MessageType.Location or 
-                    MessageType.Document or MessageType.Photo or MessageType.Voice => true,
-                _ => false
-            };
-        }
     }
 
     private sealed record TelegramAttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);
