@@ -1,8 +1,8 @@
 using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;

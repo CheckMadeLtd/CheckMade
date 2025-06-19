@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+namespace CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 
 public interface IInputsRepository
 {

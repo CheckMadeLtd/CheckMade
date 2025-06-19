@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.UiTranslation;
 

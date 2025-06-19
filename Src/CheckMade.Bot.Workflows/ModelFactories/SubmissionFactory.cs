@@ -4,7 +4,7 @@ using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using CheckMade.Abstract.Domain.Data.Core.Submissions;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;

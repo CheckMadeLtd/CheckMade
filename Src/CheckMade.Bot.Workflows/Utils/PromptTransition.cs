@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Function;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Bot.Workflows.Utils;

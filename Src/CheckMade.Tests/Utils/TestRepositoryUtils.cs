@@ -5,7 +5,7 @@ using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;

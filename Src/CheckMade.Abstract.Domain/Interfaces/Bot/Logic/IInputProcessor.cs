@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Data.Bot.Output;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+namespace CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 
 public interface IInputProcessor
 {

@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Data.Bot;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
+namespace CheckMade.Abstract.Domain.Interfaces.Bot.Function;
 
 /// <summary>
 /// Thread-safe cache for tracking the last message ID sent by each bot to each Agent.

@@ -1,4 +1,4 @@
-namespace CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+namespace CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 
 public interface IWorkflowState
 {

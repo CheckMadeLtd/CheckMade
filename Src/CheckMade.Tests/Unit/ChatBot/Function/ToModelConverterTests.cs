@@ -8,7 +8,7 @@ using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;

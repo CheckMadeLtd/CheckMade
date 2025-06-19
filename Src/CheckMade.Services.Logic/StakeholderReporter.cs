@@ -7,7 +7,7 @@ using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Abstract.Domain.Data.Core.Submissions;
 using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;

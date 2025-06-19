@@ -6,7 +6,7 @@ using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Abstract.Domain.Utils;
 using CheckMade.Bot.Workflows.Utils;

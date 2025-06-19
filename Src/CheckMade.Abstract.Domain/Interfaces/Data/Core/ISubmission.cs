@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
 using CheckMade.Abstract.Domain.Data.Core.Submissions;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using General.Utils.UiTranslation;
 
 namespace CheckMade.Abstract.Domain.Interfaces.Data.Core;

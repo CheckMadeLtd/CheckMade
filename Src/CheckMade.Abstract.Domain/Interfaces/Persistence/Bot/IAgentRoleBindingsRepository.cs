@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Core;
 
-namespace CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+namespace CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 
 public interface IAgentRoleBindingsRepository
 {

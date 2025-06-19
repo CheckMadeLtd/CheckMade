@@ -2,7 +2,7 @@ using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 
-namespace CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+namespace CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 
 public interface IDerivedWorkflowBridgesRepository
 {

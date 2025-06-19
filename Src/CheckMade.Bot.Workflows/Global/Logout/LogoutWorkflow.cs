@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.Logout.States;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;

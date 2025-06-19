@@ -2,7 +2,7 @@ using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+namespace CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 
 public interface IDomainGlossary
 {

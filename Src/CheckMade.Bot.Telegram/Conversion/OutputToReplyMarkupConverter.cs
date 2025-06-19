@@ -2,7 +2,7 @@ using System.ComponentModel;
 using CheckMade.Abstract.Domain.Data.Bot.Output;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using General.Utils.Validators;

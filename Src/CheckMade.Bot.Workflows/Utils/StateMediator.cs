@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Bot.Workflows.Utils;

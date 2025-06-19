@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using Newtonsoft.Json;
 
 namespace CheckMade.Services.Persistence.JsonHelpers;
