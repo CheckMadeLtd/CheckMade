@@ -56,11 +56,11 @@ public abstract class TestStartupBase
         
         Services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
 
-        Services.RegisterChatBotTelegramBusinessServices();
-        Services.RegisterChatBotLogicServices();
+        Services.RegisterBotTelegramHandlingServices();
+        Services.RegisterBotLogicServices();
         
-        Services.RegisterCommonBusinessLogicServices();
-        Services.RegisterCommonUtilsServices();
+        Services.RegisterServicesLogic();
+        Services.RegisterGeneralUtils();
     }
 
     protected abstract void RegisterTestTypeSpecificServices();

@@ -44,8 +44,8 @@ namespace CheckMade.Functions.Startup;
 
 public static class RegisterServicesExtensions
 {
-    // Division of ChatBotTelegram Services into Function and Business needed due to separate treatment in Tests
-    internal static void RegisterChatBotTelegramFunctionServices(
+    // Division of BotTelegram Services into Function and Business needed due to separate treatment in Tests
+    internal static void RegisterBotTelegramFunctionServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         // Function
@@ -63,7 +63,7 @@ public static class RegisterServicesExtensions
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
     }
 
-    internal static void RegisterChatBotTelegramBusinessServices(this IServiceCollection services)
+    internal static void RegisterBotTelegramHandlingServices(this IServiceCollection services)
     {
         // UpdateHandling
         services.AddScoped<IUpdateHandler, UpdateHandler>();
@@ -75,7 +75,7 @@ public static class RegisterServicesExtensions
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
     }
     
-    public static void RegisterCommonPersistenceServices(
+    public static void RegisterServicesPersistence(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         var dbConnectionString = hostingEnvironment switch
@@ -114,13 +114,13 @@ public static class RegisterServicesExtensions
         services.AddScoped<IDerivedWorkflowBridgesRepository, DerivedWorkflowBridgesRepository>();
     }
 
-    internal static void RegisterCommonBusinessLogicServices(this IServiceCollection services)
+    internal static void RegisterServicesLogic(this IServiceCollection services)
     {
         services.AddScoped<IStakeholderReporter<SanitaryTrade>, StakeholderReporter<SanitaryTrade>>();
         services.AddScoped<IStakeholderReporter<SiteCleanTrade>, StakeholderReporter<SiteCleanTrade>>();
     }
     
-    public static void RegisterCommonUtilsServices(this IServiceCollection services)
+    public static void RegisterGeneralUtils(this IServiceCollection services)
     {
         services.AddSingleton<Randomizer>();
 
@@ -133,7 +133,8 @@ public static class RegisterServicesExtensions
                 sp.GetRequiredService<ILogger<UiTranslator>>()));
     }
 
-    internal static void RegisterCommonExternalServices(this IServiceCollection services, IConfiguration config)
+    // ReSharper disable once InconsistentNaming
+    internal static void RegisterServicesExtAPIs(this IServiceCollection services, IConfiguration config)
     {
         // Azure Blob Service
         
@@ -165,7 +166,7 @@ public static class RegisterServicesExtensions
         services.AddSingleton<IHttpDownloader, HttpDownloader>();
     }
     
-    internal static void RegisterChatBotLogicServices(this IServiceCollection services)
+    internal static void RegisterBotLogicServices(this IServiceCollection services)
     {
         services.AddSingleton<IDomainGlossary, DomainGlossary>();
         

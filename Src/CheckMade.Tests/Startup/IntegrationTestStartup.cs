@@ -19,9 +19,9 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.RegisterChatBotTelegramFunctionServices(Config, HostingEnvironment);
-        Services.RegisterCommonPersistenceServices(Config, HostingEnvironment);
-        Services.RegisterCommonExternalServices(Config);
+        Services.RegisterBotTelegramFunctionServices(Config, HostingEnvironment);
+        Services.RegisterServicesPersistence(Config, HostingEnvironment);
+        Services.RegisterServicesExtAPIs(Config);
 
         /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
          also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need
