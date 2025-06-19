@@ -4,11 +4,11 @@ using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Services.Persistence.Repositories.Core;
+using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
-namespace CheckMade.Services.Persistence.Repositories.ChatBot;
+namespace CheckMade.Services.Persistence.Repositories.Bot;
 
 public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository

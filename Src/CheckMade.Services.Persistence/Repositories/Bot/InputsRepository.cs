@@ -7,13 +7,13 @@ using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Services.Persistence.JsonHelpers;
+using General.Utils.FpExtensions.Monads;
 using Npgsql;
 using NpgsqlTypes;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
-namespace CheckMade.Services.Persistence.Repositories.ChatBot;
+namespace CheckMade.Services.Persistence.Repositories.Bot;
 
 public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IInputsRepository

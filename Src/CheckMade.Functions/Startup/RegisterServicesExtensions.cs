@@ -32,7 +32,7 @@ using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
 using CheckMade.Services.Logic;
-using CheckMade.Services.Persistence.Repositories.ChatBot;
+using CheckMade.Services.Persistence.Repositories.Bot;
 using CheckMade.Services.Persistence.Repositories.Core;
 using General.Utils.RetryPolicies;
 using General.Utils.UiTranslation;
