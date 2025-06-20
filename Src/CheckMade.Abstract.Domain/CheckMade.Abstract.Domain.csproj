@@ -33,5 +33,9 @@
       <Folder Include="Interfaces\Bot\" />
       <Folder Include="Interfaces\Data\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="ResourceFiles\de.tsv" />
+    </ItemGroup>
     
 </Project>

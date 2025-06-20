@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using CsvHelper;
 using General.Utils.FpExtensions;
+using General.Utils.FpExtensions.Combinators;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
@@ -83,13 +84,8 @@ public sealed class UiTranslatorFactory(
         });
     }
 
-    private Stream GetTranslationResourceStream()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        
-        var targetLanguagesResourceName =
-            $"{typeof(UiTranslatorFactory).Namespace}.TargetLanguages.{_targetLanguage}.tsv";
-
-        return assembly.GetManifestResourceStream(targetLanguagesResourceName)!;
-    }
+    private Stream GetTranslationResourceStream() =>
+        Assembly.Load("CheckMade.Abstract.Domain")
+            .Apply(asm => asm.GetManifestResourceStream(
+                $"{asm.GetName().Name}.ResourceFiles.{_targetLanguage}.tsv")!);
 }
