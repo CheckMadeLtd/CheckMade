@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Core.Actors;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
 
 namespace CheckMade.Abstract.Domain.Model.Utils.Comparers;
 

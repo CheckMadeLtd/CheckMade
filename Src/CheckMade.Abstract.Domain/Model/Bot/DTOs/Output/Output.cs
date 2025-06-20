@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.GIS;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 

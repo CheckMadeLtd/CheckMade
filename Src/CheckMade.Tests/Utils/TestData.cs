@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Core.Actors;
-using CheckMade.Abstract.Domain.Model.Core.Actors.RoleTypes;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Core.GIS;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails.Facilities;
-using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
+using CheckMade.Abstract.Domain.Model.Common.Actors.RoleTypes;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.GIS;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Abstract.Domain.Model.Common.Trades;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
-using User = CheckMade.Abstract.Domain.Model.Core.Actors.User;
+using User = CheckMade.Abstract.Domain.Model.Common.Actors.User;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 

@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.Logout;

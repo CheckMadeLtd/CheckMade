@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Common.Trades;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.C_Review;
 using CheckMade.Bot.Workflows.Utils;

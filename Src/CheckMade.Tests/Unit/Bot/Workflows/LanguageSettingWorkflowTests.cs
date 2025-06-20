@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Common;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using CheckMade.Tests.Startup;

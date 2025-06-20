@@ -1,10 +1,10 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Core.Actors;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Core.GIS;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.GIS;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.AzureServices;
 using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.Utils;

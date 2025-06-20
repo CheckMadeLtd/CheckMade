@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
 
 namespace CheckMade.Abstract.Domain.Model.Utils.Comparers;
 

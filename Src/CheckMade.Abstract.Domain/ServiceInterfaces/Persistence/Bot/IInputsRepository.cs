@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;

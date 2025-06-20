@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
 using General.Utils.UiTranslation;
 
 namespace CheckMade.Abstract.Domain.ServiceInterfaces.Bot;

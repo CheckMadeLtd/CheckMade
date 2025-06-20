@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Model.Core.Actors;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Abstract.Domain.Model.Bot.DTOs;

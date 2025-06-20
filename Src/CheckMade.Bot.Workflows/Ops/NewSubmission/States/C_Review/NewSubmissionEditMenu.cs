@@ -1,8 +1,8 @@
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.Trades;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
 using CheckMade.Bot.Workflows.Utils;

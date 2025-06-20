@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents.SphereOfActionDetails;
 using General.Utils.Validators;
 using Xunit.Abstractions;
 

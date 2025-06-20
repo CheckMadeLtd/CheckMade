@@ -1,8 +1,8 @@
-using CheckMade.Abstract.Domain.Model.Core.Actors;
-using CheckMade.Abstract.Domain.Model.Core.Actors.RoleTypes;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
-using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
+using CheckMade.Abstract.Domain.Model.Common.Actors.RoleTypes;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.Trades;
 
 namespace CheckMade.Tests.Unit.Abstract.Domain.ModelEquality;
 

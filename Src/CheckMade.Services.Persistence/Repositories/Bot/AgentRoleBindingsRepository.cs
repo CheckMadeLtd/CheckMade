@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
-using CheckMade.Services.Persistence.Repositories.Core;
+using CheckMade.Services.Persistence.Repositories.Common;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 

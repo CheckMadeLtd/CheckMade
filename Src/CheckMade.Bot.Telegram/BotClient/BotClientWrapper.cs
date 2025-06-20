@@ -1,5 +1,5 @@
 using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.Model.Common.GIS;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.RetryPolicies;

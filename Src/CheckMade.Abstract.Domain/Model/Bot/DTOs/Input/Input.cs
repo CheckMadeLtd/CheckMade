@@ -1,6 +1,6 @@
 ﻿using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Core.Actors;
-using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Common.Actors;
+using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;

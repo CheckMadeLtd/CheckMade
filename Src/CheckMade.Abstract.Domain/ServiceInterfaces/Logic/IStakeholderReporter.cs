@@ -1,6 +1,6 @@
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Common.Trades;
 
 namespace CheckMade.Abstract.Domain.ServiceInterfaces.Logic;
 

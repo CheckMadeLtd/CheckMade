@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
 using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
