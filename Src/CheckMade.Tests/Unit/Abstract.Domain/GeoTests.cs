@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Data.Core.GIS;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Unit.Abstract.Domain;
 
 public class GeoTests
 {

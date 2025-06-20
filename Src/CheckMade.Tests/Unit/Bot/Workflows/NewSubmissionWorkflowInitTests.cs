@@ -10,7 +10,7 @@ using CheckMade.Tests.Utils;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Workflows;
 
 public sealed class NewSubmissionWorkflowInitTests
 {

@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Unit.General.Utils;
 
 public sealed class EnumCheckerTests(ITestOutputHelper outputHelper)
 {

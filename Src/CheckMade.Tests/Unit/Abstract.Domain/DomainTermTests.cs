@@ -1,7 +1,7 @@
 using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Unit.Abstract.Domain;
 
 public sealed class DomainTermTests
 {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Exceptions;
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Unit.General.Utils;
 
 public sealed class RetryPolicyTests
 {

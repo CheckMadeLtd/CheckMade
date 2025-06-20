@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
 using static CheckMade.Abstract.Domain.Data.Bot.UserInteraction.ControlPrompts;
 
-namespace CheckMade.Tests.Unit.Bot.Function;
+namespace CheckMade.Tests.Unit.Bot.Telegram;
 
 public sealed class OutputToReplyMarkupConverterTests
 {

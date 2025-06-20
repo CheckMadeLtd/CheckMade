@@ -9,7 +9,7 @@ using CheckMade.Tests.Utils;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckMade.Tests.Unit.Bot.Logic;
+namespace CheckMade.Tests.Unit.Bot.Workflows;
 
 public sealed class WorkflowIdentifierTests
 {

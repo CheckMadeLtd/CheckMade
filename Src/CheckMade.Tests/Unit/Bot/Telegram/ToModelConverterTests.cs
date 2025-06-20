@@ -19,7 +19,7 @@ using Moq;
 using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
-namespace CheckMade.Tests.Unit.Bot.Function;
+namespace CheckMade.Tests.Unit.Bot.Telegram;
 
 public sealed class ToModelConverterTests
 {

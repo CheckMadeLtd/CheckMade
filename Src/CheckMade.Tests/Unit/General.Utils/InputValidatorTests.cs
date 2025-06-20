@@ -1,7 +1,7 @@
 using General.Utils.Validators;
 using InputValidator = General.Utils.Validators.InputValidator;
 
-namespace CheckMade.Tests.Unit.Common;
+namespace CheckMade.Tests.Unit.General.Utils;
 
 public class InputValidatorTests
 {

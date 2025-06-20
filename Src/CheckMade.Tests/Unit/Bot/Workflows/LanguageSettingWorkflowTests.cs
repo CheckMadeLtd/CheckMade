@@ -10,7 +10,7 @@ using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Workflows;
 
 public sealed class LanguageSettingWorkflowTests
 {

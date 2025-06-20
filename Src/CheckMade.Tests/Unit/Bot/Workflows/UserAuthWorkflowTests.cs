@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using InputValidator = General.Utils.Validators.InputValidator;
 
-namespace CheckMade.Tests.Unit.Bot.Logic.Workflows;
+namespace CheckMade.Tests.Unit.Bot.Workflows;
 
 public sealed class UserAuthWorkflowTests
 {

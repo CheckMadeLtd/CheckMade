@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 using static CheckMade.Tests.Utils.TestUtils;
 using ChatId = Telegram.Bot.Types.ChatId;
 
-namespace CheckMade.Tests.Unit.Bot.Function;
+namespace CheckMade.Tests.Unit.Bot.Telegram;
 
 public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
 {

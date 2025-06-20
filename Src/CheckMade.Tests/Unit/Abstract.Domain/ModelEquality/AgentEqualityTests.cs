@@ -3,7 +3,7 @@ using CheckMade.Abstract.Domain.Data.Bot;
 using CheckMade.Abstract.Domain.Data.Bot.Input;
 using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
 
-namespace CheckMade.Tests.Unit.Common.ModelEquality;
+namespace CheckMade.Tests.Unit.Abstract.Domain.ModelEquality;
 
 public sealed class AgentEqualityTests
 {

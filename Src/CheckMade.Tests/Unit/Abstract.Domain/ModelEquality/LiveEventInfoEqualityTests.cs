@@ -5,7 +5,7 @@ using CheckMade.Abstract.Domain.Data.Core.LiveEvents;
 using CheckMade.Abstract.Domain.Data.Core.Trades;
 using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 
-namespace CheckMade.Tests.Unit.Common.ModelEquality;
+namespace CheckMade.Tests.Unit.Abstract.Domain.ModelEquality;
 
 public sealed class LiveEventInfoEqualityTests
 {

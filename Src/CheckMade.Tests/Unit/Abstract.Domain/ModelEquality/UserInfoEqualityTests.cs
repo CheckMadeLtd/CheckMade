@@ -7,7 +7,7 @@ using CheckMade.Abstract.Domain.Interfaces.Data.Core;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Tests.Unit.Common.ModelEquality;
+namespace CheckMade.Tests.Unit.Abstract.Domain.ModelEquality;
 
 public class UserInfoEqualityTests
 {
