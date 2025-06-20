@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
-using CheckMade.Abstract.Domain.Data.Core.LiveEvents;
-using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.Model.Core.Actors;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using User = CheckMade.Abstract.Domain.Data.Core.Actors.User;
+using User = CheckMade.Abstract.Domain.Model.Core.Actors.User;
 
 namespace CheckMade.Tests.Utils;
 

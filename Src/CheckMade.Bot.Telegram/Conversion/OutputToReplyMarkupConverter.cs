@@ -1,8 +1,9 @@
 using System.ComponentModel;
-using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using General.Utils.Validators;

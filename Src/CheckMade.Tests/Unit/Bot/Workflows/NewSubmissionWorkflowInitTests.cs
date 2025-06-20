@@ -1,7 +1,7 @@
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Data.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.Model.Core.Trades;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;

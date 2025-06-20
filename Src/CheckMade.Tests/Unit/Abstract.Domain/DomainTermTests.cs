@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails;
 using General.Utils.UiTranslation;
 
 namespace CheckMade.Tests.Unit.Abstract.Domain;

@@ -1,11 +1,12 @@
 using System.ComponentModel;
-using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Abstract.Domain.Data.Core.Submissions.SubmissionTypes;
-using CheckMade.Abstract.Domain.Data.Core.Trades;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Model.Core.Submissions.SubmissionTypes;
+using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Tests.Startup;
 using General.Utils.FpExtensions.Monads;
@@ -13,7 +14,7 @@ using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types.ReplyMarkups;
-using static CheckMade.Abstract.Domain.Data.Bot.UserInteraction.ControlPrompts;
+using static CheckMade.Abstract.Domain.Model.Bot.Categories.ControlPrompts;
 
 namespace CheckMade.Tests.Unit.Bot.Telegram;
 

@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;

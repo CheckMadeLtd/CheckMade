@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 
 namespace CheckMade.Bot.Workflows.Global.Logout.States;
 

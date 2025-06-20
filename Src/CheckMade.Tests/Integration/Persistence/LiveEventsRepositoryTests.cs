@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails;
-using CheckMade.Abstract.Domain.Data.Core.LiveEvents.SphereOfActionDetails.Facilities;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents.SphereOfActionDetails.Facilities;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
 using General.Utils.FpExtensions.Monads;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;

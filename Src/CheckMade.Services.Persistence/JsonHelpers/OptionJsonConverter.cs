@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

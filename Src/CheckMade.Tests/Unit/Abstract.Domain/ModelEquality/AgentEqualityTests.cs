@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 
 namespace CheckMade.Tests.Unit.Abstract.Domain.ModelEquality;
 

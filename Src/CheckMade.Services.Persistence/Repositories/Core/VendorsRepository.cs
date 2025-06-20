@@ -1,7 +1,7 @@
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Data.Core.Actors;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using CheckMade.Abstract.Domain.Model.Core.Actors;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 

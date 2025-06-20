@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Function;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 

@@ -1,14 +1,15 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Data.Core.Trades;
-using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
-using CheckMade.Abstract.Domain.Utils;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.Model.Core.Actors.RoleTypes;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.Model.Core.LiveEvents;
+using CheckMade.Abstract.Domain.Model.Core.Submissions;
+using CheckMade.Abstract.Domain.Model.Core.Trades;
+using CheckMade.Abstract.Domain.Model.Utils;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;
 

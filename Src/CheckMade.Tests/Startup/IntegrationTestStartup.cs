@@ -1,7 +1,7 @@
+using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.GoogleApi;
 using CheckMade.Services.ExtAPIs.GoogleApi;
 using CheckMade.Services.Persistence;
 using CheckMade.Functions.Startup;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup.ConfigProviders;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;

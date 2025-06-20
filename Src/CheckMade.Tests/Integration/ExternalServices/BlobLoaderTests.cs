@@ -1,5 +1,5 @@
 using System.Text;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.AzureServices;
 using CheckMade.Tests.Startup;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;

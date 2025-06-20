@@ -1,7 +1,7 @@
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using CheckMade.Tests.Startup;

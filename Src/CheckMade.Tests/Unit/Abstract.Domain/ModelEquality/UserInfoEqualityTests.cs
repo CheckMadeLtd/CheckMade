@@ -1,9 +1,7 @@
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.Actors;
-using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
-using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem.RoleTypes;
-using CheckMade.Abstract.Domain.Data.Core.Trades;
-using CheckMade.Abstract.Domain.Interfaces.Data.Core;
+using CheckMade.Abstract.Domain.Model.Core.Actors;
+using CheckMade.Abstract.Domain.Model.Core.Actors.RoleTypes;
+using CheckMade.Abstract.Domain.Model.Core.CrossCutting;
+using CheckMade.Abstract.Domain.Model.Core.Trades;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 

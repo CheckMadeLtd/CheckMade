@@ -1,18 +1,17 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Function;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
+using CheckMade.Abstract.Domain.Model.Core.Actors;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.AzureServices;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
-using MessageId = CheckMade.Abstract.Domain.Data.Bot.MessageId;
+using MessageId = CheckMade.Abstract.Domain.Model.Bot.DTOs.MessageId;
 
 namespace CheckMade.Bot.Telegram.UpdateHandling;
 

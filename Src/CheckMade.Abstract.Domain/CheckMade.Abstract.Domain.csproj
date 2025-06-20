@@ -29,9 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
-      <Folder Include="Interfaces\Bot\" />
-      <Folder Include="Interfaces\Data\" />
+      <Folder Include="Model\" />
     </ItemGroup>
 
     <ItemGroup>

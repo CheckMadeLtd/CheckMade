@@ -1,7 +1,7 @@
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Bot.Workflows.Utils;

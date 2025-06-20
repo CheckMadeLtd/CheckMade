@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence.JsonHelpers;
 using CheckMade.Bot.Workflows;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;

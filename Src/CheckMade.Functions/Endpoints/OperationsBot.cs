@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Bot.Telegram.Function;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;

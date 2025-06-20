@@ -1,10 +1,10 @@
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.Input;
-using CheckMade.Abstract.Domain.Data.Bot.Output;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Interfaces.Bot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Bot;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
+using CheckMade.Abstract.Domain.Model.Core.GIS;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence;
+using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Global.UserAuth.States;
 using General.Utils.FpExtensions.Monads;

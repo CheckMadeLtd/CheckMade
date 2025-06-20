@@ -1,5 +1,4 @@
-using CheckMade.Abstract.Domain.Data.Bot;
-using CheckMade.Abstract.Domain.Data.Bot.UserInteraction.BotCommands.DefinitionsByBot;
+using CheckMade.Abstract.Domain.Model.Bot.Categories;
 using CheckMade.Bot.Workflows;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.UserAuth;
