@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using Newtonsoft.Json;
 
 namespace CheckMade.Services.Persistence.JsonHelpers;

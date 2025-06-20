@@ -1,6 +1,6 @@
 using System.Data;
 using System.Diagnostics;
-using CheckMade.Abstract.Domain.Interfaces.Persistence;
+using CheckMade.Core.ServiceInterfaces.Persistence;
 using General.Utils.RetryPolicies;
 using Microsoft.Extensions.Logging;
 using Npgsql;

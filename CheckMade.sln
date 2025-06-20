@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Tests", "Src\Chec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Bot.Workflows", "Src\CheckMade.Bot.Workflows\CheckMade.Bot.Workflows.csproj", "{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Abstract.Domain", "Src\CheckMade.Abstract.Domain\CheckMade.Abstract.Domain.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Core", "Src\CheckMade.Core\CheckMade.Core.csproj", "{61FF73DE-7C40-48E7-829F-424061B0E534}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}"
 EndProject
@@ -81,16 +81,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Bot.Telegram", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.Logic", "Src\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj", "{E11C3542-1705-42B1-8AF7-A19C96AE071D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstract", "Abstract", "{B141390A-6B5E-443D-B29C-2AAE0B41671E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Desktop|Any CPU = Debug_Desktop|Any CPU
 		No_Build|Any CPU = No_Build|Any CPU
 		Release|Any CPU = Release|Any CPU
 		Debug_DevOps|Any CPU = Debug_DevOps|Any CPU
-		Debug_ChatBot|Any CPU = Debug_ChatBot|Any CPU
 		Debug_AllPrd|Any CPU = Debug_AllPrd|Any CPU
+		Debug_Bot|Any CPU = Debug_Bot|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
@@ -100,27 +98,30 @@ Global
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_DevOps|Any CPU.ActiveCfg = No_Build|Any CPU
-		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_ChatBot|Any CPU.ActiveCfg = No_Build|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_DevOps|Any CPU.ActiveCfg = No_Build|Any CPU
-		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_ChatBot|Any CPU.ActiveCfg = No_Build|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{B52607A2-9E5F-436E-81A3-7999BE2DABBF}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_DevOps|Any CPU.ActiveCfg = No_Build|Any CPU
-		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_ChatBot|Any CPU.ActiveCfg = No_Build|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{012B9519-33F7-4AE1-A604-2CA3E54423CE}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -128,31 +129,31 @@ Global
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{575C0F42-CB8A-4531-9150-20B7EE460676}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
+		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{E11437BF-47AE-4FFB-9AED-1601007BC72D}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
@@ -160,10 +161,10 @@ Global
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Release|Any CPU.Build.0 = Release|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{61FF73DE-7C40-48E7-829F-424061B0E534}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
@@ -171,17 +172,18 @@ Global
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{B5FF670E-F6EA-418D-A1AB-46726997181D}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Release|Any CPU.ActiveCfg = No_Build|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_ChatBot|Any CPU.ActiveCfg = No_Build|Any CPU
 		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_AllPrd|Any CPU.ActiveCfg = No_Build|Any CPU
+		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{5A64BC73-A68D-431C-8703-940F8B3A0F00}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
@@ -189,10 +191,10 @@ Global
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
-		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{8FABE16E-9692-46A8-9254-B414F6EA34AB}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
@@ -200,31 +202,31 @@ Global
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
-		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
+		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
-		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_Desktop|Any CPU.ActiveCfg = No_Build|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_AllPrd|Any CPU.ActiveCfg = Debug_AllPrd|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_AllPrd|Any CPU.Build.0 = Debug_AllPrd|Any CPU
-		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_ChatBot|Any CPU.ActiveCfg = Debug_ChatBot|Any CPU
-		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_ChatBot|Any CPU.Build.0 = Debug_ChatBot|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_Desktop|Any CPU.ActiveCfg = Debug_Desktop|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_Desktop|Any CPU.Build.0 = Debug_Desktop|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_DevOps|Any CPU.ActiveCfg = Debug_DevOps|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_DevOps|Any CPU.Build.0 = Debug_DevOps|Any CPU
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.No_Build|Any CPU.ActiveCfg = No_Build|Any CPU
+		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_Bot|Any CPU.ActiveCfg = Debug_Bot|Any CPU
+		{E11C3542-1705-42B1-8AF7-A19C96AE071D}.Debug_Bot|Any CPU.Build.0 = Debug_Bot|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{997AD6CD-5DB5-46E7-AB54-CA0F8226BB64} = {D26C28AE-E35F-46D7-91A0-6DC183FAA6C6}
@@ -239,6 +241,5 @@ Global
 		{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D} = {E5835236-896A-4576-8A1F-EBF20213872E}
-		{61FF73DE-7C40-48E7-829F-424061B0E534} = {B141390A-6B5E-443D-B29C-2AAE0B41671E}
 	EndGlobalSection
 EndGlobal

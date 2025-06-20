@@ -37,7 +37,7 @@ fi
 echo "--------------------------------------------------------------------------"
 
 # Once we add Desktop client, update this to a configuration that includes it.
-config="Debug_ChatBot"
+config="Debug_Bot"
 
 echo "Now running local Build & Tests for the $config configuration." \
 "This ensures integrity before attempted merge into main (especially in case the" \

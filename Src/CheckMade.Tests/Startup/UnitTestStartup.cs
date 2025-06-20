@@ -1,6 +1,6 @@
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
 using CheckMade.Bot.Telegram.BotClient;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
 using CheckMade.Tests.Startup.DefaultStubs;
 using CheckMade.Tests.Utils;
 using JetBrains.Annotations;

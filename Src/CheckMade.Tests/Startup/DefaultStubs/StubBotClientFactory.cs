@@ -1,5 +1,5 @@
+using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Bot.Telegram.BotClient;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
 using Moq;
 
 namespace CheckMade.Tests.Startup.DefaultStubs;

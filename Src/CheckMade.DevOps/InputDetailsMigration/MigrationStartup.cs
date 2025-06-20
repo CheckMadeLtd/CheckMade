@@ -51,7 +51,7 @@ internal sealed class MigrationStartup(
             _ => throw new ArgumentException($"Invalid argument for {nameof(targetEnv)}.")
         };
 
-        services.RegisterCommonPersistenceServices(config, dbConnString);
+        services.RegisterServicesPersistence(config, dbConnString);
         services.AddScoped<MigratorByIndexFactory>();
         services.AddScoped<MigrationRepository>();
     }

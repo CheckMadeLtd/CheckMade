@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using CsvHelper;
 using General.Utils.FpExtensions;
+using General.Utils.FpExtensions.Combinators;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
 
@@ -72,8 +73,8 @@ public sealed class UiTranslatorFactory(
                      Despite having introduced UiNewLine(x) to add line breaks, which does away with the need for \n in
                      the translation file, there are cases where I prefer to use """raw string literals""" to define 
                      UiStrings, where actual line breaks translate to \n in translation file. */ 
-                    var enKey = csv.GetField(1)!.Replace("\\n", "\n");
-                    var translation = csv.GetField(2)!.Replace("\\n", "\n");
+                    var enKey = csv.GetField(0)!.Replace("\\n", "\n");
+                    var translation = csv.GetField(1)!.Replace("\\n", "\n");
                     
                     builder.Add(enKey, translation);
                 }
@@ -83,13 +84,8 @@ public sealed class UiTranslatorFactory(
         });
     }
 
-    private Stream GetTranslationResourceStream()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        
-        var targetLanguagesResourceName =
-            $"{typeof(UiTranslatorFactory).Namespace}.TargetLanguages.{_targetLanguage}.tsv";
-
-        return assembly.GetManifestResourceStream(targetLanguagesResourceName)!;
-    }
+    private Stream GetTranslationResourceStream() =>
+        Assembly.Load("CheckMade.Core")
+            .Apply(asm => asm.GetManifestResourceStream(
+                $"{asm.GetName().Name}.ResourceFiles.{_targetLanguage}.tsv")!);
 }

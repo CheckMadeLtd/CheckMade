@@ -1,8 +1,7 @@
-﻿using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.Output;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
+﻿using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;
@@ -34,7 +33,7 @@ public sealed class InputProcessor(
                 {
                     outputBuilder.Add(new Output
                     { 
-                        Text = Ui("🫡 Welcome to the CheckMade ChatBot. " +
+                        Text = Ui("🫡 Welcome to the CheckMade Bot. " +
                                   "I shall follow your command!")
                     });
                 }

@@ -1,11 +1,10 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Functions.Startup;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.UpdateHandling;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -49,14 +48,14 @@ var host = new HostBuilder()
         // Here rather than in shared Services method below to enable different values for Tests Startup.
         services.AddScoped<DefaultUiLanguageCodeProvider>(static _ => new DefaultUiLanguageCodeProvider(LanguageCode.en));
         
-        services.RegisterChatBotTelegramFunctionServices(config, hostingEnvironment);
-        services.RegisterChatBotTelegramBusinessServices();
-        services.RegisterChatBotLogicServices();
+        services.RegisterBotTelegramFunctionServices(config, hostingEnvironment);
+        services.RegisterBotTelegramHandlingServices();
+        services.RegisterBotLogicServices();
         
-        services.RegisterCommonBusinessLogicServices();
-        services.RegisterCommonPersistenceServices(config, hostingEnvironment);
-        services.RegisterCommonUtilsServices();
-        services.RegisterCommonExternalServices(config);
+        services.RegisterServicesLogic();
+        services.RegisterServicesPersistence(config, hostingEnvironment);
+        services.RegisterGeneralUtils();
+        services.RegisterServicesExtAPIs(config);
         
         services.AddOptions<ServiceProviderOptions>()
             .Configure(static options =>

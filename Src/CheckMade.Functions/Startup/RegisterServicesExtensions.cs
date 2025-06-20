@@ -1,5 +1,14 @@
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Common.Trades;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
+using CheckMade.Core.ServiceInterfaces.Logic;
+using CheckMade.Core.ServiceInterfaces.Persistence;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using CheckMade.Services.Persistence;
 using CheckMade.Bot.Workflows;
 using CheckMade.Bot.Workflows.ModelFactories;
@@ -7,16 +16,6 @@ using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.Function;
 using CheckMade.Bot.Telegram.UpdateHandling;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.Core.Trades;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Function;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
-using CheckMade.Abstract.Domain.Interfaces.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Persistence;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using CheckMade.Bot.Workflows.Global.Logout;
@@ -32,8 +31,8 @@ using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
 using CheckMade.Services.Logic;
-using CheckMade.Services.Persistence.Repositories.ChatBot;
-using CheckMade.Services.Persistence.Repositories.Core;
+using CheckMade.Services.Persistence.Repositories.Bot;
+using CheckMade.Services.Persistence.Repositories.Common;
 using General.Utils.RetryPolicies;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Configuration;
@@ -44,8 +43,8 @@ namespace CheckMade.Functions.Startup;
 
 public static class RegisterServicesExtensions
 {
-    // Division of ChatBotTelegram Services into Function and Business needed due to separate treatment in Tests
-    internal static void RegisterChatBotTelegramFunctionServices(
+    // Division of BotTelegram Services into Function and Business needed due to separate treatment in Tests
+    internal static void RegisterBotTelegramFunctionServices(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         // Function
@@ -63,7 +62,7 @@ public static class RegisterServicesExtensions
         services.AddSingleton<BotTokens>(_ => PopulateBotTokens(config, hostingEnvironment));
     }
 
-    internal static void RegisterChatBotTelegramBusinessServices(this IServiceCollection services)
+    internal static void RegisterBotTelegramHandlingServices(this IServiceCollection services)
     {
         // UpdateHandling
         services.AddScoped<IUpdateHandler, UpdateHandler>();
@@ -75,7 +74,7 @@ public static class RegisterServicesExtensions
         services.AddScoped<IOutputToReplyMarkupConverterFactory, OutputToReplyMarkupConverterFactory>();
     }
     
-    public static void RegisterCommonPersistenceServices(
+    public static void RegisterServicesPersistence(
         this IServiceCollection services, IConfiguration config, string hostingEnvironment)
     {
         var dbConnectionString = hostingEnvironment switch
@@ -114,13 +113,13 @@ public static class RegisterServicesExtensions
         services.AddScoped<IDerivedWorkflowBridgesRepository, DerivedWorkflowBridgesRepository>();
     }
 
-    internal static void RegisterCommonBusinessLogicServices(this IServiceCollection services)
+    internal static void RegisterServicesLogic(this IServiceCollection services)
     {
         services.AddScoped<IStakeholderReporter<SanitaryTrade>, StakeholderReporter<SanitaryTrade>>();
         services.AddScoped<IStakeholderReporter<SiteCleanTrade>, StakeholderReporter<SiteCleanTrade>>();
     }
     
-    public static void RegisterCommonUtilsServices(this IServiceCollection services)
+    public static void RegisterGeneralUtils(this IServiceCollection services)
     {
         services.AddSingleton<Randomizer>();
 
@@ -133,7 +132,8 @@ public static class RegisterServicesExtensions
                 sp.GetRequiredService<ILogger<UiTranslator>>()));
     }
 
-    internal static void RegisterCommonExternalServices(this IServiceCollection services, IConfiguration config)
+    // ReSharper disable once InconsistentNaming
+    internal static void RegisterServicesExtAPIs(this IServiceCollection services, IConfiguration config)
     {
         // Azure Blob Service
         
@@ -165,7 +165,7 @@ public static class RegisterServicesExtensions
         services.AddSingleton<IHttpDownloader, HttpDownloader>();
     }
     
-    internal static void RegisterChatBotLogicServices(this IServiceCollection services)
+    internal static void RegisterBotLogicServices(this IServiceCollection services)
     {
         services.AddSingleton<IDomainGlossary, DomainGlossary>();
         

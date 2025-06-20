@@ -1,7 +1,7 @@
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.GoogleApi;
 using CheckMade.Services.ExtAPIs.GoogleApi;
 using CheckMade.Services.Persistence;
 using CheckMade.Functions.Startup;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.GoogleApi;
 using CheckMade.Tests.Startup.ConfigProviders;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +19,9 @@ public class IntegrationTestStartup : TestStartupBase
 
     protected override void RegisterTestTypeSpecificServices()
     {
-        Services.RegisterChatBotTelegramFunctionServices(Config, HostingEnvironment);
-        Services.RegisterCommonPersistenceServices(Config, HostingEnvironment);
-        Services.RegisterCommonExternalServices(Config);
+        Services.RegisterBotTelegramFunctionServices(Config, HostingEnvironment);
+        Services.RegisterServicesPersistence(Config, HostingEnvironment);
+        Services.RegisterServicesExtAPIs(Config);
 
         /* Here not using the usual separation of connstring and psw and then '.Replace()' because this needs to
          also work on GitHub Actions Runner / CI Environment - Integration Tests that access the production db need

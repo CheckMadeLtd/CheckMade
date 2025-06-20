@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <Configurations>No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd;Debug_Desktop</Configurations>
+        <Configurations>No_Build;Release;Debug_DevOps;Debug_AllPrd;Debug_Desktop;Debug_Bot</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -40,6 +40,10 @@
       <Compile Include="..\SharedGlobalUsings.cs">
         <Link>SharedGlobalUsings.cs</Link>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Unit\Services\" />
     </ItemGroup>
 
 </Project>

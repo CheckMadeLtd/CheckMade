@@ -1,9 +1,0 @@
-using CheckMade.Abstract.Domain.Data.Core.Actors;
-
-namespace CheckMade.Abstract.Domain.Interfaces.Persistence.Core;
-
-public interface IVendorsRepository
-{
-    Task<Vendor?> GetAsync(string vendorName);
-    Task<IReadOnlyCollection<Vendor>> GetAllAsync();
-}

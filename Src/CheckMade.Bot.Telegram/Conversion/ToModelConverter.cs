@@ -1,15 +1,14 @@
-using CheckMade.Abstract.Domain.Data.ChatBot;
-using CheckMade.Abstract.Domain.Data.ChatBot.Input;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction;
-using CheckMade.Abstract.Domain.Data.ChatBot.UserInteraction.BotCommands;
-using CheckMade.Abstract.Domain.Data.Core;
-using CheckMade.Abstract.Domain.Data.Core.Actors.RoleSystem;
-using CheckMade.Abstract.Domain.Data.Core.GIS;
-using CheckMade.Abstract.Domain.Interfaces.ChatBot.Logic;
-using CheckMade.Abstract.Domain.Interfaces.Data.Core;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.AzureServices;
-using CheckMade.Abstract.Domain.Interfaces.ExternalServices.Utils;
-using CheckMade.Abstract.Domain.Interfaces.Persistence.ChatBot;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Common.Actors;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.Model.Common.GIS;
+using CheckMade.Core.Model.Common.LiveEvents;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.Validators;
@@ -110,10 +109,7 @@ public sealed class ToModelConverter(
 
     private static Result<TelegramAttachmentDetails> GetAttachmentDetails(UpdateWrapper update)
     {
-        if (!IsMessageTypeSupported(update.Message.Type))
-        {
-            return Ui($"Attachment type {update.Message.Type} is not yet supported!");
-        }
+        // No need to check whether we have a valid MessageType, UpdateHandler already filtered that.
         
         // Why Run()? The null-forgiving operators below could throw exceptions if Telegram lib changes! 
         return Result<TelegramAttachmentDetails>.Run(() => update.Message.Type switch
@@ -135,16 +131,6 @@ public sealed class ToModelConverter(
 
             _ => throw new ArgumentOutOfRangeException(nameof(GetAttachmentDetails))
         });
-
-        static bool IsMessageTypeSupported(MessageType messageType)
-        {
-            return messageType switch
-            {
-                MessageType.Text or MessageType.Location or 
-                    MessageType.Document or MessageType.Photo or MessageType.Voice => true,
-                _ => false
-            };
-        }
     }
 
     private sealed record TelegramAttachmentDetails(Option<string> FileId, Option<AttachmentType> Type);

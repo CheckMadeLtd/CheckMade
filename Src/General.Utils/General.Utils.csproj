@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Configurations>Debug_Desktop;No_Build;Release;Debug_DevOps;Debug_ChatBot;Debug_AllPrd</Configurations>
+        <Configurations>Debug_Desktop;No_Build;Release;Debug_DevOps;Debug_AllPrd;Debug_Bot</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
@@ -27,7 +27,6 @@
 
     <ItemGroup>
       <None Remove="UiTranslation\TargetLanguages\de.tsv" />
-      <EmbeddedResource Include="UiTranslation\TargetLanguages\de.tsv" />
     </ItemGroup>
 
     <ItemGroup>

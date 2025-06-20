@@ -82,7 +82,7 @@ static IServiceCollection GetServiceCollectionWithBasics()
         loggingConfig.AddDebug(); 
     });
     
-    services.RegisterCommonUtilsServices();
+    services.RegisterGeneralUtils();
 
     return services;
 }
