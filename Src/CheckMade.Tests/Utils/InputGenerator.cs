@@ -1,10 +1,10 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Common.Actors;
-using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Common.GIS;
-using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Common.Actors;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.Model.Common.GIS;
+using CheckMade.Core.Model.Common.LiveEvents;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Tests.Utils.TestOriginatorRoleSetting;
 

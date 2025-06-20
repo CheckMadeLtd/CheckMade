@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.GoogleApi;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.GoogleApi;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Startup.ConfigProviders;
 using Microsoft.Extensions.DependencyInjection;

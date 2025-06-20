@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.Categories;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;

@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.Model.Common.Trades;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Common.Trades;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.D_Terminators;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;

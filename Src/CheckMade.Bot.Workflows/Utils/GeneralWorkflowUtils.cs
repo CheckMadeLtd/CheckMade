@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Common.Actors;
-using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Common.Actors;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.Model.Common.LiveEvents;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
-using static CheckMade.Abstract.Domain.Model.Bot.Categories.InteractionMode;
-using static CheckMade.Abstract.Domain.Model.Bot.Categories.InputType;
+using static CheckMade.Core.Model.Bot.Categories.InteractionMode;
+using static CheckMade.Core.Model.Bot.Categories.InputType;
 
 namespace CheckMade.Bot.Workflows.Utils;
 

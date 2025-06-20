@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;

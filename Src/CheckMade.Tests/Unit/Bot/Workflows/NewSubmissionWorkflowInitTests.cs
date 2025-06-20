@@ -1,7 +1,7 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Common.GIS;
-using CheckMade.Abstract.Domain.Model.Common.Trades;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Common.GIS;
+using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;

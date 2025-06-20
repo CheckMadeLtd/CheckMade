@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.Utils;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
 
 namespace CheckMade.Services.ExtAPIs.Utils;
 

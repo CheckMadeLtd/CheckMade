@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.UserAuth.States;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;

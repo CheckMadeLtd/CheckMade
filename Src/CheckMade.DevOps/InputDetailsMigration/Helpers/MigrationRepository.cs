@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;

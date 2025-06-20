@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Bot;
 
 namespace CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 

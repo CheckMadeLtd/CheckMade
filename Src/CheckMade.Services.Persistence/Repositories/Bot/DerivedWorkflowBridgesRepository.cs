@@ -1,9 +1,9 @@
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Common.LiveEvents;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;

@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Bot.Workflows;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.UserAuth;

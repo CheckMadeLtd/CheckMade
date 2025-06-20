@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Abstract.Domain.Model.Common.Actors;
-using CheckMade.Abstract.Domain.Model.Common.LiveEvents;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Common;
+using CheckMade.Core.Model.Common.Actors;
+using CheckMade.Core.Model.Common.LiveEvents;
+using CheckMade.Core.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 

@@ -1,7 +1,7 @@
-﻿using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Output;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+﻿using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Utils;
 using General.Utils.FpExtensions.Monads;
 using Microsoft.Extensions.Logging;

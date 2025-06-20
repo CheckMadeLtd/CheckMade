@@ -85,7 +85,7 @@ public sealed class UiTranslatorFactory(
     }
 
     private Stream GetTranslationResourceStream() =>
-        Assembly.Load("CheckMade.Abstract.Domain")
+        Assembly.Load("CheckMade.Core")
             .Apply(asm => asm.GetManifestResourceStream(
                 $"{asm.GetName().Name}.ResourceFiles.{_targetLanguage}.tsv")!);
 }

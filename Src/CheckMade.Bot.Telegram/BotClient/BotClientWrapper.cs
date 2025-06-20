@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
-using CheckMade.Abstract.Domain.Model.Common.GIS;
+using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Bot.Telegram.UpdateHandling;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.RetryPolicies;
@@ -12,7 +12,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using BotCommand = Telegram.Bot.Types.BotCommand;
 using File = Telegram.Bot.Types.TGFile;
-using MessageId = CheckMade.Abstract.Domain.Model.Bot.DTOs.MessageId;
+using MessageId = CheckMade.Core.Model.Bot.DTOs.MessageId;
 
 namespace CheckMade.Bot.Telegram.BotClient;
 
@@ -350,7 +350,7 @@ public sealed class BotClientWrapper(
     }
 
     private static IReadOnlyCollection<BotCommand> GetTelegramBotCommandsFromModelCommandsMenu<TEnum>(
-        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, Abstract.Domain.Model.Bot.DTOs.BotCommand>> menu, LanguageCode language) 
+        IReadOnlyDictionary<TEnum, IReadOnlyDictionary<LanguageCode, Core.Model.Bot.DTOs.BotCommand>> menu, LanguageCode language) 
         where TEnum : Enum =>
         menu
             .SelectMany(static kvp => kvp.Value)

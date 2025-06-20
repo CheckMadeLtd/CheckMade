@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.GoogleApi;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.GoogleApi;
 using Google.Apis.Http;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;

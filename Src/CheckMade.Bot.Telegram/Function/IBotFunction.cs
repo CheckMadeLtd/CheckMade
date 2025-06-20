@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.Categories;
 using Microsoft.Azure.Functions.Worker.Http;
 
 

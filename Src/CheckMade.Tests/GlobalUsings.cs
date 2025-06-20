@@ -1,2 +1,2 @@
 global using static CheckMade.Tests.Utils.TestData;
-global using static CheckMade.Abstract.Domain.Model.Bot.Categories.InteractionMode;
+global using static CheckMade.Core.Model.Bot.Categories.InteractionMode;

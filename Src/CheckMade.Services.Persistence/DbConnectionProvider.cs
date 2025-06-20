@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Persistence;
+using CheckMade.Core.ServiceInterfaces.Persistence;
 using Npgsql;
 
 namespace CheckMade.Services.Persistence;

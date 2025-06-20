@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.GoogleApi;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.GoogleApi;
 using CheckMade.Services.ExtAPIs.GoogleApi;
 using CheckMade.Services.Persistence;
 using CheckMade.Functions.Startup;

@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
-using CheckMade.Abstract.Domain.Model.Common.GIS;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;

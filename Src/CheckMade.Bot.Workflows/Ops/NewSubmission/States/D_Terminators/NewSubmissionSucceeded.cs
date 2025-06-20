@@ -1,5 +1,5 @@
-using CheckMade.Abstract.Domain.Model.Common.Trades;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Core.Model.Common.Trades;
+using CheckMade.Core.ServiceInterfaces.Bot;
 
 namespace CheckMade.Bot.Workflows.Ops.NewSubmission.States.D_Terminators;
 

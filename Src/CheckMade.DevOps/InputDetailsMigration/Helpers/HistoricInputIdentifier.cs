@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Input;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Helpers;
 

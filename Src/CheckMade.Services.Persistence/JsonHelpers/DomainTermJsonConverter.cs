@@ -1,6 +1,6 @@
-using CheckMade.Abstract.Domain.Model.Bot.DTOs;
-using CheckMade.Abstract.Domain.Model.Common.CrossCutting;
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Core.Model.Bot.DTOs;
+using CheckMade.Core.Model.Common.CrossCutting;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using Newtonsoft.Json;
 
 namespace CheckMade.Services.Persistence.JsonHelpers;

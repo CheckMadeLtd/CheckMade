@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.ServiceInterfaces.Bot;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CheckMade.Bot.Workflows.Utils;

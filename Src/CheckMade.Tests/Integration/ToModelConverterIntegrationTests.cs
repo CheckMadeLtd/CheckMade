@@ -1,5 +1,5 @@
 using System.Text;
-using CheckMade.Abstract.Domain.ServiceInterfaces.ExtAPIs.AzureServices;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Tests.Startup;

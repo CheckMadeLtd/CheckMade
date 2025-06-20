@@ -1,4 +1,4 @@
-using CheckMade.Abstract.Domain.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Bot.Telegram.BotClient;
 using Moq;
 
