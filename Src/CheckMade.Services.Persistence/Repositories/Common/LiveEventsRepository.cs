@@ -46,17 +46,28 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
             accumulateData: (liveEvent, reader) =>
             {
                 var accSw = System.Diagnostics.Stopwatch.StartNew();
-                
+    
+                var roleSw = System.Diagnostics.Stopwatch.StartNew();
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
+                roleSw.Stop();
+    
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
+                var sphereSw = System.Diagnostics.Stopwatch.StartNew();
                 var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
+                sphereSw.Stop();
+    
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-                
+    
                 accSw.Stop();
                 totalAccumulateTime += accSw.ElapsedMilliseconds;
+    
+                // Log slow operations
+                if (roleSw.ElapsedMilliseconds > 5 || sphereSw.ElapsedMilliseconds > 5)
+                    Console.WriteLine($"[PERF-DEBUG] Slow - Role: {roleSw.ElapsedMilliseconds}ms, Sphere: {sphereSw.ElapsedMilliseconds}ms");
+    
                 accumulateCount++;
             },
             modelFinalizer: liveEvent => 
