@@ -25,29 +25,47 @@ public static class JsonHelper
     /// </summary>
     public static T DeserializeFromJson<T>(string json, IDomainGlossary glossary, bool ignoreMissingMembers = false)
     {
+        var totalSw = System.Diagnostics.Stopwatch.StartNew();
+    
+        var settingsSw = System.Diagnostics.Stopwatch.StartNew();
         var jsonSettings = new JsonSerializerSettings
         {
             MissingMemberHandling = ignoreMissingMembers  
                 ? MissingMemberHandling.Ignore 
-                
-                // Throws exception during deserialization when json data has a field that doesn't map to my model class
-                // But does NOT throw an exception when json data LACKS a field that the model expects
-                // (instead, uses default)
                 : MissingMemberHandling.Error,
-            
+        
             ContractResolver = new OptionContractResolver(glossary),
             Converters = new List<JsonConverter>
             {
                 new DomainTermJsonConverter(glossary)
             }
         };
-        
+        settingsSw.Stop();
+    
+        var deserializeSw = System.Diagnostics.Stopwatch.StartNew();
         var result = JsonConvert.DeserializeObject<T>(json, jsonSettings);
-        
+        deserializeSw.Stop();
+    
         if (result is null)
             throw new JsonSerializationException($"Deserialization resulted in null for type {typeof(T).Name}");
 
-        return ValidateNoNullProperties(result);
+        var validateSw = System.Diagnostics.Stopwatch.StartNew();
+        var validatedResult = ValidateNoNullProperties(result);
+        validateSw.Stop();
+    
+        totalSw.Stop();
+    
+        if (totalSw.ElapsedMilliseconds > 5)
+        {
+            Console.WriteLine($"[PERF-DEBUG] for {nameof(DeserializeFromJson)} " +
+                              $"Settings: {settingsSw.ElapsedMilliseconds}ms, " +
+                              $"Deserialize: {deserializeSw.ElapsedMilliseconds}ms, " +
+                              $"Validate: {validateSw.ElapsedMilliseconds}ms, " +
+                              $"Total: {totalSw.ElapsedMilliseconds}ms, " +
+                              $"JsonLength: {json.Length}");
+        }
+    
+        return validatedResult;
     }
     
     /// <summary>
@@ -58,10 +76,18 @@ public static class JsonHelper
     /// </summary>
     private static T ValidateNoNullProperties<T>(T obj)
     {
+        var reflectionSw = System.Diagnostics.Stopwatch.StartNew();
         var nullProperties = typeof(T).GetProperties()
             .Where(p => p.GetValue(obj) == null)
             .Select(static p => p.Name)
             .ToList();
+        reflectionSw.Stop();
+
+        if (reflectionSw.ElapsedMilliseconds > 5)
+        {
+            Console.WriteLine($"[PERF-DEBUG] for {nameof(ValidateNoNullProperties)} " +
+                              $"Reflection: {reflectionSw.ElapsedMilliseconds}ms for {typeof(T).Name}");
+        }
 
         if (nullProperties.Count != 0)
         {
@@ -71,5 +97,4 @@ public static class JsonHelper
         }
 
         return obj;
-    }
-}
+    }}

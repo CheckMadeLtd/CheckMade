@@ -22,85 +22,38 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
         Func<LiveEvent, LiveEvent> modelFinalizer)
         LiveEventMapper(IDomainGlossary glossary)
     {
-        var totalInitializerTime = 0L;
-        var totalAccumulateTime = 0L;
-        long totalDistinctTime;
-        long totalToImmutableTime;
-        var accumulateCount = 0;
-        
         return (
             keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
-            modelInitializer: reader => 
-            {
-                var initSw = System.Diagnostics.Stopwatch.StartNew();
-                var result = new LiveEvent(
+            modelInitializer: static reader => 
+                new LiveEvent(
                     ConstituteLiveEventInfo(reader).GetValueOrThrow(),
                     new List<IRoleInfo>(),
                     ConstituteLiveEventVenue(reader),
-                    new List<ISphereOfAction>());
-                initSw.Stop();
-                
-                totalInitializerTime += initSw.ElapsedMilliseconds;
-                return result;
-            },
+                    new List<ISphereOfAction>()),
             accumulateData: (liveEvent, reader) =>
             {
                 var accSw = System.Diagnostics.Stopwatch.StartNew();
     
-                var roleSw = System.Diagnostics.Stopwatch.StartNew();
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
-                roleSw.Stop();
     
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
-                var sphereSw = System.Diagnostics.Stopwatch.StartNew();
                 var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
-                sphereSw.Stop();
     
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
     
                 accSw.Stop();
-                totalAccumulateTime += accSw.ElapsedMilliseconds;
-    
-                // Log slow operations
-                if (roleSw.ElapsedMilliseconds > 5 || sphereSw.ElapsedMilliseconds > 5)
-                    Console.WriteLine($"[PERF-DEBUG] Slow - Role: {roleSw.ElapsedMilliseconds}ms, Sphere: {sphereSw.ElapsedMilliseconds}ms");
-    
-                accumulateCount++;
+                
+                if (accSw.ElapsedMilliseconds > 5)
+                    Console.WriteLine($"[PERF-DEBUG] Slow 'accumulateData' {accSw.ElapsedMilliseconds}ms");
             },
-            modelFinalizer: liveEvent => 
+            modelFinalizer: static liveEvent => liveEvent with
             {
-                var finalizerSw = System.Diagnostics.Stopwatch.StartNew();
-                
-                var distinctSw = System.Diagnostics.Stopwatch.StartNew();
-                var distinctRoles = liveEvent.WithRoles.Distinct();
-                var distinctSpheres = liveEvent.DivIntoSpheres.Distinct();
-                distinctSw.Stop();
-                totalDistinctTime = distinctSw.ElapsedMilliseconds;
-                
-                var immutableSw = System.Diagnostics.Stopwatch.StartNew();
-                var result = liveEvent with
-                {
-                    WithRoles = distinctRoles.ToImmutableArray(),
-                    DivIntoSpheres = distinctSpheres.ToImmutableArray()
-                };
-                immutableSw.Stop();
-                totalToImmutableTime = immutableSw.ElapsedMilliseconds;
-                
-                finalizerSw.Stop();
-                
-                Console.WriteLine($"[PERF-DEBUG] STEP BREAKDOWN - " +
-                                  $"Initializer: {totalInitializerTime}ms, " +
-                                  $"Accumulate: {totalAccumulateTime}ms ({accumulateCount} calls), " +
-                                  $"Distinct: {totalDistinctTime}ms, " +
-                                  $"ToImmutable: {totalToImmutableTime}ms, " +
-                                  $"Total Finalizer: {finalizerSw.ElapsedMilliseconds}ms");
-                
-                return result;
-            }
-        );
+                WithRoles = liveEvent.WithRoles.Distinct().ToImmutableArray(),
+                DivIntoSpheres = liveEvent.DivIntoSpheres.Distinct().ToImmutableArray()
+            });
     }
 
     public async Task<LiveEvent?> GetAsync(ILiveEventInfo liveEvent) =>
@@ -145,26 +98,17 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                                             ORDER BY le.id, r.id, soa.id
                                             """;
                     
-                    var commandSw = System.Diagnostics.Stopwatch.StartNew();
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
-                    commandSw.Stop();
-                    Console.WriteLine($"[PERF-DEBUG] GenerateCommand took: {commandSw.ElapsedMilliseconds}ms");
                 
                     var (getKey,
                         initializeModel,
                         accumulateData,
                         finalizeModel) = LiveEventMapper(Glossary);
 
-                    var executeSw = System.Diagnostics.Stopwatch.StartNew();
                     var liveEvents = await ExecuteMapperAsync(
                         command, getKey, initializeModel, accumulateData, finalizeModel);
-                    executeSw.Stop();
-                    Console.WriteLine($"[PERF-DEBUG] ExecuteMapperAsync took: {executeSw.ElapsedMilliseconds}ms");
                 
-                    var cacheSw = System.Diagnostics.Stopwatch.StartNew();
                     _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);
-                    cacheSw.Stop();
-                    Console.WriteLine($"[PERF-DEBUG] Cache assignment took: {cacheSw.ElapsedMilliseconds}ms");
                 }
             }
             finally

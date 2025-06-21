@@ -1,3 +1,4 @@
+using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Core.ServiceInterfaces.Bot;
@@ -49,11 +50,30 @@ internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonCon
 
     private Option<T> ReconstructDomainTerm(JsonReader reader)
     {
+        var totalSw = System.Diagnostics.Stopwatch.StartNew();
+    
         var callbackId = reader.Value as string;
-        var domainTerm = glossary.TermById
-            .First(t => t.Key == callbackId).Value;
-            
-        return Option<T>.Some((T)(object)domainTerm);
+    
+        var lookupSw = System.Diagnostics.Stopwatch.StartNew();
+        var domainTerm = glossary.TermById[new CallbackId(callbackId!)]; // Fixed: direct dictionary access
+        lookupSw.Stop();
+    
+        var wrapSw = System.Diagnostics.Stopwatch.StartNew();
+        var result = Option<T>.Some((T)(object)domainTerm);
+        wrapSw.Stop();
+    
+        totalSw.Stop();
+    
+        if (totalSw.ElapsedMilliseconds > 1)
+        {
+            Console.WriteLine($"[PERF-DEBUG] for {nameof(ReconstructDomainTerm)} " +
+                              $"Lookup: {lookupSw.ElapsedMilliseconds}ms, " +
+                              $"Wrap: {wrapSw.ElapsedMilliseconds}ms, " +
+                              $"Total: {totalSw.ElapsedMilliseconds}ms, " +
+                              $"CallbackId: {callbackId}");
+        }
+        
+        return result;
     }
 
     private static Option<T> ReconstructGeoLocation(JsonReader reader)
