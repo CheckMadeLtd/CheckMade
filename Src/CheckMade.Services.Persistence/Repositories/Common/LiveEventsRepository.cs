@@ -29,18 +29,18 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
             modelInitializer: static reader => 
                 new LiveEvent(
                     ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-                    new HashSet<IRoleInfo>(),
+                    new List<IRoleInfo>(),
                     ConstituteLiveEventVenue(reader),
-                    new HashSet<ISphereOfAction>()),
+                    new List<ISphereOfAction>()),
             accumulateData: (liveEvent, reader) =>
             {
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
                 if (roleInfo.IsSome)
-                    ((HashSet<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
+                    ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
                 var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
                 if (sphereOfAction.IsSome)
-                    ((HashSet<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
+                    ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
             },
             modelFinalizer: static liveEvent => liveEvent with
             {
@@ -93,20 +93,20 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                                             """;
 
                     
-                    // TEMPORARY DEBUG: First run EXPLAIN ANALYZE to capture execution plan
-                    const string explainQuery = "EXPLAIN ANALYZE " + rawQuery;
-                    var explainCommand = GenerateCommand(explainQuery, Option<Dictionary<string, object>>.None());
-                
-                    var explainResults = 
-                        await ExecuteMapperAsync(
-                            explainCommand, static (reader, _) => reader.GetString(0));
-                
-                    // Log the execution plan to Application Insights
-                    var formattedExplainOutput = string.Join(" || ", explainResults)
-                        .Replace('\n', ' ').Replace('\r', ' ');
-                    
-                    logger.LogDebug("EXPLAIN ANALYZE output: {ExplainPlan}", 
-                        formattedExplainOutput);                    
+                    // // TEMPORARY DEBUG: First run EXPLAIN ANALYZE to capture execution plan
+                    // const string explainQuery = "EXPLAIN ANALYZE " + rawQuery;
+                    // var explainCommand = GenerateCommand(explainQuery, Option<Dictionary<string, object>>.None());
+                    //
+                    // var explainResults = 
+                    //     await ExecuteMapperAsync(
+                    //         explainCommand, static (reader, _) => reader.GetString(0));
+                    //
+                    // // Log the execution plan to Application Insights
+                    // var formattedExplainOutput = string.Join(" || ", explainResults)
+                    //     .Replace('\n', ' ').Replace('\r', ' ');
+                    //
+                    // logger.LogDebug("EXPLAIN ANALYZE output: {ExplainPlan}", 
+                    //     formattedExplainOutput);                    
                     
                     
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
