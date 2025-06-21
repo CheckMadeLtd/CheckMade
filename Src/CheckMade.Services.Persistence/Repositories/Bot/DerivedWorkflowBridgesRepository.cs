@@ -4,6 +4,7 @@ using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
+using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
@@ -11,6 +12,10 @@ namespace CheckMade.Services.Persistence.Repositories.Bot;
 public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
+    private static readonly SemaphoreSlim Semaphore = new(1, 1);
+    
+    private Option<IReadOnlyCollection<WorkflowBridge>> _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
+    
     private static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> WorkflowBridgeMapper =
         static (reader, glossary) =>
         {
@@ -72,17 +77,36 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
     
     public async Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent)
     {
-        const string whereClause = "WHERE le.name = @liveEventName";
-
-        var normalParameters = new Dictionary<string, object>
+        if (_cache.IsNone)
         {
-            ["@liveEventName"] = liveEvent.Name
-        };
-        
-        var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
+            await Semaphore.WaitAsync();
 
-        return await ExecuteMapperAsync(
-            command, 
-            WorkflowBridgeMapper);
+            try
+            {
+                if (_cache.IsNone)
+                {
+                    const string whereClause = "WHERE le.name = @liveEventName";
+
+                    var normalParameters = new Dictionary<string, object>
+                    {
+                        ["@liveEventName"] = liveEvent.Name
+                    };
+                    
+                    var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
+
+                    var bridges = await ExecuteMapperAsync(command, WorkflowBridgeMapper);
+                    
+                    _cache = Option<IReadOnlyCollection<WorkflowBridge>>.Some(bridges);
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        return _cache.GetValueOrThrow();
     }
+    
+    private void EmptyCache() => _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
 }
