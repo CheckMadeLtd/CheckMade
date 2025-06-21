@@ -5,11 +5,13 @@ using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using General.Utils.FpExtensions.Monads;
+using Microsoft.Extensions.Logging;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
-public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary, 
+    ILogger<LiveEventsRepository> logger) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -90,6 +92,23 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                                             ORDER BY le.id, r.id, soa.id
                                             """;
 
+                    
+                    // TEMPORARY DEBUG: First run EXPLAIN ANALYZE to capture execution plan
+                    const string explainQuery = "EXPLAIN ANALYZE " + rawQuery;
+                    var explainCommand = GenerateCommand(explainQuery, Option<Dictionary<string, object>>.None());
+                
+                    var explainResults = 
+                        await ExecuteMapperAsync(
+                            explainCommand, static (reader, _) => reader.GetString(0));
+                
+                    // Log the execution plan to Application Insights
+                    var formattedExplainOutput = string.Join(" || ", explainResults)
+                        .Replace('\n', ' ').Replace('\r', ' ');
+                    
+                    logger.LogDebug("EXPLAIN ANALYZE output: {ExplainPlan}", 
+                        formattedExplainOutput);                    
+                    
+                    
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
                     
                     var (getKey,
