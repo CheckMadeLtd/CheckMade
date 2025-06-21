@@ -133,40 +133,20 @@ internal static class DomainModelConstitutors
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
 
-        Dictionary<string, Func<IRoleType>> roleTypeFactoryByFullTypeName = new()
-        {
-            [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
-            [typeof(LiveEventObserver).FullName!] = static () => new LiveEventObserver(),
-            
-            [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
-            [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),
-            [typeof(TradeEngineer<SanitaryTrade>).FullName!] = () => new TradeEngineer<SanitaryTrade>(),
-            [typeof(TradeTeamLead<SanitaryTrade>).FullName!] = () => new TradeTeamLead<SanitaryTrade>(),
-            [typeof(TradeObserver<SanitaryTrade>).FullName!] = () => new TradeObserver<SanitaryTrade>(),
-            
-            [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
-            [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),
-            [typeof(TradeEngineer<SiteCleanTrade>).FullName!] = () => new TradeEngineer<SiteCleanTrade>(),
-            [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
-            [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
-        };
-        
         var roleTypeTypeInfo = GetRoleTypeTypeInfo();
  
-        if (!roleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
+        if (!RoleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
         {
             throw new InvalidOperationException($"Unhandled role type: {roleTypeTypeInfo.FullName}");
         }
 
         var roleType = factory();
         
-        var constructSw = System.Diagnostics.Stopwatch.StartNew();
         var result = new RoleInfo(
             reader.GetString(reader.GetOrdinal("role_token")),
             roleType,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")))); 
-        constructSw.Stop();
 
         return result;
 
@@ -186,6 +166,24 @@ internal static class DomainModelConstitutors
         }
     }
 
+    private static readonly Dictionary<string, Func<IRoleType>> RoleTypeFactoryByFullTypeName = new()
+    {
+        [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
+        [typeof(LiveEventObserver).FullName!] = static () => new LiveEventObserver(),
+            
+        [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
+        [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),
+        [typeof(TradeEngineer<SanitaryTrade>).FullName!] = () => new TradeEngineer<SanitaryTrade>(),
+        [typeof(TradeTeamLead<SanitaryTrade>).FullName!] = () => new TradeTeamLead<SanitaryTrade>(),
+        [typeof(TradeObserver<SanitaryTrade>).FullName!] = () => new TradeObserver<SanitaryTrade>(),
+            
+        [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
+        [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),
+        [typeof(TradeEngineer<SiteCleanTrade>).FullName!] = () => new TradeEngineer<SiteCleanTrade>(),
+        [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
+        [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
+    };
+    
     internal static Input ConstituteInput(
         DbDataReader reader, 
         Option<IRoleInfo> roleInfo,
