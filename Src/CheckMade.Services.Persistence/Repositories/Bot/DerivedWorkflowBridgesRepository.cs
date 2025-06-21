@@ -108,5 +108,5 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         return _cache.GetValueOrThrow();
     }
     
-    private void EmptyCache() => _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
+    // private void EmptyCache() => _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
 }
