@@ -13,6 +13,7 @@ LocalSecrets/
 logs/
 AllUiTextsFromSourceCode.txt
 real_setup_data/
+/.vs/
 
 # IDE solution settings
 **.sln.DotSettings.user
