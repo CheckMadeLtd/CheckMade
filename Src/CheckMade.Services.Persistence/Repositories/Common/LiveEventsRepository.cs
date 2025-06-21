@@ -32,8 +32,6 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                     new List<ISphereOfAction>()),
             accumulateData: (liveEvent, reader) =>
             {
-                var accSw = System.Diagnostics.Stopwatch.StartNew();
-    
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
     
                 if (roleInfo.IsSome)
@@ -43,11 +41,6 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
     
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-    
-                accSw.Stop();
-                
-                if (accSw.ElapsedMilliseconds > 5)
-                    Console.WriteLine($"[PERF-DEBUG] Slow 'accumulateData' {accSw.ElapsedMilliseconds}ms");
             },
             modelFinalizer: static liveEvent => liveEvent with
             {
