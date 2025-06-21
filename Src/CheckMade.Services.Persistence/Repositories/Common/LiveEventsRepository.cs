@@ -24,32 +24,85 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
         Func<LiveEvent, LiveEvent> modelFinalizer)
         LiveEventMapper(IDomainGlossary glossary)
     {
+        var accumulateCallCount = 0;
+        var roleAddCount = 0;
+        var sphereAddCount = 0;
+        var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var totalRoleConstituteTime = 0L;
+        var totalSphereConstituteTime = 0L;
+        var totalAccumulateTime = 0L;
+        
         return (
             keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
             modelInitializer: static reader => 
-                new LiveEvent(
+            {
+                var initStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var result = new LiveEvent(
                     ConstituteLiveEventInfo(reader).GetValueOrThrow(),
                     new List<IRoleInfo>(),
                     ConstituteLiveEventVenue(reader),
-                    new List<ISphereOfAction>()),
+                    new List<ISphereOfAction>());
+                initStopwatch.Stop();
+                
+                if (initStopwatch.ElapsedMilliseconds > 10)
+                    Console.WriteLine($"[PERF-DEBUG] ModelInitializer took {initStopwatch.ElapsedMilliseconds}ms");
+                
+                return result;
+            },
             accumulateData: (liveEvent, reader) =>
             {
+                var accStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                accumulateCallCount++;
+                
+                var roleStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
+                roleStopwatch.Stop();
+                totalRoleConstituteTime += roleStopwatch.ElapsedMilliseconds;
+                
                 if (roleInfo.IsSome)
+                {
+                    roleAddCount++;
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
+                }
 
+                var sphereStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
+                sphereStopwatch.Stop();
+                totalSphereConstituteTime += sphereStopwatch.ElapsedMilliseconds;
+                
                 if (sphereOfAction.IsSome)
+                {
+                    sphereAddCount++;
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
+                }
+                
+                accStopwatch.Stop();
+                totalAccumulateTime += accStopwatch.ElapsedMilliseconds;
             },
-            modelFinalizer: static liveEvent => liveEvent with
+            modelFinalizer: liveEvent => 
             {
-                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
+                var finalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var result = liveEvent with
+                {
+                    WithRoles = liveEvent.WithRoles.ToImmutableArray(),
+                    DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
+                };
+                finalStopwatch.Stop();
+                totalStopwatch.Stop();
+                
+                Console.WriteLine($"[PERF-DEBUG] FINAL STATS: {accumulateCallCount} accumulate calls, " +
+                                  $"{roleAddCount} roles, {sphereAddCount} spheres. " +
+                                  $"Role constitute total: {totalRoleConstituteTime}ms, " +
+                                  $"Sphere constitute total: {totalSphereConstituteTime}ms, " +
+                                  $"Accumulate total: {totalAccumulateTime}ms, " +
+                                  $"Finalizer: {finalStopwatch.ElapsedMilliseconds}ms, " +
+                                  $"Total mapper time: {totalStopwatch.ElapsedMilliseconds}ms");
+                
+                return result;
             }
         );
     }
-
+    
     public async Task<LiveEvent?> GetAsync(ILiveEventInfo liveEvent) =>
         (await GetAllAsync())
         .FirstOrDefault(le => le.Equals(liveEvent));
