@@ -131,7 +131,7 @@ var host = new HostBuilder()
                 // this ensures logs have the correct severity level in Application Insights queries on Azure
                 .WriteTo.ApplicationInsights(
                     telemetryConfig, new CustomTelemetryConverter(),
-                    restrictedToMinimumLevel: LogEventLevel.Warning);
+                    restrictedToMinimumLevel: LogEventLevel.Debug);
         }
 
         Log.Logger = loggerConfig.CreateLogger();
