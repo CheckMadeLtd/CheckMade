@@ -66,14 +66,10 @@ internal static class DomainModelConstitutors
 
     internal static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
     {
-        var totalSw = System.Diagnostics.Stopwatch.StartNew();
-        
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
 
-        var tradeSw = System.Diagnostics.Stopwatch.StartNew();
         var trade = GetTrade();
-        tradeSw.Stop();
 
         const string invalidTradeTypeException = $"""
                                                   This is not an existing '{nameof(trade)}' or we forgot to
@@ -96,7 +92,12 @@ internal static class DomainModelConstitutors
         };
         jsonSw.Stop();
 
-        var sphereSw = System.Diagnostics.Stopwatch.StartNew();
+        if (jsonSw.ElapsedMilliseconds > 1)
+        {
+            Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
+                              $"JSON: {jsonSw.ElapsedMilliseconds}ms");
+        }
+
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
 
         ISphereOfAction sphere = trade switch
@@ -108,19 +109,7 @@ internal static class DomainModelConstitutors
             _ => 
                 throw new InvalidOperationException(invalidTradeTypeException)
         };
-        sphereSw.Stop();
         
-        totalSw.Stop();
-
-        if (totalSw.ElapsedMilliseconds > 1)
-        {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
-                              $"Trade: {tradeSw.ElapsedMilliseconds}ms, " +
-                              $"JSON: {jsonSw.ElapsedMilliseconds}ms, " +
-                              $"Sphere: {sphereSw.ElapsedMilliseconds}ms, " +
-                              $"Total: {totalSw.ElapsedMilliseconds}ms");
-        }
-
         return Option<ISphereOfAction>.Some(sphere);
 
         ITrade GetTrade()
@@ -141,12 +130,9 @@ internal static class DomainModelConstitutors
 
     internal static Option<IRoleInfo> ConstituteRoleInfo(DbDataReader reader, IDomainGlossary glossary)
     {
-        var totalSw = System.Diagnostics.Stopwatch.StartNew();
-        
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
 
-        var dictSw = System.Diagnostics.Stopwatch.StartNew();
         Dictionary<string, Func<IRoleType>> roleTypeFactoryByFullTypeName = new()
         {
             [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
@@ -164,20 +150,15 @@ internal static class DomainModelConstitutors
             [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
             [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
         };
-        dictSw.Stop();
         
-        var roleTypeSw = System.Diagnostics.Stopwatch.StartNew();
         var roleTypeTypeInfo = GetRoleTypeTypeInfo();
-        roleTypeSw.Stop();
-
-        var factorySw = System.Diagnostics.Stopwatch.StartNew();
+ 
         if (!roleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
         {
             throw new InvalidOperationException($"Unhandled role type: {roleTypeTypeInfo.FullName}");
         }
 
         var roleType = factory();
-        factorySw.Stop();
         
         var constructSw = System.Diagnostics.Stopwatch.StartNew();
         var result = new RoleInfo(
@@ -187,18 +168,6 @@ internal static class DomainModelConstitutors
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")))); 
         constructSw.Stop();
 
-        totalSw.Stop();
-
-        if (totalSw.ElapsedMilliseconds > 1)
-        {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteRoleInfo)} " +
-                              $"Dict: {dictSw.ElapsedMilliseconds}ms, " +
-                              $"RoleType: {roleTypeSw.ElapsedMilliseconds}ms, " +
-                              $"Factory: {factorySw.ElapsedMilliseconds}ms, " +
-                              $"Construct: {constructSw.ElapsedMilliseconds}ms, " +
-                              $"Total: {totalSw.ElapsedMilliseconds}ms");
-        }
-        
         return result;
 
         Type GetRoleTypeTypeInfo()

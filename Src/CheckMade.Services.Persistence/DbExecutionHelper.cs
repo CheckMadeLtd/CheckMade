@@ -52,13 +52,15 @@ public sealed class DbExecutionHelper(
                                       $"the current warning threshold ({currentWarningThreshold}ms).");
                 }
                 
-                // replacements needed for Application Insights, otherwise we get one log entry per line!
-                var sqlCommands = string.Join("; ", 
-                    commands.Select(static cmd => 
-                        cmd.CommandText.Replace('\n', ' ').Replace('\r', ' ')));
+                // For detailed db perf logging.
                 
-                logger.LogDebug("Performance debugging - query took {ElapsedMs}ms - SQL commands: {SqlCommands}", 
-                    stopwatch.ElapsedMilliseconds, sqlCommands);
+                // // replacements needed for Application Insights, otherwise we get one log entry per line!
+                // var sqlCommands = string.Join("; ", 
+                //     commands.Select(static cmd => 
+                //         cmd.CommandText.Replace('\n', ' ').Replace('\r', ' ')));
+                //
+                // Console.WriteLine("Performance debugging - query took {0}ms - SQL commands: {1}", 
+                //     stopwatch.ElapsedMilliseconds, sqlCommands);
             });
             await transaction.CommitAsync();
         }
