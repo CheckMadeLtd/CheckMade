@@ -50,10 +50,30 @@ internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonCon
 
     private Option<T> ReconstructDomainTerm(JsonReader reader)
     {
+        var totalSw = System.Diagnostics.Stopwatch.StartNew();
+    
         var callbackId = reader.Value as string;
-        var domainTerm = glossary.TermById[new CallbackId(callbackId!)];
+    
+        var lookupSw = System.Diagnostics.Stopwatch.StartNew();
+        var domainTerm = glossary.TermById[new CallbackId(callbackId!)]; // Fixed: direct dictionary access
+        lookupSw.Stop();
+    
+        var wrapSw = System.Diagnostics.Stopwatch.StartNew();
+        var result = Option<T>.Some((T)(object)domainTerm);
+        wrapSw.Stop();
+    
+        totalSw.Stop();
+    
+        if (totalSw.ElapsedMilliseconds > 1)
+        {
+            Console.WriteLine($"[PERF-DEBUG] for {nameof(ReconstructDomainTerm)} " +
+                              $"Lookup: {lookupSw.ElapsedMilliseconds}ms, " +
+                              $"Wrap: {wrapSw.ElapsedMilliseconds}ms, " +
+                              $"Total: {totalSw.ElapsedMilliseconds}ms, " +
+                              $"CallbackId: {callbackId}");
+        }
         
-        return Option<T>.Some((T)(object)domainTerm);
+        return result;
     }
 
     private static Option<T> ReconstructGeoLocation(JsonReader reader)
