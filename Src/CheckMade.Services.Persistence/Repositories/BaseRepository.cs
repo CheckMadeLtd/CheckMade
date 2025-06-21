@@ -1,13 +1,27 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using System.Diagnostics;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 using Npgsql;
+using static CheckMade.Services.Persistence.Repositories.ProcessingParts;
 
 namespace CheckMade.Services.Persistence.Repositories;
 
+internal enum ProcessingParts
+{
+    PureSqlOperation,
+    ApplicationProcessing
+}
+
 public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary)
 {
+    private readonly Dictionary<ProcessingParts, int> _dbWarningThresholdsByProcessingPart = new()
+    {
+        [PureSqlOperation] = 50,
+        [ApplicationProcessing] = 250
+    };
+    
     protected IDomainGlossary Glossary { get; } = glossary;
     
     protected static NpgsqlCommand GenerateCommand(string query, Option<Dictionary<string, object>> parameters)
@@ -29,12 +43,18 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
     {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
             {
+                var sqlSw = Stopwatch.StartNew();
                 foreach (var cmd in commands)
                 {
                     cmd.Connection = db;
                     cmd.Transaction = transaction;
                     await cmd.ExecuteNonQueryAsync();
                 }
+
+                sqlSw.Stop();
+                
+                LogWarningForSlowOp(sqlSw, commands, PureSqlOperation, 
+                    _dbWarningThresholdsByProcessingPart[PureSqlOperation]);
             },
             commands);
     }
@@ -119,9 +139,36 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
                 command.Connection = db;
                 command.Transaction = transaction;
 
+                var sqlSw = Stopwatch.StartNew();
                 await using var reader = await command.ExecuteReaderAsync();
+                sqlSw.Stop();
+
+                LogWarningForSlowOp(sqlSw, [command], PureSqlOperation, 
+                    _dbWarningThresholdsByProcessingPart[PureSqlOperation]);
+                
+                var appSw = Stopwatch.StartNew();
                 await processReader(reader, Glossary);
+                appSw.Stop();
+
+                LogWarningForSlowOp(appSw, [command], ApplicationProcessing, 
+                    _dbWarningThresholdsByProcessingPart[ApplicationProcessing]);
             },
             [command]);
     }
+
+    private static readonly Action<Stopwatch, IReadOnlyCollection<NpgsqlCommand>, ProcessingParts, int> 
+        LogWarningForSlowOp = static (stopwatch, commands, part, threshold) =>
+        {
+            if (stopwatch.ElapsedMilliseconds > threshold)
+            {
+                // replacements needed for Application Insights, otherwise we get one log entry per line!
+                var formattedSqlCommand = string.Join("; ", commands.Select(
+                    static cmd => 
+                        cmd.CommandText.Replace('\n', ' ').Replace('\r', ' ')));
+                    
+                Console.WriteLine($"[PERF-DEBUG] {part} took {stopwatch.ElapsedMilliseconds}ms, " +
+                                  $"i.e. longer than the current warning threshold ({threshold}ms). " +
+                                  $"Executed SQL Command: {formattedSqlCommand}");
+            }
+        };
 }

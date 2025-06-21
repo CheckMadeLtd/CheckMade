@@ -101,8 +101,7 @@ public static class RegisterServicesExtensions
         services.AddScoped<IDbExecutionHelper>(static sp =>
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
-                sp.GetRequiredService<IDbCommandRetryPolicy>(),
-                sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
+                sp.GetRequiredService<IDbCommandRetryPolicy>()));
         
         services.AddScoped<IInputsRepository, InputsRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
