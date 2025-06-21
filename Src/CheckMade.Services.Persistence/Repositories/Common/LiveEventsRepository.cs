@@ -5,13 +5,11 @@ using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using General.Utils.FpExtensions.Monads;
-using Microsoft.Extensions.Logging;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
-public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary, 
-    ILogger<LiveEventsRepository> logger) 
+public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -24,16 +22,31 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
         Func<LiveEvent, LiveEvent> modelFinalizer)
         LiveEventMapper(IDomainGlossary glossary)
     {
+        var totalInitializerTime = 0L;
+        var totalAccumulateTime = 0L;
+        long totalDistinctTime;
+        long totalToImmutableTime;
+        var accumulateCount = 0;
+        
         return (
             keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("live_event_id")),
-            modelInitializer: static reader => 
-                new LiveEvent(
+            modelInitializer: reader => 
+            {
+                var initSw = System.Diagnostics.Stopwatch.StartNew();
+                var result = new LiveEvent(
                     ConstituteLiveEventInfo(reader).GetValueOrThrow(),
                     new List<IRoleInfo>(),
                     ConstituteLiveEventVenue(reader),
-                    new List<ISphereOfAction>()),
+                    new List<ISphereOfAction>());
+                initSw.Stop();
+                
+                totalInitializerTime += initSw.ElapsedMilliseconds;
+                return result;
+            },
             accumulateData: (liveEvent, reader) =>
             {
+                var accSw = System.Diagnostics.Stopwatch.StartNew();
+                
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
@@ -41,11 +54,40 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                 var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
+                
+                accSw.Stop();
+                totalAccumulateTime += accSw.ElapsedMilliseconds;
+                accumulateCount++;
             },
-            modelFinalizer: static liveEvent => liveEvent with
+            modelFinalizer: liveEvent => 
             {
-                WithRoles = liveEvent.WithRoles.ToImmutableArray(),
-                DivIntoSpheres = liveEvent.DivIntoSpheres.ToImmutableArray()
+                var finalizerSw = System.Diagnostics.Stopwatch.StartNew();
+                
+                var distinctSw = System.Diagnostics.Stopwatch.StartNew();
+                var distinctRoles = liveEvent.WithRoles.Distinct();
+                var distinctSpheres = liveEvent.DivIntoSpheres.Distinct();
+                distinctSw.Stop();
+                totalDistinctTime = distinctSw.ElapsedMilliseconds;
+                
+                var immutableSw = System.Diagnostics.Stopwatch.StartNew();
+                var result = liveEvent with
+                {
+                    WithRoles = distinctRoles.ToImmutableArray(),
+                    DivIntoSpheres = distinctSpheres.ToImmutableArray()
+                };
+                immutableSw.Stop();
+                totalToImmutableTime = immutableSw.ElapsedMilliseconds;
+                
+                finalizerSw.Stop();
+                
+                Console.WriteLine($"[PERF-DEBUG] STEP BREAKDOWN - " +
+                                  $"Initializer: {totalInitializerTime}ms, " +
+                                  $"Accumulate: {totalAccumulateTime}ms ({accumulateCount} calls), " +
+                                  $"Distinct: {totalDistinctTime}ms, " +
+                                  $"ToImmutable: {totalToImmutableTime}ms, " +
+                                  $"Total Finalizer: {finalizerSw.ElapsedMilliseconds}ms");
+                
+                return result;
             }
         );
     }
@@ -91,35 +133,27 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                                             
                                             ORDER BY le.id, r.id, soa.id
                                             """;
-
                     
-                    // // TEMPORARY DEBUG: First run EXPLAIN ANALYZE to capture execution plan
-                    // const string explainQuery = "EXPLAIN ANALYZE " + rawQuery;
-                    // var explainCommand = GenerateCommand(explainQuery, Option<Dictionary<string, object>>.None());
-                    //
-                    // var explainResults = 
-                    //     await ExecuteMapperAsync(
-                    //         explainCommand, static (reader, _) => reader.GetString(0));
-                    //
-                    // // Log the execution plan to Application Insights
-                    // var formattedExplainOutput = string.Join(" || ", explainResults)
-                    //     .Replace('\n', ' ').Replace('\r', ' ');
-                    //
-                    // logger.LogDebug("EXPLAIN ANALYZE output: {ExplainPlan}", 
-                    //     formattedExplainOutput);                    
-                    
-                    
+                    var commandSw = System.Diagnostics.Stopwatch.StartNew();
                     var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
-                    
+                    commandSw.Stop();
+                    Console.WriteLine($"[PERF-DEBUG] GenerateCommand took: {commandSw.ElapsedMilliseconds}ms");
+                
                     var (getKey,
                         initializeModel,
                         accumulateData,
                         finalizeModel) = LiveEventMapper(Glossary);
 
+                    var executeSw = System.Diagnostics.Stopwatch.StartNew();
                     var liveEvents = await ExecuteMapperAsync(
                         command, getKey, initializeModel, accumulateData, finalizeModel);
-                    
+                    executeSw.Stop();
+                    Console.WriteLine($"[PERF-DEBUG] ExecuteMapperAsync took: {executeSw.ElapsedMilliseconds}ms");
+                
+                    var cacheSw = System.Diagnostics.Stopwatch.StartNew();
                     _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);
+                    cacheSw.Stop();
+                    Console.WriteLine($"[PERF-DEBUG] Cache assignment took: {cacheSw.ElapsedMilliseconds}ms");
                 }
             }
             finally
