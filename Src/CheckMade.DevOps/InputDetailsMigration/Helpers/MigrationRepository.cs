@@ -16,18 +16,19 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
         var command = new NpgsqlCommand("SELECT * FROM inputs");
         
         await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            command.Connection = db;
-            command.Transaction = transaction;
-            
-            await using (var reader = await command.ExecuteReaderAsync())
             {
-                while (await reader.ReadAsync())
+                command.Connection = db;
+                command.Transaction = transaction;
+            
+                await using (var reader = await command.ExecuteReaderAsync())
                 {
-                    oldDetailsBuilder.Add(await CreateOldFormatDetailsInstanceAsync(reader));
+                    while (await reader.ReadAsync())
+                    {
+                        oldDetailsBuilder.Add(await CreateOldFormatDetailsInstanceAsync(reader));
+                    }
                 }
-            }
-        });
+            },
+            [command]);
 
         return oldDetailsBuilder.ToImmutable();
 
@@ -69,13 +70,14 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
         }).ToArray();
 
         await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            foreach (var command in commands)
             {
-                command.Connection = db;
-                command.Transaction = transaction;
-                await command.ExecuteNonQueryAsync();
-            }
-        });
+                foreach (var command in commands)
+                {
+                    command.Connection = db;
+                    command.Transaction = transaction;
+                    await command.ExecuteNonQueryAsync();
+                }
+            },
+            commands);
     }
 }

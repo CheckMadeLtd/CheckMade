@@ -9,7 +9,12 @@ namespace CheckMade.Services.Persistence;
 
 public interface IDbExecutionHelper
 {
-    Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation);
+    /// <summary>
+    /// The collection of commands are passed purely for logging/debugging purposes, otherwise not needed 
+    /// </summary>
+    Task ExecuteAsync(
+        Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperation,
+        IReadOnlyCollection<NpgsqlCommand> commands);
 }
 
 public sealed class DbExecutionHelper(
@@ -19,7 +24,9 @@ public sealed class DbExecutionHelper(
     ILogger<DbExecutionHelper> logger) 
     : IDbExecutionHelper
 {
-    public async Task ExecuteAsync(Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations)
+    public async Task ExecuteAsync(
+        Func<NpgsqlConnection, NpgsqlTransaction, Task> executeDbOperations,
+        IReadOnlyCollection<NpgsqlCommand> commands)
     {
         await using var db = dbProvider.CreateConnection() as NpgsqlConnection;
 
@@ -37,7 +44,7 @@ public sealed class DbExecutionHelper(
                 await executeDbOperations(db, transaction);
                 stopwatch.Stop();
 
-                const int currentWarningThreshold = 750;
+                const int currentWarningThreshold = 500;
                 
                 if (stopwatch.ElapsedMilliseconds > currentWarningThreshold)
                 {
@@ -45,6 +52,9 @@ public sealed class DbExecutionHelper(
                                       $"the current warning threshold ({currentWarningThreshold}ms).");
                 }
                 
+                logger.LogDebug($"Performance debugging - query took {stopwatch.ElapsedMilliseconds}ms - " +
+                                $"SQL commands: {string.Join("; ", 
+                                    commands.Select(static cmd => cmd.CommandText))}");
             });
             await transaction.CommitAsync();
         }

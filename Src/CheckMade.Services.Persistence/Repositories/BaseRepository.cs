@@ -28,14 +28,15 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
     protected async Task ExecuteTransactionAsync(IReadOnlyCollection<NpgsqlCommand> commands)
     {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            foreach (var cmd in commands)
             {
-                cmd.Connection = db;
-                cmd.Transaction = transaction;
-                await cmd.ExecuteNonQueryAsync();
-            }
-        });
+                foreach (var cmd in commands)
+                {
+                    cmd.Connection = db;
+                    cmd.Transaction = transaction;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            },
+            commands);
     }
 
     /// <summary>
@@ -114,12 +115,13 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
         Func<DbDataReader, IDomainGlossary, Task> processReader)
     {
         await dbHelper.ExecuteAsync(async (db, transaction) =>
-        {
-            command.Connection = db;
-            command.Transaction = transaction;
+            {
+                command.Connection = db;
+                command.Transaction = transaction;
 
-            await using var reader = await command.ExecuteReaderAsync();
-            await processReader(reader, Glossary);
-        });
+                await using var reader = await command.ExecuteReaderAsync();
+                await processReader(reader, Glossary);
+            },
+            [command]);
     }
 }
