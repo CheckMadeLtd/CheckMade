@@ -1,3 +1,4 @@
+using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Core.ServiceInterfaces.Bot;
@@ -50,9 +51,8 @@ internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonCon
     private Option<T> ReconstructDomainTerm(JsonReader reader)
     {
         var callbackId = reader.Value as string;
-        var domainTerm = glossary.TermById
-            .First(t => t.Key == callbackId).Value;
-            
+        var domainTerm = glossary.TermById[new CallbackId(callbackId!)];
+        
         return Option<T>.Some((T)(object)domainTerm);
     }
 
