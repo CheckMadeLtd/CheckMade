@@ -84,7 +84,6 @@ public sealed class DomainModelConstitutors
 
         if (!_detailsBySphereNameCache.TryGetValue(sphereName, out _))
         {
-            var jsonSw = System.Diagnostics.Stopwatch.StartNew();
             var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
         
             details = trade switch
@@ -98,19 +97,8 @@ public sealed class DomainModelConstitutors
                 _ => 
                     throw new InvalidOperationException(invalidTradeTypeException)
             };
-            jsonSw.Stop();
-
-            if (jsonSw.ElapsedMilliseconds > 1)
-            {
-                Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
-                                  $"JSON: {jsonSw.ElapsedMilliseconds}ms");
-            }
 
             _detailsBySphereNameCache.TryAdd(sphereName, details);
-        }
-        else
-        {
-            Console.WriteLine($"[PERF-DEBUG] {_detailsBySphereNameCache} cache hit!");
         }
 
         if (!_detailsBySphereNameCache.TryGetValue(sphereName, out details))
