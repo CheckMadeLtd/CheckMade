@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
@@ -16,8 +17,10 @@ using General.Utils.Validators;
 
 namespace CheckMade.Services.Persistence.Repositories;
 
-internal static class DomainModelConstitutors
+public sealed class DomainModelConstitutors
 {
+    private ConcurrentDictionary<string, ISphereOfActionDetails> _detailsBySphereNameCache = new();
+    
     internal static Option<Vendor> ConstituteVendor(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("vendor_name")))
@@ -64,7 +67,7 @@ internal static class DomainModelConstitutors
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    internal static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
+    internal Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
@@ -76,30 +79,43 @@ internal static class DomainModelConstitutors
                                                   implement a new type in method '{nameof(ConstituteSphereOfAction)}' 
                                                   """;
 
-        var jsonSw = System.Diagnostics.Stopwatch.StartNew();
-        var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
-        
-        ISphereOfActionDetails details = trade switch
-        {
-            SanitaryTrade => 
-                JsonHelper.DeserializeFromJson<SanitaryCampDetails>(detailsJson, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
-            SiteCleanTrade => 
-                JsonHelper.DeserializeFromJson<SiteCleaningZoneDetails>(detailsJson, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
-            _ => 
-                throw new InvalidOperationException(invalidTradeTypeException)
-        };
-        jsonSw.Stop();
+        var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
+        ISphereOfActionDetails? details;
 
-        if (jsonSw.ElapsedMilliseconds > 1)
+        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out _))
         {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
-                              $"JSON: {jsonSw.ElapsedMilliseconds}ms");
+            var jsonSw = System.Diagnostics.Stopwatch.StartNew();
+            var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
+        
+            details = trade switch
+            {
+                SanitaryTrade => 
+                    JsonHelper.DeserializeFromJson<SanitaryCampDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
+                SiteCleanTrade => 
+                    JsonHelper.DeserializeFromJson<SiteCleaningZoneDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
+                _ => 
+                    throw new InvalidOperationException(invalidTradeTypeException)
+            };
+            jsonSw.Stop();
+
+            if (jsonSw.ElapsedMilliseconds > 1)
+            {
+                Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
+                                  $"JSON: {jsonSw.ElapsedMilliseconds}ms");
+            }
+
+            _detailsBySphereNameCache.TryAdd(sphereName, details);
+        }
+        else
+        {
+            Console.WriteLine($"[PERF-DEBUG] {_detailsBySphereNameCache} cache hit!");
         }
 
-        var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
-
+        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out details))
+            throw new InvalidDataException($"Failed to add {nameof(ISphereOfActionDetails)} to cache.");
+        
         ISphereOfAction sphere = trade switch
         {
             SanitaryTrade => 

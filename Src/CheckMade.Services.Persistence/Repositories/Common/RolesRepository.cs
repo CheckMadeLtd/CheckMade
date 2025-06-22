@@ -9,18 +9,20 @@ using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
-public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class RolesRepository(
+    IDbExecutionHelper dbHelper,
+    IDomainGlossary glossary,
+    DomainModelConstitutors constitutors) 
     : BaseRepository(dbHelper, glossary), IRolesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
 
     private static readonly Func<DbDataReader, int> GetRoleKey = 
         static reader => reader.GetInt32(reader.GetOrdinal("role_id"));
 
-    internal static readonly Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments = 
-        static (reader, glossary) => 
+    public Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments { get; } =
+        static (reader, glossary) =>
             new Role(
                 ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
                 ConstituteUserInfo(reader),
@@ -28,21 +30,21 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
                 new HashSet<ISphereOfAction>()
             );
 
-    internal static readonly Action<Role, DbDataReader, IDomainGlossary> AccumulateSphereAssignments = 
-        static (role, reader, glossary) =>
+    public Action<Role, DbDataReader> GetAccumulateSphereAssignments(IDomainGlossary glossary) =>
+        (role, reader) =>
         {
-            var assignedSphere = ConstituteSphereOfAction(reader, glossary);
+            var assignedSphere = constitutors.ConstituteSphereOfAction(reader, glossary);
             if (assignedSphere.IsSome)
                 ((HashSet<ISphereOfAction>)role.AssignedToSpheres).Add(assignedSphere.GetValueOrThrow());
         };
-
-    internal static readonly Func<Role, Role> FinalizeSphereAssignments = 
+    
+    public Func<Role, Role> FinalizeSphereAssignments { get; } = 
         static role => role with
         {
             AssignedToSpheres = role.AssignedToSpheres.ToImmutableArray()
         };
 
-    private static (Func<DbDataReader, int> keyGetter,
+    private (Func<DbDataReader, int> keyGetter,
         Func<DbDataReader, Role> modelInitializer,
         Action<Role, DbDataReader> accumulateData,
         Func<Role, Role> modelFinalizer)
@@ -51,7 +53,7 @@ public sealed class RolesRepository(IDbExecutionHelper dbHelper, IDomainGlossary
         return (
             keyGetter: GetRoleKey,
             modelInitializer: reader => CreateRoleWithoutSphereAssignments(reader, glossary),
-            accumulateData: (role, reader) => AccumulateSphereAssignments(role, reader, glossary),
+            accumulateData: GetAccumulateSphereAssignments(glossary),
             modelFinalizer: FinalizeSphereAssignments
         );
     }
