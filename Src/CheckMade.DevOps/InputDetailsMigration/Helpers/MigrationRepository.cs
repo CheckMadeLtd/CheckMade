@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Data.Common;
+using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence;
 using Newtonsoft.Json.Linq;
@@ -35,10 +36,10 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
         static async Task<OldFormatDetails> CreateOldFormatDetailsInstanceAsync(DbDataReader reader)
         {
             var identifier = await reader.Fork(
-                static async r => await r.GetFieldValueAsync<long>(r.GetOrdinal("user_id")),
+                static async r => await r.GetFieldValueAsync<int>(r.GetOrdinal("message_id")),
                 static async r => await r.GetFieldValueAsync<DateTimeOffset>(r.GetOrdinal("date")),
-                static async (historicUserId, historicTimeStamp) => 
-                    new HistoricInputIdentifier(new UserId(await historicUserId), await historicTimeStamp)
+                static async (historicMessageId, historicTimeStamp) => 
+                    new HistoricInputIdentifier(new MessageId(await historicMessageId), await historicTimeStamp)
             );
         
             var actualOldFormatDetails = JObject.Parse(
@@ -58,7 +59,7 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricUserId.Id);
+            command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricMessageId.Id);
             command.Parameters.AddWithValue("@timeStamp", newDetails.Identifier.HistoricTimeStamp);
             
             command.Parameters.Add(new NpgsqlParameter($"@inputDetails", NpgsqlDbType.Jsonb)
