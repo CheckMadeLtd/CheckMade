@@ -9,14 +9,16 @@ using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
-public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class LiveEventsRepository(
+    IDbExecutionHelper dbHelper,
+    IDomainGlossary glossary,
+    DomainModelConstitutors constitutors) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
     private Option<IReadOnlyCollection<LiveEvent>> _cache = Option<IReadOnlyCollection<LiveEvent>>.None();
 
-    private static (Func<DbDataReader, int> keyGetter, 
+    private (Func<DbDataReader, int> keyGetter, 
         Func<DbDataReader, LiveEvent> modelInitializer,
         Action<LiveEvent, DbDataReader> accumulateData,
         Func<LiveEvent, LiveEvent> modelFinalizer)
@@ -32,22 +34,15 @@ public sealed class LiveEventsRepository(IDbExecutionHelper dbHelper, IDomainGlo
                     new List<ISphereOfAction>()),
             accumulateData: (liveEvent, reader) =>
             {
-                var accSw = System.Diagnostics.Stopwatch.StartNew();
-    
                 var roleInfo = ConstituteRoleInfo(reader, glossary);
     
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
-                var sphereOfAction = ConstituteSphereOfAction(reader, glossary);
+                var sphereOfAction = constitutors.ConstituteSphereOfAction(reader, glossary);
     
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());
-    
-                accSw.Stop();
-                
-                if (accSw.ElapsedMilliseconds > 5)
-                    Console.WriteLine($"[PERF-DEBUG] Slow 'accumulateData' {accSw.ElapsedMilliseconds}ms");
             },
             modelFinalizer: static liveEvent => liveEvent with
             {

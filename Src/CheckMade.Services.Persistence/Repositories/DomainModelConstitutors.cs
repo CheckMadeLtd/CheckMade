@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
@@ -16,8 +17,10 @@ using General.Utils.Validators;
 
 namespace CheckMade.Services.Persistence.Repositories;
 
-internal static class DomainModelConstitutors
+public sealed class DomainModelConstitutors
 {
+    private ConcurrentDictionary<string, ISphereOfActionDetails> _detailsBySphereNameCache = new();
+    
     internal static Option<Vendor> ConstituteVendor(DbDataReader reader)
     {
         if (reader.IsDBNull(reader.GetOrdinal("vendor_name")))
@@ -64,7 +67,7 @@ internal static class DomainModelConstitutors
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("live_event_status"))));
     }
 
-    internal static Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
+    internal Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)
     {
         if (reader.IsDBNull(reader.GetOrdinal("sphere_name")))
             return Option<ISphereOfAction>.None();
@@ -76,30 +79,43 @@ internal static class DomainModelConstitutors
                                                   implement a new type in method '{nameof(ConstituteSphereOfAction)}' 
                                                   """;
 
-        var jsonSw = System.Diagnostics.Stopwatch.StartNew();
-        var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
-        
-        ISphereOfActionDetails details = trade switch
-        {
-            SanitaryTrade => 
-                JsonHelper.DeserializeFromJson<SanitaryCampDetails>(detailsJson, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
-            SiteCleanTrade => 
-                JsonHelper.DeserializeFromJson<SiteCleaningZoneDetails>(detailsJson, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
-            _ => 
-                throw new InvalidOperationException(invalidTradeTypeException)
-        };
-        jsonSw.Stop();
+        var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
+        ISphereOfActionDetails? details;
 
-        if (jsonSw.ElapsedMilliseconds > 1)
+        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out _))
         {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
-                              $"JSON: {jsonSw.ElapsedMilliseconds}ms");
+            var jsonSw = System.Diagnostics.Stopwatch.StartNew();
+            var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
+        
+            details = trade switch
+            {
+                SanitaryTrade => 
+                    JsonHelper.DeserializeFromJson<SanitaryCampDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SanitaryCampDetails)}'!"),
+                SiteCleanTrade => 
+                    JsonHelper.DeserializeFromJson<SiteCleaningZoneDetails>(detailsJson, glossary)
+                    ?? throw new InvalidDataException($"Failed to deserialize '{nameof(SiteCleaningZoneDetails)}'!"),
+                _ => 
+                    throw new InvalidOperationException(invalidTradeTypeException)
+            };
+            jsonSw.Stop();
+
+            if (jsonSw.ElapsedMilliseconds > 1)
+            {
+                Console.WriteLine($"[PERF-DEBUG] for {nameof(ConstituteSphereOfAction)} " +
+                                  $"JSON: {jsonSw.ElapsedMilliseconds}ms");
+            }
+
+            _detailsBySphereNameCache.TryAdd(sphereName, details);
+        }
+        else
+        {
+            Console.WriteLine($"[PERF-DEBUG] {_detailsBySphereNameCache} cache hit!");
         }
 
-        var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
-
+        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out details))
+            throw new InvalidDataException($"Failed to add {nameof(ISphereOfActionDetails)} to cache.");
+        
         ISphereOfAction sphere = trade switch
         {
             SanitaryTrade => 
@@ -133,40 +149,20 @@ internal static class DomainModelConstitutors
         if (reader.IsDBNull(reader.GetOrdinal("role_token")))
             return Option<IRoleInfo>.None();
 
-        Dictionary<string, Func<IRoleType>> roleTypeFactoryByFullTypeName = new()
-        {
-            [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
-            [typeof(LiveEventObserver).FullName!] = static () => new LiveEventObserver(),
-            
-            [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
-            [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),
-            [typeof(TradeEngineer<SanitaryTrade>).FullName!] = () => new TradeEngineer<SanitaryTrade>(),
-            [typeof(TradeTeamLead<SanitaryTrade>).FullName!] = () => new TradeTeamLead<SanitaryTrade>(),
-            [typeof(TradeObserver<SanitaryTrade>).FullName!] = () => new TradeObserver<SanitaryTrade>(),
-            
-            [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
-            [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),
-            [typeof(TradeEngineer<SiteCleanTrade>).FullName!] = () => new TradeEngineer<SiteCleanTrade>(),
-            [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
-            [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
-        };
-        
         var roleTypeTypeInfo = GetRoleTypeTypeInfo();
  
-        if (!roleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
+        if (!RoleTypeFactoryByFullTypeName.TryGetValue(roleTypeTypeInfo.FullName!, out var factory))
         {
             throw new InvalidOperationException($"Unhandled role type: {roleTypeTypeInfo.FullName}");
         }
 
         var roleType = factory();
         
-        var constructSw = System.Diagnostics.Stopwatch.StartNew();
         var result = new RoleInfo(
             reader.GetString(reader.GetOrdinal("role_token")),
             roleType,
             EnsureEnumValidityOrThrow(
                 (DbRecordStatus)reader.GetInt16(reader.GetOrdinal("role_status")))); 
-        constructSw.Stop();
 
         return result;
 
@@ -186,6 +182,24 @@ internal static class DomainModelConstitutors
         }
     }
 
+    private static readonly Dictionary<string, Func<IRoleType>> RoleTypeFactoryByFullTypeName = new()
+    {
+        [typeof(LiveEventAdmin).FullName!] = static () => new LiveEventAdmin(),
+        [typeof(LiveEventObserver).FullName!] = static () => new LiveEventObserver(),
+            
+        [typeof(TradeAdmin<SanitaryTrade>).FullName!] = () => new TradeAdmin<SanitaryTrade>(),
+        [typeof(TradeInspector<SanitaryTrade>).FullName!] = () => new TradeInspector<SanitaryTrade>(),
+        [typeof(TradeEngineer<SanitaryTrade>).FullName!] = () => new TradeEngineer<SanitaryTrade>(),
+        [typeof(TradeTeamLead<SanitaryTrade>).FullName!] = () => new TradeTeamLead<SanitaryTrade>(),
+        [typeof(TradeObserver<SanitaryTrade>).FullName!] = () => new TradeObserver<SanitaryTrade>(),
+            
+        [typeof(TradeAdmin<SiteCleanTrade>).FullName!] = () => new TradeAdmin<SiteCleanTrade>(),
+        [typeof(TradeInspector<SiteCleanTrade>).FullName!] = () => new TradeInspector<SiteCleanTrade>(),
+        [typeof(TradeEngineer<SiteCleanTrade>).FullName!] = () => new TradeEngineer<SiteCleanTrade>(),
+        [typeof(TradeTeamLead<SiteCleanTrade>).FullName!] = () => new TradeTeamLead<SiteCleanTrade>(),
+        [typeof(TradeObserver<SiteCleanTrade>).FullName!] = () => new TradeObserver<SiteCleanTrade>(),
+    };
+    
     internal static Input ConstituteInput(
         DbDataReader reader, 
         Option<IRoleInfo> roleInfo,

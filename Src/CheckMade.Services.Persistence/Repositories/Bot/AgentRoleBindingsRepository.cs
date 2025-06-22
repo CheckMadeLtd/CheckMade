@@ -4,20 +4,22 @@ using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
-using CheckMade.Services.Persistence.Repositories.Common;
+using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
 
-public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class AgentRoleBindingsRepository(
+    IDbExecutionHelper dbHelper, 
+    IDomainGlossary glossary,
+    IRolesRepository rolesRepo) 
     : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
     private Option<IReadOnlyCollection<AgentRoleBind>> _cache = Option<IReadOnlyCollection<AgentRoleBind>>.None();
 
-    private static (Func<DbDataReader, int> keyGetter,
+    private (Func<DbDataReader, int> keyGetter,
         Func<DbDataReader, AgentRoleBind> modelInitializer,
         Action<AgentRoleBind, DbDataReader> accumulateData,
         Func<AgentRoleBind, AgentRoleBind> modelFinalizer)
@@ -27,16 +29,16 @@ public sealed class AgentRoleBindingsRepository(IDbExecutionHelper dbHelper, IDo
             keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("arb_id")),
             modelInitializer: reader =>
             {
-                var role = RolesRepository.CreateRoleWithoutSphereAssignments(reader, glossary);
+                var role = rolesRepo.CreateRoleWithoutSphereAssignments(reader, glossary);
                 var agent = ConstituteAgent(reader);
                 
                 return ConstituteAgentRoleBind(reader, role, agent);
             },
             accumulateData: (arb, reader) => 
-                RolesRepository.AccumulateSphereAssignments(arb.Role, reader, glossary),
-            modelFinalizer: static arb => arb with 
+                rolesRepo.GetAccumulateSphereAssignments(glossary)(arb.Role, reader),
+            modelFinalizer: arb => arb with 
             { 
-                Role = RolesRepository.FinalizeSphereAssignments(arb.Role)
+                Role = rolesRepo.FinalizeSphereAssignments(arb.Role)
             }
         );
     }

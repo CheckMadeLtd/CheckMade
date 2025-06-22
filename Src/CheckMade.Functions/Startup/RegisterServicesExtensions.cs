@@ -31,6 +31,7 @@ using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
 using CheckMade.Services.Logic;
+using CheckMade.Services.Persistence.Repositories;
 using CheckMade.Services.Persistence.Repositories.Bot;
 using CheckMade.Services.Persistence.Repositories.Common;
 using General.Utils.RetryPolicies;
@@ -101,8 +102,7 @@ public static class RegisterServicesExtensions
         services.AddScoped<IDbExecutionHelper>(static sp =>
             new DbExecutionHelper(sp.GetRequiredService<IDbConnectionProvider>(),
                 sp.GetRequiredService<IDbOpenRetryPolicy>(),
-                sp.GetRequiredService<IDbCommandRetryPolicy>(),
-                sp.GetRequiredService<ILogger<DbExecutionHelper>>()));
+                sp.GetRequiredService<IDbCommandRetryPolicy>()));
         
         services.AddScoped<IInputsRepository, InputsRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
@@ -111,6 +111,8 @@ public static class RegisterServicesExtensions
         services.AddScoped<ILiveEventsRepository, LiveEventsRepository>();
         services.AddScoped<IVendorsRepository, VendorsRepository>();
         services.AddScoped<IDerivedWorkflowBridgesRepository, DerivedWorkflowBridgesRepository>();
+        
+        services.AddScoped<DomainModelConstitutors>();
     }
 
     internal static void RegisterServicesLogic(this IServiceCollection services)
