@@ -11,7 +11,7 @@ using CheckMade.Services.Persistence.JsonHelpers;
 using General.Utils.FpExtensions.Monads;
 using Npgsql;
 using NpgsqlTypes;
-using static CheckMade.Services.Persistence.Constitutors.DomainModelConstitutors;
+using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
 

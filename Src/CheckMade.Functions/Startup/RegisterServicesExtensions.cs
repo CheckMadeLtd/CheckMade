@@ -32,7 +32,6 @@ using CheckMade.Services.ExtAPIs.AzureServices;
 using CheckMade.Services.ExtAPIs.Utils;
 using CheckMade.Services.Logic;
 using CheckMade.Services.Persistence.Constitutors;
-using CheckMade.Services.Persistence.Repositories;
 using CheckMade.Services.Persistence.Repositories.Bot;
 using CheckMade.Services.Persistence.Repositories.Common;
 using General.Utils.RetryPolicies;
@@ -113,7 +112,8 @@ public static class RegisterServicesExtensions
         services.AddScoped<IVendorsRepository, VendorsRepository>();
         services.AddScoped<IDerivedWorkflowBridgesRepository, DerivedWorkflowBridgesRepository>();
         
-        services.AddScoped<DomainModelConstitutors>();
+        services.AddScoped<SphereOfActionDetailsConstitutor>();
+        services.AddScoped<InputsConstitutor>();
     }
 
     internal static void RegisterServicesLogic(this IServiceCollection services)
