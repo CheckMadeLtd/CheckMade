@@ -10,16 +10,16 @@ using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.Model.Common.LiveEvents.SphereOfActionDetails;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
-using General.Utils.FpExtensions.Monads;
 using CheckMade.Services.Persistence.JsonHelpers;
+using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using General.Utils.Validators;
 
-namespace CheckMade.Services.Persistence.Repositories;
+namespace CheckMade.Services.Persistence.Constitutors;
 
 public sealed class DomainModelConstitutors
 {
-    private ConcurrentDictionary<string, ISphereOfActionDetails> _detailsBySphereNameCache = new();
+    private readonly ConcurrentDictionary<string, ISphereOfActionDetails> _detailsBySphereNameCache = new();
     
     internal static Option<Vendor> ConstituteVendor(DbDataReader reader)
     {

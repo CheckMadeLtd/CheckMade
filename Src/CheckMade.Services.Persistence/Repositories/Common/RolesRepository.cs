@@ -4,8 +4,9 @@ using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
+using CheckMade.Services.Persistence.Constitutors;
 using General.Utils.FpExtensions.Monads;
-using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
+using static CheckMade.Services.Persistence.Constitutors.DomainModelConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
