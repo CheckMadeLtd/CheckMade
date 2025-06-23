@@ -4,7 +4,7 @@ using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
-using CheckMade.Core.ServiceInterfaces.Persistence.Common;
+using CheckMade.Services.Persistence.Repositories.Common;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
@@ -13,7 +13,7 @@ namespace CheckMade.Services.Persistence.Repositories.Bot;
 public sealed class AgentRoleBindingsRepository(
     IDbExecutionHelper dbHelper, 
     IDomainGlossary glossary,
-    IRolesRepository rolesRepo) 
+    RolesSharedMapper rolesMapper) 
     : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -29,16 +29,16 @@ public sealed class AgentRoleBindingsRepository(
             keyGetter: static reader => reader.GetInt32(reader.GetOrdinal("arb_id")),
             modelInitializer: reader =>
             {
-                var role = rolesRepo.CreateRoleWithoutSphereAssignments(reader, glossary);
+                var role = rolesMapper.CreateRoleWithoutSphereAssignments(reader, glossary);
                 var agent = ConstituteAgent(reader);
                 
                 return ConstituteAgentRoleBind(reader, role, agent);
             },
             accumulateData: (arb, reader) => 
-                rolesRepo.GetAccumulateSphereAssignments(glossary)(arb.Role, reader),
+                rolesMapper.GetAccumulateSphereAssignments(glossary)(arb.Role, reader),
             modelFinalizer: arb => arb with 
             { 
-                Role = rolesRepo.FinalizeSphereAssignments(arb.Role)
+                Role = rolesMapper.FinalizeSphereAssignments(arb.Role)
             }
         );
     }

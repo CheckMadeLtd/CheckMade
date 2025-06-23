@@ -114,6 +114,7 @@ public static class RegisterServicesExtensions
         
         services.AddScoped<SphereOfActionDetailsConstitutor>();
         services.AddScoped<InputsConstitutor>();
+        services.AddScoped<RolesSharedMapper>();
     }
 
     internal static void RegisterServicesLogic(this IServiceCollection services)

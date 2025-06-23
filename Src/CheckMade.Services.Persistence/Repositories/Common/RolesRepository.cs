@@ -1,63 +1,18 @@
-using System.Collections.Immutable;
-using System.Data.Common;
 using CheckMade.Core.Model.Common.Actors;
-using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
-using CheckMade.Services.Persistence.Constitutors;
 using General.Utils.FpExtensions.Monads;
-using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
 public sealed class RolesRepository(
     IDbExecutionHelper dbHelper,
     IDomainGlossary glossary,
-    SphereOfActionDetailsConstitutor constitutors) 
+    RolesSharedMapper mapper) 
     : BaseRepository(dbHelper, glossary), IRolesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     private Option<IReadOnlyCollection<Role>> _cache = Option<IReadOnlyCollection<Role>>.None();
-
-    private static readonly Func<DbDataReader, int> GetRoleKey = 
-        static reader => reader.GetInt32(reader.GetOrdinal("role_id"));
-
-    public Func<DbDataReader, IDomainGlossary, Role> CreateRoleWithoutSphereAssignments { get; } =
-        static (reader, glossary) =>
-            new Role(
-                ConstituteRoleInfo(reader, glossary).GetValueOrThrow(),
-                ConstituteUserInfo(reader),
-                ConstituteLiveEventInfo(reader).GetValueOrThrow(),
-                new HashSet<ISphereOfAction>()
-            );
-
-    public Action<Role, DbDataReader> GetAccumulateSphereAssignments(IDomainGlossary glossary) =>
-        (role, reader) =>
-        {
-            var assignedSphere = constitutors.ConstituteSphereOfAction(reader, glossary);
-            if (assignedSphere.IsSome)
-                ((HashSet<ISphereOfAction>)role.AssignedToSpheres).Add(assignedSphere.GetValueOrThrow());
-        };
-    
-    public Func<Role, Role> FinalizeSphereAssignments { get; } = 
-        static role => role with
-        {
-            AssignedToSpheres = role.AssignedToSpheres.ToImmutableArray()
-        };
-
-    private (Func<DbDataReader, int> keyGetter,
-        Func<DbDataReader, Role> modelInitializer,
-        Action<Role, DbDataReader> accumulateData,
-        Func<Role, Role> modelFinalizer)
-        RoleMapper(IDomainGlossary glossary)
-    {
-        return (
-            keyGetter: GetRoleKey,
-            modelInitializer: reader => CreateRoleWithoutSphereAssignments(reader, glossary),
-            accumulateData: GetAccumulateSphereAssignments(glossary),
-            modelFinalizer: FinalizeSphereAssignments
-        );
-    }
     
     public async Task<Role?> GetAsync(IRoleInfo role) =>
         (await GetAllAsync())
@@ -113,7 +68,7 @@ public sealed class RolesRepository(
                     var (getKey,
                         initializeModel,
                         accumulateData,
-                        finalizeModel) = RoleMapper(Glossary);
+                        finalizeModel) = mapper.RoleMapper(Glossary);
 
                     var roles = await ExecuteMapperAsync(
                         command, getKey, initializeModel, accumulateData, finalizeModel);
