@@ -27,9 +27,8 @@ public sealed class SphereOfActionDetailsConstitutor
                                                   """;
 
         var sphereName = reader.GetString(reader.GetOrdinal("sphere_name"));
-        ISphereOfActionDetails? details;
 
-        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out _))
+        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out var details))
         {
             var detailsJson = reader.GetString(reader.GetOrdinal("sphere_details"));
         
@@ -48,9 +47,6 @@ public sealed class SphereOfActionDetailsConstitutor
             _detailsBySphereNameCache.TryAdd(sphereName, details);
         }
 
-        if (!_detailsBySphereNameCache.TryGetValue(sphereName, out details))
-            throw new InvalidOperationException($"Failed to add {nameof(ISphereOfActionDetails)} to cache.");
-        
         ISphereOfAction sphere = trade switch
         {
             SanitaryTrade => 

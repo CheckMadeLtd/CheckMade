@@ -14,7 +14,15 @@ namespace CheckMade.Services.Persistence.Constitutors;
 
 public sealed class InputsConstitutor
 {
-    private readonly ConcurrentDictionary<HistoricInputIdentifier, Input> _inputsByIdCache = new();
+    /* IMPORTANT: We are caching only InputDetails, not the entire Input object, because inputs can get updated
+     * during a single request AFTER they have been constituted here (e.g. via UpdateGuid()).
+     * This leads to an outdated input objects and Exceptions, as debugged on 23/06/2025.
+     * While this means occasionally redundant constitutions of Input objects, the performance bottleneck are the
+     * Json deserializations, so having those cached still solves the performance problem.
+     *
+     * ASSUMPTION: Other than e.g. EntityGuid, the InputDetails never get updated once they are saved in the db.  
+    */ 
+    private readonly ConcurrentDictionary<HistoricInputIdentifier, InputDetails> _detailsByInputIdCache = new();
     
     internal Input ConstituteInput(
         DbDataReader reader, 
@@ -24,43 +32,39 @@ public sealed class InputsConstitutor
     {
         var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
-        var identifier = new HistoricInputIdentifier(messageId, timeStamp);
-        Input? input;
+        UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
+        ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
+        var interactionMode = EnsureEnumValidityOrThrow(
+            (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
+        var inputType = EnsureEnumValidityOrThrow(
+            (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+        var resultantWorkflow = GetWorkflowInfo();
+        var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
+            ? Option<Guid>.None()
+            : reader.GetGuid(reader.GetOrdinal("input_guid"));
         
-        if (!_inputsByIdCache.TryGetValue(identifier, out _))
-        {
-            UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
-            ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
-            var interactionMode = EnsureEnumValidityOrThrow(
-                (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
-            var inputType = EnsureEnumValidityOrThrow(
-                (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
-            var resultantWorkflow = GetWorkflowInfo();
-            var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
-                ? Option<Guid>.None()
-                : reader.GetGuid(reader.GetOrdinal("input_guid"));
-            var inputDetails = reader.GetString(reader.GetOrdinal("input_details"));
-            
-            input = new Input(
-                timeStamp,
-                messageId,
-                new Agent(userId, chatId, interactionMode),
-                inputType,
-                roleInfo,
-                liveEventInfo,
-                resultantWorkflow,
-                guid,
-                Option<string>.None(), 
-                JsonHelper.DeserializeFromJson<InputDetails>(inputDetails, glossary)
-                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
+        var identifier = new HistoricInputIdentifier(messageId, timeStamp);
 
-            _inputsByIdCache.TryAdd(identifier, input);
+        if (!_detailsByInputIdCache.TryGetValue(identifier, out var details))
+        {
+            var rawDetails = reader.GetString(reader.GetOrdinal("input_details"));
+            details = JsonHelper.DeserializeFromJson<InputDetails>(rawDetails, glossary) 
+                      ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!");
+
+            _detailsByInputIdCache.TryAdd(identifier, details);
         }
         
-        if (!_inputsByIdCache.TryGetValue(identifier, out input))
-            throw new InvalidOperationException($"Failed to add {nameof(Input)} to cache.");
-        
-        return input;
+        return new Input(
+            timeStamp,
+            messageId,
+            new Agent(userId, chatId, interactionMode),
+            inputType,
+            roleInfo,
+            liveEventInfo,
+            resultantWorkflow,
+            guid,
+            Option<string>.None(), 
+            details);
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {
