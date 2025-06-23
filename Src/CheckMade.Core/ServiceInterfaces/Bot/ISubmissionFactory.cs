@@ -1,4 +1,4 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.Submissions;
 
 namespace CheckMade.Core.ServiceInterfaces.Bot;

@@ -1,7 +1,7 @@
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;

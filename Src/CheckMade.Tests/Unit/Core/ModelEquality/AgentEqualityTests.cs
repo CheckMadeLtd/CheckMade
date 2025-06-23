@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 
 namespace CheckMade.Tests.Unit.Core.ModelEquality;
 

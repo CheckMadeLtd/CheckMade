@@ -1,12 +1,12 @@
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Global.UserAuth.States;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using General.Utils.FpExtensions.Monads;
 using CheckMade.Services.Persistence;
 using General.Utils.UiTranslation;
@@ -49,7 +49,8 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             List<Input> expectedRetrieval =
             [ 
-                new(input.TimeStamp,
+                new(input.Id,
+                    input.TimeStamp,
                     input.MessageId,
                     input.Agent, 
                     input.InputType, 
@@ -67,6 +68,7 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.Agent))
+                .Select(static i => i with { Id = null }) // ignore actual Id from the database
                 .OrderByDescending(static x => x.TimeStamp)
                 .ToArray();
             

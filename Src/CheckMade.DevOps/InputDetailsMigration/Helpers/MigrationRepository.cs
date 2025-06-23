@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using System.Data.Common;
-using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;
@@ -35,17 +33,12 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
 
         static async Task<OldFormatDetails> CreateOldFormatDetailsInstanceAsync(DbDataReader reader)
         {
-            var identifier = await reader.Fork(
-                static async r => await r.GetFieldValueAsync<int>(r.GetOrdinal("message_id")),
-                static async r => await r.GetFieldValueAsync<DateTimeOffset>(r.GetOrdinal("date")),
-                static async (historicMessageId, historicTimeStamp) => 
-                    new HistoricInputIdentifier(new MessageId(await historicMessageId), await historicTimeStamp)
-            );
+            var id = await reader.GetFieldValueAsync<int>(reader.GetOrdinal("id"));
         
             var actualOldFormatDetails = JObject.Parse(
                 await reader.GetFieldValueAsync<string>(reader.GetOrdinal("details")));
         
-            return new OldFormatDetails(identifier, actualOldFormatDetails);
+            return new OldFormatDetails(id, actualOldFormatDetails);
         }
     }
 
@@ -54,13 +47,11 @@ public sealed class MigrationRepository(IDbExecutionHelper dbHelper)
         var commands = allNewFormatDetails.Select(static newDetails =>
         {
             const string commandTextPrefix = "UPDATE inputs SET details = @inputDetails " +
-                                             "WHERE user_id = @userId " +
-                                             "AND date = @timeStamp";
+                                             "WHERE id = @id";
 
             var command = new NpgsqlCommand(commandTextPrefix);
             
-            command.Parameters.AddWithValue("@userId", newDetails.Identifier.HistoricMessageId.Id);
-            command.Parameters.AddWithValue("@timeStamp", newDetails.Identifier.HistoricTimeStamp);
+            command.Parameters.AddWithValue("@id", newDetails.Id);
             
             command.Parameters.Add(new NpgsqlParameter($"@inputDetails", NpgsqlDbType.Jsonb)
             {

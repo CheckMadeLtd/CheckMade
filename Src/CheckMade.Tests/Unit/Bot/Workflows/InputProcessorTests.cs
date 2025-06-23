@@ -1,11 +1,11 @@
 using CheckMade.Core.Model.Bot.Categories;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
 using CheckMade.Bot.Workflows.Global.UserAuth.States;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using General.Utils.FpExtensions.Monads;

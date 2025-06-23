@@ -2,8 +2,8 @@ using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
@@ -46,6 +46,7 @@ public sealed class InputsRepository(
                                            dws.resultant_workflow AS input_workflow,
                                            dws.in_state AS input_wf_state,
 
+                                           inp.id AS input_id,
                                            inp.date AS input_date,
                                            inp.message_id AS input_message_id,
                                            inp.user_id AS input_user_id, 
@@ -94,6 +95,9 @@ public sealed class InputsRepository(
                                      @guid)
                                      """;
 
+        // The 'inserted_input's below are expected to not be recognised, because they are temp. references defined
+        // in the CTE statement below, in the const 'cteAddInputWith', so the IDE can't know about them. 
+        
         const string derivedWorkflowInfoQuery = $"""
                                                  INSERT INTO derived_workflow_states
                                                  (inputs_id,

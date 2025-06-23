@@ -1,7 +1,6 @@
 using System.Text;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Common.LiveEvents.SphereOfActionDetails;
 using CheckMade.Core.Model.Common.Submissions;
 using CheckMade.Core.Model.Common.Submissions.SubmissionTypes;
@@ -10,6 +9,7 @@ using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
 using CheckMade.Bot.Workflows.Utils;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Bot.Workflows.Ops.NewSubmission.NewSubmissionUtils;
 

@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence.JsonHelpers;
 using CheckMade.Bot.Workflows;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Migrators;
@@ -26,7 +26,7 @@ internal class Mig0003(MigrationRepository migRepo) : MigratorBase(migRepo)
                 oldDetails.OldFormatDetailsJson.ToString(), glossary, true);
 
             var newDetails = new NewFormatDetails(
-                oldDetails.Identifier,
+                oldDetails.Id,
                 JsonHelper.SerializeToJson(detailsWithoutTlgUri, glossary));
             
             newFormatDetailsBuilder.Add(newDetails);

@@ -1,11 +1,11 @@
 using CheckMade.Core.Model.Bot.Categories;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.Logout;
 using CheckMade.Bot.Workflows.Global.UserAuth;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
 using CheckMade.Bot.Workflows.Utils;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Core.Model.Bot.Categories.InteractionMode;
 using static CheckMade.Core.Model.Bot.Categories.InputType;

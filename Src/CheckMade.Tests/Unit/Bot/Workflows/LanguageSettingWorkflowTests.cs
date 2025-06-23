@@ -1,9 +1,9 @@
 using CheckMade.Core.Model.Bot.Categories;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using CheckMade.Bot.Workflows.Global.LanguageSetting;
 using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using General.Utils.UiTranslation;

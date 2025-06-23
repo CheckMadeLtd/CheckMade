@@ -1,6 +1,6 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 
-namespace CheckMade.Core.Model.Bot.DTOs.Output;
+namespace CheckMade.Core.Model.Bot.DTOs.Outputs;
 
 public readonly struct ActualSendOutParams
 {

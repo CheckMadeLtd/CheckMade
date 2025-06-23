@@ -4,7 +4,7 @@ using CheckMade.Core.Model.Common.GIS;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 
-namespace CheckMade.Core.Model.Bot.DTOs.Output;
+namespace CheckMade.Core.Model.Bot.DTOs.Outputs;
 
 public sealed record Output
 {

@@ -1,6 +1,6 @@
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;
@@ -74,6 +74,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new Input(
+            null,
             dateTime ?? DateTimeOffset.UtcNow, 
             1, 
             new Agent(userId, chatId, Operations),
@@ -92,6 +93,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
         TestOriginatorRoleSetting roleSetting)
     {
         return new Input(
+            null,
             DateTimeOffset.UtcNow,
             1,
             new Agent(Default_UserAndChatId_PrivateBotChat,
@@ -116,6 +118,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
         ResultantWorkflowState? resultantWorkflowState)
     {
         return new Input(
+            null,
             dateTime ?? DateTimeOffset.UtcNow, 
             1,
             new Agent(userId, chatId, Operations),
@@ -140,6 +143,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
             GetOriginatorRoleAndLiveEventFromArgs(roleSetting, roleSpecified);
         
         return new Input(
+            null,
             DateTimeOffset.UtcNow,
             messageId,
             new Agent(userId, chatId, interactionMode),
@@ -160,6 +164,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
         ResultantWorkflowState? resultantWorkflowState)
     {
         return new Input(
+            null,
             dateTime ?? DateTimeOffset.UtcNow,
             messageId,
             new Agent(userId, chatId, Operations),
@@ -180,6 +185,7 @@ internal sealed class InputGenerator(Randomizer randomizer) : IInputGenerator
         ResultantWorkflowState? resultantWorkflowState)
     {
         return new Input(
+            null,
             dateTime ?? DateTimeOffset.UtcNow,
             1,
             new Agent(userId, chatId, Operations),

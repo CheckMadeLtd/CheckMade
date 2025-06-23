@@ -1,5 +1,5 @@
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.LiveEvents;
 
 namespace CheckMade.Core.ServiceInterfaces.Persistence.Bot;
