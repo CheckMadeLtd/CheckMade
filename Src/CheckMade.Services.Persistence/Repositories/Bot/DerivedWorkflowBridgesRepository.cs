@@ -42,6 +42,7 @@ public sealed class DerivedWorkflowBridgesRepository(
                                         dws.resultant_workflow AS input_workflow,
                                         dws.in_state AS input_wf_state,
 
+                                        inp.id AS input_id,
                                         inp.date AS input_date,
                                         inp.message_id AS input_message_id,
                                         inp.user_id AS input_user_id, 

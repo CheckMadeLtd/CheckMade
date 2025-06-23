@@ -254,8 +254,14 @@ public sealed class InputsRepository(
     {
         const string rawQuery = """
                                 UPDATE inputs 
+
                                 SET entity_guid = @newGuid
-                                WHERE id = @id
+
+                                WHERE date = @timeStamp
+                                AND message_id = @messageId
+                                AND user_id = @userId 
+                                AND chat_id = @chatId
+                                AND interaction_mode = @mode
                                 """;
 
         var commands = inputs.Select(input =>
@@ -263,7 +269,11 @@ public sealed class InputsRepository(
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newGuid"] = newGuid,
-                ["@id"] = input.Id,
+                ["@timeStamp"] = input.TimeStamp,
+                ["@messageId"] = input.MessageId.Id,
+                ["@userId"] = input.Agent.UserId.Id,
+                ["@chatId"] = input.Agent.ChatId.Id,
+                ["@mode"] = (int)input.Agent.Mode
             };
 
             return GenerateCommand(rawQuery, normalParameters);

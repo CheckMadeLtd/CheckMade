@@ -22,7 +22,7 @@ public sealed class InputsConstitutor
      *
      * ASSUMPTION: Other than e.g. EntityGuid, the InputDetails never get updated once they are saved in the db.  
     */ 
-    private readonly ConcurrentDictionary<HistoricInputIdentifier, InputDetails> _detailsByInputIdCache = new();
+    private readonly ConcurrentDictionary<int, InputDetails> _detailsByInputIdCache = new();
     
     internal Input ConstituteInput(
         DbDataReader reader, 
@@ -44,15 +44,13 @@ public sealed class InputsConstitutor
             ? Option<Guid>.None()
             : reader.GetGuid(reader.GetOrdinal("input_guid"));
         
-        var identifier = new HistoricInputIdentifier(messageId, timeStamp);
-
-        if (!_detailsByInputIdCache.TryGetValue(identifier, out var details))
+        if (!_detailsByInputIdCache.TryGetValue(id, out var details))
         {
             var rawDetails = reader.GetString(reader.GetOrdinal("input_details"));
             details = JsonHelper.DeserializeFromJson<InputDetails>(rawDetails, glossary) 
                       ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!");
 
-            _detailsByInputIdCache.TryAdd(identifier, details);
+            _detailsByInputIdCache.TryAdd(id, details);
         }
         
         return new Input(
