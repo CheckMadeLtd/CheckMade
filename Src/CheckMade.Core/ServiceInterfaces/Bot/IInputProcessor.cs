@@ -1,5 +1,5 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 

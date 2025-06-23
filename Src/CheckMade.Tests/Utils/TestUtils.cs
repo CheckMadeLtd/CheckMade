@@ -1,4 +1,4 @@
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;

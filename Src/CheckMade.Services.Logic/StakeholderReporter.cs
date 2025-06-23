@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Core.Model.Common.Actors.RoleTypes;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.Model.Common.Submissions;

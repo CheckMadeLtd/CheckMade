@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
 using CheckMade.Bot.Workflows.Utils;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Bot.Workflows.Ops.NewSubmission.NewSubmissionUtils;
 // ReSharper disable UseCollectionExpression

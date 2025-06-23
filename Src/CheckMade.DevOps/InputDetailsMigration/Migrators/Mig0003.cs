@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Services.Persistence.JsonHelpers;
 using CheckMade.Bot.Workflows;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.DevOps.InputDetailsMigration.Helpers;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Migrators;

@@ -1,6 +1,6 @@
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;

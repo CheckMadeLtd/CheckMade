@@ -1,4 +1,4 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using Newtonsoft.Json.Linq;
 
 namespace CheckMade.DevOps.InputDetailsMigration.Helpers;

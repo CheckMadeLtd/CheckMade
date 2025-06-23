@@ -1,10 +1,10 @@
 using CheckMade.Core.Model.Bot.Categories;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Common.GIS;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Bot.Workflows.Ops.NewSubmission;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using General.Utils.FpExtensions.Monads;

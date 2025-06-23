@@ -1,6 +1,5 @@
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;
@@ -10,6 +9,7 @@ using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
 using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Telegram.UpdateHandling;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.Validators;
 using Microsoft.Extensions.Logging;

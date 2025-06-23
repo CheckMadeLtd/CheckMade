@@ -1,6 +1,6 @@
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;

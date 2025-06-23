@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Services.Persistence;
 using Newtonsoft.Json.Linq;
 using Npgsql;

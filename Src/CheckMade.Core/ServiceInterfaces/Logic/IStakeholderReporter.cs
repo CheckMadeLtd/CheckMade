@@ -1,5 +1,5 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
-using CheckMade.Core.Model.Bot.DTOs.Output;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Core.Model.Common.Trades;
 
 namespace CheckMade.Core.ServiceInterfaces.Logic;

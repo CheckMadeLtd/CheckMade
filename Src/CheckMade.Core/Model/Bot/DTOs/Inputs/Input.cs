@@ -3,7 +3,7 @@ using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.LiveEvents;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Core.Model.Bot.DTOs.Input;
+namespace CheckMade.Core.Model.Bot.DTOs.Inputs;
 
 public sealed record Input(
     DateTimeOffset TimeStamp,

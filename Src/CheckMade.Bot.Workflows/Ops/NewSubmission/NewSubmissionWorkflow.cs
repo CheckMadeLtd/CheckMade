@@ -1,4 +1,3 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
@@ -6,6 +5,7 @@ using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
 using CheckMade.Bot.Workflows.Utils;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
 using static CheckMade.Bot.Workflows.Ops.NewSubmission.NewSubmissionUtils;
 

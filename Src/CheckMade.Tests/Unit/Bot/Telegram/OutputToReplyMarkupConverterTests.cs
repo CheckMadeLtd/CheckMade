@@ -1,13 +1,13 @@
 using System.ComponentModel;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
-using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.LiveEvents.SphereOfActionDetails;
 using CheckMade.Core.Model.Common.Submissions.SubmissionTypes;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Telegram.Conversion;
+using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using CheckMade.Tests.Startup;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;

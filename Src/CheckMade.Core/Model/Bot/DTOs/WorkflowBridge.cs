@@ -1,4 +1,4 @@
-using CheckMade.Core.Model.Bot.DTOs.Input;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 
 namespace CheckMade.Core.Model.Bot.DTOs;
 
@@ -9,6 +9,6 @@ namespace CheckMade.Core.Model.Bot.DTOs;
 /// accepting it as a task.  
 /// </summary>
 public sealed record WorkflowBridge(
-    Input.Input SourceInput,
+    Input SourceInput,
     ChatId DestinationChatId,
     MessageId DestinationMessageId);
