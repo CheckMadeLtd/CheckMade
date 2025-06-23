@@ -68,6 +68,7 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
             
             var retrievedInputs = 
                 (await inputRepo.GetAllInteractiveAsync(input.Agent))
+                .Select(static i => i with { Id = null }) // ignore actual Id from the database
                 .OrderByDescending(static x => x.TimeStamp)
                 .ToArray();
             
