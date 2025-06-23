@@ -5,7 +5,7 @@ using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
-using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
+using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 

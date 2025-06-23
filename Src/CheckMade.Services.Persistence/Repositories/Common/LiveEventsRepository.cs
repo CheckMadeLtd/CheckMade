@@ -4,15 +4,16 @@ using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
+using CheckMade.Services.Persistence.Constitutors;
 using General.Utils.FpExtensions.Monads;
-using static CheckMade.Services.Persistence.Repositories.DomainModelConstitutors;
+using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Common;
 
 public sealed class LiveEventsRepository(
     IDbExecutionHelper dbHelper,
     IDomainGlossary glossary,
-    DomainModelConstitutors constitutors) 
+    SphereOfActionDetailsConstitutor constitutor) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -39,7 +40,7 @@ public sealed class LiveEventsRepository(
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
-                var sphereOfAction = constitutors.ConstituteSphereOfAction(reader, glossary);
+                var sphereOfAction = constitutor.ConstituteSphereOfAction(reader, glossary);
     
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());

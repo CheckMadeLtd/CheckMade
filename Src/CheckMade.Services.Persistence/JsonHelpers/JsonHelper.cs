@@ -54,10 +54,13 @@ public static class JsonHelper
         validateSw.Stop();
     
         totalSw.Stop();
-    
-        if (totalSw.ElapsedMilliseconds > 5)
+
+        const int deserializeWarningThreshold = 10;
+        
+        if (totalSw.ElapsedMilliseconds > deserializeWarningThreshold)
         {
             Console.WriteLine($"[PERF-DEBUG] for {nameof(DeserializeFromJson)} " +
+                              $"(threshold: {deserializeWarningThreshold}) " +
                               $"Settings: {settingsSw.ElapsedMilliseconds}ms, " +
                               $"Deserialize: {deserializeSw.ElapsedMilliseconds}ms, " +
                               $"Validate: {validateSw.ElapsedMilliseconds}ms, " +
@@ -76,18 +79,10 @@ public static class JsonHelper
     /// </summary>
     private static T ValidateNoNullProperties<T>(T obj)
     {
-        var reflectionSw = System.Diagnostics.Stopwatch.StartNew();
         var nullProperties = typeof(T).GetProperties()
             .Where(p => p.GetValue(obj) == null)
             .Select(static p => p.Name)
             .ToList();
-        reflectionSw.Stop();
-
-        if (reflectionSw.ElapsedMilliseconds > 5)
-        {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(ValidateNoNullProperties)} " +
-                              $"Reflection: {reflectionSw.ElapsedMilliseconds}ms for {typeof(T).Name}");
-        }
 
         if (nullProperties.Count != 0)
         {

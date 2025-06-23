@@ -6,8 +6,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <AvaloniaVersion>11.2.5</AvaloniaVersion>
-    <TelegramBotVersion>22.4.4</TelegramBotVersion>
+    <AvaloniaVersion>11.3.1</AvaloniaVersion>
+    <TelegramBotVersion>22.5.1</TelegramBotVersion>
 
     <!-- This property, when true, enforces usage of packages.lock.json files upon 'dotnet restore'
     to enforce consistency as part of our CI/CD workflow. 
