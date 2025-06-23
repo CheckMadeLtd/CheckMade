@@ -18,7 +18,7 @@ public abstract class BaseRepository(IDbExecutionHelper dbHelper, IDomainGlossar
 {
     private readonly Dictionary<ProcessingParts, int> _dbWarningThresholdsByProcessingPart = new()
     {
-        [PureSqlOperation] = 75,
+        [PureSqlOperation] = 50,
         [ApplicationProcessing] = 250
     };
     
