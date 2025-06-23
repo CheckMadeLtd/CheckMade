@@ -9,17 +9,20 @@ using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
 
-public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class DerivedWorkflowBridgesRepository(
+    IDbExecutionHelper dbHelper, 
+    IDomainGlossary glossary,
+    IInputsRepository inputRepo) 
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     
     private Option<IReadOnlyCollection<WorkflowBridge>> _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
     
-    private static readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> WorkflowBridgeMapper =
-        static (reader, glossary) =>
+    private readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> _workflowBridgeMapper =
+        (reader, glossary) =>
         {
-            var sourceInput = InputsRepository.InputMapper(reader, glossary);
+            var sourceInput = inputRepo.InputMapper(reader, glossary);
 
             return ConstituteWorkflowBridge(reader, sourceInput);
         };
@@ -71,7 +74,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
         var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
         return (await 
-                ExecuteMapperAsync(command, WorkflowBridgeMapper))
+                ExecuteMapperAsync(command, _workflowBridgeMapper))
             .FirstOrDefault();
     }
     
@@ -94,7 +97,7 @@ public sealed class DerivedWorkflowBridgesRepository(IDbExecutionHelper dbHelper
                     
                     var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
 
-                    var bridges = await ExecuteMapperAsync(command, WorkflowBridgeMapper);
+                    var bridges = await ExecuteMapperAsync(command, _workflowBridgeMapper);
                     
                     _cache = Option<IReadOnlyCollection<WorkflowBridge>>.Some(bridges);
                 }

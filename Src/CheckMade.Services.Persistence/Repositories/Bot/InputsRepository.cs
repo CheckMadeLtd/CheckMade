@@ -7,6 +7,7 @@ using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
+using CheckMade.Services.Persistence.Constitutors;
 using CheckMade.Services.Persistence.JsonHelpers;
 using General.Utils.FpExtensions.Monads;
 using Npgsql;
@@ -15,16 +16,19 @@ using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
 
-public sealed class InputsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
+public sealed class InputsRepository(
+    IDbExecutionHelper dbHelper, 
+    IDomainGlossary glossary,
+    InputsConstitutor constitutor) 
     : BaseRepository(dbHelper, glossary), IInputsRepository
 {
-    internal static readonly Func<DbDataReader, IDomainGlossary, Input> InputMapper = 
-        static (reader, glossary) =>
+    public Func<DbDataReader, IDomainGlossary, Input> InputMapper { get; } = 
+        (reader, glossary) =>
         {
             var originatorRoleInfo = ConstituteRoleInfo(reader, glossary);
             var liveEventInfo = ConstituteLiveEventInfo(reader);
         
-            return ConstituteInput(reader, originatorRoleInfo, liveEventInfo, glossary);
+            return constitutor.ConstituteInput(reader, originatorRoleInfo, liveEventInfo, glossary);
         };
     
     private const string GetAllBaseQuery = """

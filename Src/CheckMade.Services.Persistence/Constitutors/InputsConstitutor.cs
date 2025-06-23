@@ -14,7 +14,7 @@ namespace CheckMade.Services.Persistence.Constitutors;
 
 public sealed class InputsConstitutor
 {
-    private readonly ConcurrentDictionary<string, InputDetails> _detailsByInputCache = new();
+    private readonly ConcurrentDictionary<HistoricInputIdentifier, Input> _inputsByIdCache = new();
     
     internal Input ConstituteInput(
         DbDataReader reader, 
@@ -24,30 +24,43 @@ public sealed class InputsConstitutor
     {
         var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
-        UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
-        ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
-        var interactionMode = EnsureEnumValidityOrThrow(
-            (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
-        var inputType = EnsureEnumValidityOrThrow(
-            (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
-        var resultantWorkflow = GetWorkflowInfo();
-        var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
-            ? Option<Guid>.None()
-            : reader.GetGuid(reader.GetOrdinal("input_guid"));
-        var inputDetails = reader.GetString(reader.GetOrdinal("input_details"));
+        var identifier = new HistoricInputIdentifier(messageId, timeStamp);
+        Input? input;
+        
+        if (!_inputsByIdCache.TryGetValue(identifier, out _))
+        {
+            UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
+            ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
+            var interactionMode = EnsureEnumValidityOrThrow(
+                (InteractionMode)reader.GetInt16(reader.GetOrdinal("input_mode")));
+            var inputType = EnsureEnumValidityOrThrow(
+                (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
+            var resultantWorkflow = GetWorkflowInfo();
+            var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
+                ? Option<Guid>.None()
+                : reader.GetGuid(reader.GetOrdinal("input_guid"));
+            var inputDetails = reader.GetString(reader.GetOrdinal("input_details"));
+            
+            input = new Input(
+                timeStamp,
+                messageId,
+                new Agent(userId, chatId, interactionMode),
+                inputType,
+                roleInfo,
+                liveEventInfo,
+                resultantWorkflow,
+                guid,
+                Option<string>.None(), 
+                JsonHelper.DeserializeFromJson<InputDetails>(inputDetails, glossary)
+                ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
 
-        return new Input(
-            timeStamp,
-            messageId,
-            new Agent(userId, chatId, interactionMode),
-            inputType,
-            roleInfo,
-            liveEventInfo,
-            resultantWorkflow,
-            guid,
-            Option<string>.None(), 
-            JsonHelper.DeserializeFromJson<InputDetails>(inputDetails, glossary)
-            ?? throw new InvalidDataException($"Failed to deserialize '{nameof(InputDetails)}'!"));
+            _inputsByIdCache.TryAdd(identifier, input);
+        }
+        
+        if (!_inputsByIdCache.TryGetValue(identifier, out input))
+            throw new InvalidOperationException($"Failed to add {nameof(Input)} to cache.");
+        
+        return input;
 
         Option<ResultantWorkflowState> GetWorkflowInfo()
         {

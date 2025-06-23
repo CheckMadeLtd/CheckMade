@@ -1,7 +1,9 @@
+using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Bot.DTOs.Input;
 using CheckMade.Core.Model.Bot.DTOs.Output;
 using CheckMade.Core.Model.Common.LiveEvents;
+using CheckMade.Core.ServiceInterfaces.Bot;
 using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Core.ServiceInterfaces.Persistence.Bot;
@@ -16,4 +18,6 @@ public interface IInputsRepository
     Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid);
     Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid);
     Task HardDeleteAllAsync(Agent agent);
+    
+    Func<DbDataReader, IDomainGlossary, Input> InputMapper { get; }
 }

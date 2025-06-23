@@ -13,7 +13,7 @@ namespace CheckMade.Services.Persistence.Repositories.Common;
 public sealed class LiveEventsRepository(
     IDbExecutionHelper dbHelper,
     IDomainGlossary glossary,
-    SphereOfActionDetailsConstitutor constitutors) 
+    SphereOfActionDetailsConstitutor constitutor) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
@@ -40,7 +40,7 @@ public sealed class LiveEventsRepository(
                 if (roleInfo.IsSome)
                     ((List<IRoleInfo>)liveEvent.WithRoles).Add(roleInfo.GetValueOrThrow());
 
-                var sphereOfAction = constitutors.ConstituteSphereOfAction(reader, glossary);
+                var sphereOfAction = constitutor.ConstituteSphereOfAction(reader, glossary);
     
                 if (sphereOfAction.IsSome)
                     ((List<ISphereOfAction>)liveEvent.DivIntoSpheres).Add(sphereOfAction.GetValueOrThrow());

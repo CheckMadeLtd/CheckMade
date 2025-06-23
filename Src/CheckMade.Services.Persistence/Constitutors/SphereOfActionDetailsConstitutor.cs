@@ -49,7 +49,7 @@ public sealed class SphereOfActionDetailsConstitutor
         }
 
         if (!_detailsBySphereNameCache.TryGetValue(sphereName, out details))
-            throw new InvalidDataException($"Failed to add {nameof(ISphereOfActionDetails)} to cache.");
+            throw new InvalidOperationException($"Failed to add {nameof(ISphereOfActionDetails)} to cache.");
         
         ISphereOfAction sphere = trade switch
         {
