@@ -25,9 +25,8 @@ public sealed class InputsConstitutor
         var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         var identifier = new HistoricInputIdentifier(messageId, timeStamp);
-        Input? input;
-        
-        if (!_inputsByIdCache.TryGetValue(identifier, out _))
+
+        if (!_inputsByIdCache.TryGetValue(identifier, out var input))
         {
             UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
             ChatId chatId = reader.GetInt64(reader.GetOrdinal("input_chat_id"));
@@ -56,9 +55,6 @@ public sealed class InputsConstitutor
 
             _inputsByIdCache.TryAdd(identifier, input);
         }
-        
-        if (!_inputsByIdCache.TryGetValue(identifier, out input))
-            throw new InvalidOperationException($"Failed to add {nameof(Input)} to cache.");
         
         return input;
 
