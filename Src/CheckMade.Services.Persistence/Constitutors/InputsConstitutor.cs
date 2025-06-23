@@ -30,6 +30,7 @@ public sealed class InputsConstitutor
         Option<ILiveEventInfo> liveEventInfo,
         IDomainGlossary glossary)
     {
+        var id = reader.GetFieldValue<int>(reader.GetOrdinal("input_id"));
         var timeStamp = reader.GetFieldValue<DateTimeOffset>(reader.GetOrdinal("input_date"));
         MessageId messageId = reader.GetInt32(reader.GetOrdinal("input_message_id"));
         UserId userId = reader.GetInt64(reader.GetOrdinal("input_user_id"));
@@ -55,6 +56,7 @@ public sealed class InputsConstitutor
         }
         
         return new Input(
+            id,
             timeStamp,
             messageId,
             new Agent(userId, chatId, interactionMode),

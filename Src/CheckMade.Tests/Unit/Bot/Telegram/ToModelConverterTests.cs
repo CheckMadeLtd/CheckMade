@@ -43,6 +43,7 @@ public sealed class ToModelConverterTests
             Option<ILiveEventInfo>.Some(SanitaryAdmin_DanielEn_X2024.AtLiveEvent); 
         
         var expectedInput = new Input(
+            null,
             update.Message.Date,
             update.Message.MessageId,
             agent,
@@ -92,6 +93,7 @@ public sealed class ToModelConverterTests
         var basics = GetBasicTestingServices(services);
         
         var expectedInput = new Input(
+            null,
             update.Message.Date,
             update.Message.MessageId,
             agent,
@@ -134,6 +136,7 @@ public sealed class ToModelConverterTests
             horizontalAccuracy ?? Option<double>.None());
         
         var expectedInput = new Input(
+            null,
             locationUpdate.Message.Date,
             locationUpdate.Message.MessageId,
             PrivateBotChat_Operations,
@@ -173,6 +176,7 @@ public sealed class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedInput = new Input(
+            null,
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Operations,
@@ -212,6 +216,7 @@ public sealed class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedInput = new Input(
+            null,
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Communications,
@@ -251,6 +256,7 @@ public sealed class ToModelConverterTests
         var commandUpdate = basics.updateGenerator.GetValidTelegramBotCommandMessage(commandText);
     
         var expectedInput = new Input(
+            null,
             commandUpdate.Message.Date,
             commandUpdate.Message.MessageId,
             PrivateBotChat_Notifications,
@@ -289,6 +295,7 @@ public sealed class ToModelConverterTests
         var controlPromptEnumCode = (long?)long.Parse(callbackQuery.Update.CallbackQuery!.Data!);
     
         var expectedInput = new Input(
+            null,
             callbackQuery.Message.Date,
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
@@ -324,6 +331,7 @@ public sealed class ToModelConverterTests
             basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedInput = new Input(
+            null,
             callbackQuery.Message.Date,
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,

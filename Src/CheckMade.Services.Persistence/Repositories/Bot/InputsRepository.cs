@@ -46,6 +46,7 @@ public sealed class InputsRepository(
                                            dws.resultant_workflow AS input_workflow,
                                            dws.in_state AS input_wf_state,
 
+                                           inp.id AS input_id,
                                            inp.date AS input_date,
                                            inp.message_id AS input_message_id,
                                            inp.user_id AS input_user_id, 
@@ -94,6 +95,9 @@ public sealed class InputsRepository(
                                      @guid)
                                      """;
 
+        // The 'inserted_input's below are expected to not be recognised, because they are temp. references defined
+        // in the CTE statement below, in the const 'cteAddInputWith', so the IDE can't know about them. 
+        
         const string derivedWorkflowInfoQuery = $"""
                                                  INSERT INTO derived_workflow_states
                                                  (inputs_id,
@@ -250,14 +254,8 @@ public sealed class InputsRepository(
     {
         const string rawQuery = """
                                 UPDATE inputs 
-
                                 SET entity_guid = @newGuid
-
-                                WHERE date = @timeStamp
-                                AND message_id = @messageId
-                                AND user_id = @userId 
-                                AND chat_id = @chatId
-                                AND interaction_mode = @mode
+                                WHERE id = @id
                                 """;
 
         var commands = inputs.Select(input =>
@@ -265,11 +263,7 @@ public sealed class InputsRepository(
             var normalParameters = new Dictionary<string, object>
             {
                 ["@newGuid"] = newGuid,
-                ["@timeStamp"] = input.TimeStamp,
-                ["@messageId"] = input.MessageId.Id,
-                ["@userId"] = input.Agent.UserId.Id,
-                ["@chatId"] = input.Agent.ChatId.Id,
-                ["@mode"] = (int)input.Agent.Mode
+                ["@id"] = input.Id,
             };
 
             return GenerateCommand(rawQuery, normalParameters);

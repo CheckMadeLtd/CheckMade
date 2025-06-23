@@ -49,7 +49,8 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
         {
             List<Input> expectedRetrieval =
             [ 
-                new(input.TimeStamp,
+                new(input.Id,
+                    input.TimeStamp,
                     input.MessageId,
                     input.Agent, 
                     input.InputType, 

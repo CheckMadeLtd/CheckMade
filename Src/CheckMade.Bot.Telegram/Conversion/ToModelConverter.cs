@@ -270,6 +270,7 @@ public sealed class ToModelConverter(
             : update.Message.Caption;
         
         return new Input(
+            null, // db will set it later
             update.Message.Date,
             update.Message.MessageId,
             new Agent(userId, chatId, interactionMode), 

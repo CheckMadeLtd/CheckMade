@@ -6,6 +6,7 @@ using General.Utils.FpExtensions.Monads;
 namespace CheckMade.Core.Model.Bot.DTOs.Inputs;
 
 public sealed record Input(
+    int? Id,
     DateTimeOffset TimeStamp,
     MessageId MessageId, 
     Agent Agent,
