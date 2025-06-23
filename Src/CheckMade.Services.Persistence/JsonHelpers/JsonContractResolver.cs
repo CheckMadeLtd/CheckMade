@@ -5,7 +5,11 @@ using Newtonsoft.Json.Serialization;
 
 namespace CheckMade.Services.Persistence.JsonHelpers;
 
-internal sealed class OptionContractResolver(IDomainGlossary glossary) : DefaultContractResolver
+/// <summary>
+/// Custom contract resolver that provides specialized JSON conversion for domain-specific objects.
+/// Automatically assigns appropriate converters based on the object type being serialized or deserialized.
+/// </summary>
+internal sealed class JsonContractResolver(IDomainGlossary glossary) : DefaultContractResolver
 {
     protected override JsonContract CreateContract(Type objectType)
     {
@@ -15,8 +19,8 @@ internal sealed class OptionContractResolver(IDomainGlossary glossary) : Default
             var underlyingType = objectType.GetGenericArguments().First();
             // Creates a standard contract for the objectType 
             var contract = CreateObjectContract(objectType);
-            // Becomes e.g. typeof(OptionJsonConverter<string>) when underlyingType = 'string' 
-            var converterType = typeof(OptionJsonConverter<>).MakeGenericType(underlyingType);
+            // Becomes e.g. typeof(CustomJsonConverter<string>) when underlyingType = 'string' 
+            var converterType = typeof(CustomJsonConverter<>).MakeGenericType(underlyingType);
             
             contract.Converter = (JsonConverter)Activator.CreateInstance(converterType, glossary)!;
 

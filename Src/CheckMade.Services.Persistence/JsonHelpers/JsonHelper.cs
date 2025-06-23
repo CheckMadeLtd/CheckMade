@@ -9,7 +9,7 @@ public static class JsonHelper
     {
         var jsonSettings = new JsonSerializerSettings
         {
-            ContractResolver = new OptionContractResolver(glossary),
+            ContractResolver = new JsonContractResolver(glossary),
             Converters = new List<JsonConverter>
             {
                 new DomainTermJsonConverter(glossary)
@@ -34,7 +34,7 @@ public static class JsonHelper
                 ? MissingMemberHandling.Ignore 
                 : MissingMemberHandling.Error,
         
-            ContractResolver = new OptionContractResolver(glossary),
+            ContractResolver = new JsonContractResolver(glossary),
             Converters = new List<JsonConverter>
             {
                 new DomainTermJsonConverter(glossary)

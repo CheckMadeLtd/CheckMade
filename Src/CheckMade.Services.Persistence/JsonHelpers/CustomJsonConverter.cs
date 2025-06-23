@@ -8,7 +8,11 @@ using Newtonsoft.Json.Linq;
 
 namespace CheckMade.Services.Persistence.JsonHelpers;
 
-internal sealed class OptionJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
+/// <summary>
+/// Handles JSON serialization and deserialization for strongly-typed custom domain objects like DomainTerm and Geo,
+/// using glossary lookups and custom reconstruction logic.
+/// </summary>
+internal sealed class CustomJsonConverter<T>(IDomainGlossary glossary) : JsonConverter<Option<T>>
 {
     public override void WriteJson(JsonWriter writer, Option<T>? value, JsonSerializer serializer)
     {
