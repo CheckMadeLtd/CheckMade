@@ -115,7 +115,7 @@ public sealed record SubmissionFactory<T>(
 
             return uniqueGuids.Count switch
             {
-                0 => throw new InvalidOperationException("No Guid found in provided inputs, can't constitute entity."),
+                0 => throw new InvalidOperationException("No Guid found in provided inputs, can't constitute submission."),
                 > 1 => throw new InvalidOperationException($"Found {uniqueGuids.Count} Guids, expected 1."),
                 _ => uniqueGuids.First()
             };
