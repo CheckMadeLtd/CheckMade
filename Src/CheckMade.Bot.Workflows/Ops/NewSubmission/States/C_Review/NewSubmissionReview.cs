@@ -5,7 +5,6 @@ using CheckMade.Core.Model.Common.Submissions;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Logic;
-using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Bot.Workflows.Ops.NewSubmission.States.D_Terminators;
 using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Core.Model.Bot.DTOs.Inputs;
@@ -23,13 +22,10 @@ public sealed record NewSubmissionReview<T>(
     IGeneralWorkflowUtils WorkflowUtils,
     IStateMediator Mediator,
     ISubmissionFactory<T> Factory,
-    IInputsRepository InputsRepo,
     IStakeholderReporter<T> Reporter,
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionReview<T> where T : ITrade, new()
 {
-    private Guid _lastGuidCache = Guid.Empty;
-    
     public async Task<IReadOnlyCollection<Output>> GetPromptAsync(
         Input currentInput, 
         Option<MessageId> inPlaceUpdateMessageId,
@@ -37,12 +33,8 @@ public sealed record NewSubmissionReview<T>(
     {
         var interactiveHistory =
             await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
-        await InputsRepo
-            .UpdateGuid(interactiveHistory, Guid.NewGuid());
-        var updatedHistoryWithGuid = 
-            await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
         
-        var submission = await Factory.CreateAsync(updatedHistoryWithGuid);
+        var submission = await Factory.CreateAsync(interactiveHistory);
         var summary = submission.GetSummary();
 
         List<Output> outputs =
@@ -89,8 +81,7 @@ public sealed record NewSubmissionReview<T>(
                     },
                     await GetStakeholderNotificationsAsync(),
                     Mediator.GetTerminator(typeof(INewSubmissionSucceeded<T>)),
-                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent),
-                    entityGuid: await GetLastGuidAsync()),
+                    promptTransition: new PromptTransition(currentInput.MessageId, MsgIdCache, currentInput.Agent)),
             
             (long)ControlPrompts.Cancel => 
                 await WorkflowResponse.CreateFromNextStateAsync(
@@ -107,7 +98,6 @@ public sealed record NewSubmissionReview<T>(
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(
                     currentInput with
                     {
-                        EntityGuid = await GetLastGuidAsync(),
                         ResultantState = new ResultantWorkflowState(
                             Glossary.GetId(typeof(NewSubmissionWorkflow)),
                             Glossary.GetId(typeof(INewSubmissionSucceeded<T>)))
@@ -121,22 +111,6 @@ public sealed record NewSubmissionReview<T>(
             return await Reporter.GetNewSubmissionNotificationsAsync(
                 historyWithUpdatedCurrentInput, 
                 currentSubmissionTypeName);
-        }
-        
-        async Task<Guid> GetLastGuidAsync()
-        {
-            if (_lastGuidCache == Guid.Empty)
-            {
-                var interactiveHistory =
-                    await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
-            
-                _lastGuidCache = interactiveHistory
-                    .Select(static i => i.EntityGuid)
-                    .Last(static g => g.IsSome)
-                    .GetValueOrThrow();
-            }
-
-            return _lastGuidCache;
         }
     }
 }

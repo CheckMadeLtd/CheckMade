@@ -14,6 +14,6 @@ public sealed record Input(
     Option<IRoleInfo> OriginatorRole,
     Option<ILiveEventInfo> LiveEventContext,
     Option<ResultantWorkflowState> ResultantState,
-    Option<Guid> EntityGuid,
+    Option<Guid> WorkflowGuid,
     Option<string> CallbackQueryId,
     InputDetails Details);

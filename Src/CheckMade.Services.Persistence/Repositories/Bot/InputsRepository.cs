@@ -54,7 +54,7 @@ public sealed class InputsRepository(
                                            inp.interaction_mode AS input_mode, 
                                            inp.input_type AS input_type,
                                            inp.details AS input_details,
-                                           inp.entity_guid AS input_guid
+                                           inp.workflow_guid AS input_wfGuid
                                                
                                            FROM inputs inp 
                                            LEFT JOIN roles r on inp.role_id = r.id 
@@ -64,10 +64,8 @@ public sealed class InputsRepository(
 
     private const string OrderByClause = "ORDER BY inp.id";
     
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
-    private Dictionary<Agent, List<Input>> _cacheInputsByAgent = new();
-    private Dictionary<ILiveEventInfo, List<Input>> _cacheInputsByLiveEvent = new();
+    private static readonly object CacheLock = new();
+    private static readonly Dictionary<Agent, List<Input>> CacheInputsByAgent = new();
 
     public async Task AddAsync(
         Input input,
@@ -86,7 +84,7 @@ public sealed class InputsRepository(
                                      input_type, 
                                      role_id, 
                                      live_event_id,
-                                     entity_guid) 
+                                     workflow_guid) 
 
                                      VALUES (@timeStamp, @messageId, @userId, @chatId, @messageDetails, 
                                      @lastDataMig, @interactionMode, @inputType, 
@@ -152,7 +150,7 @@ public sealed class InputsRepository(
             ["@workflowState"] = input.ResultantState.Match<object>(  
                 static w => w.InStateId,  
                 static () => DBNull.Value),
-            ["@guid"] = input.EntityGuid.Match<object>(
+            ["@guid"] = input.WorkflowGuid.Match<object>(
                 static guid => guid,
                 static () => DBNull.Value)
         };
@@ -202,18 +200,12 @@ public sealed class InputsRepository(
         }
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
-        
-        if (_cacheInputsByAgent.TryGetValue(input.Agent, out var cacheForInput))
-        {
-            cacheForInput.Add(input);
-        }
 
-        if (input.LiveEventContext.IsSome)
+        lock (CacheLock)
         {
-            if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
-                    out var cacheForLiveEvent))
+            if (CacheInputsByAgent.TryGetValue(input.Agent, out var cache))
             {
-                cacheForLiveEvent.Add(input);
+                cache.Add(input);
             }
         }
     }
@@ -244,110 +236,62 @@ public sealed class InputsRepository(
             i.TimeStamp >= since)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
+    public async Task<IReadOnlyCollection<Input>> GetWorkflowHistoryAsync(ILiveEventInfo liveEvent, Guid workflowGuid) =>
         (await GetAllAsync(liveEvent))
         .Where(i =>
-            i.EntityGuid.GetValueOrDefault() == entityGuid)
+            i.WorkflowGuid.GetValueOrDefault() == workflowGuid)
         .ToImmutableArray();
     
-    public async Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid)
-    {
-        const string rawQuery = """
-                                UPDATE inputs 
-
-                                SET entity_guid = @newGuid
-
-                                WHERE date = @timeStamp
-                                AND message_id = @messageId
-                                AND user_id = @userId 
-                                AND chat_id = @chatId
-                                AND interaction_mode = @mode
-                                """;
-
-        var commands = inputs.Select(input =>
-        {
-            var normalParameters = new Dictionary<string, object>
-            {
-                ["@newGuid"] = newGuid,
-                ["@timeStamp"] = input.TimeStamp,
-                ["@messageId"] = input.MessageId.Id,
-                ["@userId"] = input.Agent.UserId.Id,
-                ["@chatId"] = input.Agent.ChatId.Id,
-                ["@mode"] = (int)input.Agent.Mode
-            };
-
-            return GenerateCommand(rawQuery, normalParameters);
-        }).ToArray();
-        
-        await ExecuteTransactionAsync(commands);
-        EmptyCache();
-    }
-
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(Agent agent)
     {
-        if (!_cacheInputsByAgent.ContainsKey(agent))
+        lock (CacheLock)
         {
-            await Semaphore.WaitAsync();
-        
-            try
+            if (CacheInputsByAgent.TryGetValue(agent, out var cachedInputs))
             {
-                if (!_cacheInputsByAgent.ContainsKey(agent))
-                {
-                    const string whereClause = """
-                                               WHERE inp.user_id = @userId 
-                                               AND inp.chat_id = @chatId 
-                                               AND inp.interaction_mode = @mode
-                                               """;
-                    
-                    const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
-                    
-                    var fetchedInputs = new List<Input>(
-                        await GetAllExecuteAsync(
-                            rawQuery,
-                            agent.UserId, agent.ChatId, agent.Mode));
-
-                    _cacheInputsByAgent[agent] = fetchedInputs;
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
+                return cachedInputs.ToImmutableArray();
             }
         }
+        
+        const string whereClause = """
+                                   WHERE inp.user_id = @userId 
+                                   AND inp.chat_id = @chatId 
+                                   AND inp.interaction_mode = @mode
+                                   """;
+                    
+        const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
+                    
+        var fetchedInputs = new List<Input>(
+            await GetAllExecuteAsync(
+                rawQuery,
+                agent.UserId, agent.ChatId, agent.Mode));
 
-        return _cacheInputsByAgent[agent];
+        
+        // Store in cache with lock (double-check pattern)
+        lock (CacheLock)
+        {
+            if (!CacheInputsByAgent.TryGetValue(agent, out var existingCache))
+            {
+                CacheInputsByAgent[agent] = fetchedInputs;
+                
+                return fetchedInputs.ToImmutableArray();
+            }
+        
+            // Someone else loaded it while we were querying - use their result
+            return existingCache.ToImmutableArray();
+        }
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(ILiveEventInfo liveEvent)
     {
-        if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
-        {
-            await Semaphore.WaitAsync();
+        const string whereClause = 
+            "WHERE inp.live_event_id = (SELECT id FROM live_events WHERE name = @liveEventName)";
+   
+        const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
         
-            try
-            {
-                if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
-                {
-                    const string whereClause = 
-                        "WHERE inp.live_event_id = (SELECT id FROM live_events WHERE name = @liveEventName)";
-               
-                    const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
-                    
-                    var fetchedInputs = new List<Input>(
-                        await GetAllExecuteAsync(
-                            rawQuery,
-                            liveEventName: liveEvent.Name));
-
-                    _cacheInputsByLiveEvent[liveEvent] = fetchedInputs;
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
-
-        return _cacheInputsByLiveEvent[liveEvent];
+        return new List<Input>(
+            await GetAllExecuteAsync(
+                rawQuery,
+                liveEventName: liveEvent.Name));
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllExecuteAsync(
@@ -370,8 +314,7 @@ public sealed class InputsRepository(
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteMapperAsync(
-            command, InputMapper);
+        return await ExecuteMapperAsync(command, InputMapper);
     }
     
     public async Task HardDeleteAllAsync(Agent agent)
@@ -402,12 +345,10 @@ public sealed class InputsRepository(
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync([command]);
-        EmptyCache();
-    }
 
-    private void EmptyCache()
-    {
-        _cacheInputsByAgent = new Dictionary<Agent, List<Input>>();
-        _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<Input>>();
+        lock (CacheLock)
+        {
+            CacheInputsByAgent.Remove(agent);
+        }
     }
 }

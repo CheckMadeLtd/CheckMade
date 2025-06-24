@@ -180,14 +180,14 @@ internal static class TestRepositoryUtils
 
         mockInputsRepo
             .Setup(static repo =>
-                repo.GetEntityHistoryAsync(
+                repo.GetWorkflowHistoryAsync(
                     It.IsAny<ILiveEventInfo>(),
                     It.IsAny<Guid>()))
-            .ReturnsAsync((ILiveEventInfo liveEvent, Guid entityGuid) =>
+            .ReturnsAsync((ILiveEventInfo liveEvent, Guid wfGuid) =>
                 inputs
                     .Where(i =>
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
-                        Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
+                        Equals(i.WorkflowGuid.GetValueOrDefault(), wfGuid))
                     .ToImmutableArray());
         
         container.Mocks[typeof(IInputsRepository)] = mockInputsRepo;

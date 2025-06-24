@@ -14,7 +14,7 @@ namespace CheckMade.Bot.Workflows;
 
 public interface IWorkflowIdentifier
 {
-    Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
+    Task<(Option<WorkflowBase> Workflow, Option<Guid> WorkflowGuid)> IdentifyAsync(IReadOnlyCollection<Input> inputHistory);
 }
 
 public sealed record WorkflowIdentifier(
@@ -26,10 +26,11 @@ public sealed record WorkflowIdentifier(
     IGeneralWorkflowUtils WorkflowUtils,
     IDomainGlossary Glossary) : IWorkflowIdentifier
 {
-    public async Task<Option<WorkflowBase>> IdentifyAsync(IReadOnlyCollection<Input> inputHistory)
+    public async Task<(Option<WorkflowBase> Workflow, Option<Guid> WorkflowGuid)> IdentifyAsync(
+        IReadOnlyCollection<Input> inputHistory)
     {
         if (!IsUserAuthenticated(inputHistory))
-            return Option<WorkflowBase>.Some(UserAuthWorkflow);
+            return (Option<WorkflowBase>.Some(UserAuthWorkflow), Option<Guid>.None());
         
         var allBridges = 
             await WorkflowUtils.GetWorkflowBridgesOrNoneAsync(inputHistory.Last().LiveEventContext);
@@ -37,7 +38,7 @@ public sealed record WorkflowIdentifier(
         var activeWorkflowLauncherOption = GetWorkflowLauncherOfLastActiveWorkflow();
 
         if (activeWorkflowLauncherOption.IsNone)
-            return Option<WorkflowBase>.None();
+            return (Option<WorkflowBase>.None(), Option<Guid>.None());
 
         var activeWorkflowLauncher = activeWorkflowLauncherOption.GetValueOrThrow();
         
@@ -46,25 +47,32 @@ public sealed record WorkflowIdentifier(
             { InputType: CommandMessage } 
                 when activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() >= 
                      BotCommandMenus.GlobalBotCommandsCodeThreshold_90 => 
-                GetGlobalMenuWorkflow(activeWorkflowLauncher),
+                (GetGlobalMenuWorkflow(activeWorkflowLauncher), 
+                    activeWorkflowLauncher.WorkflowGuid.IsSome
+                        ? activeWorkflowLauncher.WorkflowGuid.GetValueOrThrow()
+                        : Guid.NewGuid()),
             
             { InputType: CommandMessage, Agent.Mode: Operations } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    (int)OperationsBotCommands.NewSubmission => Option<WorkflowBase>.Some(NewSubmissionWorkflow),
-                    _ => Option<WorkflowBase>.None()
+                    (int)OperationsBotCommands.NewSubmission => 
+                        (Option<WorkflowBase>.Some(NewSubmissionWorkflow), 
+                            activeWorkflowLauncher.WorkflowGuid.IsSome
+                                ? activeWorkflowLauncher.WorkflowGuid.GetValueOrThrow()
+                                : Guid.NewGuid()),
+                    _ => (Option<WorkflowBase>.None(), Option<Guid>.None())
                 },
             
             { InputType: CommandMessage, Agent.Mode: Notifications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    _ => Option<WorkflowBase>.None()
+                    _ => (Option<WorkflowBase>.None(), Option<Guid>.None())
                 },
 
             { InputType: CommandMessage, Agent.Mode: Communications } => 
                 activeWorkflowLauncher.Details.BotCommandEnumCode.GetValueOrThrow() switch
                 {
-                    _ => Option<WorkflowBase>.None()
+                    _ => (Option<WorkflowBase>.None(), Option<Guid>.None())
                 },
             
             _ => throw new InvalidOperationException(
@@ -80,9 +88,7 @@ public sealed record WorkflowIdentifier(
                 return Option<Input>.None();
             
             var lastWorkflowHistory =
-                inputHistory.GetLatestRecordsUpTo(i => 
-                    i.MessageId == lastLauncher.MessageId &&
-                    i.TimeStamp == lastLauncher.TimeStamp);
+                inputHistory.GetLatestRecordsUpTo(i => i.Id == lastLauncher.Id);
             
             var isWorkflowActive =
                 !lastWorkflowHistory

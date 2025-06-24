@@ -54,15 +54,19 @@ public sealed class InputProcessor(
                 
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
-                
-                var responseResult = 
-                    await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
 
                 var enrichedCurrentInput = currentInput with
                 {
-                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
+                    WorkflowGuid = activeWorkflow.WorkflowGuid
+                };
+                
+                var responseResult = 
+                    await GetResponseFromActiveWorkflowAsync(activeWorkflow.Workflow, enrichedCurrentInput);
+
+                enrichedCurrentInput = enrichedCurrentInput with
+                {
+                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow.Workflow)
                                      ?? Option<ResultantWorkflowState>.None(),
-                    EntityGuid = GetEntityGuid(responseResult)
                 };
                 
                 return (
@@ -70,7 +74,7 @@ public sealed class InputProcessor(
                     ResolveResponseResultIntoOutputs(
                         responseResult,
                         outputBuilder,
-                        activeWorkflow,
+                        activeWorkflow.Workflow,
                         currentInput));
             },
             static failure =>
@@ -112,11 +116,6 @@ public sealed class InputProcessor(
         return workflowInfo;
     }
 
-    private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
-        response.Match(
-            static r => r.EntityGuid,
-            static _ => Option<Guid>.None());
-    
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
@@ -163,8 +162,7 @@ public sealed class InputProcessor(
                                 Text = IInputProcessor.SeeValidBotCommandsInstruction
                             }
                         ], 
-                        Option<string>.None(),
-                        Option<Guid>.None()))));
+                        Option<string>.None()))));
     }
 
     private IReadOnlyCollection<Output> ResolveResponseResultIntoOutputs(

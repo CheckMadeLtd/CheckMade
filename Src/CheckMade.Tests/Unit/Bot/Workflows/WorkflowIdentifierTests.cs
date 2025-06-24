@@ -27,8 +27,8 @@ public sealed class WorkflowIdentifierTests
             agentWithoutRole.UserId, agentWithoutRole.ChatId,
             roleSetting: TestOriginatorRoleSetting.None);
 
-        var workflow = await workflowIdentifier
-            .IdentifyAsync([inputFromUnauthenticatedUser]);
+        var workflow = (await workflowIdentifier
+            .IdentifyAsync([inputFromUnauthenticatedUser])).Workflow;
         
         Assert.True(
             workflow.GetValueOrThrow() is UserAuthWorkflow);
@@ -46,8 +46,8 @@ public sealed class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.Settings);
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync([inputWithSettingsBotCommand]);
+        var workflow = (await workflowIdentifier
+            .IdentifyAsync([inputWithSettingsBotCommand])).Workflow;
         
         Assert.True(
             workflow.GetValueOrThrow() is LanguageSettingWorkflow);
@@ -65,8 +65,8 @@ public sealed class WorkflowIdentifierTests
             Operations, 
             (int)OperationsBotCommands.NewSubmission);
         
-        var workflow = await workflowIdentifier
-            .IdentifyAsync([inputWithNewSubmissionBotCommand]);
+        var workflow = (await workflowIdentifier
+            .IdentifyAsync([inputWithNewSubmissionBotCommand])).Workflow;
         
         Assert.True(
             workflow.GetValueOrThrow() is NewSubmissionWorkflow);
@@ -80,14 +80,14 @@ public sealed class WorkflowIdentifierTests
         var inputGenerator = _services.GetRequiredService<IInputGenerator>();
         var workflowIdentifier = _services.GetRequiredService<IWorkflowIdentifier>();
         
-        var workflow = await workflowIdentifier
+        var workflow = (await workflowIdentifier
             .IdentifyAsync([
                 inputGenerator.GetValidInputTextMessage(),
                 inputGenerator.GetValidInputTextMessageWithAttachment(AttachmentType.Photo),
                 // This could be in response to an out-of-scope message in the history e.g. in another Role!
                 inputGenerator.GetValidInputCallbackQueryForDomainTerm(Dt(LanguageCode.de)),
                 inputGenerator.GetValidInputTextMessage()
-            ]);
+            ])).Workflow;
         
         Assert.True(
             workflow.IsNone);
