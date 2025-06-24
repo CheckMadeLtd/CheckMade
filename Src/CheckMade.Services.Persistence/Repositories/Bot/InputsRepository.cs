@@ -64,10 +64,8 @@ public sealed class InputsRepository(
 
     private const string OrderByClause = "ORDER BY inp.id";
     
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
-    private Dictionary<Agent, List<Input>> _cacheInputsByAgent = new();
-    private Dictionary<ILiveEventInfo, List<Input>> _cacheInputsByLiveEvent = new();
+    private static readonly object CacheLock = new();
+    private static readonly Dictionary<Agent, List<Input>> CacheInputsByAgent = new();
 
     public async Task AddAsync(
         Input input,
@@ -202,18 +200,12 @@ public sealed class InputsRepository(
         }
 
         await ExecuteTransactionAsync(new List<NpgsqlCommand> { command });
-        
-        if (_cacheInputsByAgent.TryGetValue(input.Agent, out var cacheForInput))
-        {
-            cacheForInput.Add(input);
-        }
 
-        if (input.LiveEventContext.IsSome)
+        lock (CacheLock)
         {
-            if (_cacheInputsByLiveEvent.TryGetValue(input.LiveEventContext.GetValueOrDefault(), 
-                    out var cacheForLiveEvent))
+            if (CacheInputsByAgent.TryGetValue(input.Agent, out var cache))
             {
-                cacheForLiveEvent.Add(input);
+                cache.Add(input);
             }
         }
     }
@@ -280,74 +272,85 @@ public sealed class InputsRepository(
         }).ToArray();
         
         await ExecuteTransactionAsync(commands);
-        EmptyCache();
+
+        lock (CacheLock)
+        {
+            foreach (var grouping in inputs.GroupBy(static i => i.Agent))
+            {
+                var agent = grouping.Key;
+            
+                if (CacheInputsByAgent.TryGetValue(agent, out var cache))
+                {
+                    foreach (var input in grouping)
+                    {
+                        var index = cache.FindIndex(i =>
+                            i.TimeStamp == input.TimeStamp &&
+                            i.MessageId == input.MessageId &&
+                            i.Agent == input.Agent);
+
+                        /*
+                         * No 'else' on purpose: UpdateGuid also applies to the latest/current input BEFORE it has
+                         * been added to the database and thus the cache. So we neither want to throw an exception,
+                         * nor log a warning, nor add the latest input (since it will be added later via the Add method)
+                         */
+                        if (index >= 0)
+                            cache[index] = input with { EntityGuid = newGuid };
+                    }
+                }        
+            }
+        }
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(Agent agent)
     {
-        if (!_cacheInputsByAgent.ContainsKey(agent))
+        lock (CacheLock)
         {
-            await Semaphore.WaitAsync();
-        
-            try
+            if (CacheInputsByAgent.TryGetValue(agent, out var cachedInputs))
             {
-                if (!_cacheInputsByAgent.ContainsKey(agent))
-                {
-                    const string whereClause = """
-                                               WHERE inp.user_id = @userId 
-                                               AND inp.chat_id = @chatId 
-                                               AND inp.interaction_mode = @mode
-                                               """;
-                    
-                    const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
-                    
-                    var fetchedInputs = new List<Input>(
-                        await GetAllExecuteAsync(
-                            rawQuery,
-                            agent.UserId, agent.ChatId, agent.Mode));
-
-                    _cacheInputsByAgent[agent] = fetchedInputs;
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
+                return cachedInputs.ToImmutableArray();
             }
         }
+        
+        const string whereClause = """
+                                   WHERE inp.user_id = @userId 
+                                   AND inp.chat_id = @chatId 
+                                   AND inp.interaction_mode = @mode
+                                   """;
+                    
+        const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
+                    
+        var fetchedInputs = new List<Input>(
+            await GetAllExecuteAsync(
+                rawQuery,
+                agent.UserId, agent.ChatId, agent.Mode));
 
-        return _cacheInputsByAgent[agent];
+        
+        // Store in cache with lock (double-check pattern)
+        lock (CacheLock)
+        {
+            if (!CacheInputsByAgent.TryGetValue(agent, out var existingCache))
+            {
+                CacheInputsByAgent[agent] = fetchedInputs;
+                
+                return fetchedInputs.ToImmutableArray();
+            }
+        
+            // Someone else loaded it while we were querying - use their result
+            return existingCache.ToImmutableArray();
+        }
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(ILiveEventInfo liveEvent)
     {
-        if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
-        {
-            await Semaphore.WaitAsync();
+        const string whereClause = 
+            "WHERE inp.live_event_id = (SELECT id FROM live_events WHERE name = @liveEventName)";
+   
+        const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
         
-            try
-            {
-                if (!_cacheInputsByLiveEvent.ContainsKey(liveEvent))
-                {
-                    const string whereClause = 
-                        "WHERE inp.live_event_id = (SELECT id FROM live_events WHERE name = @liveEventName)";
-               
-                    const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
-                    
-                    var fetchedInputs = new List<Input>(
-                        await GetAllExecuteAsync(
-                            rawQuery,
-                            liveEventName: liveEvent.Name));
-
-                    _cacheInputsByLiveEvent[liveEvent] = fetchedInputs;
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
-
-        return _cacheInputsByLiveEvent[liveEvent];
+        return new List<Input>(
+            await GetAllExecuteAsync(
+                rawQuery,
+                liveEventName: liveEvent.Name));
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllExecuteAsync(
@@ -370,8 +373,7 @@ public sealed class InputsRepository(
 
         var command = GenerateCommand(rawQuery, normalParameters);
 
-        return await ExecuteMapperAsync(
-            command, InputMapper);
+        return await ExecuteMapperAsync(command, InputMapper);
     }
     
     public async Task HardDeleteAllAsync(Agent agent)
@@ -402,12 +404,10 @@ public sealed class InputsRepository(
         var command = GenerateCommand(rawQuery, normalParameters);
 
         await ExecuteTransactionAsync([command]);
-        EmptyCache();
-    }
 
-    private void EmptyCache()
-    {
-        _cacheInputsByAgent = new Dictionary<Agent, List<Input>>();
-        _cacheInputsByLiveEvent = new Dictionary<ILiveEventInfo, List<Input>>();
+        lock (CacheLock)
+        {
+            CacheInputsByAgent.Remove(agent);
+        }
     }
 }
