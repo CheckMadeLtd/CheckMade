@@ -80,9 +80,7 @@ public sealed record WorkflowIdentifier(
                 return Option<Input>.None();
             
             var lastWorkflowHistory =
-                inputHistory.GetLatestRecordsUpTo(i => 
-                    i.MessageId == lastLauncher.MessageId &&
-                    i.TimeStamp == lastLauncher.TimeStamp);
+                inputHistory.GetLatestRecordsUpTo(i => i.Id == lastLauncher.Id);
             
             var isWorkflowActive =
                 !lastWorkflowHistory
