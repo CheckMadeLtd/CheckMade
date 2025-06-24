@@ -40,9 +40,9 @@ public sealed class InputsConstitutor
         var inputType = EnsureEnumValidityOrThrow(
             (InputType)reader.GetInt16(reader.GetOrdinal("input_type")));
         var resultantWorkflow = GetWorkflowInfo();
-        var guid = reader.IsDBNull(reader.GetOrdinal("input_guid"))
+        var guid = reader.IsDBNull(reader.GetOrdinal("input_wfGuid"))
             ? Option<Guid>.None()
-            : reader.GetGuid(reader.GetOrdinal("input_guid"));
+            : reader.GetGuid(reader.GetOrdinal("input_wfGuid"));
         
         if (!_detailsByInputIdCache.TryGetValue(id, out var details))
         {

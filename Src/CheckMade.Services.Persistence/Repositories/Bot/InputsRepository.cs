@@ -54,7 +54,7 @@ public sealed class InputsRepository(
                                            inp.interaction_mode AS input_mode, 
                                            inp.input_type AS input_type,
                                            inp.details AS input_details,
-                                           inp.workflow_guid AS input_guid
+                                           inp.workflow_guid AS input_wfGuid
                                                
                                            FROM inputs inp 
                                            LEFT JOIN roles r on inp.role_id = r.id 

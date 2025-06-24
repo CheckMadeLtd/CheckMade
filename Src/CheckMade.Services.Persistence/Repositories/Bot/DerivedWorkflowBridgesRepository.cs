@@ -50,7 +50,7 @@ public sealed class DerivedWorkflowBridgesRepository(
                                         inp.interaction_mode AS input_mode, 
                                         inp.input_type AS input_type,
                                         inp.details AS input_details,
-                                        inp.workflow_guid AS input_guid,
+                                        inp.workflow_guid AS input_wfGuid,
 
                                         dwb.dst_chat_id AS bridge_chat_id,
                                         dwb.dst_message_id AS bridge_message_id
