@@ -52,21 +52,20 @@ public sealed class InputProcessor(
                 var inputHistory = 
                     await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput);
                 
-                // If this currentInput is the beginning of a new workflow, enrich it with a new WorkflowGuid
-                    // The WorkflowIdentifier identifies the input that launched the workflow, take the info from there?
-                    // Set the GUID there? 
-                // If this currentInput is the continuation of an existing workflow, enrich it with the previous Workflow
-                    // I should have the previous workflow simply from the previous Input's WorkflowGuid property
-                
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
-                
-                var responseResult = 
-                    await GetResponseFromActiveWorkflowAsync(activeWorkflow, currentInput);
 
                 var enrichedCurrentInput = currentInput with
                 {
-                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
+                    WorkflowGuid = activeWorkflow.WorkflowGuid
+                };
+                
+                var responseResult = 
+                    await GetResponseFromActiveWorkflowAsync(activeWorkflow.Workflow, enrichedCurrentInput);
+
+                enrichedCurrentInput = enrichedCurrentInput with
+                {
+                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow.Workflow)
                                      ?? Option<ResultantWorkflowState>.None(),
                 };
                 
@@ -75,7 +74,7 @@ public sealed class InputProcessor(
                     ResolveResponseResultIntoOutputs(
                         responseResult,
                         outputBuilder,
-                        activeWorkflow,
+                        activeWorkflow.Workflow,
                         currentInput));
             },
             static failure =>
