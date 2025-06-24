@@ -57,7 +57,7 @@ public sealed class InputsRepositoryTests(ITestOutputHelper testOutputHelper)
                     input.OriginatorRole, 
                     input.LiveEventContext, 
                     input.ResultantState,
-                    input.EntityGuid,
+                    input.WorkflowGuid,
                     input.CallbackQueryId,
                     input.Details)
             ];

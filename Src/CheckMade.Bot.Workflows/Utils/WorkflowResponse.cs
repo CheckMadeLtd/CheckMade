@@ -9,14 +9,14 @@ namespace CheckMade.Bot.Workflows.Utils;
 public sealed record WorkflowResponse(
     IReadOnlyCollection<Output> Output,
     Option<string> NewStateId,
-    Option<Guid> EntityGuid)
+    Option<Guid> WorkflowGuid)
 {
     internal WorkflowResponse(
         Output singleOutput, Option<string> newStateId, Guid? entityGuid = null) 
         : this(
             Output: new List<Output> { singleOutput }, 
             NewStateId: newStateId,
-            EntityGuid: entityGuid ?? Option<Guid>.None())
+            WorkflowGuid: entityGuid ?? Option<Guid>.None())
     {
     }
     
@@ -25,7 +25,7 @@ public sealed record WorkflowResponse(
         : this(
             Output: new List<Output> { singleOutput }, 
             NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
-            EntityGuid: entityGuid ?? Option<Guid>.None())
+            WorkflowGuid: entityGuid ?? Option<Guid>.None())
     {
     }
 
@@ -61,7 +61,7 @@ public sealed record WorkflowResponse(
             Output: outputs,
             NewStateId: newState?.Glossary.GetIdForEquallyNamedInterface(newState.GetType()) 
                         ?? Option<string>.None(), 
-            EntityGuid: entityGuid ?? Option<Guid>.None()
+            WorkflowGuid: entityGuid ?? Option<Guid>.None()
         );
     }
     
@@ -106,7 +106,7 @@ public sealed record WorkflowResponse(
                 nextPromptInPlaceUpdateMessageId,
                 promptFinalizerWithCallbackQueryId),
             NewStateId: newState.Glossary.GetIdForEquallyNamedInterface(newState.GetType()),
-            EntityGuid: entityGuid ?? Option<Guid>.None());
+            WorkflowGuid: entityGuid ?? Option<Guid>.None());
     }
 
     internal static WorkflowResponse CreateWarningUseInlineKeyboardButtons(
@@ -119,7 +119,7 @@ public sealed record WorkflowResponse(
                 }
             },
             NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
-            EntityGuid: Option<Guid>.None());
+            WorkflowGuid: Option<Guid>.None());
 
     internal static WorkflowResponse
         CreateWarningChooseReplyKeyboardOptions(
@@ -133,7 +133,7 @@ public sealed record WorkflowResponse(
                 }
             },
             NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
-            EntityGuid: Option<Guid>.None());
+            WorkflowGuid: Option<Guid>.None());
 
     internal static WorkflowResponse CreateWarningEnterTextOnly(IWorkflowStateNormal currentState) =>
         new(Output: new List<Output>
@@ -144,5 +144,5 @@ public sealed record WorkflowResponse(
                 }
             },
             NewStateId: currentState.Glossary.GetIdForEquallyNamedInterface(currentState.GetType()),
-            EntityGuid: Option<Guid>.None());
+            WorkflowGuid: Option<Guid>.None());
 }

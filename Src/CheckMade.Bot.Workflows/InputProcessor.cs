@@ -62,7 +62,7 @@ public sealed class InputProcessor(
                 {
                     ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
                                      ?? Option<ResultantWorkflowState>.None(),
-                    EntityGuid = GetEntityGuid(responseResult)
+                    WorkflowGuid = GetEntityGuid(responseResult)
                 };
                 
                 return (
@@ -114,7 +114,7 @@ public sealed class InputProcessor(
 
     private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
         response.Match(
-            static r => r.EntityGuid,
+            static r => r.WorkflowGuid,
             static _ => Option<Guid>.None());
     
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)

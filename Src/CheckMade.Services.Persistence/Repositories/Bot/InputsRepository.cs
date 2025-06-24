@@ -54,7 +54,7 @@ public sealed class InputsRepository(
                                            inp.interaction_mode AS input_mode, 
                                            inp.input_type AS input_type,
                                            inp.details AS input_details,
-                                           inp.entity_guid AS input_guid
+                                           inp.workflow_guid AS input_guid
                                                
                                            FROM inputs inp 
                                            LEFT JOIN roles r on inp.role_id = r.id 
@@ -84,7 +84,7 @@ public sealed class InputsRepository(
                                      input_type, 
                                      role_id, 
                                      live_event_id,
-                                     entity_guid) 
+                                     workflow_guid) 
 
                                      VALUES (@timeStamp, @messageId, @userId, @chatId, @messageDetails, 
                                      @lastDataMig, @interactionMode, @inputType, 
@@ -150,7 +150,7 @@ public sealed class InputsRepository(
             ["@workflowState"] = input.ResultantState.Match<object>(  
                 static w => w.InStateId,  
                 static () => DBNull.Value),
-            ["@guid"] = input.EntityGuid.Match<object>(
+            ["@guid"] = input.WorkflowGuid.Match<object>(
                 static guid => guid,
                 static () => DBNull.Value)
         };
@@ -239,7 +239,7 @@ public sealed class InputsRepository(
     public async Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
         (await GetAllAsync(liveEvent))
         .Where(i =>
-            i.EntityGuid.GetValueOrDefault() == entityGuid)
+            i.WorkflowGuid.GetValueOrDefault() == entityGuid)
         .ToImmutableArray();
     
     public async Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid)
@@ -247,7 +247,7 @@ public sealed class InputsRepository(
         const string rawQuery = """
                                 UPDATE inputs 
 
-                                SET entity_guid = @newGuid
+                                SET workflow_guid = @newGuid
 
                                 WHERE date = @timeStamp
                                 AND message_id = @messageId
@@ -294,7 +294,7 @@ public sealed class InputsRepository(
                          * nor log a warning, nor add the latest input (since it will be added later via the Add method)
                          */
                         if (index >= 0)
-                            cache[index] = input with { EntityGuid = newGuid };
+                            cache[index] = input with { WorkflowGuid = newGuid };
                     }
                 }        
             }

@@ -107,7 +107,7 @@ public sealed record NewSubmissionReview<T>(
                 await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(
                     currentInput with
                     {
-                        EntityGuid = await GetLastGuidAsync(),
+                        WorkflowGuid = await GetLastGuidAsync(),
                         ResultantState = new ResultantWorkflowState(
                             Glossary.GetId(typeof(NewSubmissionWorkflow)),
                             Glossary.GetId(typeof(INewSubmissionSucceeded<T>)))
@@ -131,7 +131,7 @@ public sealed record NewSubmissionReview<T>(
                     await WorkflowUtils.GetInteractiveWorkflowHistoryAsync(currentInput);
             
                 _lastGuidCache = interactiveHistory
-                    .Select(static i => i.EntityGuid)
+                    .Select(static i => i.WorkflowGuid)
                     .Last(static g => g.IsSome)
                     .GetValueOrThrow();
             }

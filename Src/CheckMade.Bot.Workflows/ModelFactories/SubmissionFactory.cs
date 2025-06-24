@@ -108,8 +108,8 @@ public sealed record SubmissionFactory<T>(
         {
             var uniqueGuids =
                 inputs
-                    .Where(static i => i.EntityGuid.IsSome)
-                    .Select(static i => i.EntityGuid.GetValueOrThrow())
+                    .Where(static i => i.WorkflowGuid.IsSome)
+                    .Select(static i => i.WorkflowGuid.GetValueOrThrow())
                     .Distinct()
                     .ToList();
 

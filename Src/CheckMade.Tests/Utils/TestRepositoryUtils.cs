@@ -187,7 +187,7 @@ internal static class TestRepositoryUtils
                 inputs
                     .Where(i =>
                         Equals(i.LiveEventContext.GetValueOrDefault(), liveEvent) &&
-                        Equals(i.EntityGuid.GetValueOrDefault(), entityGuid))
+                        Equals(i.WorkflowGuid.GetValueOrDefault(), entityGuid))
                     .ToImmutableArray());
         
         container.Mocks[typeof(IInputsRepository)] = mockInputsRepo;
