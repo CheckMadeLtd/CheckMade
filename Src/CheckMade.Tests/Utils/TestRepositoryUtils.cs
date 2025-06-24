@@ -180,7 +180,7 @@ internal static class TestRepositoryUtils
 
         mockInputsRepo
             .Setup(static repo =>
-                repo.GetEntityHistoryAsync(
+                repo.GetWorkflowHistoryAsync(
                     It.IsAny<ILiveEventInfo>(),
                     It.IsAny<Guid>()))
             .ReturnsAsync((ILiveEventInfo liveEvent, Guid entityGuid) =>

@@ -15,8 +15,7 @@ public interface IInputsRepository
     Task<IReadOnlyCollection<Input>> GetAllInteractiveAsync(ILiveEventInfo liveEvent);
     Task<IReadOnlyCollection<Input>> GetAllLocationAsync(Agent agent, DateTimeOffset since);
     Task<IReadOnlyCollection<Input>> GetAllLocationAsync(ILiveEventInfo liveEvent, DateTimeOffset since);
-    Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid);
-    Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid);
+    Task<IReadOnlyCollection<Input>> GetWorkflowHistoryAsync(ILiveEventInfo liveEvent, Guid workflowGuid);
     Task HardDeleteAllAsync(Agent agent);
     
     Func<DbDataReader, IDomainGlossary, Input> InputMapper { get; }

@@ -236,71 +236,12 @@ public sealed class InputsRepository(
             i.TimeStamp >= since)
         .ToImmutableArray();
 
-    public async Task<IReadOnlyCollection<Input>> GetEntityHistoryAsync(ILiveEventInfo liveEvent, Guid entityGuid) =>
+    public async Task<IReadOnlyCollection<Input>> GetWorkflowHistoryAsync(ILiveEventInfo liveEvent, Guid workflowGuid) =>
         (await GetAllAsync(liveEvent))
         .Where(i =>
-            i.WorkflowGuid.GetValueOrDefault() == entityGuid)
+            i.WorkflowGuid.GetValueOrDefault() == workflowGuid)
         .ToImmutableArray();
     
-    public async Task UpdateGuid(IReadOnlyCollection<Input> inputs, Guid newGuid)
-    {
-        const string rawQuery = """
-                                UPDATE inputs 
-
-                                SET workflow_guid = @newGuid
-
-                                WHERE date = @timeStamp
-                                AND message_id = @messageId
-                                AND user_id = @userId 
-                                AND chat_id = @chatId
-                                AND interaction_mode = @mode
-                                """;
-
-        var commands = inputs.Select(input =>
-        {
-            var normalParameters = new Dictionary<string, object>
-            {
-                ["@newGuid"] = newGuid,
-                ["@timeStamp"] = input.TimeStamp,
-                ["@messageId"] = input.MessageId.Id,
-                ["@userId"] = input.Agent.UserId.Id,
-                ["@chatId"] = input.Agent.ChatId.Id,
-                ["@mode"] = (int)input.Agent.Mode
-            };
-
-            return GenerateCommand(rawQuery, normalParameters);
-        }).ToArray();
-        
-        await ExecuteTransactionAsync(commands);
-
-        lock (CacheLock)
-        {
-            foreach (var grouping in inputs.GroupBy(static i => i.Agent))
-            {
-                var agent = grouping.Key;
-            
-                if (CacheInputsByAgent.TryGetValue(agent, out var cache))
-                {
-                    foreach (var input in grouping)
-                    {
-                        var index = cache.FindIndex(i =>
-                            i.TimeStamp == input.TimeStamp &&
-                            i.MessageId == input.MessageId &&
-                            i.Agent == input.Agent);
-
-                        /*
-                         * No 'else' on purpose: UpdateGuid also applies to the latest/current input BEFORE it has
-                         * been added to the database and thus the cache. So we neither want to throw an exception,
-                         * nor log a warning, nor add the latest input (since it will be added later via the Add method)
-                         */
-                        if (index >= 0)
-                            cache[index] = input with { WorkflowGuid = newGuid };
-                    }
-                }        
-            }
-        }
-    }
-
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(Agent agent)
     {
         lock (CacheLock)

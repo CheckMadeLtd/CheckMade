@@ -40,7 +40,6 @@ public sealed record GeneralWorkflowUtils(
         Input newInputToAppend)
     {
         // This is designed to ensure that inputs from new, currently unauthenticated users are included
-        // Careful: if/when I decide to cache this, invalidate the cache after inputs are updated with new Guids!
         
         var lastExpiredRoleBind = (await AgentRoleBindingsRepo.GetAllAsync())
             .Where(arb =>

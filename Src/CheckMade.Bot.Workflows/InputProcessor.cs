@@ -52,6 +52,12 @@ public sealed class InputProcessor(
                 var inputHistory = 
                     await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput);
                 
+                // If this currentInput is the beginning of a new workflow, enrich it with a new WorkflowGuid
+                    // The WorkflowIdentifier identifies the input that launched the workflow, take the info from there?
+                    // Set the GUID there? 
+                // If this currentInput is the continuation of an existing workflow, enrich it with the previous Workflow
+                    // I should have the previous workflow simply from the previous Input's WorkflowGuid property
+                
                 var activeWorkflow = 
                     await workflowIdentifier.IdentifyAsync(inputHistory);
                 
@@ -62,7 +68,6 @@ public sealed class InputProcessor(
                 {
                     ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow)
                                      ?? Option<ResultantWorkflowState>.None(),
-                    WorkflowGuid = GetEntityGuid(responseResult)
                 };
                 
                 return (
@@ -112,11 +117,6 @@ public sealed class InputProcessor(
         return workflowInfo;
     }
 
-    private static Option<Guid> GetEntityGuid(Result<WorkflowResponse> response) =>
-        response.Match(
-            static r => r.WorkflowGuid,
-            static _ => Option<Guid>.None());
-    
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
@@ -163,8 +163,7 @@ public sealed class InputProcessor(
                                 Text = IInputProcessor.SeeValidBotCommandsInstruction
                             }
                         ], 
-                        Option<string>.None(),
-                        Option<Guid>.None()))));
+                        Option<string>.None()))));
     }
 
     private IReadOnlyCollection<Output> ResolveResponseResultIntoOutputs(

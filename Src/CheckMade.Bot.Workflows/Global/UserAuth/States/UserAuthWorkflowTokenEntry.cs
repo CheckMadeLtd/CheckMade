@@ -153,8 +153,7 @@ public sealed record UserAuthWorkflowTokenEntry(
             return new WorkflowResponse(
                 outputs,
                 Option<string>.Some(
-                    Glossary.GetId(typeof(IUserAuthWorkflowAuthenticated))),
-                Option<Guid>.None());
+                    Glossary.GetId(typeof(IUserAuthWorkflowAuthenticated))));
 
             AgentRoleBind? FirstOrDefaultPreExistingActiveRoleBind(InteractionMode mode) =>
                 preExistingActiveRoleBindings.FirstOrDefault(arb =>
