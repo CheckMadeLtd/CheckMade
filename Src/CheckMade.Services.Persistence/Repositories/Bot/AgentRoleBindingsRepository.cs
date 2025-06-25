@@ -18,7 +18,7 @@ public sealed class AgentRoleBindingsRepository(
     : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository
 {
     private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<AgentRoleBind>>> _cache = new();
-    private const string CacheKey = "all_bindings";
+    private const string CacheKey = "all";
     
     private (Func<DbDataReader, int> keyGetter,
         Func<DbDataReader, AgentRoleBind> modelInitializer,

@@ -16,7 +16,7 @@ public sealed class DerivedWorkflowBridgesRepository(
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
     private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<WorkflowBridge>>> _cache = new();
-    private const string CacheKey = "all_bridges";
+    private const string CacheKey = "all";
     
     private readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> _workflowBridgeMapper =
         (reader, glossary) =>

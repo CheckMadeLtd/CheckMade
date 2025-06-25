@@ -18,7 +18,7 @@ public sealed class LiveEventsRepository(
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
     private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<LiveEvent>>> _cache = new();
-    private const string CacheKey = "all_bridges";
+    private const string CacheKey = "all";
 
     private (Func<DbDataReader, int> keyGetter, 
         Func<DbDataReader, LiveEvent> modelInitializer,
