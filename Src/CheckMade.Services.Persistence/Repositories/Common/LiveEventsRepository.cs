@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Core.Model.Common.Actors;
@@ -16,8 +17,8 @@ public sealed class LiveEventsRepository(
     SphereOfActionDetailsConstitutor constitutor) 
     : BaseRepository(dbHelper, glossary), ILiveEventsRepository
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    private Option<IReadOnlyCollection<LiveEvent>> _cache = Option<IReadOnlyCollection<LiveEvent>>.None();
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<LiveEvent>>> _cache = new();
+    private const string CacheKey = "all_bridges";
 
     private (Func<DbDataReader, int> keyGetter, 
         Func<DbDataReader, LiveEvent> modelInitializer,
@@ -56,63 +57,47 @@ public sealed class LiveEventsRepository(
         (await GetAllAsync())
         .FirstOrDefault(le => le.Equals(liveEvent));
 
-    public async Task<IReadOnlyCollection<LiveEvent>> GetAllAsync()
+    public async Task<IReadOnlyCollection<LiveEvent>> GetAllAsync() =>
+        await _cache.GetOrAdd(CacheKey, async _ => await LoadAllFromDbAsync());
+    
+    private async Task<IReadOnlyCollection<LiveEvent>> LoadAllFromDbAsync()
     {
-        if (_cache.IsNone)
-        {
-            await Semaphore.WaitAsync();
+        const string rawQuery = """
+                                SELECT 
 
-            try
-            {
-                if (_cache.IsNone)
-                {
-                    const string rawQuery = """
-                                            SELECT 
-                                            
-                                            r.token AS role_token, 
-                                            r.role_type AS role_type, 
-                                            r.status AS role_status,
-                                            
-                                            soa.name AS sphere_name, 
-                                            soa.details AS sphere_details, 
-                                            soa.trade AS sphere_trade, 
-                                            
-                                            lev.name AS venue_name, 
-                                            lev.status AS venue_status, 
-                                            
-                                            le.id AS live_event_id, 
-                                            le.name AS live_event_name, 
-                                            le.start_date AS live_event_start_date, 
-                                            le.end_date AS live_event_end_date, 
-                                            le.status AS live_event_status 
-                                            
-                                            FROM live_events le
-                                            LEFT JOIN roles r on r.live_event_id = le.id
-                                            LEFT JOIN spheres_of_action soa on soa.live_event_id = le.id
-                                            JOIN live_event_venues lev on le.venue_id = lev.id
-                                            
-                                            ORDER BY le.id, r.id, soa.id
-                                            """;
+                                r.token AS role_token, 
+                                r.role_type AS role_type, 
+                                r.status AS role_status,
+
+                                soa.name AS sphere_name, 
+                                soa.details AS sphere_details, 
+                                soa.trade AS sphere_trade, 
+
+                                lev.name AS venue_name, 
+                                lev.status AS venue_status, 
+
+                                le.id AS live_event_id, 
+                                le.name AS live_event_name, 
+                                le.start_date AS live_event_start_date, 
+                                le.end_date AS live_event_end_date, 
+                                le.status AS live_event_status 
+
+                                FROM live_events le
+                                LEFT JOIN roles r on r.live_event_id = le.id
+                                LEFT JOIN spheres_of_action soa on soa.live_event_id = le.id
+                                JOIN live_event_venues lev on le.venue_id = lev.id
+
+                                ORDER BY le.id, r.id, soa.id
+                                """;
                     
-                    var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+        var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
                 
-                    var (getKey,
-                        initializeModel,
-                        accumulateData,
-                        finalizeModel) = LiveEventMapper(Glossary);
+        var (getKey,
+            initializeModel,
+            accumulateData,
+            finalizeModel) = LiveEventMapper(Glossary);
 
-                    var liveEvents = await ExecuteMapperAsync(
-                        command, getKey, initializeModel, accumulateData, finalizeModel);
-                
-                    _cache = Option<IReadOnlyCollection<LiveEvent>>.Some(liveEvents);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
-
-        return _cache.GetValueOrThrow();
+        return await ExecuteMapperAsync(
+            command, getKey, initializeModel, accumulateData, finalizeModel);
     }
 }
