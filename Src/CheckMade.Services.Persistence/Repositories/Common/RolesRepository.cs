@@ -12,7 +12,7 @@ public sealed class RolesRepository(
     RolesSharedMapper mapper) 
     : BaseRepository(dbHelper, glossary), IRolesRepository
 {
-    private ConcurrentDictionary<string, Task<IReadOnlyCollection<Role>>> _cache = new();
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<Role>>> _cache = new();
     private const string CacheKey = "all";
     
     public async Task<Role?> GetAsync(IRoleInfo role) =>

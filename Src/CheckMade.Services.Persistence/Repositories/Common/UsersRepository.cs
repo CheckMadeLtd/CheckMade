@@ -13,7 +13,7 @@ namespace CheckMade.Services.Persistence.Repositories.Common;
 public sealed class UsersRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IUsersRepository
 {
-    private ConcurrentDictionary<string, Task<IReadOnlyCollection<User>>> _cache = new();
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<User>>> _cache = new();
     private const string CacheKey = "all"; 
 
     private static (Func<DbDataReader, int> keyGetter, 
