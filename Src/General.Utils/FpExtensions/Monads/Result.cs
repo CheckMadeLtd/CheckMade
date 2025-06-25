@@ -68,9 +68,6 @@ public sealed record Result<T>
         }
     }
 
-    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Failure, TResult> onFailure) =>
-        IsSuccess ? onSuccess(Value!) : onFailure(FailureInfo!);
-
     public T GetValueOrDefault(T defaultValue = default!) =>
         IsSuccess ? Value! : defaultValue;
 
@@ -90,4 +87,37 @@ public sealed record Result<T>
         IsFailure
             ? FailureInfo!.GetEnglishMessage()
             : Option<string>.None();
+    
+    public TResult Match<TResult>(Func<T, TResult> onSuccess, Func<Failure, TResult> onFailure) =>
+        IsSuccess ? onSuccess(Value!) : onFailure(FailureInfo!);
+    
+    // Overload for when both cases are synchronous
+    public async Task<TResult> MatchAsync<TResult>(
+        Func<T, Task<TResult>> onSuccess,
+        Func<Failure, Task<TResult>> onFailure)
+    {
+        return IsSuccess 
+            ? await onSuccess(Value!) 
+            : await onFailure(FailureInfo!);
+    }
+
+    // Overload for when failure case is synchronous
+    public async Task<TResult> MatchAsync<TResult>(
+        Func<T, Task<TResult>> onSuccess,
+        Func<Failure, TResult> onFailure)
+    {
+        return IsSuccess 
+            ? await onSuccess(Value!) 
+            : onFailure(FailureInfo!);
+    }
+
+    // Overload for when success case is synchronous  
+    public async Task<TResult> MatchAsync<TResult>(
+        Func<T, TResult> onSuccess,
+        Func<Failure, Task<TResult>> onFailure)
+    {
+        return IsSuccess 
+            ? onSuccess(Value!) 
+            : await onFailure(FailureInfo!);
+    }
 }
