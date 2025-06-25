@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data.Common;
 using CheckMade.Core.Model.Common.Actors;
 using CheckMade.Core.ServiceInterfaces.Bot;
@@ -10,9 +11,8 @@ namespace CheckMade.Services.Persistence.Repositories.Common;
 public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossary glossary) 
     : BaseRepository(dbHelper, glossary), IVendorsRepository
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
-    private Option<IReadOnlyCollection<Vendor>> _cache = Option<IReadOnlyCollection<Vendor>>.None();
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<Vendor>>> _cache = new();
+    private const string CacheKey = "all";
 
     private static readonly Func<DbDataReader, IDomainGlossary, Vendor> VendorMapper = 
         static (reader, _) => 
@@ -22,39 +22,24 @@ public sealed class VendorsRepository(IDbExecutionHelper dbHelper, IDomainGlossa
         (await GetAllAsync())
         .FirstOrDefault(v => v.Name == vendorName);
 
-    public async Task<IReadOnlyCollection<Vendor>> GetAllAsync()
+    public async Task<IReadOnlyCollection<Vendor>> GetAllAsync() =>
+        await _cache.GetOrAdd(CacheKey, async _ => await LoadAllFromDbAsync());
+
+    private async Task<IReadOnlyCollection<Vendor>> LoadAllFromDbAsync()
     {
-        if (_cache.IsNone)
-        {
-            await Semaphore.WaitAsync();
+        const string rawQuery = """
+                                SELECT 
 
-            try
-            {
-                if (_cache.IsNone)
-                {
-                    const string rawQuery = """
-                                            SELECT 
-                                            
-                                            v.name AS vendor_name,
-                                            v.status AS vendor_status,
-                                            v.details AS vendor_details
-                                            
-                                            FROM vendors v 
-                                            ORDER BY id
-                                            """;
+                                v.name AS vendor_name,
+                                v.status AS vendor_status,
+                                v.details AS vendor_details
 
-                    var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
-                    var vendors = await ExecuteMapperAsync(command, VendorMapper);
-                    
-                    _cache = Option<IReadOnlyCollection<Vendor>>.Some(vendors);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
+                                FROM vendors v 
+                                ORDER BY id
+                                """;
 
-        return _cache.GetValueOrThrow();
+        var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+        
+        return await ExecuteMapperAsync(command, VendorMapper);
     }
 }

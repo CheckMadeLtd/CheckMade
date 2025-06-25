@@ -1,10 +1,10 @@
+using System.Collections.Concurrent;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.LiveEvents;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
-using General.Utils.FpExtensions.Monads;
 using static CheckMade.Services.Persistence.Constitutors.StaticConstitutors;
 
 namespace CheckMade.Services.Persistence.Repositories.Bot;
@@ -15,9 +15,8 @@ public sealed class DerivedWorkflowBridgesRepository(
     IInputsRepository inputRepo) 
     : BaseRepository(dbHelper, glossary), IDerivedWorkflowBridgesRepository
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    
-    private Option<IReadOnlyCollection<WorkflowBridge>> _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<WorkflowBridge>>> _cache = new();
+    private const string CacheKey = "all";
     
     private readonly Func<DbDataReader, IDomainGlossary, WorkflowBridge> _workflowBridgeMapper =
         (reader, glossary) =>
@@ -79,38 +78,21 @@ public sealed class DerivedWorkflowBridgesRepository(
             .FirstOrDefault();
     }
     
-    public async Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent)
-    {
-        if (_cache.IsNone)
-        {
-            await Semaphore.WaitAsync();
-
-            try
-            {
-                if (_cache.IsNone)
-                {
-                    const string whereClause = "WHERE le.name = @liveEventName";
-
-                    var normalParameters = new Dictionary<string, object>
-                    {
-                        ["@liveEventName"] = liveEvent.Name
-                    };
-                    
-                    var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
-
-                    var bridges = await ExecuteMapperAsync(command, _workflowBridgeMapper);
-                    
-                    _cache = Option<IReadOnlyCollection<WorkflowBridge>>.Some(bridges);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
-
-        return _cache.GetValueOrThrow();
-    }
+    public async Task<IReadOnlyCollection<WorkflowBridge>> GetAllAsync(ILiveEventInfo liveEvent) =>
+        await _cache.GetOrAdd(CacheKey, async _ => await LoadAllFromDbAsync(liveEvent));
     
-    // private void EmptyCache() => _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
+    private async Task<IReadOnlyCollection<WorkflowBridge>> LoadAllFromDbAsync(ILiveEventInfo liveEvent)
+    {
+        const string whereClause = "WHERE le.name = @liveEventName";
+
+        var normalParameters = new Dictionary<string, object>
+        {
+            ["@liveEventName"] = liveEvent.Name
+        };
+                    
+        var command = GenerateCommand($"{GetBaseQuery}\n{whereClause}", normalParameters);
+
+        return await ExecuteMapperAsync(command, _workflowBridgeMapper);
+    }
+
 }

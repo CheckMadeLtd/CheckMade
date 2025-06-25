@@ -9,7 +9,7 @@ namespace CheckMade.Bot.Telegram.UpdateHandling;
 public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
 {
     private readonly ConcurrentDictionary<Agent, MessageId> _lastMessageIdsByAgent = new();
-    private ILogger<ILastOutputMessageIdCache> _logger;
+    private readonly ILogger<ILastOutputMessageIdCache> _logger;
 
     /// <summary>
     /// WARNING: Do NOT inject scoped services into this singleton!
