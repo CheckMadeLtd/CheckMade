@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Data.Common;
 using CheckMade.Core.Model.Bot.DTOs;
@@ -16,9 +17,9 @@ public sealed class AgentRoleBindingsRepository(
     RolesSharedMapper rolesMapper) 
     : BaseRepository(dbHelper, glossary), IAgentRoleBindingsRepository
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    private Option<IReadOnlyCollection<AgentRoleBind>> _cache = Option<IReadOnlyCollection<AgentRoleBind>>.None();
-
+    private readonly ConcurrentDictionary<string, Task<IReadOnlyCollection<AgentRoleBind>>> _cache = new();
+    private const string CacheKey = "all_bindings";
+    
     private (Func<DbDataReader, int> keyGetter,
         Func<DbDataReader, AgentRoleBind> modelInitializer,
         Action<AgentRoleBind, DbDataReader> accumulateData,
@@ -83,88 +84,67 @@ public sealed class AgentRoleBindingsRepository(
         });
 
         await ExecuteTransactionAsync(commands.ToArray());
-        
-        _cache = _cache.Match(
-            cache => Option<IReadOnlyCollection<AgentRoleBind>>.Some(
-                cache.Concat(agentRoleBindings).ToArray()),
-            Option<IReadOnlyCollection<AgentRoleBind>>.None);
+        EmptyCache();
     }
 
-    public async Task<IReadOnlyCollection<AgentRoleBind>> GetAllAsync()
+    public async Task<IReadOnlyCollection<AgentRoleBind>> GetAllAsync() =>
+        await _cache.GetOrAdd(CacheKey, async _ => await LoadAllFromDbAsync());
+
+    private async Task<IReadOnlyCollection<AgentRoleBind>> LoadAllFromDbAsync()
     {
-        if (_cache.IsNone)
-        {
-            await Semaphore.WaitAsync();
+        const string rawQuery = """
+                                SELECT 
 
-            try
-            {
-                if (_cache.IsNone)
-                {
-                    const string rawQuery = """
-                                            SELECT 
+                                usr.mobile AS user_mobile, 
+                                usr.first_name AS user_first_name, 
+                                usr.middle_name AS user_middle_name, 
+                                usr.last_name AS user_last_name, 
+                                usr.email AS user_email, 
+                                usr.language_setting AS user_language, 
+                                usr.status AS user_status, 
 
-                                            usr.mobile AS user_mobile, 
-                                            usr.first_name AS user_first_name, 
-                                            usr.middle_name AS user_middle_name, 
-                                            usr.last_name AS user_last_name, 
-                                            usr.email AS user_email, 
-                                            usr.language_setting AS user_language, 
-                                            usr.status AS user_status, 
+                                lve.name AS live_event_name, 
+                                lve.start_date AS live_event_start_date, 
+                                lve.end_date AS live_event_end_date, 
+                                lve.status AS live_event_status, 
 
-                                            lve.name AS live_event_name, 
-                                            lve.start_date AS live_event_start_date, 
-                                            lve.end_date AS live_event_end_date, 
-                                            lve.status AS live_event_status, 
+                                r.id AS role_id,
+                                r.token AS role_token, 
+                                r.role_type AS role_type, 
+                                r.status AS role_status, 
 
-                                            r.id AS role_id,
-                                            r.token AS role_token, 
-                                            r.role_type AS role_type, 
-                                            r.status AS role_status, 
+                                arb.id AS arb_id,
+                                arb.user_id AS arb_user_id, 
+                                arb.chat_id AS arb_chat_id, 
+                                arb.interaction_mode AS arb_interaction_mode, 
+                                arb.activation_date AS arb_activation_date, 
+                                arb.deactivation_date AS arb_deactivation_date, 
+                                arb.status AS arb_status,
 
-                                            arb.id AS arb_id,
-                                            arb.user_id AS arb_user_id, 
-                                            arb.chat_id AS arb_chat_id, 
-                                            arb.interaction_mode AS arb_interaction_mode, 
-                                            arb.activation_date AS arb_activation_date, 
-                                            arb.deactivation_date AS arb_deactivation_date, 
-                                            arb.status AS arb_status,
-                                            
-                                            soa.name AS sphere_name, 
-                                            soa.details AS sphere_details, 
-                                            soa.trade AS sphere_trade,
-                                            soa.status AS sphere_status
+                                soa.name AS sphere_name, 
+                                soa.details AS sphere_details, 
+                                soa.trade AS sphere_trade,
+                                soa.status AS sphere_status
 
-                                            FROM agent_role_bindings arb 
-                                            INNER JOIN roles r on arb.role_id = r.id 
-                                            INNER JOIN users usr on r.user_id = usr.id 
-                                            INNER JOIN live_events lve on r.live_event_id = lve.id
-                                            LEFT JOIN roles_to_spheres_assignments rtsa ON r.id = rtsa.role_id
-                                            LEFT JOIN spheres_of_action soa ON rtsa.sphere_id = soa.id
-                                            
-                                            ORDER BY arb.id
-                                            """;
+                                FROM agent_role_bindings arb 
+                                INNER JOIN roles r on arb.role_id = r.id 
+                                INNER JOIN users usr on r.user_id = usr.id 
+                                INNER JOIN live_events lve on r.live_event_id = lve.id
+                                LEFT JOIN roles_to_spheres_assignments rtsa ON r.id = rtsa.role_id
+                                LEFT JOIN spheres_of_action soa ON rtsa.sphere_id = soa.id
 
-                    var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+                                ORDER BY arb.id
+                                """;
 
-                    var (getKey,
-                        initializeModel,
-                        accumulateData,
-                        finalizeModel) = AgentRoleBindMapper(Glossary);
+        var command = GenerateCommand(rawQuery, Option<Dictionary<string, object>>.None());
+
+        var (getKey,
+            initializeModel,
+            accumulateData,
+            finalizeModel) = AgentRoleBindMapper(Glossary);
                     
-                    var fetchedBindings = await ExecuteMapperAsync(
-                        command, getKey, initializeModel, accumulateData, finalizeModel);
-                    
-                    _cache = Option<IReadOnlyCollection<AgentRoleBind>>.Some(
-                        fetchedBindings.ToArray());
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        }
-        
-        return _cache.GetValueOrThrow();
+        return await ExecuteMapperAsync(
+            command, getKey, initializeModel, accumulateData, finalizeModel);
     }
 
     public async Task<IReadOnlyCollection<AgentRoleBind>> GetAllActiveAsync() =>
@@ -229,8 +209,8 @@ public sealed class AgentRoleBindingsRepository(
         var normalParameters = new Dictionary<string, object>
         {
             ["@token"] = agentRoleBind.Role.Token,
-            ["userId"] = (long)agentRoleBind.Agent.UserId,
-            ["chatId"] = (long)agentRoleBind.Agent.ChatId,
+            ["@userId"] = (long)agentRoleBind.Agent.UserId,
+            ["@chatId"] = (long)agentRoleBind.Agent.ChatId,
             ["@mode"] = (int)agentRoleBind.Agent.Mode
         };
         
@@ -240,5 +220,5 @@ public sealed class AgentRoleBindingsRepository(
         EmptyCache();
     }
 
-    private void EmptyCache() => _cache = Option<IReadOnlyCollection<AgentRoleBind>>.None();
+    private void EmptyCache() => _cache.TryRemove(CacheKey, out _);
 }
