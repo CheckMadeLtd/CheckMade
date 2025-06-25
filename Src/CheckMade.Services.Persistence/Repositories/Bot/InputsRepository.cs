@@ -244,6 +244,10 @@ public sealed class InputsRepository(
     
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(Agent agent)
     {
+        /* This lock protects against:
+         * 1. Race condition during dictionary read:
+         * Without this lock, TryGetValue could happen while another thread is modifying the dictionary structure
+         * 2. Reading partial/corrupted dictionary state: Dictionary operations aren't atomic */
         lock (CacheLock)
         {
             if (CacheInputsByAgent.TryGetValue(agent, out var cachedInputs))
@@ -251,7 +255,30 @@ public sealed class InputsRepository(
                 return cachedInputs.ToImmutableArray();
             }
         }
+
+        // Keep slow, awaited db operation outside of lock.
+        var fetchedInputs = await LoadAllFromDbAsync(agent);
         
+        /* This lock protects against:
+         * 1. Race condition during dictionary write: Multiple threads could try to add the same key simultaneously
+         * 2. Lost updates: Thread A and B both fetch data, both try to store it, one overwrites the other
+         */
+        lock (CacheLock)
+        {
+            if (!CacheInputsByAgent.TryGetValue(agent, out var existingCache))
+            {
+                CacheInputsByAgent[agent] = (List<Input>)fetchedInputs;
+                
+                return fetchedInputs.ToImmutableArray();
+            }
+        
+            // Someone else loaded it while we were querying - use their result
+            return existingCache.ToImmutableArray();
+        }
+    }
+    
+    private async Task<IReadOnlyCollection<Input>> LoadAllFromDbAsync(Agent agent)
+    {
         const string whereClause = """
                                    WHERE inp.user_id = @userId 
                                    AND inp.chat_id = @chatId 
@@ -260,25 +287,10 @@ public sealed class InputsRepository(
                     
         const string rawQuery = $"{GetAllBaseQuery} {whereClause} {OrderByClause}";
                     
-        var fetchedInputs = new List<Input>(
+        return new List<Input>(
             await GetAllExecuteAsync(
                 rawQuery,
                 agent.UserId, agent.ChatId, agent.Mode));
-
-        
-        // Store in cache with lock (double-check pattern)
-        lock (CacheLock)
-        {
-            if (!CacheInputsByAgent.TryGetValue(agent, out var existingCache))
-            {
-                CacheInputsByAgent[agent] = fetchedInputs;
-                
-                return fetchedInputs.ToImmutableArray();
-            }
-        
-            // Someone else loaded it while we were querying - use their result
-            return existingCache.ToImmutableArray();
-        }
     }
 
     private async Task<IReadOnlyCollection<Input>> GetAllAsync(ILiveEventInfo liveEvent)
