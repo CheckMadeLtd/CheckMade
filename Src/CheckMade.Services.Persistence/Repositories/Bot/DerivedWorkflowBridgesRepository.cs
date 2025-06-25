@@ -111,6 +111,4 @@ public sealed class DerivedWorkflowBridgesRepository(
 
         return _cache.GetValueOrThrow();
     }
-    
-    // private void EmptyCache() => _cache = Option<IReadOnlyCollection<WorkflowBridge>>.None();
 }
