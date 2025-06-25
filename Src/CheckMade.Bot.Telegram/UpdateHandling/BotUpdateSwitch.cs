@@ -1,5 +1,4 @@
 using CheckMade.Core.Model.Bot.Categories;
-using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
@@ -9,7 +8,7 @@ namespace CheckMade.Bot.Telegram.UpdateHandling;
 
 public interface IBotUpdateSwitch
 {
-    Task<Result<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode);
+    Task SwitchUpdateAsync(Update update, InteractionMode interactionMode);
 }
 
 public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpdateSwitch> logger) : IBotUpdateSwitch
@@ -21,7 +20,7 @@ public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpd
                                       a Telegram-System-related update didn't work. You may assume it did.
                                       """);
     
-    public async Task<Result<Unit>> SwitchUpdateAsync(Update update, InteractionMode interactionMode)
+    public async Task SwitchUpdateAsync(Update update, InteractionMode interactionMode)
     {
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (update.Type)
@@ -29,7 +28,8 @@ public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpd
             case UpdateType.Message:
             case UpdateType.EditedMessage:
             case UpdateType.CallbackQuery:
-                return await updateHandler.HandleUpdateAsync(new UpdateWrapper(update), interactionMode);
+                await updateHandler.HandleUpdateAsync(new UpdateWrapper(update), interactionMode);
+                break;
 
             case UpdateType.MyChatMember:
                 logger.LogInformation("MyChatMember Update from '{From}', with previous status '{OldStatus}' " +
@@ -37,12 +37,12 @@ public sealed class BotUpdateSwitch(IUpdateHandler updateHandler, ILogger<BotUpd
                     update.MyChatMember!.From.Username, 
                     update.MyChatMember.OldChatMember.Status, 
                     update.MyChatMember.NewChatMember.Status);
-                return Unit.Value;
+                break;
             
             default:
                 logger.LogWarning("Received update of type '{updateType}': {warningMessage}", 
                     update.Type, NoSpecialHandlingWarning.GetFormattedEnglish());
-                return Unit.Value;
+                break;
         }
     }
 }
