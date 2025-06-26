@@ -14,6 +14,8 @@ namespace CheckMade.Services.Persistence.Constitutors;
 
 public sealed class InputsConstitutor
 {
+    // Due to SQL LEFT JOINs, the reader has a lot of duplicate records (it's a 'constrained cartesian product').
+    // The cache prevents repeated constitution (and esp. deserialization) of the same records.
     private readonly ConcurrentDictionary<int, Input> _inputsByIdCache = new();
     
     internal Input ConstituteInput(
