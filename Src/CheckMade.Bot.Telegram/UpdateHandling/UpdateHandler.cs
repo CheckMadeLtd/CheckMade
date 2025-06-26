@@ -10,7 +10,6 @@ using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot.Types.Enums;
 
 namespace CheckMade.Bot.Telegram.UpdateHandling;
 
