@@ -108,7 +108,7 @@ public sealed record NewSubmissionTypeSelection<T>(
             
             return submissionTypeName switch
             {
-                nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) or nameof(Assessment<T>) => 
+                nameof(CleaningIssue<T>) or nameof(TechnicalIssue<T>) => 
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
                         Mediator.Next(typeof(INewSubmissionFacilitySelection<T>)),
@@ -124,6 +124,12 @@ public sealed record NewSubmissionTypeSelection<T>(
                     await WorkflowResponse.CreateFromNextStateAsync(
                         currentInput, 
                         Mediator.Next(typeof(INewSubmissionEvidenceEntry<T>)),
+                        promptTransition),
+                
+                nameof(Assessment<T>) => 
+                    await WorkflowResponse.CreateFromNextStateAsync(
+                        currentInput, 
+                        Mediator.Next(typeof(INewSubmissionAssessmentRating<T>)),
                         promptTransition),
                 
                 _ => throw new InvalidOperationException(

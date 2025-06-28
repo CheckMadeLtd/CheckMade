@@ -20,6 +20,7 @@ public interface INewSubmissionAssessmentRating<T> : IWorkflowStateNormal where 
 public sealed record NewSubmissionAssessmentRating<T>(
     IDomainGlossary Glossary, 
     IStateMediator Mediator,
+    IGeneralWorkflowUtils WorkflowUtils,
     ILastOutputMessageIdCache MsgIdCache) 
     : INewSubmissionAssessmentRating<T> where T : ITrade, new()
 {
@@ -87,7 +88,7 @@ public sealed record NewSubmissionAssessmentRating<T>(
         return // on ControlPrompts.Back
             await WorkflowResponse.CreateFromNextStateAsync(
                 currentInput,
-                Mediator.Next(typeof(INewSubmissionFacilitySelection<T>)),
+                Mediator.Next(typeof(INewSubmissionTypeSelection<T>)),
                 new PromptTransition(true));
     }
 }

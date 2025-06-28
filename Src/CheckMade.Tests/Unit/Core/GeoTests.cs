@@ -3,7 +3,7 @@ using General.Utils.FpExtensions.Monads;
 
 namespace CheckMade.Tests.Unit.Core;
 
-public class GeoTests
+public sealed class GeoTests
 {
     [Theory]
     [InlineData(90.000001, 0)]

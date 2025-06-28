@@ -91,7 +91,6 @@ public sealed record SubmissionFactory<T>(
                     Id: GetGuid(),
                     CreationDate: DateTimeOffset.UtcNow,
                     Sphere: GetLastSelectedSphere<T>(inputs, allSpheres),
-                    Facility: GetLastSelectedFacility(),
                     Rating: GetAssessmentRating(),
                     Evidence: GetSubmittedEvidence(),
                     ReportedBy: role,

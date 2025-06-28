@@ -12,6 +12,8 @@ namespace CheckMade.Services.Persistence.Constitutors;
 
 public sealed class SphereOfActionDetailsConstitutor
 {
+    // Due to SQL LEFT JOINs, the reader has a lot of duplicate records (it's a 'constrained cartesian product').
+    // The cache prevents repeated constitution (and esp. deserialization) of the same records.
     private readonly ConcurrentDictionary<string, ISphereOfActionDetails> _detailsBySphereNameCache = new();
     
     internal Option<ISphereOfAction> ConstituteSphereOfAction(DbDataReader reader, IDomainGlossary glossary)

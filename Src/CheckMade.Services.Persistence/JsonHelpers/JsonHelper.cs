@@ -25,9 +25,6 @@ public static class JsonHelper
     /// </summary>
     public static T DeserializeFromJson<T>(string json, IDomainGlossary glossary, bool ignoreMissingMembers = false)
     {
-        var totalSw = System.Diagnostics.Stopwatch.StartNew();
-    
-        var settingsSw = System.Diagnostics.Stopwatch.StartNew();
         var jsonSettings = new JsonSerializerSettings
         {
             MissingMemberHandling = ignoreMissingMembers  
@@ -40,35 +37,17 @@ public static class JsonHelper
                 new DomainTermJsonConverter(glossary)
             }
         };
-        settingsSw.Stop();
-    
-        var deserializeSw = System.Diagnostics.Stopwatch.StartNew();
+        
+        // PERFORMANCE HOTSPOT HERE!!
+        // On Azure Function, one in every couple of hundred deserializations runs slow (tens of ms), probably for
+        // infrastructure / thread / resource constraints
+        // ==> avoid repetitive deserialization e.g. through caching. 
         var result = JsonConvert.DeserializeObject<T>(json, jsonSettings);
-        deserializeSw.Stop();
     
         if (result is null)
             throw new JsonSerializationException($"Deserialization resulted in null for type {typeof(T).Name}");
-
-        var validateSw = System.Diagnostics.Stopwatch.StartNew();
-        var validatedResult = ValidateNoNullProperties(result);
-        validateSw.Stop();
-    
-        totalSw.Stop();
-
-        const int deserializeWarningThreshold = 10;
         
-        if (totalSw.ElapsedMilliseconds > deserializeWarningThreshold)
-        {
-            Console.WriteLine($"[PERF-DEBUG] for {nameof(DeserializeFromJson)} " +
-                              $"(threshold: {deserializeWarningThreshold}) " +
-                              $"Settings: {settingsSw.ElapsedMilliseconds}ms, " +
-                              $"Deserialize: {deserializeSw.ElapsedMilliseconds}ms, " +
-                              $"Validate: {validateSw.ElapsedMilliseconds}ms, " +
-                              $"Total: {totalSw.ElapsedMilliseconds}ms, " +
-                              $"JsonLength: {json.Length}");
-        }
-    
-        return validatedResult;
+        return ValidateNoNullProperties(result);
     }
     
     /// <summary>
