@@ -58,42 +58,41 @@ public sealed class UpdateHandler(
             { InteractionMode.Notifications, botClientFactory.CreateBotClient(InteractionMode.Notifications) }
         };
 
+        var activeRoleBindings =
+            await agentRoleBindingsRepo.GetAllActiveAsync();
+
+        var uiTranslator =
+            translatorFactory.Create(GetUiLanguage(activeRoleBindings, currentAgent));
+
+        var replyMarkupConverter =
+            replyMarkupConverterFactory.Create(uiTranslator, glossary);
+        
+        var toModelConverter = toModelConverterFactory.Create(
+            new TelegramFilePathResolver(botClientByMode[currentInteractionMode]));
+
+        var input = Result<Input>.Fail(UiNoTranslate("Updated not converted to input yet"));
+        
+        IReadOnlyCollection<Result<Output>> sentOutputs;
+        
+        (Option<Input> EnrichedOriginalInput, IReadOnlyCollection<Output> ResultingOutputs) inputOutputPair =
+            (Option<Input>.None(), []);
+        
         try
         {
-            var toModelConverter = toModelConverterFactory.Create(
-                new TelegramFilePathResolver(botClientByMode[currentInteractionMode]));
-            
-            var input =
-                await toModelConverter.ConvertToModelAsync(update, currentInteractionMode);
+            input = await toModelConverter.ConvertToModelAsync(update, currentInteractionMode);
 
-            var result = await input.MatchAsync(
-                
-                async i => await inputProcessor.ProcessInputAsync(i), 
-                
-                static failure => 
+            inputOutputPair = await input.MatchAsync(
+                async i => await inputProcessor.ProcessInputAsync(i),
+                static failure =>
                     (Option<Input>.None(),
                     [
                         new Output
                         {
-                            Text = failure is ExceptionWrapper 
-                                ? UiNoTranslate(failure.GetEnglishMessage()) 
+                            Text = failure is ExceptionWrapper
+                                ? UiNoTranslate(failure.GetEnglishMessage())
                                 : ((BusinessError)failure).Error
-                        }]));
-            
-            var activeRoleBindings = 
-                await agentRoleBindingsRepo.GetAllActiveAsync();
-            
-            var uiTranslator = 
-                translatorFactory.Create(GetUiLanguage(activeRoleBindings, currentAgent));
-            
-            var replyMarkupConverter = 
-                replyMarkupConverterFactory.Create(uiTranslator, glossary);
-            
-            var sentOutputs = await OutputSender.SendOutputsAsync(
-                result.ResultingOutputs, botClientByMode, currentAgent, activeRoleBindings,
-                uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger);
-
-            await SaveToDbAsync(result.EnrichedOriginalInput, sentOutputs);
+                        }
+                    ]));
         }
         catch (Exception ex)
         {
@@ -101,12 +100,32 @@ public sealed class UpdateHandler(
                                 "Next, some details to help debug the current exception. " +
                                 "InteractionMode: '{interactionMode}'; Telegram User Id: '{userId}'; " +
                                 "DateTime of received Update: '{telegramDate}'; with text: '{text}'",
-                ex.Message, 
-                currentInteractionMode, 
+                ex.Message,
+                currentInteractionMode,
                 update.Message.From!.Id,
                 update.Message.Date,
                 update.Message.Text);
+
+            inputOutputPair = (input.Match(
+                    static i => Option<Input>.Some(i), 
+                    static _ => Option<Input>.None()),
+                [
+                    new Output
+                    {
+                        Text = Ui("A general system error has occurred. Contact tech support.")
+                    }
+                ]);
         }
+        finally
+        {
+            sentOutputs = await OutputSender.SendOutputsAsync(
+                inputOutputPair.ResultingOutputs, botClientByMode, currentAgent, activeRoleBindings,
+                uiTranslator, replyMarkupConverter, blobLoader, msgIdCache, glossary, logger);
+        }
+        
+        // Needs to be outside the finally block to not mask/swallow any original exception from try. 
+        // If it throws, it gets caught on the top-most-level try/catch.  
+        await SaveToDbAsync(inputOutputPair.EnrichedOriginalInput, sentOutputs);
     }
 
     private LanguageCode GetUiLanguage(
