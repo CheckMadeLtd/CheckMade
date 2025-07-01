@@ -2,9 +2,9 @@ name: .NET .Core Main Branch Workflow
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
 
 jobs:  
   tag_version:
