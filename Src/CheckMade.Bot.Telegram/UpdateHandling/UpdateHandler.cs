@@ -112,7 +112,7 @@ public sealed class UpdateHandler(
                 [
                     new Output
                     {
-                        Text = Ui("A general system error has occurred. Contact tech support.")
+                        Text = Ui("A general system error has occurred. Try again or contact tech support.")
                     }
                 ]);
         }
