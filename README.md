@@ -6,11 +6,8 @@ The ultimate vision is to build a software platform that enables an ecosystem of
 
 ## Technical Documentation
 
-- [Wiki](https://github.com/CheckMadeOrga/CheckMade/wiki) with project-specific, technical documentation
-- [Discussions](https://github.com/CheckMadeLtd/CheckMade/discussions) about architectural and design choices 
-- Daniel's style guides which we follow in this project
-  - [Style Guide (Team Practices)](https://dgor82.github.io/style_guide_practices.html)
-  - [Style Guide (Code)](https://dgor82.github.io/style_guide_code.html) 
+- [Wiki](https://github.com/CheckMadeOrga/Wiki) with project-specific, technical documentation & style guide
+- [Discussions](https://github.com/CheckMadeLtd/CheckMade/discussions) about architectural and design choices
 
 ## License
 

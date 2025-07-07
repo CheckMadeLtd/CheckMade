@@ -79,7 +79,6 @@ public sealed class InputsRepository(
                                      user_id, 
                                      chat_id, 
                                      details, 
-                                     last_data_migration, 
                                      interaction_mode, 
                                      input_type, 
                                      role_id, 
@@ -87,7 +86,7 @@ public sealed class InputsRepository(
                                      workflow_guid) 
 
                                      VALUES (@timeStamp, @messageId, @userId, @chatId, @messageDetails, 
-                                     @lastDataMig, @interactionMode, @inputType, 
+                                     @interactionMode, @inputType, 
                                      (SELECT id FROM roles WHERE token = @token), 
                                      (SELECT id FROM live_events WHERE name = @liveEventName),
                                      @guid)

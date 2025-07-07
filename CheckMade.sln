@@ -46,35 +46,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.ExtAPIs"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{A539503E-BACE-48F9-822A-607F5F16A6F8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{AF183FDB-DF1C-44FA-B362-881917C37716}"
-	ProjectSection(SolutionItems) = preProject
-		..\CheckMade.wiki\Top-Level Workflow.md = ..\CheckMade.wiki\Top-Level Workflow.md
-		..\CheckMade.wiki\Tooling.md = ..\CheckMade.wiki\Tooling.md
-		..\CheckMade.wiki\Telegram-CheckMade-Interaction.md = ..\CheckMade.wiki\Telegram-CheckMade-Interaction.md
-		..\CheckMade.wiki\Home.md = ..\CheckMade.wiki\Home.md
-		..\CheckMade.wiki\Domain-Model.md = ..\CheckMade.wiki\Domain-Model.md
-		..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md = ..\CheckMade.wiki\Dev-Style-Guide-And-Pitfalls.md
-		..\CheckMade.wiki\Background-and-Nuances.md = ..\CheckMade.wiki\Background-and-Nuances.md
-		..\CheckMade.wiki\Architecture---Tech---Design-Choices.md = ..\CheckMade.wiki\Architecture---Tech---Design-Choices.md
-		..\CheckMade.wiki\DevOps-Continuous-Integration-Workflow.md = ..\CheckMade.wiki\DevOps-Continuous-Integration-Workflow.md
-		..\CheckMade.wiki\DevOps-Deployment.md = ..\CheckMade.wiki\DevOps-Deployment.md
-		..\CheckMade.wiki\DevOps-Schema-Evolution.md = ..\CheckMade.wiki\DevOps-Schema-Evolution.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClaudeProject", "ClaudeProject", "{B0CDD972-E29B-447B-9458-296ECB020312}"
 	ProjectSection(SolutionItems) = preProject
 		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_style_guide.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_style_guide.md
 		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql
 		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md
 		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md
 		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dgor82_style_guide", "dgor82_style_guide", "{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\Personal_GitHub\dgor82.github.io\style_guide_code.md = ..\..\Personal_GitHub\dgor82.github.io\style_guide_code.md
-		..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md = ..\..\Personal_GitHub\dgor82.github.io\style_guide_practices.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Bot.Telegram", "Src\CheckMade.Bot.Telegram\CheckMade.Bot.Telegram.csproj", "{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}"
@@ -236,9 +214,7 @@ Global
 		{B5FF670E-F6EA-418D-A1AB-46726997181D} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{A539503E-BACE-48F9-822A-607F5F16A6F8} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
-		{AF183FDB-DF1C-44FA-B362-881917C37716} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{B0CDD972-E29B-447B-9458-296ECB020312} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
-		{AD54C1C1-9084-499E-B2B7-BF342E4DE8D9} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D} = {E5835236-896A-4576-8A1F-EBF20213872E}
 	EndGlobalSection

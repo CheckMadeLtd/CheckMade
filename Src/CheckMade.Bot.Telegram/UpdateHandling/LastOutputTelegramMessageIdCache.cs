@@ -11,11 +11,10 @@ public sealed class LastOutputTelegramMessageIdCache : ILastOutputMessageIdCache
     private readonly ConcurrentDictionary<Agent, MessageId> _lastMessageIdsByAgent = new();
     private readonly ILogger<ILastOutputMessageIdCache> _logger;
 
-    /// <summary>
-    /// WARNING: Do NOT inject scoped services into this singleton!
-    /// See: https://github.com/CheckMadeLtd/CheckMade/wiki/Dev-Style-Guide-And-Pitfalls#avoid-singletons-that-hold-on-to-scoped-services
+    /// <warning>
+    /// Do NOT inject scoped services into this singleton to avoid 'Captive Dependencies'
     /// This constructor should only accept stateless/configuration dependencies, if any.
-    /// </summary>
+    /// </warning>
     public LastOutputTelegramMessageIdCache(ILogger<ILastOutputMessageIdCache> logger)
     {
         _logger = logger;

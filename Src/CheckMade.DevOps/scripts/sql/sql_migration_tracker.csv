@@ -40,3 +40,4 @@ SqlMig_Index;DevDb;PrdDb;Related_To_DataMig;Required_by_Vers;Note
 039;1;1;;1.4.4;
 040;1;1;;1.4.2x?;forgot which version this first applied to
 041;1;1;;1.4.28;
+042;1;1;;1.4.31;
