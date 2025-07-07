@@ -190,8 +190,8 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         List<Output> outputsMultiple = 
         [
-            new Output { Text = UiNoTranslate("Output1") },
-            new Output { Text = UiNoTranslate("Output2") }
+            new() { Text = UiNoTranslate("Output1") },
+            new() { Text = UiNoTranslate("Output2") }
         ];
         
         serviceCollection.AddScoped<IInputProcessor>(_ => 
@@ -224,21 +224,21 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         List<Output> outputsWithLogicalPort = 
         [
-            new Output
+            new()
             { 
                 LogicalPort = new LogicalPort(
                     SanitaryInspector_DanielEn_X2024, 
                     Operations), 
                 Text = UiNoTranslate("Output1")   
             },
-            new Output
+            new()
             {
                 LogicalPort = new LogicalPort(
                     SanitaryTeamLead_DanielEn_X2024, 
                     Notifications),
                 Text = UiNoTranslate("Output2") 
             },
-            new Output
+            new()
             {
                 LogicalPort = new LogicalPort(
                     SanitaryEngineer_DanielEn_X2024, 
@@ -298,7 +298,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
     {
         var serviceCollection = new UnitTestStartup().Services;
         const string expectedOutputMessage = "Output without logical port";
-        List<Output> outputWithoutPort = [new Output{ Text = UiNoTranslate(expectedOutputMessage) }];
+        List<Output> outputWithoutPort = [new() { Text = UiNoTranslate(expectedOutputMessage) }];
     
         serviceCollection.AddScoped<IInputProcessor>(_ => 
             GetStubInputProcessor((outputWithoutPort)));
@@ -336,7 +336,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         List<Output> outputWithMultipleAttachmentTypes =
         [
-            new Output
+            new()
             {
                 Attachments = new List<AttachmentDetails>
                 {
@@ -392,7 +392,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         List<Output> outputWithTextAndCaptions =
         [
-            new Output
+            new()
             {
                 Text = UiNoTranslate(mainText),
                 Attachments = new List<AttachmentDetails>
@@ -440,7 +440,7 @@ public sealed class UpdateHandlerTests(ITestOutputHelper outputHelper)
         
         List<Output> outputWithLocation =
         [
-            new Output
+            new()
             {
                 Location = new Geo(35.098, -17.077, Option<double>.None()) 
             }
