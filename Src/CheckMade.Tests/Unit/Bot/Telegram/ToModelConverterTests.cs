@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Diagnostics;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Core.Model.Bot.DTOs;
 using CheckMade.Core.Model.Common.Actors;
@@ -8,19 +10,28 @@ using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Bot.Telegram.BotClient;
 using CheckMade.Bot.Telegram.Conversion;
 using CheckMade.Bot.Telegram.UpdateHandling;
+using CheckMade.Bot.Workflows;
 using CheckMade.Core.Model.Bot.DTOs.Inputs;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.AzureServices;
+using CheckMade.Core.ServiceInterfaces.ExtAPIs.Utils;
+using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Tests.Startup;
 using CheckMade.Tests.Utils;
 using General.Utils.FpExtensions.Monads;
 using General.Utils.UiTranslation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot.Types;
+using Xunit.Abstractions;
+using ChatId = CheckMade.Core.Model.Bot.DTOs.Inputs.ChatId;
 using User = Telegram.Bot.Types.User;
+using File = Telegram.Bot.Types.TGFile;
+
 
 namespace CheckMade.Tests.Unit.Bot.Telegram;
 
-public sealed class ToModelConverterTests
+public sealed class ToModelConverterTests(ITestOutputHelper outputHelper)
 {
     private ServiceProvider? _services;
 
@@ -319,16 +330,27 @@ public sealed class ToModelConverterTests
             actualInput.GetValueOrThrow());
     }
     
+    // With DI framwork, after repeated runs, 165ms
+    // With Pure DI: 62ms (of which Arrange phase is 46, mostly mock get_Object and Setup)
+    // What if I work with my own stubs instead of Moq? 
     [Fact]
     public async Task ConvertToModelAsync_ConvertsCorrectly_ForMessageWithCallbackQueryDomainTerm_InAnyMode()
     {
-        _services = new UnitTestStartup().Services.BuildServiceProvider();
+        var swTotal = new Stopwatch();
+        swTotal.Start();
         
-        var basics = GetBasicTestingServices(_services);
+        var swArrange = new Stopwatch();
+        swArrange.Start();
+
+        // _services = new UnitTestStartup().Services.BuildServiceProvider();
+        // var basics = GetBasicTestingServices(_services);
+        
         var domainTerm = Dt(LanguageCode.de);
-        var callbackQueryData = new CallbackId(basics.glossary.GetId(domainTerm));
+        IDomainGlossary glossary = new DomainGlossary();
+        var callbackQueryData = new CallbackId(glossary.GetId(domainTerm));
+        ITelegramUpdateGenerator updateGenerator = new TelegramUpdateGenerator(new Randomizer());
         var callbackQuery = 
-            basics.updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
+            updateGenerator.GetValidTelegramUpdateWithCallbackQuery(callbackQueryData);
     
         var expectedInput = new Input(
             null,
@@ -336,23 +358,70 @@ public sealed class ToModelConverterTests
             callbackQuery.Message.MessageId,
             PrivateBotChat_Operations,
             InputType.CallbackQuery,
-            SanitaryAdmin_DanielEn_X2024, 
-            X2024, 
+            Option<IRoleInfo>.None(), 
+            Option<ILiveEventInfo>.None(), 
             Option<ResultantWorkflowState>.None(), 
             Option<Guid>.None(), 
             Option<string>.None(), 
             InputGenerator.CreateFromRelevantDetails(
                 "The bot's original prompt",
                 domainTerm: domainTerm));
-    
+
+        var mockBotClientWrapper = new Mock<IBotClientWrapper>();
+        mockBotClientWrapper
+            .Setup(static x => x.GetFileAsync(It.IsNotNull<string>()))
+            .ReturnsAsync(new File { FilePath = "fakeFilePath" });
+        mockBotClientWrapper
+            .Setup(static x => x.MyBotToken)
+            .Returns("fakeToken");
+        
+        var filePathResolver = new TelegramFilePathResolver(mockBotClientWrapper.Object);
+        var stubBlobLoader = new Mock<IBlobLoader>().Object;
+        var stubDownloader = new Mock<IHttpDownloader>().Object;
+        var stubLogger = new Mock<ILogger<ToModelConverter>>().Object;
+        
+        var mockRoleBindingsRepo = new Mock<IAgentRoleBindingsRepository>();
+        List<AgentRoleBind> roleBindings =
+        [
+            new AgentRoleBind(
+                SanitaryAdmin_DanielEn_X2024,
+                new Agent(new UserId(12345L), new ChatId(12345L), Operations),
+                DateTimeOffset.Now,
+                Option<DateTimeOffset>.None())
+        ];
+        
+        mockRoleBindingsRepo
+            .Setup(static repo => repo.GetAllAsync())
+            .ReturnsAsync(roleBindings);
+        
+        mockRoleBindingsRepo
+            .Setup(static repo => repo.GetAllActiveAsync())
+            .ReturnsAsync(roleBindings
+                .Where(static arb => arb.Status == DbRecordStatus.Active)
+                .ToImmutableArray());
+        
+        var converter = new ToModelConverter(
+            filePathResolver,
+            stubBlobLoader,
+            stubDownloader,
+            mockRoleBindingsRepo.Object,
+            glossary,
+            stubLogger);
+        
+        swArrange.Stop();
+        outputHelper.WriteLine($"Elapsed arrange time in ms: {swArrange.ElapsedMilliseconds}");
+        
         var actualInput = 
-            await basics.converter.ConvertToModelAsync(
+            await converter.ConvertToModelAsync(
                 callbackQuery,
                 PrivateBotChat_Operations.Mode);
         
         Assert.Equivalent(
             expectedInput,
             actualInput.GetValueOrThrow());
+        
+        swTotal.Stop();
+        outputHelper.WriteLine($"Elapsed test time in ms: {swTotal.ElapsedMilliseconds}");
     }
 
     [Fact]
