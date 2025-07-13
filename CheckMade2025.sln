@@ -43,17 +43,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "General.Utils", "Src\Genera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.ExtAPIs", "Src\CheckMade.Services.ExtAPIs\CheckMade.Services.ExtAPIs.csproj", "{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{A539503E-BACE-48F9-822A-607F5F16A6F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClaudeProject", "ClaudeProject", "{B0CDD972-E29B-447B-9458-296ECB020312}"
-	ProjectSection(SolutionItems) = preProject
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\docu_wiki.md
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_technical.sql
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\script_updated\db_schema_business.md
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_2024-07 Overview & Examples.md
-		..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md = ..\ClaudeProject_CheckMadeDev\knowledge\documentation\docu_GitHub_Discussions_Manual_Selection.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Bot.Telegram", "Src\CheckMade.Bot.Telegram\CheckMade.Bot.Telegram.csproj", "{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.Logic", "Src\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj", "{E11C3542-1705-42B1-8AF7-A19C96AE071D}"
@@ -212,8 +201,6 @@ Global
 		{FE8ED1AC-7BC5-49B9-A7E4-C21560A531BC} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{B5FF670E-F6EA-418D-A1AB-46726997181D} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE} = {E5835236-896A-4576-8A1F-EBF20213872E}
-		{A539503E-BACE-48F9-822A-607F5F16A6F8} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
-		{B0CDD972-E29B-447B-9458-296ECB020312} = {A539503E-BACE-48F9-822A-607F5F16A6F8}
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D} = {E5835236-896A-4576-8A1F-EBF20213872E}
 	EndGlobalSection
