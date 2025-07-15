@@ -8,13 +8,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 		Directory.Build.props = Directory.Build.props
 		global.json = global.json
 		version.txt = version.txt
-		.github\workflows\fb_workflow.yml = .github\workflows\fb_workflow.yml
 		.github\workflows\main_workflow.yml = .github\workflows\main_workflow.yml
 		Src\SharedGlobalUsings.cs = Src\SharedGlobalUsings.cs
 		README.md = README.md
 		LICENSE.md = LICENSE.md
 		nuget.config = nuget.config
 		.idea\.idea.CheckMade\.idea\bashsupport-pro.xml = .idea\.idea.CheckMade\.idea\bashsupport-pro.xml
+		.github\workflows\create_pr_from_fb_workflow.yml = .github\workflows\create_pr_from_fb_workflow.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "Src\CheckMade.Desktop.Views\CheckMade.Desktop.Views.csproj", "{B52607A2-9E5F-436E-81A3-7999BE2DABBF}"
