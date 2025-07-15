@@ -7,7 +7,7 @@ The ultimate vision is to build a software platform that enables an ecosystem of
 ## Technical Documentation
 
 - [Wiki](https://github.com/CheckMadeLtd/Wiki) with project-specific, technical documentation & style guide
-- [Discussions](https://github.com/CheckMadeLtd/CheckMade/discussions) about architectural and design choices
+- [Discussions](https://github.com/CheckMadeLtd/CheckMade/discussions/categories/architecture-design-log) about architectural and design choices
 
 ## License
 
