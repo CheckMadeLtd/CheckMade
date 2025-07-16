@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Net;
 using CheckMade.Core.Model.Bot.Categories;
 using CheckMade.Bot.Telegram.Function;
 using Microsoft.Azure.Functions.Worker;
@@ -13,9 +14,12 @@ public sealed class NotificationsBot(IBotFunction botFunction)
     private static InteractionMode Mode => InteractionMode.Notifications;
 
     [Function("NotificationsBot")]
-    public async Task<HttpResponseData> 
+    public HttpResponseData 
         Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData request)
     {
-        return await botFunction.ProcessRequestAsync(request, UpdateIds, Mode);
+        // See comment in OperationsBot
+        botFunction.ProcessRequestAsync(request, UpdateIds, Mode);
+        
+        return request.CreateResponse(HttpStatusCode.OK);
     }
 }
