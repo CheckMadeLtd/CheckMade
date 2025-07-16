@@ -64,6 +64,8 @@ public sealed class InputsRepository(
 
     private const string OrderByClause = "ORDER BY inp.id";
     
+    // Needed to make safe the thread-unsafe List<Input>.Add() mutations we do in AddAsync
+    // Using ConcurrentDictionary would not be sufficient, it only protects dictionary ops
     private static readonly object CacheLock = new();
     private static readonly Dictionary<Agent, List<Input>> CacheInputsByAgent = new();
 
