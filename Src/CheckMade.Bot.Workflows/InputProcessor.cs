@@ -4,16 +4,13 @@ using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Bot.DTOs.Outputs;
 using General.Utils.FpExtensions.Monads;
-using Microsoft.Extensions.Logging;
 
 namespace CheckMade.Bot.Workflows;
 
 public sealed class InputProcessor(
-    IWorkflowIdentifier workflowIdentifier,
     IGeneralWorkflowUtils workflowUtils,
     IDomainGlossary glossary,
-    ILastOutputMessageIdCache msgIdCache,
-    ILogger<InputProcessor> logger)
+    ILastOutputMessageIdCache msgIdCache)
     : IInputProcessor
 {
     public async Task<(Option<Input> EnrichedOriginalInput, IReadOnlyCollection<Output> ResultingOutputs)> 
@@ -49,33 +46,21 @@ public sealed class InputProcessor(
                         });
                 }
 
-                var inputHistory = 
-                    await workflowUtils.GetAllCurrentInteractiveAsync(currentInput.Agent, currentInput);
-                
-                var activeWorkflow = 
-                    await workflowIdentifier.IdentifyAsync(inputHistory);
-
                 var enrichedCurrentInput = currentInput with
                 {
-                    WorkflowGuid = activeWorkflow.WorkflowGuid
+                    WorkflowGuid = Guid.NewGuid()
                 };
-                
-                var responseResult = 
-                    await GetResponseFromActiveWorkflowAsync(activeWorkflow.Workflow, enrichedCurrentInput);
 
-                enrichedCurrentInput = enrichedCurrentInput with
+                if (outputBuilder.Count == 0)
                 {
-                    ResultantState = GetResultantWorkflowState(responseResult, activeWorkflow.Workflow)
-                                     ?? Option<ResultantWorkflowState>.None(),
-                };
+                    outputBuilder.Add(new Output
+                    {
+                        Text = Ui("Fake Test Output")
+                    });
+                }
                 
-                return (
-                    Option<Input>.Some(enrichedCurrentInput), 
-                    ResolveResponseResultIntoOutputs(
-                        responseResult,
-                        outputBuilder,
-                        activeWorkflow.Workflow,
-                        currentInput));
+                return (Option<Input>.Some(enrichedCurrentInput), 
+                    (IReadOnlyCollection<Output>)outputBuilder);
             },
             static failure =>
             {
@@ -96,26 +81,6 @@ public sealed class InputProcessor(
         currentInput.InputType.Equals(InputType.CommandMessage)
         && currentInput.Details.BotCommandEnumCode.Equals(Start.CommandCode);
     
-    private ResultantWorkflowState? GetResultantWorkflowState(
-        Result<WorkflowResponse> response,
-        Option<WorkflowBase> activeWorkflow)
-    {
-        ResultantWorkflowState? workflowInfo = null;
-                
-        var newState = response.Match(
-            static r => r.NewStateId,
-            static _ => Option<string>.None());
-                
-        if (activeWorkflow.IsSome && newState.IsSome)
-        {
-            workflowInfo = new ResultantWorkflowState(
-                glossary.GetId(activeWorkflow.GetValueOrThrow().GetType()),
-                newState.GetValueOrThrow());
-        }
-
-        return workflowInfo;
-    }
-
     private async Task<bool> IsInputInterruptingPreviousWorkflowAsync(Input currentInput)
     {
         if (currentInput.OriginatorRole.IsNone)
@@ -143,59 +108,5 @@ public sealed class InputProcessor(
                 glossary.GetDtType(
                         i.ResultantState.GetValueOrThrow().InStateId)
                     .IsAssignableTo(typeof(IWorkflowStateTerminator)));
-    }
-
-    private static async Task<Result<WorkflowResponse>>
-        GetResponseFromActiveWorkflowAsync(
-            Option<WorkflowBase> activeWorkflow,
-            Input currentInput)
-    {
-        return await activeWorkflow.Match(
-            wf => 
-                wf.GetResponseAsync(currentInput),
-            static () => 
-                Task.FromResult(Result<WorkflowResponse>
-                    .Succeed(new WorkflowResponse(
-                        [
-                            new Output 
-                            { 
-                                Text = IInputProcessor.SeeValidBotCommandsInstruction
-                            }
-                        ], 
-                        Option<string>.None()))));
-    }
-
-    private IReadOnlyCollection<Output> ResolveResponseResultIntoOutputs(
-        Result<WorkflowResponse> responseResult,
-        List<Output> outputBuilder,
-        Option<WorkflowBase> activeWorkflow,
-        Input currentInput)
-    {
-        return responseResult.Match(
-            wr => 
-            {
-                outputBuilder.AddRange(wr.Output);
-                return outputBuilder;
-            },
-            failure =>
-            {
-                switch (failure)
-                {
-                    case ExceptionWrapper exw:
-                        logger.LogError($"""
-                                         The workflow '{activeWorkflow.GetValueOrDefault().GetType()}' has returned
-                                         this exception: '{exw.Exception.Message}'. Next, the corresponding input parameters.
-                                         UserId: {currentInput.Agent.UserId}; ChatId: {currentInput.Agent.ChatId}; 
-                                         InputType: {currentInput.InputType}; InteractionMode: {currentInput.Agent.Mode};
-                                         Date: {currentInput.TimeStamp}; 
-                                         For more details of input, check database!
-                                         """);
-                        throw exw.Exception;
-                    
-                    default:
-                        return [new Output { Text = ((BusinessError)failure).Error }];
-                }
-            }
-        );
     }
 }
