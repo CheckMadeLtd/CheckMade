@@ -1,4 +1,4 @@
-name: .NET .Core Feature Branch Workflow
+name: Create PR from Feature Branch
 
 on:
   push:

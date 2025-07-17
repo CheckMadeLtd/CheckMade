@@ -1,7 +1,8 @@
-name: .NET .Core Main Branch Workflow
+name: Tag-Build-Test-Deploy Workflow
 
 on:
   workflow_dispatch:
+# Deactivated automatic trigger: not every PR merge needs to be deployed. Manual trigger via GitHub Actions UI for now.
 #  push:
 #    branches:
 #      - main

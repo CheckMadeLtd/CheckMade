@@ -4,17 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Startup",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{EC4575D6-D466-4C3F-B78C-4048E0B09498}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		Directory.Build.props = Directory.Build.props
-		global.json = global.json
-		version.txt = version.txt
-		.github\workflows\fb_workflow.yml = .github\workflows\fb_workflow.yml
-		.github\workflows\main_workflow.yml = .github\workflows\main_workflow.yml
 		Src\SharedGlobalUsings.cs = Src\SharedGlobalUsings.cs
-		README.md = README.md
-		LICENSE.md = LICENSE.md
-		nuget.config = nuget.config
-		.idea\.idea.CheckMade\.idea\bashsupport-pro.xml = .idea\.idea.CheckMade\.idea\bashsupport-pro.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Desktop.Views", "Src\CheckMade.Desktop.Views\CheckMade.Desktop.Views.csproj", "{B52607A2-9E5F-436E-81A3-7999BE2DABBF}"
@@ -46,6 +36,32 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Bot.Telegram", "Src\CheckMade.Bot.Telegram\CheckMade.Bot.Telegram.csproj", "{38F24A8D-FA64-43B0-9741-5B3B28A41DE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckMade.Services.Logic", "Src\CheckMade.Services.Logic\CheckMade.Services.Logic.csproj", "{E11C3542-1705-42B1-8AF7-A19C96AE071D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github_workflows", "github_workflows", "{DE0C9A19-9801-45C0-A30E-907D23FC8D32}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\create_pr_from_fb_workflow.yml = .github\workflows\create_pr_from_fb_workflow.yml
+		.github\workflows\tag_build_test_deploy_workflow.yml = .github\workflows\tag_build_test_deploy_workflow.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_settings", "solution_settings", "{1975E014-A26B-44BF-87B3-728ECEE72735}"
+	ProjectSection(SolutionItems) = preProject
+		nuget.config = nuget.config
+		global.json = global.json
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tooling_settings", "tooling_settings", "{6647DF77-55C5-4A8C-B6AC-686F3FFF3F95}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.idea\.idea.CheckMade\.idea\bashsupport-pro.xml = .idea\.idea.CheckMade\.idea\bashsupport-pro.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_info", "solution_info", "{9B73B08A-6077-49FD-8399-00D15DABB579}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		version.txt = version.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -203,5 +219,9 @@ Global
 		{FD54A29A-9EF6-40ED-9D23-F79D5DE630AE} = {E5835236-896A-4576-8A1F-EBF20213872E}
 		{38F24A8D-FA64-43B0-9741-5B3B28A41DE2} = {442F01A3-80F3-4BE3-8D51-4E4505216822}
 		{E11C3542-1705-42B1-8AF7-A19C96AE071D} = {E5835236-896A-4576-8A1F-EBF20213872E}
+		{DE0C9A19-9801-45C0-A30E-907D23FC8D32} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
+		{1975E014-A26B-44BF-87B3-728ECEE72735} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
+		{6647DF77-55C5-4A8C-B6AC-686F3FFF3F95} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
+		{9B73B08A-6077-49FD-8399-00D15DABB579} = {EC4575D6-D466-4C3F-B78C-4048E0B09498}
 	EndGlobalSection
 EndGlobal
