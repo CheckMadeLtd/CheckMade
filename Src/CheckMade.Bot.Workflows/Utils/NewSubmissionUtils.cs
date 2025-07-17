@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CheckMade.Core.Model.Bot.Categories;
+using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using CheckMade.Core.Model.Common.Actors.RoleTypes;
 using CheckMade.Core.Model.Common.CrossCutting;
 using CheckMade.Core.Model.Common.GIS;
@@ -9,11 +10,9 @@ using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.Model.Utils;
 using CheckMade.Core.ServiceInterfaces.Persistence.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
-using CheckMade.Bot.Workflows.Utils;
-using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
 
-namespace CheckMade.Bot.Workflows.Ops.NewSubmission;
+namespace CheckMade.Bot.Workflows.Utils;
 
 internal static class NewSubmissionUtils
 {

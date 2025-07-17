@@ -8,17 +8,6 @@ using CheckMade.Core.Model.Common.Submissions;
 using CheckMade.Core.Model.Common.Submissions.SubmissionTypes;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
-using CheckMade.Bot.Workflows.Global.LanguageSetting;
-using CheckMade.Bot.Workflows.Global.LanguageSetting.States;
-using CheckMade.Bot.Workflows.Global.Logout;
-using CheckMade.Bot.Workflows.Global.Logout.States;
-using CheckMade.Bot.Workflows.Global.UserAuth;
-using CheckMade.Bot.Workflows.Global.UserAuth.States;
-using CheckMade.Bot.Workflows.Ops.NewSubmission;
-using CheckMade.Bot.Workflows.Ops.NewSubmission.States.A_Init;
-using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
-using CheckMade.Bot.Workflows.Ops.NewSubmission.States.C_Review;
-using CheckMade.Bot.Workflows.Ops.NewSubmission.States.D_Terminators;
 using General.Utils.UiTranslation;
 
 namespace CheckMade.Bot.Workflows;
@@ -42,61 +31,6 @@ public sealed record DomainGlossary : IDomainGlossary
         AddTerm(typeof(SanitaryTrade), "DX3KFI", Ui("🪠 Sanitary"));
         AddTerm(typeof(SiteCleanTrade), "DSIL7M", Ui("🧹 Site Cleaning"));
         
-        #endregion
-        
-        #region Workflows
-        
-        AddTerm(typeof(UserAuthWorkflow), "DJIQPO");
-        AddTerm(typeof(IUserAuthWorkflowTokenEntry), "DTWLPM");
-        AddTerm(typeof(IUserAuthWorkflowAuthenticated), "DRGLYG");
-        
-        AddTerm(typeof(LanguageSettingWorkflow), "DDI3H3");
-        AddTerm(typeof(ILanguageSettingSelect), "DD4252");
-        AddTerm(typeof(ILanguageSettingSet), "DL32QX");
-        
-        AddTerm(typeof(LogoutWorkflow), "DPAWEY");
-        AddTerm(typeof(ILogoutWorkflowConfirm), "DZF3Z4");
-        AddTerm(typeof(ILogoutWorkflowLoggedOut), "DPXFZ8");
-        AddTerm(typeof(ILogoutWorkflowAborted), "D1T2AR");
-        
-        AddTerm(typeof(NewSubmissionWorkflow), "D6SORL");
-        AddTerm(typeof(INewSubmissionTradeSelection), "DA0ZMD");
-        
-        AddTerm(typeof(INewSubmissionSphereSelection<SanitaryTrade>), "D8T63V");
-        AddTerm(typeof(INewSubmissionSphereSelection<SiteCleanTrade>), "DYRNZL");
-        
-        AddTerm(typeof(INewSubmissionSphereConfirmation<SanitaryTrade>), "D45JQ1");
-        AddTerm(typeof(INewSubmissionSphereConfirmation<SiteCleanTrade>), "DI6GGV");
-        
-        AddTerm(typeof(INewSubmissionTypeSelection<SanitaryTrade>), "DDQHWW");
-        AddTerm(typeof(INewSubmissionTypeSelection<SiteCleanTrade>), "D88CK2");
-        
-        AddTerm(typeof(INewSubmissionConsumablesSelection<SanitaryTrade>), "DWBYSV");
-        
-        AddTerm(typeof(INewSubmissionEvidenceEntry<SanitaryTrade>), "DKUR0Z");
-        AddTerm(typeof(INewSubmissionEvidenceEntry<SiteCleanTrade>), "DJSD44");
-        
-        AddTerm(typeof(INewSubmissionFacilitySelection<SanitaryTrade>), "DWIY4L");
-        AddTerm(typeof(INewSubmissionFacilitySelection<SiteCleanTrade>), "D5W0J7");
-        
-        AddTerm(typeof(INewSubmissionAssessmentRating<SanitaryTrade>), "D1K6AS");
-        AddTerm(typeof(INewSubmissionAssessmentRating<SiteCleanTrade>), "DCQGAL");
-
-        AddTerm(typeof(INewSubmissionReview<SanitaryTrade>), "DAH8TX");
-        AddTerm(typeof(INewSubmissionReview<SiteCleanTrade>), "DWNXLY");
-        
-        AddTerm(typeof(INewSubmissionSucceeded<SanitaryTrade>), "D8TGOV");
-        AddTerm(typeof(INewSubmissionSucceeded<SiteCleanTrade>), "DM3PCW");
-        
-        AddTerm(typeof(INewSubmissionEditMenu<SanitaryTrade>), "D8ABBA");
-        AddTerm(typeof(INewSubmissionEditMenu<SiteCleanTrade>), "DHZY2B");
-        
-        AddTerm(typeof(INewSubmissionCancelConfirmation<SanitaryTrade>), "DL69OL");
-        AddTerm(typeof(INewSubmissionCancelConfirmation<SiteCleanTrade>), "DNLJMN");
-        
-        AddTerm(typeof(INewSubmissionCancelled<SanitaryTrade>), "DN1KAK");
-        AddTerm(typeof(INewSubmissionCancelled<SiteCleanTrade>), "DR8REC");
-
         #endregion
         
         #region Submissions
@@ -233,6 +167,7 @@ public sealed record DomainGlossary : IDomainGlossary
         }
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void AddTerm(Type typeTerm, string idRaw) =>
         AddTerm(typeTerm, idRaw, UiNoTranslate(typeTerm.Name));
 }

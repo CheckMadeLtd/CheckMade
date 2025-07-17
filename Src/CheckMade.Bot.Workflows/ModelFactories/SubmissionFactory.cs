@@ -7,11 +7,10 @@ using CheckMade.Core.Model.Common.Submissions.SubmissionTypes;
 using CheckMade.Core.Model.Common.Trades;
 using CheckMade.Core.ServiceInterfaces.Bot;
 using CheckMade.Core.ServiceInterfaces.Persistence.Common;
-using CheckMade.Bot.Workflows.Ops.NewSubmission.States.B_Details;
 using CheckMade.Bot.Workflows.Utils;
 using CheckMade.Core.Model.Bot.DTOs.Inputs;
 using General.Utils.FpExtensions.Monads;
-using static CheckMade.Bot.Workflows.Ops.NewSubmission.NewSubmissionUtils;
+using static CheckMade.Bot.Workflows.Utils.NewSubmissionUtils;
 
 namespace CheckMade.Bot.Workflows.ModelFactories;
 
@@ -139,11 +138,12 @@ public sealed record SubmissionFactory<T>(
 
             var submittedDescriptions = 
                 inputs
-                    .Where(i =>
+                    .Where(static i =>
                         i.InputType == InputType.TextMessage &&
-                        i.ResultantState.IsSome &&
-                        i.ResultantState.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
+                        i.ResultantState.IsSome
+                        // && i.ResultantState.GetValueOrThrow().InStateId ==
+                        // Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>))
+                    )
                     .Select(static i => i.Details.Text.GetValueOrThrow())
                     .ToArray();
 
@@ -159,11 +159,13 @@ public sealed record SubmissionFactory<T>(
 
             var submittedAttachments =
                 inputs
-                    .Where(i =>
+                    .Where(static i =>
                         i.InputType == InputType.AttachmentMessage &&
-                        i.ResultantState.IsSome &&
-                        i.ResultantState.GetValueOrThrow().InStateId ==
-                        Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>)))
+                        i.ResultantState.IsSome 
+                        // &&
+                        // i.ResultantState.GetValueOrThrow().InStateId ==
+                        // Glossary.GetId(typeof(INewSubmissionEvidenceEntry<T>))
+                    )
                     .ToArray();
 
             List<AttachmentDetails> attachments = [];
