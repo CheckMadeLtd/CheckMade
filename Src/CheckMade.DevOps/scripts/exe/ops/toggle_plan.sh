@@ -86,3 +86,6 @@ fi
 # such as P1V2 (Premium V2 Small plan), are actually Dedicated hosting plans. Because they are Dedicated and not Elastic Premium,
 # plans with SKU names starting with "P" won't scale dynamically and may increase your costs.
 # from https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan?tabs=portal
+
+# Current pricing for consumption vs. premium see 
+# https://azure.microsoft.com/en-gb/pricing/details/functions/
